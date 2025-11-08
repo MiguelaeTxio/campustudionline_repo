@@ -36,6 +36,9 @@ CampuStudiOnline es una plataforma web de e-learning diseñada para centralizar 
 *   `search`: Actúa como el Explorador del Campus.
 *   `users`: Gestiona la identidad y seguridad.
 
+### 2.3. Control de Versiones
+*   **Repositorio Remoto:** De acuerdo con la convención de la plataforma, el nombre canónico del repositorio para este proyecto es `campustudionline_repo`.
+
 ---
 
 ## 3. Hoja de Ruta Estratégica Consolidada
