@@ -1,0 +1,144 @@
+{# /home/MiguelAeTxio/CampuStudiOnline/contents/templates/contents/study_room/edit_copy.html #}
+{% extends "base.html" %}
+{% load static %}
+{% load assessment_tags %}
+
+{% block title %}Editar Copia: {{ content_copy.original_content.title|default:"Contenido sin título" }} - CampuStudiOnline{% endblock title %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/annotations.css' %}">
+{% endblock extra_css %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'home' %}">Inicio</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'study_room:copy_directory_root' %}">Sala de Estudio</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Editar Copia</li>
+        </ol>
+    </nav>
+
+    <div class="card shadow-sm mb-4">
+        <div class="card-header">
+            <h2 class="h5 mb-0">Autoevaluación con IA</h2>
+        </div>
+        <div class="card-body">
+            <div id="assessment-panel-container">
+                {% include "assessment/partials/assessment_status_block.html" %}
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                    <h1 class="card-title mb-0 h3">{{ content_copy.original_content.title|default:"Editar Copia" }}</h1>
+                    <div>
+                        <button id="start-study-room-tour-button" class="btn btn-outline-info btn-sm me-2">
+                            <i class="fas fa-route me-1"></i> Visita Guiada
+                        </button>
+                        <button id="btn-save-copy" class="btn btn-primary btn-sm"><i class="fas fa-save me-1"></i> Guardar Cambios</button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <form id="form-copy" method="post" action="{% url 'study_room:edit_copy' pk=content_copy.pk %}" style="display: none;">
+                        {% csrf_token %}
+                        <input type="hidden" name="html_content" id="hidden_html_content_input">
+                        <input type="checkbox" name="is_public" id="hidden_is_public_input" {% if content_copy.is_public %}checked{% endif %}>
+                    </form>
+                    <div class="form-check mt-3 mb-3">
+                        <input class="form-check-input" type="checkbox" id="visible_is_public_checkbox" {% if content_copy.is_public %}checked{% endif %}>
+                        <label class="form-check-label" for="visible_is_public_checkbox">Hacer esta copia pública</label>
+                        <small class="form-text text-muted d-block">Si marcas esta opción, tu copia con anotaciones será visible para todos los usuarios.</small>
+                    </div>
+                    <div id="material-content" class="editable-content" contenteditable="true" inputmode="none" tabindex="0">
+                        {{ content_copy.html_content|safe }}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="card shadow-sm">
+                <div class="card-header bg-light">
+                    <h2 class="card-title h5 mb-0">Mis Anotaciones</h2>
+                </div>
+                <div id="annotations-list-container" class="card-body" style="max-height: 500px; overflow-y: auto;">
+                    <div id="annotations-list">
+                        {% for annotation in annotations %}
+                            <a href="#annotation-{{ annotation.id }}" class="annotation-link" data-annotation-id="{{ annotation.id }}">
+                                <div class="annotation-item" id="li-annotation-{{ annotation.id }}">
+                                    <div class="annotation-header d-flex justify-content-between align-items-center">
+                                        <span class="annotation-type badge {% if annotation.annotation_type == 'highlight' %}bg-warning text-dark{% elif annotation.annotation_type == 'note' %}bg-info text-dark{% elif annotation.annotation_type == 'mark' %}bg-danger text-white{% else %}bg-secondary text-white{% endif %}">
+                                            {{ annotation.get_annotation_type_display }}
+                                        </span>
+                                        <div>
+                                            <small class="text-muted me-2">{{ annotation.created_at|date:"d/m/y H:i" }}</small>
+                                            <button class="btn-delete-annotation btn btn-sm btn-link text-danger p-0" data-id="{{ annotation.id }}" title="Eliminar anotación">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="annotation-content" style="{% if annotation.annotation_type == 'highlight' %}background-color: {{ annotation.color }};{% elif annotation.annotation_type == 'mark' %}color: {{ annotation.color }}; font-weight:bold;{% elif annotation.annotation_type == 'note' %}border-bottom: 2px dotted {{ annotation.color }};{% endif %}">
+                                        {% if annotation.annotation_type == 'note' %}
+                                            {% if annotation.selected_text %}
+                                                <em>Referencia: "{{ annotation.selected_text|truncatewords:10 }}"</em><br>
+                                            {% endif %}
+                                            {{ annotation.content|linebreaksbr }}
+                                        {% else %}
+                                            {{ annotation.selected_text|truncatewords:10 }}
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </a>
+                        {% empty %}
+                            <p class="text-muted">No tienes anotaciones en este material.</p>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Herramientas y Modales -->
+<div id="floating-toolbar" class="floating-toolbar">
+    <input type="color" id="floating-annotation-color" class="color-picker-input" value="#FFD700">
+    <button id="floating-btn-highlight" class="btn-tool" title="Subrayar (Alt+H)"><i class="fas fa-highlighter"></i></button>
+    <button id="floating-btn-note" class="btn-tool" title="Añadir Nota (Alt+N)"><i class="fas fa-sticky-note"></i></button>
+    <button id="floating-btn-mark" class="btn-tool" title="Marcar (Alt+M)"><i class="fas fa-marker"></i></button>
+</div>
+
+<div class="modal fade" id="noteModal" tabindex="-1" aria-labelledby="noteModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="noteModalLabel">Añadir Nota</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label for="note-text-input" class="form-label">Contenido de la nota:</label>
+                    <textarea id="note-text-input" class="form-control" rows="4" placeholder="Escribe tu nota aquí..."></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" id="save-note-button" class="btn btn-primary">Guardar Nota</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+{% block extra_js %}
+    <script>
+        window.annotationConfig = {{ annotation_config|safe }};
+        window.assessmentPollingConfig = {{ assessment_polling_config|safe }};
+        window.assessmentTourDemoURL = "{% url 'assessment:take_assessment_demo' %}";
+    </script>
+    <script src="{% static 'js/annotation_handler.js' %}"></script>
+    <script src="{% static 'js/assessment_status_handler.js' %}"></script>
+    <script src="{% static 'contents/study_room_tour.js' %}"></script>
+{% endblock extra_js %}

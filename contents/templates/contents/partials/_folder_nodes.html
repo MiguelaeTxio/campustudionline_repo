@@ -1,0 +1,45 @@
+{# /home/MiguelAeTxio/CampuStudiOnline/contents/templates/contents/partials/_folder_nodes.html #}
+{% load assessment_tags %}
+<ul class="list-group">
+    {% for folder in nodes %}
+    <li id="folder-{{ folder.id }}" class="list-group-item d-flex justify-content-between align-items-center">
+        <span id="folder-display-{{ folder.id }}">
+             <a href="{% url 'contents:favorite_folder_detail' folder.id %}">
+                <i class="fas fa-folder me-2"></i>{{ folder.name }}
+                {% render_assessment_indicators folder %}
+             </a>
+        </span>
+       
+        {% if not folder.is_system_folder %}
+        <div class="btn-group" role="group">
+            <button class="btn btn-outline-secondary btn-sm" 
+                    data-bs-toggle="modal" 
+                    data-bs-target="#moveElementModal"
+                    data-element-id="{{ folder.id }}"
+                    data-element-type="folder"
+                    data-element-name="{{ folder.name|escapejs }}"
+                    title="Mover Carpeta">
+                <i class="fas fa-arrows-alt"></i>
+            </button>
+            <button class="btn btn-outline-primary btn-sm" 
+                    hx-get="{% url 'contents:rename_folder_form' folder.id %}"
+                    hx-target="#folder-display-{{ folder.id }}"
+                    hx-swap="innerHTML"
+                    title="Renombrar Carpeta">
+                <i class="fas fa-pencil-alt"></i>
+            </button>
+            <button class="btn btn-outline-danger btn-sm"
+                    hx-delete="{% url 'contents:delete_folder' folder.id %}"
+                    hx-target="closest li"
+                    hx-swap="outerHTML"
+                    hx-confirm="¿Estás seguro de que quieres eliminar la carpeta '{{ folder.name }}'? Esta acción no se puede deshacer y solo funcionará si la carpeta está vacía."
+                    title="Eliminar Carpeta">
+                <i class="fas fa-trash-alt"></i>
+            </button>
+        </div>
+        {% endif %}
+    </li>
+    {% empty %}
+    <li class="list-group-item">No hay subcarpetas para mostrar.</li>
+    {% endfor %}
+</ul>

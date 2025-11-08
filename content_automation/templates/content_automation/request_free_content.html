@@ -1,0 +1,55 @@
+{# /home/MiguelAeTxio/CampuStudiOnline/content_automation/templates/content_automation/request_free_content.html #}
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ title }} - {{ block.super }}{% endblock title %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+
+            {% if breadcrumbs %}
+            <nav aria-label="breadcrumb" class="mb-4">
+                <ol class="breadcrumb">
+                    {% for item in breadcrumbs %}
+                        {% if forloop.last %}
+                            <li class="breadcrumb-item active" aria-current="page">{{ item.name }}</li>
+                        {% else %}
+                            <li class="breadcrumb-item"><a href="{{ item.url }}">{{ item.name }}</a></li>
+                        {% endif %}
+                    {% endfor %}
+                </ol>
+            </nav>
+            {% endif %}
+
+            <div class="card">
+                <div class="card-header">
+                    <h1 class="h3 mb-0">{{ title }}</h1>
+                </div>
+                <div class="card-body">
+                    <p class="card-text text-muted mb-4">
+                        ¿Tienes una idea para un nuevo curso o material de estudio? Compártela con nosotros.
+                        Describe tu propuesta y el equipo de administración la revisará.
+                    </p>
+
+                    <form method="post">
+                        {% csrf_token %}
+                        
+                        {{ form.as_p }}
+                        
+                        <div class="d-grid gap-2 mt-4">
+                            <button type="submit" class="btn btn-primary btn-lg">Enviar Solicitud</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="text-center mt-3">
+                <a href="{% url 'search:search_home' %}">Volver al Directorio de Contenidos Libres</a>
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock content %}

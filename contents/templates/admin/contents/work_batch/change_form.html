@@ -1,0 +1,76 @@
+{# /contents/templates/admin/contents/work_batch/change_form.html #}
+{% extends "admin/change_form.html" %}
+{% load i18n %}
+
+{% block content_title %}
+    <h1>Centro de Mando del Lote: {{ original.degree_name }}</h1>
+{% endblock %}
+
+{% block object-tools %}
+<div class="module">
+    <h2>Panel de Ejecución de Tareas</h2>
+    {% with next_task=original.get_next_pending_task %}
+        {% if next_task %}
+            <fieldset class="module aligned">
+                <h3><i class="fas fa-arrow-circle-right" style="color: #417690; margin-right: 8px;"></i>Próxima Tarea Pendiente</h3>
+                <div class="form-row">
+                    <div>
+                        <label>Asignatura:</label>
+                        <p style="font-size: 1.2em; font-weight: bold;">{{ next_task.subject_name }}</p>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div>
+                        <label>Año Académico:</label>
+                        <p>{{ next_task.academic_year }}</p>
+                    </div>
+                </div>
+            </fieldset>
+
+            <fieldset class="module aligned">
+                <h3><i class="fas fa-robot" style="color: #417690; margin-right: 8px;"></i>Paso 1: Generar Curso Completo con Manus</h3>
+                <div class="form-row">
+                    <p>Copia el siguiente prompt <strong>avanzado</strong> y pégalo en Manus. Este prompt generará el curso completo, incluyendo la clasificación académica y la descripción, listo para ser importado.</p>
+                    <textarea readonly id="prompt-area" rows="30" style="width: 100%; font-family: monospace; white-space: pre-wrap; background-color: #f7f7f7; border: 1px solid #ccc; padding: 10px;">{{ advanced_prompt }}</textarea>
+                    <button id="copy-prompt-btn" class="button" style="margin-top: 10px;">Copiar Prompt Avanzado para Manus</button>
+                    <p style="margin-top:15px;">Guarda el contenido completo que te genere Manus en un archivo con extensión `.md` (ej. `curso_calculo.md`).</p>
+                </div>
+            </fieldset>
+
+            <fieldset class="module">
+                <h3><i class="fas fa-upload" style="color: #417690; margin-right: 8px;"></i>Paso 2: Importar el Archivo Generado</h3>
+                <p>Usa el siguiente enlace para subir el archivo `.md` que te ha generado Manus y completar la tarea.</p>
+                <a href="{% url 'admin:contents_contentmaterial_import-markdown' %}?next={{ request.path }}&task_id={{ next_task.id }}" class="button">
+                    <i class="fas fa-file-import" style="margin-right: 5px;"></i>Ir a Importar Curso (.md)
+                </a>
+            </fieldset>
+
+        {% else %}
+            <div style="background-color: #d4edda; border-color: #c3e6cb; color: #155724; padding: .75rem 1.25rem; margin-bottom: 1rem; border: 1px solid transparent; border-radius: .25rem;">
+                <i class="fas fa-check-circle"></i> ¡Enhorabuena! Todas las tareas para este lote de trabajo han sido completadas.
+            </div>
+        {% endif %}
+    {% endwith %}
+</div>
+{{ block.super }}
+{% endblock %}
+
+{% block content %}
+    {{ block.super }}
+{% endblock %}
+
+{% block admin_change_form_document_ready %}
+    {{ block.super }}
+    <script>
+        (function($) {
+            $('#copy-prompt-btn').click(function(e) {
+                e.preventDefault();
+                var promptText = $('#prompt-area');
+                promptText.select();
+                document.execCommand('copy');
+                $(this).text('¡Copiado!');
+                setTimeout(() => $(this).text('Copiar Prompt Avanzado para Manus'), 2000);
+            });
+        })(django.jQuery);
+    </script>
+{% endblock %}

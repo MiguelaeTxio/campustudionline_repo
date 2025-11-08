@@ -1,0 +1,91 @@
+{# /home/MiguelAeTxio/CampuStudiOnline/assessment/templates/assessment/partials/assessment_status_block.html #}
+{% load i18n %}
+
+<div class="row">
+    <!-- Columna de Estado y Acciones Principales -->
+    <div class="col-md-8">
+        {% if assessment_context.status == "PUEDE_SOLICITAR" %}
+            <p class="mb-2">Puedes solicitar una autoevaluación generada por IA para este material de estudio.</p>
+        
+        {% elif assessment_context.status == "GENERANDOSE" or assessment_context.status == "CORRIGIENDOSE" %}
+            <div class="text-center">
+                <p><strong>{{ assessment_context.status_text }}...</strong></p>
+                <div class="progress" style="height: 25px;">
+                    <div id="assessment-progress-bar" class="progress-bar progress-bar-striped progress-bar-animated bg-info" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+                        <span id="assessment-progress-text">0%</span>
+                    </div>
+                </div>
+                <small class="text-muted">Actualizando estado en tiempo real.</small>
+            </div>
+
+        {% elif assessment_context.status == "REALIZAR_PENDIENTE" %}
+            <div class="alert alert-warning">
+                <h4 class="alert-heading">¡Evaluación Lista!</h4>
+                <p>Tienes una evaluación pendiente de realizar para este material.</p>
+                {% if assessment_context.take_assessment_timer %}
+                    <hr>
+                    <p class="mb-0">
+                        <strong>{{ assessment_context.take_assessment_timer.label }}</strong>
+                        <span class="assessment-timer fw-bold" data-end-time="{{ assessment_context.take_assessment_timer.end_time_iso }}">--:--:--</span>
+                    </p>
+                {% endif %}
+            </div>
+
+        {% elif assessment_context.status == "EN_ESPERA" %}
+             <div class="alert alert-info">
+                <h4 class="alert-heading">Límites Alcanzados</h4>
+                <p>Has alcanzado uno de tus límites de uso. Podrás solicitar una nueva evaluación pronto.</p>
+                {% if assessment_context.creation_timer %}
+                    <hr>
+                    <p class="mb-0">
+                        <strong>{{ assessment_context.creation_timer.label }}</strong>
+                        <span class="assessment-timer fw-bold" data-end-time="{{ assessment_context.creation_timer.end_time_iso }}">--:--:--</span>
+                    </p>
+                {% endif %}
+            </div>
+
+        {% elif assessment_context.status == "FALLIDA" %}
+            <div class="alert alert-danger">
+                <h4 class="alert-heading">Fallo en la Generación</h4>
+                <p>{{ assessment_context.status_text }}. Puedes volver a solicitar una nueva evaluación para este material.</p>
+            </div>
+        {% endif %}
+
+        <!-- Botones de Acción -->
+        <div class="mt-3">
+            <form id="generate-assessment-form" action="{{ assessment_context.buttons.solicitar.url }}" method="POST" class="d-inline">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-primary" {% if assessment_context.buttons.solicitar.is_disabled %}disabled{% endif %}>
+                    <i class="fas fa-magic me-1"></i> {{ assessment_context.buttons.solicitar.text }}
+                </button>
+            </form>
+            <a href="{{ assessment_context.buttons.realizar.url }}" class="btn btn-warning {% if assessment_context.buttons.realizar.is_disabled %}disabled{% endif %}" role="button">
+                <i class="fas fa-tasks me-1"></i> {{ assessment_context.buttons.realizar.text }}
+            </a>
+        </div>
+    </div>
+
+    <!-- Columna de Límites y Correcciones -->
+    <div class="col-md-4 border-start">
+        <h6 class="text-muted">Límites de Uso</h6>
+        <ul class="list-unstyled">
+            <li>{% trans "Diario:" %} {{ assessment_context.limits.daily.count }}/{{ assessment_context.limits.daily.limit }}</li>
+            <li>{% trans "Semanal:" %} {{ assessment_context.limits.weekly.count }}/{{ assessment_context.limits.weekly.limit }}</li>
+        </ul>
+
+        {% if assessment_context.available_corrections %}
+            <h6 class="text-muted mt-3">Resultados Disponibles</h6>
+            <ul class="list-group list-group-flush">
+            {% for correction in assessment_context.available_corrections %}
+                <li class="list-group-item d-flex justify-content-between align-items-center px-0">
+                    <div>
+                        <a href="{{ correction.url }}" data-viewed-url="{% url 'assessment:mark_as_viewed_ajax' correction.pk %}">{{ correction.content_title|truncatechars:25 }}</a><br>
+                        <small class="text-muted">Expira en: <span class="assessment-timer fw-bold" data-end-time="{{ correction.expiration_iso }}">--:--:--</span></small>
+                    </div>
+                    <a href="{{ correction.url }}" data-viewed-url="{% url 'assessment:mark_as_viewed_ajax' correction.pk %}" class="btn btn-sm btn-success">Ver</a>
+                </li>
+            {% endfor %}
+            </ul>
+        {% endif %}
+    </div>
+</div>

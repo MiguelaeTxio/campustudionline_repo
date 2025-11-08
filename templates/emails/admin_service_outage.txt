@@ -1,0 +1,17 @@
+Aviso de Mantenimiento Programado
+
+  Hola {{ user.username }},
+
+  Te informamos que realizaremos un mantenimiento programado en CampuStudiOnline.
+
+  Fecha y Hora: {{ maintenance_datetime }}
+  Duración estimada: {{ maintenance_duration }}
+
+  Durante este periodo, el sitio podría no estar disponible o presentar intermitencias.
+  {% if additional_message %}
+  Información adicional:
+  {{ additional_message }}
+  {% endif %}
+  Agradecemos tu comprensión.
+
+  El equipo de CampuStudiOnline

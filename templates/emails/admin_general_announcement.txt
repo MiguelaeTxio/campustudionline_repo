@@ -1,0 +1,8 @@
+{{ email_subject }}
+
+  Hola {{ user.username }},
+
+  {{ message_body }}
+
+  Saludos,
+  El equipo de CampuStudiOnline

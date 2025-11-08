@@ -1,0 +1,203 @@
+{# /templates/content_public_preview_templates/index_template.html #}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>Materiales Educativos Públicos - CampuStudiOnline</title>
+    
+    <!-- Metadatos SEO básicos -->
+    <meta name="description" content="Explora nuestra colección de materiales educativos públicos en CampuStudiOnline. Recursos de aprendizaje de alta calidad para estudiantes y profesionales.">
+    <meta name="keywords" content="materiales educativos, recursos de aprendizaje, e-learning, educación online, CampuStudiOnline, cursos gratuitos">
+    <meta name="author" content="CampuStudiOnline">
+    <meta name="robots" content="index, follow">
+    
+    <!-- Open Graph para compartir en redes sociales -->
+    <meta property="og:title" content="Materiales Educativos Públicos - CampuStudiOnline">
+    <meta property="og:description" content="Explora nuestra colección de materiales educativos públicos en CampuStudiOnline. Recursos de aprendizaje de alta calidad para estudiantes y profesionales.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="{{ request.build_absolute_uri }}">
+    <meta property="og:image" content="{{ SITE_URL }}/static/images/og_branded_default.png">
+    <meta property="og:site_name" content="CampuStudiOnline">
+    
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Materiales Educativos Públicos - CampuStudiOnline">
+    <meta name="twitter:description" content="Explora nuestra colección de materiales educativos públicos en CampuStudiOnline. Recursos de aprendizaje de alta calidad.">
+    <meta name="twitter:image" content="{{ SITE_URL }}/static/images/logo_campustudionline.jpg">
+    
+    <!-- Enlace canónico -->
+    <link rel="canonical" href="{{ SITE_URL }}/previews-seo/">
+    
+    <!-- Datos estructurados Schema.org para la página de listado -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "CollectionPage",
+      "name": "Materiales Educativos Públicos - CampuStudiOnline",
+      "description": "Explora nuestra colección de materiales educativos públicos en CampuStudiOnline. Recursos de aprendizaje de alta calidad para estudiantes y profesionales.",
+      "url": "{{ SITE_URL }}/previews-seo/",
+      "provider": {
+        "@type": "Organization",
+        "name": "CampuStudiOnline",
+        "url": "{{ SITE_URL }}/"
+      },
+      "about": {
+        "@type": "Thing",
+        "name": "Materiales educativos"
+      },
+      "isAccessibleForFree": true
+    }
+    </script>
+    
+    <!-- Datos estructurados para la organización -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "CampuStudiOnline",
+      "url": "{{ SITE_URL }}/",
+      "logo": "{{ SITE_URL }}/static/images/logo_campustudionline.jpg",
+      "description": "Plataforma e-learning diseñada para tu crecimiento. Descubre cursos, colabora y alcanza tus metas de aprendizaje online."
+    }
+    </script>
+    
+    <!-- Estilos CSS básicos -->
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            color: #333;
+            background-color: #f8f9fa;
+        }
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        header {
+            background-color: #0d6efd;
+            color: white;
+            padding: 1rem 0;
+            text-align: center;
+        }
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+        h2 {
+            font-size: 1.5rem;
+            color: #0d6efd;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+        }
+        .card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            padding: 20px;
+            transition: transform 0.3s ease;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        .card h3 {
+            margin-top: 0;
+            color: #0d6efd;
+        }
+        .card p {
+            color: #666;
+        }
+        .btn {
+            display: inline-block;
+            background-color: #0d6efd;
+            color: white;
+            padding: 10px 15px;
+            text-decoration: none;
+            border-radius: 4px;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        .btn:hover {
+            background-color: #0b5ed7;
+        }
+        footer {
+            background-color: #343a40;
+            color: white;
+            text-align: center;
+            padding: 1rem 0;
+            margin-top: 2rem;
+        }
+        .cta-section {
+            background-color: #e9ecef;
+            padding: 2rem;
+            text-align: center;
+            margin: 2rem 0;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>Materiales Educativos Públicos</h1>
+            <p>Explora nuestra colección de recursos de aprendizaje de alta calidad</p>
+        </div>
+    </header>
+    
+    <main class="container">
+        <section>
+            <h2>Recursos educativos disponibles</h2>
+            <p>Descubre nuestra selección de materiales educativos públicos creados por nuestra comunidad de expertos. Estos recursos están disponibles para todos los usuarios.</p>
+            
+            <div class="materials-grid">
+                {% if public_materials %}
+                    {% for material in public_materials %}
+                        <article class="card" itemscope itemtype="https://schema.org/LearningResource">
+                            <h3 itemprop="name">{{ material.title }}</h3>
+                            
+                            {% if material.short_description %}
+                                <p itemprop="description">{{ material.short_description }}</p>
+                            {% endif %}
+                            
+                            <meta itemprop="url" content="{{ SITE_URL }}/previews-seo/{{ material.static_detail_url }}">
+                            <meta itemprop="isAccessibleForFree" content="true">
+                            
+                            <div class="card-actions">
+                                <a href="{{ material.static_detail_url }}" class="btn" itemprop="url">Ver detalles</a>
+                                <a href="{{ platform_login_path }}?next={{ material.platform_content_full_url_for_next }}" class="btn">Acceder al contenido completo</a>
+                            </div>
+                        </article>
+                    {% endfor %}
+                {% else %}
+                    <p>No hay materiales públicos disponibles en este momento.</p>
+                {% endif %}
+            </div>
+        </section>
+        
+        <section class="cta-section">
+            <h2>¿Quieres acceder a más contenido?</h2>
+            <p>Regístrate en CampuStudiOnline para acceder a todos nuestros materiales educativos y funcionalidades.</p>
+            
+            <div class="cta-buttons">
+                <a href="{{ platform_login_path }}" class="btn">Iniciar Sesión</a>
+                {% if platform_signup_path %}
+                    <a href="{{ platform_signup_path }}" class="btn">Registrarse</a>
+                {% endif %}
+            </div>
+        </section>
+    </main>
+    
+    <footer>
+        <div class="container">
+            <p>&copy; {% now "Y" %} CampuStudiOnline. Todos los derechos reservados.</p>
+            <p>Una plataforma de aprendizaje en línea diseñada para tu crecimiento académico y profesional.</p>
+        </div>
+    </footer>
+</body>
+</html>

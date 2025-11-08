@@ -1,0 +1,31 @@
+{% load tz %}
+{% load humanize %}
+
+<div class="form-row">
+    <div>
+        <label>Último Ciclo de Trabajo:</label>
+        {% if settings.last_run_timestamp %}
+            <p><strong>{{ settings.last_run_timestamp|naturaltime }}</strong> ({{ settings.last_run_timestamp|timezone:"Europe/Madrid"|date:"d M Y, H:i:s" }})</p>
+        {% else %}
+            <p><em>El motor de automatización aún no se ha ejecutado.</em></p>
+        {% endif %}
+    </div>
+</div>
+<div class="form-row">
+    <div>
+        <label>Resultado del Último Ciclo:</label>
+        {% if settings.last_run_status %}
+            <p><strong>{{ settings.last_run_status }}</strong></p>
+        {% else %}
+            <p><em>N/A</em></p>
+        {% endif %}
+    </div>
+</div>
+{% if settings.is_running %}
+<div class="form-row">
+    <div>
+        <label>Próximo Ciclo en:</label>
+        <p>Aproximadamente en 5 minutos desde el último ciclo.</p>
+    </div>
+</div>
+{% endif %}

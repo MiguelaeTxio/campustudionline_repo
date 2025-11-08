@@ -1,0 +1,92 @@
+{# /users/templates/users/account_detail.html #}
+{% extends "base.html" %}
+{% load static i18n %}
+
+{% block title %}{{ titulo_pagina|default:_("Mi Cuenta") }} - CampuStudiOnline{% endblock title %}
+
+{% block extra_head %}
+    <meta name="robots" content="noindex, nofollow">
+    <link rel="canonical" href="{{ request.build_absolute_uri }}">
+{% endblock extra_head %}
+
+{% block content %}
+<div class="container mt-4 mb-5">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'home' %}">{% trans "Inicio" %}</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{{ titulo_pagina|default:_("Mi Cuenta") }}</li>
+        </ol>
+    </nav>
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div id="tour-account-title">
+            <h1 class="h2 mb-0">{% trans "Panel de Control de la Cuenta" %}</h1>
+            <p class="text-muted mb-0">{% blocktrans %}Hola, {{ request.user.get_full_name|default:request.user.username }}. Gestiona tu cuenta y perfil desde aquí.{% endblocktrans %}</p>
+        </div>
+        <button id="start-user-account-tour-btn" class="btn btn-outline-info btn-sm">
+            <i class="fas fa-route me-1"></i> Visita Guiada
+        </button>
+    </div>
+
+    <div class="row g-4">
+        
+        <!-- Tarjeta de Configuración de Cuenta -->
+        <div class="col-md-6" id="tour-account-settings">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body d-flex flex-column">
+                    <h2 class="card-title h5"><i class="fas fa-user-cog me-2"></i>{% trans "Configuración de la Cuenta" %}</h2>
+                    <p class="card-text">{% trans "Actualiza tus datos de acceso principales como el nombre de usuario y la dirección de correo electrónico." %}</p>
+                    <div class="mt-auto">
+                        <a href="{% url 'users:account_settings' %}" class="btn btn-primary">{% trans "Gestionar Configuración" %}</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tarjeta de Editar Perfil -->
+        <div class="col-md-6" id="tour-account-profile">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body d-flex flex-column">
+                    <h2 class="card-title h5"><i class="fas fa-id-card me-2"></i>{% trans "Editar Perfil y Privacidad" %}</h2>
+                    <p class="card-text">{% trans "Personaliza tu información pública, biografía y ajusta las opciones de privacidad de tu portafolio." %}</p>
+                    <div class="mt-auto">
+                        <a href="{% url 'users:edit_profile' %}" class="btn btn-info text-white">{% trans "Editar mi Perfil" %}</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tarjeta de Seguridad -->
+        <div class="col-md-6" id="tour-account-security">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body d-flex flex-column">
+                    <h2 class="card-title h5"><i class="fas fa-shield-alt me-2"></i>{% trans "Seguridad" %}</h2>
+                    <p class="card-text">{% trans "Gestiona tu contraseña y otros aspectos relacionados con la seguridad de tu cuenta." %}</p>
+                    <div class="mt-auto">
+                        <a href="{% url 'password_change' %}" class="btn btn-secondary">{% trans "Cambiar Contraseña" %}</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Tarjeta de Eliminar Cuenta -->
+        <div class="col-md-6" id="tour-account-danger">
+            <div class="card h-100 shadow-sm border-danger">
+                <div class="card-body d-flex flex-column text-danger">
+                    <h2 class="card-title h5"><i class="fas fa-exclamation-triangle me-2"></i>{% trans "Zona de Peligro" %}</h2>
+                    <p class="card-text">{% trans "Eliminar tu cuenta es una acción permanente e irreversible. Perderás todo tu contenido y acceso." %}</p>
+                    <div class="mt-auto">
+                        <a href="{% url 'users:request_deletion' %}" class="btn btn-outline-danger">{% trans "Eliminar mi Cuenta" %}</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock content %}
+
+
+{% block extra_js %}
+    <script src="{% static 'js/tours/user_account_tour.js' %}"></script>
+{% endblock extra_js %}

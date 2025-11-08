@@ -1,0 +1,66 @@
+{# /home/MiguelAeTxio/CampuStudiOnline/assessment/templates/assessment/take_assessment.html #}
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ page_title }}{% endblock title %}
+
+{% block content %}
+<div class="container mt-5 mb-5">
+    <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+            <h1 class="h4 mb-0">{{ page_title }}</h1>
+            <button id="start-assessment-tour-button" class="btn btn-outline-light btn-sm">
+                <i class="fas fa-route me-1"></i> Visita Guiada
+            </button>
+        </div>
+        <div class="card-body">
+            <div class="mb-4">
+                <p class="card-text">
+                    <strong>Contenido Original:</strong>
+                    <a href="{% url 'study_room:edit_copy' pk=user_copy.pk %}">
+                        {{ assessment.content.title }}
+                    </a>
+                </p>
+                <p class="text-muted">
+                    Lee atentamente cada pregunta y escribe tu respuesta en el espacio correspondiente.
+                    Una vez envíes tus respuestas, serán evaluadas por nuestra IA para darte una puntuación y feedback.
+                </p>
+            </div>
+
+            <form id="assessment-form" method="POST" action="{% url 'assessment:submit_assessment' pk=assessment.pk %}">
+                {% csrf_token %}
+
+                <ol>
+                    {% for question in assessment.questions.all %}
+                        <li class="mb-4">
+                            <div class="pregunta-container">
+                                <p class="lead">{{ question.question_text }}</p>
+                                <div class="form-group">
+                                    <textarea name="answer_q_{{ question.pk }}" id="answer_q_{{ question.pk }}" class="form-control" rows="5" placeholder="Escribe tu respuesta aquí..."></textarea>
+                                </div>
+                            </div>
+                        </li>
+                    {% endfor %}
+                </ol>
+
+                <div class="d-flex justify-content-end mt-4">
+                    <button type="submit" class="btn btn-success btn-lg">
+                        <i class="fas fa-check-circle me-2"></i>Enviar para Evaluación
+                    </button>
+                </div>
+            </form>
+        </div>
+        <div class="card-footer text-muted small">
+            <p class="mb-0">Recuerda que esta acción forma parte de tu cuota diaria de uso de la IA.</p>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+{% block extra_js %}
+    <script>
+        // Definimos la URL de la demo para que el tour de la Sala de Estudio pueda usarla.
+        window.assessmentTourDemoURL = "{% url 'assessment:take_assessment_demo' %}";
+    </script>
+    <script src="{% static 'assessment/take_assessment_tour.js' %}"></script>
+{% endblock extra_js %}

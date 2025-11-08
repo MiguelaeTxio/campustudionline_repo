@@ -1,0 +1,5 @@
+{# /home/MiguelAeTxio/CampuStudiOnline/contents/templates/contents/partials/_rename_folder_form.html #}
+<form hx-post="{% url 'contents:rename_folder' folder.id %}" hx-target="closest li > span" hx-swap="innerHTML">
+    <input type="text" name="new_folder_name" value="{{ folder.name }}" class="form-control form-control-sm d-inline-block w-auto">
+    <button type="submit" class="btn btn-sm btn-success">Guardar</button>
+</form>

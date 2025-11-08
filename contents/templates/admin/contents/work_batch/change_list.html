@@ -1,0 +1,12 @@
+{# /contents/templates/admin/contents/work_batch/change_list.html #}
+{% extends "admin/change_list.html" %}
+{% load i18n %}
+
+{% block object-tools-items %}
+  {{ block.super }}
+  <li>
+    <a href="{% url 'admin:contents_workbatch_select_proposal' %}" class="addlink">
+      {% translate 'Generar Lote desde Propuesta' %}
+    </a>
+  </li>
+{% endblock %}

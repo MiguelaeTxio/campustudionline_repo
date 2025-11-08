@@ -1,0 +1,300 @@
+{# /home/MiguelAeTxio/CampuStudiOnline/templates/base.html #}
+{% load static %}
+{% load auth_extras %}
+{% load assessment_tags %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token }}">
+    <title>{% block title %}CampuStudiOnline: Tu Plataforma de Estudio Colaborativo{% endblock title %}</title>
+    {% block standard_meta %}
+        <meta name="description" content="{% block seo_description %}Únete a la comunidad de CampuStudiOnline para compartir, crear y colaborar en contenido académico y personal. Accede a materiales de estudio, participa en debates y avanza a tu propio ritmo.{% endblock seo_description %}">
+        <meta name="keywords" content="CampuStudiOnline, e-learning, plataforma de estudio, cursos online, aprendizaje en línea, estudiar online, campus virtual">
+        <link rel="canonical" href="{{ request.build_absolute_uri }}">
+    {% endblock standard_meta %}
+    {% block meta_tags %}
+        <meta property="og:site_name" content="CampuStudiOnline">
+        <meta property="og:url" content="{{ request.build_absolute_uri }}">
+        <meta property="og:title" content="{% block og_title %}CampuStudiOnline: Tu Plataforma de Estudio Colaborativo{% endblock og_title %}">
+        <meta property="og:description" content="{% block og_description %}Únete a la comunidad de CampuStudiOnline para compartir, crear y colaborar en contenido educativo de alta calidad.{% endblock og_description %}">
+        <meta property="og:image" content="{% block og_image %}{{ request.scheme }}://{{ request.get_host }}{% static 'images/og_branded_default.png' %}{% endblock og_image %}">
+        <meta property="og:image:secure_url" content="{% block og_image_secure_ref %}{{ request.scheme }}://{{ request.get_host }}{% static 'images/og_branded_default.png' %}{% endblock og_image_secure_ref %}">
+        <meta property="og:image:alt" content="{% block og_image_alt %}Logotipo de CampuStudiOnline.{% endblock og_image_alt %}">
+        <meta property="og:type" content="{% block og_type %}website{% endblock og_type %}">
+    {% endblock meta_tags %}
+    {% block json_ld_data %}
+        <script type="application/ld+json">{"@context": "https://schema.org", "name": "CampuStudiOnline", "url": "{{ SITE_URL }}", "logo": "{{ request.scheme }}://{{ request.get_host }}{% static 'images/og_branded_default.png' %}", "description": "Plataforma e-learning diseñada para tu crecimiento. Descubre cursos, colabora y alcanza tus metas de aprendizaje online.", "contactPoint": {"@type": "ContactPoint", "contactType": "Customer Support", "email": "soporte@campustudionline.com"}}</script>
+        <script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebSite", "name": "CampuStudiOnline", "url": "{{ SITE_URL }}"}</script>
+        <script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Inicio", "item": "{{ request.build_absolute_uri }}"}]}</script>
+    {% endblock json_ld_data %}
+    <link rel="icon" type="image/png" href="{% static 'images/favicon-96x96.png' %}" sizes="96x96" />
+    <link rel="icon" type="image/svg+xml" href="{% static 'images/favicon.svg' %}" />
+    <link rel="shortcut icon" href="{% static 'images/favicon.ico' %}" />
+    <link rel="apple-touch-icon" sizes="180x180" href="{% static 'images/apple-touch-icon.png' %}" />
+    <link rel="manifest" href="{% static 'images/site.webmanifest' %}" />
+    {% block extra_head %}{% endblock extra_head %}
+    <link rel="stylesheet" href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xLiPY/NS5R+E6ztJQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="{% static 'css/preloader.css' %}">
+    <link rel="stylesheet" href="{% static 'css/shepherd.css' %}">
+    <link rel="stylesheet" href="{% static 'css/shepherd_custom.css' %}">
+    <style>body{display:flex;flex-direction:column;min-height:100vh;background-color:#f0f2f5}@media (min-width:992px){body{background-image:linear-gradient(rgba(255,255,255,.85),rgba(255,255,255,.85)),url("{% static 'images/logo_campustudionline.jpg' %}");background-repeat:no-repeat;background-position:center center;background-attachment:fixed;background-size:contain}}.main-content{flex:1;padding-bottom:60px;background-color:transparent}.footer{width:100%;background-color:#f8f9fa;text-align:center;padding:1rem 0}.badge-notification{margin-left:5px}.main-content table{width:100%;margin-bottom:1rem;border:1px solid #dee2e6;border-collapse:collapse;background-color:#fff}.main-content th,.main-content td{padding:.75rem;vertical-align:top;border:1px solid #dee2e6}.main-content thead th{vertical-align:bottom;border-bottom:2px solid #dee2e6;background-color:#f8f9fa}.main-content tbody tr:nth-of-type(odd){background-color:rgba(0,0,0,.05)}.no-select{-webkit-user-select:none;-ms-user-select:none;user-select:none;-webkit-touch-callout:none}.share-buttons .btn{margin:0 4px}#password-modal-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background-color:rgba(0,0,0,.6);display:flex;justify-content:center;align-items:center;z-index:2000}#password-modal-box{background-color:#fff;padding:25px 30px;border-radius:8px;box-shadow:0 5px 15px rgba(0,0,0,.3);width:90%;max-width:450px;text-align:center}#password-modal-error{color:#dc3545;font-size:.9rem;margin-top:10px}#notification-wall-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background-color:rgba(0,0,0,.8);display:flex;justify-content:center;align-items:center;z-index:3000;color:#fff;text-align:center}#notification-wall-box{max-width:600px;padding:2rem}
+    .list-group-item.list-group-item-light {
+        --bs-list-group-bg: #adb5bd;
+    }
+    </style>
+    {% block extra_css %}{% endblock extra_css %}
+    <script>window.protectionLevel='{{ protection_level|default:"full" }}';</script>
+</head>
+<body>
+    <div aria-live="polite" aria-atomic="true" class="position-relative"><div id="toast-container" class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 1100"></div></div>
+    <div id="preloader" class="preloader-overlay">
+        <div class="preloader-spinner"></div>
+        <p id="preloader-text" class="preloader-text">Cargando...</p>
+    </div>
+
+    <script>
+        (function() {
+            'use strict';
+            {% if not show_preloader|default:False %}
+                document.getElementById('preloader').style.display = 'none';
+            {% endif %}
+        })();
+    </script>
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary mb-4">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="{% url 'home' %}"><img src="{% static 'images/favicon.svg' %}" alt="Logo de CampuStudiOnline" height="30" class="d-inline-block align-text-top me-2">CampuStudiOnline</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navigationBar" aria-controls="navigationBar" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+            <div class="collapse navbar-collapse" id="navigationBar">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item" id="tour-nav-home"><a class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}" href="{% url 'home' %}"><i class="fas fa-home me-2"></i>Inicio</a></li>
+                    <li class="nav-item" id="tour-nav-chat"><a class="nav-link {% if request.resolver_match.app_name == 'chat' %}active{% endif %}" href="{% url 'chat:index' %}"><i class="fas fa-comments me-2"></i>Chat</a></li>
+                    <li class="nav-item" id="tour-nav-academic-chat"><a class="nav-link {% if request.resolver_match.app_name == 'academic_chat' %}active{% endif %}" href="{% url 'academic_chat:university_list' %}"><i class="fas fa-chalkboard-teacher me-2"></i>Chats Académicos</a></li>
+                    <li class="nav-item" id="tour-nav-announcements"><a class="nav-link {% if request.resolver_match.app_name == 'announcements' %}active{% endif %}" href="{% url 'announcements:announcement_list' %}"><i class="fas fa-bullhorn me-2"></i>Tablón de Anuncios</a></li>
+                    <li class="nav-item" id="tour-nav-academic-directory">
+                        <a class="nav-link {% if request.resolver_match.app_name == 'academic_directory' %}active{% endif %}" href="{% url 'academic_directory:university_list' %}">
+                            <i class="fas fa-graduation-cap me-2"></i>Directorio Académico
+                            {% include 'assessment/partials/_navbar_iv_display.html' with iv_data=academic_dir_iv %}
+                        </a>
+                    </li>
+                    {% if user.is_authenticated %}
+                    <li class="nav-item" id="tour-nav-intellectual-directory">
+                        <a class="nav-link {% if request.resolver_match.app_name == 'search' %}active{% endif %}" href="{% url 'search:search_home' %}">
+                            <i class="fas fa-folder me-2"></i>Directorio de Contenidos Libres
+                            {% include 'assessment/partials/_navbar_iv_display.html' with iv_data=free_dir_iv %}
+                        </a>
+                    </li>
+                    <li class="nav-item" id="tour-nav-personal-directory"><a class="nav-link {% if request.resolver_match.app_name == 'contents' %}active{% endif %}" href="{% url 'contents:personal_workspace' %}"><i class="fas fa-address-book me-2"></i>Directorio Personal</a></li>
+                    <li class="nav-item" id="tour-nav-study-room"><a class="nav-link {% if request.resolver_match.url_name == 'copy_directory_root' %}active{% endif %}" href="{% url 'study_room:copy_directory_root' %}"><i class="fas fa-book-reader me-2"></i>Sala de Estudio</a></li>
+                    <li class="nav-item" id="tour-nav-portfolio"><a class="nav-link {% if request.resolver_match.view_name == 'portfolio:public_portfolio_detail' and request.resolver_match.kwargs.username == user.username %}active{% endif %}" href="{% url 'portfolio:public_portfolio_detail' username=user.username %}"><i class="fas fa-address-card me-2"></i>Mi Portafolio</a></li>
+                    {% endif %}
+                </ul>
+                {% if user.is_authenticated %}
+                    <form class="d-flex me-3" role="search" method="get" action="{% url 'search:global_search' %}" id="tour-nav-global-search"><input class="form-control form-control-sm" type="search" name="q" placeholder="Búsqueda global..." aria-label="Búsqueda global"><button class="btn btn-sm btn-outline-light ms-2" type="submit"><i class="fas fa-search"></i></button></form>
+                    <ul class="navbar-nav mb-2 mb-lg-0 align-items-center">
+                        <li class="nav-item" id="tour-nav-private-messages"><a class="nav-link {% if request.resolver_match.app_name == 'messaging' and request.resolver_match.url_name == 'conversation_list' %}active{% endif %}" href="{% url 'messaging:conversation_list' %}"><i class="fab fa-whatsapp me-2"></i>Mensajes Privados{% if unread_p2p_message_count > 0 %}<span class="badge bg-danger rounded-pill badge-notification">{{ unread_p2p_message_count }}</span>{% endif %}</a></li>
+                        <li class="nav-item dropdown" id="tour-nav-user-menu"><a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="fas fa-user-circle me-2"></i> Hola, {{ user.username }}</a><ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown"><li><a class="dropdown-item {% if 'mi-cuenta' in request.path %}active{% endif %}" href="{% url 'users:account_detail' %}"><i class="fas fa-user-cog me-2"></i>Panel de Control</a></li>{% if user.is_staff or user|has_group:"Colaboradores" %}<li><hr class="dropdown-divider"></li><li><a class="dropdown-item" href="{% url 'admin:index' %}"><i class="fas fa-user-shield me-2"></i>Panel de Administración</a></li>{% endif %}<li><hr class="dropdown-divider"></li><li><form method="post" action="{% url 'logout' %}" class="d-inline">{% csrf_token %}<button type="submit" class="dropdown-item"><i class="fas fa-sign-out-alt me-2"></i>Cerrar Sesión</button></form></li></ul></li>
+                    </ul>
+                {% else %}
+                    <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-center">
+                        <li class="nav-item" id="tour-nav-login"><a class="nav-link {% if request.resolver_match.view_name == 'login' %}active{% endif %}" href="{% url 'login' %}">Iniciar Sesión</a></li>
+                        <li class="nav-item" id="tour-nav-register"><a class="nav-link {% if request.resolver_match.view_name == 'users:register' %}active{% endif %}" href="{% url 'users:register' %}">Registrarse</a></li>
+                    </ul>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+    <main class="container mt-4 main-content">
+        {% if messages %}{% for message in messages %}<div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">{{ message }}<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>{% endfor %}{% endif %}
+        {% block content %}{% endblock content %}
+    </main>
+    <div id="notification-wall-overlay" style="display: none;"><div id="notification-wall-box"><h1 id="notification-wall-title" class="mb-3"></h1><p id="notification-wall-text" class="lead mb-4"></p><button id="notification-wall-button" class="btn btn-primary btn-lg"></button></div></div>
+    <div id="password-modal-overlay" style="display: none;"><div id="password-modal-box"><h5 id="password-modal-title" class="mb-3">Se requiere autenticación</h5><p id="password-modal-text" class="mb-3">Por favor, introduce tu contraseña para confirmar.</p><form id="password-modal-form" novalidate><div class="mb-3"><input type="password" id="password-modal-input" class="form-control" required autocomplete="current-password"><div id="password-modal-error" class="invalid-feedback text-center mt-2" style="display: none;"></div></div><div class="d-grid gap-2 d-sm-flex justify-content-sm-center"><button type="button" id="password-modal-cancel-btn" class="btn btn-secondary">Cancelar</button><button type="submit" class="btn btn-primary">Confirmar</button></div></form></div></div>
+    <footer class="footer mt-auto">
+        <div class="container">
+            <div id="global-share-container" class="mb-2">
+                <div class="share-buttons">
+                    <span class="me-2 text-muted small">Compartir esta página:</span>
+                    <a id="share-twitter" href="#" class="btn btn-info btn-sm text-white" target="_blank" rel="noopener noreferrer" title="Compartir en Twitter"><i class="fab fa-twitter"></i></a>
+                    <a id="share-linkedin" href="#" class="btn btn-primary btn-sm" target="_blank" rel="noopener noreferrer" title="Compartir en LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                    <button id="copy-link-button" class="btn btn-dark btn-sm" title="Copiar enlace"><i id="copy-link-icon" class="fas fa-link"></i></button>
+                </div>
+            </div>
+            <p class="mb-0 text-muted small">© {% now "Y" %} CampuStudiOnline. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+    <script src="{% static 'vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+    <script src="https://unpkg.com/htmx.org@1.9.12" integrity="sha384-ujb1lZYygJmzgSwoxRggbCHcjc0rB2XoQrxeTUQyRjrOnlCoYta87iKBWq3EsdM2" crossorigin="anonymous"></script>
+    <script>
+        document.body.addEventListener('htmx:configRequest', function(evt) {
+            evt.detail.headers['X-CSRFToken'] = '{{ csrf_token }}';
+        });
+    </script>
+    <script src="https://unpkg.com/hyperscript.org@0.9.12"></script>
+    <script src="https://unpkg.com/htmx.org/dist/ext/response-targets.js"></script>
+    <script src="{% static 'js/content-protection.js' %}"></script>
+
+    <script>
+    (function(){
+        'use strict';
+        const preloader = document.getElementById('preloader');
+        const preloaderText = document.getElementById('preloader-text');
+        let messageInterval;
+
+        const unifiedPreloaderMessages = [
+            'Estableciendo conexión segura...',
+            'Sincronizando con la nube...',
+            'Cargando tu espacio de trabajo...',
+            'Consultando registros académicos...',
+            'Sincronizando con la base de conocimiento...',
+            'Optimizando los flujos de estudio...',
+            'Comprobando metadatos...',
+            'Comprobando título...',
+            'Cargando tabla de contenido...',
+            'Preparando módulos...',
+            'Montando secciones...',
+            'Ensamblando contenidos...',
+            'Cargando enlaces...',
+            'Comprobando enlaces de la tabla de contenidos...',
+            'Preparando cabecera...',
+            'Generando descripción...',
+            'Recuperando etiquetas...',
+            'Ya casi está todo listo para ti.',
+            'Vaya. Parece que hubo problemas con los enlaces...',
+            'Refactorizando enlaces de la tabla de contenidos...',
+            'Preparando el contenido final...'
+        ];
+
+        window.showActionPreloader = function(customMessages) {
+            const messages = customMessages || unifiedPreloaderMessages;
+            if (!preloader || !preloaderText || !messages || !messages.length) return;
+            
+            preloader.style.display = 'flex';
+            let msgIndex = 0;
+            const updateMessage = () => {
+                preloaderText.textContent = messages[msgIndex];
+                msgIndex = (msgIndex + 1) % messages.length;
+            };
+
+            if (messageInterval) clearInterval(messageInterval);
+            updateMessage();
+            messageInterval = setInterval(updateMessage, 3000);
+        };
+
+        const hidePageLoadPreloader = () => {
+            if (preloader) {
+                preloader.style.display = 'none';
+            }
+        };
+
+        window.addEventListener('load', hidePageLoadPreloader);
+
+        window.addEventListener('pageshow', function(event) {
+            if (event.persisted) {
+                hidePageLoadPreloader();
+            }
+        });
+    })();
+    </script>
+    
+    {% if user.is_authenticated %}
+        <script>window.django_data={vapidPublicKey:'{{ VAPID_PUBLIC_KEY }}',saveSubscriptionUrl:'{% url "messaging:save_webpush_subscription" %}',isUserAuthenticated:!0};</script>
+        <script src="{% static 'js/push_manager.js' %}"></script>
+        <script>document.addEventListener('DOMContentLoaded',function(){const whiteListedUrls=['portfolio:public_portfolio_detail','users:account_settings','logout'];const currentViewName="{{ request.resolver_match.view_name }}";const isWhiteListed=whiteListedUrls.some(url=>currentViewName.endsWith(':'+url.split(':')[1])&&currentViewName.startsWith(url.split(':')[0]+':'));if(isWhiteListed){console.log("Notification Wall: Whitelisted page, verification not required.");return}if(!('Notification'in window)&&"{{ user.is_authenticated }}"==="True"){console.warn("Notification Wall: This browser does not support notifications, but user is authenticated. Displaying warning if necessary.")}else if(!('Notification'in window)&&"{{ user.is_authenticated }}"==="False"){console.log("Notification Wall: This browser does not support notifications and user is not authenticated. Wall does not apply.");return}else if(Notification.permission==='granted' &&"{{ user.is_authenticated }}"==="True"){console.log("Notification Wall: Notification permission granted and user is authenticated.");return}else if("{{ user.is_authenticated }}"==="False"){console.log("Notification Wall: User not authenticated. Wall does not apply.");return}const checkAndEnforcePermissions=()=>{const permission=Notification.permission;console.log(`Notification Wall: Current permission is '${permission}'.`);if(permission==='granted')return;const wallOverlay=document.getElementById('notification-wall-overlay');const wallTitle=document.getElementById('notification-wall-title');const wallText=document.getElementById('notification-wall-text');const wallButton=document.getElementById('notification-wall-button');if(permission==='denied'){wallTitle.textContent="Has bloqueado las notificaciones";wallText.innerHTML="Para usar la plataforma, es necesario que las actives manually. <br><br><strong>Haz clic en el candado (🔒) junto a la dirección web en tu navegador, busca 'Notificaciones' y selecciona 'Permitir'.</strong><br><br>Luego, recarga esta página.";wallButton.textContent="Hecho, recargar la página";wallButton.onclick=()=>window.location.reload()}else{wallTitle.textContent="¡Atención! Se requiere un permiso";wallText.innerHTML="Para usar la plataforma es imprescindible activar las notificaciones. Son necesarias para el chat, las salas de estudio y otras funciones clave. Sin ellas, no puedes continuar.";wallButton.textContent="Activar Notificaciones";wallButton.onclick=async()=>{try{const newPermission=await Notification.requestPermission();if(newPermission==='granted'){window.location.reload()}else{checkAndEnforcePermissions()}}catch(error){console.error("Error requesting notification permission:",error)}}}wallOverlay.style.display='flex'};if("{{ user.is_authenticated }}"==="True"&&Notification.permission!=='granted'){checkAndEnforcePermissions()}else{console.log("Notification Wall: Condition to activate wall not met (user not authenticated or permission granted).")}});</script>
+    {% endif %}
+    <script>document.addEventListener('DOMContentLoaded',function(){const modalOverlay=document.getElementById('password-modal-overlay');const modalForm=document.getElementById('password-modal-form');if(!modalOverlay||!modalForm){window.requestPasswordAuthentication=function(){console.error("Attempted to call requestPasswordAuthentication, but the modal's HTML is not on the page.");return Promise.reject(new Error("Authentication modal not available."))};return}const modalBox=document.getElementById('password-modal-box');const modalTitle=document.getElementById('password-modal-title');const modalText=document.getElementById('password-modal-text');const modalInput=document.getElementById('password-modal-input');const modalError=document.getElementById('password-modal-error');const modalCancelBtn=document.getElementById('password-modal-cancel-btn');let resolvePasswordPromise;let rejectPasswordPromise;window.requestPasswordAuthentication=function(title,text){modalTitle.textContent=title||"Se requiere autenticación";modalText.textContent=text||"Por favor, introduce tu contraseña para confirmar.";modalInput.value='';modalError.style.display='none';modalOverlay.style.display='flex';modalInput.focus();return new Promise((resolve,reject)=>{resolvePasswordPromise=resolve;rejectPasswordPromise=reject})};modalForm.onsubmit=async function(e){e.preventDefault();modalError.style.display='none';const password=modalInput.value;if(!password){modalError.textContent="Por favor, introduce tu contraseña.";modalError.style.display='block';return}modalCancelBtn.disabled=!0;modalForm.querySelector('button[type="submit"]').disabled=!0;try{const csrfToken=document.querySelector('meta[name="csrf-token"]').content;const response=await fetch("{% url 'users:verify_password' %}",{method:'POST',headers:{'Content-Type':'application/json','X-CSRFToken':csrfToken,'X-Requested-With':'XMLHttpRequest'},body:JSON.stringify({password:password})});const data=await response.json();if(response.ok&&data.status==='success'){modalOverlay.style.display='none';resolvePasswordPromise(!0)}else{modalError.textContent=data.message||"Contraseña incorrecta o error de verificación.";modalError.style.display='block'}}catch(error){console.error("Error in password verification request:",error);modalError.textContent="Ocurrió un error al verificar la contraseña. Inténtalo de nuevo.";modalError.style.display='block'}finally{modalCancelBtn.disabled=!1;modalForm.querySelector('button[type="submit"]').disabled=!1;modalInput.focus()}};modalCancelBtn.onclick=function(){modalOverlay.style.display='none';if(rejectPasswordPromise){rejectPasswordPromise(new Error("Password authentication cancelled by user."))}};document.addEventListener('keydown',function(event){if(event.key==='Escape'&&modalOverlay.style.display==='flex'){modalCancelBtn.click()}});modalBox.addEventListener('click',function(event){event.stopPropagation()})});</script>
+    
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const twitterBtn = document.getElementById('share-twitter');
+        const linkedinBtn = document.getElementById('share-linkedin');
+        const copyBtn = document.getElementById('copy-link-button');
+        if (twitterBtn && linkedinBtn && copyBtn) {
+            const shareUrl = document.querySelector('link[rel="canonical"]') ? document.querySelector('link[rel="canonical"]').href : window.location.href;
+            let shareTitle = document.querySelector('meta[property="og:title"]') ? document.querySelector('meta[property="og:title"]').content : document.title;
+            shareTitle = shareTitle.replace(" - CampuStudiOnline", "");
+            const shareUrlEncoded = encodeURIComponent(shareUrl);
+            const shareTitleEncoded = encodeURIComponent(shareTitle);
+            twitterBtn.href = `https://twitter.com/intent/tweet?url=${shareUrlEncoded}&text=${shareTitleEncoded}`;
+            linkedinBtn.href = `https://www.linkedin.com/shareArticle?mini=true&url=${shareUrlEncoded}&title=${shareTitleEncoded}`;
+            const copyIcon = document.getElementById('copy-link-icon');
+            copyBtn.addEventListener('click', function() {
+                navigator.clipboard.writeText(shareUrl).then(() => {
+                    const originalIconClass = copyIcon.className;
+                    copyIcon.className = 'fas fa-check text-success';
+                    copyBtn.setAttribute('title', '¡Copiado!');
+                    setTimeout(() => {
+                        copyIcon.className = originalIconClass;
+                        copyBtn.setAttribute('title', 'Copiar enlace');
+                    }, 2000);
+                }).catch(err => {
+                    console.error('Could not copy link: ', err);
+                    copyBtn.setAttribute('title', 'Error al copiar');
+                });
+            });
+        }
+    });
+    </script>
+
+    <script src="{% static 'js/shepherd.min.js' %}"></script>
+    <script src="{% static 'js/shepherd_helpers.js' %}"></script>
+    {% block extra_js %}
+        <script>
+            document.body.addEventListener('click', function(event) {
+                const button = event.target.closest('.favorite-toggle-btn');
+                if (!button) return;
+        
+                event.preventDefault();
+        
+                const url = button.dataset.url;
+                const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
+                const icon = button.querySelector('i');
+                const textSpan = button.querySelector('span');
+        
+                fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': csrfToken,
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.status === 'success') {
+                        if (data.is_favorite) {
+                            button.classList.remove('btn-outline-warning');
+                            button.classList.add('btn-warning');
+                            if (icon) {
+                                icon.classList.remove('far');
+                                icon.classList.add('fas');
+                            }
+                            if (textSpan) textSpan.textContent = 'Quitar de Favoritos';
+                        } else {
+                            button.classList.remove('btn-warning');
+                            button.classList.add('btn-outline-warning');
+                            if (icon) {
+                                icon.classList.remove('fas');
+                                icon.classList.add('far');
+                            }
+                            if (textSpan) textSpan.textContent = 'Añadir a Favoritos';
+                        }
+                    } else {
+                        console.error('Error toggling favorite:', data.message || 'Unknown error');
+                    }
+                })
+                .catch(error => {
+                    console.error('Fetch error:', error);
+                });
+            });
+        </script>
+    {% endblock extra_js %}
+</body>
+</html>

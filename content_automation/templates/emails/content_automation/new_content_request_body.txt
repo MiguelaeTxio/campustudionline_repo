@@ -1,0 +1,13 @@
+Hola Administrador,
+
+Se ha recibido una nueva solicitud de contenido para la siguiente asignatura:
+
+Asignatura: {{ subject_name }}
+Grado: {{ degree_name }}
+Rama: {{ branch_name }}
+
+Puedes gestionar esta y otras solicitudes pendientes en el Centro de Control:
+{{ dashboard_url }}
+
+Saludos cordiales,
+El equipo de CampuStudiOnline

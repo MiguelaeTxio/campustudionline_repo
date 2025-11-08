@@ -1,0 +1,57 @@
+{# /contents/templates/admin/contents/work_batch/select_proposal.html #}
+{% extends "admin/base_site.html" %}
+{% load i18n %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+<a href="{% url 'admin:index' %}">{% translate 'Home' %}</a>
+› <a href="{% url 'admin:app_list' app_label='contents' %}">{% translate 'Contents' %}</a>
+› <a href="{% url 'admin:contents_workbatch_changelist' %}">{% translate 'Lotes de Trabajo' %}</a>
+› {{ title }}
+</div>
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+    
+    {% if proposals %}
+        <div class="module" id="changelist">
+            <div class="results">
+                <table id="result_list">
+                    <thead>
+                        <tr>
+                            <th scope="col" class="sortable column-nombre">
+                                <div class="text"><a>Nombre del Grado</a></div>
+                            </th>
+                            <th scope="col" class="sortable column-area">
+                                <div class="text"><a>Área de Conocimiento</a></div>
+                            </th>
+                            <th scope="col">
+                                <div class="text">Acciones</div>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for proposal in proposals %}
+                        <tr class="{% cycle 'row1' 'row2' %}">
+                            <th class="field-nombre">{{ proposal.name }}</th>
+                            <td class="field-area_conocimiento_texto">{{ proposal.knowledge_area_text }}</td>
+                            <td>
+                                <!-- Este enlace ahora está activo -->
+                                <a href="{% url 'admin:contents_workbatch_generate_checklist' proposal.id %}" class="button">Generar Checklist</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    {% else %}
+        <p>{% translate "No hay propuestas de grado pendientes para generar." %}</p>
+    {% endif %}
+
+    <div class="submit-row" style="padding: 10px 15px;">
+        <a href="{% url 'admin:contents_workbatch_changelist' %}" class="button">{% translate 'Volver al listado' %}</a>
+    </div>
+</div>
+{% endblock %}

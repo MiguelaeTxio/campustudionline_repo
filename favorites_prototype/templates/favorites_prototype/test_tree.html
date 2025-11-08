@@ -1,0 +1,24 @@
+{# /home/MiguelAeTxio/CampuStudiOnline/favorites_prototype/templates/favorites_prototype/test_tree.html #}
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1>Raíz de Carpetas de Prueba</h1>
+    <hr>
+    
+    <div class="mb-3">
+        <form hx-post="{% url 'favorites_prototype:create_folder' %}" hx-target="#folder-list" hx-swap="innerHTML">
+            <div class="input-group">
+                <input type="text" name="folder_name" class="form-control" placeholder="Nombre de la nueva carpeta raíz..." required>
+                <button type="submit" class="btn btn-success">Crear Carpeta</button>
+            </div>
+        </form>
+    </div>
+
+    <div id="folder-list">
+        {% include "favorites_prototype/_tree_nodes.html" with nodes=nodes %}
+    </div>
+</div>
+{% endblock %}
+
+

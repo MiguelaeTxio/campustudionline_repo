@@ -1,0 +1,2 @@
+{# /users/templates/users/emails/account_activation_subject.txt #}
+Activa tu cuenta en CampuStudiOnline

@@ -1,0 +1,152 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ material.title }} - CampuStudiOnline{% endblock title %}
+{% block seo_description %}{% if material.short_description %}{{ material.short_description }}{% else %}Material educativo sobre {{ material.title }} en CampuStudiOnline.{% endif %}{% endblock seo_description %}
+{% block og_title %}{{ material.title }}{% endblock og_title %}
+{% block og_description %}{% if material.short_description %}{{ material.short_description }}{% else %}Material educativo en CampuStudiOnline. Creado por {% if material.creator %}{{ material.creator.get_full_name|default:material.creator.username }}{% else %}un autor anónimo{% endif %}.{% endif %}{% endblock og_description %}
+{% block og_image %}{{ request.scheme }}://{{ request.get_host }}{% url 'contents:generate_share_image' pk=material.pk %}{% endblock og_image %}
+{% block og_image_alt %}Tarjeta de presentación de: {{ material.title }}{% endblock og_image_alt %}
+{% block og_type %}article{% endblock og_type %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="mb-4 d-flex align-items-center">
+        {% if request.META.HTTP_REFERER %}
+        <a href="{{ request.META.HTTP_REFERER|escape }}" class="btn btn-secondary me-3"><i class="fas fa-arrow-left"></i> Volver</a>
+        {% endif %}
+        {% if can_create_copy %}
+        <a href="{% url 'study_room:create_content_copy' pk=material.pk %}" class="btn btn-success content-link-preloader" id="tour-step-1-copy-button"><i class="fas fa-copy"></i> Crear copia para estudio</a>
+        {% endif %}
+        
+        {% if request.user.is_authenticated %}
+        <form id="favorite-toggle-form" data-url="{% url 'contents:toggle_favorite_htmx' pk=material.pk %}" class="d-inline ms-2">
+            {% csrf_token %}
+            <button id="favorite-toggle-button" type="submit" class="btn {% if is_favorite %}btn-warning{% else %}btn-outline-warning{% endif %}">
+                <i id="favorite-toggle-icon" class="{% if is_favorite %}fas fa-star{% else %}far fa-star{% endif %}"></i>
+                <span id="favorite-toggle-text">{% if is_favorite %}Quitar de Favoritos{% else %}Añadir a Favoritos{% endif %}</span>
+            </button>
+        </form>
+        {% endif %}
+
+        {% if show_tour %}
+        <button id="start-content-detail-tour-btn" class="btn btn-outline-info ms-2"><i class="fas fa-question-circle"></i> Visita Guiada</button>
+        {% endif %}
+    </div>
+    <div class="card shadow-sm">
+        <div class="card-header bg-light d-flex justify-content-between align-items-center flex-wrap">
+        {% if metadata.categoria_general or metadata.subcategoria or metadata.palabras_clave %}
+        <div class="card-body border-bottom">
+            <h2 class="h5 mb-2">Metadatos del Contenido</h2>
+            {% if metadata.categoria_general %}
+            <p class="mb-1"><strong>Categoría General:</strong> {{ metadata.categoria_general }}</p>
+            {% endif %}
+            {% if metadata.subcategoria %}
+            <p class="mb-1"><strong>Subcategoría:</strong> {{ metadata.subcategoria }}</p>
+            {% endif %}
+            {% if metadata.palabras_clave %}
+            <p class="mb-0"><strong>Palabras Clave:</strong> {{ metadata.palabras_clave|join:", " }}</p>
+            {% endif %}
+        </div>
+        {% endif %}
+            <h1 class="card-title mb-0 h3 me-3">{{ material.title }}</h1>
+            <div class="d-flex align-items-center">
+                
+                <div class="share-buttons me-3" id="tour-step-2-share-buttons">
+                    <a id="share-twitter" href="#" class="btn btn-info btn-sm text-white" target="_blank" rel="noopener noreferrer" title="Compartir en Twitter"><i class="fab fa-twitter"></i></a>
+                    <a id="share-linkedin" href="#" class="btn btn-primary btn-sm" target="_blank" rel="noopener noreferrer" title="Compartir en LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                    <button id="copy-link-button" class="btn btn-dark btn-sm" title="Copiar enlace"><i id="copy-link-icon" class="fas fa-link"></i></button>
+                </div>
+                
+                {% if can_edit_delete %}
+                <div id="tour-step-3-edit-buttons">
+                    <a href="{% url 'contents:edit_content' pk=material.pk %}" class="btn btn-sm btn-outline-primary"><i class="fas fa-edit"></i> Editar</a>
+                    <a href="{% url 'contents:delete_content' pk=material.pk %}" class="btn btn-sm btn-outline-danger ms-2"><i class="fas fa-trash-alt"></i> Eliminar</a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        {% if material.short_description %}
+        <div class="card-body border-bottom">
+            <h2 class="h5 mb-2">Resumen</h2>
+            <p class="mb-0">{{ material.short_description }}</p>
+        </div>
+        {% endif %}
+        <div class="card-body" id="tour-step-4-content-body">
+            <div class="rendered-content">{{ rendered_html_content|safe }}</div>
+        </div>
+        <div class="card-footer text-muted small">
+            <p class="mb-1"><strong>Creador:</strong> {% if material.creator %}{{ material.creator.username }}{% else %}Autor Anónimo{% endif %}</p>
+            <p class="mb-0"><strong>Última Actualización:</strong> {{ material.updated_at|date:"d M Y, H:i" }}</p>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+{% block extra_js %}
+{{ block.super }}
+{% if show_tour %}
+<script src="{% static 'contents/content_detail_tour.js' %}"></script>
+{% endif %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // --- Preloader Script ---
+        const preloaderLinks = document.querySelectorAll('.content-link-preloader');
+        preloaderLinks.forEach(function(link) {
+            link.addEventListener('click', function() {
+                if (window.showActionPreloader) {
+                    window.showActionPreloader();
+                }
+            });
+        });
+
+        // --- AJAX Favorite Toggle Script ---
+        const favoriteForm = document.getElementById('favorite-toggle-form');
+        if (favoriteForm) {
+            favoriteForm.addEventListener('submit', function(event) {
+                event.preventDefault();
+
+                const url = favoriteForm.dataset.url;
+                const csrfToken = favoriteForm.querySelector('[name=csrfmiddlewaretoken]').value;
+                const button = document.getElementById('favorite-toggle-button');
+                const icon = document.getElementById('favorite-toggle-icon');
+                const text = document.getElementById('favorite-toggle-text');
+
+                fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': csrfToken,
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        if (data.is_favorite) {
+                            // Cambiar a estado "Es Favorito"
+                            button.classList.remove('btn-outline-warning');
+                            button.classList.add('btn-warning');
+                            icon.classList.remove('far');
+                            icon.classList.add('fas');
+                            text.textContent = 'Quitar de Favoritos';
+                        } else {
+                            // Cambiar a estado "No es Favorito"
+                            button.classList.remove('btn-warning');
+                            button.classList.add('btn-outline-warning');
+                            icon.classList.remove('fas');
+                            icon.classList.add('far');
+                            text.textContent = 'Añadir a Favoritos';
+                        }
+                        // Opcional: mostrar un toast/notificación con data.message
+                    } else {
+                        // Opcional: manejar el error, mostrar un mensaje
+                        console.error('Error:', data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error en la petición fetch:', error);
+                });
+            });
+        }
+    });
+</script>
+{% endblock extra_js %}

@@ -1,0 +1,30 @@
+{# /home/MiguelAeTxio/CampuStudiOnline/content_automation/templates/admin/content_automation/_automation_control_panel.html #}
+<fieldset class="module aligned" id="automation-control-panel">
+    <h2>Acciones de Control</h2>
+    <div class="form-row">
+        <div>
+            <form 
+                hx-post="{% url 'content_automation:toggle_automation_status' %}" 
+                hx-target="#automation-control-panel-wrapper" 
+                hx-swap="innerHTML"
+                hx-indicator=".htmx-indicator"
+                style="display: inline-block; margin-right: 10px;">
+                {% csrf_token %}
+                <input type="submit" 
+                       class="button {% if not settings.is_running %}default{% endif %}" 
+                       style="{% if settings.is_running %}background-color: #ba2121; color: white;{% endif %}"
+                       value="{% if settings.is_running %}Detener Motor de Automatización{% else %}Iniciar Motor de Automatización{% endif %}">
+            </form>
+            <span class="htmx-indicator">
+                Procesando...
+            </span>
+        </div>
+        <div class="help" style="margin-top: 10px;">
+            {% if settings.is_running %}
+                <strong>¡PELIGRO!</strong> El motor está en funcionamiento. Detenerlo pausará la creación de nuevas tareas masivas.
+            {% else %}
+                El motor está detenido. Actívalo para comenzar la generación automática de contenido según las semillas configuradas.
+            {% endif %}
+        </div>
+    </div>
+</fieldset>

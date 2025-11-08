@@ -1,0 +1,26 @@
+# robots.txt for CampuStudiOnline
+
+User-agent: *
+
+Disallow: /admin/
+Disallow: /cuentas/mi-cuenta/
+Disallow: /cuentas/password_change/
+Disallow: /cuentas/password_reset/
+Disallow: /contenidos/
+
+Disallow: /chat/create/
+Disallow: /chat/room/*/leave/
+Disallow: /chat/room/*/request_join/
+Disallow: /chat/membership_request/
+Disallow: /chat/room/*/toggle_moderator/
+Disallow: /chat/room/*/toggle_silence/
+Disallow: /chat/room/*/delete_message/
+
+Disallow: /announcements/nuevo/
+Disallow: /contenidos/*/editar/
+Disallow: /contenidos/*/borrar/
+
+Allow: /static/
+Allow: /media/
+
+Sitemap: https://campustudionline.com/sitemap.xml

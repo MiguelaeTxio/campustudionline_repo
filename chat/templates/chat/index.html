@@ -1,0 +1,204 @@
+<!-- /home/MiguelAeTxio/CampuStudiOnline/chat/templates/chat/index.html -->
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Salas de Chat - CampuStudiOnline{% endblock title %}
+
+{% block content %}
+<style>
+    .chat-index-container { max-width: 900px; margin: 20px auto; padding: 20px; background-color: #fff; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+    .chat-index-container h1 { color: #0056b3; text-align: center; margin-bottom: 30px; }
+    .chat-index-container h2 { color: #007bff; border-bottom: 2px solid #007bff; padding-bottom: 5px; margin-top: 30px; margin-bottom: 20px;}
+
+    .room-list { list-style: none; padding: 0; }
+    .room-list-item {
+        margin-bottom: 12px;
+        padding: 15px;
+        background-color: #f8f9fa;
+        border: 1px solid #e9ecef;
+        border-radius: 6px; /* Ligeramente más redondeado */
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        transition: box-shadow 0.2s ease-in-out;
+    }
+    .room-list-item:hover {
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    .room-details h5 { margin-bottom: 0.3rem; font-size: 1.15em;} /* Nombre de sala un poco más grande */
+    .room-details h5 a { color: #0056b3; text-decoration: none; font-weight: 500;}
+    .room-details h5 a:hover { color: #003f80; text-decoration: underline;}
+    .room-description { font-size: 0.9em; color: #5a6268; margin-top: 4px; margin-bottom: 4px; } /* Color de descripción más oscuro */
+    .room-creator { font-size: 0.8em; color: #6c757d; }
+
+    .general-room-section { margin-bottom: 30px; }
+    .general-room-link {
+        padding: 20px; background-color: #e9f5ff; /* Un azul muy claro para la general */
+        border: 1px solid #b8d6f3; border-radius: 6px;
+        display: block; text-decoration: none;
+        transition: background-color 0.3s ease;
+    }
+    .general-room-link:hover { background-color: #d1e7fd; }
+    .general-room-link h5 { color: #004085; margin-bottom: 0.3rem; font-size: 1.25em;}
+    .general-room-link .room-description {font-size: 0.95em; color: #17a2b8; margin-top: 5px;} /* Un color diferente para la descripción de la general */
+
+    .no-rooms-message { text-align: center; color: #6c757d; margin-top: 20px; padding: 15px; background-color: #f8f9fa; border-radius: 5px;}
+    .welcome-message { text-align: center; margin-bottom: 20px; font-size: 1.1em; color: #333; }
+    .create-room-link-container { text-align: center; margin-top: 25px; margin-bottom: 30px; }
+    .create-room-link { display: inline-block; padding: 12px 25px; background-color: #28a745; color: white; text-decoration: none; border-radius: 5px; font-size: 1.1em; font-weight: 500; transition: background-color 0.3s;}
+    .create-room-link:hover { background-color: #218838; }
+
+    .room-actions .btn, .room-actions .badge { margin-left: 5px; min-width: 100px; text-align: center;}
+    .badge { font-size: 0.85em; padding: 0.5em 0.75em;}
+</style>
+
+<div class="chat-index-container">
+    <div class="d-flex justify-content-center align-items-center mb-3">
+        <h1 id="tour-chat-index-title" class="mb-0">Salas de Chat</h1>
+        <button id="start-chat-index-tour-btn" class="btn btn-sm btn-outline-info ms-3">
+            <i class="fas fa-route"></i> Guía
+        </button>
+    </div>
+
+
+    {% if user_is_authenticated %}
+        <p class="welcome-message">¡Hola, <strong>{{ request.user.username }}</strong>! Elige una sala o crea una nueva.</p>
+    {% else %}
+        <p class="welcome-message">Bienvenido. Elige una sala pública para unirte. <a href="{% url 'users:login' %}?next={{ request.path }}">Inicia sesión</a> para crear salas y acceder a contenido privado.</p>
+    {% endif %}
+
+    {% if user_is_authenticated %}
+    <div class="create-room-link-container" id="tour-chat-index-btn-crear">
+        <a href="{% url 'chat:create_room' %}" class="create-room-link">Crear Nueva Sala</a>
+    </div>
+    {% endif %}
+
+    <!-- SALA GENERAL -->
+    {% if general_room %}
+        <div class="general-room-section">
+            <h2 id="tour-chat-index-h2-general">Sala Principal de la Plataforma</h2>
+            <div class="general-room-link">
+                <a href="{{ general_room.get_absolute_url }}">
+                    <h5>{{ general_room.name }}</h5>
+                </a>
+                {% if general_room.description %}
+                    <div class="room-description">{{ general_room.description }}</div>
+                {% endif %}
+            </div>
+        </div>
+    {% endif %}
+
+    <!-- MIS SALAS PRIVADAS (Donde soy miembro activo) -->
+    {% if user_is_authenticated %}
+        <h2 id="tour-chat-index-h2-mis-privadas">Mis Salas Privadas</h2>
+        {% if my_active_private_rooms %}
+            <ul class="room-list">
+                {% for room_obj in my_active_private_rooms %}
+                    <li class="room-list-item">
+                        <div class="room-details">
+                            <h5><a href="{{ room_obj.get_absolute_url }}">{{ room_obj.name }}</a></h5>
+                            {% if room_obj.description %}<p class="room-description mb-1">{{ room_obj.description }}</p>{% endif %}
+                            <small class="room-creator text-muted">Creador: {{ room_obj.creator.username|default:"Desconocido" }}</small>
+                        </div>
+                        <div class="room-actions">
+                            <a href="{{ room_obj.get_absolute_url }}" class="btn btn-success btn-sm">Entrar</a>
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p class="no-rooms-message">Aún no perteneces activamente a ninguna sala privada.</p>
+        {% endif %}
+    {% endif %}
+
+    <!-- MIS SALAS PÚBLICAS UNIDAS -->
+    {% if user_is_authenticated and my_joined_public_rooms %}
+        <h2 id="tour-chat-index-h2-mis-publicas">Mis Salas Públicas Unidas</h2>
+        <ul class="room-list">
+            {% for room in my_joined_public_rooms %}
+                 <li class="room-list-item">
+                    <div class="room-details">
+                        <h5><a href="{{ room.get_absolute_url }}">{{ room.name }}</a></h5>
+                        {% if room.description %}<p class="room-description mb-1">{{ room.description }}</p>{% endif %}
+                         <small class="room-creator text-muted">Creador: {{ room.creator.username|default:"Desconocido" }}</small>
+                    </div>
+                    <div class="room-actions">
+                         <a href="{{ room.get_absolute_url }}" class="btn btn-info btn-sm">Entrar</a>
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
+    {% elif user_is_authenticated %}
+        <h2 id="tour-chat-index-h2-mis-publicas">Mis Salas Públicas Unidas</h2>
+        <p class="no-rooms-message">Aún no te has unido a ninguna sala pública.</p>
+    {% endif %}
+
+    <!-- SALAS PÚBLICAS PARA DESCUBRIR -->
+    <h2 id="tour-chat-index-h2-descubrir">Salas Públicas para Descubrir</h2>
+    {% if other_public_rooms_to_join %}
+        <ul class="room-list">
+            {% for room in other_public_rooms_to_join %}
+                 <li class="room-list-item">
+                    <div class="room-details">
+                        <h5><a href="{{ room.get_absolute_url }}">{{ room.name }}</a></h5>
+                        {% if room.description %}<p class="room-description mb-1">{{ room.description }}</p>{% endif %}
+                         <small class="room-creator text-muted">Creador: {{ room.creator.username|default:"Desconocido" }}</small>
+                    </div>
+                    <div class="room-actions">
+                        <a href="{{ room.get_absolute_url }}" class="btn btn-outline-primary btn-sm">Ver y Unirse</a>
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p class="no-rooms-message">No hay más salas públicas disponibles para descubrir en este momento.</p>
+    {% endif %}
+
+    <!-- OTRAS SALAS PRIVADAS (Para solicitar unirse o ver estado) -->
+    {% if user_is_authenticated %}
+        <h2 id="tour-chat-index-h2-otras-privadas">Otras Salas Privadas</h2>
+        {% if other_private_rooms_info %}
+            <ul class="room-list">
+                {% for data_item in other_private_rooms_info %}
+                    <li class="room-list-item">
+                        <div class="room-details">
+                            <h5>{{ data_item.room.name }} <span class="text-muted small">(Privada)</span></h5>
+                            {% if data_item.room.description %}<p class="room-description mb-1">{{ data_item.room.description }}</p>{% endif %}
+                            <small class="room-creator text-muted">Creador: {{ data_item.room.creator.username|default:"Desconocido" }}</small>
+                        </div>
+                        <div class="room-actions">
+                            {% if data_item.user_room_status_key == "request_is_pending" %}
+                                <span class="badge bg-warning text-dark">Solicitud Pendiente</span>
+                            {% elif data_item.user_room_status_key == "can_request_to_join" %}
+                                <a href="{% url 'chat:request_join' room_slug=data_item.room.slug %}" class="btn btn-primary btn-sm">Solicitar Unirse</a>
+                            {% elif data_item.user_room_status_key == "request_was_rejected" %}
+                                <span class="badge bg-danger">Solicitud Rechazada</span>
+                            {% endif %}
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p class="no-rooms-message">No hay otras salas privadas a las que puedas solicitar unirte o ver tu estado.</p>
+        {% endif %}
+    {% elif all_private_rooms_exist %}
+        <h2 id="tour-chat-index-h2-otras-privadas">Salas Privadas</h2>
+        <p class="no-rooms-message"><a href="{% url 'users:login' %}?next={{ request.path }}">Inicia sesión</a> para ver y solicitar unirte a salas privadas.</p>
+    {% endif %}
+
+    <!-- Mensajes finales si no hay salas de ningún tipo -->
+    {% if not other_public_rooms_to_join and not my_joined_public_rooms and not general_room and not my_active_private_rooms and not other_private_rooms_info and user_is_authenticated %}
+         <p class="no-rooms-message">¡Parece que no hay salas disponibles! Anímate a <a href="{% url 'chat:create_room' %}">crear la primera</a>.</p>
+    {% elif not other_public_rooms_to_join and not my_joined_public_rooms and not general_room and not all_private_rooms_exist and not user_is_authenticated %}
+         <p class="no-rooms-message">Actualmente no hay salas disponibles. <a href="{% url 'users:login' %}?next={{ request.path }}">Inicia sesión</a> para crear una.</p>
+    {% endif %}
+
+</div>
+{% endblock content %}
+
+{% block extra_js %}
+    {% if show_tour %}
+        <script src="{% static 'js/tours/chat_index_tour.js' %}"></script>
+    {% endif %}
+{% endblock extra_js %}

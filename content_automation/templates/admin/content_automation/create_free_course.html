@@ -1,0 +1,83 @@
+{# /home/MiguelAeTxio/CampuStudiOnline/content_automation/templates/admin/content_automation/create_free_course.html #}
+{% extends "admin/base_site.html" %}
+{% load static i18n %}
+
+{% block extrastyle %}{{ block.super }}
+<link rel="stylesheet" type="text/css" href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}">
+<style>
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+    .form-control {
+        width: 100%;
+        padding: 10px 12px;
+        background-color: #333;
+        color: #fff;
+        border: 1px solid #555;
+        border-radius: 4px;
+    }
+    .form-control:focus {
+        background-color: #444;
+        border-color: #888;
+        outline: none;
+        box-shadow: none;
+    }
+    .help-text {
+        font-size: 0.85rem;
+        color: #bbb;
+        margin-top: 0.5rem;
+    }
+    label {
+        font-weight: bold;
+        display: block;
+        margin-bottom: 0.5rem;
+    }
+</style>
+{% endblock %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+    {% for item in breadcrumbs %}
+        {% if forloop.last %}
+            {{ item.name }}
+        {% else %}
+            <a href="{{ item.url }}">{{ item.name }}</a> &rsaquo;
+        {% endif %}
+    {% endfor %}
+</div>
+{% endblock %}
+
+
+{% block content %}
+<div id="content-main">
+    <h1>{{ title }}</h1>
+    <form method="post" id="free_course_form">
+        {% csrf_token %}
+        <fieldset class="module aligned">
+            <div class="form-row">
+                <div class="form-group">
+                    {{ form.course_title.label_tag }}
+                    {{ form.course_title }}
+                    {% if form.course_title.help_text %}
+                        <div class="help-text">{{ form.course_title.help_text }}</div>
+                    {% endif %}
+                    {{ form.course_title.errors }}
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    {{ form.prompt_text.label_tag }}
+                    {{ form.prompt_text }}
+                    {% if form.prompt_text.help_text %}
+                        <div class="help-text">{{ form.prompt_text.help_text }}</div>
+                    {% endif %}
+                    {{ form.prompt_text.errors }}
+                </div>
+            </div>
+        </fieldset>
+        <div class="submit-row">
+            <input type="submit" value="Guardar y Encolar Tarea" class="default">
+        </div>
+    </form>
+</div>
+{% endblock %}

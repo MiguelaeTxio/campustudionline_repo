@@ -1,0 +1,19 @@
+{% extends "emails/base_email.html" %}
+
+{% block title %}Nueva Solicitud de Contenido{% endblock title %}
+
+{% block header_title %}Nueva Solicitud de Contenido{% endblock header_title %}
+
+{% block content %}
+<p style="margin-bottom: 15px;">Hola Administrador,</p>
+<p style="margin-bottom: 15px;">Se ha recibido una nueva solicitud de contenido para la siguiente asignatura:</p>
+<div style="padding: 10px; border-left: 3px solid #007bff; background-color: #f8f9fa; margin-bottom: 20px;">
+    <p style="margin: 5px 0;"><strong>Asignatura:</strong> {{ subject_name }}</p>
+    <p style="margin: 5px 0;"><strong>Grado:</strong> {{ degree_name }}</p>
+    <p style="margin: 5px 0;"><strong>Rama:</strong> {{ branch_name }}</p>
+</div>
+<p style="margin-bottom: 20px;">Puedes gestionar esta y otras solicitudes pendientes haciendo clic en el siguiente botón:</p>
+<p style="text-align: center;">
+    <a href="{{ dashboard_url }}" style="display: inline-block; background-color: #28a745; color: #ffffff; padding: 12px 25px; text-decoration: none; border-radius: 5px; font-weight: bold;">Ir al Centro de Control</a>
+</p>
+{% endblock content %}

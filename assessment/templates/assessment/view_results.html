@@ -1,0 +1,125 @@
+{# /home/MiguelAeTxio/CampuStudiOnline/assessment/templates/assessment/view_results.html #}
+{% extends "base.html" %}
+{% load markdownify static %}
+
+{% block title %}{{ page_title }}{% endblock title %}
+
+{% block content %}
+<div class="container mt-5 mb-5">
+    <div class="card shadow-sm">
+        <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
+            <h1 class="h4 mb-0">{{ page_title }}</h1>
+            <div>
+                <button id="start-view-results-tour-button" class="btn btn-outline-light btn-sm me-2">
+                    <i class="fas fa-route me-1"></i> Visita Guiada
+                </button>
+                {% if assessment_context.visibility_hours %}
+                <span class="badge bg-light text-dark">
+                    <i class="fas fa-info-circle me-1"></i>
+                    Correcciones visibles durante {{ assessment_context.visibility_hours }} horas
+                </span>
+                {% endif %}
+            </div>
+        </div>
+        <div class="card-body">
+            <p class="card-text mb-4">
+                <strong>Contenido Original:</strong>
+                <a href="{% url 'study_room:edit_copy' pk=user_copy.pk %}">
+                    {{ assessment.content.title }}
+                </a>
+            </p>
+
+            {% for answer in user_answers %}
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Pregunta</h5>
+                </div>
+                <div class="card-body">
+                    <p class="lead">{{ answer.question.question_text }}</p>
+                </div>
+            </div>
+
+            {% if answer.answer_text %}
+                <div class="row">
+                    <!-- Columna para la respuesta del usuario -->
+                    <div class="col-md-6 mb-4">
+                        <div class="card h-100">
+                            <div class="card-header bg-light">
+                                <strong><i class="fas fa-user-edit me-2"></i>Tu Respuesta</strong>
+                            </div>
+                            <div class="card-body">
+                                <p>{{ answer.answer_text|linebreaksbr }}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Columna para la respuesta modelo -->
+                    <div class="col-md-6 mb-4">
+                        <div class="card h-100">
+                            <div class="card-header bg-light">
+                                <strong><i class="fas fa-chalkboard-teacher me-2"></i>Respuesta Modelo</strong>
+                            </div>
+                            <div class="card-body">
+                                {{ answer.question.model_answer|markdownify|safe }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tarjeta para la evaluación -->
+                <div class="card mb-5 bg-light border-0">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <h5 class="card-title">Evaluación de la IA</h5>
+                        </div>
+
+                        {% if answer.score is not None %}
+                            <div class="d-flex align-items-center mb-3">
+                                <h2 class="display-4 text-success me-3 mb-0">{{ answer.score|floatformat:1 }} / 10.0</h2>
+                                <div>
+                                    <strong>Puntuación</strong><br>
+                                    <small class="text-muted">Calculada por la IA.</small>
+                                </div>
+                            </div>
+                            <div>
+                                <h6><i class="fas fa-comment-alt me-2"></i>Feedback:</h6>
+                                <div class="feedback-content">
+                                    {{ answer.feedback|markdownify|safe }}
+                                </div>
+                            </div>
+                        {% else %}
+                             <div class="alert alert-warning mt-3">
+                                <i class="fas fa-exclamation-triangle me-2"></i>
+                                La corrección para esta respuesta ha caducado y ha sido eliminada.
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            {% else %}
+                <div class="card mb-5 border-warning">
+                    <div class="card-body text-center text-secondary">
+                        <i class="fas fa-minus-circle fa-2x mb-2 text-warning"></i>
+                        <p class="h5 mb-0">No respondida</p>
+                        <p class="mb-0"><small>No has proporcionado una respuesta para esta pregunta.</small></p>
+                    </div>
+                </div>
+            {% endif %}
+
+            {% if not forloop.last %}
+                <hr class="my-5">
+            {% endif %}
+
+            {% endfor %}
+        </div>
+        <div class="card-footer text-center">
+            <a href="{% url 'study_room:edit_copy' pk=user_copy.pk %}" class="btn btn-primary">
+                <i class="fas fa-arrow-left me-2"></i>Volver a la Sala de Estudio
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+{% block extra_js %}
+    <script src="{% static 'assessment/view_results_tour.js' %}"></script>
+{% endblock extra_js %}

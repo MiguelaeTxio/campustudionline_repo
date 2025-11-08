@@ -1,0 +1,63 @@
+{# /home/MiguelAeTxio/CampuStudiOnline/templates/home.html #}
+{% extends "base.html" %}
+{% load static %}
+
+{# === START: OVERRIDING META TAG BLOCKS FOR THE HOMEPAGE === #}
+{% block title %}CampuStudiOnline: Tu Plataforma de Estudio Colaborativo{% endblock title %}
+
+{% block seo_description %}Únete a la comunidad de CampuStudiOnline para compartir, crear y colaborar en contenido académico y personal. Conéctate, aprende y comparte en nuestra comunidad e-learning.{% endblock seo_description %}
+
+{% block og_title %}¡Bienvenido a CampuStudiOnline!{% endblock og_title %}
+
+{% block og_description %}Tu plataforma de estudio y colaboración en línea. Conéctate, aprende y comparte en nuestra comunidad e-learning.{% endblock og_description %}
+
+{% block meta_tags %}
+    {{ block.super }}
+    <meta property="og:type" content="website">
+{% endblock meta_tags %}
+{# === END: OVERRIDING META TAG BLOCKS === #}
+
+
+{% block content %}
+<div class="container mt-4">
+    {# Visual Breadcrumbs #}
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item active" aria-current="page">Inicio</li>
+        </ol>
+    </nav>
+
+    <div class="px-4 py-4 py-md-5 my-3 my-md-5 text-center">
+        <div class="d-flex justify-content-center align-items-center mb-3">
+            <h1 class="display-5 fw-bold me-3">¡Bienvenido a CampuStudiOnline!</h1>
+            <button id="start-home-tour-btn" class="btn btn-outline-info btn-sm">
+                <i class="fas fa-route me-1"></i> Visita Guiada
+            </button>
+        </div>
+        <div class="col-lg-8 mx-auto">
+            <p class="lead mb-4">Tu plataforma de estudio y colaboración en línea. Conéctate, aprende y comparte en nuestra comunidad e-learning.</p>
+            <hr class="my-4">
+
+            <section class="mb-5">
+                <h2 class="h3 mb-3">Explora CampuStudiOnline</h2>
+                <p>En CampuStudiOnline, te ofrecemos un entorno virtual dinámico para que potencies tus conocimientos. Accede a materiales de estudio, participa en debates y avanza a tu propio ritmo.</p>
+            </section>
+
+            {% if user.is_authenticated %}
+                <p class="h5">Ya has iniciado sesión. ¡Explora las funcionalidades disponibles!</p>
+
+            {% else %}
+                <p class="h5">Para acceder a todas las funcionalidades, por favor:</p>
+                <div class="d-grid gap-2 d-sm-flex justify-content-sm-center mt-4">
+                    <a href="{% url 'login' %}" class="btn btn-primary btn-lg px-4 gap-3">Iniciar Sesión</a>
+                    <a href="{% url 'users:register' %}" class="btn btn-outline-secondary btn-lg px-4">Registrarse</a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+{% block extra_js %}
+    <script src="{% static 'js/tours/home_tour.js' %}"></script>
+{% endblock extra_js %}

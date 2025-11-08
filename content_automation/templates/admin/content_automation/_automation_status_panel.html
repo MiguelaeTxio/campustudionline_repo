@@ -1,0 +1,9 @@
+<fieldset id="status-container" class="module aligned">
+    <h2>Estado Actual</h2>
+    <div class="form-row">
+        <div><label>Interruptor Maestro:</label>{% if settings.is_running %}<p><strong style="color: green;">Activo</strong></p>{% else %}<p><strong style="color: red;">Detenido</strong></p>{% endif %}</div>
+    </div>
+    <div class="form-row">
+        <div><label>Clave de API en Uso:</label>{% if settings.active_api_key %}<p><strong>{{ settings.active_api_key.name }}</strong></p>{% else %}<p><strong style="color: orange;">No asignada</strong></p>{% endif %}</div>
+    </div>
+</fieldset>

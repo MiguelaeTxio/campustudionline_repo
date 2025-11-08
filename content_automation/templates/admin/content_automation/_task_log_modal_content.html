@@ -1,0 +1,26 @@
+{% load i18n %}
+<div style="font-family: monospace; font-size: 14px;">
+    <p><strong>Tarea:</strong> {{ task }}</p>
+    <hr style="border-color: #495057;">
+    {% for entry in task_log_reversed %}
+        <div style="border-bottom: 1px solid #373b41; padding-bottom: 10px; margin-bottom: 10px;">
+            <div><strong>Timestamp:</strong> {{ entry.timestamp }}</div>
+            <div><strong>Nivel:</strong> 
+                {% if entry.level == 'ERROR' %}
+                    <span style="color: #cc6666;">{{ entry.level }}</span>
+                {% else %}
+                    <span style="color: #b5bd68;">{{ entry.level }}</span>
+                {% endif %}
+            </div>
+            <div><strong>Mensaje:</strong> <span style="white-space: pre-wrap;">{{ entry.message }}</span></div>
+            {% if entry.payload %}
+            <div>
+                <strong>Payload:</strong>
+                <pre style="white-space: pre-wrap; word-wrap: break-word; background: #282a2e; padding: 10px; border-radius: 3px;">{{ entry.payload }}</pre>
+            </div>
+            {% endif %}
+        </div>
+    {% empty %}
+        <p>No hay eventos registrados para esta tarea en la base de datos.</p>
+    {% endfor %}
+</div>

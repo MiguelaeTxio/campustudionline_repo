@@ -1,0 +1,132 @@
+{# /home/MiguelAeTxio/CampuStudiOnline/contents/templates/contents/study_room/copy_list.html #}
+{% extends request.htmx|yesno:"_blank.html,base.html" %}
+{% load static %}
+{% load assessment_tags %}
+
+{% block title %}{{ page_title|default:"Sala de Estudio" }} - CampuStudiOnline{% endblock title %}
+
+{% block content %}
+<div class="container mt-4">
+
+    {% if not request.htmx %}
+    {# Breadcrumb de navegación #}
+    {% if breadcrumbs|length > 1 %}
+    <nav aria-label="breadcrumb" id="tour-sala-estudio-dir-breadcrumbs">
+        <ol class="breadcrumb">
+            {% for item in breadcrumbs %}
+                {% if forloop.last %}
+                    <li class="breadcrumb-item active" aria-current="page">{{ item.name }}</li>
+                {% else %}
+                    <li class="breadcrumb-item"><a href="{{ item.url }}">{{ item.name }}</a></li>
+                {% endif %}
+            {% endfor %}
+        </ol>
+    </nav>
+    {% endif %}
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="display-5 fw-bold" id="tour-sala-estudio-dir-title">{{ page_title|default:"Sala de Estudio" }}</h1>
+        <div>
+            <button id="start-study-room-directory-tour-btn" class="btn btn-outline-info btn-sm">
+                <i class="fas fa-route me-1"></i> Visita Guiada
+            </button>
+        </div>
+    </div>
+
+    {% include 'assessment/partials/_assessment_legend.html' %}
+    
+    {% endif %}{# Cierre de if not request.htmx #}
+
+    <div class="row">
+        <div class="col-12">
+            <div id="study-room-list-container" hx-get="{{ request.get_full_path }}" hx-trigger="every 15s" hx-swap="innerHTML">
+                {% include 'contents/study_room/_copy_list_partial.html' %}
+            </div>
+        </div>
+    </div>
+
+</div>
+
+{% if not request.htmx %}
+<!-- Modal para confirmar borrado de copia -->
+<div class="modal fade" id="deleteCopyModal" tabindex="-1" aria-labelledby="deleteCopyModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header"> <h5 class="modal-title" id="deleteCopyModalLabel">Confirmar borrado</h5> <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> </div>
+            <div class="modal-body"> <p>¿Estás seguro de que deseas borrar la copia de "<span id="copyTitle"></span>"?</p> <p class="text-danger">Esta acción no se puede deshacer y perderás todas las anotaciones asociadas.</p> </div>
+            <div class="modal-footer"> <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button> <form id="deleteCopyForm" method="post" action=""> {% csrf_token %} <button type="submit" class="btn btn-danger">Borrar</button> </form> </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock content %}
+
+{% block extra_js %}
+{{ block.super }}
+{% if not request.htmx %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const deleteCopyModal = document.getElementById('deleteCopyModal');
+        if (deleteCopyModal) {
+            deleteCopyModal.addEventListener('show.bs.modal', function(event) {
+                const button = event.relatedTarget;
+                const copyId = button.getAttribute('data-copy-id');
+                const copyTitle = button.getAttribute('data-copy-title');
+                const titleElement = deleteCopyModal.querySelector('#copyTitle');
+                if (titleElement) { titleElement.textContent = copyTitle; }
+                const form = deleteCopyModal.querySelector('#deleteCopyForm');
+                if (form) {
+                    const urlTemplate = "{% url 'study_room:delete_copy' pk='00000000-0000-0000-0000-000000000000' %}";
+                    form.action = urlTemplate.replace('00000000-0000-0000-0000-000000000000', copyId);
+                }
+            });
+        }
+
+        document.body.addEventListener('click', function(event) {
+            const link = event.target.closest('.js-mark-viewed');
+            if (!link) return;
+
+            event.preventDefault(); 
+            
+            const assessmentPk = link.dataset.pk;
+            if (!assessmentPk) {
+                window.location.href = link.href;
+                return;
+            }
+            
+            const urlTemplate = "{% url 'assessment:mark_as_viewed_ajax' pk=0 %}";
+            const url = urlTemplate.replace('0', assessmentPk);
+            const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
+
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': csrfToken,
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .finally(() => {
+                window.location.href = link.href;
+            });
+        });
+    });
+</script>
+
+{% if show_tour %}
+    <script src="{% static 'js/tours/study_room_directory_tour.js' %}"></script>
+{% endif %}
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const preloaderLinks = document.querySelectorAll('.content-link-preloader');
+        preloaderLinks.forEach(function(link) {
+            link.addEventListener('click', function() {
+                if (window.showActionPreloader) {
+                    window.showActionPreloader();
+                }
+            });
+        });
+    });
+</script>
+{% endif %}
+{% endblock extra_js %}

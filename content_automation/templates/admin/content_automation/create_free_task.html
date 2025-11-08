@@ -1,0 +1,95 @@
+{% extends "admin/base.html" %}
+{% load i18n static %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<script src="https://unpkg.com/htmx.org@1.9.10" integrity="sha384-D1Kt99CQMDuVetoL1lrYwg5t+9QdHe7NLX/SoJYkXDFfX37iInKRy5xLSi8nO7UC" crossorigin="anonymous"></script>
+<style>
+    .htmx-indicator {
+        display: none;
+    }
+    .htmx-request .htmx-indicator {
+        display: inline-block;
+    }
+    .htmx-request.htmx-indicator {
+        display: inline-block;
+    }
+</style>
+{% endblock %}
+
+
+{% block content %}
+<div id="content-main">
+
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'admin:index' %}">Inicio</a></li>
+            {% for crumb in breadcrumbs %}
+                {% if not forloop.last %}
+                    <li class="breadcrumb-item"><a href="{{ crumb.url }}">{{ crumb.name }}</a></li>
+                {% else %}
+                    <li class="breadcrumb-item active" aria-current="page">{{ crumb.name }}</li>
+                {% endif %}
+            {% endfor %}
+        </ol>
+    </nav>
+    
+    <form method="post" novalidate>
+        {% csrf_token %}
+        {% if source_request %}<input type="hidden" name="source_request_id" value="{{ source_request.id }}">{% endif %}
+        
+        <fieldset class="module aligned">
+            
+            {# --- Título y Prompt --- #}
+            <div class="form-row">
+                {{ form.course_title.errors }}
+                {{ form.course_title.label_tag }}
+                {{ form.course_title }}
+                {% if form.course_title.help_text %}<div class="help">{{ form.course_title.help_text|safe }}</div>{% endif %}
+            </div>
+            <div class="form-row">
+                {{ form.prompt_text.errors }}
+                {{ form.prompt_text.label_tag }}
+                {{ form.prompt_text }}
+                {% if form.prompt_text.help_text %}<div class="help">{{ form.prompt_text.help_text|safe }}</div>{% endif %}
+            </div>
+
+            {# --- Selector de Categoría Maestra (Disparador HTMX) --- #}
+            <div class="form-row">
+                {{ form.master_category.errors }}
+                {{ form.master_category.label_tag }}
+                {{ form.master_category }}
+                <span class="htmx-indicator ms-2"><i class="fas fa-spinner fa-spin"></i></span>
+                {% if form.master_category.help_text %}<div class="help">{{ form.master_category.help_text|safe }}</div>{% endif %}
+            </div>
+
+            {# --- Selector de Subcategoría (Objetivo HTMX) --- #}
+            <div id="subcategory-selector-container" 
+                 hx-get="{% url 'content_automation:get_sub_categories_for_master' %}"
+                 hx-target="#subcategory-selector-row" 
+                 hx-trigger="change from:#id_master_category"
+                 hx-swap="innerHTML">
+                
+                <div id="subcategory-selector-row" class="form-row">
+                    {{ form.sub_category.errors }}
+                    {{ form.sub_category.label_tag }}
+                    {{ form.sub_category }}
+                    {% if form.sub_category.help_text %}<div class="help">{{ form.sub_category.help_text|safe }}</div>{% endif %}
+                </div>
+            </div>
+
+        </fieldset>
+
+        <div class="submit-row">
+            {% if source_request %}
+                <input type="submit" value="Aprobar Solicitud" name="_save" class="default">
+                <a href="{{ reject_url }}" class="button" style="background-color: #f44336; border-color: #f44336;">Rechazar Solicitud</a>
+            {% else %}
+                <input type="submit" value="Guardar y Encolar Tarea" class="default">
+            {% endif %}
+        </div>
+    </form>
+</div>
+{% endblock %}

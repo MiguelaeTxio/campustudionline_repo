@@ -1,0 +1,17 @@
+{# /home/MiguelAeTxio/CampuStudiOnline/contents/templates/contents/personal_workspace.html #}
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1>Mi Explorador Personal</h1>
+    <p class="lead text-muted">Aquí se encuentran tus publicaciones y tus materiales favoritos clasificados.</p>
+    
+    {% include 'assessment/partials/_assessment_legend.html' %}
+
+    <hr>
+    
+    <div id="folder-list">
+        {% include "contents/partials/_folder_nodes.html" with nodes=nodes %}
+    </div>
+</div>
+{% endblock %}

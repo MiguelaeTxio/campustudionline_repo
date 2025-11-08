@@ -1,0 +1,47 @@
+{# /users/templates/users/setup_security.html #}
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ titulo_pagina }}{% endblock %}
+
+{% block content %}
+<div class="container mt-5 text-center">
+    <div class="card shadow-sm p-4 mx-auto" style="max-width: 500px;">
+        <h2 class="mb-3">{{ titulo_pagina }}</h2>
+        
+        <!-- Contenedor del Formulario de Contraseña (Visible por defecto) -->
+        <div id="password-form-container">
+            <p class="lead">Para proteger tus claves de cifrado, por favor, introduce tu contraseña. La usaremos para cifrar tu nueva clave privada antes de guardarla.</p>
+            <form id="password-form" class="mt-4">
+                <div class="form-floating mb-3">
+                    <input type="password" class="form-control" id="user-password" placeholder="Contraseña" required>
+                    <label for="user-password">Contraseña</label>
+                </div>
+                <p class="text-muted small">Tu contraseña nunca se enviará al servidor, solo se usa en tu navegador para el cifrado.</p>
+                <button type="submit" id="generate-keys-btn" class="btn btn-primary w-100 py-2">Generar y Guardar Claves</button>
+            </form>
+        </div>
+
+        <!-- Contenedor del Spinner (Oculto por defecto) -->
+        <div id="security-status" class="mt-4" style="display: none;">
+            <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
+                <span class="visually-hidden">Cargando...</span>
+            </div>
+            <p class="mt-3 mb-1"><strong>Generando claves y configurando tu cuenta segura, por favor espera...</strong></p>
+            <p class="text-muted">Este proceso es automático y solo tardará un momento.</p>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+{% block extra_js %}
+{# <script src="{% static 'js/crypto-js.min.js' %}"></script> #}
+
+<script id="security-setup-script"
+        src="{% static 'js/security_setup.js' %}"
+        data-save-key-url="{% url 'users:save_crypto_keys' %}"
+        data-csrf-token="{{ csrf_token }}"
+        data-redirect-url="{% url 'home' %}"
+        defer>
+</script>
+{% endblock %}

@@ -1,0 +1,70 @@
+<!-- chat/templates/chat/create_room.html -->
+{% extends "base.html" %}
+{% load static %} <!-- Si necesitas static aquí, aunque para un formulario simple puede no ser necesario -->
+
+{% block title %}{{ page_title }} - CampuStudiOnline{% endblock title %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h2 class="mb-0">{{ page_title }}</h2>
+                </div>
+                <div class="card-body">
+                    <form method="post" novalidate>
+                        {% csrf_token %}
+                        
+                        {# Renderizar el formulario campo por campo para más control con Bootstrap #}
+                        {% for field in form %}
+                            <div class="mb-3">
+                                <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+                                {{ field }} {# Django renderizará el widget con las clases que definimos en forms.py #}
+                                {% if field.help_text %}
+                                    <small class="form-text text-muted">{{ field.help_text|safe }}</small>
+                                {% endif %}
+                                {% if field.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {% for error in field.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                        
+                        {# Renderizar errores no asociados a campos específicos (non-field errors) #}
+                        {% if form.non_field_errors %}
+                            <div class="alert alert-danger">
+                                {% for error in form.non_field_errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-success btn-lg">Crear Sala</button>
+                            <a href="{% url 'chat:index' %}" class="btn btn-outline-secondary">Cancelar</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Estilos adicionales si son necesarios, o moverlos a un CSS global */
+    .card-header h2 {
+        font-size: 1.5rem; /* Ajustar tamaño de fuente del encabezado de la tarjeta */
+    }
+    .form-check-input { /* Para el checkbox de 'is_private' */
+        margin-left: 0.5em;
+        margin-top: 0.4em; /* Ajuste vertical ligero */
+    }
+    .form-label {
+        font-weight: 500; /* Un poco más de énfasis en las etiquetas */
+    }
+</style>
+{% endblock content %}

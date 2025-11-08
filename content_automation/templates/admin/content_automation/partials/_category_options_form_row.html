@@ -1,0 +1,10 @@
+{# /home/MiguelAeTxio/CampuStudiOnline/content_automation/templates/admin/content_automation/partials/_category_options_form_row.html #}
+{# Este fragmento es renderizado por la vista HTMX 'get_categories_for_discipline_htmx' #}
+{# y reemplaza el contenido del div '#category-selector-row' en la plantilla principal. #}
+
+{{ field.errors }}
+{{ field.label_tag }}
+{{ field }}
+{% if field.help_text %}
+<div class="help">{{ field.help_text|safe }}</div>
+{% endif %}

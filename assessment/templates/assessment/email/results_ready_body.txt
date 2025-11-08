@@ -1,0 +1,16 @@
+# /home/MiguelAeTxio/CampuStudiOnline/assessment/templates/assessment/email/results_ready_body.txt
+# ATENCIÓN!!! La aplicación de usuarios se llama 'users' pero el Namespace a usar es 'usuarios'
+
+Hola {{ user.username }},
+
+¡Tu evaluación para "{{ content_title }}" ha sido corregida! Ya puedes consultar tus resultados, la puntuación obtenida y el feedback detallado.
+
+Para ver tus resultados, haz clic en el siguiente enlace:
+{{ action_url }}
+
+¡Esperamos que te sea de gran ayuda!
+
+Saludos cordiales,
+El equipo de CampuStudiOnline
+
+© {% now "Y" %} CampuStudiOnline. Todos los derechos reservados.

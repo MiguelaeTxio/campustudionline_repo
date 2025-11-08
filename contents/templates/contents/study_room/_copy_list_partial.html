@@ -1,0 +1,92 @@
+{# /home/MiguelAeTxio/CampuStudiOnline/contents/templates/contents/study_room/_copy_list_partial.html #}
+{% load assessment_tags %}
+
+<div class="list-group" id="tour-sala-estudio-dir-list">
+    {# Nivel Raíz: Muestra tanto Áreas Académicas como Categorías Maestras de Contenido Libre #}
+    {% if level_name == 'areas' %}
+        {% if page_obj %}
+            <h5 class="text-muted mt-3">Contenido Académico</h5>
+            {% for area in page_obj %}
+                <a href="{% url 'study_room:copy_directory_area' area_slug=area.slug %}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                    <div>
+                        {{ area.name }}
+                        {% render_assessment_indicators area %}
+                    </div>
+                    <span class="badge bg-primary rounded-pill"><i class="fas fa-chevron-right"></i></span>
+                </a>
+            {% endfor %}
+        {% endif %}
+        {% if free_content_roots %}
+            <h5 class="text-muted mt-4">Contenido Libre</h5>
+            {% for master_cat in free_content_roots %}
+                <a href="{% url 'study_room:free_master_directory' master_slug=master_cat.slug %}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                    <div>
+                        {{ master_cat.name }}
+                        {% render_assessment_indicators master_cat %}
+                    </div>
+                    <span class="badge bg-success rounded-pill"><i class="fas fa-chevron-right"></i></span>
+                </a>
+            {% endfor %}
+        {% endif %}
+
+    {# Nivel 2 (Académico): Muestra Disciplinas dentro de un Área #}
+    {% elif level_name == 'disciplines' %}
+        {% for discipline in page_obj %}
+             <a href="{% url 'study_room:copy_directory_discipline' area_slug=current_area.slug discipline_slug=discipline.slug %}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                <div>
+                    {{ discipline.name }}
+                    {% render_assessment_indicators discipline %}
+                </div>
+                <span class="badge bg-primary rounded-pill"><i class="fas fa-chevron-right"></i></span>
+            </a>
+        {% endfor %}
+    
+    {# Nivel 2 (Libre): Muestra Subcategorías dentro de una Categoría Maestra #}
+    {% elif level_name == 'sub_categories' %}
+        {% for sub_cat in page_obj %}
+            <a href="{% url 'study_room:free_sub_directory' master_slug=current_master_category.slug sub_slug=sub_cat.slug %}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                <div>
+                    {{ sub_cat.name }}
+                    {% render_assessment_indicators sub_cat %}
+                </div>
+                <span class="badge bg-success rounded-pill"><i class="fas fa-chevron-right"></i></span>
+            </a>
+        {% endfor %}
+
+    {# Nivel Final: Muestra las Copias de Contenido #}
+    {% elif level_name == 'copies' %}
+        {% for copy in page_obj %}
+            <div class="list-group-item flex-column align-items-start shadow-sm mb-2">
+                <div class="d-flex w-100 justify-content-between">
+                    <h5 class="mb-1">
+                        <a href="{% url 'study_room:edit_copy' pk=copy.pk %}" class="text-decoration-none content-link-preloader">
+                            Copia de: {{ copy.original_content.title }}
+                        </a>
+                        {% render_assessment_indicators copy %}
+                    </h5>
+                    {% if copy.is_public %}
+                        <span class="badge bg-info text-dark">Pública</span>
+                    {% else %}
+                        <span class="badge bg-secondary">Privada</span>
+                    {% endif %}
+                </div>
+                <p class="mb-1 text-muted">
+                    Original de: <a href="{% url 'contents:content_detail' pk=copy.original_content.pk %}" class="text-reset content-link-preloader">"{{ copy.original_content.title }}"</a>
+                </p>
+                <small>Última actualización: {{ copy.updated_at|date:"d M Y, H:i" }}</small>
+                <div class="mt-2">
+                    <a href="{% url 'study_room:edit_copy' pk=copy.pk %}" class="btn btn-sm btn-outline-primary me-1 content-link-preloader"><i class="fas fa-edit"></i> Editar</a>
+                    <form action="{% url 'study_room:change_copy_visibility' pk=copy.pk %}" method="post" class="d-inline">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-sm btn-outline-secondary me-1" title="Cambiar visibilidad">
+                            {% if copy.is_public %}<i class="fas fa-lock"></i> Hacer Privada{% else %}<i class="fas fa-globe"></i> Hacer Pública{% endif %}
+                        </button>
+                    </form>
+                    <button type="button" class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteCopyModal" data-copy-id="{{ copy.pk }}" data-copy-title="{{ copy.original_content.title }}">
+                        <i class="fas fa-trash"></i> Borrar
+                    </button>
+                </div>
+            </div>
+        {% endfor %}
+    {% endif %}
+</div>

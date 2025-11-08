@@ -1,0 +1,90 @@
+{# /users/templates/users/edit_profile.html #}
+{% extends "base.html" %}
+{% load static i18n %}
+
+{% block title %}{{ titulo_pagina|default:_("Editar Perfil y Privacidad") }} - {% trans "CampuStudiOnline" %}{% endblock title %}
+
+{% block extra_head %}
+    <meta name="description" content="{% trans 'Edita tu perfil y configuración de cuenta en CampuStudiOnline. Actualiza tus datos personales, preferencias y configura la privacidad de tu portafolio.' %}">
+    <meta name="keywords" content="{% trans 'editar perfil, configuración de cuenta, CampuStudiOnline, perfil de usuario, privacidad portafolio' %}">
+    <meta name="robots" content="noindex, nofollow">
+
+    <link rel="canonical" href="{{ request.build_absolute_uri }}">
+
+    <style>
+        .form-check-label {
+            margin-left: 0.5em; /* Pequeño margen para separar el texto del checkbox */
+        }
+    </style>
+{% endblock extra_head %}
+
+{% block content %}
+<div class="container mt-4 mb-5">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'home' %}">{% trans "Inicio" %}</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'users:account_detail' %}">{% trans "Mi Cuenta" %}</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{{ titulo_pagina }}</li>
+        </ol>
+    </nav>
+
+    <h1 class="mb-4">{{ titulo_pagina }}</h1>
+
+    <div class="card shadow-sm">
+        <div class="card-header bg-info text-white">
+            <h2 class="card-title h5 mb-0">{% trans "Datos del Perfil y Privacidad" %}</h2>
+        </div>
+        <div class="card-body">
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                
+                {% for field in form_perfil.visible_fields %}
+                    {% if field.field.widget.input_type != 'checkbox' %}
+                        <div class="mb-3">
+                            <label for="{{ field.id_for_label }}" class="form-label">
+                                {{ field.label }}
+                                {% if field.field.required %}<span class="text-danger">*</span>{% endif %}
+                            </label>
+                            {{ field }}
+                            {% if field.help_text %}
+                                <small class="form-text text-muted d-block mt-1">{{ field.help_text|safe }}</small>
+                            {% endif %}
+                            {% for error in field.errors %}
+                                <div class="invalid-feedback d-block fw-bold">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                {% endfor %}
+
+                <hr class="my-3">
+                <h3 class="h6 mb-3">{% trans "Configuración de Privacidad del Portafolio" %}</h3>
+                <p class="small text-muted">{% trans "Selecciona qué información de tu perfil deseas hacer pública en tu portafolio." %}</p>
+
+                {% for field in form_perfil.visible_fields %}
+                    {% if field.field.widget.input_type == 'checkbox' %}
+                        <div class="mb-3 form-check">
+                            {{ field }} {# Renderiza el widget CheckboxInput #}
+                            <label for="{{ field.id_for_label }}" class="form-check-label">
+                                {{ field.label }}
+                            </label>
+                            {% if field.help_text %}
+                                <small class="form-text text-muted d-block mt-1">{{ field.help_text|safe }}</small>
+                            {% endif %}
+                            {% for error in field.errors %}
+                                <div class="invalid-feedback d-block fw-bold">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                {% endfor %}
+
+                <hr class="my-4">
+                <div class="d-flex justify-content-end">
+                    <button type="submit" class="btn btn-primary btn-lg">
+                        <i class="fas fa-save me-1"></i> {% trans "Guardar Cambios en el Perfil" %}
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock content %}

@@ -1,0 +1,129 @@
+{# /home/MiguelAeTxio/CampuStudiOnline/academic_chat/templates/academic_chat/academic_chat_navigator.html #}
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ page_title }} - CampuStudiOnline{% endblock title %}
+
+{% block content %}
+<div class="container mt-4">
+
+    {% if breadcrumb|length > 1 %}
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            {% for item in breadcrumb %}
+                {% if forloop.last %}
+                    <li class="breadcrumb-item active" aria-current="page">{{ item.name }}</li>
+                {% else %}
+                    <li class="breadcrumb-item"><a href="{{ item.url }}">{{ item.name }}</a></li>
+                {% endif %}
+            {% endfor %}
+        </ol>
+    </nav>
+    {% endif %}
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 id="academic-chat-navigator-title" class="display-5 fw-bold">{{ current_level_name }}</h1>
+        <button id="start-academic-chat-tour-btn" class="btn btn-outline-info btn-sm">
+            <i class="fas fa-route me-1"></i> Visita Guiada
+        </button>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+
+            {% if next_level_items %}
+                <h4 class="mb-3">Selecciona una de las siguientes opciones:</h4>
+                <div id="navigator-options-list" class="list-group">
+                    {% for item in next_level_items %}
+                        {% comment %} Determinar la URL dinámicamente {% endcomment %}
+                        {% if next_url_name == 'academic_chat:academic_chat_list' %}
+                             {% url next_url_name university_slug=university_slug branch_slug=branch_slug degree_slug=degree_slug year=item.slug as item_url %}
+                        {% elif next_url_name == 'academic_chat:academic_year_list' %}
+                             {% url next_url_name university_slug=university_slug branch_slug=branch_slug degree_slug=item.slug as item_url %}
+                        {% elif next_url_name == 'academic_chat:degree_list' %}
+                             {% url next_url_name university_slug=university_slug branch_slug=item.slug as item_url %}
+                        {% else %}
+                             {% url next_url_name university_slug=item.slug as item_url %}
+                        {% endif %}
+                        <a href="{{ item_url }}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center" {% if forloop.first %}id="first-navigator-option"{% endif %}>
+                            {{ item.name }}
+                            <span class="badge bg-primary rounded-pill"><i class="fas fa-chevron-right"></i></span>
+                        </a>
+                    {% empty %}
+                        <div class="alert alert-light" role="alert">
+                            No hay más subcategorías con chats académicos a los que tengas acceso.
+                        </div>
+                    {% endfor %}
+                </div>
+
+                {% if next_level_items.has_other_pages %}
+                <nav aria-label="Navegación del directorio" class="mt-4">
+                    <ul class="pagination justify-content-center">
+                        {% if next_level_items.has_previous %}
+                            <li class="page-item"><a class="page-link" href="?page={{ next_level_items.previous_page_number }}">Anterior</a></li>
+                        {% else %}
+                            <li class="page-item disabled"><span class="page-link">Anterior</span></li>
+                        {% endif %}
+                        <li class="page-item active" aria-current="page"><span class="page-link">Página {{ next_level_items.number }} de {{ next_level_items.paginator.num_pages }}</span></li>
+                        {% if next_level_items.has_next %}
+                            <li class="page-item"><a class="page-link" href="?page={{ next_level_items.next_page_number }}">Siguiente</a></li>
+                        {% else %}
+                            <li class="page-item disabled"><span class="page-link">Siguiente</span></li>
+                        {% endif %}
+                    </ul>
+                </nav>
+                {% endif %}
+
+            {% elif final_items %}
+                <h4 class="mb-3">Salas de Chat Disponibles:</h4>
+                <div id="academic-chat-list-container" class="list-group">
+                    {% for link in final_items %}
+                        <a href="{% url 'academic_chat:academic_chat_room' chat_slug=link.slug %}" class="list-group-item list-group-item-action academic-chat-entry-link">
+                            <h5 class="mb-1">{{ link.subject.name }}</h5>
+                            <small class="text-muted">Sala: {{ link.chat_room.name }}</small>
+                        </a>
+                    {% empty %}
+                        <div id="no-academic-chats-message" class="alert alert-light" role="alert">
+                            No tienes acceso a ninguna sala de chat en esta sección.
+                        </div>
+                    {% endfor %}
+                </div>
+
+                {% if final_items.has_other_pages %}
+                <nav aria-label="Navegación de salas" class="mt-4">
+                    <ul class="pagination justify-content-center">
+                        {% if final_items.has_previous %}
+                            <li class="page-item"><a class="page-link" href="?page={{ final_items.previous_page_number }}">Anterior</a></li>
+                        {% else %}
+                            <li class="page-item disabled"><span class="page-link">Anterior</span></li>
+                        {% endif %}
+                        <li class="page-item active" aria-current="page"><span class="page-link">Página {{ final_items.number }} de {{ final_items.paginator.num_pages }}</span></li>
+                        {% if final_items.has_next %}
+                            <li class="page-item"><a class="page-link" href="?page={{ final_items.next_page_number }}">Siguiente</a></li>
+                        {% else %}
+                            <li class="page-item disabled"><span class="page-link">Siguiente</span></li>
+                        {% endif %}
+                    </ul>
+                </nav>
+                {% endif %}
+
+            {% endif %}
+        </div>
+    </div>
+
+    {% with prev_level=breadcrumb|slice:"-2:-1"|first %}
+        {% if prev_level %}
+            <div class="mt-4">
+                <a href="{{ prev_level.url }}" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left"></i> Volver a {{ prev_level.name }}
+                </a>
+            </div>
+        {% endif %}
+    {% endwith %}
+
+</div>
+{% endblock content %}
+
+{% block extra_js %}
+    <script src="{% static 'js/tours/academic_chat_navigator_tour.js' %}"></script>
+{% endblock extra_js %}

@@ -1,0 +1,52 @@
+{% comment %}
+Ruta: /home/MiguelAeTxio/CampuStudiOnline/content_automation/templates/admin/content_automation/_task_row.html
+[V2 - REFACTORIZADO HTMX]
+Este parcial renderiza una única fila (<tr>) para un objeto 'task' (PendingContentTask).
+Ahora es un componente dinámico que se auto-actualiza mediante HTMX.
+{% endcomment %}
+<tr id="task-row-{{ task.id }}" class="{% cycle 'row1' 'row2' %}">
+    <td><strong>{{ task }}</strong></td>
+    <td>
+        {% if task.status == 'PROCESSING' %}<span style="color: #fd7e14;font-weight:bold;">{{ task.get_status_display }}</span>
+        {% elif task.status == 'PAUSED' %}<span style="color: #6c757d;font-weight:bold;">{{ task.get_status_display }}</span>
+        {% elif task.status == 'PENDING' %}<span style="color: #007bff;font-weight:bold;">{{ task.get_status_display }}</span>
+        {% elif task.status == 'FAILED' or task.status == 'CANCELLED' %}<span style="color: #dc3545;font-weight:bold;">{{ task.get_status_display }}</span>
+        {% elif task.status == 'FAILED_RETRYABLE' or task.status == 'FAILED_QUOTA' %}<span style="color: #ff8c00;font-weight:bold;">{{ task.get_status_display }}</span>
+        {% elif task.status == 'FAILED_FATAL' %}<span style="color: #8b0000;font-weight:bold; cursor: help;" title="Último Error:&#10;{{ task.last_error|default:'No hay detalles del error.' }}">{{ task.get_status_display }}</span>
+        {% elif task.status == 'COMPLETED' %}<span style="color: #28a745;font-weight:bold;">{{ task.get_status_display }}</span>
+        {% else %}<span>{{ task.get_status_display }}</span>{% endif %}
+    </td>
+    <td>{{ task.assigned_to.username }}</td>
+    <td>
+        {% if task.status == 'COMPLETED' or task.status == 'FAILED' or task.status == 'FAILED_FATAL' %}
+            {{ task.updated_at|date:"d M Y, H:i" }}
+        {% else %}
+            {{ task.created_at|date:"d M Y, H:i" }}
+        {% endif %}
+    </td>
+    <td class="task-actions">
+        <a href="{% url 'content_automation:task_log_full_page' task_id=task.id %}" class="button" target="_blank">Ver Log</a>
+        
+        {% if task.status == 'PROCESSING' %}
+            <button hx-post="{% url 'content_automation:pause_task' task_id=task.id %}" 
+                    hx-target="#task-row-{{ task.id }}" 
+                    hx-swap="outerHTML"
+                    class="button" style="background-color: #ffc107; color: #212529;">Pausar</button>
+        {% endif %}
+        
+        {% if task.status == 'PAUSED' %}
+            <button hx-post="{% url 'content_automation:resume_task' task_id=task.id %}" 
+                    hx-target="#task-row-{{ task.id }}" 
+                    hx-swap="outerHTML"
+                    class="button" style="background-color: #28a745;">Reanudar</button>
+        {% endif %}
+        
+        {% if task.status != 'COMPLETED' and task.status != 'FAILED' and task.status != 'FAILED_FATAL' %}
+            <button hx-post="{% url 'content_automation:cancel_task' task_id=task.id %}" 
+                    hx-target="#task-row-{{ task.id }}" 
+                    hx-swap="outerHTML"
+                    hx-confirm="¿Estás seguro de que quieres cancelar esta tarea? Esta acción la marcará como 'Fallida' y no se podrá reanudar."
+                    class="button" style="background-color: #dc3545;">Cancelar</button>
+        {% endif %}
+    </td>
+</tr>

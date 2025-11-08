@@ -1,0 +1,199 @@
+{# /home/MiguelAeTxio/CampuStudiOnline/search/templates/search/global_search_results.html #}
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Resultados de Búsqueda para "{{ search_query }}" - {{ block.super }}{% endblock title %}
+
+{% block content %}
+<div class="container mt-4">
+    
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 id="tour-results-title">Resultados para: <span class="text-primary">"{{ search_query }}"</span></h1>
+        <button id="start-global-search-tour-btn" class="btn btn-outline-info btn-sm">
+            <i class="fas fa-route me-1"></i> Visita Guiada
+        </button>
+    </div>
+
+    <div class="row">
+        <!-- Columna de Filtros -->
+        <div class="col-md-3" id="tour-filters">
+            <h4 class="mb-3">Filtrar por tipo</h4>
+            <form id="filterForm" method="get" action="{% url 'search:global_search' %}">
+                <input type="hidden" name="q" value="{{ search_query }}">
+
+                <div class="card">
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <span class="fw-bold">Contenido</span>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="model_type" value="material" id="checkMaterial" {% if 'material' in selected_model_types %}checked{% endif %}>
+                                <label class="form-check-label" for="checkMaterial">
+                                    Materiales ({{ content_results_count }})
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="model_type" value="copy" id="checkCopy" {% if 'copy' in selected_model_types %}checked{% endif %}>
+                                <label class="form-check-label" for="checkCopy">
+                                    Copias ({{ copy_results_count }})
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <span class="fw-bold">Comunidad</span>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="model_type" value="chat" id="checkChat" {% if 'chat' in selected_model_types %}checked{% endif %}>
+                                <label class="form-check-label" for="checkChat">
+                                    Chats ({{ total_chat_results_count }})
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="model_type" value="user" id="checkUser" {% if 'user' in selected_model_types %}checked{% endif %}>
+                                <label class="form-check-label" for="checkUser">
+                                    Usuarios ({{ user_results_count }})
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <span class="fw-bold">Estructura Intelectual</span>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="model_type" value="intellectual" id="checkIntellectual" {% if 'intellectual' in selected_model_types %}checked{% endif %}>
+                                <label class="form-check-label" for="checkIntellectual">
+                                    Áreas y Disciplinas ({{ intellectual_structure_count }})
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <span class="fw-bold">Estructura Académica</span>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="model_type" value="academic" id="checkAcademic" {% if 'academic' in selected_model_types %}checked{% endif %}>
+                                <label class="form-check-label" for="checkAcademic">
+                                    Universidades y Grados ({{ academic_structure_count }})
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="d-grid gap-2 mt-3">
+                    <button type="submit" class="btn btn-primary d-none">Aplicar Filtros</button>
+                    <a href="{% url 'search:global_search' %}?q={{ search_query }}" class="btn btn-outline-secondary">Limpiar Filtros</a>
+                </div>
+            </form>
+        </div>
+
+        <!-- Columna de Resultados -->
+        <div class="col-md-9">
+            {% if page_obj.paginator.count > 0 %}
+                <div class="list-group">
+                    {% for result in page_obj %}
+                        <div class="list-group-item list-group-item-action flex-column align-items-start">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h5 class="mb-1">
+                                    {% if result.type == 'Material' %}
+                                        <i class="fas fa-file-alt text-primary me-2"></i> <a href="{{ result.obj.get_absolute_url }}">{{ result.obj.title }}</a>
+                                    {% elif result.type == 'Copia de Estudio' %}
+                                        <i class="fas fa-copy text-info me-2"></i> <a href="{{ result.obj.get_absolute_url }}">Copia de: {{ result.obj.original_content.title }}</a>
+                                    {% elif result.type == 'Usuario' %}
+                                        <i class="fas fa-user text-success me-2"></i> <a href="{% url 'portfolio:public_portfolio_detail' username=result.obj.username %}">{{ result.obj.username }}</a>
+                                    {% elif result.type == 'Chat Grupal' %}
+                                        <i class="fas fa-comments text-warning me-2"></i> <a href="{{ result.obj.get_absolute_url }}">{{ result.obj.name }}</a>
+                                    {% elif result.type == 'Chat Directo' %}
+                                        <i class="fas fa-comment-dots text-warning me-2"></i> <a href="{% url 'messaging:conversation_detail' username=result.obj.other_user.username %}">Chat con {{ result.obj.other_user.username }}</a>
+                                    {% elif result.type == 'Área de Conocimiento' %}
+                                        <i class="fas fa-sitemap text-danger me-2"></i> <a href="{{ result.obj.get_absolute_url }}">{{ result.obj.name }}</a>
+                                    {% elif result.type == 'Disciplina' %}
+                                        <i class="fas fa-layer-group text-danger me-2"></i> <a href="{{ result.obj.get_absolute_url }}">{{ result.obj.name }}</a>
+                                    
+                                    {% elif result.type == 'Universidad' %}
+                                        <i class="fas fa-university text-secondary me-2"></i> <a href="{% url 'academic_directory:branch_list' university_slug=result.obj.slug %}">{{ result.obj.name }}</a>
+                                    {% elif result.type == 'Rama' %}
+                                        <i class="fas fa-code-branch text-secondary me-2"></i> <a href="{% url 'academic_directory:degree_list' university_slug=result.obj.university.slug branch_slug=result.obj.slug %}">{{ result.obj.name }}</a>
+                                    
+                                    {% elif result.type == 'Grado Académico' %}
+                                        <i class="fas fa-graduation-cap text-secondary me-2"></i> <a href="{% url 'academic_directory:academic_year_list' university_slug=result.obj.branch.university.slug branch_slug=result.obj.branch.slug degree_slug=result.obj.slug %}">{{ result.obj.name }}</a>
+                                    
+                                    {% else %}
+                                        <i class="fas fa-question-circle text-muted me-2"></i> {{ result.obj.name|default:result.obj.title }}
+                                    {% endif %}
+                                </h5>
+                                <small class="text-muted">{{ result.date|date:"d M Y" }}</small>
+                            </div>
+                            <p class="mb-1">
+                                {% if result.type == 'Material' %}{{ result.obj.short_description|truncatewords:30 }}{% endif %}
+                                {% if result.type == 'Copia de Estudio' %}En tu sala de estudio personal.{% endif %}
+                                {% if result.type == 'Usuario' %}Miembro de la comunidad CampuStudiOnline.{% endif %}
+                                {% if result.type == 'Chat Grupal' %}Sala de chat para colaboración.{% endif %}
+                                {% if result.type == 'Chat Directo' %}Conversación directa.{% endif %}
+                                {% if result.type == 'Área de Conocimiento' %}Área principal del Directorio de Contenidos Libres.{% endif %}
+                                {% if result.type == 'Disciplina' %}Disciplina dentro de: {{ result.obj.knowledge_area.name }}.{% endif %}
+                                {% if result.type == 'Universidad' %}Institución en el Directorio Académico.{% endif %}
+                                {% if result.type == 'Rama' %}Rama dentro de: {{ result.obj.university.name }}.{% endif %}
+                                {% if result.type == 'Grado Académico' %}Grado dentro de: {{ result.obj.branch.name }}.{% endif %}
+                            </p>
+                            <small class="text-muted">Tipo: {{ result.type }}</small>
+                        </div>
+                    {% endfor %}
+                </div>
+
+                <nav aria-label="Navegación de resultados" class="mt-4">
+                    <ul class="pagination justify-content-center">
+                        {% if page_obj.has_previous %}
+                            <li class="page-item">
+                                <a class="page-link" href="?q={{ search_query }}{% for type in selected_model_types %}&model_type={{ type }}{% endfor %}&page={{ page_obj.previous_page_number }}">Anterior</a>
+                            </li>
+                        {% else %}
+                            <li class="page-item disabled">
+                                <span class="page-link">Anterior</span>
+                            </li>
+                        {% endif %}
+
+                        <li class="page-item active" aria-current="page">
+                            <span class="page-link">Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</span>
+                        </li>
+
+                        {% if page_obj.has_next %}
+                            <li class="page-item">
+                                <a class="page-link" href="?q={{ search_query }}{% for type in selected_model_types %}&model_type={{ type }}{% endfor %}&page={{ page_obj.next_page_number }}">Siguiente</a>
+                            </li>
+                        {% else %}
+                            <li class="page-item disabled">
+                                <span class="page-link">Siguiente</span>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+
+            {% else %}
+                <div class="alert alert-info mt-4" role="alert">
+                    <h4 class="alert-heading">Sin resultados</h4>
+                    <p>No se han encontrado resultados que coincidan con "<strong>{{ search_query }}</strong>"{% if selected_model_types %} con los filtros aplicados{% endif %}.</p>
+                    <hr>
+                    <p class="mb-0">Prueba con otros términos de búsqueda o ajusta los filtros.</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const filterForm = document.getElementById('filterForm');
+    const checkboxes = filterForm.querySelectorAll('input[type="checkbox"][name="model_type"]');
+
+    checkboxes.forEach(function(checkbox) {
+        checkbox.addEventListener('change', function() {
+            filterForm.submit();
+        });
+    });
+});
+</script>
+
+{% if search_query %}
+    <script src="{% static 'js/tours/global_search_tour.js' %}"></script>
+{% endif %}
+
+{% endblock extra_js %}

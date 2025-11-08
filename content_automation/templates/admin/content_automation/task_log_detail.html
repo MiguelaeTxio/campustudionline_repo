@@ -1,0 +1,67 @@
+{% extends "admin/base.html" %}
+{% load i18n %}
+
+{% block title %}Log: {{ task }}{% endblock %}
+
+{% block content %}
+<div id="content-main">
+    
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+             <li class="breadcrumb-item"><a href="{% url 'admin:index' %}">Inicio</a></li>
+             <li class="breadcrumb-item"><a href="{% url 'content_automation:task_dashboard' %}">Centro de Control</a></li>
+             <li class="breadcrumb-item active" aria-current="page">Log de Tarea</li>
+        </ol>
+    </nav>
+    
+    <h1 style="margin-bottom: 0.5rem;">Log de Tarea</h1>
+    <p style="font-size: 1.1rem; color: #ccc; margin-top: 0;">{{ task }}</p>
+
+    <div class="module">
+        <h2 style="margin-bottom: 1rem;">Detalles de la Tarea</h2>
+        <table class="table">
+            <tbody>
+                <tr><th scope="row" style="width: 20%;">ID de Tarea</th><td>{{ task.id }}</td></tr>
+                <tr><th scope="row">Estado</th><td>{{ task.get_status_display }}</td></tr>
+                <tr><th scope="row">Creada</th><td>{{ task.created_at|date:"d M Y, H:i:s" }}</td></tr>
+                <tr><th scope="row">Última Actualización</th><td>{{ task.updated_at|date:"d M Y, H:i:s" }}</td></tr>
+                <tr><th scope="row">Notas</th><td>{{ task.notes|default:"-" }}</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="module">
+        <h2>Eventos Registrados (Más recientes primero)</h2>
+        <div id="task-log-container" style="background: #1d1f21; color: #c5c8c6; padding: 15px; border-radius: 5px; font-family: monospace; font-size: 14px; max-height: 600px; overflow-y: auto;">
+            
+            {% for entry in task_log_reversed %}
+                <div style="border-bottom: 1px solid #373b41; padding-bottom: 10px; margin-bottom: 10px;">
+                    <div><strong>Timestamp:</strong> {{ entry.timestamp }}</div>
+                    <div><strong>Nivel:</strong> 
+                        {% if entry.level == 'ERROR' %}
+                            <span style="color: #cc6666;">{{ entry.level }}</span>
+                        {% else %}
+                            <span style="color: #b5bd68;">{{ entry.level }}</span>
+                        {% endif %}
+                    </div>
+                    <div><strong>Mensaje:</strong> <span style="white-space: pre-wrap;">{{ entry.message }}</span></div>
+                    {% if entry.payload %}
+                    <div>
+                        <strong>Payload:</strong>
+                        <pre style="white-space: pre-wrap; word-wrap: break-word; background: #282a2e; padding: 10px; border-radius: 3px;">{{ entry.payload }}</pre>
+                    </div>
+                    {% endif %}
+                </div>
+            {% empty %}
+                <p>No hay eventos registrados para esta tarea en la base de datos.</p>
+                <p><em>(Nota: Si la tarea ha fallado muy al principio, es posible que no haya tenido tiempo de escribir su primer log. Revisa los logs de Celery para más detalles.)</em></p>
+            {% endfor %}
+        </div>
+    </div>
+    
+    <div class="submit-row">
+        <a href="{% url 'content_automation:task_dashboard' %}" class="button">&larr; Volver al Centro de Control</a>
+    </div>
+
+</div>
+{% endblock %}

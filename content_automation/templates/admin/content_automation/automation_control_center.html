@@ -1,0 +1,120 @@
+{# /home/MiguelAeTxio/CampuStudiOnline/content_automation/templates/admin/content_automation/automation_control_center.html #}
+{% extends "admin/base.html" %}
+{% load static %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<script src="{% static 'vendor/htmx/htmx.min.js' %}" defer></script>
+<script>
+  document.body.addEventListener('htmx:configRequest', (event) => {
+    event.detail.headers['X-CSRFToken'] = '{{ csrf_token }}';
+  });
+</script>
+<style>
+    .task-history-container { background: #2d2d2d; color: #f1f1f1; padding: 15px; border-radius: 5px; font-family: monospace; font-size: 14px; max-height: 500px; overflow-y: auto; border: 1px solid #444; }
+    .task-entry { border-bottom: 1px solid #444; padding-bottom: 10px; margin-bottom: 10px; }
+    .task-entry:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+    .task-header { display: flex; justify-content: space-between; align-items: baseline; }
+    .task-header strong { font-size: 1.1em; color: #b5bd68; }
+    .task-details { padding-left: 10px; margin-top: 5px; color: #ccc; }
+    .task-timestamp { font-size: 0.9em; color: #969896; }
+
+    .status-processing { color: #f0c674; font-weight: bold; }
+    .status-completed { color: #b5bd68; font-weight: bold; }
+    .status-failed-fatal, .status-failed, .status-failed-retryable, .status-failed-quota { color: #cc6666; font-weight: bold; }
+    .status-pending { color: #81a2be; font-weight: bold; }
+    .status-paused { color: #b294bb; font-weight: bold; }
+
+    .control-panel-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        gap: 20px;
+    }
+    
+    @media (max-width: 768px) {
+      .control-panel-grid {
+        grid-template-columns: 1fr;
+      }
+      .form-row .row {
+        flex-direction: column;
+      }
+      .form-row .row > div {
+        margin-bottom: 1rem;
+        width: 100% !important;
+      }
+    }
+</style>
+{% endblock %}
+
+
+{% block content %}
+<div id="content-main">
+    <div style="margin-bottom: 20px;">
+        <a href="{% url 'content_automation:task_dashboard' %}" class="button">&larr; Volver al Centro de Control de Contenidos</a>
+    </div>
+
+    <div class="control-panel-grid">
+        <div id="automation-control-panel-wrapper">
+            {% include 'admin/content_automation/_automation_control_panel.html' %}
+        </div>
+        <div id="stats-panel-wrapper">
+             <fieldset class="module aligned h-100">
+                <h2>Estado y Ciclo de Trabajo</h2>
+                <div id="stats-panel" hx-get="{% url 'content_automation:get_automation_status' %}" hx-trigger="load, every 10s" hx-swap="innerHTML">
+                    <p>Cargando estado del motor...</p>
+                </div>
+            </fieldset>
+        </div>
+    </div>
+
+    <form action="{% url 'content_automation:set_seed_filters' %}" method="post">
+        {% csrf_token %}
+        <fieldset class="module aligned">
+            <h2>Configuración de la Tolva (Semillas de Generación)</h2>
+            <div class="form-row">
+                <div class="row w-100">
+                    <div class="col-md-4">
+                        <label for="{{ seed_form.seed_branch.id_for_label }}">{{ seed_form.seed_branch.label }}</label>
+                        {{ seed_form.seed_branch }}
+                    </div>
+                    <div class="col-md-4">
+                        <label for="{{ seed_form.seed_degree.id_for_label }}">{{ seed_form.seed_degree.label }}</label>
+                        {{ seed_form.seed_degree }}
+                    </div>
+                    <div class="col-md-4">
+                        <label for="{{ seed_form.seed_year.id_for_label }}">{{ seed_form.seed_year.label }}</label>
+                        {{ seed_form.seed_year }}
+                    </div>
+                </div>
+            </div>
+            <div class="submit-row">
+                <input type="submit" value="Guardar Filtros de Semilla" class="default">
+            </div>
+        </fieldset>
+    </form>
+    
+    <div class="module">
+        <h2>Registro de Tareas de Generación (Últimas 50)</h2>
+        <div class="task-history-container">
+            {% for task in generation_task_history %}
+                <div class="task-entry">
+                    <div class="task-header">
+                        <strong>{{ task.subject.name|default:task.course_title }}</strong>
+                        <span class="task-timestamp">{{ task.created_at|date:"d M Y, H:i:s" }}</span>
+                    </div>
+                    <div class="task-details">
+                        <span>Tipo: {{ task.get_task_origin_display }} | </span>
+                        <span>API Key: {{ task.api_key_used|default:"N/A" }} | </span>
+                        <span>Secciones: {{ task.section_count|default:"-" }} | </span>
+                        <span>Estado: <span class="status-{{ task.status|lower|cut:' ' }}">{{ task.get_status_display }}</span></span>
+                    </div>
+                </div>
+            {% empty %}
+                <p>No se han registrado tareas de generación.</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,128 @@
+{# /home/MiguelAeTxio/CampuStudiOnline/contents/templates/contents/favorite_folder_detail.html #}
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'contents:personal_workspace' %}">Explorador Personal</a></li>
+            {% for ancestor in ancestors %}
+                <li class="breadcrumb-item"><a href="{% url 'contents:favorite_folder_detail' ancestor.id %}">{{ ancestor.name }}</a></li>
+            {% endfor %}
+            <li class="breadcrumb-item active" aria-current="page">{{ folder.name }}</li>
+        </ol>
+    </nav>
+
+    <hr>
+
+    <h2>Carpeta: {{ folder.name }}</h2>
+
+    {% if materials %}
+    <h3 class="mt-4">Materiales</h3>
+    <div class="list-group mb-4">
+        {% for material in materials %}
+        <div class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+            <div>
+                <a href="{{ material.get_absolute_url }}">{{ material.title }}</a> 
+                <small class="text-muted d-block">{{ material.topic }}</small>
+            </div>
+            <div class="btn-group" role="group">
+                <button type="button" 
+                        class="btn btn-sm favorite-toggle-btn {% if material.is_favorite %}btn-warning{% else %}btn-outline-warning{% endif %}"
+                        data-url="{% url 'contents:toggle_favorite_htmx' pk=material.pk %}"
+                        title="{% if material.is_favorite %}Quitar de Favoritos{% else %}Añadir a Favoritos{% endif %}">
+                    <i class="{% if material.is_favorite %}fas fa-star{% else %}far fa-star{% endif %}"></i>
+                </button>
+                {% if folder.folder_type != 'PUB' %}
+                <button class="btn btn-outline-secondary btn-sm" 
+                        data-bs-toggle="modal" 
+                        data-bs-target="#moveElementModal"
+                        data-element-id="{{ material.id }}"
+                        data-element-type="material"
+                        data-element-name="{{ material.title|escapejs }}"
+                        title="Mover Material">
+                    <i class="fas fa-arrows-alt"></i>
+                </button>
+                <button class="btn btn-outline-warning btn-sm"
+                        hx-post="{% url 'contents:remove_material_from_folder' material.id folder.id %}"
+                        hx-target="closest .list-group-item"
+                        hx-swap="outerHTML"
+                        hx-confirm="¿Estás seguro de que quieres quitar '{{ material.title }}' de esta carpeta?"
+                        title="Quitar de esta carpeta">
+                    <i class="fas fa-trash-alt"></i>
+                </button>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    
+    <hr class="my-4">
+    
+    {% if folder.folder_type == 'FAV' or folder.folder_type == 'USR' %}
+    <h3>Crear Subcarpeta</h3>
+    
+    <div class="mb-3">
+        <form hx-post="{% url 'contents:create_folder' %}" hx-target="#folder-list" hx-swap="beforeend">
+            <input type="hidden" name="parent_id" value="{{ folder.id }}">
+            <div class="input-group">
+                <input type="text" name="folder_name" class="form-control" placeholder="Nombre de la nueva subcarpeta..." required>
+                <button type="submit" class="btn btn-success">Crear Subcarpeta</button>
+            </div>
+        </form>
+    </div>
+    {% endif %}
+    
+    {% if nodes %}
+    <h3>Subcarpetas</h3>
+    {% endif %}
+
+    <div id="folder-list">
+        {% if nodes %}
+            {% include "contents/partials/_folder_nodes.html" with nodes=nodes %}
+        {% else %}
+            <p>No hay subcarpetas para mostrar.</p>
+        {% endif %}
+    </div>
+
+</div>
+
+{# --- Inclusión del Modal y su Lógica --- #}
+{% include "contents/partials/_move_element_modal.html" %}
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const moveElementModal = document.getElementById('moveElementModal');
+    if (moveElementModal) {
+        moveElementModal.addEventListener('show.bs.modal', function (event) {
+            const button = event.relatedTarget;
+            const elementId = button.getAttribute('data-element-id');
+            const elementType = button.getAttribute('data-element-type');
+            const elementName = button.getAttribute('data-element-name');
+            
+            const modalElementName = moveElementModal.querySelector('#elementToMoveName');
+            const modalElementIdInput = moveElementModal.querySelector('#elementToMoveId');
+            const modalElementTypeInput = moveElementModal.querySelector('#elementToMoveType');
+
+            modalElementName.textContent = elementName;
+            modalElementIdInput.value = elementId;
+            modalElementTypeInput.value = elementType;
+        });
+    }
+
+    // Inicializar tooltips de Bootstrap
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl)
+    });
+
+    document.body.addEventListener('htmx:responseError', function(evt) {
+        alert("Error: " + evt.detail.xhr.responseText);
+    });
+});
+</script>
+
+
+{% endblock %}

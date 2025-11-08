@@ -1,0 +1,126 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: CampuStudiOnline 1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-05-15 19:52+0200\n"
+"PO-Revision-Date: 2025-05-15 21:30+0200\n"
+"Last-Translator: Miguel Angel Munoz Cara nummenor@proton.me\n"
+"Language-Team: Spanish es@example.com\n"
+"Language: es\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"1 : 2;\n"
+#: global_settings/templates/admin/global_settings/send_custom_email.html:25
+msgid "Home"
+msgstr "Inicio"
+#: global_settings/templates/admin/global_settings/send_custom_email.html:118
+msgid "Send Emails"
+msgstr ""
+#: templates/registration/password_reset_complete.html:4
+#: templates/registration/password_reset_complete.html:11
+msgid "Password reset complete"
+msgstr "Reseteo de contraseña completo"
+#: templates/registration/password_reset_complete.html:14
+msgid "Your password has been set. You may go ahead and log in now."
+msgstr "Tu contraseña ha sido establecida. Puedes continuar identificándote ahora."
+#: templates/registration/password_reset_complete.html:15
+msgid "Log in"
+msgstr "Identificación"
+#: templates/registration/password_reset_confirm.html:4
+#: templates/registration/password_reset_confirm.html:12
+msgid "Enter new password"
+msgstr "Ingresa una contraseña nueva"
+#: templates/registration/password_reset_confirm.html:4
+#: templates/registration/password_reset_confirm.html:12
+msgid "Password reset unsuccessful"
+msgstr "Fallo al restablecer la contraseña"
+#: templates/registration/password_reset_confirm.html:17
+msgid ""
+"Please enter your new password twice so we can verify you typed it in "
+"correctly."
+msgstr "Por favor ingresa tu nueva contraseña dos veces para poder verificar que la escribiste correctamente"
+#: templates/registration/password_reset_confirm.html:22
+msgid "Change my password"
+msgstr "Cambia mi contraseña"
+#: templates/registration/password_reset_confirm.html:26
+msgid ""
+"The password reset link was invalid, possibly because it has already been "
+"used or has expired. Please request a new password reset."
+msgstr "El enlace de restablecimiento de contraseña no es válido, posiblemente porque ya ha sido utilizado o ha caducado. Por favor, solicita un nuevo restablecimiento de contraseña."
+
+#: templates/registration/password_reset_confirm.html:27
+msgid "Request a new password reset"
+msgstr "Solicitar un nuevo restablecimiento de contraseña"
+
+#: templates/registration/password_reset_done.html:4
+#: templates/registration/password_reset_done.html:11
+msgid "Password reset sent"
+msgstr "Restablecimiento de contraseña enviado"
+
+#: templates/registration/password_reset_done.html:14
+msgid ""
+"We've send you instructions for setting your password, if an account exists "
+"with the email you entered. You should receive them shortly."
+msgstr "Te hemos enviado instrucciones para restablecer tu contraseña, si existe una cuenta con el correo electrónico que ingresaste. Deberías recibirlas en breve."
+
+#: templates/registration/password_reset_done.html:15
+msgid ""
+"If you don't receive an email, please make sure you've entered the address "
+"you registered with, and check your spam folder."
+msgstr "Si no recibes un correo electrónico, asegúrate de haber ingresado la dirección con la que te registraste y revisa tu carpeta de spam."
+
+#: templates/registration/password_reset_done.html:16
+msgid "Return to homepage"
+msgstr "Volver a la página de inicio"
+
+#: templates/registration/password_reset_email.html:3
+#, python-format
+msgid ""
+"You're receiving this email because you requested a password reset for your "
+"user account at %(site_name)s."
+msgstr "Has recibido este correo electrónico porque solicitaste un restablecimiento de contraseña para tu cuenta en %(site_name)s."
+
+#: templates/registration/password_reset_email.html:5
+msgid "Please go to the following page and choose a new password:"
+msgstr "Por favor, ve a la siguiente página y elige una nueva contraseña:"
+
+#: templates/registration/password_reset_email.html:9
+msgid "Your username, in case you've forgotten:"
+msgstr "Tu nombre de usuario, en caso de que lo hayas olvidado:"
+
+#: templates/registration/password_reset_email.html:11
+msgid "Thanks for using our site!"
+msgstr "¡Gracias por usar nuestro sitio!"
+
+#: templates/registration/password_reset_email.html:13
+#, python-format
+msgid "The %(site_name)s team"
+msgstr "El equipo de %(site_name)s"
+
+#: templates/registration/password_reset_form.html:4
+#: templates/registration/password_reset_form.html:11
+msgid "Password reset"
+msgstr "Restablecimiento de contraseña"
+
+#: templates/registration/password_reset_form.html:14
+msgid ""
+"Forgotten your password? Enter your email address below, and we'll email "
+"instructions for setting a new one."
+msgstr "¿Olvidaste tu contraseña? Ingresa tu dirección de correo electrónico abajo y te enviaremos instrucciones para establecer una nueva."
+
+#: templates/registration/password_reset_form.html:19
+msgid "Send password reset email"
+msgstr "Enviar correo electrónico de restablecimiento de contraseña"
+
+#: templates/registration/password_reset_subject.txt:2
+#, python-format
+msgid "Password reset on %(site_name)s"
+msgstr "Restablecimiento de contraseña en %(site_name)s"

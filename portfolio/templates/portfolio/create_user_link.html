@@ -1,0 +1,100 @@
+{# /home/MiguelAeTxio/CampuStudiOnline/portfolio/templates/portfolio/create_user_link.html #}
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ page_title|default:"Añadir Nuevo Enlace" }}{% endblock title %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card shadow">
+                <div class="card-header bg-success text-white"> {# Color changed to differentiate from short messages #}
+                    <h2 class="card-title mb-0">{{ page_title|default:"Añadir Enlace de Interés a tu Portafolio" }}</h2>
+                </div>
+                <div class="card-body">
+                    <p class="card-text text-muted">
+                        Comparte un enlace a tu perfil de GitHub, blog personal, proyecto interesante o cualquier otro recurso relevante.
+                    </p>
+
+                    <form method="post" novalidate>
+                        {% csrf_token %}
+
+                        {# Display general form errors, if any #}
+                        {% if form.non_field_errors %}
+                            <div class="alert alert-danger">
+                                {% for error in form.non_field_errors %}
+                                    <p class="mb-0">{{ error }}</p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+
+                        {# Render each form field #}
+                        {% for field in form %}
+                            <div class="mb-3">
+                                <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+
+                                {{ field }} {# Django will render the appropriate widget with Bootstrap classes if defined in the form #}
+
+                                {% if field.help_text %}
+                                    <div class="form-text">{{ field.help_text }}</div>
+                                {% endif %}
+
+                                {% if field.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {% for error in field.errors %}
+                                            <span>{{ error }}</span>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-success btn-lg"> {# Color changed #}
+                                <i class="fas fa-link"></i> Añadir Enlace
+                            </button>
+                            <a href="{% url 'portfolio:public_portfolio_detail' username=request.user.username %}" class="btn btn-outline-secondary">
+                                Cancelar y Volver a mi Portafolio
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+{% block extra_css %}
+{# Generic styles for forms, can be moved to a global CSS if repeated often #}
+<style>
+    .card-title {
+        font-size: 1.75rem;
+    }
+    .form-text {
+        font-size: 0.875em;
+    }
+    .invalid-feedback span {
+        display: block;
+    }
+</style>
+{% endblock extra_css %}
+
+{% block extra_js %}
+{# This JS script is generic and should work if fields have Bootstrap classes from the form #}
+{# If no classes are applied in forms.py, this script can help, although it's better to do it in the form. #}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.querySelector('form');
+        if (form) {
+            const inputs = form.querySelectorAll('input[type="text"], input[type="url"], textarea');
+            inputs.forEach(function(input) {
+                if (!input.classList.contains('form-control')) {
+                    input.classList.add('form-control');
+                }
+            });
+        }
+    });
+</script>
+{% endblock extra_js %}

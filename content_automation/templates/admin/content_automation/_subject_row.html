@@ -1,0 +1,66 @@
+{# /home/MiguelAeTxio/CampuStudiOnline/content_automation/templates/admin/content_automation/_subject_row.html #}
+{# El namespace de la app es 'content_automation' #}
+
+<tr
+    id="subject-row-{{ item.pk }}"
+    class="{% cycle 'row1' 'row2' %}"
+    {% if item.generation_status == 'EN PROGRESO' %}
+        hx-get="{% url 'content_automation:check_task_status' subject_id=item.pk %}"
+        hx-trigger="every 5s"
+        hx-swap="outerHTML"
+    {% endif %}
+>
+    <td>{{ item.name }}{% if item.semester %} (Sem. {{ item.semester }}){% endif %}</td>
+    <td>
+        {% if item.generation_status == 'DISPONIBLE' %}
+            <span style="color: #28a745;font-weight:bold;">{{ item.generation_status }}</span>
+        {% elif item.generation_status == 'EN PROGRESO' %}
+            <span style="color: #fd7e14;font-weight:bold;" title="{{ item.task_status_display }}">
+                {{ item.generation_status }}
+            </span>
+        {% elif item.generation_status == 'COMPLETADO' %}
+            <span style="color: #adb5bd;font-weight:bold;">{{ item.generation_status }}</span>
+        {% else %}
+            <span>{{ item.generation_status }}</span>
+        {% endif %}
+    </td>
+    <td>
+        {% if item.generation_status == 'DISPONIBLE' %}
+            <button
+                class="button generate-btn"
+                hx-post="{% url 'content_automation:trigger_generation' subject_id=item.pk %}"
+                hx-target="#subject-row-{{ item.pk }}"
+                hx-swap="outerHTML"
+                _="on click send startGeneration(subjectName: '{{ item.name|escapejs }}') to body"
+            >
+                Generar Automáticamente
+            </button>
+        {% elif item.generation_status == 'EN PROGRESO' %}
+            <button
+                type="button"
+                class="button"
+                data-bs-toggle="modal"
+                data-bs-target="#taskLogModal"
+                data-task-id="{{ item.task_id }}"
+                style="margin-right: 5px;"
+            >
+                Ver Log
+            </button>
+            <button
+                class="button"
+                style="background-color:#dc3545;"
+                hx-post="{% url 'content_automation:cancel_task' subject_id=item.pk %}"
+                hx-target="#subject-row-{{ item.pk }}"
+                hx-swap="outerHTML"
+            >
+                Cancelar
+            </button>
+        {% elif item.generation_status == 'COMPLETADO' and item.generated_content %}
+            <a href="{% url 'contents:content_detail' item.generated_content.pk %}" class="button" target="_blank">
+                Ver Contenido
+            </a>
+        {% else %}
+            N/A
+        {% endif %}
+    </td>
+</tr>

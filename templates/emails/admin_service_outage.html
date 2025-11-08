@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="es">
+<head><title>Aviso Importante: Mantenimiento Programado</title><!-- Styles similar to welcome_email.html --></head>
+<body>
+<div class="container">
+<div class="header"><h1>Aviso de Mantenimiento Programado</h1></div>
+<div class="content">
+<p>Hola {{ user.username }},</p>
+<p>Te informamos que realizaremos un mantenimiento programado en CampuStudiOnline.</p>
+<p><strong>Fecha y Hora:</strong> {{ maintenance_datetime }}</p>
+<p><strong>Duración estimada:</strong> {{ maintenance_duration }}</p>
+<p>Durante este periodo, el sitio podría no estar disponible o presentar intermitencias.</p>
+{% if additional_message %}
+<p><strong>Información adicional:</strong></p>
+<p>{{ additional_message|linebreaksbr }}</p>
+{% endif %}
+<p>Agradecemos tu comprensión.</p>
+<p>El equipo de CampuStudiOnline</p>
+</div>
+<div class="footer"> <!-- ... --> </div>
+</div>
+</body>

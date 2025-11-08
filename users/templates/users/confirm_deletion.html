@@ -1,0 +1,64 @@
+{# /users/templates/users/confirm_deletion.html #}
+
+{% extends "base.html" %}
+{% load static i18n %}
+
+{% block title %}{{ titulo_pagina|default:_("Confirmar Eliminación") }} - {% trans "CampuStudiOnline" %}{% endblock title %}
+
+{% block extra_head %}
+    <meta name="robots" content="noindex, nofollow">
+{% endblock extra_head %}
+
+{% block content %}
+<div class="container mt-5 mb-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card border-danger shadow-lg">
+                <div class="card-header bg-danger text-white">
+                    <h1 class="card-title h4 mb-0"><i class="fas fa-exclamation-triangle me-2"></i> {{ titulo_pagina|default:_("Confirmar Eliminación de Cuenta") }}</h1>
+                </div>
+                <div class="card-body">
+                    <p class="card-text">
+                        {% blocktrans %}
+                        Está a punto de tomar una acción <strong>irreversible</strong>.
+                        Si elimina su cuenta, perderá el acceso a todos sus datos, messages y contenidos asociados.
+                        Su perfil ya no será visible para otros usuarios.
+                        {% endblocktrans %}
+                    </p>
+                    <p class="fw-bold">
+                        {% trans "Para confirmar esta acción, por favor, introduzca su contraseña actual." %}
+                    </p>
+
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert alert-{{ message.tags|default:'danger' }} alert-dismissible fade show" role="alert">
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+
+                    <form method="post" action="{% url 'users:delete_account' %}">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="id_password" class="form-label">{% trans "Contraseña Actual" %}</label>
+                            <input type="password" name="password" class="form-control" id="id_password" required>
+                        </div>
+
+                        <hr>
+
+                        <div class="d-flex justify-content-between">
+                            <a href="{% url 'users:account_detail' %}" class="btn btn-secondary">
+                                <i class="fas fa-times me-1"></i> {% trans "Cancelar" %}
+                            </a>
+                            <button type="submit" class="btn btn-danger">
+                                <i class="fas fa-trash-alt me-1"></i> {% trans "Sí, entiendo. Eliminar mi cuenta." %}
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

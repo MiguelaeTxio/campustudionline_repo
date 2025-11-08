@@ -1,0 +1,103 @@
+{# /home/MiguelAeTxio/CampuStudiOnline/academic_structure/templates/admin/academic_structure/matriculation/subject_list.html #}
+{% extends "admin/base_site.html" %}
+{% load static %}
+
+{% block extrastyle %}
+    {{ block.super }}
+    <style>
+        .search-form {
+            margin-bottom: 20px;
+            display: flex;
+            gap: 10px;
+        }
+        .search-form input[type="search"] {
+            flex-grow: 1;
+        }
+        .subject-list {
+            list-style: none;
+            padding: 0;
+        }
+        .subject-item {
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            padding: 10px 15px;
+            margin-bottom: 8px;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+        .subject-item:hover {
+            background-color: #f0f0f0;
+        }
+        .subject-item a {
+            text-decoration: none;
+            color: #333;
+            font-weight: bold;
+        }
+        .subject-item .details {
+            font-size: 0.9em;
+            color: #666;
+            margin-top: 5px;
+        }
+        .pagination {
+            margin-top: 20px;
+            text-align: center;
+        }
+        .pagination .step {
+            margin: 0 5px;
+        }
+        .pagination .current {
+            font-weight: bold;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+    <h1>{{ title }}</h1>
+
+    <!-- Search bar -->
+    <form class="search-form" method="get">
+        <input type="search" name="q" value="{{ search_query|default_if_none:'' }}" placeholder="Search by subject, degree, or university...">
+        <button type="submit" class="button">Search</button>
+    </form>
+
+    {% if subjects %}
+    <ul class="subject-list">
+        {% for subject in subjects %}
+        <li class="subject-item">
+            <a href="{% url 'admin:academic_structure_matriculation_manage' subject.pk %}">
+                {{ subject.name }}
+            </a>
+            <div class="details">
+                {{ subject.academic_year.degree.branch.university.name }} / {{ subject.academic_year.degree.name }}
+            </div>
+        </li>
+        {% endfor %}
+    </ul>
+    {% else %}
+    <p>No subjects found matching your search.</p>
+    {% endif %}
+
+    <!-- Pagination -->
+    {% if is_paginated %}
+    <div class="pagination">
+        <span class="step-links">
+            {% if page_obj.has_previous %}
+                <a href="?page=1{% if search_query %}&q={{ search_query }}{% endif %}">« first</a>
+                <a href="?page={{ page_obj.previous_page_number }}{% if search_query %}&q={{ search_query }}{% endif %}">previous</a>
+            {% endif %}
+
+            <span class="current">
+                Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+            </span>
+
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}{% if search_query %}&q={{ search_query }}{% endif %}">next</a>
+                <a href="?page={{ page_obj.paginator.num_pages }}{% if search_query %}&q={{ search_query }}{% endif %}">last »</a>
+            {% endif %}
+        </span>
+    </div>
+    {% endif %}
+
+</div>
+{% endblock %}

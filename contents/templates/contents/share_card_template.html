@@ -1,0 +1,112 @@
+{# /templates/contents/share_card_template.html #}
+{# ATENCIÓN!!! La aplicación de usuarios se llama 'users' pero el Namespace a usar es 'usuarios' #}
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Tarjeta para Compartir: {{ title }}</title>
+    <style>
+        @page {
+            size: 1200px 630px;
+            margin: 0;
+        }
+
+        body {
+            margin: 0;
+            padding: 60px; /* Aumentamos el padding para mejor espaciado */
+            width: 1200px;
+            height: 630px;
+            font-family: 'Roboto', sans-serif;
+            background-color: #ffffff; /* Fondo blanco limpio */
+            position: relative;
+            box-sizing: border-box;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between; /* Para empujar el footer hacia abajo */
+            border: 20px solid #0d6efd; /* Borde azul primario */
+        }
+
+        .background-image {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 60%; /* Ajustar tamaño del logo de fondo */
+            height: auto;
+            object-fit: contain;
+            opacity: 0.05; /* Reducimos opacidad para que no distraiga */
+            z-index: 1;
+        }
+
+        .content-wrapper {
+            position: relative;
+            z-index: 2;
+            text-align: left; /* Alineamos el texto a la izquierda */
+            display: flex;
+            flex-direction: column;
+            justify-content: center; /* Centramos verticalmente el contenido principal */
+            flex-grow: 1;
+        }
+        
+        h1 {
+            color: #212529; /* Color de texto oscuro */
+            font-size: 72px; /* Tamaño ajustado para títulos largos */
+            font-weight: bold;
+            margin: 0;
+            line-height: 1.1;
+            max-height: 350px; /* Límite de altura para el título */
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .author-info {
+            margin-top: 25px;
+            font-size: 38px;
+            font-weight: normal;
+            color: #6c757d; /* Color gris para el autor */
+        }
+
+        .footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            z-index: 2;
+            width: 100%;
+        }
+
+        .footer-brand {
+            font-size: 42px;
+            font-weight: bold;
+            color: #0d6efd;
+        }
+
+        .footer-logo {
+            height: 70px; /* Tamaño del logo en el footer */
+            width: auto;
+        }
+
+    </style>
+</head>
+<body>
+
+    <img src="file://{{ logo_path_svg }}" class="background-image" alt="Marca de agua">
+
+    <div class="content-wrapper">
+        <h1>{{ title }}</h1>
+        {% if author %}
+        <div class="author-info">
+            Creado por: {{ author }}
+        </div>
+        {% endif %}
+    </div>
+
+    <footer class="footer">
+        <span class="footer-brand">CampuStudiOnline</span>
+        <img src="file://{{ logo_path_png }}" class="footer-logo" alt="Logo">
+    </footer>
+
+</body>
+</html>

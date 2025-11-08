@@ -1,0 +1,108 @@
+{# /contents/templates/admin/contents/work_batch/generate_checklist.html #}
+{% extends "admin/base_site.html" %}
+{% load i18n %}
+
+{% block extrahead %}
+{{ block.super }}
+<style>
+    .container-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+        margin-bottom: 20px;
+    }
+    .prompt-box, .checklist-box {
+        display: flex;
+        flex-direction: column;
+    }
+    textarea {
+        width: 100%;
+        box-sizing: border-box;
+        font-family: monospace;
+        font-size: 14px;
+        border: 1px solid var(--border-color);
+        background-color: var(--body-bg);
+        color: var(--body-fg);
+    }
+    .prompt-box textarea {
+        background-color: var(--selected-bg);
+    }
+    .button-row {
+        margin-top: 10px;
+    }
+    @media (max-width: 768px) {
+        .container-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+<a href="{% url 'admin:index' %}">{% translate 'Home' %}</a>
+› <a href="{% url 'admin:app_list' app_label='contents' %}">{% translate 'Contents' %}</a>
+› <a href="{% url 'admin:contents_workbatch_changelist' %}">{% translate 'Lotes de Trabajo' %}</a>
+› <a href="{% url 'admin:contents_workbatch_select_proposal' %}">Seleccionar Propuesta</a>
+› {{ title }}
+</div>
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+    <form action="" method="post">
+        {% csrf_token %}
+        <h1>{{ title }}</h1>
+
+        <div class="container-grid">
+            
+            <div class="prompt-box module">
+                <h2>Paso 1: Generar Prompt</h2>
+                <p>Copia el siguiente prompt y pégalo en la IA ("Manus") para generar la checklist de asignaturas.</p>
+                <textarea id="prompt-area" rows="20" readonly>{{ prompt }}</textarea>
+                <div class="button-row">
+                    <button type="button" id="copy-button" class="button">Copiar Prompt</button>
+                </div>
+            </div>
+
+            <div class="checklist-box module">
+                <h2>Paso 2: Pegar Checklist y Crear Lote</h2>
+                <p>Pega aquí la respuesta completa de la IA. Asegúrate de que sigue el formato correcto.</p>
+                <textarea name="checklist" id="checklist-area" rows="20" placeholder="AÑO_1:
+- Asignatura 1
+- Asignatura 2
+AÑO_2:
+- Asignatura 3
+..."></textarea>
+            </div>
+
+        </div>
+
+        <div class="submit-row">
+            <input type="submit" value="{% translate 'Crear Lote de Trabajo' %}" class="default">
+            <a href="{% url 'admin:contents_workbatch_select_proposal' %}" class="button cancel-link">{% translate 'Cancelar' %}</a>
+        </div>
+    </form>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const copyButton = document.getElementById('copy-button');
+    const promptArea = document.getElementById('prompt-area');
+
+    copyButton.addEventListener('click', function() {
+        promptArea.select();
+        document.execCommand('copy');
+        
+        // Feedback visual para el usuario
+        const originalText = copyButton.textContent;
+        copyButton.textContent = '¡Copiado!';
+        copyButton.classList.add('default');
+        setTimeout(function() {
+            copyButton.textContent = originalText;
+            copyButton.classList.remove('default');
+        }, 2000);
+    });
+});
+</script>
+{% endblock %}

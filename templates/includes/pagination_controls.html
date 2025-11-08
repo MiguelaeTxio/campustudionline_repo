@@ -1,0 +1,70 @@
+{% comment %}
+    /home/MiguelAeTxio/CampuStudiOnline/templates/includes/pagination_controls.html 
+    Componente de paginación reutilizable y mejorado con Bootstrap 5.
+    Contexto requerido:
+    - page_obj: El objeto de página devuelto por el Paginator de Django.
+    - query_param_name: El nombre del parámetro GET para la paginación (ej. 'pub_materials_page').
+{% endcomment %}
+{% if page_obj.paginator.num_pages > 1 %}
+<nav aria-label="Navegación de página">
+    <ul class="pagination justify-content-center">
+
+        {# Botón Primera Página #}
+        {% if page_obj.number > 1 %}
+            <li class="page-item">
+                <a class="page-link" href="?{{ query_param_name }}=1{% for key, value in request.GET.items %}{% if key != query_param_name %}&{{ key }}={{ value }}{% endif %}{% endfor %}" aria-label="Primera">
+                    <span aria-hidden="true">&laquo;</span>
+                </a>
+            </li>
+        {% else %}
+            <li class="page-item disabled">
+                <span class="page-link">&laquo;</span>
+            </li>
+        {% endif %}
+
+        {# Botón Anterior #}
+        {% if page_obj.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?{{ query_param_name }}={{ page_obj.previous_page_number }}{% for key, value in request.GET.items %}{% if key != query_param_name %}&{{ key }}={{ value }}{% endif %}{% endfor %}">Anterior</a>
+            </li>
+        {% else %}
+            <li class="page-item disabled">
+                <span class="page-link">Anterior</span>
+            </li>
+        {% endif %}
+
+        {# Números de Página (Lógica para mostrar un rango) #}
+        {% for i in page_obj.paginator.page_range %}
+            {% if page_obj.number == i %}
+                <li class="page-item active" aria-current="page"><span class="page-link">{{ i }}</span></li>
+            {% elif i > page_obj.number|add:'-3' and i < page_obj.number|add:'3' %}
+                <li class="page-item"><a class="page-link" href="?{{ query_param_name }}={{ i }}{% for key, value in request.GET.items %}{% if key != query_param_name %}&{{ key }}={{ value }}{% endif %}{% endfor %}">{{ i }}</a></li>
+            {% endif %}
+        {% endfor %}
+
+        {# Botón Siguiente #}
+        {% if page_obj.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?{{ query_param_name }}={{ page_obj.next_page_number }}{% for key, value in request.GET.items %}{% if key != query_param_name %}&{{ key }}={{ value }}{% endif %}{% endfor %}">Siguiente</a>
+            </li>
+        {% else %}
+            <li class="page-item disabled">
+                <span class="page-link">Siguiente</span>
+            </li>
+        {% endif %}
+
+        {# Botón Última Página #}
+        {% if page_obj.number < page_obj.paginator.num_pages %}
+            <li class="page-item">
+                <a class="page-link" href="?{{ query_param_name }}={{ page_obj.paginator.num_pages }}{% for key, value in request.GET.items %}{% if key != query_param_name %}&{{ key }}={{ value }}{% endif %}{% endfor %}" aria-label="Última">
+                    <span aria-hidden="true">&raquo;</span>
+                </a>
+            </li>
+        {% else %}
+            <li class="page-item disabled">
+                <span class="page-link">&raquo;</span>
+            </li>
+        {% endif %}
+    </ul>
+</nav>
+{% endif %}

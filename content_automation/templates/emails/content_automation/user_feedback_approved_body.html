@@ -1,0 +1,12 @@
+{% extends "emails/base_email.html" %}
+
+{% block title %}Solicitud Aprobada: {{ request_title }}{% endblock title %}
+
+{% block header_subtitle %}Tu solicitud ha sido aprobada{% endblock header_subtitle %}
+
+{% block content %}
+<p style="margin-bottom: 15px;">Hola {{ requester_username }},</p>
+<p style="margin-bottom: 15px;">¡Tenemos buenas noticias! Tu solicitud para la creación del curso "<strong>{{ request_title }}</strong>" ha sido aprobada por nuestro equipo.</p>
+<p style="margin-bottom: 20px;">Ya hemos iniciado el proceso de generación de contenido. Recibirás una nueva notificación tan pronto como el material esté listo y publicado en la plataforma.</p>
+<p style="margin-bottom: 20px;">Gracias por tu contribución a hacer de CampuStudiOnline un lugar mejor para aprender.</p>
+{% endblock content %}

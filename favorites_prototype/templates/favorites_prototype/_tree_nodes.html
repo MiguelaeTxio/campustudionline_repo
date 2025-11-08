@@ -1,0 +1,29 @@
+{# /home/MiguelAeTxio/CampuStudiOnline/favorites_prototype/templates/favorites_prototype/_tree_nodes.html #}
+<ul>
+    {% for folder in nodes %}
+    <li id="folder-{{ folder.id }}">
+        <span id="folder-display-{{ folder.id }}">
+             <a href="{% url 'favorites_prototype:folder_detail' folder.id %}">{{ folder.name }}</a>
+        </span>
+       
+        <button class="btn btn-sm btn-outline-primary" 
+                hx-get="{% url 'favorites_prototype:rename_form' folder.id %}"
+                hx-target="#folder-display-{{ folder.id }}"
+                hx-swap="innerHTML">
+            Renombrar
+        </button>
+        
+        <button class="btn btn-sm btn-outline-danger"
+                hx-delete="{% url 'favorites_prototype:delete_folder' folder.id %}"
+                hx-target="closest li"
+                hx-swap="outerHTML"
+                hx-confirm="¿Estás seguro de que quieres eliminar la carpeta '{{ folder.name }}'?">
+            Eliminar
+        </button>
+    </li>
+    {% empty %}
+    <li>No hay carpetas para mostrar.</li>
+    {% endfor %}
+</ul>
+
+

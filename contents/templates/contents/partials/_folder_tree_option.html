@@ -1,0 +1,18 @@
+{# /home/MiguelAeTxio/CampuStudiOnline/contents/templates/contents/partials/_folder_tree_option.html #}
+{% for folder in folders %}
+    {# 
+        Lógica corregida: 
+        - La opción siempre se renderiza para permitir la recursión.
+        - Se añade el atributo 'disabled' si la carpeta es la misma que la actual
+          (cuando se mueve un material, esto no aplica; cuando se mueve una carpeta, evita moverla a sí misma).
+        - La variable 'exclude_folder_id' se renombra a 'current_folder_id' para mayor claridad.
+    #}
+    <option value="{{ folder.id }}" {% if folder.id == current_folder_id %}disabled{% endif %}>
+        {% for i in "x"|ljust:folder.get_depth|slice:"1:" %}&nbsp;&nbsp;&nbsp;{% endfor %}
+        {% if folder.depth > 1 %}&#x2514;&nbsp;{% endif %} {# Símbolo de rama └── #}
+        {{ folder.name }}
+    </option>
+    {% if folder.get_children %}
+        {% include "contents/partials/_folder_tree_option.html" with folders=folder.get_children current_folder_id=current_folder_id %}
+    {% endif %}
+{% endfor %}

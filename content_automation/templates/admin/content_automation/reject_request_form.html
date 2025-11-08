@@ -1,0 +1,44 @@
+{% extends "admin/base.html" %}
+{% load i18n %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div id="content-main">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'admin:index' %}">Inicio</a></li>
+            {% for crumb in breadcrumbs %}
+                {% if not forloop.last %}
+                    <li class="breadcrumb-item"><a href="{{ crumb.url }}">{{ crumb.name }}</a></li>
+                {% else %}
+                    <li class="breadcrumb-item active" aria-current="page">{{ crumb.name }}</li>
+                {% endif %}
+            {% endfor %}
+        </ol>
+    </nav>
+
+    <form method="post" novalidate>
+        {% csrf_token %}
+        <fieldset class="module aligned">
+            <h2>{{ title }}</h2>
+            <p>Estás a punto de rechazar la siguiente solicitud de contenido:</p>
+            <ul>
+                <li><strong>Título:</strong> {{ free_request.title }}</li>
+                <li><strong>Solicitante:</strong> {{ free_request.requester.username }}</li>
+                <li><strong>Fecha:</strong> {{ free_request.created_at|date:"d M Y, H:i" }}</li>
+            </ul>
+            <hr>
+            <div class="form-row">
+                {{ form.rejection_reason.errors }}
+                <label for="{{ form.rejection_reason.id_for_label }}">Por favor, selecciona un motivo para el rechazo:</label>
+                {{ form.rejection_reason }}
+            </div>
+        </fieldset>
+        <div class="submit-row">
+            <input type="submit" value="Confirmar Rechazo" class="default" style="background-color: #f44336; border-color: #f44336;">
+            <a href="{% url 'content_automation:task_dashboard' %}" class="button cancel-link">Cancelar</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

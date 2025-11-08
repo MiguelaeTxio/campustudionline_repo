@@ -1,0 +1,62 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sitio en Mantenimiento - CampuStudiOnline</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            text-align: center;
+            padding: 40px 20px;
+            color: #333;
+            background-color: #f4f4f4;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+        .container {
+            max-width: 600px;
+            margin: auto;
+            padding: 30px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            background-color: #fff;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .logo {
+            max-width: 180px; /* Ajusta según el tamaño de tu logo */
+            height: auto;
+            margin-bottom: 25px;
+        }
+        h1 {
+            color: #e74c3c; /* Un rojo suave, puedes cambiarlo */
+            font-size: 2em;
+            margin-bottom: 15px;
+        }
+        p {
+            font-size: 1.1em;
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+        .footer-text {
+            margin-top: 30px;
+            font-size: 0.9em;
+            color: #777;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <img src="{% static 'images/logo_campustudionline.jpg' %}" alt="Logo CampuStudiOnline" class="logo">
+        <h1>¡Sitio en Mantenimiento!</h1>
+        <p>Estamos realizando algunas mejoras importantes en <strong>CampuStudiOnline</strong>.</p>
+        <p>El sitio volverá a estar disponible muy pronto. Agradecemos tu paciencia y comprensión.</p>
+    </div>
+    <p class="footer-text">© {% now "Y" %} CampuStudiOnline. Todos los derechos reservados.</p>
+</body>
+</html>

@@ -1,0 +1,73 @@
+{# /users/templates/users/account_settings.html #}
+{% extends "base.html" %}
+{% load static i18n %}
+
+{% block title %}{{ titulo_pagina|default:_("Configuración de la Cuenta") }} - {% trans "CampuStudiOnline" %}{% endblock title %}
+
+{% block extra_head %}
+    <meta name="robots" content="noindex, nofollow">
+{% endblock extra_head %}
+
+{% block content %}
+<div class="container mt-4 mb-5">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'home' %}">{% trans "Inicio" %}</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'users:account_detail' %}">{% trans "Mi Cuenta" %}</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{{ titulo_pagina }}</li>
+        </ol>
+    </nav>
+
+    <h1 class="mb-4">{{ titulo_pagina }}</h1>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags|default:'info' }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h2 class="card-title h5 mb-0">{% trans "Datos de la Cuenta" %}</h2>
+                </div>
+                <div class="card-body">
+                    <form method="post" novalidate>
+                        {% csrf_token %}
+                        {% for hidden_field in form_usuario.hidden_fields %}
+                            {{ hidden_field }}
+                        {% endfor %}
+                        {% for field in form_usuario.visible_fields %}
+                            <div class="mb-3">
+                                <label for="{{ field.id_for_label }}" class="form-label">
+                                    {{ field.label }}
+                                    {% if field.field.required %}
+                                        <span class="text-danger">*</span>
+                                    {% endif %}
+                                </label>
+                                {{ field }}
+                                {% if field.help_text %}
+                                    <small class="form-text text-muted d-block mt-1">{{ field.help_text|safe }}</small>
+                                {% endif %}
+                                {% for error in field.errors %}
+                                    <div class="invalid-feedback d-block fw-bold">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                        {% endfor %}
+                        <hr class="my-4">
+                        <div class="d-flex justify-content-end">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-save me-1"></i> {% trans "Guardar Cambios" %}
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

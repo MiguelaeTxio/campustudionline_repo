@@ -1,0 +1,51 @@
+{# /contents/templates/admin/contents/lotedetrabajo/import_form.html #}
+{# ATENCIÓN!!! La aplicación de usuarios se llama 'users' pero el Namespace a usar es 'usuarios' #}
+
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block content_title %}
+    <h1>{% trans 'Importar Checklist para Nuevo Lote de Trabajo' %}</h1>
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div>
+            {% if form.errors %}
+                <p class="errornote">
+                {% if form.errors.items|length == 1 %}{% trans "Por favor, corrige el error debajo." %}{% else %}{% trans "Por favor, corrige los errores debajo." %}{% endif %}
+                </p>
+                {{ form.non_field_errors }}
+            {% endif %}
+
+            <fieldset class="module aligned">
+                <h2>{% trans 'Instrucciones' %}</h2>
+                <div class="form-row">
+                    <p>{% trans "Sube un archivo .txt que siga la estructura del prompt de generación de checklists. El sistema leerá el grado, el área de conocimiento y el listado de asignaturas para crear un nuevo Lote de Trabajo con todas sus tareas correspondientes." %}</p>
+                    <p><strong>{% trans 'Importante:' %}</strong> {% trans "Asegúrate de que el 'Área de Conocimiento' especificada en el archivo ya existe en la base de datos." %}</p>
+                </div>
+            </fieldset>
+
+            <fieldset class="module aligned">
+                <h2>{% trans 'Opciones de Importación' %}</h2>
+                <div class="form-row">
+                    {{ form.checklist_file.errors }}
+                    <label for="{{ form.checklist_file.id_for_label }}" class="required">
+                        {{ form.checklist_file.label }}:
+                    </label>
+                    {{ form.checklist_file }}
+                    {% if form.checklist_file.help_text %}
+                        <div class="help">{{ form.checklist_file.help_text|safe }}</div>
+                    {% endif %}
+                </div>
+            </fieldset>
+            
+            <div class="submit-row">
+                <input type="submit" value="{% trans 'Crear Lote de Trabajo' %}" class="default">
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}

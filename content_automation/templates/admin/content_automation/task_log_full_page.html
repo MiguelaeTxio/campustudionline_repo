@@ -1,0 +1,100 @@
+{# /home/MiguelAeTxio/CampuStudiOnline/content_automation/templates/admin/content_automation/task_log_full_page.html #}
+{# El namespace de la app es 'content_automation' #}
+
+{% extends "admin/base_site.html" %}
+{% load i18n %}
+
+{% block title %}Log Detallado: {% if task.subject %}{{ task.subject.name }}{% else %}{{ task.course_title }}{% endif %}{% endblock %}
+
+{% block extrastyle %}{{ block.super }}
+<style>
+    #content-main {
+        font-family: monospace;
+        font-size: 14px;
+        color: #ccc;
+        background-color: #1d1f21;
+        padding: 20px;
+        border-radius: 4px;
+    }
+    #content-main h2 {
+        color: #fff;
+    }
+    #content-main hr {
+        border-color: #495057;
+        margin-top: 20px;
+        margin-bottom: 20px;
+    }
+    .log-entry {
+        border-bottom: 1px solid #373b41;
+        padding-bottom: 15px;
+        margin-bottom: 15px;
+    }
+    .log-entry:last-child {
+        border-bottom: none;
+        margin-bottom: 0;
+    }
+    .log-entry strong {
+        color: #81a2be; /* Color de acento para etiquetas */
+    }
+    .log-payload {
+        white-space: pre-wrap;
+        word-wrap: break-word;
+        background: #282a2e;
+        padding: 10px;
+        border-radius: 3px;
+        border: 1px solid #444;
+        color: #c5c8c6;
+        margin-top: 10px;
+    }
+    .level-ERROR {
+        color: #cc6666;
+        font-weight: bold;
+    }
+    .level-INFO {
+        color: #b5bd68;
+    }
+    .level-WARNING {
+        color: #f0c674;
+    }
+</style>
+{% endblock %}
+
+
+{% block content_title %}
+<h1>Log Detallado de Tarea</h1>
+{% endblock %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+<a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
+&rsaquo; <a href="{% url 'content_automation:task_dashboard' %}">Dashboard de Contenido Intelectual</a>
+&rsaquo; Log: {% if task.subject %}{{ task.subject.name }}{% else %}{{ task.course_title }}{% endif %}
+</div>
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+    <h2>Tarea: {{ task }}</h2>
+    <p><strong>ID:</strong> {{ task.id }}</p>
+    <p><strong>Estado Actual:</strong> {{ task.get_status_display }}</p>
+    <hr>
+    
+    {% for entry in task_log_reversed %}
+        <div class="log-entry">
+            <div><strong>Timestamp (UTC):</strong> {{ entry.timestamp }}</div>
+            <div><strong>Nivel:</strong> 
+                <span class="level-{{ entry.level }}">{{ entry.level }}</span>
+            </div>
+            <div style="margin-top: 5px;"><strong>Mensaje:</strong> <span style="white-space: pre-wrap; color: #fff;">{{ entry.message }}</span></div>
+            {% if 'payload' in entry %}
+            <div>
+                <strong>Payload:</strong>
+                <pre class="log-payload">{{ entry.payload }}</pre>
+            </div>
+            {% endif %}
+        </div>
+    {% empty %}
+        <p>No se encontraron eventos de log para esta tarea.</p>
+    {% endfor %}
+</div>
+{% endblock %}

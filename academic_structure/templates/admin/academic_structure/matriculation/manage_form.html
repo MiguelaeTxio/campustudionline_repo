@@ -1,0 +1,53 @@
+{# /home/MiguelAeTxio/CampuStudiOnline/academic_structure/templates/admin/academic_structure/matriculation/manage_form.html #}
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block extrastyle %}
+    {{ block.super }}
+    {{ form.media.css }}
+    <style>
+        .submit-row {
+            padding: 10px 15px;
+            background: #f8f8f8;
+            border-top: 1px solid #ddd;
+            border-bottom: 1px solid #ddd;
+            margin-top: 20px;
+        }
+        .form-row {
+             padding: 10px 15px;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+    <form method="post">
+        {% csrf_token %}
+        <div>
+            <fieldset class="module aligned">
+                <h2>{{ title }}</h2>
+                <div class="form-row">
+                    <p>
+                        Use the selector below to add or remove students from the subject.
+                        You can use the search field to find specific students and the arrows to move them between the "Available students" and "Chosen students" lists.
+                    </p>
+                    {{ form.enrolled_students.label_tag }}
+                    {{ form.enrolled_students }}
+                    {% if form.enrolled_students.errors %}
+                        <div class="errornote">{{ form.enrolled_students.errors }}</div>
+                    {% endif %}
+                </div>
+            </fieldset>
+
+            <div class="submit-row">
+                <input type="submit" value="Save changes" class="default">
+                <a href="{% url 'admin:academic_structure_matriculation_list' %}" class="button cancel-link">Back to subject list</a>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script src="{% url 'javascript-catalog' %}"></script>
+{{ form.media.js }}
+
+{% endblock %}

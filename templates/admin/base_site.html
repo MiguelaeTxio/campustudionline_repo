@@ -1,0 +1,39 @@
+{# /home/MiguelAeTxio/CampuStudiOnline/templates/admin/base_site.html #}
+{% extends "admin/base.html" %}
+{% load i18n static %}
+
+{% block branding %}
+<div id="site-name">
+    <a href="{% url 'admin:index' %}">Administración de CampuStudiOnline</a>
+</div>
+{% endblock %}
+
+{% block userlinks %}
+<div id="user-tools">
+    <a href="/">VER EL SITIO</a> /
+    {% if user.has_usable_password %}
+        <a href="{% url 'admin:password_change' %}">CAMBIAR CONTRASEÑA</a> /
+    {% endif %}
+    <form id="logout-form" method="post" action="{% url 'admin:logout' %}" style="display: inline;">
+        {% csrf_token %}
+        <button type="submit" style="background: none; border: none; color: inherit; cursor: pointer; text-decoration: none; padding: 0; font: inherit;">CERRAR SESIÓN</button>
+    </form>
+</div>
+{% endblock %}
+
+{# [MODIFIED] Redundant button removed and the main one renamed for clarity. #}
+{% block nav-global %}
+<div style="padding: 10px 40px; border-bottom: 1px solid #333; background: #2e2e2e; color: #ccc;">
+    <a href="{% url 'content_automation_admin:task_dashboard' %}" class="button">Centro de Control de Contenidos</a>
+</div>
+{% endblock %}
+
+{% block footer %}{{ block.super }}
+<script src="{% static 'vendor/htmx/htmx.min.js' %}"></script>
+<script src="{% static 'vendor/hyperscript/hyperscript.min.js' %}"></script>
+<script>
+    document.body.addEventListener('htmx:configRequest', (event) => {
+        event.detail.headers['X-CSRFToken'] = '{{ csrf_token }}';
+    })
+</script>
+{% endblock %}

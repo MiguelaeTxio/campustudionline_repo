@@ -1,0 +1,7 @@
+{# /home/MiguelAeTxio/CampuStudiOnline/favorites_prototype/templates/favorites_prototype/_rename_form.html #}
+<form hx-post="{% url 'favorites_prototype:rename_folder' folder.id %}" hx-target="closest li > span" hx-swap="innerHTML">
+    <input type="text" name="new_folder_name" value="{{ folder.name }}" class="form-control form-control-sm d-inline-block w-auto">
+    <button type="submit" class="btn btn-sm btn-success">Guardar</button>
+</form>
+
+

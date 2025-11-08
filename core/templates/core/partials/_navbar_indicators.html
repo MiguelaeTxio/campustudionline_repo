@@ -1,0 +1,16 @@
+{# /home/MiguelAeTxio/CampuStudiOnline/core/templates/core/partials/_navbar_indicators.html #}
+{% if assessments_to_take_count > 0 %}
+    <span class="badge bg-warning text-dark rounded-pill badge-notification" title="{{ assessments_to_take_count }} evaluaciones por realizar">{{ assessments_to_take_count }}</span>
+{% endif %}
+{% if assessments_with_results_count > 0 %}
+    <span class="badge bg-success text-white rounded-pill badge-notification" title="{{ assessments_with_results_count }} resultados por ver">{{ assessments_with_results_count }}</span>
+{% endif %}
+{% if assessments_in_progress_count > 0 %}
+    <span class="badge bg-info text-dark rounded-pill badge-notification" title="{{ assessments_in_progress_count }} evaluaciones en progreso">{{ assessments_in_progress_count }}</span>
+{% endif %}
+{% if assessments_in_queue_count > 0 %}
+    <span class="badge bg-secondary text-white rounded-pill badge-notification" title="{{ assessments_in_queue_count }} evaluaciones en cola">{{ assessments_in_queue_count }}</span>
+{% endif %}
+{% if assessments_failed_count > 0 %}
+    <span class="badge bg-danger text-white rounded-pill badge-notification" title="{{ assessments_failed_count }} evaluaciones con error">{{ assessments_failed_count }}</span>
+{% endif %}

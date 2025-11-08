@@ -1,0 +1,18 @@
+{# /users/templates/users/emails/account_reactivation_body.txt #}
+Hola,
+
+Hemos recibido una solicitud para crear una nueva cuenta en CampuStudiOnline utilizando esta dirección de correo electrónico.
+
+Hemos detectado que ya existe una cuenta desactivada asociada a este correo.
+
+Si has sido tú quien ha iniciado este proceso y deseas reactivar tu cuenta, por favor, haz clic en el siguiente enlace:
+{{ protocol }}://{{ domain }}{% url 'users:reactivate_account' uidb64=uid token=token %}
+
+Si no puedes hacer clic en el enlace, por favor, cópialo y pégalo en la barra de direcciones de tu navegador.
+
+Importante: Por motivos de seguridad, este enlace de reactivación caducará en 10 minutos.
+
+Si no has solicitado esto, puedes ignorar este mensaje de forma segura. Nadie tendrá acceso a tu cuenta.
+
+Saludos,
+El equipo de CampuStudiOnline.

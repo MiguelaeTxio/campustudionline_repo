@@ -1,0 +1,143 @@
+{# /home/MiguelAeTxio/CampuStudiOnline/search/templates/search/category_detail.html #}
+{% extends request.htmx|yesno:"_blank.html,base.html" %}
+{% load static %}
+{% load assessment_tags %}
+
+{% block title %}Explorando {{ current_category.name }} - {{ block.super }}{% endblock title %}
+
+{% block content %}
+<div class="container mt-4">
+
+    {% if not request.htmx %}
+    {% if breadcrumbs|length > 1 %}
+    <nav aria-label="breadcrumbs">
+        <ol class="breadcrumb">
+            {% for item in breadcrumbs %}
+                {% if forloop.last %}
+                    <li class="breadcrumb-item active" aria-current="page">{{ item.name }}</li>
+                {% else %}
+                    <li class="breadcrumb-item"><a href="{{ item.url }}">{{ item.name }}</a></li>
+                {% endif %}
+            {% endfor %}
+        </ol>
+    </nav>
+    {% endif %}
+
+    <div class="d-flex align-items-center mb-4">
+        <h1 class="display-5 fw-bold" id="intellectual-detail-title">Explorando: {{ current_category.name }}</h1>
+        <div class="ms-auto d-flex align-items-center">
+            <button id="start-intellectual-directory-tour-btn" class="btn btn-outline-info btn-sm me-2">
+                <i class="fas fa-route me-1"></i> Visita Guiada
+            </button>
+            <a href="{% url 'content_automation:request_free_content' %}" class="btn btn-success btn-sm">
+                <i class="fas fa-plus-circle me-1"></i> Solicitar Contenido
+            </a>
+        </div>
+    </div>
+
+    <form method="get" action="" class="mb-4">
+        <div class="input-group">
+            <input type="text" name="q" class="form-control" placeholder="Filtrar por nombre o título..." value="{{ search_query }}">
+            <button class="btn btn-primary" type="submit" aria-label="Buscar">
+                <i class="fas fa-search"></i> Buscar
+            </button>
+            {% if search_query %}
+            <a href="{{ request.path }}" class="btn btn-outline-secondary" aria-label="Limpiar búsqueda">
+                <i class="fas fa-times"></i> Limpiar
+            </a>
+            {% endif %}
+        </div>
+    </form>
+    {% endif %}{# Cierre de if not request.htmx #}
+
+    <div class="row">
+        <div class="col-12">
+            {% if not request.htmx %}
+            <h2 class="h4 mb-3">{{ child_model_name }} en esta categoría:</h2>
+            {% endif %}
+
+            <div id="category-detail-list-container" hx-get="{{ request.get_full_path }}" hx-trigger="every 15s" hx-swap="innerHTML">
+                {% if child_items_with_urls or content_list %}
+                    <div class="list-group">
+                        {% for item in child_items_with_urls %}
+                            <a href="{{ item.url }}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                                <div>
+                                    {{ item.obj.name }}
+                                    {% render_assessment_indicators item.obj %}
+                                </div>
+                                <span class="badge bg-primary rounded-pill"><i class="fas fa-chevron-right"></i></span>
+                            </a>
+                        {% endfor %}
+
+                        {% for content in content_list %}
+                            <div class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                                <a href="{{ content.get_absolute_url }}" class="text-decoration-none text-dark flex-grow-1 content-link-preloader">
+                                    <h5 class="mb-1">
+                                        {{ content.title }}
+                                        {% render_assessment_indicators content %}
+                                    </h5>
+                                    <p class="mb-1 text-muted">{{ content.short_description|truncatewords:25 }}</p>
+                                    <small>Creado por {{ content.creator.username }} - Actualizado: {{ content.updated_at|date:"d M Y" }}</small>
+                                </a>
+                                {% if user.is_authenticated %}
+                                <div class="ms-3">
+                                    <button type="button" 
+                                            class="btn btn-sm favorite-toggle-btn {% if content.is_favorite %}btn-warning{% else %}btn-outline-warning{% endif %}"
+                                            data-url="{% url 'contents:toggle_favorite_htmx' pk=content.pk %}"
+                                            title="{% if content.is_favorite %}Quitar de Favoritos{% else %}Añadir a Favoritos{% endif %}">
+                                        <i class="{% if content.is_favorite %}fas fa-star{% else %}far fa-star{% endif %}"></i>
+                                    </button>
+                                </div>
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="alert alert-info" role="alert">
+                        {% if search_query %}
+                            No se encontraron resultados para la búsqueda "<strong>{{ search_query }}</strong>".
+                        {% else %}
+                            Esta categoría aún no tiene elementos asociados.
+                        {% endif %}
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    {% if not request.htmx %}
+    <div class="mt-4">
+        {% with prev_level=breadcrumbs|slice:"-2:-1"|first %}
+            {% if prev_level %}
+                <a href="{{ prev_level.url }}" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left"></i> Volver a {{ prev_level.name }}
+                </a>
+            {% else %}
+                <a href="{% url 'search:search_home' %}" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left"></i> Volver al Directorio
+                </a>
+            {% endif %}
+        {% endwith %}
+    </div>
+    {% endif %}{# Cierre de if not request.htmx #}
+</div>
+{% endblock content %}
+
+{% block extra_js %}
+{{ block.super }}
+{% if show_tour and not request.htmx %}
+    <script src="{% static 'js/tours/intellectual_directory_tour.js' %}"></script>
+{% endif %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const preloaderLinks = document.querySelectorAll('.content-link-preloader');
+        preloaderLinks.forEach(function(link) {
+            link.addEventListener('click', function() {
+                if (window.showActionPreloader) {
+                    window.showActionPreloader();
+                }
+            });
+        });
+    });
+</script>
+{% endblock extra_js %}

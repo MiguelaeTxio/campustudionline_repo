@@ -1,0 +1,178 @@
+{# /home/MiguelAeTxio/CampuStudiOnline/messaging/templates/messaging/conversation_list.html #}
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Mis Conversaciones Privadas - {{ block.super }}{% endblock title %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="mb-0" id="tour-pm-title">Mis Conversaciones Privadas</h1>
+        {% if show_tour %}
+            <button id="start-private-messaging-tour-btn" class="btn btn-outline-info btn-sm">
+                <i class="fas fa-route me-1"></i> Visita Guiada
+            </button>
+        {% endif %}
+    </div>
+
+    <!-- USER SEARCH FORM -->
+    <div class="card mb-4" id="tour-pm-search">
+        <div class="card-body">
+            <h5 class="card-title">Iniciar una nueva conversación</h5>
+            <form method="get" action="" class="input-group">
+                <input type="text" name="q" class="form-control" placeholder="Buscar por nick, nombre o apellidos..." value="{{ request.GET.q }}">
+                <button class="btn btn-primary" type="submit">
+                    <i class="fas fa-search"></i> Buscar
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- SEARCH RESULTS -->
+    {% if search_results is not None %}
+    <div class="mb-4">
+        <h2 class="h4">Resultados de la Búsqueda</h2>
+        {% if search_results %}
+            <div class="list-group">
+                {% for user_found in search_results %}
+                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                        <span>
+                            {{ user_found.username }}
+                            {% if user_found.get_full_name %}
+                                <small class="text-muted">({{ user_found.get_full_name }})</small>
+                            {% endif %}
+                        </span>
+                        <a href="{% url 'messaging:start_chat' username=user_found.username %}" class="btn btn-sm btn-success">
+                            <i class="fas fa-paper-plane me-1"></i> Iniciar Chat
+                        </a>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="alert alert-warning">No se encontraron usuarios que coincidan con tu búsqueda.</div>
+        {% endif %}
+    </div>
+    {% endif %}
+
+
+    <!-- LIST OF EXISTING CONVERSATIONS -->
+    {% if chat_sessions %}
+        <h2 class="h4">Tus Conversaciones</h2>
+        <div class="list-group" id="tour-pm-list">
+            {% for chat_info in chat_sessions %}
+                <a href="{{ chat_info.detail_url }}" class="list-group-item list-group-item-action {% if chat_info.unread_count > 0 %}list-group-item-primary font-weight-bold{% endif %}" id="session-link-{{ chat_info.session_id }}">
+                    <div class="d-flex w-100 justify-content-between align-items-center">
+                        <div class="flex-grow-1 me-3" style="min-width: 0;">
+                            <h5 class="mb-1">
+                                Chat con {{ chat_info.other_user.username }}
+                                {% if chat_info.other_user.get_full_name %}
+                                    <small class="text-muted">({{ chat_info.other_user.get_full_name }})</small>
+                                {% endif %}
+                            </h5>
+                            <p class="mb-1 text-muted preview-container text-truncate" data-encrypted-payload="{{ chat_info.encrypted_payload_json }}" data-sender-id="{{ chat_info.last_message.sender.id }}">
+                                {% if chat_info.last_message and chat_info.last_message.is_deleted %}
+                                    <i class="fas fa-ban me-1"></i><em>Mensaje eliminado</em>
+                                {% elif chat_info.last_message and chat_info.last_message.shared_content %}
+                                    <i class="fas fa-link me-1"></i><em>Contenido compartido</em>
+                                {% elif chat_info.last_message %}
+                                    <span class="preview-text-container">
+                                        {% if chat_info.last_message.sender == request.user %}
+                                            <i class="fas fa-reply me-1"></i>
+                                        {% endif %}
+                                        <em class="preview-text">Cargando...</em>
+                                    </span>
+                                {% else %}
+                                    <em>Sin mensajes aún.</em>
+                                {% endif %}
+                            </p>
+                        </div>
+                        <div class="text-end">
+                            <small class="text-muted d-block text-nowrap">
+                                {{ chat_info.updated_at|date:"d M Y, H:i" }}
+                                {% if chat_info.unread_count > 0 %}
+                                    <span class="badge bg-danger rounded-pill ms-2">{{ chat_info.unread_count }}</span>
+                                {% endif %}
+                            </small>
+                            <form method="post" action="{% url 'messaging:hide_conversation' session_id=chat_info.session_id %}" class="hide-conversation-form d-inline-block mt-2">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-sm btn-outline-danger" title="Ocultar conversación de la lista">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </a>
+            {% endfor %}
+        </div>
+    {% else %}
+        {% if search_results is None %}
+        <div class="alert alert-info" role="alert" id="tour-pm-list">
+            <h4 class="alert-heading">¡Aún no tienes conversaciones privadas!</h4>
+            <p>Utiliza el buscador de arriba para encontrar a otros usuarios e iniciar tu primera conversación.</p>
+        </div>
+        {% endif %}
+    {% endif %}
+
+    <div class="mt-4">
+        <a href="{% url 'portfolio:public_portfolio_detail' username=request.user.username %}" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left"></i> Volver a Mi Portafolio
+        </a>
+    </div>
+</div>
+{% endblock content %}
+
+{% block extra_js %}
+{{ block.super }}
+<script src="{% static 'js/crypto_manager.js' %}"></script>
+<script>
+document.addEventListener('DOMContentLoaded', async function() {
+    // Logic for the hide button
+    document.querySelectorAll('.hide-conversation-form button[type="submit"]').forEach(button => {
+        button.addEventListener('click', function(event) {
+            event.preventDefault();
+            event.stopPropagation();
+            if (confirm('Are you sure you want to hide this conversation?')) {
+                this.closest('form').submit();
+            }
+        });
+    });
+
+    const csrfTokenElement = document.querySelector('[name=csrfmiddlewaretoken]');
+    const csrfToken = csrfTokenElement ? csrfTokenElement.value : null;
+    const cryptoStatus = await window.cryptoManager.initializeCrypto(csrfToken);
+    const currentUserId = "{{ request.user.id }}";
+
+    if (cryptoStatus.success) {
+        document.querySelectorAll('.preview-container').forEach(async container => {
+            const previewElement = container.querySelector('.preview-text');
+            if (!previewElement) return;
+
+            const payloadJson = container.dataset.encryptedPayload;
+
+            try {
+                const encryptedPayload = JSON.parse(payloadJson);
+                
+                if (encryptedPayload && Object.keys(encryptedPayload).length > 0) {
+                    const decryptedText = await window.cryptoManager.decrypt(encryptedPayload, currentUserId);
+                    previewElement.textContent = decryptedText.length > 40 ? decryptedText.substring(0, 40) + '...' : decryptedText;
+                } else if (!container.querySelector('i.fa-ban') && !container.querySelector('i.fa-link')) { 
+                    previewElement.textContent = 'Start the conversation...';
+                }
+            } catch (error) {
+                console.error('Error processing message preview:', error);
+                previewElement.textContent = '>> Message not available to you <<';
+            }
+        });
+    } else {
+        document.querySelectorAll('.preview-text').forEach(el => {
+            if (el) el.textContent = '[Page security error]';
+        });
+    }
+});
+</script>
+
+{% if show_tour %}
+    <script src="{% static 'js/tours/private_messaging_tour.js' %}"></script>
+{% endif %}
+
+{% endblock extra_js %}

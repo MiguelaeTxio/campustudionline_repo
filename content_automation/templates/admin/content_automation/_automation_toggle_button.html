@@ -1,0 +1,22 @@
+<form id="automation-toggle-form" style="display: inline;">
+    {% csrf_token %}
+    {% if settings.is_running %}
+        <button type="button" 
+                class="button" 
+                style="background-color: #f44336;"
+                hx-post="{% url 'content_automation:toggle_automation_status' %}"
+                hx-target="#toggle-button-container"
+                hx-swap="innerHTML">
+            Detener Proceso de Automatización
+        </button>
+    {% else %}
+        <button type="button" 
+                class="button" 
+                style="background-color: #4CAF50;"
+                hx-post="{% url 'content_automation:toggle_automation_status' %}"
+                hx-target="#toggle-button-container"
+                hx-swap="innerHTML">
+            Iniciar Proceso de Automatización
+        </button>
+    {% endif %}
+</form>

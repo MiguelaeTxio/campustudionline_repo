@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block title %}Confirmar Eliminación{% endblock title %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card border-danger shadow-sm">
+            <div class="card-header bg-danger text-white">
+                <h2 class="card-title mb-0">Confirmar Eliminación de Material</h2>
+            </div>
+            <div class="card-body">
+                <p class="lead">¿Estás seguro de que quieres eliminar el material titulado "<strong>{{ content_detail.title }}</strong>"?</p>
+                
+                {% if content_detail.html_content %}
+                    <p><strong>Extracto del contenido:</strong></p>
+                    <blockquote class="blockquote bg-light p-3 rounded">
+                        <p class="mb-0 fst-italic">"{{ content_detail.html_content|striptags|truncatewords:30 }}..."</p>
+                    </blockquote>
+                {% endif %}
+
+                <p class="text-danger mt-3"><strong><i class="fas fa-exclamation-triangle"></i> ¡Atención! Esta acción no se puede deshacer.</strong></p>
+
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                        <a href="{% url 'contents:content_detail' pk=content_detail.pk %}" class="btn btn-secondary">
+                            <i class="fas fa-times-circle"></i> No, cancelar y volver
+                        </a>
+                        <button type="submit" class="btn btn-danger">
+                            <i class="fas fa-trash-alt"></i> Sí, eliminar permanentemente
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

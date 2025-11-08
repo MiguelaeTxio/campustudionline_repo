@@ -1,0 +1,12 @@
+{# /home/MiguelAeTxio/CampuStudiOnline/academic_structure/templates/admin/academic_structure/university/changelist.html #}
+{% extends "admin/change_list.html" %}
+{% load i18n %}
+
+{% block object-tools-items %}
+  <li>
+    <a href="{% url 'content_automation:task_dashboard' %}" class="addlink" style="background-color: #4CAF50; border-color: #388E3C;">
+      Go to Content Automation Dashboard
+    </a>
+  </li>
+  {{ block.super }}
+{% endblock %}

@@ -1,0 +1,100 @@
+{# /home/MiguelAeTxio/CampuStudiOnline/content_automation/templates/admin/content_automation/create_academic_task.html #}
+{# El namespace de la app es 'content_automation' #}
+
+{% extends "admin/base_site.html" %}
+{% load static i18n %}
+
+{% block title %}{{ title }}{% endblock %}
+{% block extrastyle %}
+    {{ block.super }}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/explorer.css' %}">
+{% endblock %}
+
+{# [CORRECCIÓN] Se mueve el título al bloque correcto para evitar duplicados. #}
+{% block content_title %}
+    <h1>{{ title }}</h1>
+{% endblock %}
+
+{# [CORRECCIÓN] Se usa el bloque y la estructura de breadcrumbs nativa del admin. #}
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+    <a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
+    {% for crumb in breadcrumbs %}
+        &rsaquo; 
+        {% if not forloop.last and crumb.url %}
+            <a href="{{ crumb.url }}">{{ crumb.name }}</a>
+        {% else %}
+            {{ crumb.name }}
+        {% endif %}
+    {% endfor %}
+</div>
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+    
+    {% if parent_url %}
+    <p><a href="{{ parent_url }}">&larr; Volver al nivel anterior</a></p>
+    {% endif %}
+
+    <div class="module" id="changelist">
+        {% if item_type == 'subject' %}
+            {% for year, subjects in subjects_grouped_by_year.items %}
+                <h2>Año {{ year }}</h2>
+                <div class="results">
+                    <table id="result_list_year_{{ year }}">
+                        <thead>
+                            <tr>
+                                <th class="column-name">Asignatura</th>
+                                <th class="column-actions">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in subjects %}
+                            <tr class="{% cycle 'row1' 'row2' %}">
+                                <td>{{ item.name }}{% if item.semester %} (Sem. {{ item.semester }}){% endif %}</td>
+                                <td style="display: flex; gap: 5px;">
+                                    <a href="{% url 'admin:academic_structure_subject_change' item.pk %}" class="button" target="_blank" style="background-color: #417690;">Previsualizar Guía</a>
+                                    
+                                    {# [GUARDIÁN LÓGICO] Se usa el nuevo flag 'is_locked' y se mejora el mensaje. #}
+                                    {% if item.is_locked %}
+                                        <span class="button" disabled style="background-color: #6c757d; cursor: not-allowed;">Contenido Existente</span>
+                                    {% else %}
+                                        <form action="{% url 'content_automation:create_academic_task' %}" method="post" style="margin:0;">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="subject_id" value="{{ item.pk }}">
+                                            <button type="submit" class="button">Generar Contenido</button>
+                                        </form>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="results">
+                <table id="result_list">
+                    <tbody>
+                        {% for item in page_obj %}
+                        <tr class="{% cycle 'row1' 'row2' %}">
+                            <th class="field-name">
+                                {% if item_type == 'university' %}
+                                    <a href="?university_id={{ item.pk }}">{{ item.name }}</a>
+                                {% elif item_type == 'branch' %}
+                                    <a href="?branch_id={{ item.pk }}">{{ item.name }}</a>
+                                {% elif item_type == 'degree' %}
+                                    <a href="?degree_id={{ item.pk }}">{{ item.name }}</a>
+                                {% endif %}
+                            </th>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% include "includes/pagination_controls.html" with page_obj=page_obj query_param_name="page" %}
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

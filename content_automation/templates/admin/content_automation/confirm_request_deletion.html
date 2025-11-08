@@ -1,0 +1,42 @@
+{% extends "admin/base.html" %}
+{% load i18n %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div id="content-main">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'admin:index' %}">Inicio</a></li>
+            {% for crumb in breadcrumbs %}
+                {% if not forloop.last %}
+                    <li class="breadcrumb-item"><a href="{{ crumb.url }}">{{ crumb.name }}</a></li>
+                {% else %}
+                    <li class="breadcrumb-item active" aria-current="page">{{ crumb.name }}</li>
+                {% endif %}
+            {% endfor %}
+        </ol>
+    </nav>
+
+    <form method="post">
+        {% csrf_token %}
+        <div>
+            <h2>{{ title }}</h2>
+            <p>¿Estás seguro de que deseas eliminar permanentemente la siguiente solicitud de contenido?</p>
+            <fieldset class="module aligned">
+                <ul>
+                    <li><strong>Título:</strong> {{ free_request.title }}</li>
+                    <li><strong>Solicitante:</strong> {{ free_request.requester.username }}</li>
+                    <li><strong>Fecha:</strong> {{ free_request.created_at|date:"d M Y, H:i" }}</li>
+                </ul>
+            </fieldset>
+            <p><strong>Esta acción no se puede deshacer.</strong></p>
+
+            <div class="submit-row">
+                <input type="submit" value="Sí, estoy seguro" class="deletelink">
+                <a href="{% url 'content_automation:task_dashboard' %}" class="button cancel-link">No, llévame de vuelta</a>
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}

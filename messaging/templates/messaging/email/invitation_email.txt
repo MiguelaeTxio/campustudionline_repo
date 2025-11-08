@@ -1,0 +1,14 @@
+{# /home/MiguelAeTxio/CampuStudiOnline/messaging/templates/messaging/email/invitation_email.txt #}
+Hola {{ recipient_name }},
+
+¡Buenas noticias! El usuario {{ sender_name }} quiere iniciar una conversación contigo en la plataforma CampuStudiOnline.
+
+Para poder leer y enviar mensajes seguros, primero necesitas activar tu cuenta para la mensajería cifrada. Es un proceso rápido que solo tienes que hacer una vez.
+
+Puedes hacerlo en cualquier momento iniciando sesión y visitando la sección de "Mis Conversaciones".
+
+Enlace directo a Mensajes: {{ chat_url }}
+
+¡Te esperamos!
+
+El equipo de CampuStudiOnline.

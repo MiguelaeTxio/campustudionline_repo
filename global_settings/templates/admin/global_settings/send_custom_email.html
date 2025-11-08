@@ -1,0 +1,192 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block extrastyle %}{{ block.super }}
+<style>
+    /* Styles for the form */
+    .aligned .form-row { margin-bottom: 15px; padding: 5px; }
+    .aligned label { font-weight: bold; display: block; margin-bottom: 3px; width: auto; float: none; } /* Label adjustment */
+    .aligned .help { font-size: 0.9em; color: #777; margin-top: 2px; clear: both;}
+    .aligned .checkboxselectmultiple ul { list-style-type: none; padding-left: 0; margin:0; }
+    .aligned .checkboxselectmultiple li { margin-bottom: 1px; }
+    .aligned .checkboxselectmultiple label { margin-left: 5px; font-weight: normal; }
+    .aligned input[type="radio"], .aligned input[type="checkbox"] { vertical-align: middle; margin-right: 3px;}
+    .aligned .form-row > div { padding-left: 0; } /* Remove extra admin padding if not using floating label */
+
+    /* Class to hide conditional fields */
+    .conditional-hidden { display: none !important; } /* Use !important to ensure it's hidden initially */
+    .conditional-visible { display: block !important; }
+</style>
+{% endblock %}
+
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+<a href="{% url 'admin:index' %}">{% translate 'Home' %}</a>
+› <a href="{% url 'admin:app_list' app_label=opts.app_label %}">{{ opts.app_config.verbose_name }}</a>
+› {{ title }}
+</div>
+{% endblock %}
+
+{% block content_title %}<h1>{{ title }}</h1>{% endblock %}
+
+{% block content %}
+<div id="content-main">
+    {% if messages %}
+    <ul class="messagelist">
+        {% for message in messages %}
+        <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+
+    <form method="post" novalidate>{% csrf_token %}
+        <fieldset class="module aligned">
+            
+            <div class="form-row field-user_selection_type">
+                <div>
+                    {{ form.user_selection_type.errors }}
+                    <label for="{{ form.user_selection_type.id_for_label }}">{{ form.user_selection_type.label }}:</label>
+                    {{ form.user_selection_type }}
+                    {% if form.user_selection_type.help_text %}<div class="help">{{ form.user_selection_type.help_text|safe }}</div>{% endif %}
+                </div>
+            </div>
+
+            <div class="form-row field-selected_users conditional-hidden" id="row_selected_users">
+                <div>
+                    {{ form.selected_users.errors }}
+                    <label for="{{ form.selected_users.id_for_label }}">{{ form.selected_users.label }}:</label>
+                    {{ form.selected_users }}
+                    {% if form.selected_users.help_text %}<div class="help">{{ form.selected_users.help_text|safe }}</div>{% endif %}
+                </div>
+            </div>
+            
+            <div class="form-row field-email_template">
+                <div>
+                    {{ form.email_template.errors }}
+                    <label for="{{ form.email_template.id_for_label }}">{{ form.email_template.label }}:</label>
+                    {{ form.email_template }}
+                    {% if form.email_template.help_text %}<div class="help">{{ form.email_template.help_text|safe }}</div>{% endif %}
+                </div>
+            </div>
+
+            <div class="form-row field-asunto conditional-hidden" id="row_subject">
+                <div>
+                    {{ form.asunto.errors }}
+                    <label for="{{ form.asunto.id_for_label }}">{{ form.asunto.label }}:</label>
+                    {{ form.asunto }}
+                    {% if form.asunto.help_text %}<div class="help">{{ form.asunto.help_text|safe }}</div>{% endif %}
+                </div>
+            </div>
+
+            <div class="form-row field-fecha_hora_mantenimiento conditional-hidden" id="row_maintenance_datetime">
+                <div>
+                    {{ form.fecha_hora_mantenimiento.errors }}
+                    <label for="{{ form.fecha_hora_mantenimiento.id_for_label }}">{{ form.fecha_hora_mantenimiento.label }}:</label>
+                    {{ form.fecha_hora_mantenimiento }}
+                    {% if form.fecha_hora_mantenimiento.help_text %}<div class="help">{{ form.fecha_hora_mantenimiento.help_text|safe }}</div>{% endif %}
+                </div>
+            </div>
+            <div class="form-row field-duracion_mantenimiento conditional-hidden" id="row_maintenance_duration">
+                <div>
+                    {{ form.duracion_mantenimiento.errors }}
+                    <label for="{{ form.duracion_mantenimiento.id_for_label }}">{{ form.duracion_mantenimiento.label }}:</label>
+                    {{ form.duracion_mantenimiento }}
+                    {% if form.duracion_mantenimiento.help_text %}<div class="help">{{ form.duracion_mantenimiento.help_text|safe }}</div>{% endif %}
+                </div>
+            </div>
+            <div class="form-row field-mensaje_adicional_mantenimiento conditional-hidden" id="row_maintenance_additional_message">
+                <div>
+                    {{ form.mensaje_adicional_mantenimiento.errors }}
+                    <label for="{{ form.mensaje_adicional_mantenimiento.id_for_label }}">{{ form.mensaje_adicional_mantenimiento.label }}:</label>
+                    {{ form.mensaje_adicional_mantenimiento }}
+                    {% if form.mensaje_adicional_mantenimiento.help_text %}<div class="help">{{ form.mensaje_adicional_mantenimiento.help_text|safe }}</div>{% endif %}
+                </div>
+            </div>
+
+            <div class="form-row field-cuerpo_mensaje_general conditional-hidden" id="row_general_message_body">
+                <div>
+                    {{ form.cuerpo_mensaje_general.errors }}
+                    <label for="{{ form.cuerpo_mensaje_general.id_for_label }}">{{ form.cuerpo_mensaje_general.label }}:</label>
+                    {{ form.cuerpo_mensaje_general }}
+                    {% if form.cuerpo_mensaje_general.help_text %}<div class="help">{{ form.cuerpo_mensaje_general.help_text|safe }}</div>{% endif %}
+                </div>
+            </div>
+
+        </fieldset>
+        <div class="submit-row">
+            <input type="submit" value="{% translate 'Send Emails' %}" class="default">
+        </div>
+    </form>
+</div>
+
+<script type="text/javascript">
+document.addEventListener('DOMContentLoaded', function() {
+    console.log("Admin Email Form Script Loaded");
+
+    const form = document.querySelector('#content-main form');
+    if (!form) {
+        console.error("Form not found for email script.");
+        return;
+    }
+
+    // Control elements
+    const userSelectionTypeRadios = form.querySelectorAll('input[name="user_selection_type"]');
+    const emailTemplateSelect = form.querySelector('select[name="email_template"]');
+
+    // Conditional form rows (the divs wrapping the fields)
+    const selectedUsersRow = document.getElementById('row_selected_users');
+    const subjectRow = document.getElementById('row_subject');
+    const maintenanceDateTimeRow = document.getElementById('row_maintenance_datetime');
+    const maintenanceDurationRow = document.getElementById('row_maintenance_duration');
+    const maintenanceAdditionalMessageRow = document.getElementById('row_maintenance_additional_message');
+    const generalMessageBodyRow = document.getElementById('row_general_message_body');
+
+    function setRowVisibility(rowElement, show) {
+        if (rowElement) {
+            if (show) {
+                rowElement.classList.remove('conditional-hidden');
+                rowElement.classList.add('conditional-visible');
+            } else {
+                rowElement.classList.remove('conditional-visible');
+                rowElement.classList.add('conditional-hidden');
+            }
+        }
+    }
+
+    function toggleConditionalFields() {
+        const selectedUserTypeRadio = form.querySelector('input[name="user_selection_type"]:checked');
+        const selectedUserType = selectedUserTypeRadio ? selectedUserTypeRadio.value : null;
+        
+        const selectedTemplate = emailTemplateSelect ? emailTemplateSelect.value : null;
+
+        console.log("User Type: " + selectedUserType + ", Template: " + selectedTemplate);
+
+        // Selected users field
+        setRowVisibility(selectedUsersRow, selectedUserType === 'selected');
+
+        // Subject field
+        const showSubject = selectedTemplate === 'admin_service_outage' || selectedTemplate === 'admin_general_announcement';
+        setRowVisibility(subjectRow, showSubject);
+        
+        // Maintenance fields
+        const showMaintenanceFields = selectedTemplate === 'admin_service_outage';
+        setRowVisibility(maintenanceDateTimeRow, showMaintenanceFields);
+        setRowVisibility(maintenanceDurationRow, showMaintenanceFields);
+        setRowVisibility(maintenanceAdditionalMessageRow, showMaintenanceFields);
+
+        // General Announcement field
+        setRowVisibility(generalMessageBodyRow, selectedTemplate === 'admin_general_announcement');
+    }
+
+    userSelectionTypeRadios.forEach(radio => radio.addEventListener('change', toggleConditionalFields));
+    if (emailTemplateSelect) {
+        emailTemplateSelect.addEventListener('change', toggleConditionalFields);
+    }
+
+    // Initial call
+    console.log("Initial field toggle.");
+    toggleConditionalFields();
+});
+</script>
+{% endblock %}

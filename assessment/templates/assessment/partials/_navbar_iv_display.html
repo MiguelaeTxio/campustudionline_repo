@@ -1,0 +1,19 @@
+{% if iv_data %}
+    <span class="badge rounded-pill ms-2 
+        {% if iv_data.status == 'COMPLETED' %}bg-warning text-dark
+        {% elif iv_data.status == 'RESULTS_AVAILABLE' %}bg-success
+        {% elif iv_data.status == 'PROCESSING' or iv_data.status == 'CORRECTING' %}bg-info text-dark
+        {% elif iv_data.status == 'FAILED' or iv_data.status == 'TIMEOUT_FAILURE' or iv_data.status == 'GENERATION_FAILURE' %}bg-danger
+        {% elif iv_data.status == 'MULTIPLE' %}bg-secondary
+        {% endif %}">
+        
+        <i class="fas fa-fw 
+            {% if iv_data.status == 'COMPLETED' %}fa-tasks
+            {% elif iv_data.status == 'RESULTS_AVAILABLE' %}fa-poll-h
+            {% elif iv_data.status == 'PROCESSING' or iv_data.status == 'CORRECTING' %}fa-spinner fa-spin
+            {% elif iv_data.status == 'FAILED' or iv_data.status == 'TIMEOUT_FAILURE' or iv_data.status == 'GENERATION_FAILURE' %}fa-exclamation-triangle
+            {% elif iv_data.status == 'MULTIPLE' %}fa-layer-group
+            {% endif %} me-1"></i>
+        {{ iv_data.count }}
+    </span>
+{% endif %}

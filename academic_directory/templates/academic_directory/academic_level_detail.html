@@ -1,0 +1,221 @@
+{# /home/MiguelAeTxio/CampuStudiOnline/academic_directory/templates/academic_directory/academic_level_detail.html #}
+{% extends request.htmx|yesno:"_blank.html,base.html" %}
+{% load static %}
+{% load assessment_tags %}
+
+{% block title %}{{ page_title }} - CampuStudiOnline{% endblock title %}
+
+{% block content %}
+<div class="container mt-4">
+
+    {% if not request.htmx %}
+    {% if breadcrumb|length > 1 %}
+    <nav aria-label="breadcrumb" id="tour-dir-breadcrumbs">
+        <ol class="breadcrumb">
+            {% for item in breadcrumb %}
+                {% if forloop.last %}
+                    <li class="breadcrumb-item active" aria-current="page">{{ item.name }}</li>
+                {% else %}
+                    <li class="breadcrumb-item"><a href="{{ item.url }}">{{ item.name }}</a></li>
+                {% endif %}
+            {% endfor %}
+        </ol>
+    </nav>
+    {% endif %}
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="display-5 fw-bold" id="tour-dir-title">{{ current_level_name }}</h1>
+        {% if show_tour %}
+            <div>
+                <button id="start-academic-directory-tour-btn" class="btn btn-outline-info btn-sm">
+                    <i class="fas fa-route me-1"></i> Visita Guiada
+                </button>
+            </div>
+        {% endif %}
+    </div>
+
+    {% if breadcrumb|length == 1 %}
+        {% include 'assessment/partials/_assessment_legend.html' %}
+    {% endif %}
+
+    {% endif %}{# Cierre de if not request.htmx #}
+
+    <div class="row">
+        <div class="col-12">
+
+            {% if next_level_items %}
+                {% if not request.htmx %}
+                <h4 class="mb-3">
+                    {% if next_level_name == 'Asignaturas' %}
+                        Estado del Contenido:
+                    {% else %}
+                        Selecciona una de las siguientes opciones:
+                    {% endif %}
+                </h4>
+                {% endif %}
+                <div id="directory-list-container" hx-get="{{ request.get_full_path }}" hx-trigger="every 15s" hx-swap="innerHTML">
+                    <div class="list-group" id="tour-dir-list">
+                        {% for item in next_level_items %}
+                            {% if next_url_name == 'academic_directory:branch_list' %}
+                                <a href="{% url next_url_name university_slug=item.slug %}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center {% if not item.has_public_content %}list-group-item-light{% endif %}">
+                                    <div>
+                                        {{ item.name }}
+                                        {% render_assessment_indicators item %}
+                                    </div>
+                                    <span class="badge bg-primary rounded-pill"><i class="fas fa-chevron-right"></i></span>
+                                </a>
+                            {% elif next_url_name == 'academic_directory:degree_list' %}
+                                <a href="{% url next_url_name university_slug=university_slug branch_slug=item.slug %}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center {% if not item.has_public_content %}list-group-item-light{% endif %}">
+                                    <div>
+                                        {{ item.name }}
+                                        {% render_assessment_indicators item %}
+                                    </div>
+                                    <span class="badge bg-primary rounded-pill"><i class="fas fa-chevron-right"></i></span>
+                                </a>
+                            {% elif next_url_name == 'academic_directory:academic_year_list' %}
+                                <a href="{% url next_url_name university_slug=university_slug branch_slug=branch_slug degree_slug=item.slug %}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center {% if not item.has_public_content %}list-group-item-light{% endif %}">
+                                    <div>
+                                        {{ item.name }}
+                                        {% render_assessment_indicators item %}
+                                    </div>
+                                    <span class="badge bg-primary rounded-pill"><i class="fas fa-chevron-right"></i></span>
+                                </a>
+                            {% elif next_url_name == 'academic_directory:subject_list' %}
+                                <a href="{% url next_url_name university_slug=university_slug branch_slug=branch_slug degree_slug=degree_slug year=item.year %}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center {% if not item.has_public_content %}list-group-item-light{% endif %}">
+                                    <div>
+                                        {{ item.name }}
+                                        {% render_assessment_indicators item %}
+                                    </div>
+                                    <span class="badge bg-primary rounded-pill"><i class="fas fa-chevron-right"></i></span>
+                                </a>
+                            
+                            {% elif next_url_name == 'academic_directory:public_content_list' %}
+                                {% if item.has_public_content %}
+                                    <a href="{% url 'academic_directory:public_content_list' university_slug=university_slug branch_slug=branch_slug degree_slug=degree_slug year=year subject_slug=item.slug %}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                                        <div>
+                                            {{ item.name }}
+                                            {% render_assessment_indicators item %}
+                                        </div>
+                                        <span class="badge bg-success rounded-pill"><i class="fas fa-check-circle me-1"></i> Ver Contenido</span>
+                                    </a>
+                                {% else %}
+                                    <div class="list-group-item d-flex justify-content-between align-items-center list-group-item-light">
+                                        <span>
+                                            {{ item.name }}
+                                            {% render_assessment_indicators item %}
+                                        </span>
+                                        <form action="{% url 'academic_directory:request_content' %}" method="POST" class="m-0">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="subject_id" value="{{ item.id }}">
+                                            <button type="submit" class="btn btn-primary btn-sm">
+                                                <i class="fas fa-plus-circle me-1"></i> Solicitar Contenido
+                                            </button>
+                                        </form>
+                                    </div>
+                                {% endif %}
+                            {% endif %}
+                        {% empty %}
+                            <div class="alert alert-light" role="alert">
+                                No hay más subcategorías en esta sección.
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                {% if not request.htmx %}
+                {% include "includes/pagination_controls.html" with page_obj=next_level_items query_param_name="page" %}
+                {% endif %}
+
+            {% elif public_contents %}
+                {% if not request.htmx %}
+                <h4 class="mb-3">Contenidos Públicos Disponibles:</h4>
+                {% endif %}
+                <div id="directory-list-container" hx-get="{{ request.get_full_path }}" hx-trigger="every 15s" hx-swap="innerHTML">
+                    <div class="list-group" id="tour-dir-list">
+                        {% for content in public_contents %}
+                            <div class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                                <a href="{{ content.get_absolute_url }}" class="text-decoration-none text-dark flex-grow-1">
+                                    <h5 class="mb-1">
+                                        {{ content.title }}
+                                        {% render_assessment_indicators content %}
+                                    </h5>
+                                    {% if content.short_description %}<p class="mb-1 text-muted">{{ content.short_description|truncatewords:25 }}</p>{% endif %}
+                                    <small>Actualizado: {{ content.updated_at|date:"d M Y" }}</small>
+                                </a>
+                                {% if user.is_authenticated %}
+                                <div class="ms-3">
+                                    <button type="button" 
+                                            class="btn btn-sm favorite-toggle-btn {% if content.is_favorite %}btn-warning{% else %}btn-outline-warning{% endif %}"
+                                            data-url="{% url 'contents:toggle_favorite_htmx' pk=content.pk %}"
+                                            title="{% if content.is_favorite %}Quitar de Favoritos{% else %}Añadir a Favoritos{% endif %}">
+                                        <i class="{% if content.is_favorite %}fas fa-star{% else %}far fa-star{% endif %}"></i>
+                                    </button>
+                                </div>
+                                {% endif %}
+                            </div>
+                        {% empty %}
+                            <div class="alert alert-light" role="alert">
+                                No hay contenidos públicos disponibles en esta sección del directorio.
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                {% if not request.htmx %}
+                {% include "includes/pagination_controls.html" with page_obj=public_contents query_param_name="page" %}
+                {% endif %}
+
+            {% endif %}
+        </div>
+    </div>
+
+    {% if not request.htmx %}
+    {% with prev_level=breadcrumb|slice:"-2:-1"|first %}
+        {% if prev_level %}
+            <div class="mt-4">
+                <a href="{{ prev_level.url }}" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left"></i> Volver a {{ prev_level.name }}
+                </a>
+            </div>
+        {% endif %}
+    {% endwith %}
+    {% endif %}{# Cierre de if not request.htmx #}
+
+</div>
+{% endblock content %}
+
+{% block extra_js %}
+    {% if show_tour and not request.htmx %}
+        <script src="{% static 'js/tours/academic_directory_tour.js' %}"></script>
+    {% endif %}
+
+    <script>
+        document.body.addEventListener('click', function(event) {
+            const link = event.target.closest('.js-mark-viewed');
+            if (!link) return;
+
+            event.preventDefault();
+            
+            const assessmentPk = link.dataset.pk;
+            if (!assessmentPk) {
+                window.location.href = link.href;
+                return;
+            }
+            
+            const urlTemplate = "{% url 'assessment:mark_as_viewed_ajax' pk=0 %}";
+            const url = urlTemplate.replace('0', assessmentPk);
+            const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
+
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': csrfToken,
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .finally(() => {
+                window.location.href = link.href;
+            });
+        });
+    </script>
+{% endblock extra_js %}

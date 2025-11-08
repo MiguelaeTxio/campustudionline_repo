@@ -1,0 +1,88 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block extrastyle %}{{ block.super }}
+<style>
+    .actions-bar {
+        padding: 10px;
+        background-color: #f8f9fa;
+        border-bottom: 1px solid #ddd;
+        margin-bottom: 20px;
+        text-align: right;
+    }
+    .table-container {
+        max-width: 100%;
+        overflow-x: auto;
+    }
+</style>
+{% endblock %}
+
+{% block content_title %}
+<h1>{{ title }}</h1>
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+    {% if messages %}
+    <ul class="messagelist">
+        {% for message in messages %}
+        <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+
+    <form method="post" action="{% url 'content_automation:manage_logs' %}">
+        {% csrf_token %}
+
+        <div class="actions-bar">
+            <button type="submit" class="button" style="background-color: #dc3545;" onclick="return confirm('¿Estás seguro de que deseas eliminar los archivos seleccionados? Esta acción es irreversible.')">
+                Eliminar Seleccionados
+            </button>
+        </div>
+
+        <div class="module table-container" id="logs-module">
+            {% if log_files %}
+            <div class="results">
+                <table>
+                    <thead>
+                        <tr>
+                            <th><input type="checkbox" id="select-all-logs"></th>
+                            <th>Nombre del Archivo</th>
+                            <th>Tamaño (KB)</th>
+                            <th>Última Modificación</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for file in log_files %}
+                        <tr class="{% cycle 'row1' 'row2' %}">
+                            <td><input type="checkbox" name="logs_to_delete" value="{{ file.name }}" class="log-checkbox"></td>
+                            <td><strong>{{ file.name }}</strong></td>
+                            <td style="text-align: right;">{{ file.size_kb }}</td>
+                            <td>{{ file.modified_date|date:"d M Y, H:i:s" }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <p style="padding: 20px;">No se encontraron archivos de log en el directorio.</p>
+            {% endif %}
+        </div>
+    </form>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const selectAllCheckbox = document.getElementById('select-all-logs');
+    const logCheckboxes = document.querySelectorAll('.log-checkbox');
+
+    if (selectAllCheckbox) {
+        selectAllCheckbox.addEventListener('change', function() {
+            logCheckboxes.forEach(checkbox => {
+                checkbox.checked = selectAllCheckbox.checked;
+            });
+        });
+    }
+});
+</script>
+{% endblock %}

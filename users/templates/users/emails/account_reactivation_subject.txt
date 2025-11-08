@@ -1,0 +1,2 @@
+{# /users/templates/users/emails/account_reactivation_subject.txt #}
+Acción requerida: Reactiva tu cuenta de CampuStudiOnline

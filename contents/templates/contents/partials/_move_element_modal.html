@@ -1,0 +1,37 @@
+{# /home/MiguelAeTxio/CampuStudiOnline/contents/templates/contents/partials/_move_element_modal.html #}
+<div class="modal fade" id="moveElementModal" tabindex="-1" aria-labelledby="moveElementModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="moveElementModalLabel">Mover Elemento</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="moveElementForm"
+                  hx-post="{% url 'contents:move_element' %}"
+                  hx-target="body"
+                  hx-swap="beforeend">
+                <div class="modal-body">
+                    <p>Mover "<strong id="elementToMoveName"></strong>" a la carpeta:</p>
+                    <input type="hidden" name="element_id" id="elementToMoveId">
+                    <input type="hidden" name="element_type" id="elementToMoveType">
+                    
+                    <select id="folder-options-select"
+                            name="destination_folder_id" 
+                            class="form-select" 
+                            required
+                            hx-get="{% url 'contents:get_folder_options_htmx' %}?current_folder_id={{ current_folder_id }}"
+                            hx-trigger="newFolderCreated from:body"
+                            hx-target="#folder-options-select">
+                        <option value="" disabled selected>Selecciona una carpeta de destino...</option>
+                        {# La variable root_folders es pasada desde la vista favorite_folder_detail_view #}
+                        {% include "contents/partials/_folder_tree_option.html" with folders=root_folders exclude_folder_id=current_folder_id %}
+                    </select>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Mover</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,380 @@
+{# /home/MiguelAeTxio/CampuStudiOnline/portfolio/templates/portfolio/public_portfolio_detail.html #}
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Portafolio de {{ portfolio_user.username }}{% endblock title %}
+
+{# === START: OVERRIDE META TAG BLOCKS FOR PORTFOLIO === #}
+{% block og_title %}Portafolio de {{ portfolio_user.get_full_name|default:portfolio_user.username }}{% endblock og_title %}
+
+{% block seo_description %}{% if profile and profile.show_personal_description_in_portfolio and profile.public_personal_description %}{{ profile.public_personal_description|truncatewords:25 }}{% else %}Explora el portafolio de {{ portfolio_user.username }} en CampuStudiOnline.{% endif %}{% endblock seo_description %}
+
+{% block og_description %}{% if profile and profile.show_personal_description_in_portfolio and profile.public_personal_description %}{{ profile.public_personal_description|truncatewords:25 }}{% else %}Explora el portafolio de {{ portfolio_user.username }} en CampuStudiOnline, una plataforma para compartir y colaborar en contenido académico y personal.{% endif %}{% endblock og_description %}
+
+{# {% block og_image %}{{ request.scheme }}://{{ request.get_host }}{% url 'portfolio:generate_portfolio_share_image' username=portfolio_user.username %}{% endblock og_image %} #}
+
+{# {% block og_image_secure_url %}{{ request.scheme }}://{{ request.get_host }}{% url 'portfolio:generate_portfolio_share_image' username=portfolio_user.username %}{% endblock og_image_secure_url %} #}
+
+{% block og_image_alt %}Tarjeta de presentación del portafolio de {{ portfolio_user.username }}{% endblock og_image_alt %}
+
+{% block meta_tags %}
+    {{ block.super }}
+    <meta property="og:type" content="profile" />
+    <meta property="profile:username" content="{{ portfolio_user.username }}" />
+{% endblock meta_tags %}
+{# === END: OVERRIDE META TAG BLOCKS === #}
+
+
+{% block extra_css %}
+<style>
+    .new-message-indicator {
+        display: inline-block;
+        width: 10px;
+        height: 10px;
+        background-color: #0d6efd; /* Bootstrap primary blue */
+        border-radius: 50%;
+        margin-left: 8px;
+        animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+        0% {
+            transform: scale(0.9);
+            box-shadow: 0 0 0 0 rgba(13, 110, 253, 0.7);
+        }
+        70% {
+            transform: scale(1);
+            box-shadow: 0 0 0 10px rgba(13, 110, 253, 0);
+        }
+        100% {
+            transform: scale(0.9);
+            box-shadow: 0 0 0 0 rgba(13, 110, 253, 0);
+        }
+    }
+    .material-card {
+        transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    }
+    .material-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 0.5rem 1rem rgba(0,0,0,.15)!important;
+    }
+    .delete-btn {
+        padding: 0.2rem 0.4rem;
+        font-size: 0.8rem;
+        line-height: 1; /* Ensures the icon doesn't increase the button height too much */
+        margin-left: 10px;
+    }
+</style>
+{% endblock extra_css %}
+
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card shadow-sm mb-4">
+        <div class="card-header bg-primary text-white" id="tour-portfolio-header">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h2 class="mb-0">
+                        Portafolio de {{ portfolio_user.get_full_name|default:portfolio_user.username }}
+                    </h2>
+                    {% if profile and profile.show_professional_title_in_portfolio and profile.professional_title %}
+                        <h5 class="fw-normal mt-1 mb-0">{{ profile.professional_title }}</h5>
+                    {% elif is_portfolio_owner and profile and profile.professional_title %}
+                        <h5 class="fw-normal mt-1 mb-0 fst-italic text-light-emphasis">{{ profile.professional_title }} (No público)</h5>
+                    {% endif %}
+                </div>
+                {% if show_tour %}
+                    <button id="start-portfolio-tour-btn" class="btn btn-outline-light btn-sm">
+                        <i class="fas fa-route me-1"></i> Visita Guiada
+                    </button>
+                {% endif %}
+            </div>
+        </div>
+        <div class="card-body p-4">
+
+            {% if profile and profile.show_personal_description_in_portfolio and profile.public_personal_description %}
+                <div class="mb-4 pb-3 border-bottom" id="tour-portfolio-about">
+                    <h4 class="mb-3 text-primary"><i class="fas fa-user-alt me-2"></i>Sobre mí:</h4>
+                    <p class="lead" style="white-space: pre-wrap;">{{ profile.public_personal_description }}</p>
+                </div>
+            {% elif is_portfolio_owner and profile and profile.public_personal_description %}
+                <div class="mb-4 pb-3 border-bottom" id="tour-portfolio-about">
+                    <h4 class="mb-3 text-muted"><i class="fas fa-user-alt me-2"></i>Sobre mí (Actualmente no público):</h4>
+                    <p class="lead fst-italic text-muted" style="white-space: pre-wrap;">{{ profile.public_personal_description }}</p>
+                    <small class="text-muted">Para hacerlo público, edita tu perfil y la configuración de privacidad.</small>
+                </div>
+            {% endif %}
+
+            {% if profile_info %}
+                <div class="mb-4 pb-3 border-bottom" id="tour-portfolio-info">
+                    <h4 class="mb-3 text-primary"><i class="fas fa-info-circle me-2"></i>Información de Contacto y Académica:</h4>
+                    <ul class="list-group list-group-flush">
+                        {% for key, value in profile_info.items %}
+                            {% if value %}
+                                <li class="list-group-item px-0">
+                                    <strong>{{ key }}:</strong> <span style="white-space: pre-wrap;">{{ value }}</span>
+                                </li>
+                            {% endif %}
+                        {% endfor %}
+                    </ul>
+                </div>
+            {% elif is_portfolio_owner and profile %}
+                <div class="mb-4 pb-3 border-bottom" id="tour-portfolio-info">
+                     <h4 class="mb-3 text-muted"><i class="fas fa-info-circle me-2"></i>Información de Contacto y Académica:</h4>
+                     <p class="text-muted fst-italic">No has compartido públicamente ninguna información de contacto o académica. Puedes actualizar esto en "Editar Perfil y Privacidad".</p>
+                </div>
+            {% endif %}
+
+            {% if show_materials_section %}
+                <div class="mb-4 pb-3 border-bottom" id="tour-portfolio-materials">
+                    <h4 class="mb-3 text-primary"><i class="fas fa-book-open me-2"></i>Materiales de Estudio</h4>
+                    <p>
+                        {% if is_portfolio_owner %}
+                            Accede a tu directorio personal para ver, editar y organizar todos tus materiales de estudio, tanto públicos como privados.
+                        {% else %}
+                            Explora los materiales de estudio públicos compartidos por {{ portfolio_user.username }}.
+                        {% endif %}
+                    </p>
+                    {# --- INICIO DE MODIFICACIÓN --- #}
+                    {% if publications_folder %}
+                        <a href="{% url 'contents:favorite_folder_detail' folder_id=publications_folder.id %}" class="btn btn-outline-primary">
+                            <i class="fas fa-folder-open me-2"></i>
+                            {% if is_portfolio_owner %}
+                                Ver Mi Directorio de Materiales
+                            {% else %}
+                                Ver Materiales de {{ portfolio_user.username }}
+                            {% endif %}
+                        </a>
+                    {% endif %}
+                    {# --- FIN DE MODIFICACIÓN --- #}
+                </div>
+            {% elif is_portfolio_owner %}
+                 <div class="mb-4 pb-3 border-bottom" id="tour-portfolio-materials">
+                    <h4 class="mb-3 text-muted"><i class="fas fa-book-open me-2"></i>Materiales de Estudio</h4>
+                    <p class="text-muted fst-italic">Aún no has publicado ni creado materiales de estudio. {% if perms.contents.add_contenidomaterial %}<a href="{% url 'contents:create_content' %}">¡Sube tu primer material!</a>{% endif %}</p>
+                </div>
+            {% endif %}
+
+            {% if user_links %}
+                <div class="mb-4 pb-3 border-bottom" id="tour-portfolio-links">
+                    <h4 class="mb-3 text-primary"><i class="fas fa-link me-2"></i>Mis Enlaces de Interés:</h4>
+                    <ul class="list-group list-group-flush">
+                        {% for link in user_links %}
+                            <li class="list-group-item px-0 d-flex justify-content-between align-items-center">
+                                <span>
+                                    <a href="{{ link.url }}" target="_blank" rel="noopener noreferrer" class="text-decoration-none">
+                                        <i class="fas fa-external-link-alt me-2 text-secondary"></i>{{ link.title|default:link.url }}
+                                    </a>
+                                </span>
+                                {% if is_portfolio_owner %}
+                                    <form method="post" action="{% url 'portfolio:delete_user_link' link.pk %}" class="d-inline" onsubmit="return confirm('¿Estás seguro de que quieres eliminar este enlace?');">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-danger btn-sm delete-btn" title="Eliminar enlace">
+                                            <i class="fas fa-times-circle"></i>
+                                        </button>
+                                    </form>
+                                {% endif %}
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            {% elif is_portfolio_owner and profile and profile.show_user_links_in_portfolio %}
+                 <div class="mb-4 pb-3 border-bottom" id="tour-portfolio-links">
+                    <h4 class="mb-3 text-muted"><i class="fas fa-link me-2"></i>Mis Enlaces de Interés:</h4>
+                    <p class="text-muted fst-italic">Aún no has añadido enlaces de interés. <a href="{% url 'portfolio:create_user_link' %}">¡Añade tu primer enlace!</a></p>
+                </div>
+            {% elif profile and profile.show_user_links_in_portfolio == False %}
+                <p class="text-muted fst-italic pb-3 border-bottom"><em>El usuario ha decidido no mostrar sus enlaces de interés.</em></p>
+            {% endif %}
+
+            {% if show_chat_rooms_section %}
+                <div class="mb-4 pb-3 border-bottom" id="tour-portfolio-chat-rooms">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h4 class="mb-0 text-primary"><i class="fas fa-comments me-2"></i>Salas de Chat:</h4>
+                        {% if is_portfolio_owner and chat_privacy_form %}
+                            <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#chatPrivacySettings" aria-expanded="false" aria-controls="chatPrivacySettings" title="Configurar visibilidad">
+                                <i class="fas fa-cog"></i>
+                            </button>
+                        {% endif %}
+                    </div>
+                    {% if is_portfolio_owner and chat_privacy_form %}
+                        <div class="collapse mb-3" id="chatPrivacySettings">
+                            <div class="card card-body bg-light">
+                                <form method="post" action="{% url 'portfolio:update_chat_privacy_settings' %}">
+                                    {% csrf_token %}
+                                    <div class="form-check">
+                                        {{ chat_privacy_form.show_chat_rooms_in_portfolio.label_tag }}
+                                        {{ chat_privacy_form.show_chat_rooms_in_portfolio }}
+                                        <small class="form-text text-muted">{{ chat_privacy_form.show_chat_rooms_in_portfolio.help_text }}</small>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary btn-sm mt-2">Guardar Preferencia</button>
+                                </form>
+                            </div>
+                        </div>
+                        {% if show_private_chat_config_message %}
+                        <p class="alert alert-info small"><i class="fas fa-eye-slash me-1"></i> Tu directorio de salas de chat es actualmente privado. Otros usuarios no pueden ver esta sección.</p>
+                        {% endif %}
+                    {% endif %}
+                    {% if chat_rooms_info %}
+                        <ul class="list-group list-group-flush">
+                            {% for room_info in chat_rooms_info %}
+                                <li class="list-group-item px-0 d-flex justify-content-between align-items-center">
+                                    <a href="{{ room_info.url }}" class="text-decoration-none">
+                                        <i class="fas fa-door-open me-2 text-secondary"></i>{{ room_info.room.name }}
+                                    </a>
+                                    {% if is_portfolio_owner and room_info.has_new_messages %}
+                                        <span class="new-message-indicator" title="Nuevos mensajes"></span>
+                                    {% endif %}
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p class="text-muted fst-italic">
+                            {% if is_portfolio_owner %}
+                                No perteneces a ninguna sala de chat actualmente.
+                            {% else %}
+                                Este usuario no parece pertenecer a ninguna sala de chat o ha decidido no mostrarlas.
+                            {% endif %}
+                        </p>
+                    {% endif %}
+                </div>
+            {% endif %}
+
+            {% if profile and profile.show_short_messages_in_portfolio %}
+                <div class="mb-4 pb-3 border-bottom" id="tour-portfolio-messages">
+                    <h4 class="mb-3 text-primary"><i class="far fa-comment-dots me-2"></i>Actualizaciones y Mensajes Cortos:</h4>
+                    {% if short_messages %}
+                        {% for message in short_messages %}
+                            <div class="card mb-3 shadow-sm">
+                                <div class="card-body d-flex justify-content-between align-items-start">
+                                    <div>
+                                        <p class="card-text" style="white-space: pre-wrap;">{{ message.content }}</p>
+                                        <p class="card-text mb-0">
+                                            <small class="text-muted">
+                                                <i class="far fa-calendar-alt me-1"></i>Publicado: {{ message.created_at|date:"d/m/Y H:i" }}
+                                                {% if message.is_public %}
+                                                    (<i class="fas fa-globe-americas text-success" title="Mensaje público"></i> Público)
+                                                {% else %}
+                                                    (<i class="fas fa-lock text-warning" title="Mensaje no público"></i> No Público)
+                                                {% endif %}
+                                            </small>
+                                        </p>
+                                    </div>
+                                    {% if is_portfolio_owner %}
+                                        <form method="post" action="{% url 'portfolio:delete_short_message' message.pk %}" class="d-inline ms-2" onsubmit="return confirm('¿Estás seguro de que quieres eliminar este mensaje?');">
+                                            {% csrf_token %}
+                                            <button type="submit" class="btn btn-danger btn-sm delete-btn" title="Eliminar mensaje">
+                                                <i class="fas fa-times-circle"></i>
+                                            </button>
+                                        </form>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <p class="text-muted fst-italic">
+                            {% if is_portfolio_owner %}
+                                No has publicado ningún mensaje corto. <a href="{% url 'portfolio:create_short_message' %}">¡Añade tu primer mensaje!</a>
+                            {% else %}
+                                Este usuario no tiene mensajes cortos públicos para mostrar en este momento.
+                            {% endif %}
+                        </p>
+                    {% endif %}
+                </div>
+            {% elif is_portfolio_owner and profile and not profile.show_short_messages_in_portfolio %}
+                 <div class="mb-4 pb-3 border-bottom" id="tour-portfolio-messages">
+                    <h4 class="mb-3 text-muted"><i class="far fa-comment-dots me-2"></i>Actualizaciones y Mensajes Cortos:</h4>
+                    <p class="text-muted fst-italic">Has configurado tus mensajes cortos como privados. Puedes cambiar esto en "Editar Perfil y Privacidad".</p>
+                </div>
+            {% elif not is_portfolio_owner and profile and not profile.show_short_messages_in_portfolio %}
+                 <div class="mb-4 pb-3 border-bottom">
+                     <p class="text-muted fst-italic"><em>El usuario ha decidido no mostrar sus mensajes cortos.</em></p>
+                 </div>
+            {% endif %}
+
+            <div class="mb-4 pb-3 border-bottom" id="tour-portfolio-p2p">
+                <h4 class="mb-3 text-primary"><i class="fas fa-envelope-open-text me-2"></i>Mensajes Privados (P2P):</h4>
+                {% if user.is_authenticated %}
+                    {% if is_portfolio_owner %}
+                        <p>Revisa tus conversaciones privadas o inicia una nueva.</p>
+                        <a href="{% url 'messaging:conversation_list' %}" class="btn btn-primary">
+                            <i class="fas fa-comments me-1"></i> Ir a Mis Conversaciones
+                            {% if unread_p2p_message_count > 0 %}
+                                <span class="badge bg-danger rounded-pill ms-2">{{ unread_p2p_message_count }}</span>
+                            {% endif %}
+                        </a>
+                        {% if unread_p2p_message_count > 0 %}
+                            <p class="mt-2 text-info"><i class="fas fa-bell"></i> Tienes {{ unread_p2p_message_count }} mensaje{{ unread_p2p_message_count|pluralize }} nuevo{{ unread_p2p_message_count|pluralize }} en total.</p>
+                        {% else %}
+                            <p class="mt-2 text-muted">No tienes mensajes privados nuevos.</p>
+                        {% endif %}
+                    {% else %}
+                        <p>Puedes iniciar una conversación privada con <strong>{{ portfolio_user.username }}</strong>.</p>
+                        <a href="{% url 'messaging:conversation_detail' username=portfolio_user.username %}" class="btn btn-success">
+                            <i class="fas fa-paper-plane me-1"></i> Enviar Mensaje a {{ portfolio_user.username }}
+                        </a>
+                    {% endif %}
+                {% else %}
+                     <p class="text-muted fst-italic">
+                        Para enviar mensajes privados, por favor <a href="{% url 'login' %}?next={{ request.path }}">inicia sesión</a> o <a href="{% url 'users:register' %}?next={{ request.path }}">regístrate</a>.
+                    </p>
+                {% endif %}
+            </div>
+
+            {% if is_portfolio_empty %}
+                <div class="alert alert-info text-center mt-4">
+                    <i class="fas fa-info-circle me-2"></i>
+                    {% if is_portfolio_owner %}
+                        Tu portafolio público está un poco vacío. ¡Empieza a compartir información, materiales o mensajes!
+                    {% else %}
+                        Este usuario aún no ha compartido información públicamente en su portafolio.
+                    {% endif %}
+                </div>
+            {% endif %}
+
+        </div>
+        <div class="card-footer text-muted text-center bg-light py-3">
+            Portafolio de {{ portfolio_user.username }} • CampuStudiOnline CSO
+        </div>
+    </div>
+
+    {% if is_portfolio_owner %}
+    <div class="my-4 p-3 bg-light rounded shadow-sm text-center" id="tour-portfolio-actions">
+        <h5 class="mb-3">Acciones Rápidas</h5>
+        <a href="{% url 'portfolio:create_short_message' %}" class="btn btn-success me-md-2 mb-2 mb-md-0">
+            <i class="fas fa-plus-circle me-1"></i> Añadir Mensaje
+        </a>
+        <a href="{% url 'portfolio:create_user_link' %}" class="btn btn-info me-md-2 mb-2 mb-md-0">
+            <i class="fas fa-link me-1"></i> Añadir Enlace
+        </a>
+        {% if perms.contents.add_contenidomaterial %}
+        <a href="{% url 'contents:create_content' %}" class="btn btn-warning me-md-2 mb-2 mb-md-0">
+            <i class="fas fa-file-alt me-1"></i> Añadir Material
+        </a>
+        {% endif %}
+        <a href="{% url 'users:account_settings' %}" class="btn btn-secondary mb-2 mb-md-0">
+            <i class="fas fa-user-edit me-1"></i> Editar Perfil y Privacidad
+        </a>
+    </div>
+    {% endif %}
+</div>
+{% endblock content %}
+
+{% block extra_js %}
+    {% if show_tour %}
+        <script src="{% static 'js/tours/portfolio_tour.js' %}"></script>
+    {% endif %}
+    <script>
+    // This script ensures that if the page is loaded with a specific hash, the corresponding collapse element is shown.
+    document.addEventListener('DOMContentLoaded', function () {
+        if (window.location.hash === '#chatPrivacySettings') {
+            var collapseElement = document.getElementById('chatPrivacySettings');
+            if (collapseElement) {
+                var bsCollapse = new bootstrap.Collapse(collapseElement, {
+                    toggle: true
+                });
+            }
+        }
+    });
+    </script>
+{% endblock extra_js %}

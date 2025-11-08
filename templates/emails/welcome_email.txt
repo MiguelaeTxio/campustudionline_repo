@@ -1,0 +1,21 @@
+¡Bienvenido/a a CampuStudiOnline!
+
+Hola {{ user.username }},
+
+¡Te damos la más cordial bienvenida a CampuStudiOnline! Estamos encantados de tenerte como parte de nuestra comunidad de estudiantes y creadores de contenido.
+
+En CampuStudiOnline, podrás:
+- Explorar y aprender: Accede a una variedad de materiales y recursos educativos compartidos por otros usuarios.
+- Crear y compartir: Publica tus propios apuntes, resúmenes, guías y cualquier material que consideres valioso para otros estudiantes.
+- Conectar: Utiliza nuestro tablón de anuncios para estar al tanto de novedades, buscar colaboradores o simplemente conectar con otros miembros.
+- Personalizar tu experiencia: Gestiona tu perfil y tus contenidos para adaptarlos a tus necesidades.
+
+Te animamos a explorar la plataforma y empezar a interactuar. Si tienes alguna pregunta, no dudes en consultar nuestra sección de ayuda o contactar con el soporte.
+
+¡Empieza tu viaje en CampuStudiOnline ahora mismo!
+Visita CampuStudiOnline: {{ site_url }}{% url 'inicio' %}
+
+Saludos cordiales,
+El equipo de CampuStudiOnline
+
+© {% now "Y" %} CampuStudiOnline. Todos los derechos reservados.

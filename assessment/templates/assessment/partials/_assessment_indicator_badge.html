@@ -1,0 +1,26 @@
+{# /home/MiguelAeTxio/CampuStudiOnline/assessment/templates/assessment/partials/_assessment_indicator_badge.html #}
+{% load i18n %}
+
+{% if iv_data and iv_data.status %}
+    {% if iv_data.status == 'COMPLETED' %}
+        <a href="{% url 'assessment:take_assessment' pk=iv_data.pk %}" class="ms-2 badge bg-warning text-dark text-decoration-none" title="{% trans 'Tienes una evaluación pendiente para realizar' %}">
+            <i class="fas fa-hourglass-half me-1"></i> {% trans "Realizar Evaluación" %}
+        </a>
+    {% elif iv_data.status == 'RESULTS_AVAILABLE' %}
+        <a href="{% url 'assessment:view_results' pk=iv_data.pk %}" class="ms-2 badge bg-success text-white text-decoration-none js-mark-viewed" data-pk="{{ iv_data.pk }}" title="{% trans 'Resultados disponibles para revisar' %}">
+            <i class="fas fa-eye me-1"></i> {% trans "Ver Resultados" %}
+        </a>
+    {% elif iv_data.status == 'PROCESSING' or iv_data.status == 'CORRECTING' %}
+        <span class="ms-2 badge bg-info text-dark" title="{% trans 'El sistema está trabajando en tu evaluación...' %}">
+            <i class="fas fa-spinner fa-spin me-1"></i> {% trans "En Progreso" %}
+        </span>
+    {% elif iv_data.status == 'PENDING' %}
+        <span class="ms-2 badge bg-secondary" title="{% trans 'Tu solicitud de evaluación está en cola' %}">
+            <i class="fas fa-clock me-1"></i> {% trans "Pendiente" %}
+        </span>
+    {% elif iv_data.status == 'FAILED' or iv_data.status == 'TIMEOUT_FAILURE' or iv_data.status == 'GENERATION_FAILURE' %}
+        <span class="ms-2 badge bg-danger" title="{% trans 'Hubo un error con esta evaluación' %}">
+            <i class="fas fa-exclamation-triangle me-1"></i> {% trans "Error" %}
+        </span>
+    {% endif %}
+{% endif %}

@@ -1,0 +1,17 @@
+{% extends "emails/base_email.html" %}
+
+{% block title %}Actualización de Solicitud: {{ request_title }}{% endblock title %}
+
+{% block header_subtitle %}Actualización sobre tu solicitud{% endblock header_subtitle %}
+
+{% block content %}
+<p style="margin-bottom: 15px;">Hola {{ requester_username }},</p>
+<p style="margin-bottom: 15px;">Te escribimos para informarte sobre tu solicitud de contenido para el curso "<strong>{{ request_title }}</strong>".</p>
+<p style="margin-bottom: 15px;">Tras una revisión por parte de nuestro equipo, la solicitud no ha sido aprobada en esta ocasión.</p>
+{% if rejection_reason %}
+<div style="padding: 15px; border-left: 3px solid #dc3545; background-color: #f8f9fa; margin-bottom: 20px;">
+    <p style="margin: 5px 0;"><strong>Motivo:</strong> {{ rejection_reason }}</p>
+</div>
+{% endif %}
+<p style="margin-bottom: 20px;">Agradecemos enormemente tu interés y tu tiempo. No dudes en proponer nuevas ideas de contenido en el futuro.</p>
+{% endblock content %}
