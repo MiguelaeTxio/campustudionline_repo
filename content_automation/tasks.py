@@ -44,6 +44,12 @@ from messaging.push_utils import send_notification_to_user
 logger = logging.getLogger(__name__)
 
 # ==============================================================================
+# CONSTANTES DE ARQUITECTURA
+# ==============================================================================
+QUARANTINE_MAILBOX_FILE = "/home/MiguelAeTxio/SWAP/quarantine_requests.log"
+
+
+# ==============================================================================
 # HELPERS
 # ==============================================================================
 
@@ -108,53 +114,66 @@ def _log_structured_event(message: str, level: str = "INFO", details: dict = Non
         logger.error(f"CRITICAL: No se pudo escribir en el event_log estructurado: {e}", exc_info=True)
 
 
-def _rotate_to_next_active_key(quarantined_key):
+def _request_quarantine_via_mailbox(api_key: ApiKey):
     """
-    [V3] Pone en cuarentena la clave activa y rota a la siguiente disponible en la secuencia.
-    Actualiza el estado global en AutomationSettings.
+    [V10-Mailbox] Escribe una solicitud de cuarentena en un archivo de texto (buzón).
+    Esta operación es atómica y fiable desde un worker de Celery.
     """
-    automation_settings = AutomationSettings.load()
-    
-    # 1. Poner la clave fallida en cuarentena
-    quarantined_key.is_quarantined = True
-    quarantined_key.save(update_fields=['is_quarantined'])
-    _log_structured_event(
-        f"CUARENTENA: Clave '{quarantined_key.name}' puesta en cuarentena tras fallos persistentes.",
-        "WARNING",
-        {"api_key_id": quarantined_key.id}
-    )
-    _send_admin_notification("Clave API en Cuarentena", f"La clave '{quarantined_key.name}' ha sido puesta en cuarentena.")
+    try:
+        # Usamos 'a' (append) para que si dos workers fallan casi a la vez, no se sobrescriban.
+        with open(QUARANTINE_MAILBOX_FILE, "a") as f:
+            f.write(f"{api_key.id}\n")
+        
+        # Este log va al logger principal, no al de eventos de la BBDD, para evitar la misma condición de fallo.
+        logger.warning(f"BUZÓN: Solicitud de cuarentena enviada para la clave '{api_key.name}' (ID: {api_key.id}).")
 
-    # 2. Buscar la siguiente clave en la secuencia que no esté en cuarentena
-    next_key = ApiKey.objects.filter(
-        is_enabled=True,
-        is_quarantined=False,
-        id__gt=quarantined_key.id
-    ).order_by('id').first()
+    except Exception as e:
+        logger.critical(f"FALLO CRÍTICO DE ARQUITECTURA: No se pudo escribir en el buzón de cuarentena '{QUARANTINE_MAILBOX_FILE}': {e}", exc_info=True)
 
-    # 3. Si no hay una después, buscar desde el principio (ciclo)
-    if not next_key:
-        next_key = ApiKey.objects.filter(
-            is_enabled=True,
-            is_quarantined=False
-        ).order_by('id').first()
 
-    # 4. Actualizar el estado global
-    automation_settings.active_api_key = next_key
-    automation_settings.save(update_fields=['active_api_key'])
-    
-    if next_key:
+def _process_quarantine_requests():
+    """
+    [V10-Mailbox] Procesa las solicitudes de cuarentena desde el buzón.
+    Ejecutado solo por el bucle principal para garantizar escrituras fiables a la BBDD.
+    """
+    if not os.path.exists(QUARANTINE_MAILBOX_FILE):
+        return
+
+    try:
+        with open(QUARANTINE_MAILBOX_FILE, "r") as f:
+            # Usamos set() para manejar entradas duplicadas si varios workers fallaron con la misma clave.
+            key_ids_to_quarantine = set(line.strip() for line in f if line.strip().isdigit())
+
+        if not key_ids_to_quarantine:
+            os.remove(QUARANTINE_MAILBOX_FILE) # Limpiar archivo vacío
+            return
+
         _log_structured_event(
-            f"ROTACIÓN EXITOSA: La nueva clave activa es '{next_key.name}'.",
+            f"PROCESANDO BUZÓN: Se encontraron {len(key_ids_to_quarantine)} solicitudes de cuarentena.",
             "INFO",
-            {"new_api_key_id": next_key.id}
+            {"key_ids": list(key_ids_to_quarantine)}
         )
-    else:
-        _log_structured_event(
-            "POOL AGOTADO: Todas las claves de API están en cuarentena. El sistema se detendrá.",
-            "CRITICAL"
-        )
-        _send_admin_notification("¡ALERTA CRÍTICA! POOL DE API KEYS AGOTADO", "Todas las claves están en cuarentena. La generación de contenido está detenida hasta el reseteo diario.")
+
+        with transaction.atomic():
+            keys_to_update = ApiKey.objects.select_for_update().filter(id__in=key_ids_to_quarantine, is_quarantined=False)
+            if not keys_to_update.exists():
+                os.remove(QUARANTINE_MAILBOX_FILE) # Limpiar si no hay nada que hacer
+                return
+
+            key_names = list(keys_to_update.values_list('name', flat=True))
+            updated_count = keys_to_update.update(is_quarantined=True)
+
+        if updated_count > 0:
+            message = f"BUZÓN PROCESADO: {updated_count} clave(s) han sido puestas en cuarentena: {', '.join(key_names)}."
+            _log_structured_event(message, "WARNING")
+            _send_admin_notification("Clave(s) API en Cuarentena (vía Buzón)", message)
+        
+        # Eliminar el archivo solo si la operación fue exitosa.
+        os.remove(QUARANTINE_MAILBOX_FILE)
+
+    except Exception as e:
+        logger.critical(f"FALLO CRÍTICO EN PROCESADOR DE BUZÓN: No se pudo procesar '{QUARANTINE_MAILBOX_FILE}': {e}", exc_info=True)
+        # No eliminamos el archivo si hay un error, para poder reintentarlo.
 
 
 def log_task_event(
@@ -863,15 +882,20 @@ def generate_full_course_task(self, task_id: str):
                 )
                 return
 
-            log_task_event(task.id, f"Error de cuota API (Intento {self.request.retries + 1}/3).", is_error=True, payload={"api_key": api_key.name, "error": error_str})
-            try:
-                raise self.retry(exc=e, countdown=60, max_retries=2)
-            except MaxRetriesExceededError:
-                log_task_event(task.id, f"Máximo de reintentos por error de cuota. Rotando clave.", is_error=True)
-                _rotate_to_next_active_key(api_key)
+            # [V11-REFACTOR] Lógica de reintento manual para control explícito.
+            max_retries = 2
+            if self.request.retries >= max_retries:
+                # Fallo terminal: este es el último intento.
+                log_task_event(task.id, f"Máximo de reintentos ({self.request.retries + 1}) alcanzado por error de cuota. Solicitando cuarentena vía buzón.", is_error=True)
+                _request_quarantine_via_mailbox(api_key)
                 task.status = PendingContentTask.StatusChoices.FAILED_QUOTA
-                task.last_error = f"Clave '{api_key.name}' en cuarentena tras 3 fallos.\n{traceback.format_exc()}"
+                task.last_error = f"Clave '{api_key.name}' solicitada para cuarentena tras {self.request.retries + 1} fallos. El bucle principal se encargará de rotar y re-encolar.\n{traceback.format_exc()}"
                 task.save(update_fields=["status", "last_error"])
+                # No relanzamos la excepción para que Celery no la marque como 'FAILURE'.
+            else:
+                # Reintento normal.
+                log_task_event(task.id, f"Error de cuota API (Intento {self.request.retries + 1}/{max_retries + 1}).", is_error=True, payload={"api_key": api_key.name, "error": error_str})
+                raise self.retry(exc=e, countdown=60, max_retries=max_retries)
 
     except Exception as e:
         if task:
@@ -900,9 +924,10 @@ def generate_full_course_task(self, task_id: str):
 @shared_task(bind=True)
 def automation_main_loop_task(self):
     """
-    [REFACTORIZADO V8] Bucle principal con auto-sincronización de clave activa e hibernación.
+    [REFACTORIZADO V10] Bucle principal con procesador de buzón y auto-sincronización.
     """
     try:
+        _process_quarantine_requests()
         _check_and_perform_daily_reset()
         db.close_old_connections()
         automation_settings = AutomationSettings.load()

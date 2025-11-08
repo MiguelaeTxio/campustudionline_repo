@@ -1,18 +1,21 @@
-# Sumario de Sesión Temporal: APIKEYS_ROTATION_AND_QUARENTAINE_FAILURE
+# Sumario de Sesión: Corrección de Rotación de APIKEYS (ÉXITO)
 
-## Diagnóstico
+## 1. Diagnóstico Final
 
-Se identificaron dos causas raíz interrelacionadas para el fallo del sistema de automatización:
+Tras un análisis empírico exhaustivo, se determinó que el sistema sufría una regresión crítica en la rotación de `APIKeys`. La causa raíz no era un error de lógica, sino un fallo arquitectónico:
 
-1.  **Conflicto de Responsabilidades Arquitectónico:** La capa de servicio (`core/services/gemini_service.py`) gestionaba de forma autónoma la selección y cuarentena de `API Keys`, ignorando el estado global definido en `AutomationSettings` y entrando en conflicto con la lógica de orquestación de la capa de tareas (`content_automation/tasks.py`). Esto provocaba que el sistema se detuviera al encontrar una clave en cuarentena en el estado global, aunque existieran otras válidas.
-2.  **Ruta de Worker Obsoleta:** El comando de inicio del worker de Celery en las "Always-on tasks" de PythonAnywhere apuntaba a un `working_directory` incorrecto (`/home/MiguelAeTxio/CampuStudiOnline`) tras la refactorización de la estructura de directorios del proyecto, impidiendo que el worker se iniciara.
+- El *worker* de Celery, al encontrar un error terminal de cuota (`ResourceExhausted`), intentaba actualizar el estado de la `ApiKey` en la base de datos para ponerla en cuarentena.
+- Dicha transacción a la base de datos, ejecutada desde el contexto inestable de un *worker* en estado de fallo, fallaba silenciosamente (`rollback`), por lo que el estado `is_quarantined` nunca persistía.
+- El sistema quedaba bloqueado, reintentando usar una clave agotada hasta que la cuota era reiniciada externamente por Google al día siguiente.
 
-## Solución Implementada
+## 2. Solución Implementada: Arquitectura de "Buzón"
 
-La solución se ejecutó en dos fases, restaurando la coherencia arquitectónica y corrigiendo la configuración del entorno:
+Para erradicar el problema, se refactorizó la comunicación entre el *worker* y el *scheduler* (bucle principal) implementando un patrón de "buzón" desacoplado:
 
-1.  **Refactorización del Servicio (`gemini_service.py`):** Se modificó el servicio para convertirlo en un componente "sin estado" (stateless). Ahora requiere que la `ApiKey` a utilizar sea pasada explícitamente como parámetro y propaga las excepciones de cuota (`ResourceExhausted`) a la capa superior en lugar de manejarlas internamente.
-2.  **Adaptación de la Tarea (`tasks.py`):** Se ajustó la tarea Celery `generate_full_course_task` para que pase el objeto `ApiKey` (obtenido del estado global `AutomationSettings`) al servicio. La lógica de captura de excepciones y rotación de claves (`_rotate_to_next_active_key`) ahora funciona como la única fuente de verdad para la gestión del ciclo de vida de las claves.
-3.  **Corrección de la Tarea Programada:** Se proporcionó al usuario el comando corregido para la "Always-on task" de Celery, actualizando el `working_directory` a la nueva ruta `/home/MiguelAeTxio/PROJECTS/CampuStudiOnline`.
+1.  **El Worker Informa:** Al fallar por cuota, el *worker* ahora realiza una única acción atómica y fiable: escribe el `id` de la clave fallida en un archivo de texto (`/home/MiguelAeTxio/SWAP/quarantine_requests.log`). Ya no intenta modificar la base de datos.
+2.  **El Cerebro Actúa:** El bucle principal (`automation_main_loop_task`), al inicio de cada ciclo, comprueba la existencia de este "buzón". Si existe, lee los IDs, actualiza la base de datos desde su contexto fiable para poner las claves en cuarentena, y elimina el archivo.
+3.  **Rotación Garantizada:** Con el estado de la clave actualizado correctamente en la BBDD, la lógica de sincronización del bucle principal detecta la clave en cuarentena, selecciona la siguiente disponible en la secuencia y reanuda las tareas pendientes.
 
-Esta intervención ha centralizado la gestión de estado, resuelto el conflicto de capas y asegurado que el entorno de ejecución sea el correcto, restaurando la funcionalidad y resiliencia del sistema de automatización.
+## 3. Resultado
+
+La solución fue verificada empíricamente. Se observó cómo la clave "Pluto" fallaba, escribía en el buzón, era puesta en cuarentena por el bucle principal, y el sistema rotaba exitosamente a la siguiente clave ("CYC"), reanudando la generación de contenido de forma autónoma. **El problema ha sido resuelto.**
