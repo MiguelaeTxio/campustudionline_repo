@@ -1,23 +1,33 @@
 # Hito 6: Sistema de Autoevaluaciones con IA (EN PROGRESO)
 
-## Resumen de la Sesión del 06/11/2025 (EDC)
+## Resumen de la Sesión del 09/11/2025 (NRA)
 
-**Objetivo Principal:** La sesión comenzó con el objetivo de resolver cuatro incidencias en los indicadores de evaluación. Sin embargo, se detectó una incidencia estructural bloqueante que requirió atención prioritaria.
+**Objetivo Inicial:** Resolver cuatro incidencias relacionadas con la visualización de los indicadores de estado de las autoevaluaciones (`badges`).
 
-**Progreso y Descubrimientos:**
+**Progreso y Descubrimientos Clave:**
 
-1.  **Resolución de Incidencia Estructural:** Se corrigió un error crítico de configuración en PythonAnywhere derivado de una refactorización previa de la estructura de directorios del proyecto. Se actualizaron las rutas de "Source code", "Working directory", "Static files" y "Media files", así como el archivo de configuración WSGI.
-2.  **Diagnóstico y Reparación de la "Sala de Estudio":** Tras estabilizar el entorno, se detectó que la "Sala de Estudio" no mostraba ningún contenido. El análisis empírico determinó que la vista no estaba adaptada a la reciente refactorización de la BBDD que separa el contenido académico del libre.
-3.  **Rearquitectura de la "Sala de Estudio":** Se ejecutó una modificación atómica en tres fases (rutas, plantilla y vista) para dotar a la "Sala de Estudio" de la capacidad de consultar y renderizar ambas jerarquías de contenido de forma unificada.
-4.  **Restauración de Funcionalidad:** La plataforma ha quedado en un estado estable y completamente funcional, con la "Sala de Estudio" operando según lo esperado.
+1.  **Resolución de Incidencias Menores:** Se corrigieron con éxito tres de las cuatro incidencias originales mediante modificaciones atómicas y auditadas (protocolo `PMA`):
+    *   **Incidencia 2:** Eliminada la leyenda de indicadores de "Mi Explorador Personal".
+    *   **Incidencia 4:** Implementado un *tooltip* informativo en el botón deshabilitado de "Solicitar Evaluación".
+    *   **Inconsistencia Visual:** Corregido el color del indicador de navegación en la "Sala de Estudio" para alinearlo con el branding de la plataforma.
 
-**Estado Final:** La funcionalidad crítica de la plataforma ha sido **restaurada**. La hoja de ruta original para los indicadores de evaluación no se ha abordado y se traslada íntegramente a la siguiente sesión.
+2.  **Diagnóstico de Causa Raíz (Incidencias 1 y 3):** La investigación sobre la ausencia de *badges* en los directorios reveló un fallo de diseño fundamental en la utilidad `get_latest_active_assessment_subqueries`. Se demostró empíricamente que esta función:
+    *   Excluye deliberadamente los estados de fallo (`FAILED`), impidiendo su visualización.
+    *   Carece de la capacidad de agregar múltiples estados de nodos hijos para reflejarlos en un nodo padre.
+    *   Es incapaz de implementar la lógica para el indicador de "Múltiples estados diferentes".
+
+**Estado Final:** Se ha identificado que la solución a la visibilidad de los *badges* no es un parche, sino una refactorización de la lógica de propagación de estados. Las correcciones superficiales aplicadas inicialmente a las vistas fueron insuficientes al no abordar el fallo en la utilidad subyacente.
 
 ## Hoja de Ruta para la Próxima Sesión
 
-La próxima sesión se centrará en resolver las siguientes incidencias documentadas, retomando el plan original:
+La próxima sesión se centrará **exclusivamente** en la refactorización completa del sistema de indicadores de evaluación para cumplir con el requisito de que todos los estados de la leyenda se propaguen jerárquicamente en los tres directorios.
 
-1.  **Incidencia 1 (Lógica):** Corregir la ausencia de *badges* indicadores en la vista de "Contenidos Libres", asegurando que la consulta anote correctamente los objetos `ContentMaterial`.
-2.  **Incidencia 2 (Plantilla):** Eliminar la "Leyenda de Indicadores" de la vista "Mi Explorador Personal", donde no es pertinente.
-3.  **Incidencia 3 (Lógica):** Restaurar los *badges* de estado individuales junto a cada `ContentCopy` en la "Sala de Estudio".
-4.  **Incidencia 4 (UX):** Implementar retroalimentación visual para el usuario cuando el botón de solicitar evaluación está deshabilitado debido a los límites de tiempo (cooldown), informando claramente el motivo.
+1.  **Objetivo Principal: Refactorizar la Lógica de Anotación de Estados:**
+    *   Diseñar y desarrollar una nueva utilidad (o modificar la existente) que sea capaz de consultar **todos** los descendientes de un nodo de directorio (Área, Disciplina, Categoría, etc.).
+    *   La nueva lógica deberá contar los **estados distintos** de las evaluaciones encontradas.
+    *   Implementar la regla de negocio: si el recuento de estados distintos es > 1, el nodo padre debe ser anotado con un estado "Múltiple". Si es 1, se anota con ese único estado. Si es 0, no se anota nada.
+    *   La consulta debe incluir **todos** los estados relevantes de la leyenda, incluyendo los de fallo (`FAILED`, `TIMEOUT_FAILURE`, etc.).
+
+2.  **Objetivo Secundario: Integración y Verificación:**
+    *   Integrar la nueva utilidad en las vistas de los tres directorios: `academic_directory`, `search` (Contenidos Libres) y `contents` (Sala de Estudio).
+    *   Verificar empíricamente que los *badges* se muestran correctamente en todos los niveles y para todos los estados posibles.

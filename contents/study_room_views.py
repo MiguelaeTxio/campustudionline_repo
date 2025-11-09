@@ -188,27 +188,46 @@ def user_copies_list(request, area_slug=None, discipline_slug=None, master_slug=
     items_list = None
     
     # --- NIVEL 3: VISTA DE COPIAS DE CONTENIDO ---
-    if discipline_slug: # Académico
-        discipline = get_object_or_404(Discipline, slug=discipline_slug, knowledge_area__slug=area_slug)
-        items_list = base_copies.filter(original_content__topic__main_category__discipline=discipline).order_by("-updated_at")
-        breadcrumbs.extend([
-            {"name": discipline.knowledge_area.name, "url": reverse("study_room:copy_directory_area", kwargs={"area_slug": discipline.knowledge_area.slug})},
-            {"name": discipline.name, "url": "#"},
-        ])
-        annotations = get_latest_active_assessment_subqueries(request.user, 'content')
-        items_list = items_list.annotate(**annotations)
-        context.update({"level_name": "copies", "page_title": f"Mis Copias en {discipline.name}"})
+    if discipline_slug or sub_slug:
+        now = timezone.now()
+        transient_statuses = [
+            Assessment.AssessmentStatus.PENDING,
+            Assessment.AssessmentStatus.PROCESSING,
+            Assessment.AssessmentStatus.CORRECTING,
+        ]
+        active_filter = Q(
+            Q(status=Assessment.AssessmentStatus.COMPLETED, expiration_date__gt=now) |
+            Q(status=Assessment.AssessmentStatus.RESULTS_AVAILABLE, results_expiration_date__gt=now) |
+            Q(status__in=transient_statuses)
+        )
+        latest_active_assessment = Assessment.objects.filter(
+            user=request.user,
+            content=OuterRef('original_content_id')
+        ).filter(active_filter).order_by('-created_at')
+        annotations = {
+            'latest_assessment_status': Subquery(latest_active_assessment.values('status')[:1]),
+            'latest_assessment_pk': Subquery(latest_active_assessment.values('pk')[:1]),
+        }
 
-    elif sub_slug: # Contenido Libre
-        sub_category = get_object_or_404(FreeContentSubCategory, slug=sub_slug, master_category__slug=master_slug)
-        items_list = base_copies.filter(original_content__sub_category=sub_category).order_by("-updated_at")
-        breadcrumbs.extend([
-            {"name": sub_category.master_category.name, "url": reverse("study_room:free_master_directory", kwargs={"master_slug": sub_category.master_category.slug})},
-            {"name": sub_category.name, "url": "#"},
-        ])
-        annotations = get_latest_active_assessment_subqueries(request.user, 'content')
-        items_list = items_list.annotate(**annotations)
-        context.update({"level_name": "copies", "page_title": f"Mis Copias en {sub_category.name}"})
+        if discipline_slug: # Académico
+            discipline = get_object_or_404(Discipline, slug=discipline_slug, knowledge_area__slug=area_slug)
+            items_list = base_copies.filter(original_content__topic__main_category__discipline=discipline).order_by("-updated_at")
+            breadcrumbs.extend([
+                {"name": discipline.knowledge_area.name, "url": reverse("study_room:copy_directory_area", kwargs={"area_slug": discipline.knowledge_area.slug})},
+                {"name": discipline.name, "url": "#"},
+            ])
+            items_list = items_list.annotate(**annotations)
+            context.update({"level_name": "copies", "page_title": f"Mis Copias en {discipline.name}"})
+
+        elif sub_slug: # Contenido Libre
+            sub_category = get_object_or_404(FreeContentSubCategory, slug=sub_slug, master_category__slug=master_slug)
+            items_list = base_copies.filter(original_content__sub_category=sub_category).order_by("-updated_at")
+            breadcrumbs.extend([
+                {"name": sub_category.master_category.name, "url": reverse("study_room:free_master_directory", kwargs={"master_slug": sub_category.master_category.slug})},
+                {"name": sub_category.name, "url": "#"},
+            ])
+            items_list = items_list.annotate(**annotations)
+            context.update({"level_name": "copies", "page_title": f"Mis Copias en {sub_category.name}"})
 
     # --- NIVEL 2: VISTA DE DISCIPLINAS O SUBCATEGORÍAS ---
     elif area_slug: # Académico

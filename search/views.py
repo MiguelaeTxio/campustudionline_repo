@@ -174,7 +174,7 @@ def free_content_category_detail_view(request, master_slug, sub_slug=None):
             content_list = content_list.annotate(
                 is_favorite=Exists(FavoriteFolder.objects.filter(user=request.user, materials__pk=OuterRef('pk')))
             )
-            relation = 'content_copy__original_content'
+            relation = 'content'
             annotations = get_latest_active_assessment_subqueries(request.user, relation)
             content_list = content_list.annotate(**annotations)
     else:
