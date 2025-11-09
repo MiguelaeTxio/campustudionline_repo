@@ -12,3 +12,10 @@
 *   **Session:** Resolución de Incidencias en Indicadores de Evaluación
 *   **Description:** Solucionar cuatro incidencias en el sistema de autoevaluaciones: 1) Ausencia de badges en 'Contenidos Libres', 2) Eliminación de leyenda en 'Mi Explorador Personal', 3) Restauración de badges en 'Sala de Estudio', y 4) Añadir feedback visual para el cooldown del botón de solicitar evaluación.
 
+# 2025-11-09
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+## CSO
+*  **Session:** Refactorización del Sistema de Indicadores de Estado de Autoevaluaciones
+*  **Description:** Rediseñar la lógica de propagación de estados de `assessment` para que los indicadores (`badges`) reflejen correctamente los estados de los nodos hijos en las vistas jerárquicas (`academic_directory`, `search`, `contents`), incluyendo estados de fallo y un nuevo estado "Múltiple".
+

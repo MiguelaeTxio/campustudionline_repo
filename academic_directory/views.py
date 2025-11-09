@@ -1,4 +1,4 @@
-# /home/MiguelAeTxio/CampuStudiOnline/academic_directory/views.py
+# /home/MiguelAeTxio/PROJECTS/CampuStudiOnline/academic_directory/views.py
 from django.shortcuts import render, get_object_or_404
 from django.urls import reverse
 from django.db.models import Count, Q, OuterRef, Subquery, Exists
@@ -11,7 +11,7 @@ from django.views.decorators.http import require_POST
 from academic_structure.models import University, Branch, Degree, Subject, AcademicYear
 from contents.models import ContentMaterial, FavoriteFolder
 from assessment.models import Assessment
-from assessment.utils import get_latest_active_assessment_subqueries
+from assessment.utils import annotate_with_assessment_states
 from content_automation.models import ContentRequest
 
 ACADEMIC_DIRECTORY_TEMPLATE = "academic_directory/academic_level_detail.html"
@@ -20,8 +20,8 @@ def university_list_view(request):
     universities_qs = University.objects.all().order_by("name")
 
     if request.user.is_authenticated:
-        relation = 'content__subject__academic_year__degree__branch__university'
-        annotations = get_latest_active_assessment_subqueries(request.user, relation)
+        lookup_prefix = 'subject__academic_year__degree__branch__university'
+        annotations = annotate_with_assessment_states(request.user, lookup_prefix)
         universities_qs = universities_qs.annotate(**annotations)
 
     paginator = Paginator(universities_qs, 10)
@@ -44,8 +44,8 @@ def branch_list_view(request, university_slug):
     branches_qs = Branch.objects.filter(university=university).order_by("name")
 
     if request.user.is_authenticated:
-        relation = 'content__subject__academic_year__degree__branch'
-        annotations = get_latest_active_assessment_subqueries(request.user, relation)
+        lookup_prefix = 'subject__academic_year__degree__branch'
+        annotations = annotate_with_assessment_states(request.user, lookup_prefix)
         branches_qs = branches_qs.annotate(**annotations)
 
     paginator = Paginator(branches_qs, 10)
@@ -74,8 +74,8 @@ def degree_list_view(request, university_slug, branch_slug):
     degrees_qs = Degree.objects.filter(branch=branch).order_by("name")
 
     if request.user.is_authenticated:
-        relation = 'content__subject__academic_year__degree'
-        annotations = get_latest_active_assessment_subqueries(request.user, relation)
+        lookup_prefix = 'subject__academic_year__degree'
+        annotations = annotate_with_assessment_states(request.user, lookup_prefix)
         degrees_qs = degrees_qs.annotate(**annotations)
 
     paginator = Paginator(degrees_qs, 10)
@@ -106,8 +106,8 @@ def academic_year_list_view(request, university_slug, branch_slug, degree_slug):
     academic_years_qs = AcademicYear.objects.filter(degree=degree).order_by("year")
 
     if request.user.is_authenticated:
-        relation = 'content__subject__academic_year'
-        annotations = get_latest_active_assessment_subqueries(request.user, relation)
+        lookup_prefix = 'subject__academic_year'
+        annotations = annotate_with_assessment_states(request.user, lookup_prefix)
         academic_years_qs = academic_years_qs.annotate(**annotations)
 
     paginator = Paginator(academic_years_qs, 10)
@@ -143,8 +143,8 @@ def subject_list_view(request, university_slug, branch_slug, degree_slug, year):
     subjects_qs = Subject.objects.filter(academic_year=academic_year).select_related('content_request').order_by("name")
 
     if request.user.is_authenticated:
-        relation = 'content__subject'
-        annotations = get_latest_active_assessment_subqueries(request.user, relation)
+        lookup_prefix = 'subject'
+        annotations = annotate_with_assessment_states(request.user, lookup_prefix)
         subjects_qs = subjects_qs.annotate(**annotations)
 
     paginator = Paginator(subjects_qs, 10)
@@ -180,8 +180,8 @@ def public_content_list_view(request, university_slug, branch_slug, degree_slug,
 
     if request.user.is_authenticated:
         # Annotate with assessment status
-        relation = 'content'
-        annotations = get_latest_active_assessment_subqueries(request.user, relation)
+        lookup_prefix = '' # No prefix needed, we're at the ContentMaterial level
+        annotations = annotate_with_assessment_states(request.user, lookup_prefix)
         public_contents_qs = public_contents_qs.annotate(**annotations)
 
         # Annotate with favorite status using an efficient subquery

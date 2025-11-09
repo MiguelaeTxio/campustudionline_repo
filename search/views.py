@@ -22,7 +22,7 @@ from contents.models import (
 from chat.models import ChatRoom, RoomMembership
 from messaging.models import DirectChatSession
 from academic_structure.models import University, Branch, Degree
-from assessment.utils import get_latest_active_assessment_subqueries
+from assessment.utils import annotate_with_assessment_states
 
 logger = logging.getLogger(__name__)
 
@@ -33,9 +33,8 @@ def search_home_view(request):
     master_categories = FreeContentMasterCategory.objects.all()
     
     if request.user.is_authenticated:
-        # Correct relation path from Assessment -> ContentCopy -> ContentMaterial -> FreeContentMasterCategory
-        relation = 'content_copy__original_content__master_category'
-        annotations = get_latest_active_assessment_subqueries(request.user, relation)
+        lookup_prefix = 'master_category'
+        annotations = annotate_with_assessment_states(request.user, lookup_prefix)
         master_categories = master_categories.annotate(**annotations)
 
     paginator = Paginator(master_categories, 10)
@@ -69,13 +68,15 @@ def academic_category_detail_view(
     content_list = None
     is_leaf_node = False
     
-    relation_map = {
-        'area': 'content_copy__original_content__topic__main_category__discipline__knowledge_area',
-        'discipline': 'content_copy__original_content__topic__main_category__discipline',
-        'main_category': 'content_copy__original_content__topic__main_category',
-        'topic': 'content_copy__original_content__topic',
+    # Define lookup prefixes for each hierarchy level for assessment state aggregation.
+    # The path is from ContentMaterial back to the object being annotated.
+    lookup_prefix_map = {
+        'area': 'topic__main_category__discipline__knowledge_area',
+        'discipline': 'topic__main_category__discipline',
+        'main_category': 'topic__main_category',
+        'topic': 'topic',
     }
-    current_relation = relation_map['area']
+    current_lookup_prefix = lookup_prefix_map['area']
 
     if discipline_slug:
         discipline = get_object_or_404(Discipline, slug=discipline_slug, knowledge_area=area)
@@ -83,7 +84,7 @@ def academic_category_detail_view(
         breadcrumbs.append({"name": discipline.name, "url": discipline.get_absolute_url()})
         child_items = discipline.main_categories.filter(has_free_content=True).distinct().order_by("name")
         child_model_name = "Categorías Principales"
-        current_relation = relation_map['discipline']
+        current_lookup_prefix = lookup_prefix_map['discipline']
 
     if main_category_slug:
         main_category = get_object_or_404(MainCategory, slug=main_category_slug, discipline=discipline)
@@ -91,7 +92,7 @@ def academic_category_detail_view(
         breadcrumbs.append({"name": main_category.name, "url": main_category.get_absolute_url()})
         child_items = main_category.root_topics.filter(has_free_content=True).distinct().order_by("name")
         child_model_name = "Temas"
-        current_relation = relation_map['main_category']
+        current_lookup_prefix = lookup_prefix_map['main_category']
 
         if topic_slug_path:
             slugs = topic_slug_path.strip("/").split("/")
@@ -103,12 +104,12 @@ def academic_category_detail_view(
             
             current_category = parent_topic
             child_items = parent_topic.subtopics.filter(has_free_content=True).distinct().order_by("name")
-            current_relation = relation_map['topic']
+            current_lookup_prefix = lookup_prefix_map['topic']
             child_model_name = "Sub-temas y Materiales"
             content_list = parent_topic.content_materials.filter(is_public=True, subject__isnull=True).order_by("title")
             if request.user.is_authenticated:
-                relation = 'content_copy__original_content'
-                annotations = get_latest_active_assessment_subqueries(request.user, relation)
+                lookup_prefix = '' # Annotating ContentMaterial directly
+                annotations = annotate_with_assessment_states(request.user, lookup_prefix)
                 content_list = content_list.annotate(
                     is_favorite=Exists(FavoriteFolder.objects.filter(user=request.user, materials__pk=OuterRef('pk'))),
                     **annotations
@@ -118,7 +119,7 @@ def academic_category_detail_view(
             is_leaf_node = not child_items.exists()
 
     if child_items and request.user.is_authenticated:
-        annotations = get_latest_active_assessment_subqueries(request.user, current_relation)
+        annotations = annotate_with_assessment_states(request.user, current_lookup_prefix)
         child_items = child_items.annotate(**annotations)
 
     if breadcrumbs:
@@ -157,8 +158,8 @@ def free_content_category_detail_view(request, master_slug, sub_slug=None):
     
     # Annotations for master category level (subcategories)
     if child_items and request.user.is_authenticated:
-        relation = 'content_copy__original_content__sub_category'
-        annotations = get_latest_active_assessment_subqueries(request.user, relation)
+        lookup_prefix = 'sub_category'
+        annotations = annotate_with_assessment_states(request.user, lookup_prefix)
         child_items = child_items.annotate(**annotations)
 
     if sub_slug:
@@ -174,8 +175,8 @@ def free_content_category_detail_view(request, master_slug, sub_slug=None):
             content_list = content_list.annotate(
                 is_favorite=Exists(FavoriteFolder.objects.filter(user=request.user, materials__pk=OuterRef('pk')))
             )
-            relation = 'content'
-            annotations = get_latest_active_assessment_subqueries(request.user, relation)
+            lookup_prefix = '' # Annotating ContentMaterial directly
+            annotations = annotate_with_assessment_states(request.user, lookup_prefix)
             content_list = content_list.annotate(**annotations)
     else:
         # If no sub_slug, we might be at a master category that has direct content

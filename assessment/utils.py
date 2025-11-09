@@ -1,43 +1,59 @@
-# /home/MiguelAeTxio/CampuStudiOnline/assessment/utils.py
+# /home/MiguelAeTxio/PROJECTS/CampuStudiOnline/assessment/utils.py
 from datetime import timedelta
 from django.utils import timezone
 from django.conf import settings
 from django.urls import reverse
 from django.utils.translation import gettext as _
-from django.db.models import Q, Subquery, OuterRef
+from django.db.models import Q, Subquery, OuterRef, Count, Case, When, Value, CharField, IntegerField, UUIDField
+from django.db.models.functions import Coalesce
+from django.db.models.lookups import GreaterThan
 from .models import Assessment, AssessmentSettings
 
 
-def get_latest_active_assessment_subqueries(user, relation_field):
+def annotate_with_assessment_states(user, lookup_prefix):
     """
-    [NUEVO - CENTRALIZADO]
-    Genera subconsultas para obtener el estado y PK de la evaluación ACTIVA más reciente.
-    Una evaluación se considera "activa" si está en un estado transitorio (pendiente,
-    procesando, corrigiendo) o si es una acción pendiente para el usuario que no ha caducado
-    (lista para realizar o con resultados disponibles).
-    """
-    now = timezone.now()
-    
-    transient_statuses = [
-        Assessment.AssessmentStatus.PENDING,
-        Assessment.AssessmentStatus.PROCESSING,
-        Assessment.AssessmentStatus.CORRECTING,
-    ]
+    [NUEVO - REFACTORIZADO Y CORREGIDO]
+    Genera anotaciones para determinar el estado de evaluación agregado para un objeto.
 
-    active_filter = Q(
-        Q(status=Assessment.AssessmentStatus.COMPLETED, expiration_date__gt=now) |
-        Q(status=Assessment.AssessmentStatus.RESULTS_AVAILABLE, results_expiration_date__gt=now) |
-        Q(status__in=transient_statuses)
+    Calcula el estado basándose en TODAS las evaluaciones descendientes, incluidos
+    los estados de fallo. La lógica es:
+    1. Si hay múltiples estados distintos -> 'MULTIPLE'.
+    2. Si hay un único estado distinto -> ese estado.
+    3. Si no hay evaluaciones -> None.
+    """
+    related_assessments = Assessment.objects.filter(
+        user=user,
+        **{f"content__{lookup_prefix}": OuterRef('pk')}
+    ).order_by()
+
+    distinct_states_subquery = related_assessments.annotate(
+        dummy=Value(1)
+    ).values('dummy').annotate(
+        c=Count('status', distinct=True)
+    ).values('c')
+
+    single_status_subquery = related_assessments.values('status').distinct()[:1]
+    latest_pk_subquery = related_assessments.order_by('-created_at').values('pk')[:1]
+
+    # FIX DEFINITIVO: Usar Coalesce para manejar NULL y GreaterThan para crear una expresión de comparación SQL válida.
+    coalesced_subquery = Coalesce(Subquery(distinct_states_subquery, output_field=IntegerField()), Value(0))
+    
+    state_annotation = Case(
+        When(GreaterThan(coalesced_subquery, Value(1)), then=Value('MULTIPLE')),
+        When(coalesced_subquery=1, then=Subquery(single_status_subquery)),
+        default=Value(None),
+        output_field=CharField()
     )
 
-    latest_active_assessment = Assessment.objects.filter(
-        user=user,
-        **{f"{relation_field}": OuterRef('pk')}
-    ).filter(active_filter).order_by('-created_at')
-    
+    pk_annotation = Case(
+        When(coalesced_subquery=1, then=Subquery(latest_pk_subquery)),
+        default=Value(None),
+        output_field=UUIDField(null=True)
+    )
+
     return {
-        'latest_assessment_status': Subquery(latest_active_assessment.values('status')[:1]),
-        'latest_assessment_pk': Subquery(latest_active_assessment.values('pk')[:1]),
+        'assessment_state': state_annotation,
+        'latest_assessment_pk': pk_annotation
     }
 
 

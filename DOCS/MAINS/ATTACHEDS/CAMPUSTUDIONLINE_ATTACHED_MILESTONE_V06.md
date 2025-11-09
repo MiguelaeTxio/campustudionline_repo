@@ -1,33 +1,28 @@
 # Hito 6: Sistema de Autoevaluaciones con IA (EN PROGRESO)
 
-## Resumen de la Sesión del 09/11/2025 (NRA)
+## Resumen de la Sesión del 09/11/2025 (CSO)
 
-**Objetivo Inicial:** Resolver cuatro incidencias relacionadas con la visualización de los indicadores de estado de las autoevaluaciones (`badges`).
+**Objetivo:** Refactorizar la lógica de propagación de estados de las autoevaluaciones (`badges`) en los directorios jerárquicos.
 
 **Progreso y Descubrimientos Clave:**
 
-1.  **Resolución de Incidencias Menores:** Se corrigieron con éxito tres de las cuatro incidencias originales mediante modificaciones atómicas y auditadas (protocolo `PMA`):
-    *   **Incidencia 2:** Eliminada la leyenda de indicadores de "Mi Explorador Personal".
-    *   **Incidencia 4:** Implementado un *tooltip* informativo en el botón deshabilitado de "Solicitar Evaluación".
-    *   **Inconsistencia Visual:** Corregido el color del indicador de navegación en la "Sala de Estudio" para alinearlo con el branding de la plataforma.
+1.  **Implementación de Nueva Utilidad:** Se reemplazó la función obsoleta `get_latest_active_assessment_subqueries` por una nueva, `annotate_with_assessment_states`, diseñada para agregar correctamente los estados descendientes. La nueva utilidad fue integrada en las vistas de `academic_directory`, `search` y `contents`.
 
-2.  **Diagnóstico de Causa Raíz (Incidencias 1 y 3):** La investigación sobre la ausencia de *badges* en los directorios reveló un fallo de diseño fundamental en la utilidad `get_latest_active_assessment_subqueries`. Se demostró empíricamente que esta función:
-    *   Excluye deliberadamente los estados de fallo (`FAILED`), impidiendo su visualización.
-    *   Carece de la capacidad de agregar múltiples estados de nodos hijos para reflejarlos en un nodo padre.
-    *   Es incapaz de implementar la lógica para el indicador de "Múltiples estados diferentes".
+2.  **Diagnóstico de Causa Raíz a través de Fallos Múltiples:** La verificación empírica de la implementación falló repetidamente, revelando una comprensión incorrecta de cómo el ORM de Django maneja las expresiones de consulta complejas:
+    *   **Primer Fallo (`TypeError`):** Se intentó comparar un objeto `Subquery` con un entero, lo cual no es soportado.
+    *   **Segundo Fallo (`TypeError`):** Se intentó comparar un objeto `Coalesce` con un entero, demostrando el mismo error conceptual.
+    *   **Tercer Fallo (`FieldError`):** El uso de sintaxis de `lookup` por palabra clave (`kwarg=value`) con un objeto de expresión (`Coalesce`) fue interpretado incorrectamente por el ORM como un `lookup` de campo, resultando en un error de campo no encontrado.
 
-**Estado Final:** Se ha identificado que la solución a la visibilidad de los *badges* no es un parche, sino una refactorización de la lógica de propagación de estados. Las correcciones superficiales aplicadas inicialmente a las vistas fueron insuficientes al no abordar el fallo en la utilidad subyacente.
+**Estado Final:** La sesión concluye sin resolver el problema funcional, pero con un diagnóstico empírico y definitivo de la causa raíz. El error no es de lógica, sino de sintaxis en la construcción de consultas complejas. La solución correcta, validada mediante investigación de la documentación, requiere el uso explícito de clases de `lookup` de Django (ej. `GreaterThan`, `Exact`) para encapsular **todas** las operaciones de comparación que involucren objetos de expresión.
 
 ## Hoja de Ruta para la Próxima Sesión
 
-La próxima sesión se centrará **exclusivamente** en la refactorización completa del sistema de indicadores de evaluación para cumplir con el requisito de que todos los estados de la leyenda se propaguen jerárquicamente en los tres directorios.
+La próxima sesión tiene un único objetivo atómico y de máxima prioridad:
 
-1.  **Objetivo Principal: Refactorizar la Lógica de Anotación de Estados:**
-    *   Diseñar y desarrollar una nueva utilidad (o modificar la existente) que sea capaz de consultar **todos** los descendientes de un nodo de directorio (Área, Disciplina, Categoría, etc.).
-    *   La nueva lógica deberá contar los **estados distintos** de las evaluaciones encontradas.
-    *   Implementar la regla de negocio: si el recuento de estados distintos es > 1, el nodo padre debe ser anotado con un estado "Múltiple". Si es 1, se anota con ese único estado. Si es 0, no se anota nada.
-    *   La consulta debe incluir **todos** los estados relevantes de la leyenda, incluyendo los de fallo (`FAILED`, `TIMEOUT_FAILURE`, etc.).
+1.  **Implementar la Corrección Definitiva:**
+    *   Modificar el archivo `assessment/utils.py` para importar `GreaterThan` y `Exact` desde `django.db.models.lookups`.
+    *   Reescribir las condiciones `When` dentro de la función `annotate_with_assessment_states` para usar estas clases, eliminando así la sintaxis de `lookup` por palabra clave y los `TypeError`.
+    *   **Ejemplo:** `When(coalesced_subquery=1, ...)` se convertirá en `When(Exact(coalesced_subquery, Value(1)), ...)`.
 
-2.  **Objetivo Secundario: Integración y Verificación:**
-    *   Integrar la nueva utilidad en las vistas de los tres directorios: `academic_directory`, `search` (Contenidos Libres) y `contents` (Sala de Estudio).
-    *   Verificar empíricamente que los *badges* se muestran correctamente en todos los niveles y para todos los estados posibles.
+2.  **Verificación Empírica:**
+    *   Tras aplicar el parche y recargar el servidor, se procederá a una verificación exhaustiva en los tres directorios afectados para confirmar la erradicación del `FieldError` y el correcto funcionamiento de los `badges`.
