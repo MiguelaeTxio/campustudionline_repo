@@ -19,3 +19,17 @@
 *  **Session:** Refactorización del Sistema de Indicadores de Estado de Autoevaluaciones
 *  **Description:** Rediseñar la lógica de propagación de estados de `assessment` para que los indicadores (`badges`) reflejen correctamente los estados de los nodos hijos en las vistas jerárquicas (`academic_directory`, `search`, `contents`), incluyendo estados de fallo y un nuevo estado "Múltiple".
 
+# 09/11/2025
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+## AAAA
+*  **Session:** Corrección de Sintaxis ORM en la Propagación de Estados de Autoevaluaciones
+*  **Description:** Refactorizar la función 'annotate_with_assessment_states' en 'assessment/utils.py' para utilizar las clases de lookup explícitas de Django (Exact, GreaterThan) en las condiciones 'When', solucionando el 'FieldError' causado por una sintaxis de consulta incorrecta y asegurando la correcta visualización de los badges de estado.
+
+# 2025-11-09
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+## AAAA
+*  **Session:** Refactorización de la Lógica de Badges de Autoevaluación y Corrección de Consulta ORM
+*  **Description:** La sesión se centrará en corregir un `FieldError` en la función `annotate_with_assessment_states` del archivo `assessment/utils.py`. La causa es una sintaxis incorrecta en la construcción de consultas complejas del ORM de Django. La solución, identificada en la sesión anterior, consiste en reemplazar los `lookups` implícitos por palabra clave con el uso explícito de las clases `Exact` y `GreaterThan` para asegurar la correcta comparación de valores en las subconsultas, resolviendo así la propagación incorrecta de estados de las autoevaluaciones.
+

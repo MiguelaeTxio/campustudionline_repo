@@ -11,7 +11,7 @@ from django.views.decorators.http import require_POST
 from academic_structure.models import University, Branch, Degree, Subject, AcademicYear
 from contents.models import ContentMaterial, FavoriteFolder
 from assessment.models import Assessment
-from assessment.utils import annotate_with_assessment_states
+from assessment.utils import annotate_academic_queryset_with_assessment_states, annotate_free_content_queryset_with_assessment_states
 from content_automation.models import ContentRequest
 
 ACADEMIC_DIRECTORY_TEMPLATE = "academic_directory/academic_level_detail.html"
@@ -20,9 +20,7 @@ def university_list_view(request):
     universities_qs = University.objects.all().order_by("name")
 
     if request.user.is_authenticated:
-        lookup_prefix = 'subject__academic_year__degree__branch__university'
-        annotations = annotate_with_assessment_states(request.user, lookup_prefix)
-        universities_qs = universities_qs.annotate(**annotations)
+        universities_qs = annotate_academic_queryset_with_assessment_states(universities_qs, request.user, 'University')
 
     paginator = Paginator(universities_qs, 10)
     page_number = request.GET.get("page")
@@ -44,9 +42,7 @@ def branch_list_view(request, university_slug):
     branches_qs = Branch.objects.filter(university=university).order_by("name")
 
     if request.user.is_authenticated:
-        lookup_prefix = 'subject__academic_year__degree__branch'
-        annotations = annotate_with_assessment_states(request.user, lookup_prefix)
-        branches_qs = branches_qs.annotate(**annotations)
+        branches_qs = annotate_academic_queryset_with_assessment_states(branches_qs, request.user, 'Branch')
 
     paginator = Paginator(branches_qs, 10)
     page_number = request.GET.get("page")
@@ -74,9 +70,7 @@ def degree_list_view(request, university_slug, branch_slug):
     degrees_qs = Degree.objects.filter(branch=branch).order_by("name")
 
     if request.user.is_authenticated:
-        lookup_prefix = 'subject__academic_year__degree'
-        annotations = annotate_with_assessment_states(request.user, lookup_prefix)
-        degrees_qs = degrees_qs.annotate(**annotations)
+        degrees_qs = annotate_academic_queryset_with_assessment_states(degrees_qs, request.user, 'Degree')
 
     paginator = Paginator(degrees_qs, 10)
     page_number = request.GET.get("page")
@@ -106,9 +100,7 @@ def academic_year_list_view(request, university_slug, branch_slug, degree_slug):
     academic_years_qs = AcademicYear.objects.filter(degree=degree).order_by("year")
 
     if request.user.is_authenticated:
-        lookup_prefix = 'subject__academic_year'
-        annotations = annotate_with_assessment_states(request.user, lookup_prefix)
-        academic_years_qs = academic_years_qs.annotate(**annotations)
+        academic_years_qs = annotate_academic_queryset_with_assessment_states(academic_years_qs, request.user, 'AcademicYear')
 
     paginator = Paginator(academic_years_qs, 10)
     page_number = request.GET.get("page")
@@ -140,12 +132,10 @@ def academic_year_list_view(request, university_slug, branch_slug, degree_slug):
 
 def subject_list_view(request, university_slug, branch_slug, degree_slug, year):
     academic_year = get_object_or_404(AcademicYear.objects.select_related("degree__branch__university"), year=year, degree__slug=degree_slug, degree__branch__slug=branch_slug, degree__branch__university__slug=university_slug)
-    subjects_qs = Subject.objects.filter(academic_year=academic_year).select_related('content_request').order_by("name")
+    subjects_qs = Subject.objects.filter(academic_year=academic_year).select_related('content_hash_family__content_material').order_by("name")
 
     if request.user.is_authenticated:
-        lookup_prefix = 'subject'
-        annotations = annotate_with_assessment_states(request.user, lookup_prefix)
-        subjects_qs = subjects_qs.annotate(**annotations)
+        subjects_qs = annotate_academic_queryset_with_assessment_states(subjects_qs, request.user, 'Subject')
 
     paginator = Paginator(subjects_qs, 10)
     page_number = request.GET.get("page")
@@ -175,16 +165,14 @@ def subject_list_view(request, university_slug, branch_slug, degree_slug, year):
 
 
 def public_content_list_view(request, university_slug, branch_slug, degree_slug, year, subject_slug):
-    subject = get_object_or_404(Subject.objects.select_related("academic_year__degree__branch__university"), slug=subject_slug, academic_year__year=year, academic_year__degree__slug=degree_slug, academic_year__degree__branch__slug=branch_slug, academic_year__degree__branch__university__slug=university_slug)
-    public_contents_qs = ContentMaterial.objects.filter(subject=subject, is_public=True).select_related("creator").order_by("title").distinct()
+    subject = get_object_or_404(Subject.objects.select_related("academic_year__degree__branch__university", "content_hash_family"), slug=subject_slug, academic_year__year=year, academic_year__degree__slug=degree_slug, academic_year__degree__branch__slug=branch_slug, academic_year__degree__branch__university__slug=university_slug)
+    
+    content_material = subject.content_hash_family.content_material if subject.content_hash_family else None
+    public_contents_qs = ContentMaterial.objects.filter(pk=content_material.pk) if content_material else ContentMaterial.objects.none()
 
     if request.user.is_authenticated:
-        # Annotate with assessment status
-        lookup_prefix = '' # No prefix needed, we're at the ContentMaterial level
-        annotations = annotate_with_assessment_states(request.user, lookup_prefix)
-        public_contents_qs = public_contents_qs.annotate(**annotations)
+        public_contents_qs = annotate_free_content_queryset_with_assessment_states(public_contents_qs, request.user, 'ContentMaterial')
 
-        # Annotate with favorite status using an efficient subquery
         user_favorites_subquery = FavoriteFolder.objects.filter(
             user=request.user,
             materials=OuterRef('pk')
@@ -211,7 +199,7 @@ def public_content_list_view(request, university_slug, branch_slug, degree_slug,
         "breadcrumb": breadcrumb,
         "current_level_name": subject.name,
         "next_level_name": None,
-        "next_level_items": None, # Añadido para evitar VariableDoesNotExist
+        "next_level_items": None, 
         "public_contents": page_obj,
     }
     return render(request, ACADEMIC_DIRECTORY_TEMPLATE, context)

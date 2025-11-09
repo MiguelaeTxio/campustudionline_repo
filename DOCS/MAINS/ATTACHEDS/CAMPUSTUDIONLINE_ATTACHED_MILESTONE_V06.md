@@ -6,23 +6,18 @@
 
 **Progreso y Descubrimientos Clave:**
 
-1.  **Implementación de Nueva Utilidad:** Se reemplazó la función obsoleta `get_latest_active_assessment_subqueries` por una nueva, `annotate_with_assessment_states`, diseñada para agregar correctamente los estados descendientes. La nueva utilidad fue integrada en las vistas de `academic_directory`, `search` y `contents`.
+1.  **Refactorización a Anotación Contextual:** La hipótesis inicial de un simple error de sintaxis del ORM se demostró incorrecta. El análisis de los modelos (`academic_structure`, `contents`, `assessment`) reveló la necesidad de abandonar la función de anotación genérica. Se implementó una solución de refactorización atómica, reemplazando la utilidad `annotate_with_assessment_states` por tres funciones especializadas y contextuales: una para el directorio académico, una para el contenido libre y otra para la sala de estudio.
 
-2.  **Diagnóstico de Causa Raíz a través de Fallos Múltiples:** La verificación empírica de la implementación falló repetidamente, revelando una comprensión incorrecta de cómo el ORM de Django maneja las expresiones de consulta complejas:
-    *   **Primer Fallo (`TypeError`):** Se intentó comparar un objeto `Subquery` con un entero, lo cual no es soportado.
-    *   **Segundo Fallo (`TypeError`):** Se intentó comparar un objeto `Coalesce` con un entero, demostrando el mismo error conceptual.
-    *   **Tercer Fallo (`FieldError`):** El uso de sintaxis de `lookup` por palabra clave (`kwarg=value`) con un objeto de expresión (`Coalesce`) fue interpretado incorrectamente por el ORM como un `lookup` de campo, resultando en un error de campo no encontrado.
+2.  **Diagnóstico de Causa Raíz en la Capa de Presentación:** La implementación de las nuevas utilidades seguía sin mostrar los `badges`. La investigación empírica, a través del análisis de `tracebacks` (`VariableDoesNotExist`), reveló que el fallo no estaba en las vistas, sino en la capa de presentación. Se identificó un `templatetag` (`render_assessment_indicators`) que actuaba como intermediario y mantenía un contrato de datos obsoleto (`iv_data`), rompiendo la comunicación entre las vistas y la plantilla final del `badge`.
 
-**Estado Final:** La sesión concluye sin resolver el problema funcional, pero con un diagnóstico empírico y definitivo de la causa raíz. El error no es de lógica, sino de sintaxis en la construcción de consultas complejas. La solución correcta, validada mediante investigación de la documentación, requiere el uso explícito de clases de `lookup` de Django (ej. `GreaterThan`, `Exact`) para encapsular **todas** las operaciones de comparación que involucren objetos de expresión.
+**Estado Final:** La sesión concluye con la corrección exitosa del `templatetag` `assessment_tags.py`. Con este cambio, la cadena de renderizado completa (vista -> `templatetag` -> plantilla de `badge`) quedó sincronizada. Los `badges` de estado de evaluación, incluido el de `'FAILED'`, ahora se muestran correctamente en todas las vistas de agregación. Sin embargo, al realizar la prueba final del flujo completo, se descubrió un nuevo fallo crítico.
 
 ## Hoja de Ruta para la Próxima Sesión
 
-La próxima sesión tiene un único objetivo atómico y de máxima prioridad:
+1.  **Diagnosticar el Fallo Inmediato en la Generación de Evaluaciones:**
+    *   **Problema:** Al solicitar una nueva evaluación, esta pasa a un estado `'FAILED'` de forma casi instantánea.
+    *   **Acción:** La primera acción será realizar una trazabilidad desde la base de datos. Se solicitará una evaluación y, acto seguido, se ejecutará un script en la `shell` de Django para inspeccionar el objeto `Assessment` recién creado. Se analizará su estado, `timestamps`, y cualquier posible mensaje de error asociado.
+    *   **Acción Secundaria:** En paralelo, se analizarán los logs del worker de Celery para identificar cualquier excepción que ocurra durante la ejecución de la tarea de generación de la evaluación.
 
-1.  **Implementar la Corrección Definitiva:**
-    *   Modificar el archivo `assessment/utils.py` para importar `GreaterThan` y `Exact` desde `django.db.models.lookups`.
-    *   Reescribir las condiciones `When` dentro de la función `annotate_with_assessment_states` para usar estas clases, eliminando así la sintaxis de `lookup` por palabra clave y los `TypeError`.
-    *   **Ejemplo:** `When(coalesced_subquery=1, ...)` se convertirá en `When(Exact(coalesced_subquery, Value(1)), ...)`.
-
-2.  **Verificación Empírica:**
-    *   Tras aplicar el parche y recargar el servidor, se procederá a una verificación exhaustiva en los tres directorios afectados para confirmar la erradicación del `FieldError` y el correcto funcionamiento de los `badges`.
+2.  **Verificación Empírica Integral:**
+    *   Una vez solucionado el fallo de generación, se realizará una prueba completa del ciclo de vida de una evaluación para asegurar que todos los estados (`PENDING`, `PROCESSING`, `COMPLETED`, `RESULTS_AVAILABLE`, etc.) se propagan y visualizan correctamente en todas las vistas agregadas.

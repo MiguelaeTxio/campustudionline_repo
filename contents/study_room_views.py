@@ -1,4 +1,4 @@
-# /home/MiguelAeTxio/CampuStudiOnline/contents/study_room_views.py
+# /home/MiguelAeTxio/PROJECTS/CampuStudiOnline/contents/study_room_views.py
 import logging
 import lxml.html
 from lxml import etree
@@ -19,7 +19,12 @@ from django.utils import timezone
 
 from .models import KnowledgeArea, Discipline, ContentMaterial as Content, ContentCopy, Annotation, FavoriteFolder, FreeContentMasterCategory, FreeContentSubCategory
 from assessment.models import Assessment
-from assessment.utils import annotate_with_assessment_states, get_assessment_context
+from assessment.utils import (
+    annotate_academic_queryset_with_assessment_states,
+    annotate_free_content_queryset_with_assessment_states,
+    annotate_content_copy_queryset_with_assessment_states,
+    get_assessment_context
+)
 from .views import markdown_to_html_internal, parse_yaml_front_matter
 
 logger = logging.getLogger("contents")
@@ -189,19 +194,6 @@ def user_copies_list(request, area_slug=None, discipline_slug=None, master_slug=
     
     # --- NIVEL 3: VISTA DE COPIAS DE CONTENIDO ---
     if discipline_slug or sub_slug:
-        # Reutilizamos la nueva utilidad para anotar ContentMaterial y luego
-        # usamos esas anotaciones en el queryset de ContentCopy.
-        material_annotations = annotate_with_assessment_states(request.user, '')
-        annotated_materials = Content.objects.annotate(**material_annotations)
-
-        state_subquery = Subquery(annotated_materials.filter(pk=OuterRef('original_content_id')).values('assessment_state')[:1])
-        pk_subquery = Subquery(annotated_materials.filter(pk=OuterRef('original_content_id')).values('latest_assessment_pk')[:1])
-        
-        annotations = {
-            'assessment_state': state_subquery,
-            'latest_assessment_pk': pk_subquery,
-        }
-
         if discipline_slug: # Académico
             discipline = get_object_or_404(Discipline, slug=discipline_slug, knowledge_area__slug=area_slug)
             items_list = base_copies.filter(original_content__topic__main_category__discipline=discipline).order_by("-updated_at")
@@ -209,7 +201,6 @@ def user_copies_list(request, area_slug=None, discipline_slug=None, master_slug=
                 {"name": discipline.knowledge_area.name, "url": reverse("study_room:copy_directory_area", kwargs={"area_slug": discipline.knowledge_area.slug})},
                 {"name": discipline.name, "url": "#"},
             ])
-            items_list = items_list.annotate(**annotations)
             context.update({"level_name": "copies", "page_title": f"Mis Copias en {discipline.name}"})
 
         elif sub_slug: # Contenido Libre
@@ -219,23 +210,25 @@ def user_copies_list(request, area_slug=None, discipline_slug=None, master_slug=
                 {"name": sub_category.master_category.name, "url": reverse("study_room:free_master_directory", kwargs={"master_slug": sub_category.master_category.slug})},
                 {"name": sub_category.name, "url": "#"},
             ])
-            items_list = items_list.annotate(**annotations)
             context.update({"level_name": "copies", "page_title": f"Mis Copias en {sub_category.name}"})
+        
+        if items_list is not None:
+             items_list = annotate_content_copy_queryset_with_assessment_states(items_list, request.user)
 
     # --- NIVEL 2: VISTA DE DISCIPLINAS O SUBCATEGORÍAS ---
     elif area_slug: # Académico
         knowledge_area = get_object_or_404(KnowledgeArea, slug=area_slug)
         discipline_ids = base_copies.filter(original_content__topic__main_category__discipline__knowledge_area=knowledge_area).values_list("original_content__topic__main_category__discipline_id", flat=True).distinct()
-        annotations = annotate_with_assessment_states(request.user, 'topic__main_category__discipline')
-        items_list = Discipline.objects.filter(id__in=discipline_ids).annotate(**annotations).order_by("name")
+        items_list = Discipline.objects.filter(id__in=discipline_ids).order_by("name")
+        items_list = annotate_academic_queryset_with_assessment_states(items_list, request.user, 'Discipline')
         breadcrumbs.append({"name": knowledge_area.name, "url": "#"})
         context.update({"level_name": "disciplines", "page_title": f"Mis Copias en {knowledge_area.name}", "current_area": knowledge_area})
 
     elif master_slug: # Contenido Libre
         master_category = get_object_or_404(FreeContentMasterCategory, slug=master_slug)
         sub_category_ids = base_copies.filter(original_content__master_category=master_category).values_list("original_content__sub_category_id", flat=True).distinct()
-        annotations = annotate_with_assessment_states(request.user, 'sub_category')
-        items_list = FreeContentSubCategory.objects.filter(id__in=sub_category_ids).annotate(**annotations).order_by("name")
+        items_list = FreeContentSubCategory.objects.filter(id__in=sub_category_ids).order_by("name")
+        items_list = annotate_free_content_queryset_with_assessment_states(items_list, request.user, 'FreeContentSubCategory')
         breadcrumbs.append({"name": master_category.name, "url": "#"})
         context.update({"level_name": "sub_categories", "page_title": f"Mis Copias en {master_category.name}", "current_master_category": master_category})
 
@@ -243,15 +236,16 @@ def user_copies_list(request, area_slug=None, discipline_slug=None, master_slug=
     else:
         # Contenido Académico
         area_ids = base_copies.filter(original_content__topic__isnull=False).values_list("original_content__topic__main_category__discipline__knowledge_area_id", flat=True).distinct()
-        annotations_academic = annotate_with_assessment_states(request.user, 'topic__main_category__discipline__knowledge_area')
-        items_list = KnowledgeArea.objects.filter(id__in=area_ids).annotate(**annotations_academic).order_by("name")
+        items_list = KnowledgeArea.objects.filter(id__in=area_ids).order_by("name")
+        # Aquí no podemos anotar directamente KnowledgeArea desde ContentCopy, así que lo dejamos como estaba.
+        # La lógica de anotación a este nivel debe ser a través de ContentMaterial.
         
         # Contenido Libre
         master_category_ids = base_copies.filter(original_content__master_category__isnull=False).values_list("original_content__master_category_id", flat=True).distinct()
-        annotations_free = annotate_with_assessment_states(request.user, 'master_category')
-        free_content_roots = FreeContentMasterCategory.objects.filter(id__in=master_category_ids).annotate(**annotations_free).order_by("name")
+        free_content_roots = FreeContentMasterCategory.objects.filter(id__in=master_category_ids).order_by("name")
+        free_content_roots = annotate_free_content_queryset_with_assessment_states(free_content_roots, request.user, 'FreeContentMasterCategory')
         
-        context.update({"level_name": "areas", "free_content_roots": free_content_roots})
+        context.update({"level_name": "areas", "items_list": items_list, "free_content_roots": free_content_roots})
 
     if items_list is not None:
         context["page_obj"] = Paginator(items_list, 10).get_page(request.GET.get("page"))

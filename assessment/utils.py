@@ -4,27 +4,19 @@ from django.utils import timezone
 from django.conf import settings
 from django.urls import reverse
 from django.utils.translation import gettext as _
-from django.db.models import Q, Subquery, OuterRef, Count, Case, When, Value, CharField, IntegerField, UUIDField
+from django.db.models import Q, Subquery, OuterRef, Count, Case, When, Value, CharField, IntegerField
+from django.db.models.lookups import GreaterThan, Exact  # [CORRECCIÓN] Ruta de importación correcta.
 from django.db.models.functions import Coalesce
-from django.db.models.lookups import GreaterThan
 from .models import Assessment, AssessmentSettings
 
+# --- [INICIO] REFACTORIZACIÓN DE ANOTACIONES CONTEXTUALES ---
 
-def annotate_with_assessment_states(user, lookup_prefix):
+def _get_base_assessment_subqueries(user_filter):
     """
-    [NUEVO - REFACTORIZADO Y CORREGIDO]
-    Genera anotaciones para determinar el estado de evaluación agregado para un objeto.
-
-    Calcula el estado basándose en TODAS las evaluaciones descendientes, incluidos
-    los estados de fallo. La lógica es:
-    1. Si hay múltiples estados distintos -> 'MULTIPLE'.
-    2. Si hay un único estado distinto -> ese estado.
-    3. Si no hay evaluaciones -> None.
+    Función de ayuda interna para construir las subconsultas base reutilizables.
+    Acepta un diccionario de filtro para user y content.
     """
-    related_assessments = Assessment.objects.filter(
-        user=user,
-        **{f"content__{lookup_prefix}": OuterRef('pk')}
-    ).order_by()
+    related_assessments = Assessment.objects.filter(**user_filter).order_by()
 
     distinct_states_subquery = related_assessments.annotate(
         dummy=Value(1)
@@ -35,27 +27,74 @@ def annotate_with_assessment_states(user, lookup_prefix):
     single_status_subquery = related_assessments.values('status').distinct()[:1]
     latest_pk_subquery = related_assessments.order_by('-created_at').values('pk')[:1]
 
-    # FIX DEFINITIVO: Usar Coalesce para manejar NULL y GreaterThan para crear una expresión de comparación SQL válida.
     coalesced_subquery = Coalesce(Subquery(distinct_states_subquery, output_field=IntegerField()), Value(0))
-    
+
+    # [CORRECCIÓN DEFINITIVA] Usar clases de lookup explícitas para comparar expresiones.
     state_annotation = Case(
         When(GreaterThan(coalesced_subquery, Value(1)), then=Value('MULTIPLE')),
-        When(coalesced_subquery=1, then=Subquery(single_status_subquery)),
+        When(Exact(coalesced_subquery, Value(1)), then=Subquery(single_status_subquery, output_field=CharField())),
         default=Value(None),
         output_field=CharField()
     )
 
     pk_annotation = Case(
-        When(coalesced_subquery=1, then=Subquery(latest_pk_subquery)),
+        When(Exact(coalesced_subquery, Value(1)), then=Subquery(latest_pk_subquery, output_field=IntegerField())),
         default=Value(None),
-        output_field=UUIDField(null=True)
+        output_field=IntegerField()
     )
 
-    return {
-        'assessment_state': state_annotation,
-        'latest_assessment_pk': pk_annotation
-    }
+    return {'assessment_state': state_annotation, 'latest_assessment_pk': pk_annotation}
 
+def annotate_academic_queryset_with_assessment_states(queryset, user, model_name):
+    """
+    Anota un queryset del directorio ACADÉMICO (University, Branch, etc.)
+    con el estado de evaluación agregado.
+    """
+    # Construye el lookup inverso basado en el modelo que estamos anotando.
+    lookup_map = {
+        'University': 'content__subject__academic_year__degree__branch__university',
+        'Branch': 'content__subject__academic_year__degree__branch',
+        'Degree': 'content__subject__academic_year__degree',
+        'AcademicYear': 'content__subject__academic_year',
+        'Subject': 'content__subject',
+    }
+    user_filter = {
+        'user': user,
+        lookup_map[model_name]: OuterRef('pk')
+    }
+    annotations = _get_base_assessment_subqueries(user_filter)
+    return queryset.annotate(**annotations)
+
+def annotate_free_content_queryset_with_assessment_states(queryset, user, model_name):
+    """
+    Anota un queryset del directorio de CONTENIDO LIBRE (FreeContentMasterCategory, etc.)
+    con el estado de evaluación agregado.
+    """
+    lookup_map = {
+        'FreeContentMasterCategory': 'content__master_category',
+        'FreeContentSubCategory': 'content__sub_category',
+        'ContentMaterial': 'content',
+    }
+    # Para ContentMaterial, la relación es directa.
+    user_filter = {
+        'user': user,
+        lookup_map[model_name]: OuterRef('pk')
+    } if model_name != 'ContentMaterial' else {
+        'user': user,
+        'content': OuterRef('pk')
+    }
+    annotations = _get_base_assessment_subqueries(user_filter)
+    return queryset.annotate(**annotations)
+
+def annotate_content_copy_queryset_with_assessment_states(queryset, user):
+    """
+    Anota un queryset de ContentCopy con el estado de evaluación agregado.
+    """
+    user_filter = {'user': user, 'content_copy': OuterRef('pk')}
+    annotations = _get_base_assessment_subqueries(user_filter)
+    return queryset.annotate(**annotations)
+
+# --- [FIN] REFACTORIZACIÓN DE ANOTACIONES CONTEXTUALES ---
 
 def check_user_assessment_limits(user):
     """
