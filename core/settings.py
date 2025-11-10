@@ -133,6 +133,7 @@ CELERY_ACCEPT_CONTENT = ["json"]
 CELERY_TASK_SERIALIZER = "json"
 CELERY_RESULT_SERIALIZER = "json"
 CELERY_TIMEZONE = "Europe/Madrid"
+CELERY_WORKER_CONCURRENCY = 1
 
 # --- Celery Priority Queues Configuration (V2 - Arquitectura de Prioridades) ---
 CELERY_TASK_QUEUES = (
@@ -398,7 +399,7 @@ CELERY_BEAT_SCHEDULE = {
     'run-automation-main-loop-every-5-minutes': {
         'task': 'content_automation.tasks.automation_main_loop_task',
         'schedule': crontab(minute='*/5'),
-        'options': {'queue': 'default'},
+        'options': {'queue': 'content_automation'},
     },
 }
 # ==============================================================================

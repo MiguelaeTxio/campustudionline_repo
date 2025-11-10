@@ -33,3 +33,17 @@
 *  **Session:** Refactorización de la Lógica de Badges de Autoevaluación y Corrección de Consulta ORM
 *  **Description:** La sesión se centrará en corregir un `FieldError` en la función `annotate_with_assessment_states` del archivo `assessment/utils.py`. La causa es una sintaxis incorrecta en la construcción de consultas complejas del ORM de Django. La solución, identificada en la sesión anterior, consiste en reemplazar los `lookups` implícitos por palabra clave con el uso explícito de las clases `Exact` y `GreaterThan` para asegurar la correcta comparación de valores en las subconsultas, resolviendo así la propagación incorrecta de estados de las autoevaluaciones.
 
+# 09/11/2025
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+## CYC
+*  **Session:** Diagnóstico de Fallo en Generación de Autoevaluaciones
+*  **Description:** Investigar y resolver la causa por la que las nuevas autoevaluaciones pasan a estado 'FAILED' de forma inmediata, utilizando la shell de Django y los logs de Celery para un análisis empírico.
+
+# 10/11/2025
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+## EPI
+*  **Session:** Diagnóstico y Corrección de Fallo en Generación de Autoevaluaciones
+*  **Description:** La sesión se centrará en investigar por qué las nuevas autoevaluaciones fallan de forma inmediata. El plan de acción se basa en el método empírico: se inspeccionará el estado del objeto Assessment en la base de datos y se revisarán los logs de Celery para identificar la causa raíz del error y proceder a su corrección.
+

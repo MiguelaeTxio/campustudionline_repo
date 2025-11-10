@@ -1,23 +1,23 @@
 # Hito 6: Sistema de Autoevaluaciones con IA (EN PROGRESO)
 
-## Resumen de la Sesión del 09/11/2025 (CSO)
+## Resumen de la Sesión del 10/11/2025 (CSO-DGF-IA)
 
-**Objetivo:** Refactorizar la lógica de propagación de estados de las autoevaluaciones (`badges`) en los directorios jerárquicos.
+**Objetivos:** Diagnosticar y corregir el fallo inmediato en la generación de evaluaciones y la disrupción en el sistema de prioridades de tareas asíncronas.
 
 **Progreso y Descubrimientos Clave:**
 
-1.  **Refactorización a Anotación Contextual:** La hipótesis inicial de un simple error de sintaxis del ORM se demostró incorrecta. El análisis de los modelos (`academic_structure`, `contents`, `assessment`) reveló la necesidad de abandonar la función de anotación genérica. Se implementó una solución de refactorización atómica, reemplazando la utilidad `annotate_with_assessment_states` por tres funciones especializadas y contextuales: una para el directorio académico, una para el contenido libre y otra para la sala de estudio.
+1.  **Diagnóstico de Fallo en Cascada:** Se identificó una cadena de fallos críticos. El problema inicial no era un simple error de lógica, sino un fallo total en la inicialización del worker de Celery en el entorno de la tarea `always-on` de PythonAnywhere.
+2.  **Causa Raíz - Proliferación de Procesos:** La investigación empírica demostró que el comando del worker, al incluir el scheduler (`-B`) y usar el pool `prefork` por defecto, entraba en conflicto con el entorno de la tarea `always-on`, provocando una proliferación incontrolada de procesos huérfanos que bloqueaban cualquier nuevo inicio.
+3.  **Solución de Estabilidad (Concurrencia):** Se solucionó el problema de raíz forzando a Celery a operar en un único proceso mediante la directiva `CELERY_WORKER_CONCURRENCY = 1` en `core/settings.py`.
+4.  **Corrección de Errores Secundarios:** Durante el proceso se corrigió un `TypeError` en la configuración de `TEMPLATES` y se restauró la lógica de prioridades de las colas de Celery, tanto en `settings.py` (`CELERY_BEAT_SCHEDULE`) como en el comando de la tarea `always-on`.
+5.  **Inicio del Refactor Arquitectónico:** Con el sistema estable, se inició el refactor para encapsular las evaluaciones. Se completó la Fase 1, modificando el modelo `assessment.models.Assessment` para que la `ContentCopy` sea la única fuente de verdad, preparando el terreno para las migraciones y la refactorización de la lógica de negocio.
 
-2.  **Diagnóstico de Causa Raíz en la Capa de Presentación:** La implementación de las nuevas utilidades seguía sin mostrar los `badges`. La investigación empírica, a través del análisis de `tracebacks` (`VariableDoesNotExist`), reveló que el fallo no estaba en las vistas, sino en la capa de presentación. Se identificó un `templatetag` (`render_assessment_indicators`) que actuaba como intermediario y mantenía un contrato de datos obsoleto (`iv_data`), rompiendo la comunicación entre las vistas y la plantilla final del `badge`.
-
-**Estado Final:** La sesión concluye con la corrección exitosa del `templatetag` `assessment_tags.py`. Con este cambio, la cadena de renderizado completa (vista -> `templatetag` -> plantilla de `badge`) quedó sincronizada. Los `badges` de estado de evaluación, incluido el de `'FAILED'`, ahora se muestran correctamente en todas las vistas de agregación. Sin embargo, al realizar la prueba final del flujo completo, se descubrió un nuevo fallo crítico.
+**Estado Final:** El sistema de tareas asíncronas vuelve a ser estable y funcional, con la lógica de prioridades restaurada. El refactor arquitectónico del sistema de evaluaciones ha comenzado con éxito.
 
 ## Hoja de Ruta para la Próxima Sesión
 
-1.  **Diagnosticar el Fallo Inmediato en la Generación de Evaluaciones:**
-    *   **Problema:** Al solicitar una nueva evaluación, esta pasa a un estado `'FAILED'` de forma casi instantánea.
-    *   **Acción:** La primera acción será realizar una trazabilidad desde la base de datos. Se solicitará una evaluación y, acto seguido, se ejecutará un script en la `shell` de Django para inspeccionar el objeto `Assessment` recién creado. Se analizará su estado, `timestamps`, y cualquier posible mensaje de error asociado.
-    *   **Acción Secundaria:** En paralelo, se analizarán los logs del worker de Celery para identificar cualquier excepción que ocurra durante la ejecución de la tarea de generación de la evaluación.
+1.  **Generar y Aplicar Migraciones:** El primer paso será generar el archivo de migración para los cambios realizados en `assessment/models.py` y aplicarlo a la base de datos.
+2.  **Fase 2 del Refactor - Lógica de la Tarea:** Modificar la tarea `generate_assessment_from_content_task` en `assessment/tasks.py` para que obtenga el contenido y las asignaturas asociadas a través de `assessment.content_copy`, eliminando toda dependencia directa de `assessment.content`.
+3.  **Fase 3 del Refactor - Lógica de las Vistas:** Auditar `assessment/views.py` para asegurar que la creación y gestión de las evaluaciones se alinea completamente con la nueva arquitectura centrada en `ContentCopy`.
+4.  **Refinamiento de UX/UI (Badges):** Abordar la mejora de la experiencia de usuario de los `badges` de estado de la evaluación, centralizándolos exclusivamente en la vista de la Sala de Estudio (`edit_copy.html`).
 
-2.  **Verificación Empírica Integral:**
-    *   Una vez solucionado el fallo de generación, se realizará una prueba completa del ciclo de vida de una evaluación para asegurar que todos los estados (`PENDING`, `PROCESSING`, `COMPLETED`, `RESULTS_AVAILABLE`, etc.) se propagan y visualizan correctamente en todas las vistas agregadas.

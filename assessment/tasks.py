@@ -1,4 +1,4 @@
-# /home/MiguelAeTxio/CampuStudiOnline/assessment/tasks.py
+# /home/MiguelAeTxio/PROJECTS/CampuStudiOnline/assessment/tasks.py
 import logging
 import re
 import time
@@ -92,7 +92,7 @@ def generate_assessment_from_content_task(assessment_id):
         if not full_content or not full_content.strip():
             raise ValueError("El contenido para la evaluación está vacío.")
 
-        subject = assessment.content.subject
+        subject = assessment.content.subject.first()
         
         prompt_format_instructions = (
             "**FORMATO DE SALIDA OBLIGATORIO:**\n"
@@ -105,7 +105,7 @@ def generate_assessment_from_content_task(assessment_id):
             "Repite esta estructura para cada pregunta que generes."
         )
 
-        if subject and subject.learning_objectives and subject.learning_objectives.strip():
+        if subject and subject.learning_objectives:
             learning_objectives = subject.learning_objectives
             logger.info(f"Generando evaluación para contenido académico (Subject: {subject.name}).")
             prompt = (
@@ -122,6 +122,8 @@ def generate_assessment_from_content_task(assessment_id):
                 f"{prompt_format_instructions}\n\n"
                 f"Material de estudio:\n---\n{full_content}\n---"
             )
+            # [DEPURACIÓN] Log del prompt para contenido libre
+            logger.info(f"GENERATION_TASK (Free Content) - PROMPT ENVIADO A LA API:\n---\n{prompt}\n---")
 
         success, response_text, api_key_used = generate_text_content(prompt)
         if not success:

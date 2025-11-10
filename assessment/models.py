@@ -1,4 +1,4 @@
-# /home/MiguelAeTxio/CampuStudiOnline/assessment/models.py
+# /home/MiguelAeTxio/PROJECTS/CampuStudiOnline/assessment/models.py
 from django.db import models
 from django.conf import settings
 from django.utils import timezone
@@ -25,18 +25,6 @@ class Assessment(models.Model):
         GENERATION_FAILURE = "GENERATION_FAILURE", "Fallo de Generación"
         USER_CANCELLED = "USER_CANCELLED", "Cancelada por el Usuario"
 
-    content = models.ForeignKey(
-        "contents.ContentMaterial",
-        on_delete=models.CASCADE,
-        related_name="assessments",
-        verbose_name="Contenido Original",
-    )
-    user = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE,
-        related_name="assessments",
-        verbose_name="Usuario",
-    )
     content_copy = models.ForeignKey(
         "contents.ContentCopy",
         on_delete=models.CASCADE,
@@ -44,6 +32,20 @@ class Assessment(models.Model):
         verbose_name="Copia de Estudio",
         null=False,
         help_text="La copia de estudio específica a la que está vinculada esta evaluación."
+    )
+    content = models.ForeignKey(
+        "contents.ContentMaterial",
+        on_delete=models.CASCADE,
+        related_name="assessments",
+        verbose_name="Contenido Original",
+        editable=False,
+        help_text="Se rellena automáticamente desde la Copia de Estudio."
+    )
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="assessments",
+        verbose_name="Usuario",
     )
     status = models.CharField(
         max_length=30,
@@ -91,11 +93,16 @@ class Assessment(models.Model):
 
     def save(self, *args, **kwargs):
         """
-        Sobrescribe el método save para establecer las fechas de caducidad
-        basándose en el estado de la evaluación.
+        Sobrescribe el método save para:
+        1. Asegurar que el 'content' original siempre se deriva de la 'content_copy'.
+        2. Establecer las fechas de caducidad basándose en el estado.
         """
-        app_settings = AssessmentSettings.get_settings()
+        # 1. Enlace forzado a ContentMaterial a través de ContentCopy
+        if self.content_copy and not self.content_id:
+            self.content = self.content_copy.original_content
 
+        # 2. Lógica de fechas de caducidad
+        app_settings = AssessmentSettings.get_settings()
         if self.status == self.AssessmentStatus.COMPLETED:
             self.expiration_date = timezone.now() + timedelta(
                 seconds=app_settings.assessment_expiration_seconds
@@ -119,8 +126,9 @@ class Assessment(models.Model):
         ordering = ["-created_at"]
 
     def __str__(self):
+        # Usamos content_copy para la representación para reforzar la nueva lógica
         return (
-            f"Assessment for '{self.content.title}' "
+            f"Assessment for copy of '{self.content_copy.original_content.title}' "
             f"by {self.user.username} ({self.get_status_display()})"
         )
 

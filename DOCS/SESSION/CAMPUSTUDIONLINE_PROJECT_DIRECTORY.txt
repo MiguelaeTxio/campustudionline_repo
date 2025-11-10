@@ -13,6 +13,7 @@
 ./academic_directory/migrations
 ./academic_directory/migrations/__init__.py
 ./academic_directory/tests.py
+./AUTORIZADO
 ./academic_chat
 ./academic_chat/urls.py
 ./academic_chat/templates
@@ -624,6 +625,7 @@
 ./public_seo_previews/material_5.html
 ./public_seo_previews/material_14_curso-de-selenium-qa.html
 ./celery@miguelaetxio-182748-deployment-7bd7f54d64-9stlv:
+./file00.txt
 ./check_models.py
 ./.env
 ./push_tester

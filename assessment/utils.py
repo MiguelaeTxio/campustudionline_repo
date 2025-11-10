@@ -50,13 +50,19 @@ def annotate_academic_queryset_with_assessment_states(queryset, user, model_name
     Anota un queryset del directorio ACADÉMICO (University, Branch, etc.)
     con el estado de evaluación agregado.
     """
-    # Construye el lookup inverso basado en el modelo que estamos anotando.
+    # [CORRECCIÓN] Añadidas las rutas para la nueva jerarquía de contenido académico.
     lookup_map = {
+        # Jerarquía académica (legacy via Subject)
         'University': 'content__subject__academic_year__degree__branch__university',
         'Branch': 'content__subject__academic_year__degree__branch',
         'Degree': 'content__subject__academic_year__degree',
         'AcademicYear': 'content__subject__academic_year',
         'Subject': 'content__subject',
+        # Nueva jerarquía académica (via Topic)
+        'KnowledgeArea': 'content__topic__main_category__discipline__knowledge_area',
+        'Discipline': 'content__topic__main_category__discipline',
+        'MainCategory': 'content__topic__main_category',
+        'Topic': 'content__topic',
     }
     user_filter = {
         'user': user,
