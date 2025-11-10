@@ -11,16 +11,12 @@ from django.views.decorators.http import require_POST
 from academic_structure.models import University, Branch, Degree, Subject, AcademicYear
 from contents.models import ContentMaterial, FavoriteFolder
 from assessment.models import Assessment
-from assessment.utils import annotate_academic_queryset_with_assessment_states, annotate_free_content_queryset_with_assessment_states
 from content_automation.models import ContentRequest
 
 ACADEMIC_DIRECTORY_TEMPLATE = "academic_directory/academic_level_detail.html"
 
 def university_list_view(request):
     universities_qs = University.objects.all().order_by("name")
-
-    if request.user.is_authenticated:
-        universities_qs = annotate_academic_queryset_with_assessment_states(universities_qs, request.user, 'University')
 
     paginator = Paginator(universities_qs, 10)
     page_number = request.GET.get("page")
@@ -40,9 +36,6 @@ def university_list_view(request):
 def branch_list_view(request, university_slug):
     university = get_object_or_404(University, slug=university_slug)
     branches_qs = Branch.objects.filter(university=university).order_by("name")
-
-    if request.user.is_authenticated:
-        branches_qs = annotate_academic_queryset_with_assessment_states(branches_qs, request.user, 'Branch')
 
     paginator = Paginator(branches_qs, 10)
     page_number = request.GET.get("page")
@@ -68,9 +61,6 @@ def branch_list_view(request, university_slug):
 def degree_list_view(request, university_slug, branch_slug):
     branch = get_object_or_404(Branch.objects.select_related("university"), slug=branch_slug, university__slug=university_slug)
     degrees_qs = Degree.objects.filter(branch=branch).order_by("name")
-
-    if request.user.is_authenticated:
-        degrees_qs = annotate_academic_queryset_with_assessment_states(degrees_qs, request.user, 'Degree')
 
     paginator = Paginator(degrees_qs, 10)
     page_number = request.GET.get("page")
@@ -98,9 +88,6 @@ def degree_list_view(request, university_slug, branch_slug):
 def academic_year_list_view(request, university_slug, branch_slug, degree_slug):
     degree = get_object_or_404(Degree.objects.select_related("branch__university"), slug=degree_slug, branch__slug=branch_slug, branch__university__slug=university_slug)
     academic_years_qs = AcademicYear.objects.filter(degree=degree).order_by("year")
-
-    if request.user.is_authenticated:
-        academic_years_qs = annotate_academic_queryset_with_assessment_states(academic_years_qs, request.user, 'AcademicYear')
 
     paginator = Paginator(academic_years_qs, 10)
     page_number = request.GET.get("page")
@@ -133,9 +120,6 @@ def academic_year_list_view(request, university_slug, branch_slug, degree_slug):
 def subject_list_view(request, university_slug, branch_slug, degree_slug, year):
     academic_year = get_object_or_404(AcademicYear.objects.select_related("degree__branch__university"), year=year, degree__slug=degree_slug, degree__branch__slug=branch_slug, degree__branch__university__slug=university_slug)
     subjects_qs = Subject.objects.filter(academic_year=academic_year).select_related('content_hash_family__content_material').order_by("name")
-
-    if request.user.is_authenticated:
-        subjects_qs = annotate_academic_queryset_with_assessment_states(subjects_qs, request.user, 'Subject')
 
     paginator = Paginator(subjects_qs, 10)
     page_number = request.GET.get("page")
@@ -171,8 +155,6 @@ def public_content_list_view(request, university_slug, branch_slug, degree_slug,
     public_contents_qs = ContentMaterial.objects.filter(pk=content_material.pk) if content_material else ContentMaterial.objects.none()
 
     if request.user.is_authenticated:
-        public_contents_qs = annotate_free_content_queryset_with_assessment_states(public_contents_qs, request.user, 'ContentMaterial')
-
         user_favorites_subquery = FavoriteFolder.objects.filter(
             user=request.user,
             materials=OuterRef('pk')

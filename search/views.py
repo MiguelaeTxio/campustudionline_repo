@@ -22,7 +22,6 @@ from contents.models import (
 from chat.models import ChatRoom, RoomMembership
 from messaging.models import DirectChatSession
 from academic_structure.models import University, Branch, Degree
-from assessment.utils import annotate_free_content_queryset_with_assessment_states
 
 logger = logging.getLogger(__name__)
 
@@ -31,9 +30,6 @@ logger = logging.getLogger(__name__)
 def search_home_view(request):
     """Displays top-level Free Content Master Categories."""
     master_categories_qs = FreeContentMasterCategory.objects.all()
-    
-    if request.user.is_authenticated:
-        master_categories_qs = annotate_free_content_queryset_with_assessment_states(master_categories_qs, request.user, 'FreeContentMasterCategory')
 
     paginator = Paginator(master_categories_qs, 10)
     page_number = request.GET.get("page")
@@ -47,9 +43,7 @@ def search_home_view(request):
 
 @login_required
 def academic_category_detail_view(request, *args, **kwargs):
-    # Esta vista pertenece a la jerarquía académica (legacy) y no se modifica
-    # ya que la lógica de anotación se ha movido a su propia app.
-    # Se deja intacta para mantener la funcionalidad existente.
+    # This view is a legacy passthrough and remains unchanged.
     return free_content_category_detail_view(request, *args, **kwargs)
 
 
@@ -72,9 +66,6 @@ def free_content_category_detail_view(request, master_slug, sub_slug=None):
     content_list = None
     is_leaf_node = False
     
-    if child_items and request.user.is_authenticated:
-        child_items = annotate_free_content_queryset_with_assessment_states(child_items, request.user, 'FreeContentSubCategory')
-
     if sub_slug:
         sub_category = get_object_or_404(FreeContentSubCategory, slug=sub_slug, master_category=master_category)
         current_category = sub_category
@@ -88,14 +79,12 @@ def free_content_category_detail_view(request, master_slug, sub_slug=None):
             content_list = content_list.annotate(
                 is_favorite=Exists(FavoriteFolder.objects.filter(user=request.user, materials__pk=OuterRef('pk')))
             )
-            content_list = annotate_free_content_queryset_with_assessment_states(content_list, request.user, 'ContentMaterial')
     else:
         content_list = master_category.content_materials.filter(is_public=True, sub_category__isnull=True).order_by("title")
         if request.user.is_authenticated:
             content_list = content_list.annotate(
                 is_favorite=Exists(FavoriteFolder.objects.filter(user=request.user, materials__pk=OuterRef('pk')))
             )
-            content_list = annotate_free_content_queryset_with_assessment_states(content_list, request.user, 'ContentMaterial')
         is_leaf_node = not child_items.exists() and content_list.exists()
 
     if breadcrumbs:
