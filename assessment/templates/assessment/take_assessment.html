@@ -18,7 +18,7 @@
                 <p class="card-text">
                     <strong>Contenido Original:</strong>
                     <a href="{% url 'study_room:edit_copy' pk=user_copy.pk %}">
-                        {{ assessment.content.title }}
+                        {{ assessment.content_copy.original_content.title }}
                     </a>
                 </p>
                 <p class="text-muted">

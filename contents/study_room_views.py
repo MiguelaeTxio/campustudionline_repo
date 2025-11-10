@@ -147,6 +147,20 @@ def create_content_copy(request, pk):
 def edit_copy(request, pk):
     content_copy = get_object_or_404(ContentCopy, pk=pk, user=request.user)
 
+    # --- Lógica de Descarte de Notificaciones de Fallo ---
+    FAILURE_STATUSES = [
+        Assessment.AssessmentStatus.FAILED,
+        Assessment.AssessmentStatus.TIMEOUT_FAILURE,
+        Assessment.AssessmentStatus.GENERATION_FAILURE,
+    ]
+    latest_assessment = Assessment.objects.filter(content_copy=content_copy).order_by('-created_at').first()
+    
+    if latest_assessment and latest_assessment.status in FAILURE_STATUSES and not latest_assessment.was_viewed:
+        latest_assessment.was_viewed = True
+        latest_assessment.save(update_fields=['was_viewed'])
+        logger.info(f"Notificación de fallo para Assessment ID {latest_assessment.id} marcada como vista.")
+    # --- Fin de la Lógica de Descarte ---
+
     if request.method == "POST":
         content_copy.html_content = request.POST.get("html_content", content_copy.html_content)
         content_copy.is_public = request.POST.get("is_public") == "on"

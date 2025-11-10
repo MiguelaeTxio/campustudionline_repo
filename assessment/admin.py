@@ -50,10 +50,10 @@ class AssessmentAdmin(admin.ModelAdmin):
     Admin panel configuration for the Assessment model.
     """
 
-    list_display = ("id", "content", "user", "status", "created_at")
+    list_display = ("id", "content_copy", "user", "status", "created_at")
     list_filter = ("status", "created_at", "user")
-    search_fields = ("user__username", "content__title")
-    autocomplete_fields = ("content", "user")
+    search_fields = ("user__username", "content_copy__original_content__title")
+    autocomplete_fields = ("content_copy", "user")
     inlines = [QuestionInline]
     date_hierarchy = "created_at"
 

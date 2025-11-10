@@ -11,7 +11,7 @@ urlpatterns = [
         name="take_assessment_demo",
     ),
     path(
-        "generate/<uuid:content_pk>/",
+        "generate/<uuid:copy_pk>/",
         views.generate_ai_assessment,
         name="generate_ai_assessment",
     ),

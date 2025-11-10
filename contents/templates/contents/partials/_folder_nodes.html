@@ -1,12 +1,11 @@
 {# /home/MiguelAeTxio/CampuStudiOnline/contents/templates/contents/partials/_folder_nodes.html #}
-{% load assessment_tags %}
 <ul class="list-group">
     {% for folder in nodes %}
     <li id="folder-{{ folder.id }}" class="list-group-item d-flex justify-content-between align-items-center">
         <span id="folder-display-{{ folder.id }}">
              <a href="{% url 'contents:favorite_folder_detail' folder.id %}">
                 <i class="fas fa-folder me-2"></i>{{ folder.name }}
-                {% render_assessment_indicators folder %}
+                
              </a>
         </span>
        

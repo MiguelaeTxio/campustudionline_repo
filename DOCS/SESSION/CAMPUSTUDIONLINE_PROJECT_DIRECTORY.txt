@@ -400,6 +400,7 @@
 ./assessment/migrations/__init__.py
 ./assessment/migrations/0005_alter_assessment_content_copy.py
 ./assessment/migrations/0008_assessmentsettings_assessment_expiration_seconds_and_more.py
+./assessment/migrations/0009_alter_assessment_content.py
 ./assessment/migrations/0001_initial.py
 ./assessment/tasks.py
 ./assessment/tests.py

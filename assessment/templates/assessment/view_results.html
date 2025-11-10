@@ -25,7 +25,7 @@
             <p class="card-text mb-4">
                 <strong>Contenido Original:</strong>
                 <a href="{% url 'study_room:edit_copy' pk=user_copy.pk %}">
-                    {{ assessment.content.title }}
+                    {{ assessment.content_copy.original_content.title }}
                 </a>
             </p>
 

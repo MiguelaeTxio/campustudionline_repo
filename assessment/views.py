@@ -12,7 +12,7 @@ from django.template.loader import render_to_string
 
 
 from .models import Assessment, Question, UserAnswer
-from contents.models import ContentMaterial as Content, ContentCopy as ContentCopy
+from contents.models import ContentCopy
 from .tasks import generate_assessment_from_content_task, correct_assessment_task
 from .utils import get_assessment_context, check_user_assessment_limits
 
@@ -25,16 +25,13 @@ def log_timestamp(message):
 
 @login_required
 @require_POST
-def generate_ai_assessment(request, content_pk):
-    content = get_object_or_404(Content, pk=content_pk)
-    user_copy = get_object_or_404(
-        ContentCopy, original_content=content, user=request.user
-    )
+def generate_ai_assessment(request, copy_pk):
+    user_copy = get_object_or_404(ContentCopy, pk=copy_pk, user=request.user)
     redirect_url = reverse("study_room:edit_copy", kwargs={"pk": user_copy.pk})
 
     if Assessment.objects.filter(
         user=request.user,
-        content=content,
+        content_copy=user_copy,
         status__in=["PENDING", "PROCESSING", "CORRECTING"],
     ).exists():
         messages.info(
@@ -54,8 +51,7 @@ def generate_ai_assessment(request, content_pk):
     try:
         assessment = Assessment.objects.create(
             user=request.user,
-            content=content,
-            content_copy=user_copy, # [ADAPTADO] Campo obligatorio en el modelo actual
+            content_copy=user_copy,
             status="PENDING",
         )
         generate_assessment_from_content_task.delay(assessment.id)
@@ -66,7 +62,7 @@ def generate_ai_assessment(request, content_pk):
 
     except Exception as e:
         logger.error(
-            f"GENERATE_VIEW: Error inesperado al crear evaluación para content {content_pk}: {e}",
+            f"GENERATE_VIEW: Error inesperado al crear evaluación para copy {copy_pk}: {e}",
             exc_info=True,
         )
         messages.error(
@@ -80,11 +76,11 @@ def generate_ai_assessment(request, content_pk):
 @login_required
 def take_assessment(request, pk):
     assessment = get_object_or_404(
-        Assessment.objects.prefetch_related("questions"), pk=pk, user=request.user
+        Assessment.objects.select_related("content_copy__original_content").prefetch_related("questions"),
+        pk=pk,
+        user=request.user,
     )
-    user_copy = get_object_or_404(
-        ContentCopy, original_content=assessment.content, user=request.user
-    )
+    user_copy = assessment.content_copy
 
     if assessment.status != "COMPLETED":
         messages.warning(
@@ -112,10 +108,10 @@ def take_assessment(request, pk):
 @login_required
 @require_POST
 def submit_assessment(request, pk):
-    assessment = get_object_or_404(Assessment, pk=pk, user=request.user)
-    user_copy = get_object_or_404(
-        ContentCopy, original_content=assessment.content, user=request.user
+    assessment = get_object_or_404(
+        Assessment.objects.select_related("content_copy"), pk=pk, user=request.user
     )
+    user_copy = assessment.content_copy
     redirect_url = reverse("study_room:edit_copy", kwargs={"pk": user_copy.pk})
 
     if UserAnswer.objects.filter(
@@ -175,13 +171,13 @@ def submit_assessment(request, pk):
 @login_required
 def view_results(request, pk):
     assessment = get_object_or_404(
-        Assessment.objects.prefetch_related("questions__user_answers"),
+        Assessment.objects.select_related("content_copy__original_content").prefetch_related(
+            "questions__user_answers"
+        ),
         pk=pk,
         user=request.user,
     )
-    user_copy = get_object_or_404(
-        ContentCopy, original_content=assessment.content, user=request.user
-    )
+    user_copy = assessment.content_copy
     user_answers_qs = UserAnswer.objects.filter(
         question__assessment=assessment, user=request.user
     ).select_related("question")
@@ -264,14 +260,16 @@ def get_assessment_panel_content(request, copy_pk):
 @login_required
 @require_POST
 def retry_assessment_generation(request, assessment_pk):
-    assessment = get_object_or_404(Assessment, pk=assessment_pk, user=request.user)
+    assessment = get_object_or_404(
+        Assessment.objects.select_related("content_copy"),
+        pk=assessment_pk,
+        user=request.user,
+    )
     messages.error(
         request,
         "Esta función ha sido deshabilitada. Utiliza el botón principal para generar una nueva evaluación.",
     )
-    user_copy = get_object_or_404(
-        ContentCopy, original_content=assessment.content, user=request.user
-    )
+    user_copy = assessment.content_copy
     return redirect(reverse("study_room:edit_copy", kwargs={"pk": user_copy.pk}))
 
 
@@ -324,12 +322,15 @@ def take_assessment_demo(request):
     to be used exclusively by the guided tour.
     """
 
-    class FakeContent:
+    class FakeOriginalContent:
         title = "Contenido de Demostración"
+
+    class FakeUserCopy:
+        pk = "00000000-0000-0000-0000-000000000000"
+        original_content = FakeOriginalContent()
 
     class FakeAssessment:
         pk = 9999
-        content = FakeContent()
 
         class FakeQuestions:
             def all(self):
@@ -350,9 +351,6 @@ def take_assessment_demo(request):
                 ]
 
         questions = FakeQuestions()
-
-    class FakeUserCopy:
-        pk = "00000000-0000-0000-0000-000000000000"
 
     context = {
         "assessment": FakeAssessment(),

@@ -78,21 +78,29 @@ def generate_assessment_from_content_task(assessment_id):
 
     try:
         with transaction.atomic():
-            assessment = Assessment.objects.select_for_update().get(pk=assessment_id)
+            assessment = Assessment.objects.select_related(
+                'content_copy__content_material'
+            ).prefetch_related(
+                'content_copy__content_material__subjects'
+            ).select_for_update().get(pk=assessment_id)
+            
             if assessment.status != "PENDING":
                 return f"Tarea omitida. Estado: {assessment.status}."
+            
             assessment.status = "PROCESSING"
             assessment.save(update_fields=["status"])
+
     except Assessment.DoesNotExist:
         logger.error(f"GENERATION_TASK: No se encontró Assessment con ID: {assessment_id}.")
         return f"Error: Assessment con ID {assessment_id} no encontrado."
 
     try:
-        full_content = assessment.content.get_full_markdown_content()
+        full_content = assessment.content_copy.get_full_markdown_content()
         if not full_content or not full_content.strip():
             raise ValueError("El contenido para la evaluación está vacío.")
 
-        subject = assessment.content.subject.first()
+        subjects = assessment.content_copy.content_material.subjects.all()
+        subject = subjects.first() if subjects else None
         
         prompt_format_instructions = (
             "**FORMATO DE SALIDA OBLIGATORIO:**\n"
@@ -116,13 +124,13 @@ def generate_assessment_from_content_task(assessment_id):
                 f"Material de estudio:\n---\n{full_content}\n---"
             )
         else:
-            logger.info(f"Generando evaluación para contenido libre (Título: {assessment.content.title}).")
+            title = assessment.content_copy.content_material.title
+            logger.info(f"Generando evaluación para contenido libre (Título: {title}).")
             prompt = (
                 f"Tu tarea es crear un examen basado en el siguiente texto, cubriendo sus conceptos clave.\n\n"
                 f"{prompt_format_instructions}\n\n"
                 f"Material de estudio:\n---\n{full_content}\n---"
             )
-            # [DEPURACIÓN] Log del prompt para contenido libre
             logger.info(f"GENERATION_TASK (Free Content) - PROMPT ENVIADO A LA API:\n---\n{prompt}\n---")
 
         success, response_text, api_key_used = generate_text_content(prompt)
@@ -139,7 +147,9 @@ def generate_assessment_from_content_task(assessment_id):
 
         num_questions = len(questions_data)
         with transaction.atomic():
-            assessment_to_complete = Assessment.objects.get(pk=assessment_id)
+            assessment_to_complete = Assessment.objects.select_related(
+                'user', 'content_copy__content_material'
+            ).get(pk=assessment_id)
             assessment_to_complete.total_questions_expected = num_questions
             questions_to_create = [
                 Question(
@@ -157,7 +167,8 @@ def generate_assessment_from_content_task(assessment_id):
 
         log_timestamp(f"GENERATION_TASK: ÉXITO para Assessment ID {assessment_id}. Generadas {num_questions} preguntas.")
 
-        context = {"assessment_pk": assessment_to_complete.pk, "content_title": assessment_to_complete.content.title}
+        content_title = assessment_to_complete.content_copy.content_material.title
+        context = {"assessment_pk": assessment_to_complete.pk, "content_title": content_title}
         send_unified_notification(user=assessment_to_complete.user, subject_template="assessment/email/assessment_ready_subject.txt", body_template_prefix="assessment/email/assessment_ready_body", context=context)
         return f"Evaluación {assessment_id} generada con {num_questions} preguntas."
 
@@ -232,12 +243,13 @@ def correct_assessment_task(assessment_id):
                 time.sleep(5)
 
         with transaction.atomic():
-            assessment_to_complete = Assessment.objects.select_related("content", "user").get(pk=assessment_id)
+            assessment_to_complete = Assessment.objects.select_related("user", "content_copy__content_material").get(pk=assessment_id)
             assessment_to_complete.status = "RESULTS_AVAILABLE"
             assessment_to_complete.save(update_fields=["status"])
 
         log_timestamp(f"CORRECTION_TASK: ÉXITO para Assessment ID {assessment_id}.")
-        context = {"assessment_pk": assessment_to_complete.pk, "content_title": assessment_to_complete.content.title}
+        content_title = assessment_to_complete.content_copy.content_material.title
+        context = {"assessment_pk": assessment_to_complete.pk, "content_title": content_title}
         send_unified_notification(user=assessment_to_complete.user, subject_template="assessment/email/results_ready_subject.txt", body_template_prefix="assessment/email/results_ready_body", context=context)
         return f"Corrección de evaluación {assessment_id} completada."
     except Exception as e:

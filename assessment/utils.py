@@ -5,7 +5,7 @@ from django.conf import settings
 from django.urls import reverse
 from django.utils.translation import gettext as _
 from django.db.models import Q, Subquery, OuterRef, Count, Case, When, Value, CharField, IntegerField
-from django.db.models.lookups import GreaterThan, Exact  # [CORRECCIÓN] Ruta de importación correcta.
+from django.db.models.lookups import GreaterThan, Exact
 from django.db.models.functions import Coalesce
 from .models import Assessment, AssessmentSettings
 
@@ -14,7 +14,6 @@ from .models import Assessment, AssessmentSettings
 def _get_base_assessment_subqueries(user_filter):
     """
     Función de ayuda interna para construir las subconsultas base reutilizables.
-    Acepta un diccionario de filtro para user y content.
     """
     related_assessments = Assessment.objects.filter(**user_filter).order_by()
 
@@ -29,7 +28,6 @@ def _get_base_assessment_subqueries(user_filter):
 
     coalesced_subquery = Coalesce(Subquery(distinct_states_subquery, output_field=IntegerField()), Value(0))
 
-    # [CORRECCIÓN DEFINITIVA] Usar clases de lookup explícitas para comparar expresiones.
     state_annotation = Case(
         When(GreaterThan(coalesced_subquery, Value(1)), then=Value('MULTIPLE')),
         When(Exact(coalesced_subquery, Value(1)), then=Subquery(single_status_subquery, output_field=CharField())),
@@ -45,56 +43,10 @@ def _get_base_assessment_subqueries(user_filter):
 
     return {'assessment_state': state_annotation, 'latest_assessment_pk': pk_annotation}
 
-def annotate_academic_queryset_with_assessment_states(queryset, user, model_name):
-    """
-    Anota un queryset del directorio ACADÉMICO (University, Branch, etc.)
-    con el estado de evaluación agregado.
-    """
-    # [CORRECCIÓN] Añadidas las rutas para la nueva jerarquía de contenido académico.
-    lookup_map = {
-        # Jerarquía académica (legacy via Subject)
-        'University': 'content__subject__academic_year__degree__branch__university',
-        'Branch': 'content__subject__academic_year__degree__branch',
-        'Degree': 'content__subject__academic_year__degree',
-        'AcademicYear': 'content__subject__academic_year',
-        'Subject': 'content__subject',
-        # Nueva jerarquía académica (via Topic)
-        'KnowledgeArea': 'content__topic__main_category__discipline__knowledge_area',
-        'Discipline': 'content__topic__main_category__discipline',
-        'MainCategory': 'content__topic__main_category',
-        'Topic': 'content__topic',
-    }
-    user_filter = {
-        'user': user,
-        lookup_map[model_name]: OuterRef('pk')
-    }
-    annotations = _get_base_assessment_subqueries(user_filter)
-    return queryset.annotate(**annotations)
-
-def annotate_free_content_queryset_with_assessment_states(queryset, user, model_name):
-    """
-    Anota un queryset del directorio de CONTENIDO LIBRE (FreeContentMasterCategory, etc.)
-    con el estado de evaluación agregado.
-    """
-    lookup_map = {
-        'FreeContentMasterCategory': 'content__master_category',
-        'FreeContentSubCategory': 'content__sub_category',
-        'ContentMaterial': 'content',
-    }
-    # Para ContentMaterial, la relación es directa.
-    user_filter = {
-        'user': user,
-        lookup_map[model_name]: OuterRef('pk')
-    } if model_name != 'ContentMaterial' else {
-        'user': user,
-        'content': OuterRef('pk')
-    }
-    annotations = _get_base_assessment_subqueries(user_filter)
-    return queryset.annotate(**annotations)
-
 def annotate_content_copy_queryset_with_assessment_states(queryset, user):
     """
     Anota un queryset de ContentCopy con el estado de evaluación agregado.
+    Esta es ahora la única función de anotación necesaria para la Sala de Estudio.
     """
     user_filter = {'user': user, 'content_copy': OuterRef('pk')}
     annotations = _get_base_assessment_subqueries(user_filter)
@@ -105,8 +57,6 @@ def annotate_content_copy_queryset_with_assessment_states(queryset, user):
 def check_user_assessment_limits(user):
     """
     Calcula los límites de evaluación para un usuario de forma GLOBAL.
-    Esta es la fuente de la verdad para saber si un usuario puede crear CUALQUIER evaluación.
-    Devuelve un diccionario con el estado de los límites.
     """
     now = timezone.now()
     settings = AssessmentSettings.get_settings()
@@ -165,15 +115,12 @@ def check_user_assessment_limits(user):
 
 def get_assessment_context(user, content_copy):
     """
-    [RESTAURADO Y ADAPTADO]
     Calcula el contexto completo para el bloque de estado de la autoevaluación.
-    Esta es la fuente de la verdad para la lógica de negocio, incluyendo
-    límites, penalizaciones y múltiples estados/temporizadores coexistentes.
     """
     now = timezone.now()
     all_user_assessments_for_content = Assessment.objects.filter(
-        user=user, content=content_copy.original_content
-    ).select_related("content")
+        user=user, content_copy=content_copy
+    ).select_related("content_copy__original_content")
 
     limit_data = check_user_assessment_limits(user)
     is_daily_limit_reached = limit_data["daily"]["is_reached"]
@@ -203,7 +150,7 @@ def get_assessment_context(user, content_copy):
         },
         "limits": limit_data,
         "raw_assessment": None,
-        "content_pk": content_copy.original_content.pk,
+        "copy_pk": content_copy.pk,
         "assessment_to_take": None,
     }
 
@@ -272,7 +219,7 @@ def get_assessment_context(user, content_copy):
         user=user,
         status=Assessment.AssessmentStatus.RESULTS_AVAILABLE,
         results_expiration_date__gt=now,
-    ).select_related("content")
+    ).select_related("content_copy__original_content")
 
     for assessment in visible_assessments:
         context["available_corrections"].append(
@@ -281,7 +228,7 @@ def get_assessment_context(user, content_copy):
                 "url": reverse(
                     "assessment:view_results", kwargs={"pk": assessment.pk}
                 ),
-                "content_title": assessment.content.title,
+                "content_title": assessment.content_copy.original_content.title,
                 "expiration_iso": assessment.results_expiration_date.isoformat(),
             }
         )
@@ -301,7 +248,7 @@ def get_assessment_context(user, content_copy):
             "is_disabled": not can_solicitar,
             "url": reverse(
                 "assessment:generate_ai_assessment",
-                kwargs={"content_pk": content_copy.original_content.pk},
+                kwargs={"copy_pk": content_copy.pk},
             ),
             "text": _("Solicitar Evaluación"),
         },

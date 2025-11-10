@@ -1,7 +1,6 @@
 {# /home/MiguelAeTxio/CampuStudiOnline/search/templates/search/search_home.html #}
 {% extends request.htmx|yesno:"_blank.html,base.html" %}
 {% load static %}
-{% load assessment_tags %}
 
 {% block title %}Directorio de Contenidos Libres - {{ block.super }}{% endblock title %}
 
@@ -30,8 +29,6 @@
         </button>
     </div>
 
-    {% include 'assessment/partials/_assessment_legend.html' %}
-
     {% endif %}
 
     <div id="category-list-container" hx-get="{% url 'search:search_home' %}" hx-trigger="every 15s" hx-swap="innerHTML">
@@ -40,7 +37,7 @@
                 <a href="{% url 'search:free_master_detail' master_slug=category.slug %}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center" {% if forloop.first %}id="first-category-item"{% endif %}>
                     <div>
                         {{ category.name }}
-                        {% render_assessment_indicators category %}
+                        
                     </div>
                     <span class="badge bg-primary rounded-pill"><i class="fas fa-chevron-right"></i></span>
                 </a>
