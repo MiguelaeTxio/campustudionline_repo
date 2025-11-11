@@ -204,33 +204,38 @@ def user_copies_list(request, area_slug=None, discipline_slug=None, master_slug=
     context = {"page_title": "Mi Sala de Estudio", "show_tour": True}
     items_list = None
     
-    def get_status_subquery(filter_kwargs):
+    def get_aggregated_assessment_annotations(filter_kwargs):
         """
-        Helper para construir la subconsulta que obtiene el estado de evaluación agregado.
-        Busca todas las evaluaciones para un usuario y un contexto (ej. Área de Conocimiento)
-        y devuelve el estado de mayor prioridad (Error > Pendiente > En Progreso).
+        [NUEVO] Genera subconsultas para anotar directorios (Áreas, etc.)
+        con el estado y PK de la evaluación más prioritaria contenida dentro de ellos.
         """
-        return Subquery(
-            Assessment.objects.filter(
-                content_copy__user=request.user,
-                **filter_kwargs
-            )
-            .annotate(
-                priority=Case(
-                    When(status__in=[
-                        Assessment.AssessmentStatus.FAILED,
-                        Assessment.AssessmentStatus.TIMEOUT_FAILURE,
-                        Assessment.AssessmentStatus.GENERATION_FAILURE], then=1),
-                    When(status=Assessment.AssessmentStatus.PENDING, then=2),
-                    When(status=Assessment.AssessmentStatus.PROCESSING, then=3),
-                    When(status=Assessment.AssessmentStatus.COMPLETED, then=4),
-                    default=5,
-                    output_field=IntegerField()
-                )
-            )
-            .order_by('priority')
-            .values('status')[:1]
+        base_assessments = Assessment.objects.filter(
+            content_copy__user=request.user,
+            **filter_kwargs
         )
+        # Prioridad de estados (menor número = mayor prioridad)
+        priority_annotation = Case(
+            When(status__in=[
+                Assessment.AssessmentStatus.FAILED,
+                Assessment.AssessmentStatus.TIMEOUT_FAILURE,
+                Assessment.AssessmentStatus.GENERATION_FAILURE], then=Value(1)),
+            When(status=Assessment.AssessmentStatus.COMPLETED, then=Value(2)),
+            When(status=Assessment.AssessmentStatus.RESULTS_AVAILABLE, then=Value(3)),
+            When(status__in=[
+                Assessment.AssessmentStatus.PROCESSING,
+                Assessment.AssessmentStatus.CORRECTING,
+                Assessment.AssessmentStatus.PENDING], then=Value(4)),
+            default=Value(5),
+            output_field=IntegerField()
+        )
+        prioritized_assessments = base_assessments.annotate(
+            priority=priority_annotation
+        ).order_by('priority', '-created_at')
+
+        return {
+            'assessment_state': Subquery(prioritized_assessments.values('status')[:1]),
+            'latest_assessment_pk': Subquery(prioritized_assessments.values('pk')[:1])
+        }
 
     # --- NIVEL 3: VISTA DE COPIAS DE CONTENIDO ---
     if discipline_slug or sub_slug:
@@ -252,7 +257,7 @@ def user_copies_list(request, area_slug=None, discipline_slug=None, master_slug=
             context.update({"level_name": "copies", "page_title": f"Mis Copias en {sub_category.name}"})
         
         if items_list is not None:
-            # A nivel de copia, la anotación es directa y utiliza otra función
+            # A nivel de copia, la anotación es directa y utiliza la función de utils
             items_list = annotate_content_copy_queryset_with_assessment_states(items_list, request.user)
 
     # --- NIVEL 2: VISTA DE DISCIPLINAS O SUBCATEGORÍAS ---
@@ -260,9 +265,8 @@ def user_copies_list(request, area_slug=None, discipline_slug=None, master_slug=
         knowledge_area = get_object_or_404(KnowledgeArea, slug=area_slug)
         discipline_ids = base_copies.filter(original_content__topic__main_category__discipline__knowledge_area=knowledge_area).values_list("original_content__topic__main_category__discipline_id", flat=True).distinct()
         
-        # Anotamos cada Disciplina con su estado agregado
         items_list = Discipline.objects.filter(id__in=discipline_ids).annotate(
-            assessment_state=get_status_subquery({'content_copy__original_content__topic__main_category__discipline': OuterRef('pk')})
+            **get_aggregated_assessment_annotations({'content_copy__original_content__topic__main_category__discipline': OuterRef('pk')})
         ).order_by("name")
 
         breadcrumbs.append({"name": knowledge_area.name, "url": "#"})
@@ -272,9 +276,8 @@ def user_copies_list(request, area_slug=None, discipline_slug=None, master_slug=
         master_category = get_object_or_404(FreeContentMasterCategory, slug=master_slug)
         sub_category_ids = base_copies.filter(original_content__master_category=master_category).values_list("original_content__sub_category_id", flat=True).distinct()
 
-        # Anotamos cada Subcategoría Libre con su estado agregado
         items_list = FreeContentSubCategory.objects.filter(id__in=sub_category_ids).annotate(
-             assessment_state=get_status_subquery({'content_copy__original_content__sub_category': OuterRef('pk')})
+             **get_aggregated_assessment_annotations({'content_copy__original_content__sub_category': OuterRef('pk')})
         ).order_by("name")
 
         breadcrumbs.append({"name": master_category.name, "url": "#"})
@@ -285,17 +288,15 @@ def user_copies_list(request, area_slug=None, discipline_slug=None, master_slug=
         # Contenido Académico
         area_ids = base_copies.filter(original_content__topic__isnull=False).values_list("original_content__topic__main_category__discipline__knowledge_area_id", flat=True).distinct()
         
-        # Anotamos cada Área de Conocimiento con su estado agregado
         items_list = KnowledgeArea.objects.filter(id__in=area_ids).annotate(
-            assessment_state=get_status_subquery({'content_copy__original_content__topic__main_category__discipline__knowledge_area': OuterRef('pk')})
+            **get_aggregated_assessment_annotations({'content_copy__original_content__topic__main_category__discipline__knowledge_area': OuterRef('pk')})
         ).order_by("name")
         
         # Contenido Libre
         master_category_ids = base_copies.filter(original_content__master_category__isnull=False).values_list("original_content__master_category_id", flat=True).distinct()
         
-        # Anotamos cada Categoría Maestra Libre con su estado agregado
         free_content_roots = FreeContentMasterCategory.objects.filter(id__in=master_category_ids).annotate(
-            assessment_state=get_status_subquery({'content_copy__original_content__master_category': OuterRef('pk')})
+            **get_aggregated_assessment_annotations({'content_copy__original_content__master_category': OuterRef('pk')})
         ).order_by("name")
         
         context.update({"level_name": "areas", "items_list": items_list, "free_content_roots": free_content_roots})

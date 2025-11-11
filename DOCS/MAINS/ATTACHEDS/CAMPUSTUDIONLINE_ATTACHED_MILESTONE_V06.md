@@ -2,23 +2,32 @@
 
 ## Resumen de la Sesión del 11/11/2025 (EDC)
 
-**Objetivo:** Implementar la visualización jerárquica de los indicadores de estado de las evaluaciones (`badges`) en la "Sala de Estudio", asegurando que los niveles de directorio superiores (Áreas, Disciplinas) reflejen un estado agregado de las `ContentCopy` que contienen.
+**Objetivo Inicial:** Investigar por qué las evaluaciones se quedaban permanentemente en estado `PROCESSING`.
 
-**Progreso y Descubrimientos Clave:**
+**Desarrollo y Descubrimientos Clave:**
+La sesión fue inmediatamente interrumpida por un error crítico `NoReverseMatch` que impedía la carga de la "Sala de Estudio". La depuración siguió un riguroso proceso empírico:
 
-1.  **Diagnóstico del Problema:** Se confirmó empíricamente que la implementación anterior no mostraba los indicadores en los niveles jerárquicos. La causa raíz se localizó en la vista `contents/study_room_views.py`, que no anotaba los `QuerySets` de los directorios con la información de estado necesaria.
-2.  **Primer Intento de Corrección Fallido:** Se implementó una lógica de subconsultas en la vista que resultó ser defectuosa, provocando un `Internal Server Error` (`AttributeError: IN_PROGRESS`) al recargar la página.
-3.  **Investigación Empírica:** Siguiendo el protocolo `PEO`, se solicitó y analizó el modelo `assessment/models.py`. Se descubrió que el estado para "en progreso" estaba definido como `PROCESSING`, y no `IN_PROGRESS` como se había supuesto. Este fue el único punto de fallo.
-4.  **Implementación Definitiva:** Se corrigió el nombre del estado en la subconsulta de la vista `contents/study_room_views.py`. Tras aplicar el cambio, la funcionalidad fue restaurada con éxito.
+1.  **Diagnóstico Inicial y Corrección Fallida:** Se identificó una llamada a `reverse()` con `pk=None` en `assessment/utils.py`. La corrección aplicada en este archivo resultó ser insuficiente, ya que el error persistía.
+2.  **Investigación Empírica Ampliada:** Se utilizó `grep` para localizar de forma inequívoca **todas** las invocaciones a la URL `take_assessment`. Esta búsqueda reveló una segunda llamada no contemplada en la plantilla `assessment/templates/assessment/partials/_assessment_indicator_badge.html`.
+3.  **Corrección de `NoReverseMatch`:** Se añadió una guarda `{% if latest_assessment_pk %}` en `_assessment_indicator_badge.html`, solucionando definitivamente el `NoReverseMatch`.
+4.  **Diagnóstico de Regresión Visual:** La solución anterior provocó que los `badges` de estado desaparecieran de los directorios de nivel superior. La investigación de `contents/study_room_views.py` reveló que se utilizaban dos métodos distintos e incompatibles para anotar el estado de las evaluaciones. El método para directorios no proporcionaba el `latest_assessment_pk` necesario.
+5.  **Refactor y Corrección de Regresión:** Se refactorizó `study_room_views.py` para utilizar un método de anotación unificado, restaurando la visibilidad de los `badges` en los directorios.
+6.  **Diagnóstico y Corrección de UX:** El `refactor` expuso un problema de HTML inválido (enlaces `<a>` anidados) que causaba una mala experiencia de usuario. Se corrigió convirtiendo los `badges` en elementos `<span>` no interactivos, resolviendo el conflicto.
 
-**Estado Final:** El sistema es estable. Los indicadores de estado de las evaluaciones ahora se muestran correctamente en toda la jerarquía de la Sala de Estudio, reflejando el estado de mayor prioridad de las copias contenidas.
+**Estado Final:** La aplicación es estable y funcional. Los errores críticos y las regresiones visuales han sido solucionados. La navegación y la visualización de estados en la "Sala de Estudio" operan como se espera.
 
 ## Hoja de Ruta para la Próxima Sesión
 
-1.  **Fase 1: Diagnóstico del Bucle de Procesamiento:**
-    *   **Objetivo:** Investigar por qué las evaluaciones se quedan permanentemente en estado `PROCESSING` y nunca transicionan a `COMPLETED` o `FAILED`.
+1.  **Fase 1: Corrección del Temporizador de Evaluaciones (UX).**
+    *   **Objetivo:** Investigar por qué el temporizador en la vista de edición de copia (`edit_copy`) muestra un valor estático (`--:--:--`) en lugar de la cuenta regresiva.
     *   **Plan:**
-        *   Revisar la tarea Celery responsable de generar las evaluaciones (`assessment/tasks.py`).
-        *   Inspeccionar los logs de Celery en busca de errores silenciosos o bucles infinitos.
-        *   Verificar la comunicación con la API de IA y el manejo de sus respuestas.
-        *   Realizar una prueba de generación de evaluación de principio a fin, monitorizando el estado en la base de datos y los logs en tiempo real.
+        *   Analizar el código Javascript responsable de inicializar y actualizar los temporizadores en las plantillas `assessment/partials/assessment_status_block.html` y `assessment/view_results.html`.
+        *   Verificar que los datos `data-end-time` se estén pasando correctamente desde el contexto de Django a la plantilla.
+        *   Depurar el script para asegurar que el cálculo de la diferencia de tiempo y la actualización del DOM se realizan correctamente.
+
+2.  **Fase 2: Diagnóstico del Bucle de Procesamiento (Objetivo Original).**
+    *   **Objetivo:** Retomar la investigación original para determinar por qué las evaluaciones se quedan permanentemente en estado `PROCESSING`.
+    *   **Plan:**
+        *   Revisar la tarea Celery `assessment/tasks.py`.
+        *   Inspeccionar los logs de Celery.
+        *   Realizar una prueba de generación de evaluación monitorizando la BBDD y los logs.

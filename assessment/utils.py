@@ -239,8 +239,13 @@ def get_assessment_context(user, content_copy):
         and can_create_new
     )
 
-    active_assessment_pk_to_take = (
-        context["assessment_to_take"].pk if context["assessment_to_take"] else None
+    realizar_url = (
+        reverse(
+            "assessment:take_assessment",
+            kwargs={"pk": context["assessment_to_take"].pk},
+        )
+        if context["assessment_to_take"]
+        else "#"
     )
 
     context["buttons"] = {
@@ -254,14 +259,7 @@ def get_assessment_context(user, content_copy):
         },
         "realizar": {
             "is_disabled": not bool(context["assessment_to_take"]),
-            "url": (
-                reverse(
-                    "assessment:take_assessment",
-                    kwargs={"pk": active_assessment_pk_to_take},
-                )
-                if active_assessment_pk_to_take
-                else "#"
-            ),
+            "url": realizar_url,
             "text": _("Realizar Evaluación"),
         },
     }

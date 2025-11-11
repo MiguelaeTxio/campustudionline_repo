@@ -13,6 +13,7 @@ from datetime import timedelta
 
 from .models import Assessment, Question, UserAnswer
 from academic_structure.models import Subject
+from content_automation.models import ApiKey
 from core.services.gemini_service import generate_text_content, AIServiceCriticalError
 from core.services.gemini_schemas import ASSESSMENT_CORRECTION_SCHEMA
 from core.utils import send_unified_notification
@@ -79,9 +80,9 @@ def generate_assessment_from_content_task(assessment_id):
     try:
         with transaction.atomic():
             assessment = Assessment.objects.select_related(
-                'content_copy__content_material'
+                'content_copy', 'content', 'user'
             ).prefetch_related(
-                'content_copy__content_material__subjects'
+                'content__subject'
             ).select_for_update().get(pk=assessment_id)
             
             if assessment.status != "PENDING":
@@ -95,11 +96,11 @@ def generate_assessment_from_content_task(assessment_id):
         return f"Error: Assessment con ID {assessment_id} no encontrado."
 
     try:
-        full_content = assessment.content_copy.get_full_markdown_content()
+        full_content = assessment.content.get_full_markdown_content()
         if not full_content or not full_content.strip():
             raise ValueError("El contenido para la evaluación está vacío.")
 
-        subjects = assessment.content_copy.content_material.subjects.all()
+        subjects = assessment.content.subject.all()
         subject = subjects.first() if subjects else None
         
         prompt_format_instructions = (
@@ -124,7 +125,7 @@ def generate_assessment_from_content_task(assessment_id):
                 f"Material de estudio:\n---\n{full_content}\n---"
             )
         else:
-            title = assessment.content_copy.content_material.title
+            title = assessment.content.title
             logger.info(f"Generando evaluación para contenido libre (Título: {title}).")
             prompt = (
                 f"Tu tarea es crear un examen basado en el siguiente texto, cubriendo sus conceptos clave.\n\n"
@@ -133,7 +134,11 @@ def generate_assessment_from_content_task(assessment_id):
             )
             logger.info(f"GENERATION_TASK (Free Content) - PROMPT ENVIADO A LA API:\n---\n{prompt}\n---")
 
-        success, response_text, api_key_used = generate_text_content(prompt)
+        api_key = ApiKey.objects.filter(is_enabled=True, is_quarantined=False).first()
+        if not api_key:
+            raise ValueError("No se encontró una clave de API activa y disponible para generar la evaluación.")
+
+        success, response_text, api_key_used = generate_text_content(prompt, api_key=api_key)
         if not success:
             raise AIServiceCriticalError(f"La llamada a la API de texto falló: {response_text}")
 
@@ -147,9 +152,11 @@ def generate_assessment_from_content_task(assessment_id):
 
         num_questions = len(questions_data)
         with transaction.atomic():
+            # Volvemos a obtener el objeto para asegurar que tenemos la última versión
             assessment_to_complete = Assessment.objects.select_related(
-                'user', 'content_copy__content_material'
+                'user', 'content'
             ).get(pk=assessment_id)
+            
             assessment_to_complete.total_questions_expected = num_questions
             questions_to_create = [
                 Question(
@@ -167,8 +174,7 @@ def generate_assessment_from_content_task(assessment_id):
 
         log_timestamp(f"GENERATION_TASK: ÉXITO para Assessment ID {assessment_id}. Generadas {num_questions} preguntas.")
 
-        content_title = assessment_to_complete.content_copy.content_material.title
-        context = {"assessment_pk": assessment_to_complete.pk, "content_title": content_title}
+        context = {"assessment": assessment_to_complete}
         send_unified_notification(user=assessment_to_complete.user, subject_template="assessment/email/assessment_ready_subject.txt", body_template_prefix="assessment/email/assessment_ready_body", context=context)
         return f"Evaluación {assessment_id} generada con {num_questions} preguntas."
 

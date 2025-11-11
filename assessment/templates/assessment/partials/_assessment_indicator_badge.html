@@ -1,16 +1,18 @@
-{# /home/MiguelAeTxio/CampuStudiOnline/assessment/templates/assessment/partials/_assessment_indicator_badge.html #}
+{# /home/MiguelAeTxio/PROJECTS/CampuStudiOnline/assessment/templates/assessment/partials/_assessment_indicator_badge.html #}
 {% load i18n %}
 
 {# [CORRECCIÓN] Se adapta la plantilla para consumir directamente las variables anotadas #}
 {% if assessment_state %}
     {% if assessment_state == 'COMPLETED' %}
-        <a href="{% url 'assessment:take_assessment' pk=latest_assessment_pk %}" class="ms-2 badge bg-warning text-dark text-decoration-none" title="{% trans 'Tienes una evaluación pendiente para realizar' %}">
-            <i class="fas fa-hourglass-half me-1"></i> {% trans "Realizar Evaluación" %}
-        </a>
+        {% if latest_assessment_pk %}
+            <span class="ms-2 badge bg-warning text-dark" title="{% trans 'Tienes una evaluación pendiente para realizar' %}">
+                <i class="fas fa-hourglass-half me-1"></i> {% trans "Realizar Evaluación" %}
+            </span>
+        {% endif %}
     {% elif assessment_state == 'RESULTS_AVAILABLE' %}
-        <a href="{% url 'assessment:view_results' pk=latest_assessment_pk %}" class="ms-2 badge bg-success text-white text-decoration-none js-mark-viewed" data-pk="{{ latest_assessment_pk }}" title="{% trans 'Resultados disponibles para revisar' %}">
+        <span class="ms-2 badge bg-success text-white js-mark-viewed" data-pk="{{ latest_assessment_pk }}" title="{% trans 'Resultados disponibles para revisar' %}">
             <i class="fas fa-eye me-1"></i> {% trans "Ver Resultados" %}
-        </a>
+        </span>
     {% elif assessment_state == 'PROCESSING' or assessment_state == 'CORRECTING' or assessment_state == 'PENDING' %}
         <span class="ms-2 badge bg-info text-dark" title="{% trans 'El sistema está trabajando en tu evaluación...' %}">
             <i class="fas fa-spinner fa-spin me-1"></i> {% trans "En Progreso" %}

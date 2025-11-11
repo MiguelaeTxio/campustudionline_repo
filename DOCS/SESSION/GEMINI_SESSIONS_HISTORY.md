@@ -54,3 +54,17 @@
 *  **Session:** Mantenimiento y Mejora del Sistema de Autoevaluaciones con IA y Celery
 *  **Description:** Continuar con la refactorización del sistema de autoevaluaciones (Fases 2 y 3), centrando la lógica en el modelo ContentCopy, aplicando las migraciones de base de datos necesarias y mejorando la experiencia de usuario de los indicadores de estado en la Sala de Estudio.
 
+# 11/11/2025
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+## NRA
+*  **Session:** Diagnóstico del Bucle Infinito en Tareas Celery de Autoevaluaciones
+*  **Description:** Investigar y resolver por qué las autoevaluaciones generadas por IA en la app `assessment` permanecen indefinidamente en estado `PROCESSING`, analizando la tarea Celery (`assessment/tasks.py`), los logs y la comunicación con la API externa para asegurar la correcta transición a estados finales (`COMPLETED` o `FAILED`).
+
+# 2025-11-11
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+## CSO
+*  **Session:** Diagnóstico del Bucle Infinito en el Procesamiento de Evaluaciones de IA
+*  **Description:** Analizar la tarea Celery en assessment/tasks.py y los logs del sistema para identificar la causa raíz por la que las autoevaluaciones generadas por IA no finalizan, quedándose atascadas en el estado 'PROCESSING'.
+
