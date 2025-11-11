@@ -123,8 +123,6 @@ def get_assessment_context(user, content_copy):
     ).select_related("content_copy__original_content")
 
     limit_data = check_user_assessment_limits(user)
-    is_daily_limit_reached = limit_data["daily"]["is_reached"]
-    is_weekly_limit_reached = limit_data["weekly"]["is_reached"]
     can_create_new = limit_data["can_create_new"]
 
     FAILURE_STATUSES = [
@@ -141,12 +139,8 @@ def get_assessment_context(user, content_copy):
         "take_assessment_timer": None,
         "available_corrections": [],
         "buttons": {
-            "solicitar": {
-                "is_disabled": True, "url": "#", "text": _("No Disponible")
-            },
-            "realizar": {
-                "is_disabled": True, "url": "#", "text": _("No Disponible")
-            },
+            "solicitar": { "is_disabled": True, "url": "#", "text": _("No Disponible") },
+            "realizar": { "is_disabled": True, "url": "#", "text": _("No Disponible") },
         },
         "limits": limit_data,
         "raw_assessment": None,
@@ -154,18 +148,10 @@ def get_assessment_context(user, content_copy):
         "assessment_to_take": None,
     }
 
-    latest_assessment = all_user_assessments_for_content.order_by(
-        "-created_at"
-    ).first()
-    context["raw_assessment"] = latest_assessment
+    assessment_to_take = all_user_assessments_for_content.filter(
+        status=Assessment.AssessmentStatus.COMPLETED, expiration_date__gt=now
+    ).order_by("-created_at").first()
 
-    assessment_to_take = (
-        all_user_assessments_for_content.filter(
-            status=Assessment.AssessmentStatus.COMPLETED, expiration_date__gt=now
-        )
-        .order_by("-created_at")
-        .first()
-    )
     if assessment_to_take:
         context["assessment_to_take"] = assessment_to_take
         context["status"] = "REALIZAR_PENDIENTE"
@@ -173,39 +159,33 @@ def get_assessment_context(user, content_copy):
             "label": _("Debes realizar esta evaluación en:"),
             "end_time_iso": assessment_to_take.expiration_date.isoformat(),
         }
+    else:
+        latest_assessment = all_user_assessments_for_content.order_by("-created_at").first()
+        context["raw_assessment"] = latest_assessment
 
-    if latest_assessment and latest_assessment.status in FAILURE_STATUSES:
-        context["status"] = "FALLIDA"
-        context["status_text"] = _("Error: {}").format(
-            latest_assessment.get_status_display()
-        )
-    elif not context["assessment_to_take"]:
-        if not can_create_new:
+        if latest_assessment and latest_assessment.status in FAILURE_STATUSES:
+            context["status"] = "FALLIDA"
+            context["status_text"] = _("Error: {}").format(latest_assessment.get_status_display())
+        
+        elif not can_create_new:
             context["status"] = "EN_ESPERA"
             daily_slot, weekly_slot = None, None
-            if is_daily_limit_reached:
-                oldest_in_day = (
-                    limit_data["assessments_in_last_day"]
-                    .order_by("created_at")
-                    .first()
-                )
+            if limit_data["daily"]["is_reached"]:
+                oldest_in_day = limit_data["assessments_in_last_day"].order_by("created_at").first()
                 if oldest_in_day:
                     daily_slot = oldest_in_day.created_at + timedelta(days=1)
-            if is_weekly_limit_reached:
-                oldest_in_week = (
-                    limit_data["assessments_in_last_week"]
-                    .order_by("created_at")
-                    .first()
-                )
+            if limit_data["weekly"]["is_reached"]:
+                oldest_in_week = limit_data["assessments_in_last_week"].order_by("created_at").first()
                 if oldest_in_week:
                     weekly_slot = oldest_in_week.created_at + timedelta(days=7)
+            
             potential_slots = [s for s in [daily_slot, weekly_slot] if s]
             if potential_slots:
                 context["creation_timer"] = {
                     "label": _("Próxima evaluación disponible en:"),
                     "end_time_iso": max(potential_slots).isoformat(),
                 }
-
+        
         if latest_assessment:
             s = latest_assessment.status
             if s in ["PENDING", "PROCESSING"]:
@@ -222,16 +202,12 @@ def get_assessment_context(user, content_copy):
     ).select_related("content_copy__original_content")
 
     for assessment in visible_assessments:
-        context["available_corrections"].append(
-            {
-                "pk": assessment.pk,
-                "url": reverse(
-                    "assessment:view_results", kwargs={"pk": assessment.pk}
-                ),
-                "content_title": assessment.content_copy.original_content.title,
-                "expiration_iso": assessment.results_expiration_date.isoformat(),
-            }
-        )
+        context["available_corrections"].append({
+            "pk": assessment.pk,
+            "url": reverse("assessment:view_results", kwargs={"pk": assessment.pk}),
+            "content_title": assessment.content_copy.original_content.title,
+            "expiration_iso": assessment.results_expiration_date.isoformat(),
+        })
 
     can_solicitar = (
         (not context["assessment_to_take"])
@@ -240,10 +216,7 @@ def get_assessment_context(user, content_copy):
     )
 
     realizar_url = (
-        reverse(
-            "assessment:take_assessment",
-            kwargs={"pk": context["assessment_to_take"].pk},
-        )
+        reverse("assessment:take_assessment", kwargs={"pk": context["assessment_to_take"].pk})
         if context["assessment_to_take"]
         else "#"
     )
@@ -251,10 +224,7 @@ def get_assessment_context(user, content_copy):
     context["buttons"] = {
         "solicitar": {
             "is_disabled": not can_solicitar,
-            "url": reverse(
-                "assessment:generate_ai_assessment",
-                kwargs={"copy_pk": content_copy.pk},
-            ),
+            "url": reverse("assessment:generate_ai_assessment", kwargs={"copy_pk": content_copy.pk}),
             "text": _("Solicitar Evaluación"),
         },
         "realizar": {

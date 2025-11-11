@@ -75,3 +75,9 @@
 *  **Session:** Corrección del Temporizador de Evaluaciones y Diagnóstico del Bucle de Procesamiento
 *  **Description:** La sesión se centrará en dos objetivos principales. Primero, se abordará un problema de experiencia de usuario (UX) en el que el temporizador de cuenta regresiva de las evaluaciones se muestra de forma estática. Se investigará el código JavaScript y la transmisión de datos desde Django para solucionarlo. En segundo lugar, se retomará la investigación original para diagnosticar por qué las evaluaciones quedan indefinidamente en estado de "procesamiento", lo que implicará un análisis de las tareas y logs de Celery.
 
+# 11/11/2025
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+## CYC
+*  **Session:** Corrección del Temporizador de Evaluaciones y Diagnóstico de Bucle de Procesamiento
+*  **Description:** La sesión se centrará en dos objetivos: primero, corregir el temporizador de cuenta regresiva en las autoevaluaciones, asegurando que la `expiration_date` se propague correctamente al frontend; y segundo, diagnosticar la causa por la cual las evaluaciones pueden quedar atascadas en el estado 'PROCESSING', investigando los logs de Celery y el flujo de la tarea asíncrona.
