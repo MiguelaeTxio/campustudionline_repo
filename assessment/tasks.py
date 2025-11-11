@@ -80,14 +80,12 @@ def generate_assessment_from_content_task(assessment_id):
     try:
         with transaction.atomic():
             assessment = Assessment.objects.select_related(
-                'content_copy', 'content', 'user'
-            ).prefetch_related(
-                'content__subject'
+                'content_copy', 'user'
             ).select_for_update().get(pk=assessment_id)
-            
+
             if assessment.status != "PENDING":
                 return f"Tarea omitida. Estado: {assessment.status}."
-            
+
             assessment.status = "PROCESSING"
             assessment.save(update_fields=["status"])
 
@@ -96,13 +94,15 @@ def generate_assessment_from_content_task(assessment_id):
         return f"Error: Assessment con ID {assessment_id} no encontrado."
 
     try:
-        full_content = assessment.content.get_full_markdown_content()
+        original_content = assessment.content_copy.original_content
+        full_content = original_content.get_full_markdown_content()
+
         if not full_content or not full_content.strip():
             raise ValueError("El contenido para la evaluación está vacío.")
 
-        subjects = assessment.content.subject.all()
-        subject = subjects.first() if subjects else None
-        
+        subjects = getattr(original_content, "subjects", None)
+        subject = subjects.first() if subjects and subjects.exists() else None
+
         prompt_format_instructions = (
             "**FORMATO DE SALIDA OBLIGATORIO:**\n"
             "Cada par pregunta-respuesta DEBE seguir esta estructura exacta, usando los separadores como se indica:\n"
@@ -125,14 +125,13 @@ def generate_assessment_from_content_task(assessment_id):
                 f"Material de estudio:\n---\n{full_content}\n---"
             )
         else:
-            title = assessment.content.title
+            title = original_content.title
             logger.info(f"Generando evaluación para contenido libre (Título: {title}).")
             prompt = (
                 f"Tu tarea es crear un examen basado en el siguiente texto, cubriendo sus conceptos clave.\n\n"
                 f"{prompt_format_instructions}\n\n"
                 f"Material de estudio:\n---\n{full_content}\n---"
             )
-            logger.info(f"GENERATION_TASK (Free Content) - PROMPT ENVIADO A LA API:\n---\n{prompt}\n---")
 
         api_key = ApiKey.objects.filter(is_enabled=True, is_quarantined=False).first()
         if not api_key:
@@ -152,11 +151,10 @@ def generate_assessment_from_content_task(assessment_id):
 
         num_questions = len(questions_data)
         with transaction.atomic():
-            # Volvemos a obtener el objeto para asegurar que tenemos la última versión
             assessment_to_complete = Assessment.objects.select_related(
-                'user', 'content'
+                'user', 'content_copy__original_content'
             ).get(pk=assessment_id)
-            
+
             assessment_to_complete.total_questions_expected = num_questions
             questions_to_create = [
                 Question(
@@ -170,6 +168,12 @@ def generate_assessment_from_content_task(assessment_id):
 
             assessment_to_complete.status = "COMPLETED"
             assessment_to_complete.questions_processed = num_questions
+
+            # [INICIO] CORRECCIÓN DEFINITIVA
+            expiration_seconds = getattr(settings, "ASSESSMENT_EXPIRATION_SECONDS", 86400)
+            assessment_to_complete.expiration_date = timezone.now() + timedelta(seconds=expiration_seconds)
+            # [FIN] CORRECCIÓN DEFINITIVA
+
             assessment_to_complete.save()
 
         log_timestamp(f"GENERATION_TASK: ÉXITO para Assessment ID {assessment_id}. Generadas {num_questions} preguntas.")
@@ -205,8 +209,9 @@ def correct_assessment_task(assessment_id):
         assessment.questions_processed = 0
         assessment.save(update_fields=["total_questions_expected", "questions_processed"])
 
-        expiration_date = timezone.now() + timedelta(seconds=getattr(settings, "CORRECTION_VISIBILITY_DURATION_SECONDS", 86400))
-        
+        expiration_seconds = getattr(settings, "CORRECTION_VISIBILITY_DURATION_SECONDS", 86400)
+        expiration_date = timezone.now() + timedelta(seconds=expiration_seconds)
+
         prompt_format_instructions = (
             "**FORMATO DE SALIDA OBLIGATORIO:**\n"
             "Debes generar DOS líneas, cada una con un prefijo claro:\n"
@@ -243,18 +248,19 @@ def correct_assessment_task(assessment_id):
 
             except Exception as e:
                 logger.error(f"CORRECTION_TASK: ERROR corrigiendo UserAnswer ID {answer.id}: {e}", exc_info=True)
-            
+
             Assessment.objects.filter(pk=assessment_id).update(questions_processed=F("questions_processed") + 1)
             if i < num_answers:
                 time.sleep(5)
 
         with transaction.atomic():
-            assessment_to_complete = Assessment.objects.select_related("user", "content_copy__content_material").get(pk=assessment_id)
+            assessment_to_complete = Assessment.objects.select_related("user", "content_copy__original_content").get(pk=assessment_id)
             assessment_to_complete.status = "RESULTS_AVAILABLE"
-            assessment_to_complete.save(update_fields=["status"])
+            assessment_to_complete.results_expiration_date = expiration_date
+            assessment_to_complete.save(update_fields=["status", "results_expiration_date"])
 
         log_timestamp(f"CORRECTION_TASK: ÉXITO para Assessment ID {assessment_id}.")
-        content_title = assessment_to_complete.content_copy.content_material.title
+        content_title = assessment_to_complete.content_copy.original_content.title
         context = {"assessment_pk": assessment_to_complete.pk, "content_title": content_title}
         send_unified_notification(user=assessment_to_complete.user, subject_template="assessment/email/results_ready_subject.txt", body_template_prefix="assessment/email/results_ready_body", context=context)
         return f"Corrección de evaluación {assessment_id} completada."
@@ -270,7 +276,7 @@ def expire_untaken_assessments():
     expiration_limit = getattr(settings, "ASSESSMENT_EXPIRATION_SECONDS", 86400)
     expiration_threshold = now - timedelta(seconds=expiration_limit)
     log_timestamp(f"EXPIRE_UNTAKEN_TASK: Buscando evaluaciones 'COMPLETED' creadas antes de {expiration_threshold}.")
-    
+
     assessments_to_expire = Assessment.objects.filter(status="COMPLETED", created_at__lt=expiration_threshold)
     count = assessments_to_expire.count()
 
@@ -288,7 +294,7 @@ def purge_and_penalize_corrections():
     log_timestamp(f"PURGE_PENALIZE_TASK: Buscando correcciones caducadas antes de {now}.")
 
     expired_assessments = Assessment.objects.filter(
-        status="RESULTS_AVAILABLE", questions__user_answers__correction_expiration_date__lt=now
+        status="RESULTS_AVAILABLE", results_expiration_date__lt=now
     ).distinct()
 
     if not expired_assessments.exists():
