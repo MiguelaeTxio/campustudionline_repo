@@ -81,3 +81,10 @@
 ## CYC
 *  **Session:** Corrección del Temporizador de Evaluaciones y Diagnóstico de Bucle de Procesamiento
 *  **Description:** La sesión se centrará en dos objetivos: primero, corregir el temporizador de cuenta regresiva en las autoevaluaciones, asegurando que la `expiration_date` se propague correctamente al frontend; y segundo, diagnosticar la causa por la cual las evaluaciones pueden quedar atascadas en el estado 'PROCESSING', investigando los logs de Celery y el flujo de la tarea asíncrona.
+# 12/11/2025
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+## EPI
+*  **Session:** Diagnóstico de Inyección Dinámica de Scripts en el Módulo de Autoevaluaciones
+*  **Description:** Localizar y erradicar la causa de la carga duplicada del script `assessment_status_handler.js`, que impide el correcto funcionamiento del temporizador de las autoevaluaciones, mediante el análisis de código Python y la inserción de sondas en las plantillas.
+
