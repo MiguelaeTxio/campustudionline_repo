@@ -1,28 +1,24 @@
 # Hito 6: Sistema de Autoevaluaciones con IA (EN PROGRESO)
 
-## Resumen de la Sesión del 10/11/2025 (MAMC)
+## Resumen de la Sesión del 11/11/2025 (EDC)
 
-**Objetivos:** Refactorizar el sistema de autoevaluaciones, centralizar la lógica de indicadores de estado (badges) en la Sala de Estudio y diagnosticar y corregir una cascada de errores de importación (`ImportError`).
+**Objetivo:** Implementar la visualización jerárquica de los indicadores de estado de las evaluaciones (`badges`) en la "Sala de Estudio", asegurando que los niveles de directorio superiores (Áreas, Disciplinas) reflejen un estado agregado de las `ContentCopy` que contienen.
 
 **Progreso y Descubrimientos Clave:**
 
-1.  **Refactorización del Backend:** Se completó la refactorización para centrar la lógica en `ContentCopy`. Se modificaron `tasks.py`, `views.py`, `urls.py`, y `admin.py` de la app `assessment`, y se aplicó la migración `0009`.
-2.  **Implementación de Lógica de Descarte:** Se implementó la mecánica de "visto/no visto" para las notificaciones:
-    *   Se refactorizó `core/context_processors.py` para que los contadores de la barra de navegación solo muestren avisos de evaluaciones cuyo flag `was_viewed` es `False`.
-    *   Se implementó en `contents/study_room_views.py` la lógica que marca automáticamente como "vistas" las evaluaciones fallidas al acceder a la `edit_copy` correspondiente.
-3.  **Desmantelamiento de Indicadores Públicos:** Se eliminaron los indicadores de estado de todas las plantillas de los directorios públicos (`academic_directory`, `search`, etc.) para centralizar la funcionalidad.
-4.  **Diagnóstico y Corrección de Errores en Cascada:** El intento de purgar el código obsoleto reveló un fallo sistémico en la auditoría de dependencias, provocando una cascada de tres `ImportError` consecutivos que interrumpieron el cierre de sesión. Se diagnosticó y corrigió empíricamente cada error, eliminando las importaciones y llamadas a funciones obsoletas en:
-    *   `contents/study_room_views.py`
-    *   `search/views.py`
-    *   `academic_directory/views.py`
+1.  **Diagnóstico del Problema:** Se confirmó empíricamente que la implementación anterior no mostraba los indicadores en los niveles jerárquicos. La causa raíz se localizó en la vista `contents/study_room_views.py`, que no anotaba los `QuerySets` de los directorios con la información de estado necesaria.
+2.  **Primer Intento de Corrección Fallido:** Se implementó una lógica de subconsultas en la vista que resultó ser defectuosa, provocando un `Internal Server Error` (`AttributeError: IN_PROGRESS`) al recargar la página.
+3.  **Investigación Empírica:** Siguiendo el protocolo `PEO`, se solicitó y analizó el modelo `assessment/models.py`. Se descubrió que el estado para "en progreso" estaba definido como `PROCESSING`, y no `IN_PROGRESS` como se había supuesto. Este fue el único punto de fallo.
+4.  **Implementación Definitiva:** Se corrigió el nombre del estado en la subconsulta de la vista `contents/study_room_views.py`. Tras aplicar el cambio, la funcionalidad fue restaurada con éxito.
 
-**Estado Final:** El sistema se encuentra estable. La refactorización del backend y la limpieza de plantillas están completas. La lógica de descarte de notificaciones está implementada. Queda pendiente el purgado final del código Python obsoleto.
+**Estado Final:** El sistema es estable. Los indicadores de estado de las evaluaciones ahora se muestran correctamente en toda la jerarquía de la Sala de Estudio, reflejando el estado de mayor prioridad de las copias contenidas.
 
 ## Hoja de Ruta para la Próxima Sesión
 
-1.  **Fase 1: Purgado Final de Código Obsoleto:**
-    *   Eliminar el template tag `render_assessment_indicators` de `assessment/templatetags/assessment_tags.py`.
-    *   Eliminar la plantilla parcial `assessment/templates/assessment/partials/_assessment_indicator_badge.html` que quedó sin crear.
-2.  **Fase 2: Verificación Funcional en Sala de Estudio:**
-    *   Confirmar que la vista de lista de la Sala de Estudio (`_copy_list_partial.html`) muestra correctamente los indicadores de estado para cada `ContentCopy` utilizando su propia lógica, ahora que el tag global ha sido eliminado.
-    *   Realizar pruebas para verificar que los contadores de la barra de navegación reflejan únicamente los estados de la Sala de Estudio y que la lógica de descarte de notificaciones (`was_viewed`) funciona correctamente.
+1.  **Fase 1: Diagnóstico del Bucle de Procesamiento:**
+    *   **Objetivo:** Investigar por qué las evaluaciones se quedan permanentemente en estado `PROCESSING` y nunca transicionan a `COMPLETED` o `FAILED`.
+    *   **Plan:**
+        *   Revisar la tarea Celery responsable de generar las evaluaciones (`assessment/tasks.py`).
+        *   Inspeccionar los logs de Celery en busca de errores silenciosos o bucles infinitos.
+        *   Verificar la comunicación con la API de IA y el manejo de sus respuestas.
+        *   Realizar una prueba de generación de evaluación de principio a fin, monitorizando el estado en la base de datos y los logs en tiempo real.
