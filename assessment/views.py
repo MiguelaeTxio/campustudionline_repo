@@ -97,6 +97,13 @@ def take_assessment(request, pk):
         )
         return redirect("assessment:view_results", pk=assessment.pk)
 
+    if not assessment.was_viewed:
+        assessment.was_viewed = True
+        assessment.save(update_fields=["was_viewed"])
+        log_timestamp(
+            f"TAKE_ASSESSMENT: Marcado Assessment ID {assessment.id} como 'visto'."
+        )
+
     context = {
         "assessment": assessment,
         "user_copy": user_copy,

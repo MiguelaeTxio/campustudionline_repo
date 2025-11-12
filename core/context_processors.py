@@ -19,12 +19,7 @@ def global_context(request):
         "show_tour": False,
         "unread_p2p_message_count": 0,
         "protection_level": None,
-        # Navbar Assessment Indicators (Study Room specific)
-        "assessments_to_take_count": 0,
-        "assessments_with_results_count": 0,
-        "assessments_in_progress_count": 0,
-        "assessments_in_queue_count": 0,
-        "assessments_failed_count": 0,
+        "study_room_iv_data": None,
     }
 
     if request.user.is_authenticated:
@@ -43,40 +38,56 @@ def global_context(request):
         if general_room:
             context["protection_level"] = general_room.is_private
 
-        # --- Study Room Navbar Indicator Logic (Refactored) ---
-        base_assessments = Assessment.objects.filter(user=user)
+        # --- Navbar Notification Logic (Intelligent Badge) ---
+        base_query = Assessment.objects.filter(user=user)
 
-        # Count assessments ready to be taken (not expired)
-        context["assessments_to_take_count"] = base_assessments.filter(
-            status=Assessment.AssessmentStatus.COMPLETED
-        ).count()
+        # Individual notification counters (only for UNSEEN items)
+        notifications = {
+            "COMPLETED": {
+                "count": base_query.filter(status=Assessment.AssessmentStatus.COMPLETED, was_viewed=False).count(),
+                "status": "COMPLETED",
+            },
+            "RESULTS_AVAILABLE": {
+                "count": base_query.filter(status=Assessment.AssessmentStatus.RESULTS_AVAILABLE, was_viewed=False).count(),
+                "status": "RESULTS_AVAILABLE",
+            },
+            "FAILED": {
+                "count": base_query.filter(
+                    status__in=[
+                        Assessment.AssessmentStatus.FAILED,
+                        Assessment.AssessmentStatus.TIMEOUT_FAILURE,
+                        Assessment.AssessmentStatus.GENERATION_FAILURE,
+                    ],
+                    was_viewed=False,
+                ).count(),
+                "status": "FAILED",
+            },
+            "PROCESSING": {
+                "count": base_query.filter(status__in=[
+                    Assessment.AssessmentStatus.PROCESSING,
+                    Assessment.AssessmentStatus.CORRECTING,
+                ]).count(),
+                "status": "PROCESSING",
+            },
+            "PENDING": {
+                "count": base_query.filter(status=Assessment.AssessmentStatus.PENDING).count(),
+                "status": "PENDING", # Note: 'PENDING' doesn't have a specific badge style, but is counted.
+            },
+        }
 
-        # Count available results that have not been viewed yet
-        context["assessments_with_results_count"] = base_assessments.filter(
-            status=Assessment.AssessmentStatus.RESULTS_AVAILABLE, was_viewed=False
-        ).count()
+        # Filter out notification types with a zero count
+        active_notifications = [v for k, v in notifications.items() if v["count"] > 0]
         
-        # Count assessments currently being generated or corrected
-        context["assessments_in_progress_count"] = base_assessments.filter(
-            status__in=[
-                Assessment.AssessmentStatus.PROCESSING,
-                Assessment.AssessmentStatus.CORRECTING,
-            ]
-        ).count()
-
-        # Count assessments waiting in the queue
-        context["assessments_in_queue_count"] = base_assessments.filter(
-            status=Assessment.AssessmentStatus.PENDING
-        ).count()
-
-        # Count failed assessments that have not been viewed/acknowledged yet
-        context["assessments_failed_count"] = base_assessments.filter(
-            status__in=[
-                Assessment.AssessmentStatus.FAILED,
-                Assessment.AssessmentStatus.TIMEOUT_FAILURE,
-                Assessment.AssessmentStatus.GENERATION_FAILURE,
-            ],
-            was_viewed=False,
-        ).count()
-
+        # Determine the final badge to display
+        if len(active_notifications) == 1:
+            # If there's only one type of notification, use its specific style
+            context["study_room_iv_data"] = active_notifications[0]
+        elif len(active_notifications) > 1:
+            # If there are multiple types, show a consolidated 'MULTIPLE' badge
+            total_count = sum(item["count"] for item in active_notifications)
+            context["study_room_iv_data"] = {
+                "count": total_count,
+                "status": "MULTIPLE",
+            }
+            
     return context

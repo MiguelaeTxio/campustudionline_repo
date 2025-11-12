@@ -77,18 +77,21 @@
                     <li class="nav-item" id="tour-nav-academic-directory">
                         <a class="nav-link {% if request.resolver_match.app_name == 'academic_directory' %}active{% endif %}" href="{% url 'academic_directory:university_list' %}">
                             <i class="fas fa-graduation-cap me-2"></i>Directorio Académico
-                            {% include 'assessment/partials/_navbar_iv_display.html' with iv_data=academic_dir_iv %}
                         </a>
                     </li>
                     {% if user.is_authenticated %}
                     <li class="nav-item" id="tour-nav-intellectual-directory">
                         <a class="nav-link {% if request.resolver_match.app_name == 'search' %}active{% endif %}" href="{% url 'search:search_home' %}">
                             <i class="fas fa-folder me-2"></i>Directorio de Contenidos Libres
-                            {% include 'assessment/partials/_navbar_iv_display.html' with iv_data=free_dir_iv %}
                         </a>
                     </li>
                     <li class="nav-item" id="tour-nav-personal-directory"><a class="nav-link {% if request.resolver_match.app_name == 'contents' %}active{% endif %}" href="{% url 'contents:personal_workspace' %}"><i class="fas fa-address-book me-2"></i>Directorio Personal</a></li>
-                    <li class="nav-item" id="tour-nav-study-room"><a class="nav-link {% if request.resolver_match.url_name == 'copy_directory_root' %}active{% endif %}" href="{% url 'study_room:copy_directory_root' %}"><i class="fas fa-book-reader me-2"></i>Sala de Estudio</a></li>
+                    <li class="nav-item" id="tour-nav-study-room">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'copy_directory_root' %}active{% endif %}" href="{% url 'study_room:copy_directory_root' %}">
+                            <i class="fas fa-book-reader me-2"></i>Sala de Estudio
+                            {% include 'assessment/partials/_navbar_iv_display.html' with iv_data=study_room_iv_data %}
+                        </a>
+                    </li>
                     <li class="nav-item" id="tour-nav-portfolio"><a class="nav-link {% if request.resolver_match.view_name == 'portfolio:public_portfolio_detail' and request.resolver_match.kwargs.username == user.username %}active{% endif %}" href="{% url 'portfolio:public_portfolio_detail' username=user.username %}"><i class="fas fa-address-card me-2"></i>Mi Portafolio</a></li>
                     {% endif %}
                 </ul>
