@@ -523,6 +523,7 @@
 ./favorites_prototype/migrations/__init__.py
 ./favorites_prototype/migrations/0001_initial.py
 ./favorites_prototype/tests.py
+./except
 ./users
 ./users/urls.py
 ./users/templates
@@ -686,6 +687,7 @@
 ./public_seo_previews/material_14_curso-de-selenium-qa.html
 ./celery@miguelaetxio-182748-deployment-7bd7f54d64-9stlv:
 ./file00.txt
+./EOF
 ./check_models.py
 ./.env
 ./push_tester

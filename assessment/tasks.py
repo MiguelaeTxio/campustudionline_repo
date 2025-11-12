@@ -13,7 +13,7 @@ from django.utils import timezone
 from google.api_core.exceptions import DeadlineExceeded
 from datetime import timedelta
 
-from .models import Assessment, Question, UserAnswer
+from .models import Assessment, Question, UserAnswer, AssessmentSettings
 from academic_structure.models import Subject
 from content_automation.models import ApiKey
 from core.services.gemini_service import generate_text_content, AIServiceCriticalError
@@ -204,7 +204,8 @@ def correct_assessment_task(self, assessment_id):
         assessment.questions_processed = 0
         assessment.save(update_fields=["total_questions_expected", "questions_processed"])
 
-        expiration_date = timezone.now() + timedelta(seconds=getattr(settings, "CORRECTION_VISIBILITY_DURATION_SECONDS", 86400))
+        app_settings = AssessmentSettings.get_settings()
+        expiration_date = timezone.now() + timedelta(days=app_settings.results_expiration_days)
         prompt_format_instructions = (
             "**FORMATO DE SALIDA OBLIGATORIO:**\n"
             "Debes generar DOS líneas, cada una con un prefijo claro:\n"

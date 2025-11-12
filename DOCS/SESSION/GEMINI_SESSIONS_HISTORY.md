@@ -95,3 +95,10 @@
 *  **Session:** Validación Final y Cierre del Hito 6: Sistema de Autoevaluaciones
 *  **Description:** Realizar una comprobación final del sistema de autoevaluaciones para verificar la ausencia de regresiones tras la corrección del temporizador. Si la validación es exitosa, proceder a actualizar la documentación del proyecto para marcar el Hito 6 como COMPLETADO.
 
+# 2025-11-12
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+## EDC
+*  **Session:** Diagnóstico y Corrección de la Caducidad Inconsistente de Resultados de Autoevaluación
+*  **Description:** Auditar y corregir la lógica de purgado de resultados de autoevaluaciones (`purge_and_penalize_corrections`) para resolver la inconsistencia entre la fecha de expiración mostrada y el mensaje de caducidad prematura, garantizando la coherencia del estado para el usuario.
+

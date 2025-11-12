@@ -284,14 +284,14 @@ def user_copies_list(request, area_slug=None, discipline_slug=None, master_slug=
     # --- NIVEL 1: VISTA RAÍZ ---
     else:
         # Contenido Académico
-        area_ids = base_copies.filter(original_content__topic__isnull=False).values_list("original_content__topic__main_category__discipline__knowledge_area_id", flat=True).distinct()
+        area_ids = base_copies.filter(original_content__is_free_content=False).values_list("original_content__topic__main_category__discipline__knowledge_area_id", flat=True).distinct()
         
         items_list = KnowledgeArea.objects.filter(id__in=area_ids).annotate(
             **get_aggregated_assessment_annotations({'content_copy__original_content__topic__main_category__discipline__knowledge_area': OuterRef('pk')})
         ).order_by("name")
         
         # Contenido Libre
-        master_category_ids = base_copies.filter(original_content__master_category__isnull=False).values_list("original_content__master_category_id", flat=True).distinct()
+        master_category_ids = base_copies.filter(original_content__is_free_content=True).values_list("original_content__master_category_id", flat=True).distinct()
         
         free_content_roots = FreeContentMasterCategory.objects.filter(id__in=master_category_ids).annotate(
             **get_aggregated_assessment_annotations({'content_copy__original_content__master_category': OuterRef('pk')})

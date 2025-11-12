@@ -1,5 +1,6 @@
 # /home/MiguelAeTxio/PROJECTS/CampuStudiOnline/assessment/utils.py
 from datetime import timedelta
+from math import ceil
 from django.utils import timezone
 from django.conf import settings
 from django.urls import reverse
@@ -135,6 +136,7 @@ def get_assessment_context(user, content_copy):
         "status_text": "",
         "creation_timer": None,
         "take_assessment_timer": None,
+        "visibility_hours": None,
         "available_corrections": [],
         "buttons": {
             "solicitar": { "is_disabled": True, "url": "#", "text": _("No Disponible") },
@@ -198,6 +200,13 @@ def get_assessment_context(user, content_copy):
         status=Assessment.AssessmentStatus.RESULTS_AVAILABLE,
         results_expiration_date__gt=now,
     ).select_related("content_copy__original_content")
+
+    if visible_assessments.exists():
+        soonest_expiration = min(a.results_expiration_date for a in visible_assessments)
+        if soonest_expiration > now:
+            remaining_time = soonest_expiration - now
+            visibility_hours = ceil(remaining_time.total_seconds() / 3600)
+            context["visibility_hours"] = visibility_hours
 
     for assessment in visible_assessments:
         context["available_corrections"].append({
