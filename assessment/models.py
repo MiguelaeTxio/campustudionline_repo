@@ -20,9 +20,8 @@ class Assessment(models.Model):
         CORRECTING = "CORRECTING", "Corrigiendo"
         RESULTS_AVAILABLE = "RESULTS_AVAILABLE", "Resultados Disponibles"
         CORRECTION_EXPIRED = "CORRECTION_EXPIRED", "Corrección Expirada"
-        FAILED = "FAILED", "Fallida (Error General)"
-        TIMEOUT_FAILURE = "TIMEOUT_FAILURE", "Fallo por Tiempo de Espera"
-        GENERATION_FAILURE = "GENERATION_FAILURE", "Fallo de Generación"
+        FAILED_RETRYABLE = "FAILED_RETRYABLE", "Fallo (Reintentando)"
+        FAILED_FATAL = "FAILED_FATAL", "Fallo Permanente"
         USER_CANCELLED = "USER_CANCELLED", "Cancelada por el Usuario"
 
     content_copy = models.ForeignKey(
@@ -91,6 +90,10 @@ class Assessment(models.Model):
         help_text=_("Los resultados de la evaluación estarán disponibles hasta esta fecha."),
     )
 
+    last_error = models.TextField(
+        blank=True, null=True, verbose_name=_("Último Error Registrado")
+    )
+    
     def save(self, *args, **kwargs):
         """
         Sobrescribe el método save para:

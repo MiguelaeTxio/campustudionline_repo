@@ -147,9 +147,8 @@ def edit_copy(request, pk):
 
     # --- Lógica de Descarte de Notificaciones de Fallo ---
     FAILURE_STATUSES = [
-        Assessment.AssessmentStatus.FAILED,
-        Assessment.AssessmentStatus.TIMEOUT_FAILURE,
-        Assessment.AssessmentStatus.GENERATION_FAILURE,
+        Assessment.AssessmentStatus.FAILED_RETRYABLE,
+        Assessment.AssessmentStatus.FAILED_FATAL,
     ]
     latest_assessment = Assessment.objects.filter(content_copy=content_copy).order_by('-created_at').first()
     
@@ -216,9 +215,8 @@ def user_copies_list(request, area_slug=None, discipline_slug=None, master_slug=
         # Prioridad de estados (menor número = mayor prioridad)
         priority_annotation = Case(
             When(status__in=[
-                Assessment.AssessmentStatus.FAILED,
-                Assessment.AssessmentStatus.TIMEOUT_FAILURE,
-                Assessment.AssessmentStatus.GENERATION_FAILURE], then=Value(1)),
+                Assessment.AssessmentStatus.FAILED_RETRYABLE,
+                Assessment.AssessmentStatus.FAILED_FATAL], then=Value(1)),
             When(status=Assessment.AssessmentStatus.COMPLETED, then=Value(2)),
             When(status=Assessment.AssessmentStatus.RESULTS_AVAILABLE, then=Value(3)),
             When(status__in=[

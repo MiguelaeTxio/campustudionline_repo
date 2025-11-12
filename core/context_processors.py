@@ -51,17 +51,6 @@ def global_context(request):
                 "count": base_query.filter(status=Assessment.AssessmentStatus.RESULTS_AVAILABLE, was_viewed=False).count(),
                 "status": "RESULTS_AVAILABLE",
             },
-            "FAILED": {
-                "count": base_query.filter(
-                    status__in=[
-                        Assessment.AssessmentStatus.FAILED,
-                        Assessment.AssessmentStatus.TIMEOUT_FAILURE,
-                        Assessment.AssessmentStatus.GENERATION_FAILURE,
-                    ],
-                    was_viewed=False,
-                ).count(),
-                "status": "FAILED",
-            },
             "PROCESSING": {
                 "count": base_query.filter(status__in=[
                     Assessment.AssessmentStatus.PROCESSING,

@@ -62,9 +62,8 @@ def check_user_assessment_limits(user):
     settings = AssessmentSettings.get_settings()
 
     FAILURE_STATUSES = [
-        Assessment.AssessmentStatus.FAILED,
-        Assessment.AssessmentStatus.TIMEOUT_FAILURE,
-        Assessment.AssessmentStatus.GENERATION_FAILURE,
+        Assessment.AssessmentStatus.FAILED_RETRYABLE,
+        Assessment.AssessmentStatus.FAILED_FATAL,
         Assessment.AssessmentStatus.USER_CANCELLED,
     ]
     all_valid_user_assessments = Assessment.objects.filter(user=user).exclude(
@@ -126,9 +125,8 @@ def get_assessment_context(user, content_copy):
     can_create_new = limit_data["can_create_new"]
 
     FAILURE_STATUSES = [
-        Assessment.AssessmentStatus.FAILED,
-        Assessment.AssessmentStatus.TIMEOUT_FAILURE,
-        Assessment.AssessmentStatus.GENERATION_FAILURE,
+        Assessment.AssessmentStatus.FAILED_RETRYABLE,
+        Assessment.AssessmentStatus.FAILED_FATAL,
         Assessment.AssessmentStatus.USER_CANCELLED,
     ]
 

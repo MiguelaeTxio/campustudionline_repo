@@ -2,7 +2,9 @@
 import logging
 import re
 import time
+import traceback
 from celery import shared_task
+from celery.exceptions import MaxRetriesExceededError
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.db import transaction
@@ -73,25 +75,26 @@ def _parse_correction_text(text: str) -> dict:
 
 # --- Celery Tasks ---
 
-@shared_task
-def generate_assessment_from_content_task(assessment_id):
-    log_timestamp(f"GENERATION_TASK: INICIO para Assessment ID {assessment_id}.")
-
+@shared_task(bind=True, acks_late=True)
+def generate_assessment_from_content_task(self, assessment_id):
+    log_timestamp(f"GENERATION_TASK: INICIO para Assessment ID {assessment_id}. Intento: {self.request.retries + 1}")
+    
+    assessment = None
     try:
         with transaction.atomic():
             assessment = Assessment.objects.select_related(
                 'content_copy', 'user'
             ).select_for_update().get(pk=assessment_id)
 
-            if assessment.status != "PENDING":
-                return f"Tarea omitida. Estado: {assessment.status}."
+            if assessment.status not in [Assessment.AssessmentStatus.PENDING, Assessment.AssessmentStatus.FAILED_RETRYABLE]:
+                return f"Tarea omitida. Estado actual: {assessment.get_status_display()}."
 
-            assessment.status = "PROCESSING"
+            assessment.status = Assessment.AssessmentStatus.PROCESSING
             assessment.save(update_fields=["status"])
 
     except Assessment.DoesNotExist:
         logger.error(f"GENERATION_TASK: No se encontró Assessment con ID: {assessment_id}.")
-        return f"Error: Assessment con ID {assessment_id} no encontrado."
+        return
 
     try:
         original_content = assessment.content_copy.original_content
@@ -116,7 +119,6 @@ def generate_assessment_from_content_task(assessment_id):
 
         if subject and subject.learning_objectives:
             learning_objectives = subject.learning_objectives
-            logger.info(f"Generando evaluación para contenido académico (Subject: {subject.name}).")
             prompt = (
                 f"Tu tarea es crear un examen basado en los siguientes Objetivos de Aprendizaje:\n"
                 f"<OBJETIVOS>\n{learning_objectives}\n</OBJETIVOS>\n\n"
@@ -125,8 +127,6 @@ def generate_assessment_from_content_task(assessment_id):
                 f"Material de estudio:\n---\n{full_content}\n---"
             )
         else:
-            title = original_content.title
-            logger.info(f"Generando evaluación para contenido libre (Título: {title}).")
             prompt = (
                 f"Tu tarea es crear un examen basado en el siguiente texto, cubriendo sus conceptos clave.\n\n"
                 f"{prompt_format_instructions}\n\n"
@@ -135,83 +135,76 @@ def generate_assessment_from_content_task(assessment_id):
 
         api_key = ApiKey.objects.filter(is_enabled=True, is_quarantined=False).first()
         if not api_key:
-            raise ValueError("No se encontró una clave de API activa y disponible para generar la evaluación.")
+            raise ValueError("No se encontró una clave de API activa y disponible.")
 
-        success, response_text, api_key_used = generate_text_content(prompt, api_key=api_key)
+        success, response_text, _ = generate_text_content(prompt, api_key=api_key)
         if not success:
             raise AIServiceCriticalError(f"La llamada a la API de texto falló: {response_text}")
 
         questions_data = _parse_assessment_text(response_text)
-
         if not questions_data:
-            raise ValueError(
-                "No se pudieron extraer preguntas del texto generado por la IA. "
-                f"Respuesta cruda (primeros 500 chars): '{response_text[:500]}...'"
-            )
+            raise ValueError(f"No se pudieron extraer preguntas. Respuesta IA: '{response_text[:500]}...'")
 
-        num_questions = len(questions_data)
         with transaction.atomic():
-            assessment_to_complete = Assessment.objects.select_related(
-                'user', 'content_copy__original_content'
-            ).get(pk=assessment_id)
-
-            assessment_to_complete.total_questions_expected = num_questions
-            questions_to_create = [
-                Question(
-                    assessment=assessment_to_complete,
-                    question_text=q["question"],
-                    model_answer=q["model_answer"],
-                )
-                for q in questions_data
-            ]
-            Question.objects.bulk_create(questions_to_create)
-
-            assessment_to_complete.status = "COMPLETED"
-            assessment_to_complete.questions_processed = num_questions
-
-            # [INICIO] CORRECCIÓN DEFINITIVA
-            expiration_seconds = getattr(settings, "ASSESSMENT_EXPIRATION_SECONDS", 86400)
-            assessment_to_complete.expiration_date = timezone.now() + timedelta(seconds=expiration_seconds)
-            # [FIN] CORRECCIÓN DEFINITIVA
-
+            # Re-fetch for update
+            assessment_to_complete = Assessment.objects.select_for_update().get(pk=assessment_id)
+            assessment_to_complete.total_questions_expected = len(questions_data)
+            Question.objects.bulk_create([
+                Question(assessment=assessment_to_complete, **q) for q in questions_data
+            ])
+            assessment_to_complete.status = Assessment.AssessmentStatus.COMPLETED
+            assessment_to_complete.questions_processed = len(questions_data)
             assessment_to_complete.save()
 
-        log_timestamp(f"GENERATION_TASK: ÉXITO para Assessment ID {assessment_id}. Generadas {num_questions} preguntas.")
-
+        log_timestamp(f"GENERATION_TASK: ÉXITO para Assessment ID {assessment_id}.")
         context = {"assessment": assessment_to_complete}
         send_unified_notification(user=assessment_to_complete.user, subject_template="assessment/email/assessment_ready_subject.txt", body_template_prefix="assessment/email/assessment_ready_body", context=context)
-        return f"Evaluación {assessment_id} generada con {num_questions} preguntas."
 
-    except (DeadlineExceeded, AIServiceCriticalError) as e:
-        logger.error(f"GENERATION_TASK: ERROR de API para Assessment ID {assessment_id}: {e}", exc_info=True)
-        Assessment.objects.filter(pk=assessment_id).update(status="TIMEOUT_FAILURE")
-        return f"Error de API en Assessment {assessment_id}."
+    except (DeadlineExceeded, AIServiceCriticalError, ValueError) as e:
+        logger.error(f"GENERATION_TASK: ERROR RECUPERABLE para Assessment ID {assessment_id}: {e}", exc_info=True)
+        if assessment:
+            assessment.status = Assessment.AssessmentStatus.FAILED_RETRYABLE
+            assessment.last_error = traceback.format_exc()
+            assessment.save(update_fields=["status", "last_error"])
+        try:
+            raise self.retry(exc=e, countdown=60)
+        except MaxRetriesExceededError:
+            logger.critical(f"GENERATION_TASK: FALLO FATAL para Assessment ID {assessment_id} tras múltiples reintentos.")
+            assessment.status = Assessment.AssessmentStatus.FAILED_FATAL
+            assessment.save(update_fields=["status"])
     except Exception as e:
         logger.error(f"GENERATION_TASK: ERROR INESPERADO para Assessment ID {assessment_id}: {e}", exc_info=True)
-        Assessment.objects.filter(pk=assessment_id).update(status="FAILED")
-        return f"Error al procesar evaluación {assessment_id}: {e}"
+        if assessment:
+            assessment.status = Assessment.AssessmentStatus.FAILED_RETRYABLE
+            assessment.last_error = traceback.format_exc()
+            assessment.save(update_fields=["status", "last_error"])
+        try:
+            raise self.retry(exc=e, countdown=300)
+        except MaxRetriesExceededError:
+            logger.critical(f"GENERATION_TASK: FALLO FATAL (inesperado) para Assessment ID {assessment_id}.")
+            assessment.status = Assessment.AssessmentStatus.FAILED_FATAL
+            assessment.save(update_fields=["status"])
 
 
-@shared_task
-def correct_assessment_task(assessment_id):
-    log_timestamp(f"CORRECTION_TASK: INICIO para Assessment ID: {assessment_id}")
+@shared_task(bind=True, acks_late=True)
+def correct_assessment_task(self, assessment_id):
+    log_timestamp(f"CORRECTION_TASK: INICIO para Assessment ID: {assessment_id}. Intento: {self.request.retries + 1}")
+    
+    assessment = None
     try:
         assessment = Assessment.objects.get(pk=assessment_id)
         user_answers = UserAnswer.objects.filter(question__assessment=assessment).select_related("question")
-        num_answers = user_answers.count()
 
-        if num_answers == 0:
-            assessment.status = "COMPLETED"
+        if not user_answers.exists():
+            assessment.status = Assessment.AssessmentStatus.COMPLETED
             assessment.save(update_fields=["status"])
-            return f"No hay respuestas para evaluación {assessment_id}."
+            return
 
-        assessment.total_questions_expected = num_answers
+        assessment.total_questions_expected = user_answers.count()
         assessment.questions_processed = 0
         assessment.save(update_fields=["total_questions_expected", "questions_processed"])
 
-        expiration_seconds = getattr(settings, "CORRECTION_VISIBILITY_DURATION_SECONDS", 86400)
-        expiration_date = timezone.now() + timedelta(seconds=expiration_seconds)
-
+        expiration_date = timezone.now() + timedelta(seconds=getattr(settings, "CORRECTION_VISIBILITY_DURATION_SECONDS", 86400))
         prompt_format_instructions = (
             "**FORMATO DE SALIDA OBLIGATORIO:**\n"
             "Debes generar DOS líneas, cada una con un prefijo claro:\n"
@@ -223,51 +216,64 @@ def correct_assessment_task(assessment_id):
             if not answer.answer_text:
                 Assessment.objects.filter(pk=assessment_id).update(questions_processed=F("questions_processed") + 1)
                 continue
-            try:
-                prompt = (
-                    f"Evalúa la siguiente respuesta de un usuario, comparándola con la pregunta y la respuesta modelo.\n\n"
-                    f'Pregunta: "{answer.question.question_text}"\n'
-                    f'Respuesta Modelo: "{answer.question.model_answer}"\n'
-                    f'Respuesta del Usuario: "{answer.answer_text}"\n\n'
-                    f"{prompt_format_instructions}"
-                )
-                success, response_text, api_key_used = generate_text_content(prompt)
+            
+            prompt = (
+                f"Evalúa la siguiente respuesta de un usuario, comparándola con la pregunta y la respuesta modelo.\n\n"
+                f'Pregunta: "{answer.question.question_text}"\n'
+                f'Respuesta Modelo: "{answer.question.model_answer}"\n'
+                f'Respuesta del Usuario: "{answer.answer_text}"\n\n'
+                f"{prompt_format_instructions}"
+            )
+            success, response_text, _ = generate_text_content(prompt)
 
-                if not success:
-                    raise AIServiceCriticalError(f"La llamada a la API de texto falló: {response_text}")
+            if not success:
+                raise AIServiceCriticalError(f"API falló para UserAnswer ID {answer.id}: {response_text}")
 
-                correction_result = _parse_correction_text(response_text)
-
-                if correction_result and correction_result.get("score") is not None:
-                    answer.score = correction_result["score"]
-                    answer.feedback = correction_result["feedback"]
-                    answer.correction_expiration_date = expiration_date
-                    answer.save(update_fields=["score", "feedback", "correction_expiration_date"])
-                else:
-                    logger.warning(f"No se pudo parsear la corrección para UserAnswer ID {answer.id}. Respuesta: {response_text}")
-
-            except Exception as e:
-                logger.error(f"CORRECTION_TASK: ERROR corrigiendo UserAnswer ID {answer.id}: {e}", exc_info=True)
-
+            correction = _parse_correction_text(response_text)
+            if correction and correction.get("score") is not None:
+                answer.score = correction["score"]
+                answer.feedback = correction["feedback"]
+                answer.correction_expiration_date = expiration_date
+                answer.save(update_fields=["score", "feedback", "correction_expiration_date"])
+            
             Assessment.objects.filter(pk=assessment_id).update(questions_processed=F("questions_processed") + 1)
-            if i < num_answers:
+            if i < user_answers.count():
                 time.sleep(5)
 
         with transaction.atomic():
-            assessment_to_complete = Assessment.objects.select_related("user", "content_copy__original_content").get(pk=assessment_id)
-            assessment_to_complete.status = "RESULTS_AVAILABLE"
+            assessment_to_complete = Assessment.objects.select_for_update().get(pk=assessment_id)
+            assessment_to_complete.status = Assessment.AssessmentStatus.RESULTS_AVAILABLE
             assessment_to_complete.results_expiration_date = expiration_date
             assessment_to_complete.save(update_fields=["status", "results_expiration_date"])
 
         log_timestamp(f"CORRECTION_TASK: ÉXITO para Assessment ID {assessment_id}.")
-        content_title = assessment_to_complete.content_copy.original_content.title
-        context = {"assessment_pk": assessment_to_complete.pk, "content_title": content_title}
+        context = {"assessment_pk": assessment_id, "content_title": assessment_to_complete.content_copy.original_content.title}
         send_unified_notification(user=assessment_to_complete.user, subject_template="assessment/email/results_ready_subject.txt", body_template_prefix="assessment/email/results_ready_body", context=context)
-        return f"Corrección de evaluación {assessment_id} completada."
+
+    except (AIServiceCriticalError) as e:
+        logger.error(f"CORRECTION_TASK: ERROR RECUPERABLE para Assessment ID {assessment_id}: {e}", exc_info=True)
+        if assessment:
+            assessment.status = Assessment.AssessmentStatus.FAILED_RETRYABLE
+            assessment.last_error = traceback.format_exc()
+            assessment.save(update_fields=["status", "last_error"])
+        try:
+            raise self.retry(exc=e, countdown=60)
+        except MaxRetriesExceededError:
+            logger.critical(f"CORRECTION_TASK: FALLO FATAL para Assessment ID {assessment_id}.")
+            assessment.status = Assessment.AssessmentStatus.FAILED_FATAL
+            assessment.save(update_fields=["status"])
     except Exception as e:
         logger.error(f"CORRECTION_TASK: ERROR INESPERADO para Assessment ID {assessment_id}: {e}", exc_info=True)
-        Assessment.objects.filter(pk=assessment_id).update(status="FAILED")
-        return f"Error en corrección de {assessment_id}: {e}"
+        if assessment:
+            assessment.status = Assessment.AssessmentStatus.FAILED_RETRYABLE
+            assessment.last_error = traceback.format_exc()
+            assessment.save(update_fields=["status", "last_error"])
+        try:
+            raise self.retry(exc=e, countdown=300)
+        except MaxRetriesExceededError:
+            logger.critical(f"CORRECTION_TASK: FALLO FATAL (inesperado) para Assessment ID {assessment_id}.")
+            assessment.status = Assessment.AssessmentStatus.FAILED_FATAL
+            assessment.save(update_fields=["status"])
 
 
 @shared_task(name="assessment.tasks.expire_untaken_assessments")
