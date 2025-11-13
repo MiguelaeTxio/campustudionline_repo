@@ -322,95 +322,53 @@ def _assemble_final_markdown_from_chunks(
     return "\n\n".join(final_parts)
 
 
-def _get_predictive_topic_from_prompt(prompt_text: str) -> Topic | None:
+def _get_or_create_academic_topic_for_subject(subject: Subject) -> Topic:
     """
-    [NUEVO] Intenta clasificar el contenido de forma predeterminada basándose en
-    palabras clave en el prompt inicial para garantizar una jerarquía consistente.
+    [NUEVA FUNCIÓN DE CORRECCIÓN] Crea o recupera la jerarquía intelectual para
+    un contenido académico, replicando su estructura institucional para garantizar
+    la consistencia.
     """
-    if not prompt_text:
-        return None
-
-    prompt_lower = prompt_text.lower()
-    area_name = "Contenidos en CampuStudiOnline"
-    area, _ = KnowledgeArea.objects.get_or_create(name=area_name)
-    
-    # Regla 1: Historia de la Música
-    if "historia de la música" in prompt_lower or "pink floyd" in prompt_lower:
-        disciplina_name = "Artes y Humanidades"
-        categoria_name = "Música"
-        tema_name = "Historia de la Música"
-        
-        disciplina, _ = Discipline.objects.get_or_create(knowledge_area=area, name=disciplina_name)
-        categoria, _ = MainCategory.objects.get_or_create(discipline=disciplina, name=categoria_name)
-        tema, _ = Topic.objects.get_or_create(main_category=categoria, name=tema_name)
-        return tema
-
-    # Regla 2: Biografías
-    if "biografía" in prompt_lower:
-        disciplina_name = "Artes y Humanidades"
-        categoria_name = "Historia"
-        tema_name = "Biografías"
-        
-        disciplina, _ = Discipline.objects.get_or_create(knowledge_area=area, name=disciplina_name)
-        categoria, _ = MainCategory.objects.get_or_create(discipline=disciplina, name=categoria_name)
-        tema, _ = Topic.objects.get_or_create(main_category=categoria, name=tema_name)
-        return tema
-
-    # Regla 3: Formación Profesional
-    if "formación profesional" in prompt_lower:
-        disciplina_name = "Artes y Humanidades"
-        categoria_name = "Desarrollo Personal"
-        tema_name = "Formación Profesional"
-        
-        disciplina, _ = Discipline.objects.get_or_create(knowledge_area=area, name=disciplina_name)
-        categoria, _ = MainCategory.objects.get_or_create(discipline=disciplina, name=categoria_name)
-        tema, _ = Topic.objects.get_or_create(main_category=categoria, name=tema_name)
-        return tema
-        
-    return None
-
-
-def _get_or_create_topic_from_classification(classification_data: dict) -> Topic | None:
     try:
-        area_name = "Contenidos en CampuStudiOnline"
-        disciplina_name = classification_data.get("categoria_general")
-        categoria_name = classification_data.get("subcategoria")
-        palabras_clave = classification_data.get("palabras_clave", [])
-
-        # [LÓGICA MEJORADA V2]
-        # Se prioriza la búsqueda de palabras clave especiales sobre la subcategoría.
-        special_keywords = ["Biografía", "Historia de la Música", "Formación Profesional"]
-        tema_name = None
+        # Navegar la jerarquía institucional desde la asignatura
+        academic_year = subject.academic_year
+        degree = academic_year.degree
+        branch = degree.branch
         
-        # 1. Buscar coincidencia en palabras clave.
-        for keyword in palabras_clave:
-            if keyword in special_keywords:
-                tema_name = keyword
-                break
+        # 1. KnowledgeArea <-- Branch
+        area, _ = KnowledgeArea.objects.get_or_create(
+            name=branch.name,
+            defaults={'slug': slugify(branch.name)}
+        )
         
-        # 2. Si no se encontró, usar la lógica por defecto.
-        if not tema_name:
-            tema_name = palabras_clave[0] if palabras_clave else categoria_name
+        # 2. Discipline <-- Degree
+        discipline, _ = Discipline.objects.get_or_create(
+            knowledge_area=area,
+            name=degree.name,
+            defaults={'slug': slugify(f"{area.name}-{degree.name}")}
+        )
+        
+        # 3. MainCategory <-- AcademicYear
+        main_category_name = f"{academic_year.year}º Curso"
+        main_category, _ = MainCategory.objects.get_or_create(
+            discipline=discipline,
+            name=main_category_name,
+            defaults={'slug': slugify(f"{discipline.name}-{main_category_name}")}
+        )
+        
+        # 4. Topic <-- Subject
+        topic, _ = Topic.objects.get_or_create(
+            main_category=main_category,
+            name=subject.name,
+            defaults={'slug': slugify(f"{main_category.name}-{subject.name}")}
+        )
+        
+        return topic
 
-        if not all([disciplina_name, categoria_name, tema_name]):
-            logger.warning(
-                f"Datos de clasificación intelectual incompletos: {classification_data}"
-            )
-            return None
-
-        area, _ = KnowledgeArea.objects.get_or_create(name=area_name)
-        disciplina, _ = Discipline.objects.get_or_create(
-            knowledge_area=area, name=disciplina_name
-        )
-        categoria, _ = MainCategory.objects.get_or_create(
-            discipline=disciplina, name=categoria_name
-        )
-        tema, _ = Topic.objects.get_or_create(
-            main_category=categoria, name=tema_name, defaults={"parent": None}
-        )
-        return tema
     except Exception as e:
-        logger.error(f"Error al procesar la jerarquía intelectual: {e}", exc_info=True)
+        logger.error(
+            f"Error CRÍTICO al crear la jerarquía académica para la asignatura '{subject.name}': {e}",
+            exc_info=True
+        )
         return None
 
 
@@ -418,7 +376,8 @@ def _get_or_create_free_categories_from_classification(
     classification_data: dict, course_title: str
 ) -> tuple:
     """
-    [NUEVO] Obtiene o crea las categorías de contenido libre basándose en la clasificación de la IA.
+    Obtiene o crea las categorías de contenido libre basándose en la clasificación de la IA.
+    Esta función se mantiene para el flujo de trabajo de contenido libre.
     """
     master_name = classification_data.get("categoria_general")
     sub_name = classification_data.get("subcategoria")
@@ -601,7 +560,6 @@ def generate_full_course_task(self, task_id: str):
     
     task = None
     api_key = None
-    predictive_topic = None # Inicializar para evitar UnboundLocalError
     try:
         time.sleep(10)
         
@@ -613,7 +571,7 @@ def generate_full_course_task(self, task_id: str):
             raise self.retry(countdown=900)
 
         task = PendingContentTask.objects.select_related(
-            'subject__academic_year__degree__branch', 'subject__content_hash_family'
+            'subject__academic_year__degree__branch__university', 'subject__content_hash_family'
         ).get(id=task_id)
 
         # ======================================================================
@@ -772,25 +730,24 @@ def generate_full_course_task(self, task_id: str):
             
             log_task_event(task_id, "Iniciando fase de clasificación de contenido.")
             
-            # [REFACTORIZADO] Lógica de clasificación bifurcada
             manual_classification = task.structured_content.get('manual_classification')
 
             if task.subject:
-                # Ruta 1: Contenido Académico (siempre automático)
-                log_task_event(task_id, "Clasificación AUTOMÁTICA para contenido académico iniciada.")
-                predictive_topic = _get_predictive_topic_from_prompt(task.subject.name)
-                if predictive_topic:
-                    target_topic = predictive_topic
-                    log_task_event(task_id, f"Clasificación PREDICTIVA aplicada. Tema: '{predictive_topic.name}'.")
-                else:
-                    target_topic = _get_or_create_topic_from_classification(
-                        task.structured_content["metadata"].get("clasificacion_intelectual", {})
-                    )
-                    log_task_event(task_id, "Clasificación por IA (fallback) aplicada.")
+                # ==================================================================
+                # RUTA ACADÉMICA CORREGIDA Y CONSOLIDADA
+                # ==================================================================
+                log_task_event(task_id, "Clasificación para contenido académico iniciada (Lógica Corregida).")
+                target_topic = _get_or_create_academic_topic_for_subject(task.subject)
+                if not target_topic:
+                    raise ContentGenerationError(f"No se pudo crear la jerarquía académica para la asignatura {task.subject.name}")
+                
+                log_task_event(task_id, f"Clasificación jerárquica académica creada/verificada. Tema final: '{target_topic.name}'.")
                 master_category, sub_category = None, None
             
             elif manual_classification:
-                # Ruta 2: Contenido Libre con clasificación MANUAL
+                # ==================================================================
+                # RUTA CONTENIDO LIBRE (MANUAL) - SIN CAMBIOS
+                # ==================================================================
                 log_task_event(task_id, "Clasificación MANUAL para contenido libre iniciada.")
                 master_category = FreeContentMasterCategory.objects.get(id=manual_classification['master_category_id'])
                 sub_category = None
@@ -799,13 +756,13 @@ def generate_full_course_task(self, task_id: str):
                 target_topic = None
             
             else:
-                # Ruta 3: Contenido Libre con clasificación AUTOMÁTICA (fallback)
-                log_task_event(task_id, "Clasificación AUTOMÁTICA para contenido libre iniciada (fallback).")
-                master_category, sub_category = _get_or_create_free_categories_from_classification(
-                    task.structured_content["metadata"].get("clasificacion_intelectual", {}),
-                    final_course_title,
+                # ==================================================================
+                # CÓDIGO MUERTO ELIMINADO - Esta ruta era inalcanzable.
+                # ==================================================================
+                # Si se llega aquí, es un estado anómalo, se lanza un error.
+                raise ContentGenerationError(
+                    "Estado de tarea anómalo: Contenido libre sin clasificación manual."
                 )
-                target_topic = None
             
             with transaction.atomic():
                 task_final = PendingContentTask.objects.select_for_update().get(id=task_id)

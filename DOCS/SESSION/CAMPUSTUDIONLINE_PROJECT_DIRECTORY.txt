@@ -333,6 +333,7 @@
 ./content_automation/management
 ./content_automation/management/commands
 ./content_automation/management/commands/test_schema_generation.py
+./content_automation/management/commands/correct_academic_classification.py
 ./messaging
 ./messaging/urls.py
 ./messaging/templates
@@ -629,6 +630,7 @@
 ./DOCS/MAINS/ATTACHEDS/CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V04.md
 ./DOCS/MAINS/CONTENT_PROMPTS.md
 ./DOCS/MAINS/CAMPUSTUDIONLINE_MASTER_DOCUMENT.md
+./tuple[str,
 ./ASGI
 ./global_settings
 ./global_settings/templates

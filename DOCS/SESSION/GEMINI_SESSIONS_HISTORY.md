@@ -102,3 +102,10 @@
 *  **Session:** Diagnóstico y Corrección de la Caducidad Inconsistente de Resultados de Autoevaluación
 *  **Description:** Auditar y corregir la lógica de purgado de resultados de autoevaluaciones (`purge_and_penalize_corrections`) para resolver la inconsistencia entre la fecha de expiración mostrada y el mensaje de caducidad prematura, garantizando la coherencia del estado para el usuario.
 
+# 13/11/2025
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+## NRA
+*  **Session:** Diagnóstico y Corrección de Filtrado de Categorías en la Vista de la Sala de Estudio
+*  **Description:** La sesión se centrará en resolver un error visual donde la categoría de contenido libre 'Contenidos en CampuStudiOnline' aparece incorrectamente en la sección de contenido académico. Siguiendo un enfoque empírico, se desarrollará un script de diagnóstico para inspeccionar los querysets de la vista `user_copies_list` y determinar la causa raíz del filtrado incorrecto antes de proponer una solución.
+

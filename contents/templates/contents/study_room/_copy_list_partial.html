@@ -1,12 +1,14 @@
-{# /home/MiguelAeTxio/CampuStudiOnline/contents/templates/contents/study_room/_copy_list_partial.html #}
+{# /home/MiguelAeTxio/PROJECTS/CampuStudiOnline/contents/templates/contents/study_room/_copy_list_partial.html #}
 {% load assessment_tags %}
 
 <div class="list-group" id="tour-sala-estudio-dir-list">
+    <!-- DEBUG: Level Name = {{ level_name }} -->
     {# Nivel Raíz: Muestra tanto Áreas Académicas como Categorías Maestras de Contenido Libre #}
     {% if level_name == 'areas' %}
         {% if page_obj %}
             <h5 class="text-muted mt-3">Contenido Académico</h5>
             {% for area in page_obj %}
+                <!-- DEBUG: Rendering academic area. Name: {{ area.name }}, Slug: '{{ area.slug }}' -->
                 <a href="{% url 'study_room:copy_directory_area' area_slug=area.slug %}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
                     <div>
                         {{ area.name }}
@@ -19,6 +21,7 @@
         {% if free_content_roots %}
             <h5 class="text-muted mt-4">Contenido Libre</h5>
             {% for master_cat in free_content_roots %}
+                <!-- DEBUG: Rendering free content root. Name: {{ master_cat.name }}, Slug: '{{ master_cat.slug }}' -->
                 <a href="{% url 'study_room:free_master_directory' master_slug=master_cat.slug %}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
                     <div>
                         {{ master_cat.name }}
@@ -32,6 +35,7 @@
     {# Nivel 2 (Académico): Muestra Disciplinas dentro de un Área #}
     {% elif level_name == 'disciplines' %}
         {% for discipline in page_obj %}
+            <!-- DEBUG: Rendering discipline. Name: {{ discipline.name }}, Slug: '{{ discipline.slug }}', Area Slug: '{{ current_area.slug }}' -->
              <a href="{% url 'study_room:copy_directory_discipline' area_slug=current_area.slug discipline_slug=discipline.slug %}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
                 <div>
                     {{ discipline.name }}
@@ -44,6 +48,7 @@
     {# Nivel 2 (Libre): Muestra Subcategorías dentro de una Categoría Maestra #}
     {% elif level_name == 'sub_categories' %}
         {% for sub_cat in page_obj %}
+            <!-- DEBUG: Rendering sub-category. Name: {{ sub_cat.name }}, Slug: '{{ sub_cat.slug }}', Master Slug: '{{ current_master_category.slug }}' -->
             <a href="{% url 'study_room:free_sub_directory' master_slug=current_master_category.slug sub_slug=sub_cat.slug %}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
                 <div>
                     {{ sub_cat.name }}
