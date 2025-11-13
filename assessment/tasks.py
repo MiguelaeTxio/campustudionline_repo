@@ -45,7 +45,7 @@ def _parse_assessment_text(text: str) -> list:
         model_answer = match[1].strip()
         if question_text and model_answer:
             questions.append(
-                {"question": question_text, "model_answer": model_answer}
+                {"question_text": question_text, "model_answer": model_answer}
             )
     return questions
 
@@ -86,7 +86,7 @@ def generate_assessment_from_content_task(self, assessment_id):
                 'content_copy', 'user'
             ).select_for_update().get(pk=assessment_id)
 
-            if assessment.status not in [Assessment.AssessmentStatus.PENDING, Assessment.AssessmentStatus.FAILED_RETRYABLE]:
+            if assessment.status not in [Assessment.AssessmentStatus.PENDING, Assessment.AssessmentStatus.GENERATION_FAILED_RETRYABLE]:
                 return f"Tarea omitida. Estado actual: {assessment.get_status_display()}."
 
             assessment.status = Assessment.AssessmentStatus.PROCESSING
@@ -163,7 +163,7 @@ def generate_assessment_from_content_task(self, assessment_id):
     except (DeadlineExceeded, AIServiceCriticalError, ValueError) as e:
         logger.error(f"GENERATION_TASK: ERROR RECUPERABLE para Assessment ID {assessment_id}: {e}", exc_info=True)
         if assessment:
-            assessment.status = Assessment.AssessmentStatus.FAILED_RETRYABLE
+            assessment.status = Assessment.AssessmentStatus.GENERATION_FAILED_RETRYABLE
             assessment.last_error = traceback.format_exc()
             assessment.save(update_fields=["status", "last_error"])
         try:
@@ -175,7 +175,7 @@ def generate_assessment_from_content_task(self, assessment_id):
     except Exception as e:
         logger.error(f"GENERATION_TASK: ERROR INESPERADO para Assessment ID {assessment_id}: {e}", exc_info=True)
         if assessment:
-            assessment.status = Assessment.AssessmentStatus.FAILED_RETRYABLE
+            assessment.status = Assessment.AssessmentStatus.GENERATION_FAILED_RETRYABLE
             assessment.last_error = traceback.format_exc()
             assessment.save(update_fields=["status", "last_error"])
         try:
@@ -213,6 +213,10 @@ def correct_assessment_task(self, assessment_id):
             "FEEDBACK: [Tu feedback constructivo detallado]"
         )
 
+        api_key = ApiKey.objects.filter(is_enabled=True, is_quarantined=False).first()
+        if not api_key:
+            raise ValueError("No se encontró una clave de API activa y disponible para corrección.")
+
         for i, answer in enumerate(user_answers, 1):
             if not answer.answer_text:
                 Assessment.objects.filter(pk=assessment_id).update(questions_processed=F("questions_processed") + 1)
@@ -225,7 +229,7 @@ def correct_assessment_task(self, assessment_id):
                 f'Respuesta del Usuario: "{answer.answer_text}"\n\n'
                 f"{prompt_format_instructions}"
             )
-            success, response_text, _ = generate_text_content(prompt)
+            success, response_text, _ = generate_text_content(prompt, api_key=api_key)
 
             if not success:
                 raise AIServiceCriticalError(f"API falló para UserAnswer ID {answer.id}: {response_text}")
@@ -254,7 +258,7 @@ def correct_assessment_task(self, assessment_id):
     except (AIServiceCriticalError) as e:
         logger.error(f"CORRECTION_TASK: ERROR RECUPERABLE para Assessment ID {assessment_id}: {e}", exc_info=True)
         if assessment:
-            assessment.status = Assessment.AssessmentStatus.FAILED_RETRYABLE
+            assessment.status = Assessment.AssessmentStatus.CORRECTION_FAILED_RETRYABLE
             assessment.last_error = traceback.format_exc()
             assessment.save(update_fields=["status", "last_error"])
         try:
@@ -266,7 +270,7 @@ def correct_assessment_task(self, assessment_id):
     except Exception as e:
         logger.error(f"CORRECTION_TASK: ERROR INESPERADO para Assessment ID {assessment_id}: {e}", exc_info=True)
         if assessment:
-            assessment.status = Assessment.AssessmentStatus.FAILED_RETRYABLE
+            assessment.status = Assessment.AssessmentStatus.CORRECTION_FAILED_RETRYABLE
             assessment.last_error = traceback.format_exc()
             assessment.save(update_fields=["status", "last_error"])
         try:

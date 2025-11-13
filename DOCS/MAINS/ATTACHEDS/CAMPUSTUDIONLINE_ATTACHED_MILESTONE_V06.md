@@ -2,22 +2,27 @@
 
 ## Resumen de la Sesión del 13/11/2025 (CSO)
 
-**Objetivo:** Rediseñar el sistema de autoevaluaciones para que sea robusto y resiliente ante fallos, solucionando un bucle de reintentos ineficaz.
+**Objetivo:** Diagnosticar y erradicar la causa raíz de un bucle de fallos en la generación de autoevaluaciones que dejaba las tareas en un estado de reintento perpetuo.
 
 **Desarrollo y Resultado Empírico:**
-La sesión aplicó un riguroso método empírico, utilizando el arquetipo de Tarea Celery Resiliente de la app `content_automation` como referencia para la refactorización:
-1.  **Diagnóstico:** El análisis de los logs confirmó que la tarea de generación de autoevaluaciones (`generate_assessment_from_content_task`) carecía de una estrategia de manejo de errores robusta, especialmente para fallos de cuota de API, lo que provocaba un bucle de reintentos infinito.
-2.  **Refactorización del Modelo:** Se actualizó el modelo `Assessment` (`assessment/models.py`) para incluir estados de fallo granulares (ej: `GENERATION_FAILED_RETRYABLE`, `GENERATION_FAILED_QUOTA`, `GENERATION_FAILED_FATAL`), siguiendo el patrón del arquetipo.
-3.  **Refactorización de la Tarea Celery:** Se modificó la tarea `generate_assessment_from_content_task` en `assessment/tasks.py` para implementar un manejo de excepciones explícito, lógica de reintentos con `exponential backoff` y la actualización del estado del modelo en la base de datos para registrar la causa del fallo.
-4.  **Migración y Sincronización:** Se generó y aplicó una migración de base de datos para sincronizar el esquema con los nuevos estados del modelo.
-5.  **Corrección de Efectos Secundarios:** Se diagnosticaron y corrigieron `AttributeError` subsecuentes en `contents/study_room_views.py` y `assessment/utils.py`, que hacían referencia a los antiguos estados de fallo.
+La sesión aplicó un riguroso método empírico, utilizando logs de Celery y scripts en la `shell` de Django como únicas fuentes de verdad para el diagnóstico.
+1.  **Diagnóstico Inicial:** Se identificó un `AttributeError` en `assessment/tasks.py` debido a una discrepancia entre el nombre de un estado de fallo en el código (`FAILED_RETRYABLE`) y su definición en el modelo (`GENERATION_FAILED_RETRYABLE`).
+2.  **Primera Corrección y Nuevo Hallazgo:** Tras corregir el primer error, las pruebas empíricas revelaron un `TypeError` análogo en la misma tarea, donde el constructor del modelo `Question` recibía un argumento `question` en lugar del esperado `question_text`.
+3.  **Segunda Corrección y Hallazgo Final:** La corrección del segundo `TypeError` destapó un tercer error de consistencia: la tarea de corrección (`correct_assessment_task`) también llamaba a `generate_text_content` sin el argumento `api_key` requerido, provocando un nuevo `TypeError`.
+4.  **Validación Final:** Tras corregir los tres errores de programación en `assessment/tasks.py`, se ejecutó con éxito un ciclo de vida completo (generación, simulación de respuestas y corrección) desde la `shell` de Django, validando empíricamente que el sistema es ahora funcional y robusto.
 
-**Estado Final:** La refactorización ha sido completada, dotando al sistema de autoevaluaciones de la resiliencia y robustez requeridas. Sin embargo, se ha detectado un nuevo problema de usabilidad en la interfaz.
+**Estado Final:** El sistema de autoevaluaciones ha sido reparado y validado. No obstante, se han detectado nuevas incidencias de navegación no relacionadas que se abordarán a futuro.
 
 ## Hoja de Ruta para la Próxima Sesión
 
-El objetivo principal será diagnosticar y corregir el comportamiento anómalo del botón "Realizar Evaluación" en la Sala de Estudio.
+El objetivo será diagnosticar y corregir dos comportamientos anómalos en la navegación de la Sala de Estudio.
 
-1.  **Investigación Empírica:** Ejecutar un script en la `shell` de Django para consultar el estado real de todos los objetos `Assessment` asociados al `ContentCopy` del usuario. El objetivo es verificar la hipótesis de que no existe ninguna evaluación en el estado `COMPLETED` que habilite dicho botón.
-2.  **Análisis de la Lógica de la Vista:** Basado en los resultados de la consulta, analizar la función `get_assessment_context` en `assessment/utils.py` para confirmar si la lógica que determina la habilitación del botón está funcionando como se espera o si existe una condición de borde no contemplada.
-3.  **Implementación Correctiva:** Aplicar las modificaciones necesarias en la capa de utilidades o vistas para asegurar que el estado del botón refleje fielmente la disponibilidad real de una evaluación para ser realizada.
+1.  **Incidencia 1: Error `Not Found` Transitorio.**
+    *   **Síntoma:** Al crear una `ContentCopy` y navegar a ella por primera vez, el sistema devuelve un error `Not Found`. En un segundo intento de navegación, la URL se resuelve correctamente.
+    *   **Hipótesis:** Posible problema de caché, resolución de URL diferida o una condición de carrera en la vista que muestra la copia.
+    *   **Plan:** Replicar el error y analizar la vista responsable de renderizar la `ContentCopy` (`study_room:edit_copy`) y su lógica de obtención de objetos.
+
+2.  **Incidencia 2: Navegación Cruzada por `ContentHashFamily`.**
+    *   **Síntoma:** Una `ContentCopy` creada para un `ContentMaterial` asociado a un grado (ej. "Lenguas Modernas") aparece también listada bajo otro grado (ej. "Estudios Franceses") si ambos comparten la misma `ContentHashFamily`.
+    *   **Hipótesis:** La vista que lista las `ContentCopy` de un usuario para un grado o materia específicos está filtrando incorrectamente, basándose en la `ContentHashFamily` en lugar de la jerarquía académica estricta.
+    *   **Plan:** Analizar y corregir la lógica de filtrado en las vistas de la Sala de Estudio para asegurar que la presentación de copias respete la estructura académica del `academic_directory`.

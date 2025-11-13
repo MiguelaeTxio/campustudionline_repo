@@ -109,3 +109,10 @@
 *  **Session:** Diagnóstico y Corrección de Filtrado de Categorías en la Vista de la Sala de Estudio
 *  **Description:** La sesión se centrará en resolver un error visual donde la categoría de contenido libre 'Contenidos en CampuStudiOnline' aparece incorrectamente en la sección de contenido académico. Siguiendo un enfoque empírico, se desarrollará un script de diagnóstico para inspeccionar los querysets de la vista `user_copies_list` y determinar la causa raíz del filtrado incorrecto antes de proponer una solución.
 
+# 13/11/2025
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+## AAAA
+*  **Session:** Diagnóstico y Corrección del Botón 'Realizar Evaluación' en la Sala de Estudio
+*  **Description:** Sesión dedicada a solucionar un problema de usabilidad donde el botón 'Realizar Evaluación' no se comporta como se espera. Se utilizará un script de diagnóstico en la shell de Django para verificar los estados de las evaluaciones existentes y se auditará la lógica de la vista `get_assessment_context` en `assessment/utils.py` para implementar una solución que sincronice el estado del botón con la disponibilidad real de la evaluación.
+
