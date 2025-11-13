@@ -29,14 +29,25 @@ def generate_ai_assessment(request, copy_pk):
     user_copy = get_object_or_404(ContentCopy, pk=copy_pk, user=request.user)
     redirect_url = reverse("study_room:edit_copy", kwargs={"pk": user_copy.pk})
 
+    # [REFACTORIZADO] Ampliamos la lista de estados que bloquean la creación para
+    # incluir los estados de reintento y los que esperan acción del usuario.
+    # Una nueva evaluación solo se permite si la anterior ha terminado (con o sin éxito).
+    blocking_statuses = [
+        Assessment.AssessmentStatus.PENDING,
+        Assessment.AssessmentStatus.PROCESSING,
+        Assessment.AssessmentStatus.COMPLETED,
+        Assessment.AssessmentStatus.CORRECTING,
+        Assessment.AssessmentStatus.RESULTS_AVAILABLE,
+        Assessment.AssessmentStatus.GENERATION_FAILED_RETRYABLE,
+        Assessment.AssessmentStatus.GENERATION_FAILED_QUOTA,
+        Assessment.AssessmentStatus.CORRECTION_FAILED_RETRYABLE,
+    ]
     if Assessment.objects.filter(
-        user=request.user,
-        content_copy=user_copy,
-        status__in=["PENDING", "PROCESSING", "CORRECTING"],
+        user=request.user, content_copy=user_copy, status__in=blocking_statuses
     ).exists():
         messages.info(
             request,
-            "Ya hay una evaluación en curso para este material. Por favor, espera a que finalice.",
+            "Ya hay una evaluación en curso o esperando tu acción para este material. Por favor, espera a que finalice o complétala.",
         )
         return redirect(redirect_url)
 
@@ -272,9 +283,10 @@ def retry_assessment_generation(request, assessment_pk):
         pk=assessment_pk,
         user=request.user,
     )
+    # [REFACTORIZADO] El sistema ahora reintenta automáticamente. Esta vista está obsoleta.
     messages.error(
         request,
-        "Esta función ha sido deshabilitada. Utiliza el botón principal para generar una nueva evaluación.",
+        "Esta función ya no es necesaria. El sistema reintentará generar tu evaluación automáticamente si ocurre un problema.",
     )
     user_copy = assessment.content_copy
     return redirect(reverse("study_room:edit_copy", kwargs={"pk": user_copy.pk}))
@@ -284,26 +296,13 @@ def retry_assessment_generation(request, assessment_pk):
 @require_POST
 def cancel_assessment_generation(request, assessment_pk):
     assessment = get_object_or_404(Assessment, pk=assessment_pk, user=request.user)
-    if assessment.status == "TIMEOUT_FAILURE":
-        log_timestamp(f"CANCEL_VIEW: Cancelando Assessment ID: {assessment_pk}")
-        assessment.status = "USER_CANCELLED"
-        assessment.save(update_fields=["status"])
-        return JsonResponse(
-            {
-                "status": "CANCELLED",
-                "message": "La generación de la evaluación ha sido cancelada.",
-            }
-        )
-    log_timestamp(
-        f"CANCEL_VIEW: Intento de cancelación inválido para Assessment ID {assessment_pk} con estado {assessment.status}"
+    # [REFACTORIZADO] La cancelación manual ya no es soportada por la nueva lógica de estados.
+    messages.error(
+        request,
+        "La cancelación manual de una generación en curso ya no está disponible.",
     )
-    return JsonResponse(
-        {
-            "status": "INVALID_STATE",
-            "message": "La evaluación no está en un estado que permita la cancelación.",
-        },
-        status=400,
-    )
+    user_copy = assessment.content_copy
+    return redirect(reverse("study_room:edit_copy", kwargs={"pk": user_copy.pk}))
 
 
 @login_required

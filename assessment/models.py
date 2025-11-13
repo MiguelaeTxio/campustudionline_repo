@@ -13,16 +13,30 @@ class Assessment(models.Model):
     """
 
     class AssessmentStatus(models.TextChoices):
+        # Flujo de Generación
         PENDING = "PENDING", "Pendiente de Generación"
-        PROCESSING = "PROCESSING", "Procesando Generación"
-        COMPLETED = "COMPLETED", "Lista para Realizar"
-        EXPIRED_UNTAKEN = "EXPIRED_UNTAKEN", "Expirada (No Realizada)"
+        PROCESSING = "PROCESSING", "Generando Cuestionario"
+        COMPLETED = "COMPLETED", "Listo para Realizar"
+        
+        # Flujo de Corrección
         CORRECTING = "CORRECTING", "Corrigiendo"
         RESULTS_AVAILABLE = "RESULTS_AVAILABLE", "Resultados Disponibles"
+
+        # Estados de Expiración
+        EXPIRED_UNTAKEN = "EXPIRED_UNTAKEN", "Expirado (No Realizado)"
         CORRECTION_EXPIRED = "CORRECTION_EXPIRED", "Corrección Expirada"
-        FAILED_RETRYABLE = "FAILED_RETRYABLE", "Fallo (Reintentando)"
-        FAILED_FATAL = "FAILED_FATAL", "Fallo Permanente"
-        USER_CANCELLED = "USER_CANCELLED", "Cancelada por el Usuario"
+        
+        # Estados de Fallo (Generación)
+        GENERATION_FAILED_RETRYABLE = "GENERATION_FAILED_RETRYABLE", "Fallo de Generación (Reintentando)"
+        GENERATION_FAILED_QUOTA = "GENERATION_FAILED_QUOTA", "Fallo de Generación (Límite de Cuota)"
+        GENERATION_FAILED_FATAL = "GENERATION_FAILED_FATAL", "Fallo de Generación (Permanente)"
+
+        # Estados de Fallo (Corrección)
+        CORRECTION_FAILED_RETRYABLE = "CORRECTION_FAILED_RETRYABLE", "Fallo de Corrección (Reintentando)"
+        CORRECTION_FAILED_FATAL = "CORRECTION_FAILED_FATAL", "Fallo de Corrección (Permanente)"
+
+        # Estados Finales de Usuario
+        USER_CANCELLED = "USER_CANCELLED", "Cancelado por el Usuario"
 
     content_copy = models.ForeignKey(
         "contents.ContentCopy",
@@ -47,7 +61,7 @@ class Assessment(models.Model):
         verbose_name="Usuario",
     )
     status = models.CharField(
-        max_length=30,
+        max_length=50, # Aumentado para dar cabida a los nuevos estados
         choices=AssessmentStatus.choices,
         default=AssessmentStatus.PENDING,
         verbose_name="Estado",
@@ -140,6 +154,8 @@ class Question(models.Model):
     """
     Stores an individual question within an assessment.
     """
+
+
 
     class QuestionType(models.TextChoices):
         OPEN_ENDED = "open_ended", "Respuesta Abierta"

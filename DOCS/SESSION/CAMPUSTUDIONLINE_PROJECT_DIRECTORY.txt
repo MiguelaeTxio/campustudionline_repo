@@ -393,6 +393,7 @@
 ./assessment/apps.py
 ./assessment/models.py
 ./assessment/migrations
+./assessment/migrations/0011_auto_20251113_1540.py
 ./assessment/migrations/0002_initial.py
 ./assessment/migrations/0010_assessment_last_error_alter_assessment_status.py
 ./assessment/migrations/0003_assessment_content_copy.py
@@ -630,7 +631,6 @@
 ./DOCS/MAINS/ATTACHEDS/CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V04.md
 ./DOCS/MAINS/CONTENT_PROMPTS.md
 ./DOCS/MAINS/CAMPUSTUDIONLINE_MASTER_DOCUMENT.md
-./tuple[str,
 ./ASGI
 ./global_settings
 ./global_settings/templates
