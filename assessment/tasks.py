@@ -157,7 +157,10 @@ def generate_assessment_from_content_task(self, assessment_id):
             assessment_to_complete.save()
 
         log_timestamp(f"GENERATION_TASK: ÉXITO para Assessment ID {assessment_id}.")
-        context = {"assessment": assessment_to_complete}
+        context = {
+            "assessment_pk": assessment_to_complete.pk,
+            "content_title": assessment_to_complete.content_copy.original_content.title
+        }
         send_unified_notification(user=assessment_to_complete.user, subject_template="assessment/email/assessment_ready_subject.txt", body_template_prefix="assessment/email/assessment_ready_body", context=context)
 
     except (DeadlineExceeded, AIServiceCriticalError, ValueError) as e:

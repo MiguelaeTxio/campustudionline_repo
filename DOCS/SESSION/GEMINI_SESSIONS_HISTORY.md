@@ -116,3 +116,31 @@
 *  **Session:** Diagnóstico y Corrección del Botón 'Realizar Evaluación' en la Sala de Estudio
 *  **Description:** Sesión dedicada a solucionar un problema de usabilidad donde el botón 'Realizar Evaluación' no se comporta como se espera. Se utilizará un script de diagnóstico en la shell de Django para verificar los estados de las evaluaciones existentes y se auditará la lógica de la vista `get_assessment_context` en `assessment/utils.py` para implementar una solución que sincronice el estado del botón con la disponibilidad real de la evaluación.
 
+# 2025-11-13
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+## CYC
+*  **Session:** Diagnóstico y Corrección de Comportamientos Anómalos en Navegación de Sala de Estudio
+*  **Description:** Abordar dos incidencias críticas en la Sala de Estudio: un error 'Not Found' transitorio al acceder a nuevas 'ContentCopy' y la aparición de copias en grados incorrectos debido a un filtrado erróneo por 'ContentHashFamily'. La sesión se centrará en analizar y corregir las vistas y lógicas de filtrado pertinentes para restaurar la coherencia en la navegación.
+# 2025-11-14
+# CAMPUSTUDIONLINE --TEMP
+# ASSESSMENT_NOTIFICATION_TEMPLATE_FIX
+## CYC
+*  **Session:** Corrección del Contexto en Plantillas de Notificación de Autoevaluaciones.
+*  **Description:** Solucionar el error `VariableDoesNotExist` en las notificaciones de autoevaluación (`assessment`) asegurando que el contexto (`context`) pasado a las plantillas (`.txt`, `.html`) contenga las variables `content_title` y `action_url`.
+
+# 2025-11-14
+# CAMPUSTUDIONLINE --TEMP
+# UI_BADGE_ERRORS_FIX
+## CYC
+*  **Session:** Corrección de la Lógica de Visualización de Badges de Autoevaluación
+*  **Description:** Diagnosticar y solucionar los errores en la presentación de los indicadores de estado de las autoevaluaciones (Assessment) en la vista de la Sala de Estudio, asegurando que se muestren correctamente según su contexto jerárquico.
+
+
+# 14/11/2025
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+## EPI
+*  **Session:** Validación Integral del Sistema de Autoevaluaciones con IA
+*  **Description:** Esta sesión se centrará en realizar una validación completa y exhaustiva del sistema de autoevaluaciones con IA. Se probará el flujo de trabajo completo, desde la creación y generación de la evaluación, pasando por la realización del test, su posterior corrección y la visualización final de los resultados, para asegurar su estabilidad y correcto funcionamiento antes de continuar con nuevas funcionalidades.
+

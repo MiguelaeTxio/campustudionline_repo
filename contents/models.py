@@ -1,4 +1,4 @@
-# /home/MiguelAeTxio/CampuStudiOnline/contents/models.py
+# /home/MiguelAeTxio/PROJECTS/CampuStudiOnline/contents/models.py
 import uuid
 import markdown
 import bleach
@@ -216,7 +216,12 @@ class Topic(models.Model):
     def save(self, *args, **kwargs):
         self.clean()
         if not self.slug:
-            base_slug = slugify(self.name)
+            root_category = self.get_root_category()
+            if root_category:
+                base_slug = slugify(f"{root_category.discipline.slug}-{root_category.name}-{self.name}")
+            else:
+                base_slug = slugify(self.name) # Fallback para casos inesperados
+
             proposed_slug = base_slug
             while Topic.objects.filter(slug=proposed_slug).exists():
                 unique_suffix = uuid.uuid4().hex[:6]

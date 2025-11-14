@@ -223,6 +223,7 @@
 ./contents/migrations/0002_initial.py
 ./contents/migrations/0016_populate_sub_categories.py
 ./contents/migrations/0010_freecontentmastercategory_and_more.py
+./contents/migrations/0018_regenerate_topic_slugs.py
 ./contents/migrations/0013_data_migration_to_master_category.py
 ./contents/migrations/0003_alter_favoritefolder_unique_together.py
 ./contents/migrations/0009_populate_free_content_hierarchy.py
