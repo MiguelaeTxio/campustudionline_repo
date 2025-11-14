@@ -18,6 +18,7 @@ from django.utils.html import escape
 from django.utils import timezone
 
 from .models import KnowledgeArea, Discipline, ContentMaterial as Content, ContentCopy, Annotation, FavoriteFolder, FreeContentMasterCategory, FreeContentSubCategory
+from academic_structure.models import Subject
 from assessment.models import Assessment
 from assessment.utils import (
     annotate_content_copy_queryset_with_assessment_states,
@@ -104,9 +105,13 @@ def _wrap_selection_in_span(root, position_data, span_attributes):
 
 @login_required
 @transaction.atomic
-def create_content_copy(request, pk):
+def create_content_copy(request, pk, subject_pk=None):
     original_content = get_object_or_404(Content, pk=pk)
-    
+    subject_context = None
+
+    if subject_pk:
+        subject_context = get_object_or_404(Subject, pk=subject_pk)
+
     if ContentCopy.objects.filter(user=request.user).count() >= 6:
         messages.error(request, "Has alcanzado el límite de 6 copias de estudio. Por favor, elimina alguna para poder crear una nueva.")
         return redirect(original_content.get_absolute_url())
@@ -114,10 +119,16 @@ def create_content_copy(request, pk):
     if not original_content.is_public and original_content.creator != request.user:
         messages.error(request, "No tienes permiso para crear una copia de este contenido.")
         return redirect(original_content.get_absolute_url())
+    
+    # Se busca una copia existente con el mismo contexto de asignatura
+    existing_copy = ContentCopy.objects.filter(
+        original_content=original_content,
+        user=request.user,
+        subject_context=subject_context
+    ).first()
 
-    existing_copy = ContentCopy.objects.filter(original_content=original_content, user=request.user).first()
     if existing_copy:
-        messages.info(request, "Ya tienes una copia de este contenido. Redirigiendo a tu Sala de Estudio.")
+        messages.info(request, "Ya tienes una copia de este contenido para esta asignatura. Redirigiendo a tu Sala de Estudio.")
         return redirect("study_room:edit_copy", pk=existing_copy.pk)
     
     link_to_original = reverse("contents:content_detail", kwargs={"pk": original_content.pk})
@@ -127,8 +138,11 @@ def create_content_copy(request, pk):
     content_with_watermark = watermark_html + original_html
     
     new_copy = ContentCopy.objects.create(
-        original_content=original_content, user=request.user,
-        html_content=content_with_watermark, is_public=False
+        original_content=original_content,
+        user=request.user,
+        html_content=content_with_watermark,
+        is_public=False,
+        subject_context=subject_context
     )
     
     favorites_folder, _ = FavoriteFolder.objects.get_or_create(
@@ -139,7 +153,9 @@ def create_content_copy(request, pk):
     favorites_folder.materials.add(original_content)
     
     messages.success(request, f"Se ha creado una copia de '{original_content.title}' y el original se ha añadido a 'Mis Favoritos'.")
-    return redirect("study_room:edit_copy", pk=new_copy.pk)
+    
+    # [CORRECCIÓN INCIDENCIA 1] Redirigir a la raíz para evitar condiciones de carrera
+    return redirect("study_room:copy_directory_root")
 
 @login_required
 def edit_copy(request, pk):
@@ -207,15 +223,10 @@ def user_copies_list(request, area_slug=None, discipline_slug=None, master_slug=
     items_list = None
     
     def get_aggregated_assessment_annotations(filter_kwargs):
-        """
-        [NUEVO] Genera subconsultas para anotar directorios (Áreas, etc.)
-        con el estado y PK de la evaluación más prioritaria contenida dentro de ellos.
-        """
         base_assessments = Assessment.objects.filter(
             content_copy__user=request.user,
             **filter_kwargs
         )
-        # Prioridad de estados (menor número = mayor prioridad)
         priority_annotation = Case(
             When(status__in=[
                 Assessment.AssessmentStatus.GENERATION_FAILED_RETRYABLE,
@@ -262,13 +273,14 @@ def user_copies_list(request, area_slug=None, discipline_slug=None, master_slug=
             context.update({"level_name": "copies", "page_title": f"Mis Copias en {sub_category.name}"})
         
         if items_list is not None:
-            # A nivel de copia, la anotación es directa y utiliza la función de utils
             items_list = annotate_content_copy_queryset_with_assessment_states(items_list, request.user)
 
     # --- NIVEL 2: VISTA DE DISCIPLINAS O SUBCATEGORÍAS ---
     elif area_slug:  # Académico
         knowledge_area = get_object_or_404(KnowledgeArea, slug=area_slug)
-        discipline_ids = base_copies.filter(original_content__topic__main_category__discipline__knowledge_area=knowledge_area).values_list("original_content__topic__main_category__discipline_id", flat=True).distinct()
+        discipline_ids = base_copies.filter(
+            original_content__topic__main_category__discipline__knowledge_area=knowledge_area
+        ).values_list("original_content__topic__main_category__discipline_id", flat=True).distinct()
         
         items_list = Discipline.objects.filter(id__in=discipline_ids).annotate(
             **get_aggregated_assessment_annotations({'content_copy__original_content__topic__main_category__discipline': OuterRef('pk')})
@@ -291,14 +303,18 @@ def user_copies_list(request, area_slug=None, discipline_slug=None, master_slug=
     # --- NIVEL 1: VISTA RAÍZ ---
     else:
         # Contenido Académico
-        area_ids = base_copies.filter(original_content__is_free_content=False).values_list("original_content__topic__main_category__discipline__knowledge_area_id", flat=True).distinct()
-        
-        items_list = KnowledgeArea.objects.filter(id__in=area_ids).annotate(
+        # [CORRECCIÓN LÓGICA BASADA EN EVIDENCIA EMPÍRICA]
+        # Consulta robusta que filtra KnowledgeArea directamente.
+        items_list = KnowledgeArea.objects.filter(
+            disciplines__main_categories__root_topics__content_materials__derived_copies__user=request.user
+        ).distinct().annotate(
             **get_aggregated_assessment_annotations({'content_copy__original_content__topic__main_category__discipline__knowledge_area': OuterRef('pk')})
         ).order_by("name")
         
-        # Contenido Libre
-        master_category_ids = base_copies.filter(original_content__is_free_content=True).values_list("original_content__master_category_id", flat=True).distinct()
+        # Contenido Libre (la lógica aquí era correcta y no cambia)
+        master_category_ids = base_copies.filter(
+            original_content__is_free_content=True
+        ).values_list("original_content__master_category_id", flat=True).distinct()
         
         free_content_roots = FreeContentMasterCategory.objects.filter(id__in=master_category_ids).annotate(
             **get_aggregated_assessment_annotations({'content_copy__original_content__master_category': OuterRef('pk')})

@@ -9,6 +9,7 @@ from django.conf import settings
 from django.utils.text import slugify
 from django.urls import reverse
 from treebeard.mp_tree import MP_Node # Importado para el modelo FavoriteFolder
+from academic_structure.models import Subject
 
 MARKDOWN_EXTENSIONS = [
     "markdown.extensions.fenced_code", "markdown.extensions.codehilite",
@@ -517,6 +518,15 @@ class ContentCopy(models.Model):
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name="Usuario",
         related_name="user_copies", help_text="Usuario que ha creado esta copia personalizada.",
     )
+    subject_context = models.ForeignKey(
+        Subject,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="study_copies",
+        verbose_name="Asignatura de Contexto",
+        help_text="Asignatura específica para la cual se creó esta copia de estudio.",
+    )
     html_content = models.TextField(
         verbose_name="Contenido con Anotaciones (HTML)",
         help_text="El cuerpo del contenido con las anotaciones y marcados integrados.",
@@ -532,10 +542,11 @@ class ContentCopy(models.Model):
         verbose_name = "Sala de Estudio - Copia"
         verbose_name_plural = "E. Sala de Estudio - Copias"
         ordering = ["-updated_at"]
-        unique_together = ["original_content", "user"]
+        unique_together = ["original_content", "user", "subject_context"]
 
     def __str__(self):
-        return f"Copia de '{self.original_content.title}' por {self.user.username}"
+        context = f"para la asignatura '{self.subject_context.name}'" if self.subject_context else "de contenido libre"
+        return f"Copia de '{self.original_content.title}' por {self.user.username} {context}"
 
     def get_absolute_url(self):
         return reverse("study_room:edit_copy", kwargs={"pk": self.pk})

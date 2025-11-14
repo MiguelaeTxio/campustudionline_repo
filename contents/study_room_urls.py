@@ -16,7 +16,8 @@ urlpatterns = [
     path("directory/free/<slug:master_slug>/<slug:sub_slug>/", study_room_views.user_copies_list, name="free_sub_directory"),
 
     # --- Gestión de Copias y Anotaciones ---
-    path("content/<uuid:pk>/create-copy/", study_room_views.create_content_copy, name="create_content_copy"),
+    path("content/<uuid:pk>/in-subject/<uuid:subject_pk>/create-copy/", study_room_views.create_content_copy, name="create_content_copy"),
+    path("content/<uuid:pk>/create-copy/", study_room_views.create_content_copy, name="create_free_content_copy"), # Para contenido libre
     path("copy/<uuid:pk>/", RedirectView.as_view(pattern_name="study_room:edit_copy", permanent=False), name="detail_copy"),
     path("copy/<uuid:pk>/edit/", study_room_views.edit_copy, name="edit_copy"),
     path("copy/<uuid:pk>/visibility/", study_room_views.change_copy_visibility, name="change_copy_visibility"),

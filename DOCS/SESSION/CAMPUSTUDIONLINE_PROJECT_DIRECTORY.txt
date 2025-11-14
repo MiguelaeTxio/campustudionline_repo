@@ -231,6 +231,7 @@
 ./contents/migrations/0011_populate_master_categories.py
 ./contents/migrations/0004_remove_contentmaterial_subject_and_more.py
 ./contents/migrations/0015_contentmaterial_sub_category_and_more.py
+./contents/migrations/0017_alter_contentcopy_unique_together_and_more.py
 ./contents/migrations/0008_freecontentcategory_freecontenttopic_and_more.py
 ./contents/migrations/0001_initial.py
 ./contents/migrations/0006_update_public_status_by_rules.py
@@ -581,6 +582,7 @@
 ./DOCS/SESSION/CAMPUSTUDIONLINE_PROJECT_DIRECTORY.txt
 ./DOCS/SESSION/GEMINI_SESSIONS_HISTORY.md
 ./DOCS/SESSION/CAMPUSTUDIONLINE_ASSESSMENT_NOTIFICATION_TEMPLATE_FIX_SESSION_SUMMARY.md
+./DOCS/SESSION/CAMPUSTUDIONLINE_UI_BADGE_ERRORS_FIX_SESSION_SUMMARY.md
 ./DOCS/SESSION/TEMP_SESSIONS_HISTORY.md
 ./DOCS/SESSION/COMPLETED
 ./DOCS/SESSION/COMPLETED/CAMPUSTUDIONLINE_IS_FAVORITE_BUG_FIX_SESSION_SUMMARY.md
