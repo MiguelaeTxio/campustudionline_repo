@@ -157,3 +157,10 @@
 ## MAMC
 *  **Session:** Refactorización del Orquestador de Tareas Asíncronas e Implementación de la App 'orchestrator'
 *  **Description:** Crear la nueva aplicación 'orchestrator', migrar los modelos 'ApiKey' y 'AutomationSettings', centralizar la lógica de tareas en 'global_orchestrator_task', actualizar Celery Beat y refactorizar la app 'assessment' para su integración con el nuevo sistema.
+# 2025-11-15
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V21.md
+## EDC
+*  **Session:** Refactorización de la App 'assessment' para Integración con 'orchestrator'
+*  **Description:** Continuar con la refactorización de la app 'assessment', corrigiendo el diseño del modelo Assessment para mantener los estados de fallo reintentables. Se modificará la lógica de las tareas asíncronas para delegar la gestión de reintentos al orquestador central y se aplicarán las migraciones correspondientes.
+

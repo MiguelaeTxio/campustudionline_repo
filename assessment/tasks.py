@@ -78,7 +78,7 @@ def _parse_correction_text(text: str) -> dict:
 
 @shared_task(bind=True, acks_late=True)
 def generate_assessment_from_content_task(self, assessment_id):
-    log_timestamp(f"GENERATION_TASK: INICIO para Assessment ID {assessment_id}. Intento: {self.request.retries + 1}")
+    log_timestamp(f"GENERATION_TASK: INICIO para Assessment ID {assessment_id}.")
     
     assessment = None
     try:
@@ -169,34 +169,24 @@ def generate_assessment_from_content_task(self, assessment_id):
         send_unified_notification(user=assessment_to_complete.user, subject_template="assessment/email/assessment_ready_subject.txt", body_template_prefix="assessment/email/assessment_ready_body", context=context)
 
     except (DeadlineExceeded, AIServiceCriticalError, ValueError) as e:
-        logger.error(f"GENERATION_TASK: ERROR RECUPERABLE para Assessment ID {assessment_id}: {e}", exc_info=True)
+        logger.error(f"GENERATION_TASK: ERROR RECUPERABLE para Assessment ID {assessment_id}: {e}", exc_info=False)
         if assessment:
             assessment.status = Assessment.AssessmentStatus.GENERATION_FAILED_RETRYABLE
             assessment.last_error = traceback.format_exc()
             assessment.save(update_fields=["status", "last_error"])
-        try:
-            raise self.retry(exc=e, countdown=60)
-        except MaxRetriesExceededError:
-            logger.critical(f"GENERATION_TASK: FALLO FATAL para Assessment ID {assessment_id} tras múltiples reintentos.")
-            assessment.status = Assessment.AssessmentStatus.FAILED_FATAL
-            assessment.save(update_fields=["status"])
+        logger.warning(f"GENERATION_TASK: Finalizando tarea para Assessment ID {assessment_id} debido a error recuperable. El orquestador gestionará el reintento.")
+
     except Exception as e:
-        logger.error(f"GENERATION_TASK: ERROR INESPERADO para Assessment ID {assessment_id}: {e}", exc_info=True)
+        logger.critical(f"GENERATION_TASK: ERROR FATAL/INESPERADO para Assessment ID {assessment_id}: {e}", exc_info=True)
         if assessment:
-            assessment.status = Assessment.AssessmentStatus.GENERATION_FAILED_RETRYABLE
+            assessment.status = Assessment.AssessmentStatus.FAILED_FATAL
             assessment.last_error = traceback.format_exc()
             assessment.save(update_fields=["status", "last_error"])
-        try:
-            raise self.retry(exc=e, countdown=300)
-        except MaxRetriesExceededError:
-            logger.critical(f"GENERATION_TASK: FALLO FATAL (inesperado) para Assessment ID {assessment_id}.")
-            assessment.status = Assessment.AssessmentStatus.FAILED_FATAL
-            assessment.save(update_fields=["status"])
 
 
 @shared_task(bind=True, acks_late=True)
 def correct_assessment_task(self, assessment_id):
-    log_timestamp(f"CORRECTION_TASK: INICIO para Assessment ID: {assessment_id}. Intento: {self.request.retries + 1}")
+    log_timestamp(f"CORRECTION_TASK: INICIO para Assessment ID: {assessment_id}.")
     
     assessment = None
     try:
@@ -271,29 +261,19 @@ def correct_assessment_task(self, assessment_id):
         send_unified_notification(user=assessment_to_complete.user, subject_template="assessment/email/results_ready_subject.txt", body_template_prefix="assessment/email/results_ready_body", context=context)
 
     except (AIServiceCriticalError) as e:
-        logger.error(f"CORRECTION_TASK: ERROR RECUPERABLE para Assessment ID {assessment_id}: {e}", exc_info=True)
+        logger.error(f"CORRECTION_TASK: ERROR RECUPERABLE para Assessment ID {assessment_id}: {e}", exc_info=False)
         if assessment:
             assessment.status = Assessment.AssessmentStatus.CORRECTION_FAILED_RETRYABLE
             assessment.last_error = traceback.format_exc()
             assessment.save(update_fields=["status", "last_error"])
-        try:
-            raise self.retry(exc=e, countdown=60)
-        except MaxRetriesExceededError:
-            logger.critical(f"CORRECTION_TASK: FALLO FATAL para Assessment ID {assessment_id}.")
-            assessment.status = Assessment.AssessmentStatus.FAILED_FATAL
-            assessment.save(update_fields=["status"])
+        logger.warning(f"CORRECTION_TASK: Finalizando tarea para Assessment ID {assessment_id} debido a error recuperable. El orquestador gestionará el reintento.")
+
     except Exception as e:
-        logger.error(f"CORRECTION_TASK: ERROR INESPERADO para Assessment ID {assessment_id}: {e}", exc_info=True)
+        logger.critical(f"CORRECTION_TASK: ERROR FATAL/INESPERADO para Assessment ID {assessment_id}: {e}", exc_info=True)
         if assessment:
-            assessment.status = Assessment.AssessmentStatus.CORRECTION_FAILED_RETRYABLE
+            assessment.status = Assessment.AssessmentStatus.FAILED_FATAL
             assessment.last_error = traceback.format_exc()
             assessment.save(update_fields=["status", "last_error"])
-        try:
-            raise self.retry(exc=e, countdown=300)
-        except MaxRetriesExceededError:
-            logger.critical(f"CORRECTION_TASK: FALLO FATAL (inesperado) para Assessment ID {assessment_id}.")
-            assessment.status = Assessment.AssessmentStatus.FAILED_FATAL
-            assessment.save(update_fields=["status"])
 
 
 @shared_task(name="assessment.tasks.expire_untaken_assessments")

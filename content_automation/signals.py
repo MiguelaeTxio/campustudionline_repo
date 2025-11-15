@@ -4,7 +4,7 @@ from django.dispatch import receiver
 import logging
 
 from orchestrator.models import ApiKey
-from .tasks import automation_main_loop_task
+from orchestrator.tasks import global_orchestrator_task
 
 logger = logging.getLogger(__name__)
 
@@ -20,9 +20,9 @@ def trigger_automation_on_key_availability(sender, instance, created, **kwargs):
     if instance.is_enabled and not instance.is_quarantined:
         logger.info(
             f"Señal detectada: La clave API '{instance.name}' está disponible. "
-            "Intentando despertar el bucle principal de automatización."
+            "Intentando despertar el orquestador global."
         )
         # Llama a la tarea principal para que se ejecute lo antes posible.
         # La propia tarea comprobará el estado global y decidirá si debe
         # iniciar un nuevo trabajo.
-        automation_main_loop_task.delay()
+        global_orchestrator_task.delay()

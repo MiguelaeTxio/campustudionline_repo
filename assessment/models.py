@@ -27,7 +27,9 @@ class Assessment(models.Model):
         EXPIRED_UNTAKEN = "EXPIRED_UNTAKEN", "Expirado (No Realizado)"
         CORRECTION_EXPIRED = "CORRECTION_EXPIRED", "Corrección Expirada"
         
-        # Estado de Fallo Consolidado
+        # Estados de Fallo
+        GENERATION_FAILED_RETRYABLE = "GENERATION_FAILED_RETRYABLE", "Fallo de Generación (Reintentable)"
+        CORRECTION_FAILED_RETRYABLE = "CORRECTION_FAILED_RETRYABLE", "Fallo de Corrección (Reintentable)"
         FAILED_FATAL = "FAILED_FATAL", "Fallo Permanente"
 
         # Estado Final de Usuario
