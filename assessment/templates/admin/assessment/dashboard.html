@@ -1,0 +1,161 @@
+{% extends "admin/base_site.html" %}
+{% load static %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div id="content-main">
+    <h1>{{ title }}</h1>
+
+    <!-- Panel de Control Principal -->
+    <div class="module">
+        <h2>Estado del Motor</h2>
+        <div style="display: flex; align-items: center; gap: 20px;">
+            <p>El motor de evaluaciones está actualmente: 
+                <strong style="color: {% if settings.is_running %}green{% else %}red{% endif %};">
+                    {% if settings.is_running %}ACTIVO{% else %}DETENIDO{% endif %}
+                </strong>
+            </p>
+            <form action="{% url 'admin:assessment_toggle_engine' %}" method="post">
+                {% csrf_token %}
+                <button type="submit" class="button">
+                    {% if settings.is_running %}Detener Motor{% else %}Iniciar Motor{% endif %}
+                </button>
+            </form>
+        </div>
+        {% if settings.last_run_timestamp %}
+            <p><small>Última ejecución: {{ settings.last_run_timestamp|date:"d/m/Y H:i:s" }}</small></p>
+            <p><small>Estado: {{ settings.last_run_status }}</small></p>
+        {% endif %}
+    </div>
+
+    <!-- Panel de Estadísticas -->
+    <div class="module">
+        <h2>Estadísticas Generales</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Estado</th>
+                    <th>Cantidad</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for status, count in stats.items %}
+                <tr>
+                    <td>{{ status }}</td>
+                    <td>{{ count }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Tareas en Proceso -->
+    {% if processing_tasks %}
+    <div class="module">
+        <h2>Tareas en Proceso</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID Tarea</th>
+                    <th>Usuario</th>
+                    <th>Estado</th>
+                    <th>Creada</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for task in processing_tasks %}
+                <tr>
+                    <td><a href="{% url 'admin:assessment_assessment_change' task.pk %}">{{ task.pk }}</a></td>
+                    <td>{{ task.user.username }}</td>
+                    <td>{{ task.get_status_display }}</td>
+                    <td>{{ task.created_at|date:"d/m/Y H:i" }}</td>
+                    <td>
+                        <form action="{% url 'admin:assessment_pause_task' task.pk %}" method="post" style="display:inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="button" style="background-color: #f0ad4e;">Pausar</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+    
+    <!-- Tareas Pausadas -->
+    {% if paused_tasks %}
+    <div class="module">
+        <h2>Tareas Pausadas</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID Tarea</th>
+                    <th>Usuario</th>
+                    <th>Pausada</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for task in paused_tasks %}
+                <tr>
+                    <td><a href="{% url 'admin:assessment_assessment_change' task.pk %}">{{ task.pk }}</a></td>
+                    <td>{{ task.user.username }}</td>
+                    <td>{{ task.updated_at|date:"d/m/Y H:i" }}</td>
+                    <td>
+                        <form action="{% url 'admin:assessment_resume_task' task.pk %}" method="post" style="display:inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="button" style="background-color: #5cb85c;">Reanudar</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+
+    <!-- Tareas Fallidas Reintentables -->
+    {% if failed_tasks %}
+    <div class="module">
+        <h2>Tareas Fallidas (Reintentables)</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID Tarea</th>
+                    <th>Usuario</th>
+                    <th>Último Error</th>
+                    <th>Fecha Fallo</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for task in failed_tasks %}
+                <tr>
+                    <td><a href="{% url 'admin:assessment_assessment_change' task.pk %}">{{ task.pk }}</a></td>
+                    <td>{{ task.user.username }}</td>
+                    <td><pre style="max-height: 100px; overflow: auto;">{{ task.last_error|truncatechars:200 }}</pre></td>
+                    <td>{{ task.updated_at|date:"d/m/Y H:i" }}</td>
+                    <td>
+                        <form action="{% url 'admin:assessment_retry_task' task.pk %}" method="post" style="display:inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="button">Reintentar</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+
+    <!-- Log de Eventos -->
+    <div class="module">
+        <h2>Log de Eventos del Motor</h2>
+        <div style="background-color: #f5f5f5; border: 1px solid #ddd; padding: 10px; max-height: 400px; overflow-y: scroll;">
+            <pre><code>{{ event_log_pretty }}</code></pre>
+        </div>
+    </div>
+</div>
+{% endblock %}

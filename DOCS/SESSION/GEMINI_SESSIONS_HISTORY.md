@@ -164,3 +164,10 @@
 *  **Session:** Refactorización de la App 'assessment' para Integración con 'orchestrator'
 *  **Description:** Continuar con la refactorización de la app 'assessment', corrigiendo el diseño del modelo Assessment para mantener los estados de fallo reintentables. Se modificará la lógica de las tareas asíncronas para delegar la gestión de reintentos al orquestador central y se aplicarán las migraciones correspondientes.
 
+# 2025-11-15
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+## NRA
+*  **Session:** Desarrollo del Sistema de Autoevaluaciones con IA
+*  **Description:** Implementación y refinamiento del módulo 'assessment', enfocado en la generación, gestión y visualización de autoevaluaciones personalizadas mediante la API de Gemini.
+

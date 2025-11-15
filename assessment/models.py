@@ -27,11 +27,16 @@ class Assessment(models.Model):
         EXPIRED_UNTAKEN = "EXPIRED_UNTAKEN", "Expirado (No Realizado)"
         CORRECTION_EXPIRED = "CORRECTION_EXPIRED", "Corrección Expirada"
         
-        # Estados de Fallo
+        # Estados de Fallo (Alineados con PAIR y vista)
         GENERATION_FAILED_RETRYABLE = "GENERATION_FAILED_RETRYABLE", "Fallo de Generación (Reintentable)"
         CORRECTION_FAILED_RETRYABLE = "CORRECTION_FAILED_RETRYABLE", "Fallo de Corrección (Reintentable)"
-        FAILED_FATAL = "FAILED_FATAL", "Fallo Permanente"
+        GENERATION_FAILED_QUOTA = "GENERATION_FAILED_QUOTA", "Fallo de Generación (Cuota API)"
+        GENERATION_FAILED_FATAL = "GENERATION_FAILED_FATAL", "Fallo Permanente de Generación"
+        CORRECTION_FAILED_FATAL = "CORRECTION_FAILED_FATAL", "Fallo Permanente de Corrección"
 
+        # Estados de Control
+        PAUSED = "PAUSED", "Pausada por el Administrador"
+        
         # Estado Final de Usuario
         USER_CANCELLED = "USER_CANCELLED", "Cancelado por el Usuario"
 
@@ -236,7 +241,13 @@ class AssessmentSettings(models.Model):
     """
     Singleton model to hold sitewide settings for the assessment application.
     """
-
+    is_running = models.BooleanField(
+        default=False,
+        verbose_name=_("Motor de Evaluaciones Activado"),
+        help_text=_(
+            "Si está activado, el sistema buscará y procesará tareas de evaluación pendientes."
+        ),
+    )
     daily_limit = models.PositiveIntegerField(
         default=1,
         verbose_name=_("Límite Diario de Evaluaciones por Usuario"),
@@ -265,7 +276,16 @@ class AssessmentSettings(models.Model):
             "Número de días que los resultados de una evaluación permanecen visibles."
         ),
     )
-
+    last_run_timestamp = models.DateTimeField(
+        null=True, blank=True, verbose_name=_("Última Ejecución del Orquestador")
+    )
+    last_run_status = models.TextField(
+        blank=True, verbose_name=_("Estado del Último Ciclo del Orquestador")
+    )
+    event_log = models.JSONField(
+        default=list, blank=True, verbose_name=_("Historial de Eventos del Motor")
+    )
+    
     class Meta:
         verbose_name = _("Configuración de Evaluaciones")
         verbose_name_plural = _("Configuraciones de Evaluaciones")
