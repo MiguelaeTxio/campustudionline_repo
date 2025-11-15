@@ -9,6 +9,7 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.db import transaction
 from django.db.models import F
+from django.urls import reverse
 from django.utils import timezone
 from google.api_core.exceptions import DeadlineExceeded
 from datetime import timedelta
@@ -157,9 +158,13 @@ def generate_assessment_from_content_task(self, assessment_id):
             assessment_to_complete.save()
 
         log_timestamp(f"GENERATION_TASK: ÉXITO para Assessment ID {assessment_id}.")
+        
+        action_url = settings.BASE_URL + reverse("assessment:take_assessment", kwargs={"pk": assessment_to_complete.pk})
+        
         context = {
             "assessment_pk": assessment_to_complete.pk,
-            "content_title": assessment_to_complete.content_copy.original_content.title
+            "content_title": assessment_to_complete.content_copy.original_content.title,
+            "action_url": action_url,
         }
         send_unified_notification(user=assessment_to_complete.user, subject_template="assessment/email/assessment_ready_subject.txt", body_template_prefix="assessment/email/assessment_ready_body", context=context)
 
@@ -255,7 +260,14 @@ def correct_assessment_task(self, assessment_id):
             assessment_to_complete.save(update_fields=["status", "results_expiration_date"])
 
         log_timestamp(f"CORRECTION_TASK: ÉXITO para Assessment ID {assessment_id}.")
-        context = {"assessment_pk": assessment_id, "content_title": assessment_to_complete.content_copy.original_content.title}
+        
+        action_url = settings.BASE_URL + reverse("assessment:view_results", kwargs={"pk": assessment_id})
+        
+        context = {
+            "assessment_pk": assessment_id, 
+            "content_title": assessment_to_complete.content_copy.original_content.title,
+            "action_url": action_url,
+        }
         send_unified_notification(user=assessment_to_complete.user, subject_template="assessment/email/results_ready_subject.txt", body_template_prefix="assessment/email/results_ready_body", context=context)
 
     except (AIServiceCriticalError) as e:

@@ -16,13 +16,8 @@
         <a href="{{ request.META.HTTP_REFERER|escape }}" class="btn btn-secondary me-3"><i class="fas fa-arrow-left"></i> Volver</a>
         {% endif %}
         {% if can_create_copy %}
-            {% if not material.is_free_content and subject_context %}
-                {# Caso 1: Contenido académico CON contexto de asignatura #}
-                <a href="{% url 'study_room:create_content_copy' pk=material.pk subject_pk=subject_context.pk %}" class="btn btn-success content-link-preloader" id="tour-step-1-copy-button"><i class="fas fa-copy"></i> Crear copia para estudio</a>
-            {% else %}
-                {# Caso 2: Contenido libre O contenido académico SIN contexto de asignatura en esta vista #}
-                <a href="{% url 'study_room:create_free_content_copy' pk=material.pk %}" class="btn btn-success content-link-preloader" id="tour-step-1-copy-button"><i class="fas fa-copy"></i> Crear copia para estudio</a>
-            {% endif %}
+            {# Se unifica la lógica. El contexto de asignatura se elige, si aplica, después de crear la copia. #}
+            <a href="{% url 'study_room:create_free_content_copy' pk=material.pk %}" class="btn btn-success content-link-preloader" id="tour-step-1-copy-button"><i class="fas fa-copy"></i> Crear copia para estudio</a>
         {% endif %}
         
         {% if request.user.is_authenticated %}

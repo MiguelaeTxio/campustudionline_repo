@@ -144,3 +144,10 @@
 *  **Session:** Validación Integral del Sistema de Autoevaluaciones con IA
 *  **Description:** Esta sesión se centrará en realizar una validación completa y exhaustiva del sistema de autoevaluaciones con IA. Se probará el flujo de trabajo completo, desde la creación y generación de la evaluación, pasando por la realización del test, su posterior corrección y la visualización final de los resultados, para asegurar su estabilidad y correcto funcionamiento antes de continuar con nuevas funcionalidades.
 
+# 15/11/2025
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+## DEPCRI-VTLUI
+*  **Session:** Depuración de Errores Post-Refactorización en Vistas, Tareas y UI
+*  **Description:** Resolución de `VariableDoesNotExist` en `content_detail`, corrección de contexto en notificaciones de `assessment` y refactorización de la lógica de badges en la sala de estudio.
+
