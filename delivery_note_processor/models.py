@@ -1,7 +1,7 @@
 # /home/MiguelAeTxio/CampuStudiOnline/delivery_note_processor/models.py
 from django.db import models
 from django.utils.translation import gettext_lazy as _
-from content_automation.models import ApiKey
+from orchestrator.models import ApiKey
 
 class Vehicle(models.Model):
     """
@@ -99,5 +99,3 @@ class DeliveryNote(models.Model):
 
     def __str__(self):
         return f"Albarán ID: {self.id} ({self.get_status_display()})"
-
-

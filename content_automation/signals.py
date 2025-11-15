@@ -1,9 +1,9 @@
-# /home/MiguelAeTxio/CampuStudiOnline/content_automation/signals.py
+# /home/MiguelAeTxio/PROJECTS/CampuStudiOnline/content_automation/signals.py
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 import logging
 
-from .models import ApiKey
+from orchestrator.models import ApiKey
 from .tasks import automation_main_loop_task
 
 logger = logging.getLogger(__name__)

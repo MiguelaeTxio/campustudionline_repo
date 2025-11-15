@@ -16,7 +16,7 @@ from datetime import timedelta
 
 from .models import Assessment, Question, UserAnswer, AssessmentSettings
 from academic_structure.models import Subject
-from content_automation.models import ApiKey
+from orchestrator.models import ApiKey
 from core.services.gemini_service import generate_text_content, AIServiceCriticalError
 from core.services.gemini_schemas import ASSESSMENT_CORRECTION_SCHEMA
 from core.utils import send_unified_notification

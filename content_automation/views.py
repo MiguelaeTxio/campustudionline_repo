@@ -1,4 +1,4 @@
-# /home/MiguelAeTxio/CampuStudiOnline/content_automation/views.py
+# /home/MiguelAeTxio/PROJECTS/CampuStudiOnline/content_automation/views.py
 # El namespace de la app es 'content_automation'
 
 import logging
@@ -27,7 +27,8 @@ from django.db import IntegrityError
 from academic_structure.models import University, Branch, Degree, Subject
 from contents.models import ContentMaterial, FreeContentSubCategory
 from messaging.push_utils import send_notification_to_user
-from .models import PendingContentTask, ContentRequest, FreeContentRequest, AutomationSettings, ApiKey
+from .models import PendingContentTask, ContentRequest, FreeContentRequest
+from orchestrator.models import AutomationSettings, ApiKey
 from .forms import FreeCourseCreationForm, FreeContentRequestForm, RejectionReasonForm, ReviseTaskForm, SeedFiltersForm
 from .tasks import generate_full_course_task
 

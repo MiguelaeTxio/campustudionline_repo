@@ -197,6 +197,7 @@ INSTALLED_APPS = [
     "django_celery_beat",
     # 3. Project Applications
     "core",
+    "orchestrator.apps.OrchestratorConfig",
     "users.apps.UsersConfig",
     "academic_structure.apps.AcademicStructureConfig",
     "content_automation.apps.ContentAutomationConfig",
@@ -396,10 +397,10 @@ CELERY_BEAT_SCHEDULE = {
         "schedule": timedelta(hours=1),
         "options": {"expires": 3500},
     },
-    'run-automation-main-loop-every-5-minutes': {
-        'task': 'content_automation.tasks.automation_main_loop_task',
+    'run-global-orchestrator-every-5-minutes': {
+        'task': 'orchestrator.tasks.global_orchestrator_task',
         'schedule': crontab(minute='*/5'),
-        'options': {'queue': 'content_automation'},
+        'options': {'queue': 'default'},
     },
 }
 # ==============================================================================

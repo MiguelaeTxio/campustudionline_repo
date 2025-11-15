@@ -5,32 +5,11 @@ import json
 from django.contrib import admin, messages
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
-from django.urls import path, include
+from django.urls import path, include, reverse
 from django.utils.html import format_html
-from .models import PendingContentTask, ContentRequest, FreeContentRequest, ApiKey, AutomationSettings
+from .models import PendingContentTask, ContentRequest, FreeContentRequest
 from .tasks import generate_full_course_task
 from .forms import RejectionReasonForm
-
-
-@admin.register(ApiKey)
-class ApiKeyAdmin(admin.ModelAdmin):
-    list_display = ('name', 'is_enabled', 'is_quarantined')
-    list_filter = ('is_enabled',)
-    search_fields = ('name',)
-    ordering = ('name',)
-
-
-@admin.register(AutomationSettings)
-class AutomationSettingsAdmin(admin.ModelAdmin):
-    list_display = ('id', 'is_running', 'active_api_key', 'quarantine_reset_time', 'last_quarantine_reset_date')
-    list_editable = ('is_running', 'quarantine_reset_time')
-    readonly_fields = ('last_quarantine_reset_date',)
-    
-    def has_add_permission(self, request):
-        return not AutomationSettings.objects.exists()
-
-    def has_delete_permission(self, request, obj=None):
-        return False
 
 
 @admin.register(ContentRequest)

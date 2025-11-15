@@ -1,9 +1,10 @@
-# /home/MiguelAeTxio/CampuStudiOnline/content_automation/forms.py
+# /home/MiguelAeTxio/PROJECTS/CampuStudiOnline/content_automation/forms.py
 # El namespace de la app es 'content_automation'
 
 from django import forms
 from django.urls import reverse_lazy
-from .models import PendingContentTask, FreeContentRequest, AutomationSettings
+from .models import PendingContentTask, FreeContentRequest
+from orchestrator.models import AutomationSettings
 from academic_structure.models import Branch, Degree
 from contents.models import FreeContentMasterCategory, FreeContentSubCategory
 

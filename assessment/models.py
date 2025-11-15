@@ -19,6 +19,7 @@ class Assessment(models.Model):
         COMPLETED = "COMPLETED", "Listo para Realizar"
         
         # Flujo de Corrección
+        AWAITING_CORRECTION = "AWAITING_CORRECTION", "Pendiente de Corrección" # Estado intermedio
         CORRECTING = "CORRECTING", "Corrigiendo"
         RESULTS_AVAILABLE = "RESULTS_AVAILABLE", "Resultados Disponibles"
 
@@ -26,16 +27,10 @@ class Assessment(models.Model):
         EXPIRED_UNTAKEN = "EXPIRED_UNTAKEN", "Expirado (No Realizado)"
         CORRECTION_EXPIRED = "CORRECTION_EXPIRED", "Corrección Expirada"
         
-        # Estados de Fallo (Generación)
-        GENERATION_FAILED_RETRYABLE = "GENERATION_FAILED_RETRYABLE", "Fallo de Generación (Reintentando)"
-        GENERATION_FAILED_QUOTA = "GENERATION_FAILED_QUOTA", "Fallo de Generación (Límite de Cuota)"
-        GENERATION_FAILED_FATAL = "GENERATION_FAILED_FATAL", "Fallo de Generación (Permanente)"
+        # Estado de Fallo Consolidado
+        FAILED_FATAL = "FAILED_FATAL", "Fallo Permanente"
 
-        # Estados de Fallo (Corrección)
-        CORRECTION_FAILED_RETRYABLE = "CORRECTION_FAILED_RETRYABLE", "Fallo de Corrección (Reintentando)"
-        CORRECTION_FAILED_FATAL = "CORRECTION_FAILED_FATAL", "Fallo de Corrección (Permanente)"
-
-        # Estados Finales de Usuario
+        # Estado Final de Usuario
         USER_CANCELLED = "USER_CANCELLED", "Cancelado por el Usuario"
 
     content_copy = models.ForeignKey(
@@ -61,7 +56,7 @@ class Assessment(models.Model):
         verbose_name="Usuario",
     )
     status = models.CharField(
-        max_length=50, # Aumentado para dar cabida a los nuevos estados
+        max_length=50,
         choices=AssessmentStatus.choices,
         default=AssessmentStatus.PENDING,
         verbose_name="Estado",

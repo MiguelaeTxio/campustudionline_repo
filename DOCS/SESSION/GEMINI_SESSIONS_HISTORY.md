@@ -151,3 +151,9 @@
 *  **Session:** Depuración de Errores Post-Refactorización en Vistas, Tareas y UI
 *  **Description:** Resolución de `VariableDoesNotExist` en `content_detail`, corrección de contexto en notificaciones de `assessment` y refactorización de la lógica de badges en la sala de estudio.
 
+# 15 de noviembre de 2025
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V21.md
+## MAMC
+*  **Session:** Refactorización del Orquestador de Tareas Asíncronas e Implementación de la App 'orchestrator'
+*  **Description:** Crear la nueva aplicación 'orchestrator', migrar los modelos 'ApiKey' y 'AutomationSettings', centralizar la lógica de tareas en 'global_orchestrator_task', actualizar Celery Beat y refactorizar la app 'assessment' para su integración con el nuevo sistema.
