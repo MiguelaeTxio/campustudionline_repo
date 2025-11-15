@@ -1,3 +1,4 @@
+# /home/MiguelAeTxio/PROJECTS/CampuStudiOnline/contents/urls.py
 from django.urls import path
 from . import views
 
@@ -8,6 +9,11 @@ urlpatterns = [
     path("create/", views.create_content, name="create_content"),
     path("<uuid:pk>/edit/", views.edit_content, name="edit_content"),
     path("<uuid:pk>/delete/", views.delete_content, name="delete_content"),
+    
+    # [NUEVA RUTA] Ruta específica para cuando se accede a un material desde una asignatura.
+    path("from-subject/<uuid:subject_pk>/material/<uuid:pk>/", views.content_detail, name="content_detail_academic"),
+    
+    # Ruta genérica para acceso directo o desde contenido libre.
     path("<uuid:pk>/", views.content_detail, name="content_detail"),
 
     # --- Personal Workspace & Favorites (Arquitectura PAIR) ---

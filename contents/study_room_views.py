@@ -109,8 +109,19 @@ def create_content_copy(request, pk, subject_pk=None):
     original_content = get_object_or_404(Content, pk=pk)
     subject_context = None
 
+    # [CORRECCIÓN DEFINITIVA] La lógica se simplifica para ser inequívoca.
+    # Si se provee un subject_pk, ESE es el contexto. Punto.
     if subject_pk:
         subject_context = get_object_or_404(Subject, pk=subject_pk)
+    # Si no se provee, es contenido libre y subject_context permanece None.
+
+    # [VALIDACIÓN MANTENIDA] Bloqueo si se intenta crear copia académica sin contexto
+    if not original_content.is_free_content and not subject_context:
+        messages.error(
+            request,
+            "Error Crítico: Se intentó crear una copia académica sin especificar la asignatura."
+        )
+        return redirect(original_content.get_absolute_url())
 
     if ContentCopy.objects.filter(user=request.user).count() >= 6:
         messages.error(request, "Has alcanzado el límite de 6 copias de estudio. Por favor, elimina alguna para poder crear una nueva.")
@@ -120,7 +131,6 @@ def create_content_copy(request, pk, subject_pk=None):
         messages.error(request, "No tienes permiso para crear una copia de este contenido.")
         return redirect(original_content.get_absolute_url())
     
-    # Se busca una copia existente con el mismo contexto de asignatura
     existing_copy = ContentCopy.objects.filter(
         original_content=original_content,
         user=request.user,
@@ -154,7 +164,6 @@ def create_content_copy(request, pk, subject_pk=None):
     
     messages.success(request, f"Se ha creado una copia de '{original_content.title}' y el original se ha añadido a 'Mis Favoritos'.")
     
-    # [CORRECCIÓN INCIDENCIA 1] Redirigir a la raíz para evitar condiciones de carrera
     return redirect("study_room:copy_directory_root")
 
 @login_required
@@ -216,7 +225,8 @@ def user_copies_list(request, area_slug=None, discipline_slug=None, master_slug=
     base_copies = ContentCopy.objects.filter(user=request.user).select_related(
         "original_content__topic__main_category__discipline__knowledge_area",
         "original_content__master_category",
-        "original_content__sub_category__master_category"
+        "original_content__sub_category__master_category",
+        "subject_context__academic_year__degree__branch__university" # [CORRECCIÓN VISUALIZACIÓN]
     )
     breadcrumbs = [{"name": "Sala de Estudio", "url": reverse("study_room:copy_directory_root")}]
     context = {"page_title": "Mi Sala de Estudio", "show_tour": True}
@@ -257,7 +267,8 @@ def user_copies_list(request, area_slug=None, discipline_slug=None, master_slug=
     if discipline_slug or sub_slug:
         if discipline_slug:  # Académico
             discipline = get_object_or_404(Discipline, slug=discipline_slug, knowledge_area__slug=area_slug)
-            items_list = base_copies.filter(original_content__topic__main_category__discipline=discipline).order_by("-updated_at")
+            # [CORRECCIÓN VISUALIZACIÓN]
+            items_list = base_copies.filter(subject_context__academic_year__degree__branch__discipline=discipline).order_by("-updated_at")
             breadcrumbs.extend([
                 {"name": discipline.knowledge_area.name, "url": reverse("study_room:copy_directory_area", kwargs={"area_slug": discipline.knowledge_area.slug})},
                 {"name": discipline.name, "url": "#"},
@@ -278,12 +289,13 @@ def user_copies_list(request, area_slug=None, discipline_slug=None, master_slug=
     # --- NIVEL 2: VISTA DE DISCIPLINAS O SUBCATEGORÍAS ---
     elif area_slug:  # Académico
         knowledge_area = get_object_or_404(KnowledgeArea, slug=area_slug)
+        # [CORRECCIÓN VISUALIZACIÓN]
         discipline_ids = base_copies.filter(
-            original_content__topic__main_category__discipline__knowledge_area=knowledge_area
-        ).values_list("original_content__topic__main_category__discipline_id", flat=True).distinct()
+            subject_context__academic_year__degree__branch__discipline__knowledge_area=knowledge_area
+        ).values_list("subject_context__academic_year__degree__branch__discipline_id", flat=True).distinct()
         
         items_list = Discipline.objects.filter(id__in=discipline_ids).annotate(
-            **get_aggregated_assessment_annotations({'content_copy__original_content__topic__main_category__discipline': OuterRef('pk')})
+            **get_aggregated_assessment_annotations({'content_copy__subject_context__academic_year__degree__branch__discipline': OuterRef('pk')})
         ).order_by("name")
 
         breadcrumbs.append({"name": knowledge_area.name, "url": "#"})
@@ -303,12 +315,11 @@ def user_copies_list(request, area_slug=None, discipline_slug=None, master_slug=
     # --- NIVEL 1: VISTA RAÍZ ---
     else:
         # Contenido Académico
-        # [CORRECCIÓN LÓGICA BASADA EN EVIDENCIA EMPÍRICA]
-        # Consulta robusta que filtra KnowledgeArea directamente.
+        # [CORRECCIÓN VISUALIZACIÓN]
         items_list = KnowledgeArea.objects.filter(
-            disciplines__main_categories__root_topics__content_materials__derived_copies__user=request.user
+            disciplines__branches__degrees__academic_years__subjects__study_copies__user=request.user
         ).distinct().annotate(
-            **get_aggregated_assessment_annotations({'content_copy__original_content__topic__main_category__discipline__knowledge_area': OuterRef('pk')})
+            **get_aggregated_assessment_annotations({'content_copy__subject_context__academic_year__degree__branch__discipline__knowledge_area': OuterRef('pk')})
         ).order_by("name")
         
         # Contenido Libre (la lógica aquí era correcta y no cambia)

@@ -171,3 +171,23 @@
 *  **Session:** Desarrollo del Sistema de Autoevaluaciones con IA
 *  **Description:** Implementación y refinamiento del módulo 'assessment', enfocado en la generación, gestión y visualización de autoevaluaciones personalizadas mediante la API de Gemini.
 
+# 13/11/2025
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+## CSO
+*  **Session:** Refactorización del Sistema de Autoevaluaciones con IA para Robustez y Resiliencia
+*  **Description:** Implementar un sistema de reintentos con exponential backoff en la tarea Celery, gestionar errores fatales de forma explícita y mejorar los estados del modelo y la interfaz de usuario para proporcionar un feedback claro sobre los fallos en la generación de autoevaluaciones.
+
+# 2025-11-11
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+## CSO
+*  **Session:** Diagnóstico del Bucle Infinito en el Procesamiento de Evaluaciones de IA
+*  **Description:** Analizar la tarea Celery en assessment/tasks.py y los logs del sistema para identificar la causa raíz por la que las autoevaluaciones generadas por IA no finalizan, quedándose atascadas en el estado 'PROCESSING'.
+
+# $(date +'15-11-2025')
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+## CSO
+*  **Session:** Depuración de Visualización de ContentCopy en Sala de Estudio
+*  **Description:** Investigar y solucionar la incorrecta visualización de una copia de estudio en su contexto académico correspondiente, analizando modelos, vistas y datos en la BBDD.

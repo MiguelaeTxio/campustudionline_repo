@@ -1,4 +1,4 @@
-# /home/MiguelAeTxio/CampuStudiOnline/contents/views.py
+# /home/MiguelAeTxio/PROJECTS/CampuStudiOnline/contents/views.py
 import logging
 import yaml
 from django.shortcuts import render, redirect, get_object_or_404
@@ -13,6 +13,7 @@ from django.db.models import Q, Exists, OuterRef # Importado para consultas comp
 import markdown
 import bleach
 
+from academic_structure.models import Subject # Importación necesaria
 from .utils import generate_share_image_bytes
 from .models import (
     ContentMaterial, KnowledgeArea, Discipline, MainCategory, Topic, FavoriteFolder
@@ -379,8 +380,16 @@ def get_folder_options_htmx_view(request):
 
 # --- VISTAS DE CONTENIDO Y AJAX RESTANTES ---
 
-def content_detail(request, pk):
+def content_detail(request, pk, subject_pk=None):
     content_obj = get_object_or_404(ContentMaterial, pk=pk)
+    
+    subject_context = None
+    if subject_pk:
+        subject_context = get_object_or_404(Subject, pk=subject_pk)
+        # Verificación de seguridad: Asegurarse de que el material pertenece a la asignatura.
+        if not content_obj.subject.filter(pk=subject_pk).exists():
+             raise Http404("Este material no pertenece a la asignatura especificada.")
+
     metadata, remaining_markdown = parse_yaml_front_matter(content_obj.markdown_content)
     rendered_html_content = markdown_to_html_internal(remaining_markdown)
     is_creator = request.user.is_authenticated and request.user == content_obj.creator
@@ -398,6 +407,7 @@ def content_detail(request, pk):
         "metadata": metadata, "can_edit_delete": is_creator,
         "can_create_copy": content_obj.is_public or is_creator,
         "is_favorite": is_favorite,
+        "subject": subject_context, # Se añade el contexto de la asignatura a la plantilla
         "show_preloader": True, "show_tour": True,
     }
     return render(request, "contents/content_detail.html", context)

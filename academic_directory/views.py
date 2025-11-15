@@ -180,6 +180,7 @@ def public_content_list_view(request, university_slug, branch_slug, degree_slug,
         "page_title": f"{subject.name} - Contenidos Públicos",
         "breadcrumb": breadcrumb,
         "current_level_name": subject.name,
+        "subject": subject,  # [CORRECCIÓN] Pasar el objeto subject al contexto
         "next_level_name": None,
         "next_level_items": None, 
         "public_contents": page_obj,

@@ -1,4 +1,4 @@
-{# /home/MiguelAeTxio/CampuStudiOnline/academic_directory/templates/academic_directory/academic_level_detail.html #}
+{# /home/MiguelAeTxio/PROJECTS/CampuStudiOnline/academic_directory/templates/academic_directory/academic_level_detail.html #}
 {% extends request.htmx|yesno:"_blank.html,base.html" %}
 {% load static %}
 
@@ -129,7 +129,8 @@
                     <div class="list-group" id="tour-dir-list">
                         {% for content in public_contents %}
                             <div class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
-                                <a href="{{ content.get_absolute_url }}" class="text-decoration-none text-dark flex-grow-1">
+                                {# [CORRECCIÓN] Se utiliza la URL académica específica, pasando el pk de la asignatura. #}
+                                <a href="{% url 'contents:content_detail_academic' subject_pk=subject.pk pk=content.pk %}" class="text-decoration-none text-dark flex-grow-1">
                                     <h5 class="mb-1">
                                         {{ content.title }}
                                         
