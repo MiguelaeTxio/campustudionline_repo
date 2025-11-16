@@ -1,4 +1,4 @@
-# /home/MiguelAeTxio/CampuStudiOnline/contents/study_room_urls.py
+# /home/MiguelAeTxio/PROJECTS/CampuStudiOnline/contents/study_room_urls.py
 from django.urls import path
 from django.views.generic import RedirectView
 from . import study_room_views
@@ -6,11 +6,14 @@ from . import study_room_views
 app_name = "study_room"
 
 urlpatterns = [
-    # --- Raíz y Navegación Académica ---
+    # --- Raíz y Navegación Académica Jerárquica ---
     path("directory/", study_room_views.user_copies_list, name="copy_directory_root"),
-    path("directory/academic/<slug:area_slug>/", study_room_views.user_copies_list, name="copy_directory_area"),
-    path("directory/academic/<slug:area_slug>/<slug:discipline_slug>/", study_room_views.user_copies_list, name="copy_directory_discipline"),
-    
+    path("directory/academic/<slug:university_slug>/", study_room_views.user_copies_list, name="academic_directory_university"),
+    path("directory/academic/<slug:university_slug>/<slug:branch_slug>/", study_room_views.user_copies_list, name="academic_directory_branch"),
+    path("directory/academic/<slug:university_slug>/<slug:branch_slug>/<slug:degree_slug>/", study_room_views.user_copies_list, name="academic_directory_degree"),
+    path("directory/academic/<slug:university_slug>/<slug:branch_slug>/<slug:degree_slug>/<int:year>/", study_room_views.user_copies_list, name="academic_directory_year"),
+    path("directory/academic/<slug:university_slug>/<slug:branch_slug>/<slug:degree_slug>/<int:year>/<slug:subject_slug>/", study_room_views.user_copies_list, name="academic_directory_subject"),
+
     # --- Navegación de Contenido Libre ---
     path("directory/free/<slug:master_slug>/", study_room_views.user_copies_list, name="free_master_directory"),
     path("directory/free/<slug:master_slug>/<slug:sub_slug>/", study_room_views.user_copies_list, name="free_sub_directory"),

@@ -206,7 +206,7 @@ def user_copies_list(request, university_slug=None, branch_slug=None, degree_slu
         "original_content__master_category",
         "original_content__sub_category__master_category",
         "subject_context__academic_year__degree__branch__university"
-    ).prefetch_related('assessment_set')
+    ).prefetch_related('assessments')
 
     breadcrumbs = [{"name": "Sala de Estudio", "url": reverse("study_room:copy_directory_root")}]
     context = {"page_title": "Mi Sala de Estudio", "show_tour": True}
