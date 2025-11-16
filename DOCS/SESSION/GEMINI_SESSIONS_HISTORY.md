@@ -205,3 +205,17 @@
 *  **Session:** Estabilización y Verificación de la Navegación Jerárquica en la Sala de Estudio
 *  **Description:** Solución del error 'VariableDoesNotExist' en la vista de detalle de contenido para estabilizar la plataforma. Verificación empírica posterior de la refactorización de la navegación jerárquica académica en la sala de estudio, asegurando el correcto funcionamiento de las rutas y los indicadores de autoevaluación.
 
+# 2025-11-14
+# CAMPUSTUDIONLINE --TEMP
+# UI_BADGE_ERRORS_FIX
+## CYC
+*  **Session:** Corrección de la Lógica de Visualización en Indicadores de Estado de Autoevaluaciones
+*  **Description:** Diagnosticar y corregir la lógica de renderizado de los badges de estado para las autoevaluaciones en la Sala de Estudio, asegurando que se muestren correctamente según la jerarquía académica.
+
+# 2025-11-16
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+## CYC
+*  **Session:** Estabilización de BBDD: Sincronización de Migraciones para la App 'Orchestrator'
+*  **Description:** Resolver el error 'ProgrammingError: Table doesn't exist' para el modelo AutomationSettings mediante la aplicación de las migraciones pendientes de la app 'orchestrator', restaurando así la funcionalidad del panel de administración de automatización.
+

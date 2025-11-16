@@ -48,6 +48,7 @@
 ./orchestrator/models.py
 ./orchestrator/migrations
 ./orchestrator/migrations/__init__.py
+./orchestrator/migrations/0002_alter_apikey_table_alter_automationsettings_table.py
 ./orchestrator/migrations/0001_initial.py
 ./orchestrator/tasks.py
 ./orchestrator/tests.py
