@@ -2,17 +2,16 @@
 {% load assessment_tags %}
 
 <div class="list-group" id="tour-sala-estudio-dir-list">
-    <!-- DEBUG: Level Name = {{ level_name }} -->
-    {# Nivel Raíz: Muestra tanto Áreas Académicas como Categorías Maestras de Contenido Libre #}
-    {% if level_name == 'areas' %}
-        {% if page_obj %}
+    
+    {# Nivel Raíz: Muestra Universidades y Categorías de Contenido Libre #}
+    {% if level_name == 'root' %}
+        {% if academic_roots %}
             <h5 class="text-muted mt-3">Contenido Académico</h5>
-            {% for area in page_obj %}
-                <!-- DEBUG: Rendering academic area. Name: {{ area.name }}, Slug: '{{ area.slug }}' -->
-                <a href="{% url 'study_room:copy_directory_area' area_slug=area.slug %}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+            {% for university in academic_roots %}
+                <a href="{% url 'study_room:academic_directory_university' university_slug=university.slug %}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
                     <div>
-                        {{ area.name }}
-                        {% render_assessment_indicators area %}
+                        {{ university.name }}
+                        {% render_assessment_indicators university %}
                     </div>
                     <span class="badge bg-primary rounded-pill"><i class="fas fa-chevron-right"></i></span>
                 </a>
@@ -21,7 +20,6 @@
         {% if free_content_roots %}
             <h5 class="text-muted mt-4">Contenido Libre</h5>
             {% for master_cat in free_content_roots %}
-                <!-- DEBUG: Rendering free content root. Name: {{ master_cat.name }}, Slug: '{{ master_cat.slug }}' -->
                 <a href="{% url 'study_room:free_master_directory' master_slug=master_cat.slug %}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
                     <div>
                         {{ master_cat.name }}
@@ -32,23 +30,39 @@
             {% endfor %}
         {% endif %}
 
-    {# Nivel 2 (Académico): Muestra Disciplinas dentro de un Área #}
-    {% elif level_name == 'disciplines' %}
-        {% for discipline in page_obj %}
-            <!-- DEBUG: Rendering discipline. Name: {{ discipline.name }}, Slug: '{{ discipline.slug }}', Area Slug: '{{ current_area.slug }}' -->
-             <a href="{% url 'study_room:copy_directory_discipline' area_slug=current_area.slug discipline_slug=discipline.slug %}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
-                <div>
-                    {{ discipline.name }}
-                    {% render_assessment_indicators discipline %}
-                </div>
+    {# --- JERARQUÍA ACADÉMICA --- #}
+    {% elif level_name == 'branches' %}
+        {% for branch in page_obj %}
+            <a href="{% url 'study_room:academic_directory_branch' university_slug=current_university.slug branch_slug=branch.slug %}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                <div>{{ branch.name }}{% render_assessment_indicators branch %}</div>
                 <span class="badge bg-primary rounded-pill"><i class="fas fa-chevron-right"></i></span>
             </a>
         {% endfor %}
-    
-    {# Nivel 2 (Libre): Muestra Subcategorías dentro de una Categoría Maestra #}
+    {% elif level_name == 'degrees' %}
+        {% for degree in page_obj %}
+            <a href="{% url 'study_room:academic_directory_degree' university_slug=current_branch.university.slug branch_slug=current_branch.slug degree_slug=degree.slug %}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                <div>{{ degree.name }}{% render_assessment_indicators degree %}</div>
+                <span class="badge bg-primary rounded-pill"><i class="fas fa-chevron-right"></i></span>
+            </a>
+        {% endfor %}
+    {% elif level_name == 'years' %}
+        {% for year in page_obj %}
+            <a href="{% url 'study_room:academic_directory_year' university_slug=current_degree.branch.university.slug branch_slug=current_degree.branch.slug degree_slug=current_degree.slug year=year.year %}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                <div>Año {{ year.year }}{% render_assessment_indicators year %}</div>
+                <span class="badge bg-primary rounded-pill"><i class="fas fa-chevron-right"></i></span>
+            </a>
+        {% endfor %}
+    {% elif level_name == 'subjects' %}
+        {% for subject in page_obj %}
+            <a href="{% url 'study_room:academic_directory_subject' university_slug=current_year.degree.branch.university.slug branch_slug=current_year.degree.branch.slug degree_slug=current_year.degree.slug year=current_year.year subject_slug=subject.slug %}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                <div>{{ subject.name }}{% render_assessment_indicators subject %}</div>
+                <span class="badge bg-primary rounded-pill"><i class="fas fa-chevron-right"></i></span>
+            </a>
+        {% endfor %}
+
+    {# --- JERARQUÍA DE CONTENIDO LIBRE (Preservada) --- #}
     {% elif level_name == 'sub_categories' %}
         {% for sub_cat in page_obj %}
-            <!-- DEBUG: Rendering sub-category. Name: {{ sub_cat.name }}, Slug: '{{ sub_cat.slug }}', Master Slug: '{{ current_master_category.slug }}' -->
             <a href="{% url 'study_room:free_sub_directory' master_slug=current_master_category.slug sub_slug=sub_cat.slug %}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
                 <div>
                     {{ sub_cat.name }}
@@ -58,8 +72,8 @@
             </a>
         {% endfor %}
 
-    {# Nivel Final: Muestra las Copias de Contenido #}
-    {% elif level_name == 'copies' %}
+    {# --- NIVEL FINAL: LISTA DE COPIAS (Unificado) --- #}
+    {% elif level_name == 'academic_copies' or level_name == 'free_copies' %}
         {% for copy in page_obj %}
             <div class="list-group-item flex-column align-items-start shadow-sm mb-2">
                 <div class="d-flex w-100 justify-content-between">
@@ -77,6 +91,9 @@
                 </div>
                 <p class="mb-1 text-muted">
                     Original de: <a href="{% url 'contents:content_detail' pk=copy.original_content.pk %}" class="text-reset content-link-preloader">"{{ copy.original_content.title }}"</a>
+                    {% if copy.subject_context %}
+                        <br><small><strong>Asignatura:</strong> {{ copy.subject_context.name }}</small>
+                    {% endif %}
                 </p>
                 <small>Última actualización: {{ copy.updated_at|date:"d M Y, H:i" }}</small>
                 <div class="mt-2">
@@ -94,4 +111,23 @@
             </div>
         {% endfor %}
     {% endif %}
+
+    {% if page_obj.has_other_pages %}
+    <div class="mt-3">
+        <nav aria-label="Page navigation">
+            <ul class="pagination justify-content-center">
+                {% if page_obj.has_previous %}
+                    <li class="page-item"><a class="page-link" href="?page=1">&laquo; Primera</a></li>
+                    <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}">Anterior</a></li>
+                {% endif %}
+                <li class="page-item disabled"><a class="page-link" href="#" tabindex="-1" aria-disabled="True">Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</a></li>
+                {% if page_obj.has_next %}
+                    <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">Siguiente</a></li>
+                    <li class="page-item"><a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">Última &raquo;</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+    </div>
+    {% endif %}
+
 </div>

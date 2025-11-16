@@ -191,3 +191,10 @@
 ## CSO
 *  **Session:** Depuración de Visualización de ContentCopy en Sala de Estudio
 *  **Description:** Investigar y solucionar la incorrecta visualización de una copia de estudio en su contexto académico correspondiente, analizando modelos, vistas y datos en la BBDD.
+# 16/11/2025
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+## CSO
+*  **Session:** Refactorización de la Vista de Copias de Estudio para Contexto Académico
+*  **Description:** Implementar una lógica de despacho en la vista `user_copies_list` para diferenciar entre la navegación de contenido libre y la navegación académica, solucionando el error de visualización que ignora el `subject_context` de las `ContentCopy`. Esto implica refactorizar las URLs y adaptar la plantilla correspondiente.
+
