@@ -28,6 +28,7 @@ urlpatterns = [
         "admin/automation/",
         include("content_automation.admin_urls", namespace="content_automation_admin"),
     ),
+    path("admin/assessment/", include("assessment.admin_urls", namespace="assessment_admin")),
     path("admin/contents/", include("contents.admin_urls", namespace="contents_admin")),
     path("admin/", admin.site.urls),
     path("", user_views.home_view, name="home"),

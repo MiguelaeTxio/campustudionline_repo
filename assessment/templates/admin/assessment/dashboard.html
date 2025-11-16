@@ -1,161 +1,112 @@
 {% extends "admin/base_site.html" %}
 {% load static %}
+{% load i18n %}
 
 {% block title %}{{ title }}{% endblock %}
+
+{% block extrastyle %}{{ block.super }}
+<style>
+    .dashboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; }
+    .metric-card { background-color: #f8f9fa; border: 1px solid #dee2e6; border-radius: 4px; padding: 15px; text-align: center; }
+    .metric-card h3 { margin: 0 0 10px 0; font-size: 1.1em; color: #666; text-transform: uppercase; }
+    .metric-card .value { font-size: 2.2em; font-weight: bold; color: #333; }
+    .module h2 { margin-top: 20px; }
+    .task-actions form, .task-actions .button { display: inline-block; margin: 0 4px; }
+    .task-status-badge { display: inline-block; padding: 3px 8px; border-radius: 4px; color: white; font-weight: bold; font-size: 0.8em; }
+    .status-completed { background-color: #28a745; }
+    .status-failed { background-color: #dc3545; }
+    .status-processing { background-color: #007bff; }
+    .status-pending { background-color: #fd7e14; }
+    .status-default { background-color: #6c757d; }
+</style>
+{% endblock %}
 
 {% block content %}
 <div id="content-main">
     <h1>{{ title }}</h1>
 
-    <!-- Panel de Control Principal -->
+    <!-- Panel de Métricas -->
     <div class="module">
-        <h2>Estado del Motor</h2>
-        <div style="display: flex; align-items: center; gap: 20px;">
-            <p>El motor de evaluaciones está actualmente: 
-                <strong style="color: {% if settings.is_running %}green{% else %}red{% endif %};">
-                    {% if settings.is_running %}ACTIVO{% else %}DETENIDO{% endif %}
-                </strong>
-            </p>
-            <form action="{% url 'admin:assessment_toggle_engine' %}" method="post">
-                {% csrf_token %}
-                <button type="submit" class="button">
-                    {% if settings.is_running %}Detener Motor{% else %}Iniciar Motor{% endif %}
-                </button>
-            </form>
+        <h2>Métricas de Evaluaciones Completadas</h2>
+        <div class="dashboard-grid">
+            <div class="metric-card"><h3>Hoy</h3><div class="value">{{ metrics.today }}</div></div>
+            <div class="metric-card"><h3>Esta Semana</h3><div class="value">{{ metrics.week }}</div></div>
+            <div class="metric-card"><h3>Este Mes</h3><div class="value">{{ metrics.month }}</div></div>
+            <div class="metric-card"><h3>Este Año</h3><div class="value">{{ metrics.year }}</div></div>
+            <div class="metric-card"><h3>Total Histórico</h3><div class="value">{{ metrics.total }}</div></div>
         </div>
-        {% if settings.last_run_timestamp %}
-            <p><small>Última ejecución: {{ settings.last_run_timestamp|date:"d/m/Y H:i:s" }}</small></p>
-            <p><small>Estado: {{ settings.last_run_status }}</small></p>
+    </div>
+
+    <!-- Tarea en Proceso -->
+    <div class="module">
+        <h2>Tarea en Proceso</h2>
+        {% if processing_task %}
+        <table>
+            <thead><tr><th>ID</th><th>Usuario</th><th>Iniciada</th><th>Acciones</th></tr></thead>
+            <tbody>
+                <tr>
+                    <td><a href="{% url 'admin:assessment_assessment_change' processing_task.pk %}">{{ processing_task.pk }}</a></td>
+                    <td>{{ processing_task.user.username }}</td>
+                    <td>{{ processing_task.created_at|date:"d/m/Y H:i" }}</td>
+                    <td class="task-actions">
+                        <button class="button" disabled>Pausar</button>
+                        <button class="button" disabled>Cancelar</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        {% else %}
+        <p>No hay ninguna evaluación en proceso actualmente.</p>
         {% endif %}
     </div>
 
-    <!-- Panel de Estadísticas -->
+    <!-- Tareas Encoladas -->
     <div class="module">
-        <h2>Estadísticas Generales</h2>
+        <h2>Tareas Encoladas</h2>
+        {% if pending_tasks %}
         <table>
-            <thead>
-                <tr>
-                    <th>Estado</th>
-                    <th>Cantidad</th>
-                </tr>
-            </thead>
+            <thead><tr><th>ID</th><th>Usuario</th><th>Encolada</th></tr></thead>
             <tbody>
-                {% for status, count in stats.items %}
-                <tr>
-                    <td>{{ status }}</td>
-                    <td>{{ count }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-
-    <!-- Tareas en Proceso -->
-    {% if processing_tasks %}
-    <div class="module">
-        <h2>Tareas en Proceso</h2>
-        <table>
-            <thead>
-                <tr>
-                    <th>ID Tarea</th>
-                    <th>Usuario</th>
-                    <th>Estado</th>
-                    <th>Creada</th>
-                    <th>Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for task in processing_tasks %}
+                {% for task in pending_tasks %}
                 <tr>
                     <td><a href="{% url 'admin:assessment_assessment_change' task.pk %}">{{ task.pk }}</a></td>
                     <td>{{ task.user.username }}</td>
-                    <td>{{ task.get_status_display }}</td>
                     <td>{{ task.created_at|date:"d/m/Y H:i" }}</td>
-                    <td>
-                        <form action="{% url 'admin:assessment_pause_task' task.pk %}" method="post" style="display:inline;">
-                            {% csrf_token %}
-                            <button type="submit" class="button" style="background-color: #f0ad4e;">Pausar</button>
-                        </form>
-                    </td>
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
+        {% else %}
+        <p>No hay tareas pendientes en la cola.</p>
+        {% endif %}
     </div>
-    {% endif %}
-    
-    <!-- Tareas Pausadas -->
-    {% if paused_tasks %}
+
+    <!-- Historial de Tareas Finalizadas -->
     <div class="module">
-        <h2>Tareas Pausadas</h2>
+        <h2>Historial de Tareas Finalizadas (Últimas 10)</h2>
+        {% if finished_tasks %}
         <table>
-            <thead>
-                <tr>
-                    <th>ID Tarea</th>
-                    <th>Usuario</th>
-                    <th>Pausada</th>
-                    <th>Acciones</th>
-                </tr>
-            </thead>
+            <thead><tr><th>ID</th><th>Usuario</th><th>Estado</th><th>Finalizada</th></tr></thead>
             <tbody>
-                {% for task in paused_tasks %}
+                {% for task in finished_tasks %}
                 <tr>
                     <td><a href="{% url 'admin:assessment_assessment_change' task.pk %}">{{ task.pk }}</a></td>
                     <td>{{ task.user.username }}</td>
-                    <td>{{ task.updated_at|date:"d/m/Y H:i" }}</td>
                     <td>
-                        <form action="{% url 'admin:assessment_resume_task' task.pk %}" method="post" style="display:inline;">
-                            {% csrf_token %}
-                            <button type="submit" class="button" style="background-color: #5cb85c;">Reanudar</button>
-                        </form>
+                        {% if task.status == 'COMPLETED' %}<span class="task-status-badge status-completed">{{ task.get_status_display }}</span>
+                        {% elif 'FAILED' in task.status %}<span class="task-status-badge status-failed">{{ task.get_status_display }}</span>
+                        {% else %}<span class="task-status-badge status-default">{{ task.get_status_display }}</span>
+                        {% endif %}
                     </td>
+                    <td>{{ task.created_at|date:"d/m/Y H:i" }}</td>
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
+        {% else %}
+        <p>No hay tareas finalizadas en el historial.</p>
+        {% endif %}
     </div>
-    {% endif %}
 
-    <!-- Tareas Fallidas Reintentables -->
-    {% if failed_tasks %}
-    <div class="module">
-        <h2>Tareas Fallidas (Reintentables)</h2>
-        <table>
-            <thead>
-                <tr>
-                    <th>ID Tarea</th>
-                    <th>Usuario</th>
-                    <th>Último Error</th>
-                    <th>Fecha Fallo</th>
-                    <th>Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for task in failed_tasks %}
-                <tr>
-                    <td><a href="{% url 'admin:assessment_assessment_change' task.pk %}">{{ task.pk }}</a></td>
-                    <td>{{ task.user.username }}</td>
-                    <td><pre style="max-height: 100px; overflow: auto;">{{ task.last_error|truncatechars:200 }}</pre></td>
-                    <td>{{ task.updated_at|date:"d/m/Y H:i" }}</td>
-                    <td>
-                        <form action="{% url 'admin:assessment_retry_task' task.pk %}" method="post" style="display:inline;">
-                            {% csrf_token %}
-                            <button type="submit" class="button">Reintentar</button>
-                        </form>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-    {% endif %}
-
-    <!-- Log de Eventos -->
-    <div class="module">
-        <h2>Log de Eventos del Motor</h2>
-        <div style="background-color: #f5f5f5; border: 1px solid #ddd; padding: 10px; max-height: 400px; overflow-y: scroll;">
-            <pre><code>{{ event_log_pretty }}</code></pre>
-        </div>
-    </div>
 </div>
 {% endblock %}

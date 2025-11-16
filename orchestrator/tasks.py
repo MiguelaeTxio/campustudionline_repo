@@ -223,7 +223,7 @@ def global_orchestrator_task(self):
             task.save(update_fields=["status"])
 
         # --- [PASO 5] RESCATE DE TAREAS DE EVALUACIÓN ---
-        assessment_gen_to_rescue = Assessment.objects.filter(status=Assessment.AssessmentStatus.GENERATION_FAILED_RETRYABLE).order_by('updated_at').first()
+        assessment_gen_to_rescue = Assessment.objects.filter(status=Assessment.AssessmentStatus.GENERATION_FAILED_RETRYABLE).order_by('created_at').first()
         if assessment_gen_to_rescue:
             _log_structured_event(f"RESCATE (ASSESSMENT-GEN): Re-encolando la tarea de generación de evaluación {assessment_gen_to_rescue.id}.")
             assessment_gen_to_rescue.status = Assessment.AssessmentStatus.PENDING
@@ -231,7 +231,7 @@ def global_orchestrator_task(self):
             generate_assessment_from_content_task.delay(assessment_gen_to_rescue.id)
             return
 
-        assessment_corr_to_rescue = Assessment.objects.filter(status=Assessment.AssessmentStatus.CORRECTION_FAILED_RETRYABLE).order_by('updated_at').first()
+        assessment_corr_to_rescue = Assessment.objects.filter(status=Assessment.AssessmentStatus.CORRECTION_FAILED_RETRYABLE).order_by('created_at').first()
         if assessment_corr_to_rescue:
             _log_structured_event(f"RESCATE (ASSESSMENT-CORR): Re-encolando la tarea de corrección de evaluación {assessment_corr_to_rescue.id}.")
             # No hay estado intermedio, simplemente se re-encola. El estado FAILED_RETRYABLE es suficiente.
