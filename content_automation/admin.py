@@ -8,7 +8,7 @@ from django.shortcuts import render
 from django.urls import path, include, reverse
 from django.utils.html import format_html
 from .models import PendingContentTask, ContentRequest, FreeContentRequest
-from .tasks import generate_full_course_task
+from orchestrator.tasks import generate_full_course_task
 from .forms import RejectionReasonForm
 
 

@@ -30,7 +30,7 @@ from messaging.push_utils import send_notification_to_user
 from .models import PendingContentTask, ContentRequest, FreeContentRequest
 from orchestrator.models import AutomationSettings, ApiKey
 from .forms import FreeCourseCreationForm, FreeContentRequestForm, RejectionReasonForm, ReviseTaskForm, SeedFiltersForm
-from .tasks import generate_full_course_task
+from orchestrator.tasks import generate_full_course_task
 
 logger = logging.getLogger(__name__)
 

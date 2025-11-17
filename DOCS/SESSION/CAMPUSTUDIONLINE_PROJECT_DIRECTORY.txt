@@ -343,7 +343,6 @@
 ./content_automation/migrations/0003_apikey_automationsettings.py
 ./content_automation/migrations/0019_separate_state_api_automation_models.py
 ./content_automation/migrations/0001_initial.py
-./content_automation/tasks.py
 ./content_automation/admin_urls.py
 ./content_automation/tests.py
 ./content_automation/management
@@ -429,7 +428,6 @@
 ./assessment/migrations/0008_assessmentsettings_assessment_expiration_seconds_and_more.py
 ./assessment/migrations/0009_alter_assessment_content.py
 ./assessment/migrations/0001_initial.py
-./assessment/tasks.py
 ./assessment/admin_urls.py
 ./assessment/tests.py
 ./assessment/templatetags

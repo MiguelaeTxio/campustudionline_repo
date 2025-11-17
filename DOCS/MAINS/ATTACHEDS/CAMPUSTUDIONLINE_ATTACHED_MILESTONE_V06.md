@@ -2,28 +2,34 @@
 
 ## Resumen de la Sesión del 17/11/2025 (PCS - EXITOSA)
 
-**Objetivo Estratégico Alcanzado:** Se ha implementado la `dashboard` de control para el módulo `assessment` con funcionalidades interactivas y se ha diagnosticado la causa raíz del bloqueo del sistema de tareas asíncronas.
+**Objetivo Estratégico Alcanzado:** Se ha diagnosticado y resuelto una migración incompleta de la arquitectura de tareas asíncronas, unificando toda la lógica en el módulo `orchestrator` y resolviendo los conflictos que impedían el procesamiento de las evaluaciones.
 
 **Desarrollo y Solución:**
 
-1.  **Implementación de la Dashboard Interactiva:**
-    *   **Vistas de Acción:** Se crearon las vistas `pause_assessment_task`, `resume_assessment_task`, `cancel_assessment_task` y `view_assessment_log` en `assessment/admin_views.py`.
-    *   **Activación de Rutas:** Se configuraron las URLs correspondientes en `assessment/admin_urls.py`.
-    *   **Interfaz de Usuario:** Se modificó la plantilla `dashboard.html` para habilitar los botones de control (Pausar, Reanudar, Cancelar) y los enlaces a los logs, ajustando la lógica para mostrar las acciones aplicables a cada estado de la tarea.
-    *   **Correcciones de UI:** Se solucionaron errores de contexto (`VariableDoesNotExist`) y de `layout` (títulos duplicados) para integrar correctamente las vistas personalizadas en el `admin` de Django.
+1.  **Diagnóstico del Problema de Prioridad:** Se identificó que las tareas de `assessment` no se ejecutaban debido a una lógica de priorización incorrecta en el `global_orchestrator_task` y a una dependencia obsoleta de un interruptor de motor (`is_running`) específico de la app `assessment`.
 
-2.  **Diagnóstico de la Causa Raíz del Bloqueo:**
-    *   Tras un exhaustivo proceso de diagnóstico empírico, se ha identificado de forma concluyente que el sistema de tareas no procesaba nuevo trabajo (ni evaluaciones ni contenido) debido a que el interruptor maestro del motor de automatización (`AutomationSettings.is_running`) se encontraba en estado `False`.
-    *   Se descubrió una **inconsistencia crítica en la interfaz de usuario** del "Centro de Control de Automatización", donde el botón de control indicaba erróneamente que el motor estaba "en funcionamiento" cuando en realidad estaba "detenido". Este bug en la UI fue la causa principal de la prolongada dificultad en el diagnóstico.
+2.  **Consolidación de la Lógica de Tareas:**
+    *   Se migró toda la lógica de `content_automation/tasks.py` y `assessment/tasks.py` al archivo centralizado `orchestrator/tasks.py`.
+    *   Se eliminaron los archivos de tareas obsoletos para prevenir conflictos.
 
-**Estado Actual:** El sistema de tareas asíncronas está funcional a nivel de código y entorno, pero inoperativo a la espera de que se corrija el bug de la interfaz que impide arrancarlo.
+3.  **Actualización de Referencias y Configuración:**
+    *   Se corrigieron todas las importaciones en las vistas (`views.py`) y paneles de administración (`admin.py`) que llamaban a las tareas migradas.
+    *   Se actualizó la configuración estática de `CELERY_BEAT_SCHEDULE` en `core/settings.py` para que todas las tareas periódicas apunten al módulo `orchestrator`.
 
-## Hoja de Ruta para la Próxima Sesión (Estabilización Final del Motor)
+4.  **Unificación del Interruptor Maestro:**
+    *   Se eliminó la dependencia del interruptor `is_running` de `AssessmentSettings`, haciendo que todas las tareas asíncronas (contenido y evaluaciones) obedezcan al interruptor global y único en `AutomationSettings`.
 
-**Objetivo Estratégico:** Corregir el bug en la interfaz del "Centro de Control de Automatización" para reflejar el estado real del motor y permitir su correcta manipulación.
+5.  **Corrección de Bug de Estado (`AttributeError`):**
+    *   Se resolvió un `AttributeError` en la tarea `generate_assessment_from_content_task` añadiendo una llamada a `assessment.refresh_from_db()` para asegurar que el objeto en memoria estuviera sincronizado con la base de datos antes de leer el campo `last_error`.
+
+**Estado Actual:** La arquitectura de tareas está completamente centralizada y funcional. El orquestador global ahora procesa correctamente la cola de trabajo según la prioridad definida. Sin embargo, se ha detectado que las tareas de generación de `assessment`, aunque se inician, no finalizan. El último log indica que la tarea se omite con el mensaje `'Tarea omitida. Estado actual: Generando Cuestionario.'`, sugiriendo un posible problema de concurrencia o de gestión de estados.
+
+## Hoja de Ruta para la Próxima Sesión (Estabilización de `assessment`)
+
+**Objetivo Estratégico:** Diagnosticar y resolver la causa por la cual la tarea `generate_assessment_from_content_task` no completa su ejecución, quedando en un estado de "reintento" o siendo omitida.
 
 **Plan de Acción Atómico:**
 
-1.  **Auditar la Vista:** Analizar la vista que renderiza el "Centro de Control de Automatización" para encontrar el error lógico que causa la discrepancia entre el estado real de `AutomationSettings.is_running` y el estado mostrado en la plantilla.
-2.  **Auditar la Plantilla:** Revisar la lógica condicional en la plantilla para asegurar que muestra el botón correcto ("Iniciar" o "Detener") según el estado real del motor.
-3.  **Probar la Solución:** Una vez corregido, iniciar el motor a través de la interfaz y verificar que el sistema de tareas (`Celery`) comienza a procesar la cola de trabajo pendiente (la evaluación y las nuevas tareas de contenido).
+1.  **Auditoría de la Lógica de Estado:** Revisar la tarea `generate_assessment_from_content_task` en `orchestrator/tasks.py` para analizar las condiciones de entrada y las transiciones de estado (`status`) del modelo `Assessment`.
+2.  **Análisis Empírico de Logs:** Examinar en detalle los logs del `worker` de Celery para rastrear el ciclo de vida completo de una tarea de `assessment` desde que es encolada hasta que es omitida, buscando el punto exacto donde la lógica diverge del comportamiento esperado.
+3.  **Verificación en Base de Datos:** Consultar directamente el estado del objeto `Assessment` en la base de datos durante el ciclo de vida de la tarea para verificar si los cambios de estado se persisten correctamente y si coinciden con lo que la tarea espera encontrar.

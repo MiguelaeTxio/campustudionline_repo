@@ -233,3 +233,17 @@
 *  **Session:** MAMC - Implementación de Controles Interactivos en Dashboard de Evaluaciones
 *  **Description:** Desarrollar las vistas, URLs y modificaciones de plantilla necesarias para permitir la pausa, reanudación y cancelación de tareas de autoevaluación desde el nuevo "Centro de Control de Evaluaciones".
 
+# 2025-11-17
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+## EPI
+*  **Session:** Corrección de Bug en la Interfaz del Centro de Control de Automatización
+*  **Description:** Resolver la inconsistencia en la UI del 'Centro de Control de Automatización' que muestra un estado incorrecto del motor de tareas, impidiendo su arranque. El objetivo es auditar y corregir la vista y la plantilla correspondientes.
+
+# 2025-11-17
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+## EPI
+*  **Session:** Diagnóstico y Corrección de Bug en la UI del Orquestador de Tareas
+*  **Description:** Localizar y resolver la inconsistencia en la UI del nuevo módulo 'orchestrator' que impide el arranque del motor de tareas. La lógica ha sido migrada desde 'content_automation', por lo que se deben auditar las vistas, plantillas y modelos de 'orchestrator' para reflejar el estado real del motor.
+

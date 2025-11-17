@@ -149,11 +149,11 @@ CELERY_TASK_ROUTES = {
         'queue': 'high_priority',
         'routing_key': 'task.high_priority',
     },
-    'assessment.tasks.generate_assessment_from_content_task': {
+    'orchestrator.tasks.generate_assessment_from_content_task': {
         'queue': 'high_priority',
         'routing_key': 'task.high_priority',
     },
-    'assessment.tasks.correct_assessment_task': {
+    'orchestrator.tasks.correct_assessment_task': {
         'queue': 'high_priority',
         'routing_key': 'task.high_priority',
     },
@@ -388,12 +388,12 @@ CORRECTION_VISIBILITY_DURATION_SECONDS = 86400
 # Task scheduler for Celery Beat
 CELERY_BEAT_SCHEDULE = {
     "purge-and-penalize-corrections-periodic": {
-        "task": "assessment.tasks.purge_and_penalize_corrections",
+        "task": "orchestrator.tasks.purge_and_penalize_corrections",
         "schedule": timedelta(hours=1),
         "options": {"expires": 3500},
     },
     "expire-untaken-assessments-periodic": {
-        "task": "assessment.tasks.expire_untaken_assessments",
+        "task": "orchestrator.tasks.expire_untaken_assessments",
         "schedule": timedelta(hours=1),
         "options": {"expires": 3500},
     },

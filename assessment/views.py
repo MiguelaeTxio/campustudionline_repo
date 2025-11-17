@@ -1,4 +1,4 @@
-# /home/MiguelAeTxio/CampuStudiOnline/assessment/views.py
+# /home/MiguelAeTxio/PROJECTS/CampuStudiOnline/assessment/views.py
 import logging
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
@@ -13,7 +13,7 @@ from django.template.loader import render_to_string
 
 from .models import Assessment, Question, UserAnswer
 from contents.models import ContentCopy
-from .tasks import generate_assessment_from_content_task, correct_assessment_task
+from orchestrator.tasks import generate_assessment_from_content_task, correct_assessment_task
 from .utils import get_assessment_context, check_user_assessment_limits
 
 logger = logging.getLogger(__name__)
