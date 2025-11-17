@@ -247,3 +247,10 @@
 *  **Session:** Diagnóstico y Corrección de Bug en la UI del Orquestador de Tareas
 *  **Description:** Localizar y resolver la inconsistencia en la UI del nuevo módulo 'orchestrator' que impide el arranque del motor de tareas. La lógica ha sido migrada desde 'content_automation', por lo que se deben auditar las vistas, plantillas y modelos de 'orchestrator' para reflejar el estado real del motor.
 
+# 2025-11-17
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+## NRA
+*  **Session:** Estabilización del Generador de Autoevaluaciones Asíncronas
+*  **Description:** Auditar la lógica de estados en `orchestrator/tasks.py`, analizar los logs de Celery y consultar la base de datos para resolver el bucle o la omisión de la tarea `generate_assessment_from_content_task`.
+

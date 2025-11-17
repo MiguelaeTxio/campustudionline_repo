@@ -65,10 +65,10 @@ def generate_ai_assessment(request, copy_pk):
             content_copy=user_copy,
             status="PENDING",
         )
-        generate_assessment_from_content_task.delay(assessment.id)
+        # generate_assessment_from_content_task.delay(assessment.id)
         messages.success(
             request,
-            "¡Estupendo! Hemos empezado a generar tu autoevaluación. Te avisaremos cuando esté lista.",
+            "¡Estupendo! Hemos puesto tu autoevaluación en la cola de generación. Te avisaremos cuando esté lista.",
         )
 
     except Exception as e:

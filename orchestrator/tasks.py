@@ -418,12 +418,21 @@ def global_orchestrator_task(self):
 
         # --- FASE DE RESCATE (TODOS LOS TIPOS DE TAREAS) ---
         zombie_threshold = timezone.now() - timedelta(minutes=5)
-        zombie_content_tasks = PendingContentTask.objects.filter(status__in=[PendingContentTask.StatusChoices.PROCESSING, PendingContentTask.StatusChoices.PENDING], created_at__lt=zombie_threshold)
+        
+        zombie_content_tasks = PendingContentTask.objects.filter(status__in=[PendingContentTask.StatusChoices.PROCESSING, PendingContentTask.StatusChoices.PENDING], updated_at__lt=zombie_threshold)
         for task in zombie_content_tasks:
             message = f"VIGILANTE (CONTENT): Tarea '{task.id}' detectada como ZOMBIE. Marcada para rescate."
             _log_structured_event(message, "WARNING", {"task_id": str(task.id)})
             task.status = PendingContentTask.StatusChoices.FAILED_RETRYABLE
             task.save(update_fields=["status"])
+
+        zombie_assessment_tasks = Assessment.objects.filter(status=Assessment.AssessmentStatus.PROCESSING, created_at__lt=zombie_threshold)
+        for task in zombie_assessment_tasks:
+            message = f"VIGILANTE (ASSESSMENT): Tarea '{task.id}' detectada como ZOMBIE. Marcada para rescate."
+            _log_structured_event(message, "WARNING", {"task_id": str(task.id)})
+            task.status = Assessment.AssessmentStatus.GENERATION_FAILED_RETRYABLE
+            task.save(update_fields=["status"])
+        
         assessment_gen_to_rescue = Assessment.objects.filter(status=Assessment.AssessmentStatus.GENERATION_FAILED_RETRYABLE).order_by('created_at').first()
         if assessment_gen_to_rescue:
             _log_structured_event(f"RESCATE (ASSESSMENT-GEN): Re-encolando la tarea de generación de evaluación {assessment_gen_to_rescue.id}.")
@@ -431,11 +440,13 @@ def global_orchestrator_task(self):
             assessment_gen_to_rescue.save(update_fields=["status"])
             generate_assessment_from_content_task.delay(assessment_gen_to_rescue.id)
             return
+
         assessment_corr_to_rescue = Assessment.objects.filter(status=Assessment.AssessmentStatus.CORRECTION_FAILED_RETRYABLE).order_by('created_at').first()
         if assessment_corr_to_rescue:
             _log_structured_event(f"RESCATE (ASSESSMENT-CORR): Re-encolando la tarea de corrección de evaluación {assessment_corr_to_rescue.id}.")
             correct_assessment_task.delay(assessment_corr_to_rescue.id)
             return
+
         task_to_rescue = PendingContentTask.objects.filter(status__in=[PendingContentTask.StatusChoices.FAILED_RETRYABLE, PendingContentTask.StatusChoices.FAILED_QUOTA]).order_by('created_at').first()
         if task_to_rescue:
             _log_structured_event(f"RESCATE (CONTENT): Re-encolando la tarea de contenido {task_to_rescue.id}.")
@@ -738,7 +749,7 @@ def generate_assessment_from_content_task(self, assessment_id):
             if assessment.status == Assessment.AssessmentStatus.PAUSED:
                 log_timestamp(f"GENERATION_TASK: Tarea en PAUSA. Reintentando en 1 min. ID: {assessment_id}")
                 raise self.retry(countdown=60)
-            if assessment.status not in [Assessment.AssessmentStatus.PENDING, Assessment.AssessmentStatus.GENERATION_FAILED_RETRYABLE]:
+            if assessment.status not in [Assessment.AssessmentStatus.PENDING, Assessment.AssessmentStatus.GENERATION_FAILED_RETRYABLE, Assessment.AssessmentStatus.PROCESSING]:
                 return f"Tarea omitida. Estado actual: {assessment.get_status_display()}."
             assessment.status = Assessment.AssessmentStatus.PROCESSING
             assessment.save(update_fields=["status"])

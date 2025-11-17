@@ -1,35 +1,27 @@
 # Hito 6: Sistema de Autoevaluaciones con IA (EN PROGRESO)
 
-## Resumen de la Sesión del 17/11/2025 (PCS - EXITOSA)
+## Resumen de la Sesión del 17/11/2025 (PCS)
 
-**Objetivo Estratégico Alcanzado:** Se ha diagnosticado y resuelto una migración incompleta de la arquitectura de tareas asíncronas, unificando toda la lógica en el módulo `orchestrator` y resolviendo los conflictos que impedían el procesamiento de las evaluaciones.
+**Objetivo Estratégico:** Diagnosticar y resolver la causa por la cual la tarea `generate_assessment_from_content_task` no completaba su ejecución.
 
-**Desarrollo y Solución:**
+**Desarrollo y Hallazgos:**
 
-1.  **Diagnóstico del Problema de Prioridad:** Se identificó que las tareas de `assessment` no se ejecutaban debido a una lógica de priorización incorrecta en el `global_orchestrator_task` y a una dependencia obsoleta de un interruptor de motor (`is_running`) específico de la app `assessment`.
+1.  **Refactorización `PAIR`:** Se aplicó el patrón arquitectónico de `content_automation` al sistema de `assessment`. Se modificó `assessment/views.py` para desacoplar la creación de la tarea de su ejecución, y se adaptó `orchestrator/tasks.py` para incluir un mecanismo de rescate de tareas "zombi".
 
-2.  **Consolidación de la Lógica de Tareas:**
-    *   Se migró toda la lógica de `content_automation/tasks.py` y `assessment/tasks.py` al archivo centralizado `orchestrator/tasks.py`.
-    *   Se eliminaron los archivos de tareas obsoletos para prevenir conflictos.
+2.  **Diagnóstico de `FieldError`:** La implementación inicial del mecanismo de rescate introdujo un `FieldError` (`Cannot resolve keyword 'updated_at'`) que colapsaba el bucle del orquestador. El error se debió a una suposición incorrecta sobre el modelo `Assessment`, que no fue verificado empíricamente.
 
-3.  **Actualización de Referencias y Configuración:**
-    *   Se corrigieron todas las importaciones en las vistas (`views.py`) y paneles de administración (`admin.py`) que llamaban a las tareas migradas.
-    *   Se actualizó la configuración estática de `CELERY_BEAT_SCHEDULE` en `core/settings.py` para que todas las tareas periódicas apunten al módulo `orchestrator`.
+3.  **Corrección y Evidencia Final:** Se corrigió el `FieldError` en `orchestrator/tasks.py` utilizando el campo correcto (`created_at`). Los logs de Celery posteriores confirmaron que el orquestador se recuperó y procesó exitosamente la tarea de `assessment` que estaba atascada.
 
-4.  **Unificación del Interruptor Maestro:**
-    *   Se eliminó la dependencia del interruptor `is_running` de `AssessmentSettings`, haciendo que todas las tareas asíncronas (contenido y evaluaciones) obedezcan al interruptor global y único en `AutomationSettings`.
+4.  **Descubrimiento de Error Crítico de Logging:** A pesar del éxito en Celery, se constató que el estado en la base de datos no se actualizaba y que el `server.log` de la plataforma está inundado por un bucle infinito de errores de logging, lo que impide cualquier depuración efectiva y enmascara la causa real del fallo silencioso de la tarea.
 
-5.  **Corrección de Bug de Estado (`AttributeError`):**
-    *   Se resolvió un `AttributeError` en la tarea `generate_assessment_from_content_task` añadiendo una llamada a `assessment.refresh_from_db()` para asegurar que el objeto en memoria estuviera sincronizado con la base de datos antes de leer el campo `last_error`.
+**Estado Actual:** El orquestador es funcional, pero la plataforma sufre un error crítico de logging que impide la finalización correcta de las tareas y su diagnóstico. El objetivo de estabilización del `assessment` no se ha completado.
 
-**Estado Actual:** La arquitectura de tareas está completamente centralizada y funcional. El orquestador global ahora procesa correctamente la cola de trabajo según la prioridad definida. Sin embargo, se ha detectado que las tareas de generación de `assessment`, aunque se inician, no finalizan. El último log indica que la tarea se omite con el mensaje `'Tarea omitida. Estado actual: Generando Cuestionario.'`, sugiriendo un posible problema de concurrencia o de gestión de estados.
+## Hoja de Ruta para la Próxima Sesión (Estabilización de `assessment` - Parte 2)
 
-## Hoja de Ruta para la Próxima Sesión (Estabilización de `assessment`)
-
-**Objetivo Estratégico:** Diagnosticar y resolver la causa por la cual la tarea `generate_assessment_from_content_task` no completa su ejecución, quedando en un estado de "reintento" o siendo omitida.
+**Objetivo Estratégico:** Alcanzar la estabilidad completa del sistema de logging y de la pipeline de generación de `assessment`.
 
 **Plan de Acción Atómico:**
 
-1.  **Auditoría de la Lógica de Estado:** Revisar la tarea `generate_assessment_from_content_task` en `orchestrator/tasks.py` para analizar las condiciones de entrada y las transiciones de estado (`status`) del modelo `Assessment`.
-2.  **Análisis Empírico de Logs:** Examinar en detalle los logs del `worker` de Celery para rastrear el ciclo de vida completo de una tarea de `assessment` desde que es encolada hasta que es omitida, buscando el punto exacto donde la lógica diverge del comportamiento esperado.
-3.  **Verificación en Base de Datos:** Consultar directamente el estado del objeto `Assessment` en la base de datos durante el ciclo de vida de la tarea para verificar si los cambios de estado se persisten correctamente y si coinciden con lo que la tarea espera encontrar.
+1.  **Prioridad Absoluta: Reparar el Sistema de Logging:** Auditar la configuración de `LOGGING` en `core/settings.py` para identificar y corregir la causa del bucle de errores en `server.log`. Sin logs fiables, no se puede avanzar.
+2.  **Diagnóstico del Fallo Silencioso:** Una vez que el logging sea funcional, ejecutar de nuevo el proceso de generación de una evaluación para capturar el `traceback` real que provoca que la tarea `generate_assessment_from_content_task` termine "exitosamente" para Celery pero sin actualizar el estado en la base de datos.
+3.  **Implementación de la Corrección:** Aplicar la solución al fallo silencioso identificado.
