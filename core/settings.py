@@ -1,3 +1,4 @@
+# /home/MiguelAeTxio/PROJECTS/CampuStudiOnline/core/settings.py
 from pathlib import Path
 import os
 import socket
@@ -405,7 +406,7 @@ CELERY_BEAT_SCHEDULE = {
 }
 # ==============================================================================
 
-# --- Forensic Logging Configuration (ROBUST) ---
+# --- Forensic Logging Configuration (ROBUST V2) ---
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
@@ -438,19 +439,28 @@ LOGGING = {
         },
     },
     "loggers": {
+        # El logger raíz captura los logs de NUESTRAS aplicaciones.
         "": {
-            "handlers": ["console", "file", "error_file"],
+            "handlers": ["console", "file"],
             "level": "DEBUG",
-            "propagate": True,
         },
+        # El logger 'django' captura los logs del framework.
         "django": {
-            "handlers": ["console", "file", "error_file"],
-            "level": "DEBUG",
+            "handlers": ["console", "file"],
+            "level": "INFO",
             "propagate": False,
         },
+        # Logger específico para errores del servidor (5xx). Crucial para producción.
+        "django.request": {
+            "handlers": ["error_file"],
+            "level": "ERROR",
+            "propagate": True,
+        },
+        # Silenciamos el logger de base de datos por defecto para evitar ruido.
+        # Cambiar a 'DEBUG' para depurar consultas SQL específicas.
         "django.db.backends": {
             "handlers": ["console"],
-            "level": "DEBUG",
+            "level": "INFO",
             "propagate": False,
         },
         "push_debugger": {

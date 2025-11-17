@@ -1,18 +1,25 @@
-# Hito 21: Refactorización del Orquestador de Tareas Asíncronas y Resiliencia del Sistema (COMPLETADO)
+# Hito 21: Refactorización del Orquestador de Tareas Asíncronas (EN PROGRESO)
 
-## Resumen de la Implementación
+## Resumen de la Sesión del 17/11/2025 (PCS)
 
-En esta sesión se ha completado con éxito la refactorización de la aplicación `assessment` para integrarla con el nuevo `orchestrator` centralizado. Los objetivos alcanzados son:
+**Objetivo Estratégico:** Auditar el estado de la refactorización del orquestador, documentar los hallazgos y reestructurar la hoja de ruta del proyecto para priorizar su finalización.
 
-1.  **Modelo de Datos Corregido:** Se modificó el modelo `Assessment` para reintroducir los estados de fallo reintentables (`GENERATION_FAILED_RETRYABLE` y `CORRECTION_FAILED_RETRYABLE`), cruciales para la lógica del orquestador.
-2.  **Migración Aplicada:** Se generó y aplicó con éxito la migración `0012_alter_assessment_status` para reflejar los cambios en la base de datos.
-3.  **Lógica de Tareas Refactorizada:** Se eliminó la lógica de reintentos (`self.retry()`) de las tareas de Celery en `assessment/tasks.py`. La gestión de fallos recuperables ahora es responsabilidad exclusiva del orquestador, fortaleciendo la resiliencia y centralizando la lógica.
-4.  **Dependencias Corregidas:** Se solucionó un `ImportError` en `content_automation/signals.py` que bloqueaba el sistema, producto de la refactorización inicial.
+**Desarrollo y Hallazgos:**
 
-## Conclusión
+1.  **Auditoría Empírica:** Se realizó una auditoría exhaustiva del código fuente mediante `grep`, revelando múltiples referencias a módulos y modelos obsoletos en `assessment` y `content_automation`.
+2.  **Creación de Dossier:** Se ha creado un dossier de refactorización centralizado en `/home/MiguelAeTxio/SYSTEM_DOCS/ORCHESTRATOR_REFACTOR_AUDIT/` que contiene:
+    *   `audit_report.txt`: La evidencia empírica de todas las referencias de código obsoletas.
+    *   `REFACTOR_MASTER_REPORT.md`: Un informe maestro que detalla la causa raíz, la evidencia y una hoja de ruta atómica para la corrección.
+3.  **Reconfiguración de Hitos:** Se ha actualizado el Documento Maestro del Proyecto para reabrir el Hito 21, poniéndolo `EN PROGRESO`, y pausar formalmente el Hito 6.
 
-El objetivo de este hito, que era desacoplar la lógica de reintentos de `assessment` y delegarla en un sistema centralizado, se ha cumplido en su totalidad.
+**Estado Actual:** La infraestructura documental y la planificación para completar la refactorización están listas.
 
-## Próximos Pasos
+## Hoja de Ruta para la Próxima Sesión (Ejecución de la Refactorización)
 
-Con la arquitectura de tareas asíncronas fortalecida, el sistema está listo para retomar las funcionalidades de cara al usuario. El foco del proyecto vuelve al **Hito 6: Sistema de Autoevaluaciones con IA**.
+**Objetivo Estratégico:** Ejecutar el plan de acción detallado en el `REFACTOR_MASTER_REPORT.md`.
+
+**Plan de Acción Atómico:**
+
+1.  Cargar la sesión con el Hito 21 como `EN PROGRESO`.
+2.  Seguir la hoja de ruta del `REFACTOR_MASTER_REPORT.md` para modificar, uno por uno, todos los archivos que contienen referencias obsoletas.
+3.  Realizar el protocolo de verificación final End-to-End para asegurar que el sistema es estable y todos los errores de importación han sido erradicados.

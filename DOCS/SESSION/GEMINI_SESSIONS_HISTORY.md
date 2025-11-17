@@ -81,6 +81,7 @@
 ## CYC
 *  **Session:** Corrección del Temporizador de Evaluaciones y Diagnóstico de Bucle de Procesamiento
 *  **Description:** La sesión se centrará en dos objetivos: primero, corregir el temporizador de cuenta regresiva en las autoevaluaciones, asegurando que la `expiration_date` se propague correctamente al frontend; y segundo, diagnosticar la causa por la cual las evaluaciones pueden quedar atascadas en el estado 'PROCESSING', investigando los logs de Celery y el flujo de la tarea asíncrona.
+
 # 12/11/2025
 # CAMPUSTUDIONLINE --ROADMAP
 # CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
@@ -122,6 +123,7 @@
 ## CYC
 *  **Session:** Diagnóstico y Corrección de Comportamientos Anómalos en Navegación de Sala de Estudio
 *  **Description:** Abordar dos incidencias críticas en la Sala de Estudio: un error 'Not Found' transitorio al acceder a nuevas 'ContentCopy' y la aparición de copias en grados incorrectos debido a un filtrado erróneo por 'ContentHashFamily'. La sesión se centrará en analizar y corregir las vistas y lógicas de filtrado pertinentes para restaurar la coherencia en la navegación.
+
 # 2025-11-14
 # CAMPUSTUDIONLINE --TEMP
 # ASSESSMENT_NOTIFICATION_TEMPLATE_FIX
@@ -157,6 +159,7 @@
 ## MAMC
 *  **Session:** Refactorización del Orquestador de Tareas Asíncronas e Implementación de la App 'orchestrator'
 *  **Description:** Crear la nueva aplicación 'orchestrator', migrar los modelos 'ApiKey' y 'AutomationSettings', centralizar la lógica de tareas en 'global_orchestrator_task', actualizar Celery Beat y refactorizar la app 'assessment' para su integración con el nuevo sistema.
+
 # 2025-11-15
 # CAMPUSTUDIONLINE --ROADMAP
 # CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V21.md
@@ -191,6 +194,7 @@
 ## CSO
 *  **Session:** Depuración de Visualización de ContentCopy en Sala de Estudio
 *  **Description:** Investigar y solucionar la incorrecta visualización de una copia de estudio en su contexto académico correspondiente, analizando modelos, vistas y datos en la BBDD.
+
 # 16/11/2025
 # CAMPUSTUDIONLINE --ROADMAP
 # CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
@@ -253,4 +257,18 @@
 ## NRA
 *  **Session:** Estabilización del Generador de Autoevaluaciones Asíncronas
 *  **Description:** Auditar la lógica de estados en `orchestrator/tasks.py`, analizar los logs de Celery y consultar la base de datos para resolver el bucle o la omisión de la tarea `generate_assessment_from_content_task`.
+
+# 17/11/2025
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+## CSO
+*  **Session:** Estabilización del Sistema de Logging y Generación de Autoevaluaciones
+*  **Description:** El objetivo principal es reparar el bucle de errores en el sistema de logging auditando `core/settings.py`. Una vez restaurada la telemetría, se diagnosticará y corregirá el fallo silencioso que impide a la tarea `generate_assessment_from_content_task` actualizar su estado final en la base de datos.
+
+# 17/11/2025
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+## AAAA
+*  **Session:** Corrección de Importación y Estabilización del Módulo de Autoevaluaciones (Assessment)
+*  **Description:** Sesión dedicada a resolver el `ModuleNotFoundError` en `assessment/views.py` causado por una importación incorrecta. El objetivo es aplicar el parche, recargar el servidor y realizar una prueba completa del flujo de generación de autoevaluaciones, verificando la correcta transición de estados en la base de datos y la ejecución exitosa de la tarea Celery.
 
