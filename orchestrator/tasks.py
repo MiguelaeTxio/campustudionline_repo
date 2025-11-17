@@ -174,6 +174,7 @@ def global_orchestrator_task(self):
     """
     [ORQUESTRADOR GLOBAL] Bucle principal que gestiona el estado del sistema y lanza tareas.
     """
+    raise ValueError("AUDIT_ERROR_TIMESTAMP_21_30")
     try:
         _process_quarantine_requests()
         _check_and_perform_daily_reset()
@@ -215,7 +216,7 @@ def global_orchestrator_task(self):
 
         # --- RESCATE DE TAREAS ZOMBIE ---
         zombie_threshold = timezone.now() - timedelta(minutes=5)
-        zombie_tasks = PendingContentTask.objects.filter(status__in=[PendingContentTask.StatusChoices.PROCESSING, PendingContentTask.StatusChoices.PENDING], updated_at__lt=zombie_threshold)
+        zombie_tasks = PendingContentTask.objects.filter(status__in=[PendingContentTask.StatusChoices.PROCESSING, PendingContentTask.StatusChoices.PENDING], created_at__lt=zombie_threshold)
         for task in zombie_tasks:
             message = f"VIGILANTE (CONTENT): Tarea '{task.id}' detectada como ZOMBIE. Marcada para rescate."
             _log_structured_event(message, "WARNING", {"task_id": str(task.id)})
@@ -239,7 +240,7 @@ def global_orchestrator_task(self):
             return
 
         # --- RESCATE DE TAREAS DE CONTENIDO FALLIDAS ---
-        task_to_rescue = PendingContentTask.objects.filter(status__in=[PendingContentTask.StatusChoices.FAILED_RETRYABLE, PendingContentTask.StatusChoices.FAILED_QUOTA]).order_by('updated_at').first()
+        task_to_rescue = PendingContentTask.objects.filter(status__in=[PendingContentTask.StatusChoices.FAILED_RETRYABLE, PendingContentTask.StatusChoices.FAILED_QUOTA]).order_by('created_at').first()
         if task_to_rescue:
             _log_structured_event(f"RESCATE (CONTENT): Re-encolando la tarea de contenido {task_to_rescue.id}.")
             task_to_rescue.status = PendingContentTask.StatusChoices.PENDING
@@ -262,7 +263,7 @@ def global_orchestrator_task(self):
         # --- BÚSQUEDA DE NUEVO TRABAJO ---
         while True:
             subject_to_process = None
-            approved_request = ContentRequest.objects.filter(status=ContentRequest.StatusChoices.APPROVED).order_by('updated_at').first()
+            approved_request = ContentRequest.objects.filter(status=ContentRequest.StatusChoices.APPROVED).order_by('created_at').first()
             if approved_request and approved_request.subject.content_materials.count() == 0:
                 subject_to_process = approved_request.subject
                 origin = PendingContentTask.TaskOrigin.APPROVED_REQUEST

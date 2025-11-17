@@ -226,3 +226,10 @@
 *  **Session:** Estabilización del Motor de Tareas Asíncronas: Corrección de FieldError en `assessment`
 *  **Description:** Sesión dedicada a localizar y corregir un FieldError crítico en la app 'assessment', causado por una referencia a un campo 'updated_at' inexistente en el modelo Assessment. El objetivo es restaurar la funcionalidad del panel de control de automatización y el procesamiento de tareas en segundo plano.
 
+# 2025-11-16
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+## MAMC
+*  **Session:** MAMC - Implementación de Controles Interactivos en Dashboard de Evaluaciones
+*  **Description:** Desarrollar las vistas, URLs y modificaciones de plantilla necesarias para permitir la pausa, reanudación y cancelación de tareas de autoevaluación desde el nuevo "Centro de Control de Evaluaciones".
+

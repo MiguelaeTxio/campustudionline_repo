@@ -401,6 +401,7 @@
 ./assessment/templates/admin
 ./assessment/templates/admin/assessment
 ./assessment/templates/admin/assessment/dashboard.html
+./assessment/templates/admin/assessment/view_log.html
 ./assessment/templates/admin/assessment/assessment_changelist.html
 ./assessment/static
 ./assessment/static/assessment

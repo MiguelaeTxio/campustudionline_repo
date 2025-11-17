@@ -1,6 +1,8 @@
 # /home/MiguelAeTxio/PROJECTS/CampuStudiOnline/assessment/admin_views.py
 from django.contrib.admin.views.decorators import staff_member_required
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404, redirect, render
+from django.contrib import messages, admin
+from django.urls import reverse
 from django.utils import timezone
 from datetime import timedelta
 from .models import Assessment
@@ -11,6 +13,7 @@ def assessment_dashboard(request):
     Muestra un panel de control con métricas y estados del sistema de autoevaluaciones,
     siguiendo los requisitos especificados.
     """
+    context = admin.site.each_context(request)
     now = timezone.now()
     
     # --- 1. MÉTRICAS ---
@@ -50,11 +53,66 @@ def assessment_dashboard(request):
         ]
     ).order_by('-created_at')[:10]
 
-    context = {
+    context.update({
         'title': 'Panel de Control de Evaluaciones',
         'metrics': metrics,
         'processing_task': processing_task,
         'pending_tasks': pending_tasks,
         'finished_tasks': finished_tasks,
-    }
+    })
     return render(request, 'admin/assessment/dashboard.html', context)
+
+@staff_member_required
+def pause_assessment_task(request, pk):
+    """Pausa una tarea de evaluación que está en proceso."""
+    task = get_object_or_404(Assessment, pk=pk)
+    if task.status == Assessment.AssessmentStatus.PROCESSING:
+        task.status = Assessment.AssessmentStatus.PAUSED
+        task.save()
+        messages.success(request, f"La tarea de evaluación #{task.pk} ha sido pausada.")
+    else:
+        messages.warning(request, f"La tarea #{task.pk} no se puede pausar porque no está en proceso.")
+    return redirect(reverse('admin:assessment_admin:assessment_dashboard'))
+
+@staff_member_required
+def resume_assessment_task(request, pk):
+    """Reanuda una tarea de evaluación pausada."""
+    task = get_object_or_404(Assessment, pk=pk)
+    if task.status == Assessment.AssessmentStatus.PAUSED:
+        # Se devuelve a PENDING para que el orquestador la recoja en el siguiente ciclo.
+        task.status = Assessment.AssessmentStatus.PENDING
+        task.save()
+        messages.success(request, f"La tarea de evaluación #{task.pk} ha sido reanudada y puesta en cola.")
+    else:
+        messages.warning(request, f"La tarea #{task.pk} no se puede reanudar porque no está pausada.")
+    return redirect(reverse('admin:assessment_admin:assessment_dashboard'))
+
+@staff_member_required
+def cancel_assessment_task(request, pk):
+    """Cancela una tarea de evaluación que esté pendiente o pausada."""
+    task = get_object_or_404(Assessment, pk=pk)
+    if task.status in [Assessment.AssessmentStatus.PENDING, Assessment.AssessmentStatus.PAUSED]:
+        task.status = Assessment.AssessmentStatus.CANCELLED
+        task.save()
+        messages.success(request, f"La tarea de evaluación #{task.pk} ha sido cancelada.")
+    else:
+        messages.error(request, f"La tarea #{task.pk} no se puede cancelar. Solo tareas pendientes o pausadas son cancelables.")
+    return redirect(reverse('admin:assessment_admin:assessment_dashboard'))
+
+@staff_member_required
+def view_assessment_log(request, pk):
+    """Muestra los logs detallados para una tarea de evaluación específica."""
+    task = get_object_or_404(Assessment, pk=pk)
+    
+    # Obtener el contexto base del sitio de administración para que la plantilla herede correctamente.
+    context = admin.site.each_context(request)
+    
+    # Añadir nuestras variables específicas al contexto.
+    context.update({
+        'title': f'Log de la Evaluación #{task.pk}',
+        'subtitle': f'Detalles para la tarea de {task.user.username}',
+        'task': task,
+        'opts': Assessment._meta, # Necesario para algunas partes de las plantillas admin.
+    })
+    
+    return render(request, 'admin/assessment/view_log.html', context)
