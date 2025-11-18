@@ -5,7 +5,7 @@ from django.core.management.base import BaseCommand
 from django.contrib.auth.models import Group, Permission
 from django.contrib.contenttypes.models import ContentType
 from academic_structure.models import University, Branch, Degree, Subject
-from content_automation.models import PendingContentTask
+from orchestrator.models import PendingContentTask
 
 
 class Command(BaseCommand):

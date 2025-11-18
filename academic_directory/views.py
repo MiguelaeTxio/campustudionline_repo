@@ -11,7 +11,7 @@ from django.views.decorators.http import require_POST
 from academic_structure.models import University, Branch, Degree, Subject, AcademicYear
 from contents.models import ContentMaterial, FavoriteFolder
 from assessment.models import Assessment
-from content_automation.models import ContentRequest
+from orchestrator.models import ContentRequest
 
 ACADEMIC_DIRECTORY_TEMPLATE = "academic_directory/academic_level_detail.html"
 

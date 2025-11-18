@@ -3,7 +3,7 @@ import re
 from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
 from academic_structure.models import University, Branch, Degree, Subject, AcademicYear
-from content_automation.models import PendingContentTask
+from orchestrator.models import PendingContentTask
 
 
 class Command(BaseCommand):

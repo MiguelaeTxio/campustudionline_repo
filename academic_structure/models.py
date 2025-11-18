@@ -1,4 +1,4 @@
-# /home/MiguelAeTxio/CampuStudiOnline/academic_structure/models.py
+# /home/MiguelAeTxio/PROJECTS/CampuStudiOnline/academic_structure/models.py
 from django.db import models
 from django.db.models import Q
 from django.conf import settings
@@ -413,7 +413,7 @@ class Subject(TimeStampedModel):
            de la misma familia (independientemente del estado de la tarea).
         """
         # [CORRECCIÓN] Importación local para romper el ciclo.
-        from content_automation.models import PendingContentTask
+        from orchestrator.models import PendingContentTask
 
         if not self.content_hash_family:
             return False
@@ -435,7 +435,7 @@ class Subject(TimeStampedModel):
         basándose en el estado de la FAMILIA de contenido.
         """
         # [CORRECCIÓN] Importación local para romper el ciclo.
-        from content_automation.models import ContentRequest
+        from orchestrator.models import ContentRequest
 
         if not self.content_hash_family:
             return 'REQUESTABLE'

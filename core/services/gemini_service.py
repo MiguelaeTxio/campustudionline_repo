@@ -12,8 +12,7 @@ from django.db import close_old_connections
 
 # [REFACTORIZADO V6] El servicio ya no gestiona estado, solo ejecuta.
 # Las importaciones de modelos de Django y la lógica de BBDD se eliminan.
-from content_automation.models import PendingContentTask
-from orchestrator.models import ApiKey
+from orchestrator.models import ApiKey, PendingContentTask
 
 logger = logging.getLogger(__name__)
 

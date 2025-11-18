@@ -22,8 +22,7 @@ from django.db import IntegrityError
 from django.contrib.auth import get_user_model
 from google.api_core.exceptions import ResourceExhausted, DeadlineExceeded
 
-from .models import AutomationSettings, ApiKey
-from content_automation.models import PendingContentTask, GeneratedContentChunk, ContentRequest
+from .models import AutomationSettings, ApiKey, PendingContentTask, GeneratedContentChunk, ContentRequest
 from academic_structure.models import Subject
 from users.models import CustomUser
 from assessment.models import Assessment, Question, UserAnswer, AssessmentSettings

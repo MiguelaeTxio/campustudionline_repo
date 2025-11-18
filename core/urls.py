@@ -1,4 +1,4 @@
-# /home/MiguelAeTxio/CampuStudiOnline/core/urls.py
+# /home/MiguelAeTxio/PROJECTS/CampuStudiOnline/core/urls.py
 from django.contrib import admin
 from django.urls import path, include, re_path, reverse_lazy
 from django.conf import settings
@@ -24,10 +24,6 @@ core_urlpatterns = [
 urlpatterns = [
     path("jsi18n/", JavaScriptCatalog.as_view(), name="javascript-catalog"),
     path("service-worker.js", ServiceWorkerView.as_view(), name="service_worker"),
-    path(
-        "admin/automation/",
-        include("content_automation.admin_urls", namespace="content_automation_admin"),
-    ),
     path("admin/assessment/", include("assessment.admin_urls", namespace="assessment_admin")),
     path("admin/contents/", include("contents.admin_urls", namespace="contents_admin")),
     path("admin/", admin.site.urls),

@@ -272,3 +272,10 @@
 *  **Session:** Corrección de Importación y Estabilización del Módulo de Autoevaluaciones (Assessment)
 *  **Description:** Sesión dedicada a resolver el `ModuleNotFoundError` en `assessment/views.py` causado por una importación incorrecta. El objetivo es aplicar el parche, recargar el servidor y realizar una prueba completa del flujo de generación de autoevaluaciones, verificando la correcta transición de estados en la base de datos y la ejecución exitosa de la tarea Celery.
 
+# 17/11/2025
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V21.md
+## EROTA
+*  **Session:** Ejecución de la Refactorización del Orquestador de Tareas Asíncronas
+*  **Description:** Aplicar el plan de acción definido en REFACTOR_MASTER_REPORT.md para eliminar referencias a módulos y modelos obsoletos en 'assessment' y 'content_automation', siguiendo un enfoque atómico archivo por archivo.
+

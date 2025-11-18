@@ -1,25 +1,20 @@
 # Hito 21: Refactorización del Orquestador de Tareas Asíncronas (EN PROGRESO)
 
-## Resumen de la Sesión del 17/11/2025 (PCS)
+## Resumen de la Sesión del 18/11/2025 (PCS)
 
-**Objetivo Estratégico:** Auditar el estado de la refactorización del orquestador, documentar los hallazgos y reestructurar la hoja de ruta del proyecto para priorizar su finalización.
+**Objetivo Estratégico:** Completar la refactorización del orquestador moviendo todas las dependencias lógicas desde `content_automation` y estabilizando la base de datos.
 
 **Desarrollo y Hallazgos:**
+Se ha ejecutado una refactorización exhaustiva del orquestador de tareas. Siguiendo un método empírico guiado por los errores de la aplicación, se han movido con éxito los `models`, `forms`, `admin_views` y `admin_urls` de la aplicación `content_automation` a `orchestrator`. Se resolvieron múltiples `ImportError`, `ModuleNotFoundError` y conflictos de migración de base de datos a través de una resincronización forzada en varias fases. La estructura del código y de la base de datos es ahora coherente. La corrección final de una referencia obsoleta en la plantilla `templates/admin/base_site.html` fue propuesta pero denegada, quedando como único punto pendiente.
 
-1.  **Auditoría Empírica:** Se realizó una auditoría exhaustiva del código fuente mediante `grep`, revelando múltiples referencias a módulos y modelos obsoletos en `assessment` y `content_automation`.
-2.  **Creación de Dossier:** Se ha creado un dossier de refactorización centralizado en `/home/MiguelAeTxio/SYSTEM_DOCS/ORCHESTRATOR_REFACTOR_AUDIT/` que contiene:
-    *   `audit_report.txt`: La evidencia empírica de todas las referencias de código obsoletas.
-    *   `REFACTOR_MASTER_REPORT.md`: Un informe maestro que detalla la causa raíz, la evidencia y una hoja de ruta atómica para la corrección.
-3.  **Reconfiguración de Hitos:** Se ha actualizado el Documento Maestro del Proyecto para reabrir el Hito 21, poniéndolo `EN PROGRESO`, y pausar formalmente el Hito 6.
+**Estado Actual:** La refactorización está completa a nivel de código Python y de base de datos. Queda pendiente un único ajuste en una plantilla para resolver un error de renderizado.
 
-**Estado Actual:** La infraestructura documental y la planificación para completar la refactorización están listas.
+## Hoja de Ruta para la Próxima Sesión (Finalización)
 
-## Hoja de Ruta para la Próxima Sesión (Ejecución de la Refactorización)
-
-**Objetivo Estratégico:** Ejecutar el plan de acción detallado en el `REFACTOR_MASTER_REPORT.md`.
+**Objetivo Estratégico:** Corregir la última referencia obsoleta para dar por finalizado el Hito 21.
 
 **Plan de Acción Atómico:**
-
-1.  Cargar la sesión con el Hito 21 como `EN PROGRESO`.
-2.  Seguir la hoja de ruta del `REFACTOR_MASTER_REPORT.md` para modificar, uno por uno, todos los archivos que contienen referencias obsoletas.
-3.  Realizar el protocolo de verificación final End-to-End para asegurar que el sistema es estable y todos los errores de importación han sido erradicados.
+1.  Iniciar la sesión.
+2.  Solicitar el archivo `templates/admin/base_site.html`.
+3.  Ejecutar un `PMA` para corregir la etiqueta `{% url %}` que apunta al `namespace` obsoleto `content_automation_admin`, cambiándolo por `orchestrator`.
+4.  Realizar el protocolo de verificación final End-to-End.

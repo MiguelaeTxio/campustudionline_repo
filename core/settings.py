@@ -158,10 +158,6 @@ CELERY_TASK_ROUTES = {
         'queue': 'high_priority',
         'routing_key': 'task.high_priority',
     },
-    # 'content_automation.tasks.*': {
-    #     'queue': 'content_automation',
-    #     'routing_key': 'task.content_automation',
-    # },
 }
 
 # --- reCAPTCHA Configuration ---

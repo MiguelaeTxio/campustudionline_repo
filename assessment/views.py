@@ -65,7 +65,7 @@ def generate_ai_assessment(request, copy_pk):
             content_copy=user_copy,
             status="PENDING",
         )
-        # generate_assessment_from_content_task.delay(assessment.id)
+        generate_assessment_from_content_task.delay(assessment.id)
         messages.success(
             request,
             "¡Estupendo! Hemos puesto tu autoevaluación en la cola de generación. Te avisaremos cuando esté lista.",
@@ -154,7 +154,7 @@ def submit_assessment(request, pk):
     try:
         with transaction.atomic():
             UserAnswer.objects.bulk_create(answers_to_create)
-            assessment.status = "CORRECTING"
+            assessment.status = "AWAITING_CORRECTION"
             assessment.questions_processed = 0
             assessment.total_questions_expected = questions.count()
             assessment.save(
@@ -283,12 +283,16 @@ def retry_assessment_generation(request, assessment_pk):
         pk=assessment_pk,
         user=request.user,
     )
-    # [REFACTORIZADO] El sistema ahora reintenta automáticamente. Esta vista está obsoleta.
-    messages.error(
-        request,
-        "Esta función ya no es necesaria. El sistema reintentará generar tu evaluación automáticamente si ocurre un problema.",
-    )
     user_copy = assessment.content_copy
+
+    # El sistema ahora reintenta automáticamente.
+    # No obstante, mantenemos la capacidad de re-encolar manualmente
+    # para casos donde el worker se haya detenido por completo.
+    generate_assessment_from_content_task.delay(assessment.id)
+    messages.info(
+        request,
+        "Se ha enviado una solicitud para reintentar la generación de la evaluación.",
+    )
     return redirect(reverse("study_room:edit_copy", kwargs={"pk": user_copy.pk}))
 
 
@@ -296,12 +300,25 @@ def retry_assessment_generation(request, assessment_pk):
 @require_POST
 def cancel_assessment_generation(request, assessment_pk):
     assessment = get_object_or_404(Assessment, pk=assessment_pk, user=request.user)
-    # [REFACTORIZADO] La cancelación manual ya no es soportada por la nueva lógica de estados.
-    messages.error(
-        request,
-        "La cancelación manual de una generación en curso ya no está disponible.",
-    )
     user_copy = assessment.content_copy
+
+    cancellable_statuses = [
+        Assessment.AssessmentStatus.PENDING,
+        Assessment.AssessmentStatus.GENERATION_FAILED_RETRYABLE,
+        Assessment.AssessmentStatus.GENERATION_FAILED_QUOTA,
+        Assessment.AssessmentStatus.GENERATION_FAILED_FATAL,
+    ]
+
+    if assessment.status in cancellable_statuses:
+        assessment.status = Assessment.AssessmentStatus.USER_CANCELLED
+        assessment.save(update_fields=["status"])
+        messages.success(request, "La generación de la evaluación ha sido cancelada.")
+    else:
+        messages.error(
+            request,
+            "No se puede cancelar una evaluación que ya está en proceso o completada.",
+        )
+
     return redirect(reverse("study_room:edit_copy", kwargs={"pk": user_copy.pk}))
 
 
