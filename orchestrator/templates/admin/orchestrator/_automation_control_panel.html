@@ -1,10 +1,10 @@
-{# /home/MiguelAeTxio/CampuStudiOnline/content_automation/templates/admin/content_automation/_automation_control_panel.html #}
+{# /home/MiguelAeTxio/PROJECTS/CampuStudiOnline/orchestrator/templates/admin/orchestrator/_automation_control_panel.html #}
 <fieldset class="module aligned" id="automation-control-panel">
     <h2>Acciones de Control</h2>
     <div class="form-row">
         <div>
             <form 
-                hx-post="{% url 'content_automation:toggle_automation_status' %}" 
+                hx-post="{% url 'orchestrator:toggle_automation_status' %}" 
                 hx-target="#automation-control-panel-wrapper" 
                 hx-swap="innerHTML"
                 hx-indicator=".htmx-indicator"

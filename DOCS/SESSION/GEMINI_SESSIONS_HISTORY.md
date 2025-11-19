@@ -1,6 +1,6 @@
 # 2025-11-08
 # CAMPUSTUDIONLINE --TEMP
-# APIKEYS_ROTATION_AND_QUARENTAINE_FAILURE
+# APIKEYS_ROTATION_AND_QUARENTNINE_FAILURE
 ## MAMC
 *  **Session:** Investigación y Corrección del Fallo en la Rotación y Cuarentena de API Keys
 *  **Description:** Sesión de depuración para diagnosticar y resolver una posible regresión en el sistema de rotación de `APIKeys` de la aplicación `content_automation`. El síntoma principal es que solo una clave entra en cuarentena y la clave activa no rota correctamente, impactando la generación de contenido.
@@ -137,7 +137,6 @@
 ## CYC
 *  **Session:** Corrección de la Lógica de Visualización de Badges de Autoevaluación
 *  **Description:** Diagnosticar y solucionar los errores en la presentación de los indicadores de estado de las autoevaluaciones (Assessment) en la vista de la Sala de Estudio, asegurando que se muestren correctamente según su contexto jerárquico.
-
 
 # 14/11/2025
 # CAMPUSTUDIONLINE --ROADMAP
@@ -279,3 +278,9 @@
 *  **Session:** Ejecución de la Refactorización del Orquestador de Tareas Asíncronas
 *  **Description:** Aplicar el plan de acción definido en REFACTOR_MASTER_REPORT.md para eliminar referencias a módulos y modelos obsoletos en 'assessment' y 'content_automation', siguiendo un enfoque atómico archivo por archivo.
 
+# 18/11/2025
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V21.md
+## MAMC
+*   **Session:** Refactorización Final del Orquestador y Corrección de Plantilla
+*   **Description:** Finalizar el Hito 21 mediante la corrección de una referencia de URL obsoleta en `templates/admin/base_site.html`, cambiando el namespace `content_automation_admin` por `orchestrator`, completando así la migración de `content_automation` a `orchestrator`.

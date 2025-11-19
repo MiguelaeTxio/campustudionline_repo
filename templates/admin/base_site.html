@@ -24,7 +24,7 @@
 {# [MODIFIED] Redundant button removed and the main one renamed for clarity. #}
 {% block nav-global %}
 <div style="padding: 10px 40px; border-bottom: 1px solid #333; background: #2e2e2e; color: #ccc; display: flex; gap: 10px;">
-    <a href="{% url 'content_automation_admin:task_dashboard' %}" class="button">Centro de Control de Contenidos</a>
+    <a href="{% url 'orchestrator:task_dashboard' %}" class="button">Centro de Control de Contenidos</a>
     <a href="{% url 'assessment_admin:assessment_dashboard' %}" class="button">Centro de Control de Evaluaciones</a>
 </div>
 {% endblock %}

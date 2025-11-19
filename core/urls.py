@@ -24,6 +24,7 @@ core_urlpatterns = [
 urlpatterns = [
     path("jsi18n/", JavaScriptCatalog.as_view(), name="javascript-catalog"),
     path("service-worker.js", ServiceWorkerView.as_view(), name="service_worker"),
+    path("admin/orchestrator/", include("orchestrator.admin_urls")),
     path("admin/assessment/", include("assessment.admin_urls", namespace="assessment_admin")),
     path("admin/contents/", include("contents.admin_urls", namespace="contents_admin")),
     path("admin/", admin.site.urls),

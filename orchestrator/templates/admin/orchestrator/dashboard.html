@@ -1,4 +1,4 @@
-{# /home/MiguelAeTxio/CampuStudiOnline/content_automation/templates/admin/content_automation/dashboard.html #}
+{# /home/MiguelAeTxio/PROJECTS/CampuStudiOnline/orchestrator/templates/admin/orchestrator/dashboard.html #}
 {% extends "admin/base_site.html" %}
 {% load i18n static %}
 
@@ -64,14 +64,14 @@
 
     <!-- Acciones Principales -->
     <div class="main-actions">
-        <a href="{% url 'content_automation:create_academic_task' %}" class="button">Crear Tarea Académica</a>
-        <a href="{% url 'content_automation:create_free_task' %}" class="button">Crear Tarea Libre</a>
-        <a href="{% url 'content_automation:manage_logs' %}" class="button" style="background-color: #ffc107; color: #212529;">Gestionar Logs</a>
-        <a href="{% url 'content_automation:automation_control_center' %}" class="button">Centro de Control de Automatización</a>
+        <a href="{% url 'orchestrator:create_academic_task' %}" class="button">Crear Tarea Académica</a>
+        <a href="{% url 'orchestrator:create_free_task' %}" class="button">Crear Tarea Libre</a>
+        <a href="{% url 'orchestrator:manage_logs' %}" class="button" style="background-color: #ffc107; color: #212529;">Gestionar Logs</a>
+        <a href="{% url 'orchestrator:automation_control_center' %}" class="button">Centro de Control de Automatización</a>
     </div>
 
     <!-- Módulo de Gestión de API Key -->
-    {% include 'admin/content_automation/_api_key_selector.html' %}
+    {% include 'admin/orchestrator/_api_key_selector.html' %}
 
     <!-- Métricas del Dashboard -->
     <div class="dashboard-metrics">
@@ -112,7 +112,7 @@
                         {% if request.subject.id in subjects_with_active_tasks %}
                             <span class="status-in-progress">EnProceso</span>
                         {% else %}
-                            <form action="{% url 'content_automation:create_academic_task' %}" method="post">{% csrf_token %}<input type="hidden" name="subject_id" value="{{ request.subject.id }}"><button type="submit" class="button" style="background-color: #28a745;">Generar</button></form>
+                            <form action="{% url 'orchestrator:create_academic_task' %}" method="post">{% csrf_token %}<input type="hidden" name="subject_id" value="{{ request.subject.id }}"><button type="submit" class="button" style="background-color: #28a745;">Generar</button></form>
                         {% endif %}
                     </td>
                 </tr>
@@ -137,10 +137,10 @@
                 <tr>
                     <td><strong>{{ request.title }}</strong><br><small>{{ request.detailed_prompt|truncatewords:15 }}</small></td><td>{{ request.requester.username }}</td><td>{{ request.created_at|date:"d M Y, H:i" }}</td>
                     <td class="task-actions"><div class="triage-actions">
-                        <a href="{% url 'content_automation:create_free_task' %}?request_id={{ request.id }}" class="button">Revisar</a>
-                        <form action="{% url 'content_automation:create_free_task' %}" method="post" style="margin: 0;">{% csrf_token %}<input type="hidden" name="source_request_id" value="{{ request.id }}"><input type="hidden" name="course_title" value="{{ request.title }}"><input type="hidden" name="prompt_text" value="{{ request.detailed_prompt }}"><button type="submit" class="button" style="background-color: #28a745;">Aprobar</button></form>
-                        <a href="{% url 'content_automation:reject_free_request' request.id %}" class="button" style="background-color: #ffc107; color: #212529;">Rechazar</a>
-                        <a href="{% url 'content_automation:delete_free_request' request.id %}" class="button deletelink">Eliminar</a>
+                        <a href="{% url 'orchestrator:create_free_task' %}?request_id={{ request.id }}" class="button">Revisar</a>
+                        <form action="{% url 'orchestrator:create_free_task' %}" method="post" style="margin: 0;">{% csrf_token %}<input type="hidden" name="source_request_id" value="{{ request.id }}"><input type="hidden" name="course_title" value="{{ request.title }}"><input type="hidden" name="prompt_text" value="{{ request.detailed_prompt }}"><button type="submit" class="button" style="background-color: #28a745;">Aprobar</button></form>
+                        <a href="{% url 'orchestrator:reject_free_request' request.id %}" class="button" style="background-color: #ffc107; color: #212529;">Rechazar</a>
+                        <a href="{% url 'orchestrator:delete_free_request' request.id %}" class="button deletelink">Eliminar</a>
                     </div></td>
                 </tr>
                 {% endfor %}
@@ -160,7 +160,7 @@
                 <thead><tr><th>Título de la Tarea</th><th>Estado</th><th>Asignado a</th><th>Creada</th><th>Acciones</th></tr></thead>
                 <tbody>
                     {% for task in active_tasks %}
-                    {% include "admin/content_automation/_task_row.html" with task=task %}
+                    {% include "admin/orchestrator/_task_row.html" with task=task %}
                     {% endfor %}
                     {% if not active_tasks %}
                     <tr><td colspan="5" style="padding: 20px; text-align: center;">No hay tareas en estado activo (procesando, pendiente, pausada, etc.).</td></tr>
@@ -179,7 +179,7 @@
                 <thead><tr><th>Título de la Tarea</th><th>Estado</th><th>Asignado a</th><th>Última Actualización</th><th>Acciones</th></tr></thead>
                 <tbody>
                     {% for task in finished_tasks_page %}
-                    {% include "admin/content_automation/_task_row.html" with task=task %}
+                    {% include "admin/orchestrator/_task_row.html" with task=task %}
                     {% endfor %}
                 </tbody>
             </table>

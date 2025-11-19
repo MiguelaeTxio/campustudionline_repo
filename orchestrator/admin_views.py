@@ -54,12 +54,40 @@ def task_dashboard_view(request: HttpRequest) -> HttpResponse:
         "subjects_with_active_tasks": subjects_with_active_tasks, "pending_free_requests": pending_free_requests,
         "active_tasks": active_tasks, "finished_tasks_page": finished_tasks_page,
     })
-    return render(request, "admin/content_automation/dashboard.html", context)
+    return render(request, "admin/orchestrator/dashboard.html", context)
 
-# ... (Se incluyen aquí el resto de vistas de admin: automation_control_view, get_academic_filters_htmx, etc., con sus importaciones corregidas)
-# Por brevedad, se omite el cuerpo completo de las funciones que no cambian, pero en la propuesta real estarían completas.
 @staff_member_required
-def automation_control_view(request, *args, **kwargs): return HttpResponse("Placeholder")
+def automation_control_view(request: HttpRequest) -> HttpResponse:
+    context = admin.site.each_context(request)
+    settings_instance = AutomationSettings.load()
+
+    if request.method == "POST":
+        seed_form = SeedFiltersForm(request.POST, instance=settings_instance)
+        if seed_form.is_valid():
+            seed_form.save()
+            messages.success(request, "Los filtros de semilla se han guardado correctamente.")
+            return HttpResponseRedirect(reverse("orchestrator:automation_control_center"))
+        else:
+            messages.error(request, "Por favor, corrige los errores en el formulario.")
+    else:
+        seed_form = SeedFiltersForm(instance=settings_instance)
+
+    generation_task_history = PendingContentTask.objects.order_by("-created_at")[:50]
+
+    context.update({
+        "title": "Centro de Control de Automatización",
+        "settings": settings_instance,
+        "seed_form": seed_form,
+        "generation_task_history": generation_task_history,
+    })
+    return render(request, "admin/orchestrator/automation_control_center.html", context)
+
+@staff_member_required
+def get_automation_status_view(request: HttpRequest) -> HttpResponse:
+    settings_instance = AutomationSettings.load()
+    context = {"settings": settings_instance}
+    return render(request, "admin/orchestrator/_automation_status_panel.html", context)
+
 @staff_member_required
 def get_academic_filters_htmx(request, *args, **kwargs): return HttpResponse("Placeholder")
 @staff_member_required
@@ -86,8 +114,6 @@ def cancel_task_view(request, *args, **kwargs): return HttpResponse("Placeholder
 def task_row_partial_view(request, *args, **kwargs): return HttpResponse("Placeholder")
 @staff_member_required
 def get_modal_log_content_view(request, *args, **kwargs): return HttpResponse("Placeholder")
-@staff_member_required
-def get_automation_status_view(request, *args, **kwargs): return HttpResponse("Placeholder")
 @staff_member_required
 def reject_free_request_view(request, *args, **kwargs): return HttpResponse("Placeholder")
 @staff_member_required

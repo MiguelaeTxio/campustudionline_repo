@@ -1,4 +1,4 @@
-{# /home/MiguelAeTxio/CampuStudiOnline/content_automation/templates/admin/content_automation/automation_control_center.html #}
+{# /home/MiguelAeTxio/PROJECTS/CampuStudiOnline/orchestrator/templates/admin/orchestrator/automation_control_center.html #}
 {% extends "admin/base.html" %}
 {% load static %}
 
@@ -52,24 +52,24 @@
 {% block content %}
 <div id="content-main">
     <div style="margin-bottom: 20px;">
-        <a href="{% url 'content_automation:task_dashboard' %}" class="button">&larr; Volver al Centro de Control de Contenidos</a>
+        <a href="{% url 'orchestrator:task_dashboard' %}" class="button">&larr; Volver al Centro de Control de Contenidos</a>
     </div>
 
     <div class="control-panel-grid">
         <div id="automation-control-panel-wrapper">
-            {% include 'admin/content_automation/_automation_control_panel.html' %}
+            {% include 'admin/orchestrator/_automation_control_panel.html' %}
         </div>
         <div id="stats-panel-wrapper">
              <fieldset class="module aligned h-100">
                 <h2>Estado y Ciclo de Trabajo</h2>
-                <div id="stats-panel" hx-get="{% url 'content_automation:get_automation_status' %}" hx-trigger="load, every 10s" hx-swap="innerHTML">
+                <div id="stats-panel" hx-get="{% url 'orchestrator:get_automation_status' %}" hx-trigger="load, every 10s" hx-swap="innerHTML">
                     <p>Cargando estado del motor...</p>
                 </div>
             </fieldset>
         </div>
     </div>
 
-    <form action="{% url 'content_automation:set_seed_filters' %}" method="post">
+    <form action="{% url 'orchestrator:set_seed_filters' %}" method="post">
         {% csrf_token %}
         <fieldset class="module aligned">
             <h2>Configuración de la Tolva (Semillas de Generación)</h2>
