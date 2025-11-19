@@ -411,23 +411,45 @@ class Subject(TimeStampedModel):
         1. Su familia de contenido ya tiene un ContentMaterial asociado.
         2. Ya existe CUALQUIER PendingContentTask para CUALQUIER asignatura
            de la misma familia (independientemente del estado de la tarea).
+        3. [NUEVO] La asignatura tiene material de contenido vinculado directamente.
         """
         # [CORRECCIÓN] Importación local para romper el ciclo.
         from orchestrator.models import PendingContentTask
 
-        if not self.content_hash_family:
-            return False
-
-        # 1. Comprobar si ya existe material de contenido para la familia.
-        if self.content_hash_family.content_material:
+        # 1. Comprobación directa de contenido vinculado (Prioridad Máxima)
+        if self.content_materials.exists():
             return True
 
-        # 2. Comprobar si hay tareas pendientes para cualquier asignatura de la familia.
-        has_task = PendingContentTask.objects.filter(
-            subject__content_hash_family=self.content_hash_family
-        ).exists()
+        if self.content_hash_family:
+            # 2. Comprobar si ya existe material de contenido para la familia.
+            if self.content_hash_family.content_material:
+                return True
+
+            # 3. Comprobar si hay tareas pendientes para cualquier asignatura de la familia.
+            has_task = PendingContentTask.objects.filter(
+                subject__content_hash_family=self.content_hash_family
+            ).exclude(
+                status__in=[
+                    PendingContentTask.StatusChoices.COMPLETED,
+                    PendingContentTask.StatusChoices.FAILED,
+                    PendingContentTask.StatusChoices.FAILED_FATAL,
+                ]
+            ).exists()
+            if has_task:
+                return True
         
-        return has_task
+        # 4. Comprobar si hay tareas pendientes para esta asignatura específica (si no tiene familia)
+        has_direct_task = PendingContentTask.objects.filter(
+            subject=self
+        ).exclude(
+            status__in=[
+                PendingContentTask.StatusChoices.COMPLETED,
+                PendingContentTask.StatusChoices.FAILED,
+                PendingContentTask.StatusChoices.FAILED_FATAL,
+            ]
+        ).exists()
+
+        return has_direct_task
 
     def get_public_status(self):
         """
@@ -436,6 +458,10 @@ class Subject(TimeStampedModel):
         """
         # [CORRECCIÓN] Importación local para romper el ciclo.
         from orchestrator.models import ContentRequest
+
+        # Comprobación directa de contenido
+        if self.content_materials.filter(is_public=True).exists():
+            return 'HAS_CONTENT'
 
         if not self.content_hash_family:
             return 'REQUESTABLE'

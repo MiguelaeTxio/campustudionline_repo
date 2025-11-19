@@ -756,53 +756,52 @@ def generate_assessment_from_content_task(self, assessment_id):
         logger.error(f"GENERATION_TASK: No se encontró Assessment con ID: {assessment_id}.")
         return
     try:
-        if assessment.questions.exists():
-            log_timestamp(f"GENERATION_TASK: Reanudando generación para ID {assessment_id}.")
-        if not assessment.total_questions_expected > 0:
-            original_content = assessment.content_copy.original_content
-            full_content = original_content.get_full_markdown_content()
-            if not full_content or not full_content.strip():
-                raise ValueError("El contenido para la evaluación está vacío.")
-            prompt_format_instructions = ("**FORMATO DE SALIDA OBLIGATORIO:**\n" "Cada par pregunta-respuesta DEBE seguir esta estructura exacta, usando los separadores como se indica:\n" "[---PREGUNTA---]\n" "Aquí el texto completo de la pregunta.\n" "[---RESPUESTA---]\n" "Aquí el texto completo de la respuesta modelo.\n" "[---FIN-PREGUNTA---]\n\n")
-            prompt = (f"Tu tarea es crear un examen basado en el siguiente texto, cubriendo sus conceptos clave.\n\n" f"{prompt_format_instructions}\n\n" f"Material de estudio:\n---\n{full_content}\n---")
-            api_key = ApiKey.objects.filter(is_enabled=True, is_quarantined=False).first()
-            if not api_key:
-                raise ValueError("No se encontró una clave de API activa y disponible.")
-            success, response_text, _ = generate_text_content(prompt, api_key=api_key)
-            if not success:
-                raise AIServiceCriticalError(f"La llamada a la API de texto falló: {response_text}")
-            questions_data = _parse_assessment_text(response_text)
-            if not questions_data:
-                raise ValueError(f"No se pudieron extraer preguntas. Respuesta IA: '{response_text[:500]}...'")
-            with transaction.atomic():
-                assessment_for_setup = Assessment.objects.select_for_update().get(pk=assessment_id)
-                assessment_for_setup.total_questions_expected = len(questions_data)
-                assessment_for_setup.save(update_fields=['total_questions_expected'])
-                assessment_for_setup.last_error = f"__QUESTIONS_DATA__:{json.dumps(questions_data)}"
-                assessment_for_setup.save(update_fields=['last_error'])
+        # [REFACTORIZACIÓN CRÍTICA] Eliminada la lógica de reanudación basada en last_error.
+        # Se fuerza una generación atómica y limpia.
         
-        assessment.refresh_from_db()
+        original_content = assessment.content_copy.original_content
+        full_content = original_content.get_full_markdown_content()
+        if not full_content or not full_content.strip():
+            raise ValueError("El contenido para la evaluación está vacío.")
         
-        questions_to_process_json = assessment.last_error.replace("__QUESTIONS_DATA__:", "")
-        questions_to_process = json.loads(questions_to_process_json)
-        for q_data in questions_to_process:
-            assessment.refresh_from_db(fields=['status'])
-            if assessment.status == Assessment.AssessmentStatus.PAUSED:
-                log_timestamp(f"GENERATION_TASK: Tarea pausada durante la creación. ID: {assessment_id}")
-                raise self.retry(countdown=60)
-            if not Question.objects.filter(assessment=assessment, question_text=q_data['question_text']).exists():
-                Question.objects.create(assessment=assessment, **q_data)
-                Assessment.objects.filter(pk=assessment_id).update(questions_processed=F('questions_processed') + 1)
+        prompt_format_instructions = ("**FORMATO DE SALIDA OBLIGATORIO:**\n" "Cada par pregunta-respuesta DEBE seguir esta estructura exacta, usando los separadores como se indica:\n" "[---PREGUNTA---]\n" "Aquí el texto completo de la pregunta.\n" "[---RESPUESTA---]\n" "Aquí el texto completo de la respuesta modelo.\n" "[---FIN-PREGUNTA---]\n\n")
+        prompt = (f"Tu tarea es crear un examen basado en el siguiente texto, cubriendo sus conceptos clave.\n\n" f"{prompt_format_instructions}\n\n" f"Material de estudio:\n---\n{full_content}\n---")
+        
+        api_key = ApiKey.objects.filter(is_enabled=True, is_quarantined=False).first()
+        if not api_key:
+            raise ValueError("No se encontró una clave de API activa y disponible.")
+        
+        success, response_text, _ = generate_text_content(prompt, api_key=api_key)
+        if not success:
+            raise AIServiceCriticalError(f"La llamada a la API de texto falló: {response_text}")
+        
+        questions_data = _parse_assessment_text(response_text)
+        if not questions_data:
+            raise ValueError(f"No se pudieron extraer preguntas. Respuesta IA: '{response_text[:500]}...'")
+        
+        # [REFACTORIZACIÓN CRÍTICA] Guardado atómico de preguntas y finalización.
         with transaction.atomic():
-            assessment_to_complete = Assessment.objects.select_for_update().get(pk=assessment_id)
-            if assessment_to_complete.questions.count() >= assessment_to_complete.total_questions_expected:
-                assessment_to_complete.status = Assessment.AssessmentStatus.COMPLETED
-                assessment_to_complete.last_error = None
-                assessment_to_complete.save(update_fields=['status', 'last_error'])
-                log_timestamp(f"GENERATION_TASK: ÉXITO para Assessment ID {assessment_id}.")
-                action_url = settings.BASE_URL + reverse("assessment:take_assessment", kwargs={"pk": assessment_to_complete.pk})
-                context = {"assessment_pk": assessment_to_complete.pk, "content_title": assessment_to_complete.content_copy.original_content.title, "action_url": action_url}
-                send_unified_notification(user=assessment_to_complete.user, subject_template="assessment/email/assessment_ready_subject.txt", body_template_prefix="assessment/email/assessment_ready_body", context=context)
+            assessment_to_update = Assessment.objects.select_for_update().get(pk=assessment_id)
+            
+            # Limpiar preguntas previas si es un reintento para evitar duplicados
+            assessment_to_update.questions.all().delete()
+            
+            for q_data in questions_data:
+                Question.objects.create(assessment=assessment_to_update, **q_data)
+            
+            assessment_to_update.total_questions_expected = len(questions_data)
+            assessment_to_update.questions_processed = len(questions_data)
+            assessment_to_update.status = Assessment.AssessmentStatus.COMPLETED
+            assessment_to_update.last_error = None # Limpiar cualquier error previo
+            assessment_to_update.save(update_fields=['status', 'last_error', 'total_questions_expected', 'questions_processed'])
+            
+            log_timestamp(f"GENERATION_TASK: ÉXITO para Assessment ID {assessment_id}. {len(questions_data)} preguntas creadas.")
+            
+            # Notificación
+            action_url = settings.BASE_URL + reverse("assessment:take_assessment", kwargs={"pk": assessment_to_update.pk})
+            context = {"assessment_pk": assessment_to_update.pk, "content_title": assessment_to_update.content_copy.original_content.title, "action_url": action_url}
+            send_unified_notification(user=assessment_to_update.user, subject_template="assessment/email/assessment_ready_subject.txt", body_template_prefix="assessment/email/assessment_ready_body", context=context)
+
     except (DeadlineExceeded, AIServiceCriticalError, ValueError) as e:
         logger.error(f"GENERATION_TASK: ERROR RECUPERABLE para Assessment ID {assessment_id}: {e}", exc_info=False)
         if assessment:

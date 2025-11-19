@@ -31,7 +31,7 @@
     </ul>
     {% endif %}
 
-    <form method="post" action="{% url 'content_automation:manage_logs' %}">
+    <form method="post" action="{% url 'orchestrator:manage_logs' %}">
         {% csrf_token %}
 
         <div class="actions-bar">

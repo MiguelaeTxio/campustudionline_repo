@@ -284,3 +284,19 @@
 ## MAMC
 *   **Session:** Refactorización Final del Orquestador y Corrección de Plantilla
 *   **Description:** Finalizar el Hito 21 mediante la corrección de una referencia de URL obsoleta en `templates/admin/base_site.html`, cambiando el namespace `content_automation_admin` por `orchestrator`, completando así la migración de `content_automation` a `orchestrator`.
+
+# 2025-11-19
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V21.md
+## EDC
+*  **Session:** Implementación de Vistas Placeholder en el Orquestador
+*  **Description:** Continuar con la refactorización del módulo `orchestrator`, implementando las vistas `Placeholder` restantes en `admin_views.py` para restaurar la funcionalidad completa del Centro de Control de Automatización.
+
+
+# 19/11/2025
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V21.md
+## EDC
+*  **Session:** Refactorización del Orquestador: Recuperación y Estabilización
+*  **Description:** Actualización de manifiestos tras reinicio de sesión y resolución de error crítico NoReverseMatch en la vista create_academic_task del orquestador.
+

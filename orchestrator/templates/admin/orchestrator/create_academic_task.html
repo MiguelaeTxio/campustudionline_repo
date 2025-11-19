@@ -1,5 +1,5 @@
-{# /home/MiguelAeTxio/CampuStudiOnline/content_automation/templates/admin/content_automation/create_academic_task.html #}
-{# El namespace de la app es 'content_automation' #}
+{# /home/MiguelAeTxio/PROJECTS/CampuStudiOnline/orchestrator/templates/admin/orchestrator/create_academic_task.html #}
+{# El namespace de la app es 'orchestrator' #}
 
 {% extends "admin/base_site.html" %}
 {% load static i18n %}
@@ -60,7 +60,7 @@
                                     {% if item.is_locked %}
                                         <span class="button" disabled style="background-color: #6c757d; cursor: not-allowed;">Contenido Existente</span>
                                     {% else %}
-                                        <form action="{% url 'content_automation:create_academic_task' %}" method="post" style="margin:0;">
+                                        <form action="{% url 'orchestrator:create_academic_task' %}" method="post" style="margin:0;">
                                             {% csrf_token %}
                                             <input type="hidden" name="subject_id" value="{{ item.pk }}">
                                             <button type="submit" class="button">Generar Contenido</button>

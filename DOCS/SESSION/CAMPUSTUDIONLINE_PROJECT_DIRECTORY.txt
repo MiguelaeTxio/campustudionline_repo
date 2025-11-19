@@ -160,6 +160,7 @@
 ./academic_structure/management/commands/resync_subject_slugs.py
 ./academic_structure/management/commands/import_ugr_data.py
 ./academic_structure/management/commands/detect_hidden_duplicates.py
+./delete_stuck_assessment.py
 ./delivery_note_processor
 ./delivery_note_processor/urls.py
 ./delivery_note_processor/templates
@@ -208,6 +209,7 @@
 ./templates/includes
 ./templates/includes/pagination_controls.html
 ./AI_INCIDENTS.txt
+./check_system_state.py
 ./google_credentials.json
 ./contents
 ./contents/urls.py
@@ -300,6 +302,7 @@
 ./contents/study_room_forms.py
 ./manage.py
 ./requirements.txt
+./check_system_state_v2.py
 ./content_automation
 ./content_automation/urls.py
 ./content_automation/templates

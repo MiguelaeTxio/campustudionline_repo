@@ -67,7 +67,7 @@
 
             {# --- Selector de Subcategoría (Objetivo HTMX) --- #}
             <div id="subcategory-selector-container" 
-                 hx-get="{% url 'content_automation:get_sub_categories_for_master' %}"
+                 hx-get="{% url 'orchestrator:get_sub_categories_for_master' %}"
                  hx-target="#subcategory-selector-row" 
                  hx-trigger="change from:#id_master_category"
                  hx-swap="innerHTML">
