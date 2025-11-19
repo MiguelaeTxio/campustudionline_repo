@@ -2,24 +2,22 @@
 
 ## Resumen de la Sesión del 19/11/2025 (PCS)
 
-**Objetivo Estratégico:** Restaurar la funcionalidad crítica del sistema de generación de contenido y evaluaciones, que se encontraba inoperativo y con la interfaz desincronizada de la base de datos.
+**Objetivo Estratégico:** Recuperar el acceso al Dashboard de Administración del Orquestador y verificar el flujo.
 
 **Desarrollo y Hallazgos:**
-1.  **Corrección de "Ceguera" de la Interfaz (`academic_structure/models.py`):** Se diagnosticó que el botón "Generar Contenido" aparecía incluso cuando el contenido ya existía, debido a que la lógica solo verificaba "Familias de Contenido" y no asignaciones directas. Se implementó una corrección en `is_content_generation_locked` y `get_public_status` para detectar contenido vinculado directamente.
-2.  **Restauración de Resiliencia en Tareas (`orchestrator/tasks.py`):** Se identificó que las evaluaciones se quedaban atascadas en estado `PROCESSING` porque la tarea usaba el campo `last_error` como almacenamiento temporal de datos, fallando silenciosamente. Se refactorizó `generate_assessment_from_content_task` para realizar la generación y guardado de preguntas de forma atómica y robusta.
-3.  **Corrección de Namespaces en Plantillas:** Se corrigieron referencias obsoletas (`content_automation` -> `orchestrator`) en `create_academic_task.html`, `create_free_task.html` y `manage_logs.html`.
-4.  **Limpieza de Datos:** Se eliminó manualmente la evaluación ID 158 que había quedado en un estado irrecuperable.
+1.  **Corrección de Namespaces (`orchestrator`):** Se aplicaron correcciones mediante `PMA` en `_task_row.html` y `task_log_full_page.html`. Se reemplazaron las referencias obsoletas `content_automation:` por `orchestrator:`, eliminando el error `NoReverseMatch` (Error 500).
+2.  **Restauración del Dashboard:** El panel de administración vuelve a ser accesible.
+3.  **Verificación de Generación:** El usuario confirma que la generación de contenido ha vuelto a funcionar ("Por fin ha vuelto a funcionar").
+4.  **Nuevo Incidente (Logs Invisibles):** Aunque la tarea se procesa, el visor de logs (`task_log_full_page.html`) muestra "No se encontraron eventos de log para esta tarea", a pesar de que el sistema está trabajando. Esto sugiere que los eventos no se están persistiendo correctamente en el campo `task_log` del modelo o la plantilla no los está iterando correctamente tras la refactorización.
 
 **Estado Actual:**
-El backend de generación (contenido y evaluaciones) ha sido reparado. Sin embargo, el **Dashboard de Administración está inaccesible (Error 500)** debido a un error `NoReverseMatch` remanente en las plantillas parciales (`_task_row.html` y posiblemente otras) que aún usan los namespaces antiguos.
+Backend funcional (Generación OK). Frontend de Administración accesible pero con **ceguera de logs**.
 
 ## Hoja de Ruta para la Próxima Sesión
 
-**Objetivo Inmediato:** Recuperar el acceso al Dashboard y verificar el flujo completo de usuario.
+**Objetivo Inmediato:** Reparar la visibilidad de los Logs de Tarea en el Dashboard.
 
 **Plan de Acción Atómico:**
-1.  **Corrección de Plantillas Parciales:** Descargar y corregir `_task_row.html`, `_api_key_selector.html` y `task_log_full_page.html` para solucionar el `NoReverseMatch`.
-2.  **Verificación Integral:** Confirmar que:
-    *   El Dashboard carga correctamente.
-    *   Las asignaturas con contenido generado muestran "Ver Contenido" en lugar de "Generar".
-    *   La generación de una nueva evaluación completa su ciclo sin atascarse.
+1.  **Diagnóstico de Persistencia de Logs:** Auditar `orchestrator/tasks.py` y el método de logging en `orchestrator/models.py` para confirmar si los logs se escriben en el JSONField `task_log` o solo en archivo físico.
+2.  **Corrección de Visualización:** Asegurar que la plantilla `task_log_full_page.html` itera sobre la fuente de datos correcta.
+3.  **Verificación Final:** Ejecutar una tarea y confirmar que los pasos aparecen en tiempo real (o al refrescar) en el visor de logs.

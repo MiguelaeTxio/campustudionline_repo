@@ -1,5 +1,5 @@
-{# /home/MiguelAeTxio/CampuStudiOnline/content_automation/templates/admin/content_automation/task_log_full_page.html #}
-{# El namespace de la app es 'content_automation' #}
+{# /home/MiguelAeTxio/PROJECTS/CampuStudiOnline/orchestrator/templates/admin/orchestrator/task_log_full_page.html #}
+{# El namespace de la app es 'orchestrator' #}
 
 {% extends "admin/base_site.html" %}
 {% load i18n %}
@@ -67,7 +67,7 @@
 {% block breadcrumbs %}
 <div class="breadcrumbs">
 <a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
-&rsaquo; <a href="{% url 'content_automation:task_dashboard' %}">Dashboard de Contenido Intelectual</a>
+&rsaquo; <a href="{% url 'orchestrator:task_dashboard' %}">Dashboard de Contenido Intelectual</a>
 &rsaquo; Log: {% if task.subject %}{{ task.subject.name }}{% else %}{{ task.course_title }}{% endif %}
 </div>
 {% endblock %}

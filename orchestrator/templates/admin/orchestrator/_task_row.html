@@ -1,5 +1,5 @@
 {% comment %}
-Ruta: /home/MiguelAeTxio/CampuStudiOnline/content_automation/templates/admin/content_automation/_task_row.html
+Ruta: /home/MiguelAeTxio/PROJECTS/CampuStudiOnline/orchestrator/templates/admin/orchestrator/_task_row.html
 [V2 - REFACTORIZADO HTMX]
 Este parcial renderiza una única fila (<tr>) para un objeto 'task' (PendingContentTask).
 Ahora es un componente dinámico que se auto-actualiza mediante HTMX.
@@ -25,24 +25,24 @@ Ahora es un componente dinámico que se auto-actualiza mediante HTMX.
         {% endif %}
     </td>
     <td class="task-actions">
-        <a href="{% url 'content_automation:task_log_full_page' task_id=task.id %}" class="button" target="_blank">Ver Log</a>
+        <a href="{% url 'orchestrator:task_log_full_page' task_id=task.id %}" class="button" target="_blank">Ver Log</a>
         
         {% if task.status == 'PROCESSING' %}
-            <button hx-post="{% url 'content_automation:pause_task' task_id=task.id %}" 
+            <button hx-post="{% url 'orchestrator:pause_task' task_id=task.id %}" 
                     hx-target="#task-row-{{ task.id }}" 
                     hx-swap="outerHTML"
                     class="button" style="background-color: #ffc107; color: #212529;">Pausar</button>
         {% endif %}
         
         {% if task.status == 'PAUSED' %}
-            <button hx-post="{% url 'content_automation:resume_task' task_id=task.id %}" 
+            <button hx-post="{% url 'orchestrator:resume_task' task_id=task.id %}" 
                     hx-target="#task-row-{{ task.id }}" 
                     hx-swap="outerHTML"
                     class="button" style="background-color: #28a745;">Reanudar</button>
         {% endif %}
         
         {% if task.status != 'COMPLETED' and task.status != 'FAILED' and task.status != 'FAILED_FATAL' %}
-            <button hx-post="{% url 'content_automation:cancel_task' task_id=task.id %}" 
+            <button hx-post="{% url 'orchestrator:cancel_task' task_id=task.id %}" 
                     hx-target="#task-row-{{ task.id }}" 
                     hx-swap="outerHTML"
                     hx-confirm="¿Estás seguro de que quieres cancelar esta tarea? Esta acción la marcará como 'Fallida' y no se podrá reanudar."
