@@ -316,3 +316,10 @@
 *  **Session:** Recuperación del Dashboard y Corrección de Namespaces
 *  **Description:** Corrección de errores `NoReverseMatch` en plantillas del orquestador causados por namespaces obsoletos. Verificación del flujo completo de generación de contenido y evaluaciones.
 
+# 20/11/2025
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V21
+## CSO
+*  **Session:** Reparación de Visibilidad de Logs en Orquestador
+*  **Description:** Diagnóstico y corrección de la persistencia y visualización de logs de tareas asíncronas en el dashboard administrativo, resolviendo la incidencia de "logs invisibles" tras la refactorización de namespaces.
+

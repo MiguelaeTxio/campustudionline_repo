@@ -199,27 +199,40 @@ def _request_quarantine_via_mailbox(api_key: ApiKey):
         logger.critical(f"FALLO CRÍTICO DE ARQUITECTURA: No se pudo escribir en el buzón de cuarentena '{QUARANTINE_MAILBOX_FILE}': {e}", exc_info=True)
 
 def log_task_event(task_id: str, message: str, is_error: bool = False, payload: dict = None):
+    """
+    Registra un evento en el historial de la tarea (Base de Datos).
+    """
     try:
-        log_dir = os.path.join(settings.BASE_DIR, "logs", "content_automation")
-        os.makedirs(log_dir, exist_ok=True)
-        log_file_path = os.path.join(log_dir, f"task_{task_id}.log")
-        log_entry = {
-            "timestamp": datetime.utcnow().isoformat() + "Z",
-            "message": message,
+        timestamp = datetime.utcnow().isoformat() + "Z"
+        entry = {
+            "timestamp": timestamp,
             "level": "ERROR" if is_error else "INFO",
+            "message": message,
         }
+        
         if payload:
             try:
-                log_entry["payload"] = json.dumps(payload, indent=2, ensure_ascii=False, sort_keys=True)
+                entry["payload"] = json.dumps(payload, indent=2, ensure_ascii=False, sort_keys=True)
             except TypeError:
-                log_entry["payload"] = f"Error al serializar payload: {str(payload)}"
-        log_line = f"[{log_entry['timestamp']}] [{log_entry['level']}] {log_entry['message']}"
-        if "payload" in log_entry:
-            log_line += f"\n--- PAYLOAD ---\n{log_entry['payload']}\n-----------------\n"
-        with open(log_file_path, "a", encoding="utf-8") as f:
-            f.write(log_line + "\n")
+                entry["payload"] = str(payload)
+
+        # Escritura Atómica en Base de Datos
+        with transaction.atomic():
+            # Usamos select_for_update para bloquear la fila y evitar condiciones de carrera
+            # al leer y escribir la lista JSON.
+            task = PendingContentTask.objects.select_for_update().get(id=task_id)
+            
+            if task.task_log is None:
+                task.task_log = []
+                
+            if isinstance(task.task_log, list):
+                task.task_log.append(entry)
+                
+            task.save(update_fields=['task_log'])
+            
     except Exception as e:
-        logger.error(f"Error CRÍTICO al escribir en el archivo de log para la tarea {task_id}: {e}", exc_info=True)
+        # Si falla la escritura en DB, usamos el logger de Django como último recurso
+        logger.error(f"Error al escribir en task_log DB para {task_id}: {e}")
 
 def _parse_master_schema(markdown_text: str) -> list:
     headings = re.findall(r"^(##+)\s(.*)", markdown_text, re.MULTILINE)
@@ -779,11 +792,16 @@ def generate_assessment_from_content_task(self, assessment_id):
         if not questions_data:
             raise ValueError(f"No se pudieron extraer preguntas. Respuesta IA: '{response_text[:500]}...'")
         
-        # [REFACTORIZACIÓN CRÍTICA] Guardado atómico de preguntas y finalización.
+        # [REFACTORIZACIÓN CRÍTICA] Guardado atómico de preguntas.
+        # [V2 RESILIENCIA] La notificación se extrae del bloque atómico.
+        assessment_user = None
+        assessment_pk_val = None
+        content_title_val = None
+
         with transaction.atomic():
             assessment_to_update = Assessment.objects.select_for_update().get(pk=assessment_id)
             
-            # Limpiar preguntas previas si es un reintento para evitar duplicados
+            # Limpiar preguntas previas si es un reintento
             assessment_to_update.questions.all().delete()
             
             for q_data in questions_data:
@@ -792,15 +810,25 @@ def generate_assessment_from_content_task(self, assessment_id):
             assessment_to_update.total_questions_expected = len(questions_data)
             assessment_to_update.questions_processed = len(questions_data)
             assessment_to_update.status = Assessment.AssessmentStatus.COMPLETED
-            assessment_to_update.last_error = None # Limpiar cualquier error previo
+            assessment_to_update.last_error = None
             assessment_to_update.save(update_fields=['status', 'last_error', 'total_questions_expected', 'questions_processed'])
             
-            log_timestamp(f"GENERATION_TASK: ÉXITO para Assessment ID {assessment_id}. {len(questions_data)} preguntas creadas.")
+            # Capturar datos necesarios para la notificación fuera de la transacción
+            assessment_user = assessment_to_update.user
+            assessment_pk_val = assessment_to_update.pk
+            content_title_val = assessment_to_update.content_copy.original_content.title
             
-            # Notificación
-            action_url = settings.BASE_URL + reverse("assessment:take_assessment", kwargs={"pk": assessment_to_update.pk})
-            context = {"assessment_pk": assessment_to_update.pk, "content_title": assessment_to_update.content_copy.original_content.title, "action_url": action_url}
-            send_unified_notification(user=assessment_to_update.user, subject_template="assessment/email/assessment_ready_subject.txt", body_template_prefix="assessment/email/assessment_ready_body", context=context)
+            log_timestamp(f"GENERATION_TASK: ÉXITO PERSISTIDO para Assessment ID {assessment_id}. {len(questions_data)} preguntas creadas.")
+
+        # Notificación (Desacoplada de la persistencia)
+        try:
+            if assessment_user and assessment_pk_val:
+                action_url = settings.BASE_URL + reverse("assessment:take_assessment", kwargs={"pk": assessment_pk_val})
+                context = {"assessment_pk": assessment_pk_val, "content_title": content_title_val, "action_url": action_url}
+                send_unified_notification(user=assessment_user, subject_template="assessment/email/assessment_ready_subject.txt", body_template_prefix="assessment/email/assessment_ready_body", context=context)
+        except Exception as e:
+            logger.error(f"GENERATION_TASK: El contenido se generó pero falló el envío de notificación para ID {assessment_id}: {e}")
+            # No relanzamos la excepción para no revertir el éxito de la tarea
 
     except (DeadlineExceeded, AIServiceCriticalError, ValueError) as e:
         logger.error(f"GENERATION_TASK: ERROR RECUPERABLE para Assessment ID {assessment_id}: {e}", exc_info=False)
@@ -872,16 +900,31 @@ def correct_assessment_task(self, assessment_id):
                 answer.save(update_fields=["score", "feedback", "correction_expiration_date"])
             Assessment.objects.filter(pk=assessment_id).update(questions_processed=F("questions_processed") + 1)
             time.sleep(5)
+        # [V2 RESILIENCIA] Notificación desacoplada de la transacción final.
+        should_notify = False
+        assessment_user = None
+        content_title_val = None
+        
         with transaction.atomic():
             assessment_to_complete = Assessment.objects.select_for_update().get(pk=assessment_id)
             if assessment_to_complete.questions_processed >= assessment_to_complete.total_questions_expected:
                 assessment_to_complete.status = Assessment.AssessmentStatus.RESULTS_AVAILABLE
                 assessment_to_complete.results_expiration_date = expiration_date
                 assessment_to_complete.save(update_fields=["status", "results_expiration_date"])
-                log_timestamp(f"CORRECTION_TASK: ÉXITO para Assessment ID {assessment_id}.")
+                log_timestamp(f"CORRECTION_TASK: ÉXITO PERSISTIDO para Assessment ID {assessment_id}.")
+                
+                should_notify = True
+                assessment_user = assessment_to_complete.user
+                content_title_val = assessment_to_complete.content_copy.original_content.title
+
+        # Notificación
+        if should_notify:
+            try:
                 action_url = settings.BASE_URL + reverse("assessment:view_results", kwargs={"pk": assessment_id})
-                context = {"assessment_pk": assessment_id, "content_title": assessment_to_complete.content_copy.original_content.title, "action_url": action_url}
-                send_unified_notification(user=assessment_to_complete.user, subject_template="assessment/email/results_ready_subject.txt", body_template_prefix="assessment/email/results_ready_body", context=context)
+                context = {"assessment_pk": assessment_id, "content_title": content_title_val, "action_url": action_url}
+                send_unified_notification(user=assessment_user, subject_template="assessment/email/results_ready_subject.txt", body_template_prefix="assessment/email/results_ready_body", context=context)
+            except Exception as e:
+                logger.error(f"CORRECTION_TASK: Corrección finalizada pero falló notificación para ID {assessment_id}: {e}")
     except (AIServiceCriticalError) as e:
         logger.error(f"CORRECTION_TASK: ERROR RECUPERABLE para Assessment ID {assessment_id}: {e}", exc_info=False)
         if assessment:

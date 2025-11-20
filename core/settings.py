@@ -473,3 +473,7 @@ WSGI_APPLICATION = "core.wsgi.application"
 logger_settings.info(f"Settings cargados para {SITE_NAME}. DEBUG={DEBUG}.")
 
 PASSWORD_RESET_TIMEOUT = 600
+
+# --- Compatibility Aliases ---
+# BASE_URL is required by orchestrator tasks for notifications
+BASE_URL = SITE_URL
