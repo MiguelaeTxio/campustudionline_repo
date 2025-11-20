@@ -16,7 +16,15 @@ def _get_base_assessment_subqueries(user_filter):
     """
     Función de ayuda interna para construir las subconsultas base reutilizables.
     """
-    related_assessments = Assessment.objects.filter(**user_filter).order_by()
+    # [CORRECCIÓN ROBUSTA] Filtramos las evaluaciones COMPLETED que:
+    # 1. Han expirado (expiration_date <= now)
+    # 2. O tienen la fecha corrupta/vacía (expiration_date IS NULL)
+    now = timezone.now()
+    
+    related_assessments = Assessment.objects.filter(**user_filter).exclude(
+        Q(status=Assessment.AssessmentStatus.COMPLETED) &
+        (Q(expiration_date__lte=now) | Q(expiration_date__isnull=True))
+    ).order_by()
 
     distinct_states_subquery = related_assessments.annotate(
         dummy=Value(1)
@@ -47,7 +55,6 @@ def _get_base_assessment_subqueries(user_filter):
 def annotate_content_copy_queryset_with_assessment_states(queryset, user):
     """
     Anota un queryset de ContentCopy con el estado de evaluación agregado.
-    Esta es ahora la única función de anotación necesaria para la Sala de Estudio.
     """
     user_filter = {'user': user, 'content_copy': OuterRef('pk')}
     annotations = _get_base_assessment_subqueries(user_filter)
@@ -144,6 +151,7 @@ def get_assessment_context(user, content_copy):
         "take_assessment_timer": None,
         "visibility_hours": None,
         "available_corrections": [],
+        "latest_result_url": "#", # URL para el botón de resultados nuevos
         "buttons": {
             "solicitar": { "is_disabled": True, "url": "#", "text": _("No Disponible") },
             "realizar": { "is_disabled": True, "url": "#", "text": _("No Disponible") },
@@ -169,12 +177,29 @@ def get_assessment_context(user, content_copy):
         latest_assessment = all_user_assessments_for_content.order_by("-created_at").first()
         context["raw_assessment"] = latest_assessment
 
-        if latest_assessment and latest_assessment.status in FAILURE_STATUSES:
-            context["status"] = "FALLIDA"
-            context["status_text"] = _("Error: {}").format(latest_assessment.get_status_display())
+        # [REFACTOR] Prioridad 1: Mostrar el estado de la evaluación activa si existe
+        if latest_assessment:
+            s = latest_assessment.status
+            if s in ["PENDING", "PROCESSING"]:
+                context["status"] = "GENERANDOSE"
+                context["status_text"] = latest_assessment.get_status_display()
+            elif s in ["CORRECTING", "AWAITING_CORRECTION"]:
+                context["status"] = "CORRIGIENDOSE"
+                context["status_text"] = latest_assessment.get_status_display()
+            elif s == Assessment.AssessmentStatus.RESULTS_AVAILABLE and not latest_assessment.was_viewed:
+                context["status"] = "RESULTADOS_LISTOS"
+                context["latest_result_url"] = reverse("assessment:view_results", kwargs={"pk": latest_assessment.pk})
+            elif latest_assessment.status in FAILURE_STATUSES:
+                context["status"] = "FALLIDA"
+                context["status_text"] = _("Error: {}").format(latest_assessment.get_status_display())
         
-        elif not can_create_new:
+        # [REFACTOR] Prioridad 2: Si no hay estado activo que mostrar, comprobamos límites
+        # Solo entramos aquí si el status sigue siendo el default "PUEDE_SOLICITAR" (o lo hemos sobrescrito arriba pero queremos chequear límites para el futuro, aunque la UI suele bloquearse antes)
+        # Simplificación: Si ya hemos definido un estado activo (Generando, Corrigiendo, Resultados), NO mostramos "En Espera".
+        
+        if context["status"] == "PUEDE_SOLICITAR" and not can_create_new:
             context["status"] = "EN_ESPERA"
+            
             daily_slot, weekly_slot = None, None
             if limit_data["daily"]["is_reached"]:
                 oldest_in_day = limit_data["assessments_in_last_day"].order_by("created_at").first()
@@ -191,15 +216,6 @@ def get_assessment_context(user, content_copy):
                     "label": _("Próxima evaluación disponible en:"),
                     "end_time_iso": max(potential_slots).isoformat(),
                 }
-        
-        if latest_assessment:
-            s = latest_assessment.status
-            if s in ["PENDING", "PROCESSING"]:
-                context["status"] = "GENERANDOSE"
-                context["status_text"] = latest_assessment.get_status_display()
-            elif s == "CORRECTING":
-                context["status"] = "CORRIGIENDOSE"
-                context["status_text"] = latest_assessment.get_status_display()
 
     visible_assessments = Assessment.objects.filter(
         user=user,

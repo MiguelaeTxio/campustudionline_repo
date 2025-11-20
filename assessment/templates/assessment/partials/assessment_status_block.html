@@ -11,8 +11,8 @@
             <div class="text-center">
                 <p><strong>{{ assessment_context.status_text }}...</strong></p>
                 <div class="progress" style="height: 25px;">
-                    <div id="assessment-progress-bar" class="progress-bar progress-bar-striped progress-bar-animated bg-info" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
-                        <span id="assessment-progress-text">0%</span>
+                    <div id="assessment-progress-bar" class="progress-bar progress-bar-striped progress-bar-animated bg-info" role="progressbar" style="width: 100%;" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100">
+                        <span id="assessment-progress-text">Procesando</span>
                     </div>
                 </div>
                 <small class="text-muted">Actualizando estado en tiempo real.</small>
@@ -29,6 +29,12 @@
                         <span class="assessment-timer fw-bold" data-end-time="{{ assessment_context.take_assessment_timer.end_time_iso }}">--:--:--</span>
                     </p>
                 {% endif %}
+            </div>
+        
+        {% elif assessment_context.status == "RESULTADOS_LISTOS" %}
+            <div class="alert alert-success">
+                <h4 class="alert-heading"><i class="fas fa-check-circle"></i> ¡Corrección Completada!</h4>
+                <p>Tus resultados ya están disponibles. Revisa tu puntuación y el feedback de la IA.</p>
             </div>
 
         {% elif assessment_context.status == "EN_ESPERA" %}
@@ -51,23 +57,37 @@
             </div>
         {% endif %}
 
-        <!-- Botones de Acción -->
+        <!-- Botones de Acción Refactorizados -->
         <div class="mt-3">
-            <form id="generate-assessment-form" action="{{ assessment_context.buttons.solicitar.url }}" method="POST" class="d-inline">
-                {% csrf_token %}
-                <button type="submit" class="btn btn-primary" 
-                        {% if assessment_context.buttons.solicitar.is_disabled %}disabled{% endif %}
-                        {% if assessment_context.status == "EN_ESPERA" %}
-                            data-bs-toggle="tooltip"
-                            data-bs-placement="top"
-                            title="Has alcanzado uno de tus límites de uso. Podrás solicitar una nueva evaluación cuando el temporizador finalice."
-                        {% endif %}>
-                    <i class="fas fa-magic me-1"></i> {{ assessment_context.buttons.solicitar.text }}
+            {% if assessment_context.status == "REALIZAR_PENDIENTE" %}
+                <a href="{{ assessment_context.buttons.realizar.url }}" class="btn btn-warning w-100 btn-lg" role="button">
+                    <i class="fas fa-tasks me-1"></i> {{ assessment_context.buttons.realizar.text }}
+                </a>
+            
+            {% elif assessment_context.status == "RESULTADOS_LISTOS" %}
+                 <a href="{{ assessment_context.latest_result_url }}" class="btn btn-success w-100 btn-lg" role="button">
+                    <i class="fas fa-chart-bar me-1"></i> Ver Resultados Ahora
+                </a>
+
+            {% elif assessment_context.status == "GENERANDOSE" or assessment_context.status == "CORRIGIENDOSE" %}
+                <button class="btn btn-secondary disabled w-100" disabled>
+                    <i class="fas fa-spinner fa-spin me-1"></i> Procesando...
                 </button>
-            </form>
-            <a href="{{ assessment_context.buttons.realizar.url }}" class="btn btn-warning {% if assessment_context.buttons.realizar.is_disabled %}disabled{% endif %}" role="button">
-                <i class="fas fa-tasks me-1"></i> {{ assessment_context.buttons.realizar.text }}
-            </a>
+
+            {% else %}
+                <form id="generate-assessment-form" action="{{ assessment_context.buttons.solicitar.url }}" method="POST" class="d-inline">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-primary" 
+                            {% if assessment_context.buttons.solicitar.is_disabled %}disabled{% endif %}
+                            {% if assessment_context.status == "EN_ESPERA" %}
+                                data-bs-toggle="tooltip"
+                                data-bs-placement="top"
+                                title="Has alcanzado uno de tus límites de uso. Podrás solicitar una nueva evaluación cuando el temporizador finalice."
+                            {% endif %}>
+                        <i class="fas fa-magic me-1"></i> {{ assessment_context.buttons.solicitar.text }}
+                    </button>
+                </form>
+            {% endif %}
         </div>
     </div>
 

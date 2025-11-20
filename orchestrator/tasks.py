@@ -811,7 +811,7 @@ def generate_assessment_from_content_task(self, assessment_id):
             assessment_to_update.questions_processed = len(questions_data)
             assessment_to_update.status = Assessment.AssessmentStatus.COMPLETED
             assessment_to_update.last_error = None
-            assessment_to_update.save(update_fields=['status', 'last_error', 'total_questions_expected', 'questions_processed'])
+            assessment_to_update.save(update_fields=['status', 'last_error', 'total_questions_expected', 'questions_processed', 'expiration_date', 'results_expiration_date'])
             
             # Capturar datos necesarios para la notificación fuera de la transacción
             assessment_user = assessment_to_update.user
@@ -829,6 +829,21 @@ def generate_assessment_from_content_task(self, assessment_id):
         except Exception as e:
             logger.error(f"GENERATION_TASK: El contenido se generó pero falló el envío de notificación para ID {assessment_id}: {e}")
             # No relanzamos la excepción para no revertir el éxito de la tarea
+
+    except ResourceExhausted as e:
+        logger.warning(f"GENERATION_TASK: Cuota agotada para Assessment ID {assessment_id}. Iniciando protocolo de resiliencia.")
+        if assessment:
+            # 1. Si es error de cuota temporal (429), reintenta en 60s
+            if "429" in str(e) or "Too Many Requests" in str(e) or "Resource has been exhausted" in str(e):
+                 if self.request.retries < self.max_retries:
+                     log_timestamp(f"GENERATION_TASK: Cuota temporal. Reintentando en 60s. Intento {self.request.retries + 1}")
+                     raise self.retry(exc=e, countdown=60)
+            
+            # 2. Si llegamos aquí, es cuota diaria o max reintentos.
+            log_timestamp(f"GENERATION_TASK: Cuota diaria excedida o max reintentos. Solicitando cuarentena.")
+            assessment.status = Assessment.AssessmentStatus.GENERATION_FAILED_RETRYABLE
+            assessment.last_error = f"Cuota agotada: {str(e)}"
+            assessment.save(update_fields=["status", "last_error"])
 
     except (DeadlineExceeded, AIServiceCriticalError, ValueError) as e:
         logger.error(f"GENERATION_TASK: ERROR RECUPERABLE para Assessment ID {assessment_id}: {e}", exc_info=False)
@@ -867,7 +882,7 @@ def correct_assessment_task(self, assessment_id):
             return
         with transaction.atomic():
             assessment_to_update = Assessment.objects.select_for_update().get(pk=assessment_id)
-            if assessment_to_update.status not in [Assessment.AssessmentStatus.CORRECTING, Assessment.AssessmentStatus.CORRECTION_FAILED_RETRYABLE]:
+            if assessment_to_update.status not in [Assessment.AssessmentStatus.AWAITING_CORRECTION, Assessment.AssessmentStatus.CORRECTING, Assessment.AssessmentStatus.CORRECTION_FAILED_RETRYABLE]:
                  return f"Tarea de corrección omitida. Estado: {assessment_to_update.get_status_display()}."
             assessment_to_update.status = Assessment.AssessmentStatus.CORRECTING
             assessment_to_update.total_questions_expected = user_answers.count()

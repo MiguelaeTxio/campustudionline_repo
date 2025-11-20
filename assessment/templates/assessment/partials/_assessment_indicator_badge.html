@@ -13,7 +13,7 @@
         <span class="ms-2 badge bg-success text-white js-mark-viewed" data-pk="{{ latest_assessment_pk }}" title="{% trans 'Resultados disponibles para revisar' %}">
             <i class="fas fa-eye me-1"></i> {% trans "Ver Resultados" %}
         </span>
-    {% elif assessment_state == 'PROCESSING' or assessment_state == 'CORRECTING' or assessment_state == 'PENDING' %}
+    {% elif assessment_state == 'PROCESSING' or assessment_state == 'CORRECTING' or assessment_state == 'AWAITING_CORRECTION' or assessment_state == 'PENDING' %}
         <span class="ms-2 badge bg-info text-dark" title="{% trans 'El sistema está trabajando en tu evaluación...' %}">
             <i class="fas fa-spinner fa-spin me-1"></i> {% trans "En Progreso" %}
         </span>

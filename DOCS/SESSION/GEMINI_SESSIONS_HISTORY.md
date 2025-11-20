@@ -323,3 +323,33 @@
 *  **Session:** Reparación de Visibilidad de Logs en Orquestador
 *  **Description:** Diagnóstico y corrección de la persistencia y visualización de logs de tareas asíncronas en el dashboard administrativo, resolviendo la incidencia de "logs invisibles" tras la refactorización de namespaces.
 
+
+# 2025-11-20
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+## AAAA
+*  **Session:** Reparación del Flujo de Ejecución de Evaluaciones
+*  **Description:** Diagnóstico y corrección de fallos en los botones de acción "Realizar Evaluación" en la interfaz móvil, verificando la generación de URLs y la lógica de estado en el frontend.
+
+# 2025-11-20
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+## FIX_ASSESSMENT_EXECUTION
+*  **Session:** Reparación de la Ejecución de Evaluaciones
+*  **Description:** Diagnóstico y corrección del flujo de "Realizar Evaluación" en la interfaz de usuario, verificando la lógica de los botones, las URLs de redirección y el estado de las evaluaciones generadas.
+
+# 20/11/2025
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06
+## CYC
+*  **Session:** Diagnóstico y Reparación del Flujo de Ejecución de Evaluaciones
+*  **Description:** Sesión dedicada a investigar y solucionar el bloqueo reportado en la acción "Realizar Evaluación". Se auditará la lógica del frontend (`assessment_status_handler.js`), la integridad de las URLs en las plantillas y la coherencia de los estados en el backend (`assessment/models.py` y `views.py`).
+
+
+# 20/11/2025
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06
+## AES
+* **Session:** Reparación del Flujo de Ejecución de Evaluaciones
+* **Description:** Sesión dedicada a diagnosticar y corregir el fallo reportado en la acción "Realizar Evaluación" tras su generación. Se auditarán las plantillas, el manejo de estados en JavaScript (`assessment_status_handler.js`) y las rutas de Django para garantizar una transición fluida desde la notificación de "Evaluación Lista" hasta la interfaz de examen.
+
