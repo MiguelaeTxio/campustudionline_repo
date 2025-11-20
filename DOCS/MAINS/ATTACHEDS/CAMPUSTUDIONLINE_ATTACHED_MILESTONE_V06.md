@@ -1,35 +1,33 @@
 
+
 # Hito 6: Sistema de Autoevaluaciones con IA (EN PROGRESO)
 
 ## Hoja de Ruta para la Próxima Sesión
 
-**Objetivo Estratégico:** Finalización de UI y Estabilización del Admin.
+**Objetivo Estratégico:** Resolución de Errores de Enrutado (500) en Admin y Verificación Final de Logs.
 
 **Estado Actual:**
-El flujo principal ("Solicitar" -> "Generar" -> "Realizar" -> "Corregir" -> "Ver Resultados") está **100% funcional y verificado E2E**. Se han implementado correcciones críticas en la lógica de estados (backend), priorización de UI (frontend) y resiliencia de tareas (Celery).
+El sistema de notificaciones en la navbar ya reconoce correctamente el estado "Esperando Corrección". La lógica de persistencia de logs para las tareas de evaluación ha sido inyectada en `tasks.py`. Sin embargo, persiste un error crítico (`NoReverseMatch`) al intentar acceder al listado de evaluaciones en el panel de administración.
 
 **Tareas Pendientes (Backlog):**
-1.  **UI Navbar:** El badge de notificación de evaluaciones en la barra de navegación no se actualiza correctamente o no aparece.
-2.  **Admin Logs:** El visor de logs en el panel de administración presenta errores de visualización o enlace (`NoReverseMatch`).
+1.  **CRÍTICO:** Corregir el error 500 en `assessment/admin.py` relacionado con `reverse("admin:assessment_dashboard")`.
+2.  **Verificación:** Confirmar que los logs de las nuevas evaluaciones aparecen correctamente en el "Centro de Control de Evaluaciones" (campo `event_log`).
 3.  **Refinamiento Visual:** Pulir la consistencia de los badges entre diferentes vistas (lista vs detalle).
 
 **Plan de Acción Inmediato:**
-1.  Diagnosticar el renderizado del badge en `base.html` o el partial correspondiente de la navbar.
-2.  Corregir las rutas `reverse` en el módulo de logs del Admin (`orchestrator`).
+1.  Auditar `assessment/admin_urls.py` y la configuración del `AdminSite` para determinar el namespace exacto que se está registrando.
+2.  Corregir la llamada `reverse()` en `assessment/admin.py`.
 
 ---
 
 ## Registro de Cambios (Sesión 20/11/2025)
 
-### Correcciones Críticas
-*   **Lógica de Estados (Tasks):** Se modificó `correct_assessment_task` en `orchestrator/tasks.py` para aceptar explícitamente el estado `AWAITING_CORRECTION`, evitando que las evaluaciones se quedaran en el limbo tras el envío.
-*   **Persistencia de Fechas:** Se corrigió un bug en `tasks.py` donde `expiration_date` y `results_expiration_date` no se guardaban en la BD al finalizar las tareas, causando que la UI las ignorara.
-*   **Prioridad de UI (Utils):** Se refactorizó `get_assessment_context` en `assessment/utils.py` para que el estado activo de una evaluación prevalezca sobre el mensaje de "Límites Alcanzados", desbloqueando el acceso al usuario.
+### Estabilización de Interfaz y Logs (Sesión EPI)
+*   **Navbar Badge (Context Processor):** Se modificó `core/context_processors.py` para incluir el estado `AWAITING_CORRECTION` en el contador de notificaciones, solucionando la "desaparición" del badge durante la espera.
+*   **Persistencia de Logs:** Se parcheó `orchestrator/tasks.py` (función `log_timestamp`) para que los eventos de las tareas de evaluación se guarden en `AssessmentSettings.event_log`, garantizando su visibilidad en el admin tras la ejecución de Celery.
+*   **Infraestructura:** Se intentó corregir los namespaces en los templates de `orchestrator`, pero se identificó un conflicto persistente en `assessment/admin.py` que impide la carga de la vista de lista (Error 500).
 
-### Mejoras de Resiliencia
-*   **Manejo de Cuota API:** Se implementó un manejo robusto de la excepción `ResourceExhausted` en las tareas de evaluación, replicando la lógica de espera (60s) y cuarentena del generador de contenido.
-
-### Infraestructura
-*   **Admin Django:** Se reparó un error 500 en el admin de Evaluaciones corrigiendo los namespaces en `assessment/admin.py`.
-*   **System Prompts:** Se actualizó el protocolo `PMA` para estandarizar el uso de "Python Patching" (scripts `.py` para aplicar cambios) en lugar de `sed`/`awk`, eliminando el protocolo obsoleto `PMP`.
+### Correcciones Críticas (Sesión Anterior)
+*   **Lógica de Estados (Tasks):** Se modificó `correct_assessment_task` para aceptar explícitamente el estado `AWAITING_CORRECTION`.
+*   **Manejo de Cuota API:** Implementación de espera y cuarentena para `ResourceExhausted`.
 

@@ -102,7 +102,7 @@ class AssessmentAdmin(admin.ModelAdmin):
 
         # Botón para ir al Dashboard en la cabecera
         if not hasattr(self, "_dashboard_button_added"):
-            dashboard_url = reverse("admin:assessment_admin:assessment_dashboard")
+            dashboard_url = reverse("admin:assessment_dashboard")
             self.change_list_template = "admin/assessment/assessment_changelist.html"
             self._dashboard_button_added = True
 
@@ -110,7 +110,7 @@ class AssessmentAdmin(admin.ModelAdmin):
 
     def changelist_view(self, request, extra_context=None):
         extra_context = extra_context or {}
-        extra_context["dashboard_url"] = reverse("admin:assessment_admin:assessment_dashboard")
+        extra_context["dashboard_url"] = reverse("admin:assessment_dashboard")
         return super().changelist_view(request, extra_context=extra_context)
 
 

@@ -353,3 +353,10 @@
 * **Session:** Reparación del Flujo de Ejecución de Evaluaciones
 * **Description:** Sesión dedicada a diagnosticar y corregir el fallo reportado en la acción "Realizar Evaluación" tras su generación. Se auditarán las plantillas, el manejo de estados en JavaScript (`assessment_status_handler.js`) y las rutas de Django para garantizar una transición fluida desde la notificación de "Evaluación Lista" hasta la interfaz de examen.
 
+# 20/11/2025
+# CAMPUSTUDIONLINE --ROADMAP
+# Hito 6
+## EPI
+*  **Session:** Estabilización del Proceso de Evaluaciones e Interfaz
+*  **Description:** Corrección de la visualización de notificaciones (badges) en la interfaz de usuario y reparación de enlaces rotos en los logs del panel de administración del orquestador.
+

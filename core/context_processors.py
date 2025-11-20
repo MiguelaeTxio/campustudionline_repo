@@ -55,6 +55,7 @@ def global_context(request):
                 "count": base_query.filter(status__in=[
                     Assessment.AssessmentStatus.PROCESSING,
                     Assessment.AssessmentStatus.CORRECTING,
+                    Assessment.AssessmentStatus.AWAITING_CORRECTION,
                 ]).count(),
                 "status": "PROCESSING",
             },

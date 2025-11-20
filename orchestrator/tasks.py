@@ -350,7 +350,17 @@ def _send_completion_notifications(new_content: ContentMaterial):
 
 def log_timestamp(message):
     logger.info(f"[{timezone.now().strftime('%Y-%m-%d %H:%M:%S.%f')}] {message}")
-
+    try:
+        # [PATCH] Persistencia en BBDD para visibilidad en Admin
+        from assessment.models import AssessmentSettings
+        s = AssessmentSettings.get_settings()
+        entry = {"timestamp": timezone.now().isoformat(), "message": str(message)}
+        if s.event_log is None: s.event_log = []
+        s.event_log.insert(0, entry)
+        s.event_log = s.event_log[:100] # Guardar últimos 100 eventos
+        s.save(update_fields=["event_log"])
+    except Exception:
+        pass
 def _parse_assessment_text(text: str) -> list:
     questions = []
     pattern = re.compile(
