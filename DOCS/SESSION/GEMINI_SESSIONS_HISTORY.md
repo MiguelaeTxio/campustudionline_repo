@@ -360,3 +360,11 @@
 *  **Session:** Estabilización del Proceso de Evaluaciones e Interfaz
 *  **Description:** Corrección de la visualización de notificaciones (badges) en la interfaz de usuario y reparación de enlaces rotos en los logs del panel de administración del orquestador.
 
+
+# 2025-11-21
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+## MAMC
+*   **Session:** Corrección de Enrutado Admin y Verificación de Logs
+*   **Description:** Diagnóstico y resolución del error `NoReverseMatch` que provoca un fallo 500 en el panel de administración de evaluaciones. Verificación de la correcta persistencia de logs en `AssessmentSettings`.
+

@@ -67,7 +67,7 @@ class AssessmentAdmin(admin.ModelAdmin):
         "id",
         "content_copy",
         "user",
-        "status",
+        "status_badge",
         "created_at",
         "control_actions",
     )
@@ -77,6 +77,36 @@ class AssessmentAdmin(admin.ModelAdmin):
     inlines = [QuestionInline]
     date_hierarchy = "created_at"
 
+    @admin.display(description="Estado", ordering="status")
+    def status_badge(self, obj):
+        colors = {
+            Assessment.AssessmentStatus.PENDING: "#6c757d", # Secondary
+            Assessment.AssessmentStatus.PROCESSING: "#007bff", # Primary
+            Assessment.AssessmentStatus.COMPLETED: "#28a745", # Success
+            Assessment.AssessmentStatus.AWAITING_CORRECTION: "#ffc107", # Warning
+            Assessment.AssessmentStatus.CORRECTING: "#17a2b8", # Info
+            Assessment.AssessmentStatus.RESULTS_AVAILABLE: "#28a745", # Success
+            Assessment.AssessmentStatus.EXPIRED_UNTAKEN: "#6c757d", # Secondary
+            Assessment.AssessmentStatus.CORRECTION_EXPIRED: "#6c757d", # Secondary
+            Assessment.AssessmentStatus.GENERATION_FAILED_RETRYABLE: "#dc3545", # Danger
+            Assessment.AssessmentStatus.CORRECTION_FAILED_RETRYABLE: "#dc3545", # Danger
+            Assessment.AssessmentStatus.GENERATION_FAILED_QUOTA: "#c82333", # Darker Danger
+            Assessment.AssessmentStatus.GENERATION_FAILED_FATAL: "#343a40", # Dark
+            Assessment.AssessmentStatus.CORRECTION_FAILED_FATAL: "#343a40", # Dark
+            Assessment.AssessmentStatus.PAUSED: "#fd7e14", # Orange
+            Assessment.AssessmentStatus.USER_CANCELLED: "#6c757d", # Secondary
+        }
+        
+        color = colors.get(obj.status, "#6c757d")
+        text_color = "#000000" if color == "#ffc107" else "#ffffff"
+        
+        return format_html(
+            '<span style="background-color: {}; color: {}; padding: 3px 10px; border-radius: 10px; font-weight: bold; font-size: 12px;">{}</span>',
+            color,
+            text_color,
+            obj.get_status_display()
+        )
+
     @admin.display(description="Acciones de Control")
     def control_actions(self, obj):
         buttons = []
@@ -84,12 +114,12 @@ class AssessmentAdmin(admin.ModelAdmin):
             Assessment.AssessmentStatus.PROCESSING,
             Assessment.AssessmentStatus.CORRECTING,
         ]:
-            pause_url = reverse("admin:assessment_pause_task", args=[obj.pk])
+            pause_url = reverse("admin:assessment_admin:assessment_pause_task", args=[obj.pk])
             buttons.append(
                 f'<a href="{pause_url}" class="button" style="background-color: #f0ad4e;">Pausar</a>'
             )
         elif obj.status == Assessment.AssessmentStatus.PAUSED:
-            resume_url = reverse("admin:assessment_resume_task", args=[obj.pk])
+            resume_url = reverse("admin:assessment_admin:assessment_resume_task", args=[obj.pk])
             buttons.append(
                 f'<a href="{resume_url}" class="button" style="background-color: #5cb85c;">Reanudar</a>'
             )
@@ -97,12 +127,14 @@ class AssessmentAdmin(admin.ModelAdmin):
             Assessment.AssessmentStatus.GENERATION_FAILED_RETRYABLE,
             Assessment.AssessmentStatus.CORRECTION_FAILED_RETRYABLE,
         ]:
-            retry_url = reverse("admin:assessment_retry_task", args=[obj.pk])
-            buttons.append(f'<a href="{retry_url}" class="button">Reintentar</a>')
+            # TODO: Implement assessment_retry_task view and url pattern
+            # retry_url = reverse("admin:assessment_admin:assessment_retry_task", args=[obj.pk])
+            # buttons.append(f'<a href="{retry_url}" class="button">Reintentar</a>')
+            buttons.append(f'<span class="button" style="background-color: #d9534f; cursor: not-allowed;" title="Función Reintentar pendiente de implementación">Fallo (Reintentar Pendiente)</span>')
 
         # Botón para ir al Dashboard en la cabecera
         if not hasattr(self, "_dashboard_button_added"):
-            dashboard_url = reverse("admin:assessment_dashboard")
+            dashboard_url = reverse("admin:assessment_admin:assessment_dashboard")
             self.change_list_template = "admin/assessment/assessment_changelist.html"
             self._dashboard_button_added = True
 
@@ -110,7 +142,7 @@ class AssessmentAdmin(admin.ModelAdmin):
 
     def changelist_view(self, request, extra_context=None):
         extra_context = extra_context or {}
-        extra_context["dashboard_url"] = reverse("admin:assessment_dashboard")
+        extra_context["dashboard_url"] = reverse("admin:assessment_admin:assessment_dashboard")
         return super().changelist_view(request, extra_context=extra_context)
 
 

@@ -1,33 +1,12 @@
+# Hito 6: Sistema de Autoevaluaciones con IA (PAUSADO)
 
+**Motivo de la Pausa:**
+Se ha detectado una fragilidad crítica en el sistema de navegación de la "Sala de Estudio" que afecta directamente a la usabilidad de las evaluaciones. La arquitectura actual basada en deducción de jerarquías en tiempo real mediante consultas anidadas profundas es insostenible y propensa a errores por inconsistencias de datos (slugs). Se requiere una refactorización arquitectónica previa (Nuevo Hito 22) para implementar un sistema de navegación centrado en el usuario y persistente.
 
-# Hito 6: Sistema de Autoevaluaciones con IA (EN PROGRESO)
+**Estado al Pausar:**
+*   El sistema de evaluaciones (backend) funciona correctamente (generación y corrección con IA).
+*   El problema reside exclusivamente en el acceso y navegación a las copias de estudio donde se alojan estas evaluaciones.
 
-## Hoja de Ruta para la Próxima Sesión
-
-**Objetivo Estratégico:** Resolución de Errores de Enrutado (500) en Admin y Verificación Final de Logs.
-
-**Estado Actual:**
-El sistema de notificaciones en la navbar ya reconoce correctamente el estado "Esperando Corrección". La lógica de persistencia de logs para las tareas de evaluación ha sido inyectada en `tasks.py`. Sin embargo, persiste un error crítico (`NoReverseMatch`) al intentar acceder al listado de evaluaciones en el panel de administración.
-
-**Tareas Pendientes (Backlog):**
-1.  **CRÍTICO:** Corregir el error 500 en `assessment/admin.py` relacionado con `reverse("admin:assessment_dashboard")`.
-2.  **Verificación:** Confirmar que los logs de las nuevas evaluaciones aparecen correctamente en el "Centro de Control de Evaluaciones" (campo `event_log`).
-3.  **Refinamiento Visual:** Pulir la consistencia de los badges entre diferentes vistas (lista vs detalle).
-
-**Plan de Acción Inmediato:**
-1.  Auditar `assessment/admin_urls.py` y la configuración del `AdminSite` para determinar el namespace exacto que se está registrando.
-2.  Corregir la llamada `reverse()` en `assessment/admin.py`.
-
----
-
-## Registro de Cambios (Sesión 20/11/2025)
-
-### Estabilización de Interfaz y Logs (Sesión EPI)
-*   **Navbar Badge (Context Processor):** Se modificó `core/context_processors.py` para incluir el estado `AWAITING_CORRECTION` en el contador de notificaciones, solucionando la "desaparición" del badge durante la espera.
-*   **Persistencia de Logs:** Se parcheó `orchestrator/tasks.py` (función `log_timestamp`) para que los eventos de las tareas de evaluación se guarden en `AssessmentSettings.event_log`, garantizando su visibilidad en el admin tras la ejecución de Celery.
-*   **Infraestructura:** Se intentó corregir los namespaces en los templates de `orchestrator`, pero se identificó un conflicto persistente en `assessment/admin.py` que impide la carga de la vista de lista (Error 500).
-
-### Correcciones Críticas (Sesión Anterior)
-*   **Lógica de Estados (Tasks):** Se modificó `correct_assessment_task` para aceptar explícitamente el estado `AWAITING_CORRECTION`.
-*   **Manejo de Cuota API:** Implementación de espera y cuarentena para `ResourceExhausted`.
-
+**Próximos Pasos (Al reanudar):**
+1.  Integrar las vistas de evaluación con el nuevo sistema de navegación `UserStudyNavigation` (Hito 22).
+2.  Verificar el flujo completo de usuario tras la refactorización.

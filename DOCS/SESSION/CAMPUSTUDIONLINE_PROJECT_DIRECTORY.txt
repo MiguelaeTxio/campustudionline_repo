@@ -188,6 +188,7 @@
 ./delivery_note_processor/management/commands
 ./delivery_note_processor/management/commands/check_api_credentials.py
 ./delivery_note_processor/services.py
+./inspect_copy.py
 ./templates
 ./templates/base.html
 ./templates/emails
@@ -303,6 +304,7 @@
 ./manage.py
 ./requirements.txt
 ./check_system_state_v2.py
+./check_slugs.py
 ./content_automation
 ./content_automation/urls.py
 ./content_automation/templates
@@ -366,6 +368,7 @@
 ./messaging/management/commands/delete_chat_session.py
 ./messaging/management/__init__.py
 ./alvarez_credentials.json
+./check_duplicates.py
 ./assessment
 ./assessment/urls.py
 ./assessment/templates
@@ -629,6 +632,7 @@
 ./DOCS/MAINS/PROJECT_DIRECTORY.txt
 ./DOCS/MAINS/SESSION_VARIABLES.md
 ./DOCS/MAINS/ATTACHEDS
+./DOCS/MAINS/ATTACHEDS/CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V22.md
 ./DOCS/MAINS/ATTACHEDS/CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V19.md
 ./DOCS/MAINS/ATTACHEDS/CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V13.md
 ./DOCS/MAINS/ATTACHEDS/CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V21.md

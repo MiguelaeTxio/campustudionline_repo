@@ -235,23 +235,23 @@ def user_copies_list(request, university_slug=None, branch_slug=None, degree_slu
     if is_academic_path:
         breadcrumbs.extend(get_academic_breadcrumbs(university_slug, branch_slug, degree_slug, year, subject_slug))
         if subject_slug:
-            subject = get_object_or_404(Subject, slug=subject_slug)
+            subject = get_object_or_404(Subject, slug=subject_slug, academic_year__degree__slug=degree_slug, academic_year__year=year) if degree_slug and year else get_object_or_404(Subject, slug=subject_slug)
             items_list = base_copies.filter(subject_context=subject).order_by("-updated_at")
             items_list = annotate_content_copy_queryset_with_assessment_states(items_list, request.user)
             context.update({"level_name": "academic_copies", "page_title": f"Copias de {subject.name}"})
         elif year:
-            degree = get_object_or_404(Degree, slug=degree_slug)
+            degree = get_object_or_404(Degree, slug=degree_slug, branch__slug=branch_slug) if branch_slug else get_object_or_404(Degree, slug=degree_slug)
             year_obj = get_object_or_404(AcademicYear, degree=degree, year=year)
             subject_ids = base_copies.filter(subject_context__academic_year=year_obj).values_list("subject_context_id", flat=True).distinct()
             items_list = Subject.objects.filter(id__in=subject_ids).annotate(**get_aggregated_assessment_annotations({'content_copy__subject_context': OuterRef('pk')})).order_by("name")
             context.update({"level_name": "subjects", "page_title": f"Asignaturas de {degree.name} - Año {year}", "current_year": year_obj})
         elif degree_slug:
-            degree = get_object_or_404(Degree, slug=degree_slug)
+            degree = get_object_or_404(Degree, slug=degree_slug, branch__slug=branch_slug) if branch_slug else get_object_or_404(Degree, slug=degree_slug)
             year_numbers = base_copies.filter(subject_context__academic_year__degree=degree).values_list("subject_context__academic_year__year", flat=True).distinct()
             items_list = AcademicYear.objects.filter(degree=degree, year__in=year_numbers).annotate(**get_aggregated_assessment_annotations({'content_copy__subject_context__academic_year': OuterRef('pk')})).order_by("year")
             context.update({"level_name": "years", "page_title": f"Años de {degree.name}", "current_degree": degree})
         elif branch_slug:
-            branch = get_object_or_404(Branch, slug=branch_slug)
+            branch = get_object_or_404(Branch, slug=branch_slug, university__slug=university_slug) if university_slug else get_object_or_404(Branch, slug=branch_slug)
             degree_ids = base_copies.filter(subject_context__academic_year__degree__branch=branch).values_list("subject_context__academic_year__degree_id", flat=True).distinct()
             items_list = Degree.objects.filter(id__in=degree_ids).annotate(**get_aggregated_assessment_annotations({'content_copy__subject_context__academic_year__degree': OuterRef('pk')})).order_by("name")
             context.update({"level_name": "degrees", "page_title": f"Titulaciones de {branch.name}", "current_branch": branch})
