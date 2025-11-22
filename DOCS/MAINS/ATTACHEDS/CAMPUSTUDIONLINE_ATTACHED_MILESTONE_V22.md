@@ -9,6 +9,7 @@
 *   **Planificación:** Actualización del Plan Maestro de Refactorización para incluir fases de barrido de código huérfano.
 
 **Hoja de Ruta para la Siguiente Sesión:**
+*   **NOTA PISA:** Cargar obligatoriamente el documento dedicado: .
 1.  **FASE 7: Barrido de Referencias Huérfanas (PRIORIDAD)**
     *   Ejecutar auditoría de código (grep) para localizar imports de modelos eliminados.
     *   Limpiar `contents/views.py`, `study_room_views.py` y `core/context_processors.py`.
