@@ -202,92 +202,80 @@ def get_academic_breadcrumbs(university_slug=None, branch_slug=None, degree_slug
 
 @login_required
 def user_copies_list(request, university_slug=None, branch_slug=None, degree_slug=None, year=None, subject_slug=None, master_slug=None, sub_slug=None):
+    """
+    Vista resiliente y centrada en el usuario para listar copias de estudio.
+    Se apoya en UserStudyNavigation para la estructura visual (sidebar)
+    y usa esta vista solo para filtrar el contenido final.
+    """
+    # Base QuerySet: Solo las copias del usuario
     base_copies = ContentCopy.objects.filter(user=request.user).select_related(
-        "original_content__master_category",
-        "original_content__sub_category__master_category",
-        "subject_context__academic_year__degree__branch__university"
-    ).prefetch_related('assessments')
+        "original_content",
+        "subject_context"
+    ).order_by("-updated_at")
 
-    breadcrumbs = [{"name": "Sala de Estudio", "url": reverse("study_room:copy_directory_root")}]
-    context = {"page_title": "Mi Sala de Estudio", "show_tour": True}
-    items_list = None
+    context = {
+        "page_title": "Mi Sala de Estudio", 
+        "show_tour": True,
+        "breadcrumbs": [{"name": "Sala de Estudio", "url": reverse("study_room:copy_directory_root")}]
+    }
     
-    is_academic_path = any([university_slug, branch_slug, degree_slug, year, subject_slug])
-    is_free_content_path = any([master_slug, sub_slug])
+    items_list = []
+    level_name = "root"
 
-    def get_aggregated_assessment_annotations(filter_kwargs):
-        base_assessments = Assessment.objects.filter(content_copy__user=request.user, **filter_kwargs)
-        priority_annotation = Case(
-            When(status__in=[
-                Assessment.AssessmentStatus.GENERATION_FAILED_RETRYABLE, Assessment.AssessmentStatus.GENERATION_FAILED_QUOTA,
-                Assessment.AssessmentStatus.GENERATION_FAILED_FATAL, Assessment.AssessmentStatus.CORRECTION_FAILED_RETRYABLE,
-                Assessment.AssessmentStatus.CORRECTION_FAILED_FATAL,
-            ], then=Value(1)),
-            When(status=Assessment.AssessmentStatus.COMPLETED, then=Value(2)),
-            When(status=Assessment.AssessmentStatus.RESULTS_AVAILABLE, then=Value(3)),
-            When(status__in=[Assessment.AssessmentStatus.PROCESSING, Assessment.AssessmentStatus.CORRECTING, Assessment.AssessmentStatus.PENDING], then=Value(4)),
-            default=Value(5), output_field=IntegerField()
-        )
-        prioritized_assessments = base_assessments.annotate(priority=priority_annotation).order_by('priority', '-created_at')
-        return {'assessment_state': Subquery(prioritized_assessments.values('status')[:1]), 'latest_assessment_pk': Subquery(prioritized_assessments.values('pk')[:1])}
-
-    # --- RUTA DE NAVEGACIÓN ACADÉMICA ---
-    if is_academic_path:
-        breadcrumbs.extend(get_academic_breadcrumbs(university_slug, branch_slug, degree_slug, year, subject_slug))
+    # --- MODO 1: NAVEGACIÓN ACADÉMICA ---
+    if any([university_slug, branch_slug, degree_slug, year, subject_slug]):
         if subject_slug:
-            subject = get_object_or_404(Subject, slug=subject_slug, academic_year__degree__slug=degree_slug, academic_year__year=year) if degree_slug and year else get_object_or_404(Subject, slug=subject_slug)
-            items_list = base_copies.filter(subject_context=subject).order_by("-updated_at")
-            items_list = annotate_content_copy_queryset_with_assessment_states(items_list, request.user)
-            context.update({"level_name": "academic_copies", "page_title": f"Copias de {subject.name}"})
-        elif year:
-            degree = get_object_or_404(Degree, slug=degree_slug, branch__slug=branch_slug) if branch_slug else get_object_or_404(Degree, slug=degree_slug)
-            year_obj = get_object_or_404(AcademicYear, degree=degree, year=year)
-            subject_ids = base_copies.filter(subject_context__academic_year=year_obj).values_list("subject_context_id", flat=True).distinct()
-            items_list = Subject.objects.filter(id__in=subject_ids).annotate(**get_aggregated_assessment_annotations({'content_copy__subject_context': OuterRef('pk')})).order_by("name")
-            context.update({"level_name": "subjects", "page_title": f"Asignaturas de {degree.name} - Año {year}", "current_year": year_obj})
-        elif degree_slug:
-            degree = get_object_or_404(Degree, slug=degree_slug, branch__slug=branch_slug) if branch_slug else get_object_or_404(Degree, slug=degree_slug)
-            year_numbers = base_copies.filter(subject_context__academic_year__degree=degree).values_list("subject_context__academic_year__year", flat=True).distinct()
-            items_list = AcademicYear.objects.filter(degree=degree, year__in=year_numbers).annotate(**get_aggregated_assessment_annotations({'content_copy__subject_context__academic_year': OuterRef('pk')})).order_by("year")
-            context.update({"level_name": "years", "page_title": f"Años de {degree.name}", "current_degree": degree})
-        elif branch_slug:
-            branch = get_object_or_404(Branch, slug=branch_slug, university__slug=university_slug) if university_slug else get_object_or_404(Branch, slug=branch_slug)
-            degree_ids = base_copies.filter(subject_context__academic_year__degree__branch=branch).values_list("subject_context__academic_year__degree_id", flat=True).distinct()
-            items_list = Degree.objects.filter(id__in=degree_ids).annotate(**get_aggregated_assessment_annotations({'content_copy__subject_context__academic_year__degree': OuterRef('pk')})).order_by("name")
-            context.update({"level_name": "degrees", "page_title": f"Titulaciones de {branch.name}", "current_branch": branch})
-        elif university_slug:
-            university = get_object_or_404(University, slug=university_slug)
-            branch_ids = base_copies.filter(subject_context__academic_year__degree__branch__university=university).values_list("subject_context__academic_year__degree__branch_id", flat=True).distinct()
-            items_list = Branch.objects.filter(id__in=branch_ids).annotate(**get_aggregated_assessment_annotations({'content_copy__subject_context__academic_year__degree__branch': OuterRef('pk')})).order_by("name")
-            context.update({"level_name": "branches", "page_title": f"Ramas de {university.name}", "current_university": university})
-
-    # --- RUTA DE NAVEGACIÓN DE CONTENIDO LIBRE (Lógica preservada) ---
-    elif is_free_content_path:
-        master_category = get_object_or_404(FreeContentMasterCategory, slug=master_slug)
-        breadcrumbs.append({"name": master_category.name, "url": reverse("study_room:free_master_directory", kwargs={"master_slug": master_category.slug})})
-        if sub_slug:
-            sub_category = get_object_or_404(FreeContentSubCategory, slug=sub_slug, master_category=master_category)
-            items_list = base_copies.filter(original_content__sub_category=sub_category).order_by("-updated_at")
-            items_list = annotate_content_copy_queryset_with_assessment_states(items_list, request.user)
-            breadcrumbs.append({"name": sub_category.name, "url": "#"})
-            context.update({"level_name": "free_copies", "page_title": f"Mis Copias en {sub_category.name}"})
-        else:
-            sub_category_ids = base_copies.filter(original_content__master_category=master_category).values_list("original_content__sub_category_id", flat=True).distinct()
-            items_list = FreeContentSubCategory.objects.filter(id__in=sub_category_ids).annotate(**get_aggregated_assessment_annotations({'content_copy__original_content__sub_category': OuterRef('pk')})).order_by("name")
-            context.update({"level_name": "sub_categories", "page_title": f"Mis Copias en {master_category.name}", "current_master_category": master_category})
+            items_list = base_copies.filter(subject_context__slug=subject_slug)
+            try:
+                subj_name = items_list.first().subject_context.name if items_list.exists() else subject_slug
+            except AttributeError:
+                subj_name = subject_slug
             
-    # --- VISTA RAÍZ (NIVEL 0) ---
-    else:
-        university_ids = base_copies.filter(subject_context__isnull=False).values_list("subject_context__academic_year__degree__branch__university_id", flat=True).distinct()
-        academic_roots = University.objects.filter(id__in=university_ids).annotate(**get_aggregated_assessment_annotations({'content_copy__subject_context__academic_year__degree__branch__university': OuterRef('pk')})).order_by("name")
-        master_category_ids = base_copies.filter(original_content__is_free_content=True).values_list("original_content__master_category_id", flat=True).distinct()
-        free_content_roots = FreeContentMasterCategory.objects.filter(id__in=master_category_ids).annotate(**get_aggregated_assessment_annotations({'content_copy__original_content__master_category': OuterRef('pk')})).order_by("name")
-        context.update({"level_name": "root", "academic_roots": academic_roots, "free_content_roots": free_content_roots})
+            context.update({
+                "page_title": f"Copias de {subj_name}",
+                "level_name": "academic_copies"
+            })
+            context["breadcrumbs"].append({"name": "Académico", "url": "#"})
+            context["breadcrumbs"].append({"name": subj_name, "url": "#"})
 
-    if items_list is not None and "page_obj" not in context:
+        elif year and degree_slug:
+            subject_ids = base_copies.filter(
+                subject_context__academic_year__year=year,
+                subject_context__academic_year__degree__slug=degree_slug
+            ).values_list("subject_context_id", flat=True).distinct()
+            
+            items_list = Subject.objects.filter(id__in=subject_ids).order_by("name")
+            context.update({"page_title": f"Asignaturas del Año {year}", "level_name": "subjects"})
+
+        elif degree_slug:
+             items_list = [] 
+             context.update({"page_title": f"Grado: {degree_slug}", "level_name": "years"})
+             
+        else:
+            pass
+
+    # --- MODO 2: CONTENIDO LIBRE ---
+    elif any([master_slug, sub_slug]):
+        if sub_slug:
+            items_list = base_copies.filter(original_content__sub_category__slug=sub_slug)
+            context.update({"page_title": f"Categoría: {sub_slug}", "level_name": "free_copies"})
+        elif master_slug:
+            sub_ids = base_copies.filter(
+                original_content__master_category__slug=master_slug
+            ).values_list("original_content__sub_category_id", flat=True).distinct()
+            items_list = FreeContentSubCategory.objects.filter(id__in=sub_ids)
+            context.update({"page_title": f"Sección: {master_slug}", "level_name": "sub_categories"})
+
+    # --- MODO 3: RAÍZ (Dashboard) ---
+    else:
+        items_list = base_copies
+        context.update({"page_title": "Resumen Reciente", "level_name": "dashboard"})
+
+    if items_list is not None:
         context["page_obj"] = Paginator(items_list, 10).get_page(request.GET.get("page"))
-    
-    context["breadcrumbs"] = breadcrumbs
+    else:
+         context["page_obj"] = None
+
     template_name = "contents/study_room/copy_list.html"
     if request.htmx:
         template_name = "contents/study_room/_copy_list_partial.html"

@@ -658,7 +658,6 @@ def generate_full_course_task(self, task_id: str):
             manual_classification = task.structured_content.get('manual_classification')
             if task.subject:
                 log_task_event(task_id, "Clasificación académica: Asignando contenido a asignatura oficial.")
-                target_topic = None # Campo legacy desactivado
                 master_category, sub_category = None, None
             elif manual_classification:
                 log_task_event(task_id, "Clasificación MANUAL para contenido libre iniciada.")
@@ -666,13 +665,12 @@ def generate_full_course_task(self, task_id: str):
                 sub_category = None
                 if manual_classification.get('sub_category_id'):
                     sub_category = FreeContentSubCategory.objects.get(id=manual_classification['sub_category_id'])
-                target_topic = None
             else:
                 raise ContentGenerationError("Estado de tarea anómalo: Contenido libre sin clasificación manual.")
             with transaction.atomic():
                 task_final = PendingContentTask.objects.select_for_update().get(id=task_id)
                 is_free = task_final.subject is None
-                new_content = ContentMaterial.objects.create(title=final_course_title, short_description=task_final.structured_content["metadata"].get("descripcion_corta", ""), markdown_content=final_markdown, topic=target_topic, master_category=master_category, sub_category=sub_category, creator=task_final.assigned_to, is_free_content=is_free)
+                new_content = ContentMaterial.objects.create(title=final_course_title, short_description=task_final.structured_content["metadata"].get("descripcion_corta", ""), markdown_content=final_markdown, master_category=master_category, sub_category=sub_category, creator=task_final.assigned_to, is_free_content=is_free)
                 if not is_free:
                     family = task_final.subject.content_hash_family
                     if family:

@@ -134,6 +134,12 @@ class ContentMaterial(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    def __str__(self):
+        return self.title
+
+    def get_full_markdown_content(self):
+        return self.markdown_content
+
     class Meta:
         verbose_name = "Material de Contenido"
         verbose_name_plural = "D. Materiales de Contenido"

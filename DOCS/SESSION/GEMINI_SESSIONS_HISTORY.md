@@ -413,3 +413,11 @@
 *  **Session:** Limpieza de Referencias Huérfanas Post-Migración de Navegación
 *  **Description:** Ejecución de la Fase 7 del Hito 22. Auditoría y eliminación sistemática de código muerto y referencias a modelos eliminados (KnowledgeArea, Discipline, etc.) en vistas, procesadores de contexto y templates tras la migración exitosa a UserStudyNavigation. Preparación del backend para la integración del frontend.
 
+
+# 2025-11-22
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V22
+## CYC
+*  **Session:** H22: Reparación Crítica Navegación y Orquestador
+*  **Description:** Ejecución de emergencia de la Fase 6 omitida: refactorización de `contents/study_room_views.py` para consumir `UserStudyNavigation` y eliminar dependencias legacy causantes de 404. Corrección de `TypeError: 'topic'` en `orchestrator/tasks.py` por campo obsoleto.
+
