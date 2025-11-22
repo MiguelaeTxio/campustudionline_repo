@@ -1,20 +1,15 @@
 # Hito 22: Refactorización de Navegación de Sala de Estudio (User-Centric)
 
-**Estado:** EN PROGRESO (Fase 6 Completada - Backend Operativo)
+**Estado:** EN PROGRESO (Fases 7 y 8 Completadas - FASE 6 PENDIENTE Y CRÍTICA)
 
-**Progreso de la Sesión:**
-*   **Reparación Crítica:** Corrección de errores de sintaxis bloqueantes en `search/views.py` y corrección de `contents/admin.py`.
-*   **Sincronización DB:** Ejecución exitosa de la migración `0019` usando `SeparateDatabaseAndState`, eliminando las tablas legacy (`KnowledgeArea`, `Discipline`, etc.) y creando `UserStudyNavigation`.
-*   **Backend de Navegación:** Implementación del servicio `contents/services/navigation_builder.py` y conexión de señales en `contents/signals.py`.
-*   **Planificación:** Actualización del Plan Maestro de Refactorización para incluir fases de barrido de código huérfano.
+**Resumen de la Sesión:**
+*   **Fase 7 (Limpieza):** Se eliminaron referencias huérfanas a modelos legacy (`Topic`, etc.) en `contents/views.py`.
+*   **Fase 8 (Frontend):** Se implementó el componente visual `_navigation_sidebar.html` y se integró en `base.html` y `context_processors.py`. El árbol de navegación se visualiza correctamente.
+*   **DIAGNÓSTICO DE ERROR CRÍTICO (404):** Se confirmó que la **Fase 6** (Adaptación de Vistas Backend) fue omitida erróneamente. `contents/study_room_views.py` sigue usando lógica legacy (`get_object_or_404` contra tablas), provocando errores 404 al navegar.
+*   **DIAGNÓSTICO ORQUESTADOR:** Se detectó un error bloqueante en `orchestrator/tasks.py` (`TypeError: 'topic'`) que impide la generación de nuevo contenido.
 
-**Hoja de Ruta para la Siguiente Sesión:**
-*   **NOTA PISA:** Cargar obligatoriamente el documento dedicado: .
-1.  **FASE 7: Barrido de Referencias Huérfanas (PRIORIDAD)**
-    *   Ejecutar auditoría de código (grep) para localizar imports de modelos eliminados.
-    *   Limpiar `contents/views.py`, `study_room_views.py` y `core/context_processors.py`.
-    *   Verificar que no queden referencias rotas en templates.
-2.  **FASE 8: Integración Frontend**
-    *   Exponer el árbol JSON (`UserStudyNavigation`) al contexto del usuario.
-    *   Implementar el componente visual del árbol de navegación.
+**Hoja de Ruta para la Siguiente Sesión (PRIORIDAD ABSOLUTA):**
+1.  **EJECUCIÓN DE FASE 6 (Recuperación):** Refactorizar `contents/study_room_views.py` (vista `user_copies_list`) para consumir exclusivamente `UserStudyNavigation` (JSON) y eliminar validaciones contra DB legacy. **Esto solucionará los 404.**
+2.  **REPARACIÓN ORQUESTADOR:** Modificar `orchestrator/tasks.py` para eliminar la asignación del campo eliminado `topic`.
+3.  **Verificación Final:** Confirmar navegación fluida sin 404 y reanudación de tareas de Celery.
 

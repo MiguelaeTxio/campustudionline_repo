@@ -48,7 +48,7 @@ El análisis de impacto ha identificado dependencias críticas en los siguientes
     - [x] `contents/templates/contents/create_edit_content.html` (Selectores AJAX).
     - [x] `contents/templates/contents/favorite_folder_detail.html` (Referencias a `material.topic`).
 
-### FASE 4: Limpieza de Consumidores (Search y Signals) [CORRECCIÓN PENDIENTE]
+### FASE 4: Limpieza de Consumidores (Search y Signals) [COMPLETADO]
 *Objetivo: Eliminar referencias de lectura.*
 - [x] **Refactorizar `search/views.py`**: Eliminar bloque "Intelectual" en búsqueda global y vistas passthrough.
 - [x] **Refactorizar `search/urls.py`**: Eliminar rutas `academic/`.
@@ -62,7 +62,7 @@ El análisis de impacto ha identificado dependencias críticas en los siguientes
     - [x] Eliminar funciones helper obsoletas.
 - [ ] **Crear Migración**: `makemigrations contents`.
 
-### FASE 6: Nueva Arquitectura de Navegación [PENDIENTE]
+### FASE 6: Nueva Arquitectura de Navegación [PENDIENTE - PRIORIDAD ALTA]
 *Objetivo: Implementar `UserStudyNavigation`.*
 - [ ] **Definir Modelo**: Añadir `UserStudyNavigation` a `contents/models.py` (Ya incluido en Fase 5).
 - [ ] **Implementar Servicio**: Crear `contents/services/navigation_builder.py`.
@@ -74,3 +74,5 @@ El análisis de impacto ha identificado dependencias críticas en los siguientes
 
 ## 4. Registro de Sesiones
 *   **Sesión 1:** Análisis de impacto, definición de estrategia y ejecución de fases 1 a 5.
+
+*   **Sesión 2 (22/11):** Ejecución de Fases 7 y 8 (Limpieza y Frontend). Detección de bloqueo por omisión de Fase 6.

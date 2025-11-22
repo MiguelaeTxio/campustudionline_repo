@@ -1,0 +1,33 @@
+<div class="accordion-item border-0">
+    <h2 class="accordion-header">
+        <button class="accordion-button collapsed py-2 px-3 shadow-none bg-white" type="button" 
+                data-bs-toggle="collapse" 
+                data-bs-target="#collapse-folder-{{ node.id }}" 
+                aria-expanded="false"
+                style="padding-left: {{ level|add:'1' }}rem !important;">
+            <i class="fas {% if node.is_system %}fa-star text-warning{% else %}fa-folder text-warning{% endif %} me-2"></i>
+            <span class="text-truncate">{{ node.name }}</span>
+        </button>
+    </h2>
+    <div id="collapse-folder-{{ node.id }}" class="accordion-collapse collapse">
+        <div class="accordion-body p-0">
+            <!-- Materiales en esta carpeta -->
+            {% for mat in node.materials %}
+                <a href="{% url 'contents:content_detail' mat.id %}" class="list-group-item list-group-item-action border-0 py-1 small text-truncate" 
+                   style="padding-left: {{ level|add:'2.5' }}rem !important;">
+                    <i class="far fa-file text-muted me-2"></i>{{ mat.title }}
+                </a>
+            {% endfor %}
+            
+            <!-- Subcarpetas (Recursión) -->
+            {% for child in node.children %}
+                {% include "contents/partials/_nav_folder_recursive.html" with node=child level=level|add:"1" %}
+            {% endfor %}
+            
+            <!-- Link para abrir carpeta completa -->
+            <a href="{{ node.url }}" class="list-group-item list-group-item-action border-0 py-2 text-center text-primary small bg-light">
+                Ver todo en {{ node.name }} <i class="fas fa-arrow-right ms-1"></i>
+            </a>
+        </div>
+    </div>
+</div>

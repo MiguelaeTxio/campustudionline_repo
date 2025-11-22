@@ -4,6 +4,11 @@ from django.db.models import Count, Q
 from messaging.models import DirectMessage
 from assessment.models import Assessment
 from chat.models import ChatRoom
+import logging
+from contents.services.navigation_builder import refresh_user_navigation
+from contents.models import UserStudyNavigation
+
+logger = logging.getLogger(__name__)
 
 
 def global_context(request):
@@ -80,4 +85,23 @@ def global_context(request):
                 "status": "MULTIPLE",
             }
             
+
+        # --- Study Room Navigation Tree (User-Centric) ---
+        try:
+            # Acceso optimizado vía reverse relation
+            nav_entry = getattr(user, 'study_navigation', None)
+            if nav_entry:
+                context["user_navigation_tree"] = nav_entry.navigation_tree
+            else:
+                raise UserStudyNavigation.DoesNotExist
+        except (UserStudyNavigation.DoesNotExist, AttributeError):
+            # Lazy generation: Si no existe, se crea al vuelo (Fail-safe)
+            try:
+                refresh_user_navigation(user)
+                nav_entry = UserStudyNavigation.objects.get(user=user)
+                context["user_navigation_tree"] = nav_entry.navigation_tree
+            except Exception as e:
+                logger.error(f"Failed to generate navigation tree for user {user.id}: {e}")
+                context["user_navigation_tree"] = {}
+
     return context

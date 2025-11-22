@@ -1,0 +1,87 @@
+<div class="offcanvas offcanvas-start" tabindex="-1" id="studyNavigationSidebar" aria-labelledby="studyNavigationSidebarLabel">
+  <div class="offcanvas-header bg-light">
+    <h5 class="offcanvas-title" id="studyNavigationSidebarLabel">
+      <i class="fas fa-compass me-2"></i>Mi Sala de Estudio
+    </h5>
+    <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+  </div>
+  <div class="offcanvas-body p-0">
+    <!-- User Info Section -->
+    <div class="p-3 border-bottom bg-white">
+      <small class="text-muted text-uppercase fw-bold" style="font-size: 0.7rem;">Usuario</small>
+      <div class="d-flex align-items-center mt-2">
+        <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-2" style="width: 32px; height: 32px;">
+          {{ user.username|slice:":1"|upper }}
+        </div>
+        <span class="fw-bold text-dark">{{ user.username }}</span>
+      </div>
+    </div>
+
+    <!-- Navigation Tree Container -->
+    <div class="list-group list-group-flush" id="navigation-tree-root">
+      {% if user_navigation_tree %}
+        
+        <!-- SECCIÓN 1: FAVORITOS Y CARPETAS -->
+        <div class="p-2 bg-light border-bottom">
+            <small class="text-muted fw-bold text-uppercase ms-2" style="font-size: 0.75rem;">Mis Carpetas</small>
+        </div>
+        
+        {% for folder in user_navigation_tree.favorites %}
+            {% include "contents/partials/_nav_folder_recursive.html" with node=folder level=0 %}
+        {% empty %}
+            <div class="p-3 text-center text-muted">
+                <small>No tienes carpetas aún.</small>
+            </div>
+        {% endfor %}
+
+        <!-- SECCIÓN 2: COPIAS DE ESTUDIO (ACADÉMICAS) -->
+        <div class="p-2 bg-light border-bottom border-top mt-2">
+            <small class="text-muted fw-bold text-uppercase ms-2" style="font-size: 0.75rem;">Asignaturas</small>
+        </div>
+        
+        {% for subject_name, copies in user_navigation_tree.study_copies.academic.items %}
+            <div class="accordion-item border-0">
+                <h2 class="accordion-header" id="heading-subj-{{ forloop.counter }}">
+                    <button class="accordion-button collapsed py-2 px-3 shadow-none bg-white" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-subj-{{ forloop.counter }}" aria-expanded="false">
+                        <i class="fas fa-book text-primary me-2"></i>
+                        <span class="text-truncate">{{ subject_name }}</span>
+                        <span class="badge bg-secondary rounded-pill ms-auto" style="font-size: 0.7em;">{{ copies|length }}</span>
+                    </button>
+                </h2>
+                <div id="collapse-subj-{{ forloop.counter }}" class="accordion-collapse collapse" data-bs-parent="#navigation-tree-root">
+                    <div class="accordion-body p-0">
+                        {% for copy in copies %}
+                            <a href="{{ copy.url }}" class="list-group-item list-group-item-action border-0 ps-5 py-2 small text-truncate">
+                                <i class="far fa-file-alt me-2 text-muted"></i>{{ copy.title }}
+                            </a>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+             <div class="p-3 text-center text-muted">
+                <small>Sin actividad académica reciente.</small>
+            </div>
+        {% endfor %}
+
+        <!-- SECCIÓN 3: CONTENIDO LIBRE -->
+        {% if user_navigation_tree.study_copies.free %}
+            <div class="p-2 bg-light border-bottom border-top mt-2">
+                <small class="text-muted fw-bold text-uppercase ms-2" style="font-size: 0.75rem;">Contenido Libre</small>
+            </div>
+            {% for copy in user_navigation_tree.study_copies.free %}
+                <a href="{{ copy.url }}" class="list-group-item list-group-item-action border-0 px-3 py-2">
+                     <i class="fas fa-feather-alt text-success me-2"></i>{{ copy.title }}
+                </a>
+            {% endfor %}
+        {% endif %}
+
+      {% else %}
+        <div class="p-4 text-center">
+            <div class="spinner-border text-primary spinner-border-sm" role="status"></div>
+            <p class="small text-muted mt-2">Generando navegación...</p>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</div>

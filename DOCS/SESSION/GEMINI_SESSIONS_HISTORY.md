@@ -405,3 +405,11 @@
 *  **Session:** Hito 22: Reparación Crítica en Search y Consolidación de Modelos
 *  **Description:** Sesión de emergencia para corregir un error de sintaxis bloqueante en 'search/views.py' resultante de la refactorización previa. El objetivo inmediato es restaurar la operatividad de Django para ejecutar las migraciones pendientes en la aplicación 'contents', finalizando la limpieza de modelos obsoletos (Jerarquía Intelectual). Posteriormente, se procederá con la implementación de la lógica de navegación 'UserStudyNavigation'.
 
+
+# 2025-11-22
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V22.md
+## CSO_NAV_REF_CLEAN
+*  **Session:** Limpieza de Referencias Huérfanas Post-Migración de Navegación
+*  **Description:** Ejecución de la Fase 7 del Hito 22. Auditoría y eliminación sistemática de código muerto y referencias a modelos eliminados (KnowledgeArea, Discipline, etc.) en vistas, procesadores de contexto y templates tras la migración exitosa a UserStudyNavigation. Preparación del backend para la integración del frontend.
+

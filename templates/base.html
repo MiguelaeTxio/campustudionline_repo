@@ -85,7 +85,12 @@
                             <i class="fas fa-folder me-2"></i>Directorio de Contenidos Libres
                         </a>
                     </li>
-                    <li class="nav-item" id="tour-nav-personal-directory"><a class="nav-link {% if request.resolver_match.app_name == 'contents' %}active{% endif %}" href="{% url 'contents:personal_workspace' %}"><i class="fas fa-address-book me-2"></i>Directorio Personal</a></li>
+                                        <li class="nav-item">
+                        <button class="btn nav-link" type="button" data-bs-toggle="offcanvas" data-bs-target="#studyNavigationSidebar" aria-controls="studyNavigationSidebar">
+                            <i class="fas fa-bars me-1"></i> Explorador
+                        </button>
+                    </li>
+<li class="nav-item" id="tour-nav-personal-directory"><a class="nav-link {% if request.resolver_match.app_name == 'contents' %}active{% endif %}" href="{% url 'contents:personal_workspace' %}"><i class="fas fa-address-book me-2"></i>Directorio Personal</a></li>
                     <li class="nav-item" id="tour-nav-study-room">
                         <a class="nav-link {% if request.resolver_match.url_name == 'copy_directory_root' %}active{% endif %}" href="{% url 'study_room:copy_directory_root' %}">
                             <i class="fas fa-book-reader me-2"></i>Sala de Estudio
@@ -299,5 +304,8 @@
             });
         </script>
     {% endblock extra_js %}
+    {% if user.is_authenticated %}
+        {% include "contents/partials/_navigation_sidebar.html" %}
+    {% endif %}
 </body>
 </html>

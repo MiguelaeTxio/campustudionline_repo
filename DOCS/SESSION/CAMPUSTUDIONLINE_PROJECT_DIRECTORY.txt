@@ -226,9 +226,11 @@
 ./contents/templates/contents/study_room/copy_list.html
 ./contents/templates/contents/partials
 ./contents/templates/contents/partials/_move_element_modal.html
+./contents/templates/contents/partials/_nav_folder_recursive.html
 ./contents/templates/contents/partials/_folder_nodes.html
 ./contents/templates/contents/partials/_rename_folder_form.html
 ./contents/templates/contents/partials/_folder_tree_option.html
+./contents/templates/contents/partials/_navigation_sidebar.html
 ./contents/templates/contents/confirm_content_deletion.html
 ./contents/templates/contents/personal_workspace.html
 ./contents/templates/contents/share_card_template.html

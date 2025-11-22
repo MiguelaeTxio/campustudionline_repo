@@ -464,8 +464,7 @@ def edit_content(request, pk):
         form = ContentMaterialForm(instance=content_obj)
     context = {
         "content_form": form, "content_obj": content_obj, "page_title": "Editando Material",
-        "is_editing": True, "NEW_OPTION_ID_VALUE": NEW_OPTION_ID_VALUE,
-        "NEW_OPTION_TEXT": NEW_OPTION_TEXT, "PLACEHOLDER_OPTION_TEXT": PLACEHOLDER_OPTION_TEXT,
+        "is_editing": True
     }
     return render(request, "contents/create_edit_content.html", context)
 
@@ -481,17 +480,6 @@ def delete_content(request, pk):
         messages.success(request, f"El material '{deleted_title}' ha sido eliminado.")
         return redirect("contents:personal_workspace")
     return render(request, "contents/confirm_content_deletion.html", {"content_detail": content_obj})
-
-def ajax_load_topics(request):
-    parent_model = request.GET.get("parent_model")
-    parent_id = request.GET.get("parent_id")
-    queryset = Topic.objects.none()
-    if parent_id:
-        if parent_model == "MainCategory":
-            queryset = Topic.objects.filter(main_category_id=parent_id, parent__isnull=True).order_by("name")
-        elif parent_model == "Topic":
-            queryset = Topic.objects.filter(parent_id=parent_id).order_by("name")
-    return _options_to_json_response(queryset)
 
 def generate_share_image(request, pk):
     material = get_object_or_404(ContentMaterial, pk=pk)
