@@ -1,5 +1,7 @@
 # /home/MiguelAeTxio/CampuStudiOnline/contents/signals.py
 import logging
+from .services.navigation_builder import refresh_user_navigation
+
 from django.db.models.signals import m2m_changed, post_save, post_delete, pre_delete
 from django.dispatch import receiver
 from django.utils import timezone
@@ -7,10 +9,8 @@ from django.urls import reverse, NoReverseMatch
 
 from .models import (
     ContentMaterial,
-    KnowledgeArea,
-    Discipline,
-    MainCategory,
-    Topic,
+    ContentCopy,
+    FavoriteFolder,
 )
 from academic_structure.models import Subject, Degree, Branch, University, AcademicYear
 from announcements.models import Announcement
@@ -202,75 +202,30 @@ def handle_subject_deletion(sender, instance, **kwargs):
     _propagate_academic_status_update([instance])
 
 
+
+
 # ==============================================================================
-# SEÑALES PARA SINCRONIZACIÓN DE ESTADO DE CONTENIDO (LIBRE)
+# SEÑALES PARA NAVEGACION DE SALA DE ESTUDIO (USER-CENTRIC)
 # ==============================================================================
-@receiver(post_save, sender=ContentMaterial)
-@receiver(post_delete, sender=ContentMaterial)
-def update_intellectual_hierarchy_content_status(sender, instance, **kwargs):
+
+@receiver([post_save, post_delete], sender=ContentCopy)
+def update_navigation_on_copy_change(sender, instance, **kwargs):
     """
-    Actualiza el flag 'has_free_content' en la jerarquía intelectual.
-    Esta señal reacciona a cambios en ContentMaterial que son
-    explícitamente marcados como 'is_free_content = True'.
+    Actualiza el arbol de navegacion cuando se crea o borra una copia.
     """
-    if not instance.is_free_content:
-        return
+    refresh_user_navigation(instance.user)
 
-    topic_id = instance.topic_id
-    if not topic_id:
-        return
-    try:
-        topic = Topic.objects.get(pk=topic_id)
-    except Topic.DoesNotExist:
-        return
+@receiver([post_save, post_delete], sender=FavoriteFolder)
+def update_navigation_on_folder_change(sender, instance, **kwargs):
+    """
+    Actualiza el arbol de navegacion cuando cambia la estructura de carpetas.
+    """
+    refresh_user_navigation(instance.user)
 
-    # Inicia el recálculo desde el topic del material afectado hacia arriba.
-    current_topic = topic
-    while current_topic:
-        has_direct_content = ContentMaterial.objects.filter(
-            topic=current_topic, is_public=True, is_free_content=True
-        ).exists()
-        has_child_content = current_topic.subtopics.filter(
-            has_free_content=True
-        ).exists()
-        new_status = has_direct_content or has_child_content
-
-        if current_topic.has_free_content != new_status:
-            Topic.objects.filter(pk=current_topic.pk).update(
-                has_free_content=new_status
-            )
-            current_topic = current_topic.parent
-        else:
-            # Optimización: Si el estado no ha cambiado, los ancestros tampoco.
-            break
-
-    # Propaga el cambio a los ancestros de nivel superior.
-    main_category = topic.get_root_category()
-    if not main_category:
-        return
-
-    category_has_content = main_category.root_topics.filter(
-        has_free_content=True
-    ).exists()
-    if main_category.has_free_content != category_has_content:
-        MainCategory.objects.filter(pk=main_category.pk).update(
-            has_free_content=category_has_content
-        )
-
-    discipline = main_category.discipline
-    discipline_has_content = discipline.main_categories.filter(
-        has_free_content=True
-    ).exists()
-    if discipline.has_free_content != discipline_has_content:
-        Discipline.objects.filter(pk=discipline.pk).update(
-            has_free_content=discipline_has_content
-        )
-
-    knowledge_area = discipline.knowledge_area
-    area_has_content = knowledge_area.disciplines.filter(
-        has_free_content=True
-    ).exists()
-    if knowledge_area.has_free_content != area_has_content:
-        KnowledgeArea.objects.filter(pk=knowledge_area.pk).update(
-            has_free_content=area_has_content
-        )
+@receiver(m2m_changed, sender=FavoriteFolder.materials.through)
+def update_navigation_on_folder_content_change(sender, instance, action, **kwargs):
+    """
+    Actualiza el arbol cuando se anaden/quitan materiales de favoritos.
+    """
+    if action in ["post_add", "post_remove", "post_clear"]:
+        refresh_user_navigation(instance.user)

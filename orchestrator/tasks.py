@@ -28,10 +28,6 @@ from users.models import CustomUser
 from assessment.models import Assessment, Question, UserAnswer, AssessmentSettings
 from contents.models import (
     ContentMaterial,
-    KnowledgeArea,
-    Discipline,
-    MainCategory,
-    Topic,
     FreeContentMasterCategory,
     FreeContentSubCategory,
 )
@@ -290,20 +286,7 @@ def _assemble_final_markdown_from_chunks(course_title: str, metadata: dict, mast
     final_parts = yaml_header + introduction + content_body
     return "\n\n".join(final_parts)
 
-def _get_or_create_academic_topic_for_subject(subject: Subject) -> Topic:
-    try:
-        academic_year = subject.academic_year
-        degree = academic_year.degree
-        branch = degree.branch
-        area, _ = KnowledgeArea.objects.get_or_create(name=branch.name, defaults={'slug': slugify(branch.name)})
-        discipline, _ = Discipline.objects.get_or_create(knowledge_area=area, name=degree.name, defaults={'slug': slugify(f"{area.name}-{degree.name}")})
-        main_category_name = f"{academic_year.year}º Curso"
-        main_category, _ = MainCategory.objects.get_or_create(discipline=discipline, name=main_category_name, defaults={'slug': slugify(f"{discipline.name}-{main_category_name}")})
-        topic, _ = Topic.objects.get_or_create(main_category=main_category, name=subject.name, defaults={'slug': slugify(f"{main_category.name}-{subject.name}")})
-        return topic
-    except Exception as e:
-        logger.error(f"Error CRÍTICO al crear la jerarquía académica para la asignatura '{subject.name}': {e}", exc_info=True)
-        return None
+
 
 def _get_or_create_free_categories_from_classification(classification_data: dict, course_title: str) -> tuple:
     master_name = classification_data.get("categoria_general")
@@ -674,11 +657,8 @@ def generate_full_course_task(self, task_id: str):
             log_task_event(task_id, "Iniciando fase de clasificación de contenido.")
             manual_classification = task.structured_content.get('manual_classification')
             if task.subject:
-                log_task_event(task_id, "Clasificación para contenido académico iniciada (Lógica Corregida).")
-                target_topic = _get_or_create_academic_topic_for_subject(task.subject)
-                if not target_topic:
-                    raise ContentGenerationError(f"No se pudo crear la jerarquía académica para la asignatura {task.subject.name}")
-                log_task_event(task_id, f"Clasificación jerárquica académica creada/verificada. Tema final: '{target_topic.name}'.")
+                log_task_event(task_id, "Clasificación académica: Asignando contenido a asignatura oficial.")
+                target_topic = None # Campo legacy desactivado
                 master_category, sub_category = None, None
             elif manual_classification:
                 log_task_event(task_id, "Clasificación MANUAL para contenido libre iniciada.")

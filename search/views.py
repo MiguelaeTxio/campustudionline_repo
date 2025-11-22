@@ -9,10 +9,6 @@ from django.utils import timezone
 import logging
 
 from contents.models import (
-    KnowledgeArea,
-    Discipline,
-    MainCategory,
-    Topic,
     ContentMaterial,
     ContentCopy,
     FavoriteFolder,
@@ -40,11 +36,6 @@ def search_home_view(request):
     context = {"page_obj": page_obj, "breadcrumbs": breadcrumbs, "show_tour": True}
     return render(request, "search/search_home.html", context)
 
-
-@login_required
-def academic_category_detail_view(request, *args, **kwargs):
-    # This view is a legacy passthrough and remains unchanged.
-    return free_content_category_detail_view(request, *args, **kwargs)
 
 
 @login_required
@@ -126,7 +117,6 @@ def global_search_view(request):
     chat_room_search_q = Q(name__icontains=search_query)
     direct_chat_permission_q = Q(user1=user, is_hidden_by_user1=False) | Q(user2=user, is_hidden_by_user2=False)
     direct_chat_search_q = Q(user1__username__icontains=search_query) | Q(user2__username__icontains=search_query)
-    intellectual_search_q = Q(name__icontains=search_query)
     academic_search_q = Q(name__icontains=search_query)
 
     content_results_count = ContentMaterial.objects.filter(content_permission_q & content_search_q).distinct().count() if search_query else 0
@@ -135,18 +125,13 @@ def global_search_view(request):
     chat_room_results_count = ChatRoom.objects.filter(chat_room_permission_q & chat_room_search_q).distinct().count() if search_query else 0
     direct_chat_results_count = DirectChatSession.objects.filter(direct_chat_permission_q & direct_chat_search_q).distinct().count() if search_query else 0
     total_chat_results_count = chat_room_results_count + direct_chat_results_count
-    area_results_count = KnowledgeArea.objects.filter(intellectual_search_q).count() if search_query else 0
-    discipline_results_count = Discipline.objects.filter(intellectual_search_q).count() if search_query else 0
-    main_category_results_count = MainCategory.objects.filter(intellectual_search_q).count() if search_query else 0
-    topic_results_count = Topic.objects.filter(intellectual_search_q).count() if search_query else 0
-    intellectual_structure_count = area_results_count + discipline_results_count + main_category_results_count + topic_results_count
     university_results_count = University.objects.filter(academic_search_q).count() if search_query else 0
     branch_results_count = Branch.objects.filter(academic_search_q).count() if search_query else 0
     degree_results_count = Degree.objects.filter(academic_search_q).count() if search_query else 0
     academic_structure_count = university_results_count + branch_results_count + degree_results_count
 
     if not selected_model_types and search_query:
-        selected_model_types = ["material", "copy", "user", "chat", "intellectual", "academic"]
+        selected_model_types = ["material", "copy", "user", "chat", "academic"]
 
     if search_query:
         if "material" in selected_model_types:
@@ -163,10 +148,6 @@ def global_search_view(request):
                 combined_results.append({"type": "Chat Grupal", "obj": item, "date": item.updated_at})
             for item in DirectChatSession.objects.filter(direct_chat_permission_q & direct_chat_search_q).select_related("user1", "user2").distinct().order_by("-updated_at"):
                 combined_results.append({"type": "Chat Directo", "obj": {"session": item, "other_user": item.get_other_user(user)}, "date": item.updated_at})
-        if "intellectual" in selected_model_types:
-            for model, type_name in [(KnowledgeArea, "Área de Conocimiento"), (Discipline, "Disciplina"), (MainCategory, "Categoría"), (Topic, "Tema")]:
-                for item in model.objects.filter(intellectual_search_q):
-                    combined_results.append({"type": type_name, "obj": item, "date": fallback_date})
         if "academic" in selected_model_types:
             for model, type_name in [(University, "Universidad"), (Branch, "Rama"), (Degree, "Grado Académico")]:
                 for item in model.objects.filter(academic_search_q):
@@ -178,7 +159,7 @@ def global_search_view(request):
     context = {
         "search_query": search_query, "page_obj": page_obj, "content_results_count": content_results_count,
         "copy_results_count": copy_results_count, "user_results_count": user_results_count,
-        "total_chat_results_count": total_chat_results_count, "intellectual_structure_count": intellectual_structure_count,
+        "total_chat_results_count": total_chat_results_count,
         "academic_structure_count": academic_structure_count, "selected_model_types": selected_model_types,
     }
     return render(request, "search/global_search_results.html", context)

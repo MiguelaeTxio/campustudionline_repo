@@ -7,7 +7,7 @@
 {% block extra_css %}{{ block.super }}<link rel="stylesheet" href="https://unpkg.com/easymde/dist/easymde.min.css">
 <style>
     .EasyMDEContainer .CodeMirror { min-height: 400px; border: 1px solid #ced4da; border-radius: .25rem; }
-    .category-level.d-none, .new-category-input-container.d-none { display: none; }
+    
     .category-section { border: 1px solid #e0e0e0; padding: 1.5rem; margin-bottom: 1.5rem; border-radius: 0.375rem; background-color: #f8f9fa; }
     .form-label { font-weight: 500; }
 </style>
@@ -21,7 +21,7 @@
             <div class="card-body">
                 <form method="post" id="content-form" novalidate>
                     {% csrf_token %}
-                    {{ content_form.topic }}
+                    
 
                     {% if content_form.non_field_errors %}<div class="alert alert-danger">{% for error in content_form.non_field_errors %}<p class="mb-0">{{ error }}</p>{% endfor %}</div>{% endif %}
 
@@ -29,22 +29,6 @@
                     <div class="mb-3"><label for="{{ content_form.short_description.id_for_label }}" class="form-label"><strong>{{ content_form.short_description.label }}</strong></label>{{ content_form.short_description }}{% for error in content_form.short_description.errors %}<div class="invalid-feedback d-block">{{ error }}</div>{% endfor %}</div>
                     <div class="mb-3"><label for="{{ content_form.markdown_content.id_for_label }}" class="form-label"><strong>{{ content_form.markdown_content.label }}</strong></label>{{ content_form.markdown_content }}{% for error in content_form.markdown_content.errors %}<div class="invalid-feedback d-block">{{ error }}</div>{% endfor %}</div>
                     
-                    <div class="category-section">
-                        <h5>Clasificación del Contenido</h5>
-                        <p class="text-muted small">Organiza tu material en la jerarquía intelectual. Si no seleccionas nada, se asignará a "General".</p>
-                        
-                        <div id="category-levels-container">
-                            <div class="mb-3 category-level" data-level="0"><label for="{{ content_form.knowledge_area_form.id_for_label }}" class="form-label"><strong>{{ content_form.knowledge_area_form.label }}</strong></label>{{ content_form.knowledge_area_form }}</div>
-                            <div class="mb-3 category-level d-none" data-level="1"><label for="{{ content_form.discipline_form.id_for_label }}" class="form-label"><strong>{{ content_form.discipline_form.label }}</strong></label>{{ content_form.discipline_form }}</div>
-                            <div class="mb-3 category-level d-none" data-level="2"><label for="{{ content_form.main_category_form.id_for_label }}" class="form-label"><strong>{{ content_form.main_category_form.label }}</strong></label>{{ content_form.main_category_form }}</div>
-                            <div class="mb-3 category-level d-none" data-level="3"><label for="{{ content_form.topic_form_1.id_for_label }}" class="form-label"><strong>{{ content_form.topic_form_1.label }}</strong></label>{{ content_form.topic_form_1 }}</div>
-                            <div class="mb-3 category-level d-none" data-level="4"><label for="{{ content_form.topic_form_2.id_for_label }}" class="form-label"><strong>{{ content_form.topic_form_2.label }}</strong></label>{{ content_form.topic_form_2 }}</div>
-                            <div class="mb-3 category-level d-none" data-level="5"><label for="{{ content_form.topic_form_3.id_for_label }}" class="form-label"><strong>{{ content_form.topic_form_3.label }}</strong></label>{{ content_form.topic_form_3 }}</div>
-                            <div class="mb-3 category-level d-none" data-level="6"><label for="{{ content_form.topic_form_4.id_for_label }}" class="form-label"><strong>{{ content_form.topic_form_4.label }}</strong></label>{{ content_form.topic_form_4 }}</div>
-                        </div>
-                        <div class="mb-3 new-category-input-container d-none"><label for="{{ content_form.new_topic_form.id_for_label }}" class="form-label"><strong>Nombre para Nuevo Tema/Sub-tema</strong></label>{{ content_form.new_topic_form }}</div>
-                    </div>
-
                     <div class="mb-3">
                         <fieldset><legend class="form-label fs-6"><strong>{{ content_form.is_public.label }}</strong></legend>{% for radio in content_form.is_public %}<div class="form-check form-check-inline">{{ radio.tag }} <label class="form-check-label" for="{{ radio.id_for_label }}">{{ radio.choice_label }}</label></div>{% endfor %}</fieldset>
                     </div>
@@ -67,84 +51,6 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     new EasyMDE({element: document.getElementById('markdown-editor'), spellChecker: false, status: false});
-
-    const NEW_OPTION_VALUE = '{{ NEW_OPTION_ID_VALUE }}';
-    const PLACEHOLDER_TEXT = '{{ PLACEHOLDER_OPTION_TEXT }}';
-    const NEW_OPTION_TEXT = '{{ NEW_OPTION_TEXT }}';
-    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
-    const newCategoryInputContainer = document.querySelector('.new-category-input-container');
-    const newCategoryInput = newCategoryInputContainer.querySelector('input');
-
-    const levelConfigs = [
-        { select: '#id_knowledge_area_form', loadUrl: '{% url "contents:ajax_load_disciplines" %}' },
-        { select: '#id_discipline_form', loadUrl: '{% url "contents:ajax_load_main_categories" %}' },
-        { select: '#id_main_category_form', loadUrl: '{% url "contents:ajax_load_topics" %}', parentModel: 'MainCategory' },
-        { select: '#id_topic_form_1', loadUrl: '{% url "contents:ajax_load_topics" %}', parentModel: 'Topic' },
-        { select: '#id_topic_form_2', loadUrl: '{% url "contents:ajax_load_topics" %}', parentModel: 'Topic' },
-        { select: '#id_topic_form_3', loadUrl: '{% url "contents:ajax_load_topics" %}', parentModel: 'Topic' },
-        { select: '#id_topic_form_4', loadUrl: null }
-    ];
-
-    function populateSelect(selectElement, options) {
-        const currentValue = selectElement.value;
-        selectElement.innerHTML = ''; 
-        selectElement.add(new Option(PLACEHOLDER_TEXT, ''));
-        options.forEach(option => selectElement.add(new Option(option.text, option.id)));
-        selectElement.add(new Option(NEW_OPTION_TEXT, NEW_OPTION_VALUE));
-        if (options.some(opt => opt.id == currentValue)) {
-            selectElement.value = currentValue;
-        }
-    }
-
-    async function loadNextLevel(currentLevelIndex, parentId) {
-        const nextLevelIndex = currentLevelIndex + 1;
-        if (nextLevelIndex >= levelConfigs.length) return;
-
-        const nextConfig = levelConfigs[nextLevelIndex];
-        const nextSelect = document.querySelector(nextConfig.select);
-        
-        let url = nextConfig.loadUrl;
-        if (!url) return;
-        
-        url += `?parent_id=${parentId}`;
-        if (levelConfigs[currentLevelIndex].parentModel) {
-            url += `&parent_model=${levelConfigs[currentLevelIndex].parentModel}`;
-        }
-
-        try {
-            const response = await fetch(url);
-            const options = await response.json();
-            populateSelect(nextSelect, options);
-            nextSelect.closest('.category-level').classList.remove('d-none');
-        } catch (error) { console.error('Error loading next level:', error); }
-    }
-
-    levelConfigs.forEach((config, index) => {
-        const selectElement = document.querySelector(config.select);
-        if (!selectElement) return;
-
-        // On page load, reveal next level if current has a value
-        if (selectElement.value) {
-            loadNextLevel(index, selectElement.value);
-        }
-
-        selectElement.addEventListener('change', async (e) => {
-            const selectedValue = e.target.value;
-            
-            // Hide all subsequent levels first
-            for (let i = index + 1; i < levelConfigs.length; i++) {
-                document.querySelector(levelConfigs[i].select).closest('.category-level').classList.add('d-none');
-            }
-            newCategoryInputContainer.classList.add('d-none');
-
-            if (selectedValue === NEW_OPTION_VALUE) {
-                newCategoryInputContainer.classList.remove('d-none');
-                newCategoryInput.focus();
-            } else if (selectedValue) {
-                await loadNextLevel(index, selectedValue);
-            }
-        });
-    });
 });
 </script>
 {% endblock extra_js %}

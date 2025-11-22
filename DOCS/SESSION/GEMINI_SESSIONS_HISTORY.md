@@ -368,3 +368,40 @@
 *   **Session:** Corrección de Enrutado Admin y Verificación de Logs
 *   **Description:** Diagnóstico y resolución del error `NoReverseMatch` que provoca un fallo 500 en el panel de administración de evaluaciones. Verificación de la correcta persistencia de logs en `AssessmentSettings`.
 
+# 2025-11-22
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V22.md
+## NRA
+*  **Session:** Refactorización de la Navegación de Sala de Estudio: Implementación del Modelo Persistente UserStudyNavigation
+*  **Description:** Se inicia la implementación del modelo UserStudyNavigation y el servicio NavigationTreeBuilder para desacoplar la visualización de la jerarquía académica de las consultas en tiempo real. El objetivo es mejorar el rendimiento y eliminar errores por cambios de slugs mediante un árbol JSON pre-calculado actualizado por señales.
+
+
+# 2025-11-22
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V22.md
+## RNS_FIX
+*  **Session:** Reparación Crítica en Search y Avance en Hito 22
+*  **Description:** Sesión de emergencia para corregir el error de sintaxis en `search/views.py` que mantiene bloqueado el arranque de Django. Tras la reparación, se procederá a ejecutar las migraciones pendientes del módulo `contents` para consolidar la eliminación de la deuda técnica (Jerarquía Intelectual y Contenido Libre Legacy) y se avanzará en la implementación de la lógica de `UserStudyNavigation`.
+
+
+# 2025-11-22
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V22.md
+## RCSV
+*  **Session:** Hito 22: Reparación Crítica en Search y Consolidación de Modelos
+*  **Description:** Sesión de emergencia para corregir un error de sintaxis bloqueante en 'search/views.py' resultante de la refactorización previa. El objetivo inmediato es restaurar la operatividad de Django para ejecutar las migraciones pendientes en la aplicación 'contents', finalizando la limpieza de modelos obsoletos (Jerarquía Intelectual). Posteriormente, se procederá con la implementación de la lógica de navegación 'UserStudyNavigation'.
+
+# 2025-11-22
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V22.md
+## CSO
+*  **Session:** Hito 22: Reparación Crítica en Search y Consolidación de Modelos
+*  **Description:** Sesión de emergencia para corregir un error de sintaxis bloqueante en 'search/views.py' resultante de la refactorización previa. El objetivo inmediato es restaurar la operatividad de Django para ejecutar las migraciones pendientes en la aplicación 'contents', finalizando la limpieza de modelos obsoletos (Jerarquía Intelectual). Posteriormente, se procederá con la implementación de la lógica de navegación 'UserStudyNavigation'.
+
+# 2025-11-22
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V22.md
+## CSO
+*  **Session:** Hito 22: Reparación Crítica en Search y Consolidación de Modelos
+*  **Description:** Sesión de emergencia para corregir un error de sintaxis bloqueante en 'search/views.py' resultante de la refactorización previa. El objetivo inmediato es restaurar la operatividad de Django para ejecutar las migraciones pendientes en la aplicación 'contents', finalizando la limpieza de modelos obsoletos (Jerarquía Intelectual). Posteriormente, se procederá con la implementación de la lógica de navegación 'UserStudyNavigation'.
+

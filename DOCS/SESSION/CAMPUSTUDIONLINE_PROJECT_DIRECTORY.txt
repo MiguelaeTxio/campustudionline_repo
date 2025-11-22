@@ -188,7 +188,6 @@
 ./delivery_note_processor/management/commands
 ./delivery_note_processor/management/commands/check_api_credentials.py
 ./delivery_note_processor/services.py
-./inspect_copy.py
 ./templates
 ./templates/base.html
 ./templates/emails
@@ -213,6 +212,9 @@
 ./check_system_state.py
 ./google_credentials.json
 ./contents
+./contents/services
+./contents/services/__init__.py
+./contents/services/navigation_builder.py
 ./contents/urls.py
 ./contents/templates
 ./contents/templates/contents
@@ -275,6 +277,7 @@
 ./contents/migrations/0014_alter_freecontentmastercategory_options_and_more.py
 ./contents/migrations/0011_populate_master_categories.py
 ./contents/migrations/0004_remove_contentmaterial_subject_and_more.py
+./contents/migrations/0019_userstudynavigation_alter_discipline_unique_together_and_more.py
 ./contents/migrations/0015_contentmaterial_sub_category_and_more.py
 ./contents/migrations/0017_alter_contentcopy_unique_together_and_more.py
 ./contents/migrations/0008_freecontentcategory_freecontenttopic_and_more.py
@@ -290,21 +293,17 @@
 ./contents/management
 ./contents/management/commands
 ./contents/management/commands/update_content_format.py
-./contents/management/commands/update_free_content_flags.py
-./contents/management/commands/clean_content_hierarchy.py
 ./contents/management/commands/generate_default_share_card.py
-./contents/management/commands/resync_free_content_flags.py
-./contents/management/commands/clean_autogen_content.py
-./contents/management/commands/ensure_free_content_structure.py
-./contents/management/commands/setup_default_categories.py
+./contents/management/commands/audit_tables.py
+./contents/management/commands/drop_stuck_table.py
 ./contents/management/commands/__init__.py
 ./contents/management/commands/populate_share_images.py
+./contents/management/commands/emergency_cleanup_legacy.py
 ./contents/management/__init__.py
 ./contents/study_room_forms.py
 ./manage.py
 ./requirements.txt
 ./check_system_state_v2.py
-./check_slugs.py
 ./content_automation
 ./content_automation/urls.py
 ./content_automation/templates
@@ -337,7 +336,6 @@
 ./content_automation/management
 ./content_automation/management/commands
 ./content_automation/management/commands/test_schema_generation.py
-./content_automation/management/commands/correct_academic_classification.py
 ./messaging
 ./messaging/urls.py
 ./messaging/templates
@@ -368,7 +366,6 @@
 ./messaging/management/commands/delete_chat_session.py
 ./messaging/management/__init__.py
 ./alvarez_credentials.json
-./check_duplicates.py
 ./assessment
 ./assessment/urls.py
 ./assessment/templates
@@ -631,6 +628,7 @@
 ./DOCS/MAINS
 ./DOCS/MAINS/PROJECT_DIRECTORY.txt
 ./DOCS/MAINS/SESSION_VARIABLES.md
+./DOCS/MAINS/CAMPUSTUDIONLINE_REFACTOR_NAVIGATION_MASTER_PLAN.md
 ./DOCS/MAINS/ATTACHEDS
 ./DOCS/MAINS/ATTACHEDS/CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V22.md
 ./DOCS/MAINS/ATTACHEDS/CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V19.md

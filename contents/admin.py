@@ -2,10 +2,6 @@
 from django.contrib import admin, messages
 from .models import (
     FavoriteFolder,
-    KnowledgeArea,
-    Discipline,
-    MainCategory,
-    Topic,
     ContentMaterial,
     ContentCopy,
     Annotation,
@@ -34,98 +30,17 @@ def generate_public_previews_action_for_admin(modeladmin, request, queryset):
     except Exception as e:
         modeladmin.message_user(request, f"Error crítico al generar previews: {e}", messages.ERROR)
 
-@admin.register(FreeContentMasterCategory)
-class FreeContentMasterCategoryAdmin(admin.ModelAdmin):
-    list_display = ('name', 'slug', 'display_order', 'description')
-    search_fields = ('name',)
-    prepopulated_fields = {"slug": ("name",)}
-    list_editable = ('display_order',)
-
-    def has_add_permission(self, request):
-        return request.user.is_superuser
-
-    def has_change_permission(self, request, obj=None):
-        return request.user.is_superuser
-
-    def has_delete_permission(self, request, obj=None):
-        return request.user.is_superuser
-
-@admin.register(FreeContentSubCategory)
-class FreeContentSubCategoryAdmin(admin.ModelAdmin):
-    list_display = ('name', 'master_category', 'slug', 'display_order')
-    list_filter = ('master_category',)
-    search_fields = ('name', 'master_category__name')
-    prepopulated_fields = {"slug": ("name",)}
-    autocomplete_fields = ['master_category']
-    list_editable = ('display_order',)
-
-    def has_add_permission(self, request):
-        return request.user.is_superuser
-
-    def has_change_permission(self, request, obj=None):
-        return request.user.is_superuser
-
-    def has_delete_permission(self, request, obj=None):
-        return request.user.is_superuser
-
-@admin.register(KnowledgeArea)
-class KnowledgeAreaAdmin(admin.ModelAdmin):
-    list_display = ("name", "slug", "description")
-    search_fields = ("name",)
-    prepopulated_fields = {"slug": ("name",)}
-
-    def delete_queryset(self, request, queryset):
-        for obj in queryset:
-            obj.delete()
-
-@admin.register(Discipline)
-class DisciplineAdmin(admin.ModelAdmin):
-    list_display = ("name", "knowledge_area", "slug")
-    list_filter = ("knowledge_area",)
-    search_fields = ("name", "knowledge_area__name")
-    prepopulated_fields = {"slug": ("name",)}
-    autocomplete_fields = ["knowledge_area"]
-
-    def delete_queryset(self, request, queryset):
-        for obj in queryset:
-            obj.delete()
-
-@admin.register(MainCategory)
-class MainCategoryAdmin(admin.ModelAdmin):
-    list_display = ("name", "discipline", "slug")
-    list_filter = ("discipline__knowledge_area", "discipline")
-    search_fields = ("name", "discipline__name")
-    prepopulated_fields = {"slug": ("name",)}
-    autocomplete_fields = ["discipline"]
-
-    def delete_queryset(self, request, queryset):
-        for obj in queryset:
-            obj.delete()
-
-@admin.register(Topic)
-class TopicAdmin(admin.ModelAdmin):
-    list_display = ("__str__", "main_category", "parent", "slug")
-    list_filter = ("main_category__discipline__knowledge_area", "main_category")
-    search_fields = ("name", "parent__name", "main_category__name")
-    prepopulated_fields = {"slug": ("name",)}
-    autocomplete_fields = ["main_category", "parent"]
-    list_per_page = 25
-
-    def delete_queryset(self, request, queryset):
-        for obj in queryset:
-            obj.delete()
-
 @admin.register(ContentMaterial)
 class ContentMaterialAdmin(admin.ModelAdmin):
-    list_display = ("title", "get_category_display", "creator", "is_public", "updated_at")
-    list_filter = ("is_free_content", "is_public", "master_category", "topic__main_category__discipline")
-    search_fields = ("title", "creator__username", "topic__name", "master_category__name", "sub_category__name", "subject__name")
+    list_display = ("title", "creator", "is_public", "updated_at")
+    list_filter = ("is_free_content", "is_public", "master_category", )
+    search_fields = ("title", "creator__username", "master_category__name", "sub_category__name", "subject__name")
     actions = [generate_public_previews_action_for_admin]
     readonly_fields = ("created_at", "updated_at")
-    autocomplete_fields = ["creator", "topic", "subject", "master_category", "sub_category"]
+    autocomplete_fields = ["creator", "subject", "master_category", "sub_category"]
     fieldsets = (
         (None, {"fields": ("title", "is_free_content", "short_description", "creator", "is_public")}),
-        ("Categorización Académica (Rellenar solo si NO es Contenido Libre)", {"fields": ("topic", "subject"), "classes": ("collapse",)}),
+        ("Categorización Académica (Rellenar solo si NO es Contenido Libre)", {"fields": ("subject",), "classes": ("collapse",)}),
         ("Categorización de Contenido Libre (Rellenar solo si ES Contenido Libre)", {"fields": ("master_category", "sub_category"), "classes": ("collapse",)}),
         ("Contenido Fuente (Markdown)", {"fields": ("markdown_content",)}),
         ("Fechas Importantes", {"fields": ("created_at", "updated_at"), "classes": ("collapse",)}),
@@ -133,18 +48,6 @@ class ContentMaterialAdmin(admin.ModelAdmin):
 
     class Media:
         js = ('contents/js/admin_custom.js',)
-
-    @admin.display(description="Categoría", ordering="topic")
-    def get_category_display(self, obj):
-        if obj.is_free_content:
-            if obj.sub_category:
-                return str(obj.sub_category)
-            if obj.master_category:
-                return str(obj.master_category)
-            return "N/A (Libre)"
-        if obj.topic:
-            return str(obj.topic)
-        return "N/A (Académico)"
 
     def delete_queryset(self, request, queryset):
         """
@@ -179,3 +82,17 @@ class AnnotationAdmin(admin.ModelAdmin):
 class FavoriteFolderAdmin(admin.ModelAdmin):
     list_display = ('name', 'user', 'id')
     search_fields = ('name', 'user__username')
+
+@admin.register(FreeContentMasterCategory)
+class FreeContentMasterCategoryAdmin(admin.ModelAdmin):
+    list_display = ("name", "display_order", "slug")
+    search_fields = ("name",)
+    ordering = ("display_order", "name")
+
+@admin.register(FreeContentSubCategory)
+class FreeContentSubCategoryAdmin(admin.ModelAdmin):
+    list_display = ("name", "master_category", "display_order", "slug")
+    search_fields = ("name", "master_category__name")
+    list_filter = ("master_category",)
+    autocomplete_fields = ["master_category"]
+    ordering = ("master_category", "display_order", "name")

@@ -36,234 +36,6 @@ ALLOWED_ATTRIBUTES = {
     "div": ["class"], "span": ["class"],
 }
 
-def _is_node_empty(node):
-    if isinstance(node, Topic):
-        return not node.subtopics.exists() and not node.content_materials.exists()
-    if isinstance(node, MainCategory):
-        return not node.root_topics.exists()
-    if isinstance(node, Discipline):
-        return not node.main_categories.exists()
-    if isinstance(node, KnowledgeArea):
-        return not node.disciplines.exists()
-    return False
-
-def _is_free_node_empty(node):
-    if isinstance(node, FreeContentCategory):
-        return not node.content_materials.exists()
-    if isinstance(node, FreeContentTopic):
-        return not node.categories.exists()
-    return False
-
-class KnowledgeArea(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    name = models.CharField(max_length=255, unique=True, verbose_name="Nombre del Área")
-    slug = models.SlugField(max_length=300, unique=True, blank=True, default="")
-    description = models.TextField(blank=True, verbose_name="Descripción")
-    has_free_content = models.BooleanField(default=False, verbose_name="Tiene Contenido Libre")
-
-    class Meta:
-        verbose_name = "Área de Conocimiento"
-        verbose_name_plural = "1. Áreas de Conocimiento"
-        ordering = ["name"]
-
-    def __str__(self):
-        return self.name
-
-    def save(self, *args, **kwargs):
-        if not self.slug:
-            base_slug = slugify(self.name)
-            proposed_slug = base_slug
-            while KnowledgeArea.objects.filter(slug=proposed_slug).exists():
-                unique_suffix = uuid.uuid4().hex[:8]
-                proposed_slug = f"{base_slug}-{unique_suffix}"
-            self.slug = proposed_slug
-        super().save(*args, **kwargs)
-
-    def get_absolute_url(self):
-        return reverse("search:academic_area_detail", kwargs={"area_slug": self.slug})
-
-class Discipline(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    knowledge_area = models.ForeignKey(
-        KnowledgeArea, on_delete=models.CASCADE, related_name="disciplines",
-        verbose_name="Área de Conocimiento",
-    )
-    name = models.CharField(max_length=255, verbose_name="Nombre de la Disciplina")
-    slug = models.SlugField(max_length=300, unique=True, blank=True, default="")
-    has_free_content = models.BooleanField(default=False, verbose_name="Tiene Contenido Libre")
-
-    class Meta:
-        verbose_name = "Disciplina"
-        verbose_name_plural = "2. Disciplinas"
-        ordering = ["knowledge_area", "name"]
-        unique_together = ("knowledge_area", "name")
-
-    def __str__(self):
-        return self.name
-
-    def save(self, *args, **kwargs):
-        if not self.slug:
-            base_slug = slugify(self.name)
-            proposed_slug = base_slug
-            while Discipline.objects.filter(slug=proposed_slug).exists():
-                unique_suffix = uuid.uuid4().hex[:8]
-                proposed_slug = f"{base_slug}-{unique_suffix}"
-            self.slug = proposed_slug
-        super().save(*args, **kwargs)
-
-    def get_absolute_url(self):
-        return reverse(
-            "search:academic_discipline_detail",
-            kwargs={"area_slug": self.knowledge_area.slug, "discipline_slug": self.slug},
-        )
-
-    def delete(self, *args, **kwargs):
-        knowledge_area_to_check = self.knowledge_area
-        super().delete(*args, **kwargs)
-        if _is_node_empty(knowledge_area_to_check):
-            PROTECTED_KNOWLEDGE_AREAS = [
-                "Biografías", "Desarrollo Personal", "Formación Profesional",
-                "General", "Historia de la Música"
-            ]
-            if knowledge_area_to_check.name not in PROTECTED_KNOWLEDGE_AREAS:
-                knowledge_area_to_check.delete()
-
-class MainCategory(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    discipline = models.ForeignKey(
-        Discipline, on_delete=models.CASCADE, related_name="main_categories",
-        verbose_name="Disciplina",
-    )
-    name = models.CharField(max_length=255, verbose_name="Nombre de la Categoría")
-    slug = models.SlugField(max_length=300, unique=True, blank=True, default="")
-    has_free_content = models.BooleanField(default=False, verbose_name="Tiene Contenido Libre")
-
-    class Meta:
-        verbose_name = "Categoría Principal"
-        verbose_name_plural = "3. Categorías Principales"
-        ordering = ["discipline", "name"]
-        unique_together = ("discipline", "name")
-
-    def __str__(self):
-        return self.name
-
-    def save(self, *args, **kwargs):
-        if not self.slug:
-            base_slug = slugify(self.name)
-            proposed_slug = base_slug
-            while MainCategory.objects.filter(slug=proposed_slug).exists():
-                unique_suffix = uuid.uuid4().hex[:8]
-                proposed_slug = f"{base_slug}-{unique_suffix}"
-            self.slug = proposed_slug
-        super().save(*args, **kwargs)
-
-    def get_absolute_url(self):
-        return reverse(
-            "search:academic_main_category_detail",
-            kwargs={
-                "area_slug": self.discipline.knowledge_area.slug,
-                "discipline_slug": self.discipline.slug,
-                "main_category_slug": self.slug,
-            },
-        )
-
-    def delete(self, *args, **kwargs):
-        discipline_to_check = self.discipline
-        super().delete(*args, **kwargs)
-        if _is_node_empty(discipline_to_check):
-            discipline_to_check.delete()
-
-class Topic(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    main_category = models.ForeignKey(
-        MainCategory, on_delete=models.CASCADE, related_name="root_topics",
-        verbose_name="Categoría Principal Raíz", null=True, blank=True,
-        help_text="Asignar solo si este es un tema de primer nivel.",
-    )
-    parent = models.ForeignKey(
-        "self", on_delete=models.CASCADE, null=True, blank=True,
-        related_name="subtopics", verbose_name="Tema Padre",
-        help_text="Asignar si este es un sub-tema de otro tema.",
-    )
-    name = models.CharField(max_length=255, verbose_name="Nombre del Tema")
-    slug = models.SlugField(max_length=300, unique=True, blank=True, default="")
-    has_free_content = models.BooleanField(default=False, verbose_name="Tiene Contenido Libre")
-
-    class Meta:
-        verbose_name = "Tema"
-        verbose_name_plural = "4. Temas (Jerarquía)"
-        ordering = ["name"]
-        unique_together = ("parent", "name")
-
-    def clean(self):
-        super().clean()
-        if self.parent and self.main_category:
-            raise ValidationError(
-                "Un tema no puede tener simultáneamente un 'Tema Padre' y una 'Categoría Principal Raíz'."
-            )
-        if not self.parent and not self.main_category:
-            raise ValidationError(
-                "Un tema debe tener o un 'Tema Padre' o una 'Categoría Principal Raíz'."
-            )
-        if self.pk and self.parent and self.pk == self.parent.pk:
-            raise ValidationError("Un tema no puede ser su propio padre.")
-
-    def __str__(self):
-        if self.parent:
-            return f"{self.parent} -> {self.name}"
-        return self.name
-
-    def save(self, *args, **kwargs):
-        self.clean()
-        if not self.slug:
-            root_category = self.get_root_category()
-            if root_category:
-                base_slug = slugify(f"{root_category.discipline.slug}-{root_category.name}-{self.name}")
-            else:
-                base_slug = slugify(self.name) # Fallback para casos inesperados
-
-            proposed_slug = base_slug
-            while Topic.objects.filter(slug=proposed_slug).exists():
-                unique_suffix = uuid.uuid4().hex[:6]
-                proposed_slug = f"{base_slug}-{unique_suffix}"
-            self.slug = proposed_slug
-        super().save(*args, **kwargs)
-
-    def get_root_category(self):
-        if self.main_category:
-            return self.main_category
-        if self.parent:
-            return self.parent.get_root_category()
-        return None
-
-    def get_slug_path(self):
-        if self.parent:
-            return f"{self.parent.get_slug_path()}/{self.slug}"
-        return self.slug
-
-    def get_absolute_url(self):
-        root = self.get_root_category()
-        if not root:
-            return reverse("search:search_home")
-        return reverse(
-            "search:academic_topic_detail",
-            kwargs={
-                "area_slug": root.discipline.knowledge_area.slug,
-                "discipline_slug": root.discipline.slug,
-                "main_category_slug": root.slug,
-                "topic_slug_path": self.get_slug_path(),
-            },
-        )
-
-    def delete(self, *args, **kwargs):
-        parent_to_check = self.parent
-        main_category_to_check = self.main_category
-        super().delete(*args, **kwargs)
-        if parent_to_check and _is_node_empty(parent_to_check):
-            parent_to_check.delete()
-        if main_category_to_check and _is_node_empty(main_category_to_check):
-            main_category_to_check.delete()
-
 # --- NUEVA ARQUITECTURA DE CATEGORÍAS MAESTRAS PARA CONTENIDO LIBRE ---
 class FreeContentMasterCategory(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -326,87 +98,12 @@ class FreeContentSubCategory(models.Model):
             kwargs={"master_slug": self.master_category.slug, "sub_slug": self.slug},
         )
 
-# -- HIERARCHY FOR FREE CONTENT (LEGACY - A SER DEPRECIADA) --
-
-class FreeContentTopic(models.Model):
-    """
-    Representa el Nivel 1 de la jerarquía para Contenido Libre.
-    Ej: "Historia de la Música", "Formación Profesional".
-    """
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    name = models.CharField(max_length=255, unique=True, verbose_name="Nombre del Tema de Contenido Libre")
-    slug = models.SlugField(max_length=300, unique=True, blank=True, default="")
-
-    class Meta:
-        verbose_name = "Tema de Contenido Libre (Legacy)"
-        verbose_name_plural = "B. Temas de Contenido Libre (Legacy)"
-        ordering = ["name"]
-
-    def __str__(self):
-        return self.name
-
-    def save(self, *args, **kwargs):
-        if not self.slug:
-            base_slug = slugify(self.name)
-            proposed_slug = base_slug
-            while FreeContentTopic.objects.filter(slug=proposed_slug).exists():
-                unique_suffix = uuid.uuid4().hex[:8]
-                proposed_slug = f"{base_slug}-{unique_suffix}"
-            self.slug = proposed_slug
-        super().save(*args, **kwargs)
-
-
-class FreeContentCategory(models.Model):
-    """
-    Representa el Nivel 2 de la jerarquía para Contenido Libre.
-    Ej: "Rock Progresivo", "Mecánica".
-    """
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    topic = models.ForeignKey(
-        FreeContentTopic, on_delete=models.CASCADE, related_name="categories",
-        verbose_name="Tema Padre",
-    )
-    name = models.CharField(max_length=255, verbose_name="Nombre de la Categoría de Contenido Libre")
-    slug = models.SlugField(max_length=300, unique=True, blank=True, default="")
-
-    class Meta:
-        verbose_name = "Categoría de Contenido Libre (Legacy)"
-        verbose_name_plural = "C. Categorías de Contenido Libre (Legacy)"
-        ordering = ["topic", "name"]
-        unique_together = ("topic", "name")
-
-    def __str__(self):
-        return f"{self.topic.name} -> {self.name}"
-
-    def save(self, *args, **kwargs):
-        if not self.slug:
-            base_slug = slugify(f"{self.topic.name}-{self.name}")
-            proposed_slug = base_slug
-            counter = 1
-            while FreeContentCategory.objects.filter(slug=proposed_slug).exists():
-                proposed_slug = f"{base_slug}-{counter}"
-                counter += 1
-            self.slug = proposed_slug
-        super().save(*args, **kwargs)
-
 class ContentMaterial(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     title = models.CharField(max_length=512, verbose_name="Título del Curso")
     slug = models.SlugField(max_length=600, unique=True, blank=True, default="")
     short_description = models.TextField(verbose_name="Descripción Corta")
     
-    # -- ACADEMIC HIERARCHY --
-    topic = models.ForeignKey(
-        Topic, on_delete=models.PROTECT, related_name="content_materials",
-        verbose_name="Clasificación Académica",
-        null=True, blank=True, help_text="Usar solo para contenido académico estructurado.",
-    )
-    # -- FREE CONTENT HIERARCHY (LEGACY) --
-    free_category = models.ForeignKey(
-        "FreeContentCategory", on_delete=models.PROTECT, related_name="content_materials",
-        verbose_name="Clasificación de Contenido Libre (Legacy)",
-        null=True, blank=True, help_text="Usar solo para contenido libre no estructurado.",
-    )
     # -- NEW FREE CONTENT HIERARCHY --
     master_category = models.ForeignKey(
         "FreeContentMasterCategory", on_delete=models.PROTECT, related_name="content_materials",
@@ -441,76 +138,32 @@ class ContentMaterial(models.Model):
         verbose_name = "Material de Contenido"
         verbose_name_plural = "D. Materiales de Contenido"
         ordering = ["-updated_at"]
-        constraints = [
-            models.CheckConstraint(
-                check=(
-                    (Q(is_free_content=True) & Q(master_category__isnull=False) & Q(topic__isnull=True)) |
-                    (Q(is_free_content=False) & Q(master_category__isnull=True) & Q(topic__isnull=False))
-                ),
-                name='content_hierarchy_is_exclusive'
-            )
-        ]
+
+class UserStudyNavigation(models.Model):
+    """
+    Modelo persistente y desnormalizado para la navegación de la Sala de Estudio.
+    Almacena el árbol de navegación del usuario en formato JSON para evitar
+    consultas costosas en tiempo real.
+    """
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='study_navigation',
+        verbose_name="Usuario"
+    )
+    navigation_tree = models.JSONField(
+        default=dict,
+        verbose_name="Árbol de Navegación (JSON)",
+        help_text="Estructura jerárquica pre-calculada de las copias del usuario."
+    )
+    last_updated = models.DateTimeField(auto_now=True, verbose_name="Última Actualización")
+
+    class Meta:
+        verbose_name = "Navegación de Sala de Estudio"
+        verbose_name_plural = "Navegaciones de Sala de Estudio"
 
     def __str__(self):
-        return self.title
-
-    def _render_markdown_to_html(self):
-        if not self.markdown_content:
-            return ""
-        html_output = markdown.markdown(
-            self.markdown_content, extensions=MARKDOWN_EXTENSIONS,
-            extension_configs=MARKDOWN_EXTENSION_CONFIGS,
-        )
-        return bleach.clean(
-            html_output, tags=ALLOWED_TAGS, attributes=ALLOWED_ATTRIBUTES
-        )
-
-    def get_full_markdown_content(self):
-        """
-        Ensambla el contenido completo desde los GeneratedContentChunk asociados.
-        Esta es la fuente de verdad para el contenido generado por automatización.
-        """
-        # Usamos hasattr para evitar un RelatedObjectDoesNotExist si la relación no existe
-        if hasattr(self, 'source_task') and self.source_task:
-            chunks = self.source_task.content_chunks.all().order_by('order')
-            if chunks.exists():
-                return '\n\n'.join(chunk.content for chunk in chunks)
-        
-        # Fallback para contenido creado manualmente o antes de la refactorización.
-        return self.markdown_content
-
-    def save(self, *args, **kwargs):
-        # Regla de negocio: El contenido libre creado por el staff es siempre público.
-        if self.is_free_content and self.creator and self.creator.is_staff:
-            self.is_public = True
-
-        if (not self.slug or ContentMaterial.objects.filter(slug=self.slug)
-            .exclude(pk=self.pk).exists()):
-            base_slug = slugify(self.title)
-            proposed_slug = base_slug
-            while ContentMaterial.objects.filter(slug=proposed_slug).exists():
-                unique_suffix = uuid.uuid4().hex[:8]
-                proposed_slug = f"{base_slug}-{unique_suffix}"
-
-            self.slug = proposed_slug
-        super().save(*args, **kwargs)
-
-    def get_absolute_url(self):
-        return reverse("contents:content_detail", kwargs={"pk": self.pk})
-
-    def delete(self, *args, **kwargs):
-        topic_to_check = self.topic
-        free_category_to_check = self.free_category
-        super().delete(*args, **kwargs)
-        if topic_to_check and _is_node_empty(topic_to_check):
-            topic_to_check.delete()
-        
-        if free_category_to_check:
-            if _is_free_node_empty(free_category_to_check):
-                parent_topic_to_check = free_category_to_check.topic
-                free_category_to_check.delete()
-                if parent_topic_to_check and _is_free_node_empty(parent_topic_to_check):
-                    parent_topic_to_check.delete()
+        return f"Navegación de {self.user.username}"
 
 
 class ContentCopy(models.Model):

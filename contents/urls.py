@@ -34,8 +34,4 @@ urlpatterns = [
     path("share_image/<uuid:pk>/", views.generate_share_image, name="generate_share_image"),
     path("share_image/default/", views.generate_default_share_image, name="generate_default_share_image"),
 
-    # --- Dynamic Form AJAX Endpoints ---
-    path("ajax/load_disciplines/", views.ajax_load_disciplines, name="ajax_load_disciplines"),
-    path("ajax/load_main_categories/", views.ajax_load_main_categories, name="ajax_load_main_categories"),
-    path("ajax/load_topics/", views.ajax_load_topics, name="ajax_load_topics"),
 ]

@@ -16,12 +16,9 @@ import bleach
 from academic_structure.models import Subject # Importación necesaria
 from .utils import generate_share_image_bytes
 from .models import (
-    ContentMaterial, KnowledgeArea, Discipline, MainCategory, Topic, FavoriteFolder
+    ContentMaterial, FavoriteFolder
 )
-from .forms import (
-    ContentMaterialForm, NEW_OPTION_ID_VALUE, NEW_OPTION_TEXT,
-    PLACEHOLDER_OPTION_TEXT,
-)
+from .forms import ContentMaterialForm
 
 User = get_user_model()
 logger = logging.getLogger(__name__)
@@ -447,9 +444,7 @@ def create_content(request):
     else:
         form = ContentMaterialForm()
     context = {
-        "content_form": form, "page_title": "Crear Nuevo Material", "is_editing": False,
-        "NEW_OPTION_ID_VALUE": NEW_OPTION_ID_VALUE, "NEW_OPTION_TEXT": NEW_OPTION_TEXT,
-        "PLACEHOLDER_OPTION_TEXT": PLACEHOLDER_OPTION_TEXT,
+        "content_form": form, "page_title": "Crear Nuevo Material", "is_editing": False
     }
     return render(request, "contents/create_edit_content.html", context)
 
@@ -486,20 +481,6 @@ def delete_content(request, pk):
         messages.success(request, f"El material '{deleted_title}' ha sido eliminado.")
         return redirect("contents:personal_workspace")
     return render(request, "contents/confirm_content_deletion.html", {"content_detail": content_obj})
-
-def _options_to_json_response(queryset, include_create_new=True):
-    options = [{"id": obj.pk, "text": str(obj)} for obj in queryset]
-    return JsonResponse(options, safe=False)
-
-def ajax_load_disciplines(request):
-    area_id = request.GET.get("parent_id")
-    queryset = Discipline.objects.filter(knowledge_area_id=area_id).order_by("name") if area_id else Discipline.objects.none()
-    return _options_to_json_response(queryset)
-
-def ajax_load_main_categories(request):
-    discipline_id = request.GET.get("parent_id")
-    queryset = MainCategory.objects.filter(discipline_id=discipline_id).order_by("name") if discipline_id else MainCategory.objects.none()
-    return _options_to_json_response(queryset)
 
 def ajax_load_topics(request):
     parent_model = request.GET.get("parent_model")
