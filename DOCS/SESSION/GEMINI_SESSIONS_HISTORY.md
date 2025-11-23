@@ -431,3 +431,6 @@
 *  **Session:** Hito 22 Fase 9: Corrección de Navegación Circular en Contenido Libre
 *  **Description:** Sesión enfocada en la Fase 9 del Hito 22, destinada a la estabilización de la refactorización de navegación. Se abordará prioritariamente la resolución del error de "navegación circular" (Pink Floyd) detectado en los enlaces de Contenido Libre, asegurando la correcta jerarquía y accesibilidad en la nueva arquitectura centrada en el usuario.
 
+*   **Session:** Resolución de Error de Integridad por Slug Duplicado en Generación de Contenido
+*   **Description:** Análisis y corrección del fallo `IntegrityError 1062` en la tabla `contents_contentmaterial` durante la ejecución de tareas de orquestación. El objetivo es depurar la lógica de asignación de slugs vacíos y asegurar la unicidad mediante validación robusta en el modelo y señales.
+

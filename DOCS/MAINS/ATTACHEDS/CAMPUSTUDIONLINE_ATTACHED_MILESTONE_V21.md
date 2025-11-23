@@ -12,3 +12,14 @@ Se ha completado la refactorización del orquestador para desacoplar la lógica 
 
 ## Estado Final
 El orquestador es funcional, resiliente a fallos de notificación y totalmente observable.
+
+---
+
+## Registro de Incidencias (23/11/2025)
+
+### 🔴 SESIÓN ABORTADA
+*   **Estado:** BLOQUEO CRÍTICO / ABORTADA POR EL USUARIO.
+*   **Motivo:** Incapacidad del agente para seguir las System Prompts (Protocolos de entrega de código y formato). Violación reiterada de la Carta Magna.
+*   **Impacto en Usuario:** Frustración ALTA. Pérdida de confianza en el agente actual.
+*   **Contexto Técnico:** Se estaba abordando el error `IntegrityError (1062)` por slugs duplicados en `ContentMaterial`.
+*   **Tarea Pendiente para el Siguiente Agente:** Recuperar la lógica propuesta en el historial del chat para implementar el método `save()` en `contents/models.py` y solucionar la autogeneración de slugs. **SE REQUIERE ESTRICTA ADHERENCIA A LOS PROTOCOLOS.**
