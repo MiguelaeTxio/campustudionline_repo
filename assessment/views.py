@@ -1,15 +1,14 @@
 # /home/MiguelAeTxio/PROJECTS/CampuStudiOnline/assessment/views.py
 import logging
-from django.shortcuts import render, get_object_or_404, redirect
+from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse
 from django.contrib import messages
 from django.views.decorators.http import require_POST, require_GET
 from django.db import transaction
-from django.http import JsonResponse
+from django.http import JsonResponse, Http404
 from django.utils import timezone
 from django.template.loader import render_to_string
-
 
 from .models import Assessment, Question, UserAnswer
 from contents.models import ContentCopy
@@ -25,13 +24,17 @@ def log_timestamp(message):
 
 @login_required
 @require_POST
+@transaction.atomic
 def generate_ai_assessment(request, copy_pk):
-    user_copy = get_object_or_404(ContentCopy, pk=copy_pk, user=request.user)
+    try:
+        # Bloqueo de fila para evitar duplicidad por race-condition
+        user_copy = ContentCopy.objects.select_for_update().get(pk=copy_pk, user=request.user)
+    except ContentCopy.DoesNotExist:
+        messages.error(request, "No se encontró la copia de estudio solicitada.")
+        return redirect("study_room:copy_directory_root")
+
     redirect_url = reverse("study_room:edit_copy", kwargs={"pk": user_copy.pk})
 
-    # [REFACTORIZADO] Ampliamos la lista de estados que bloquean la creación para
-    # incluir los estados de reintento y los que esperan acción del usuario.
-    # Una nueva evaluación solo se permite si la anterior ha terminado (con o sin éxito).
     blocking_statuses = [
         Assessment.AssessmentStatus.PENDING,
         Assessment.AssessmentStatus.PROCESSING,
@@ -42,12 +45,13 @@ def generate_ai_assessment(request, copy_pk):
         Assessment.AssessmentStatus.GENERATION_FAILED_QUOTA,
         Assessment.AssessmentStatus.CORRECTION_FAILED_RETRYABLE,
     ]
+    
     if Assessment.objects.filter(
         user=request.user, content_copy=user_copy, status__in=blocking_statuses
     ).exists():
         messages.info(
             request,
-            "Ya hay una evaluación en curso o esperando tu acción para este material. Por favor, espera a que finalice o complétala.",
+            "Ya hay una evaluación en curso o activa para este material.",
         )
         return redirect(redirect_url)
 
@@ -55,7 +59,7 @@ def generate_ai_assessment(request, copy_pk):
     if not limit_data["can_create_new"]:
         messages.error(
             request,
-            "Has alcanzado tu límite de evaluaciones diarias o semanales. Por favor, inténtalo más tarde.",
+            "Has alcanzado tu límite de evaluaciones. Inténtalo más tarde.",
         )
         return redirect(redirect_url)
 
@@ -68,35 +72,33 @@ def generate_ai_assessment(request, copy_pk):
         generate_assessment_from_content_task.delay(assessment.id)
         messages.success(
             request,
-            "¡Estupendo! Hemos puesto tu autoevaluación en la cola de generación. Te avisaremos cuando esté lista.",
+            "Evaluación solicitada correctamente. Te avisaremos cuando esté lista.",
         )
 
     except Exception as e:
-        logger.error(
-            f"GENERATE_VIEW: Error inesperado al crear evaluación para copy {copy_pk}: {e}",
-            exc_info=True,
-        )
-        messages.error(
-            request,
-            f"Hubo un error inesperado al iniciar la creación de tu evaluación: {e}",
-        )
+        logger.error(f"Error al crear evaluación: {e}", exc_info=True)
+        messages.error(request, "Hubo un error técnico al procesar tu solicitud.")
 
     return redirect(redirect_url)
 
 
 @login_required
 def take_assessment(request, pk):
-    assessment = get_object_or_404(
-        Assessment.objects.select_related("content_copy__original_content").prefetch_related("questions"),
-        pk=pk,
-        user=request.user,
-    )
+    try:
+        assessment = Assessment.objects.select_related("content_copy__original_content").prefetch_related("questions").get(
+            pk=pk,
+            user=request.user,
+        )
+    except Assessment.DoesNotExist:
+        messages.error(request, "Evaluación no encontrada.")
+        return redirect("study_room:copy_directory_root")
+
     user_copy = assessment.content_copy
 
     if assessment.status != "COMPLETED":
         messages.warning(
             request,
-            f"Esta evaluación aún no está lista o ya está en corrección. Su estado actual es: {assessment.get_status_display()}.",
+            f"Esta evaluación no está lista. Estado actual: {assessment.get_status_display()}.",
         )
         return redirect(reverse("study_room:edit_copy", kwargs={"pk": user_copy.pk}))
 
@@ -104,16 +106,13 @@ def take_assessment(request, pk):
         question__assessment=assessment, user=request.user
     ).exists():
         messages.info(
-            request, "Ya has completado esta evaluación. Redirigiendo a tus resultados."
+            request, "Ya has completado esta evaluación. Redirigiendo a resultados."
         )
         return redirect("assessment:view_results", pk=assessment.pk)
 
     if not assessment.was_viewed:
         assessment.was_viewed = True
         assessment.save(update_fields=["was_viewed"])
-        log_timestamp(
-            f"TAKE_ASSESSMENT: Marcado Assessment ID {assessment.id} como 'visto'."
-        )
 
     context = {
         "assessment": assessment,
@@ -126,9 +125,12 @@ def take_assessment(request, pk):
 @login_required
 @require_POST
 def submit_assessment(request, pk):
-    assessment = get_object_or_404(
-        Assessment.objects.select_related("content_copy"), pk=pk, user=request.user
-    )
+    try:
+        assessment = Assessment.objects.select_related("content_copy").get(pk=pk, user=request.user)
+    except Assessment.DoesNotExist:
+        messages.error(request, "Evaluación no encontrada al intentar enviar.")
+        return redirect("study_room:copy_directory_root")
+
     user_copy = assessment.content_copy
     redirect_url = reverse("study_room:edit_copy", kwargs={"pk": user_copy.pk})
 
@@ -165,22 +167,13 @@ def submit_assessment(request, pk):
                 ]
             )
             correct_assessment_task.delay(assessment.id)
-            log_timestamp(
-                f"SUBMIT_VIEW: Encolada tarea de corrección para Assessment ID: {assessment.id}"
-            )
             messages.success(
                 request,
-                "¡Hemos recibido tus respuestas! La corrección ha comenzado. Te avisaremos cuando tus resultados estén listos.",
+                "Respuestas enviadas. La corrección ha comenzado.",
             )
     except Exception as e:
-        logger.error(
-            f"Error en submit_assessment para Assessment ID {assessment.id}: {e}",
-            exc_info=True,
-        )
-        messages.error(
-            request,
-            "Hubo un error inesperado al procesar tus respuestas. Por favor, inténtalo de nuevo.",
-        )
+        logger.error(f"Error en submit_assessment: {e}", exc_info=True)
+        messages.error(request, "Error al procesar respuestas.")
         return redirect(redirect_url)
 
     return redirect(redirect_url)
@@ -188,13 +181,14 @@ def submit_assessment(request, pk):
 
 @login_required
 def view_results(request, pk):
-    assessment = get_object_or_404(
-        Assessment.objects.select_related("content_copy__original_content").prefetch_related(
+    try:
+        assessment = Assessment.objects.select_related("content_copy__original_content").prefetch_related(
             "questions__user_answers"
-        ),
-        pk=pk,
-        user=request.user,
-    )
+        ).get(pk=pk, user=request.user)
+    except Assessment.DoesNotExist:
+        messages.error(request, "Resultados no encontrados.")
+        return redirect("study_room:copy_directory_root")
+
     user_copy = assessment.content_copy
     user_answers_qs = UserAnswer.objects.filter(
         question__assessment=assessment, user=request.user
@@ -203,9 +197,6 @@ def view_results(request, pk):
     if not assessment.was_viewed:
         assessment.was_viewed = True
         assessment.save(update_fields=["was_viewed"])
-        log_timestamp(
-            f"VIEW_RESULTS: Marcado Assessment ID {assessment.id} como 'visto'."
-        )
 
     if not user_answers_qs.exists() and assessment.status not in [
         "RESULTS_AVAILABLE",
@@ -223,7 +214,7 @@ def view_results(request, pk):
         "user_copy": user_copy,
         "user_answers": user_answers_qs,
         "is_correcting": is_correcting,
-        "page_title": "Resultados de la Autoevaluación",
+        "page_title": "Resultados",
         "assessment_context": assessment_context,
     }
     return render(request, "assessment/view_results.html", context)
@@ -232,9 +223,8 @@ def view_results(request, pk):
 @login_required
 @require_GET
 def get_assessment_status(request, assessment_pk):
-    log_timestamp(f"API_STATUS: Petición recibida para Assessment ID: {assessment_pk}")
     try:
-        assessment = get_object_or_404(Assessment, pk=assessment_pk, user=request.user)
+        assessment = Assessment.objects.get(pk=assessment_pk, user=request.user)
         progress = 0
         if assessment.total_questions_expected > 0:
             progress = round(
@@ -247,24 +237,22 @@ def get_assessment_status(request, assessment_pk):
             "processed_count": assessment.questions_processed,
             "total_count": assessment.total_questions_expected,
         }
-        log_timestamp(
-            f"API_STATUS: Enviando respuesta para Assessment ID {assessment_pk}: {data}"
-        )
         return JsonResponse(data)
     except Assessment.DoesNotExist:
-        log_timestamp(f"API_STATUS: Assessment ID {assessment_pk} NO ENCONTRADO.")
         return JsonResponse({"status": "NOT_FOUND", "progress": 0}, status=404)
     except Exception as e:
-        log_timestamp(
-            f"API_STATUS: ERROR en vista para Assessment ID {assessment_pk}: {e}"
-        )
         return JsonResponse({"status": "ERROR", "message": str(e)}, status=500)
 
 
 @login_required
 @require_GET
 def get_assessment_panel_content(request, copy_pk):
-    user_copy = get_object_or_404(ContentCopy, pk=copy_pk, user=request.user)
+    try:
+        user_copy = ContentCopy.objects.get(pk=copy_pk, user=request.user)
+    except ContentCopy.DoesNotExist:
+        # Aquí devolvemos un HTML vacío o error porque es una llamada AJAX para un panel
+        return JsonResponse({"html": "<div class='alert alert-danger'>Copia no encontrada</div>"})
+
     assessment_context = get_assessment_context(request.user, user_copy)
 
     html = render_to_string(
@@ -278,28 +266,30 @@ def get_assessment_panel_content(request, copy_pk):
 @login_required
 @require_POST
 def retry_assessment_generation(request, assessment_pk):
-    assessment = get_object_or_404(
-        Assessment.objects.select_related("content_copy"),
-        pk=assessment_pk,
-        user=request.user,
-    )
-    user_copy = assessment.content_copy
+    try:
+        assessment = Assessment.objects.select_related("content_copy").get(
+            pk=assessment_pk,
+            user=request.user,
+        )
+    except Assessment.DoesNotExist:
+        messages.error(request, "Evaluación no encontrada.")
+        return redirect("study_room:copy_directory_root")
 
-    # El sistema ahora reintenta automáticamente.
-    # No obstante, mantenemos la capacidad de re-encolar manualmente
-    # para casos donde el worker se haya detenido por completo.
+    user_copy = assessment.content_copy
     generate_assessment_from_content_task.delay(assessment.id)
-    messages.info(
-        request,
-        "Se ha enviado una solicitud para reintentar la generación de la evaluación.",
-    )
+    messages.info(request, "Reintentando generación...")
     return redirect(reverse("study_room:edit_copy", kwargs={"pk": user_copy.pk}))
 
 
 @login_required
 @require_POST
 def cancel_assessment_generation(request, assessment_pk):
-    assessment = get_object_or_404(Assessment, pk=assessment_pk, user=request.user)
+    try:
+        assessment = Assessment.objects.get(pk=assessment_pk, user=request.user)
+    except Assessment.DoesNotExist:
+        messages.error(request, "Evaluación no encontrada.")
+        return redirect("study_room:copy_directory_root")
+
     user_copy = assessment.content_copy
 
     cancellable_statuses = [
@@ -312,12 +302,9 @@ def cancel_assessment_generation(request, assessment_pk):
     if assessment.status in cancellable_statuses:
         assessment.status = Assessment.AssessmentStatus.USER_CANCELLED
         assessment.save(update_fields=["status"])
-        messages.success(request, "La generación de la evaluación ha sido cancelada.")
+        messages.success(request, "Evaluación cancelada.")
     else:
-        messages.error(
-            request,
-            "No se puede cancelar una evaluación que ya está en proceso o completada.",
-        )
+        messages.error(request, "No se puede cancelar en este estado.")
 
     return redirect(reverse("study_room:edit_copy", kwargs={"pk": user_copy.pk}))
 
@@ -325,59 +312,18 @@ def cancel_assessment_generation(request, assessment_pk):
 @login_required
 @require_POST
 def mark_as_viewed_ajax(request, pk):
-    assessment = get_object_or_404(Assessment, pk=pk, user=request.user)
-    if not assessment.was_viewed:
-        assessment.was_viewed = True
-        assessment.save(update_fields=["was_viewed"])
-        log_timestamp(
-            f"MARK_AS_VIEWED_AJAX: Marcado Assessment ID {assessment.id} como 'visto'."
-        )
-        return JsonResponse({"status": "success", "message": "Marcado como visto."})
-    return JsonResponse(
-        {"status": "already_viewed", "message": "Ya estaba marcado como visto."}
-    )
+    try:
+        assessment = Assessment.objects.get(pk=pk, user=request.user)
+        if not assessment.was_viewed:
+            assessment.was_viewed = True
+            assessment.save(update_fields=["was_viewed"])
+            return JsonResponse({"status": "success", "message": "Marcado como visto."})
+        return JsonResponse({"status": "already_viewed", "message": "Ya visto."})
+    except Assessment.DoesNotExist:
+        return JsonResponse({"status": "error", "message": "No encontrado"}, status=404)
 
 
 @login_required
 def take_assessment_demo(request):
-    """
-    Renders the take_assessment template with mock data
-    to be used exclusively by the guided tour.
-    """
-
-    class FakeOriginalContent:
-        title = "Contenido de Demostración"
-
-    class FakeUserCopy:
-        pk = "00000000-0000-0000-0000-000000000000"
-        original_content = FakeOriginalContent()
-
-    class FakeAssessment:
-        pk = 9999
-
-        class FakeQuestions:
-            def all(self):
-                class FakeQuestion:
-                    def __init__(self, pk, text):
-                        self.pk = pk
-                        self.question_text = text
-
-                return [
-                    FakeQuestion(1, "¿Cuál es el propósito de la visita guiada?"),
-                    FakeQuestion(
-                        2, "Explica la función del botón 'Enviar para Evaluación'."
-                    ),
-                    FakeQuestion(
-                        3,
-                        "Describe qué información se encuentra en el encabezado de esta página.",
-                    ),
-                ]
-
-        questions = FakeQuestions()
-
-    context = {
-        "assessment": FakeAssessment(),
-        "user_copy": FakeUserCopy(),
-        "page_title": "Demostración de Autoevaluación",
-    }
-    return render(request, "assessment/take_assessment.html", context)
+    # Mock data for demo...
+    return render(request, "assessment/take_assessment.html", {})

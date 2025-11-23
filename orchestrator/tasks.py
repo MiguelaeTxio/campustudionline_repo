@@ -833,6 +833,19 @@ def generate_assessment_from_content_task(self, assessment_id):
             assessment.last_error = f"Cuota agotada: {str(e)}"
             assessment.save(update_fields=["status", "last_error"])
 
+    except ResourceExhausted as e:
+        logger.warning(f"GENERATION_TASK: Cuota agotada para Assessment ID {assessment_id}. Iniciando protocolo de resiliencia.")
+        if assessment:
+            if "429" in str(e) or "Too Many Requests" in str(e) or "Resource has been exhausted" in str(e):
+                 if self.request.retries < self.max_retries:
+                     log_timestamp(f"GENERATION_TASK: Cuota temporal. Reintentando en 60s. Intento {self.request.retries + 1}")
+                     raise self.retry(exc=e, countdown=60)
+            
+            log_timestamp(f"GENERATION_TASK: Cuota diaria excedida o max reintentos. Solicitando cuarentena.")
+            assessment.status = Assessment.AssessmentStatus.GENERATION_FAILED_RETRYABLE
+            assessment.last_error = f"Cuota agotada: {str(e)}"
+            assessment.save(update_fields=["status", "last_error"])
+
     except (DeadlineExceeded, AIServiceCriticalError, ValueError) as e:
         logger.error(f"GENERATION_TASK: ERROR RECUPERABLE para Assessment ID {assessment_id}: {e}", exc_info=False)
         if assessment:

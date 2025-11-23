@@ -51,8 +51,25 @@
                 <div id="collapse-subj-{{ forloop.counter }}" class="accordion-collapse collapse" data-bs-parent="#navigation-tree-root">
                     <div class="accordion-body p-0">
                         {% for copy in copies %}
-                            <a href="{{ copy.url }}" class="list-group-item list-group-item-action border-0 ps-5 py-2 small text-truncate">
-                                <i class="far fa-file-alt me-2 text-muted"></i>{{ copy.title }}
+                            <a href="{{ copy.url }}" class="list-group-item list-group-item-action border-0 ps-5 py-2 small text-truncate d-flex align-items-center justify-content-between">
+
+    <span class="text-truncate">
+        <i class="far fa-file-alt me-2 text-muted"></i>{{ copy.title }}
+    </span>
+    {% if copy.assessment_status %}
+        {% if copy.assessment_status == 'PENDING' or copy.assessment_status == 'PROCESSING' or copy.assessment_status == 'CORRECTING' or copy.assessment_status == 'AWAITING_CORRECTION' %}
+            <i class="fas fa-hourglass-half text-warning ms-2" title="Evaluación en curso"></i>
+        {% elif copy.assessment_status == 'COMPLETED' or copy.assessment_status == 'RESULTS_AVAILABLE' %}
+            {% if not copy.assessment_viewed %}
+                <i class="fas fa-circle text-danger ms-2" style="font-size: 0.5rem;" title="Resultados nuevos"></i>
+            {% else %}
+                <i class="fas fa-check-circle text-success ms-2" title="Evaluación completada"></i>
+            {% endif %}
+        {% elif 'FAILED' in copy.assessment_status %}
+             <i class="fas fa-exclamation-triangle text-danger ms-2" title="Error en evaluación"></i>
+        {% endif %}
+    {% endif %}
+
                             </a>
                         {% endfor %}
                     </div>
@@ -70,8 +87,25 @@
                 <small class="text-muted fw-bold text-uppercase ms-2" style="font-size: 0.75rem;">Contenido Libre</small>
             </div>
             {% for copy in user_navigation_tree.study_copies.free %}
-                <a href="{{ copy.url }}" class="list-group-item list-group-item-action border-0 px-3 py-2">
-                     <i class="fas fa-feather-alt text-success me-2"></i>{{ copy.title }}
+                <a href="{{ copy.url }}" class="list-group-item list-group-item-action border-0 px-3 py-2 d-flex align-items-center justify-content-between">
+
+    <span class="text-truncate">
+        <i class="fas fa-feather-alt text-success me-2 text-muted"></i>{{ copy.title }}
+    </span>
+    {% if copy.assessment_status %}
+        {% if copy.assessment_status == 'PENDING' or copy.assessment_status == 'PROCESSING' or copy.assessment_status == 'CORRECTING' or copy.assessment_status == 'AWAITING_CORRECTION' %}
+            <i class="fas fa-hourglass-half text-warning ms-2" title="Evaluación en curso"></i>
+        {% elif copy.assessment_status == 'COMPLETED' or copy.assessment_status == 'RESULTS_AVAILABLE' %}
+            {% if not copy.assessment_viewed %}
+                <i class="fas fa-circle text-danger ms-2" style="font-size: 0.5rem;" title="Resultados nuevos"></i>
+            {% else %}
+                <i class="fas fa-check-circle text-success ms-2" title="Evaluación completada"></i>
+            {% endif %}
+        {% elif 'FAILED' in copy.assessment_status %}
+             <i class="fas fa-exclamation-triangle text-danger ms-2" title="Error en evaluación"></i>
+        {% endif %}
+    {% endif %}
+
                 </a>
             {% endfor %}
         {% endif %}

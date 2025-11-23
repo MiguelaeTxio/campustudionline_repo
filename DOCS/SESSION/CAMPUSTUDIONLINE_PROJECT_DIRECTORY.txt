@@ -392,6 +392,7 @@
 ./assessment/templates/admin/assessment/dashboard.html
 ./assessment/templates/admin/assessment/view_log.html
 ./assessment/templates/admin/assessment/assessment_changelist.html
+./assessment/signals.py
 ./assessment/static
 ./assessment/static/assessment
 ./assessment/static/assessment/take_assessment_tour.js

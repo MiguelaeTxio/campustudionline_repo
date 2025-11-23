@@ -177,7 +177,7 @@ def get_assessment_context(user, content_copy):
         latest_assessment = all_user_assessments_for_content.order_by("-created_at").first()
         context["raw_assessment"] = latest_assessment
 
-        # [REFACTOR] Prioridad 1: Mostrar el estado de la evaluación activa si existe
+        # 1. Si existe una evaluación, su estado manda (Procesando, Corrigiendo, Resultados...)
         if latest_assessment:
             s = latest_assessment.status
             if s in ["PENDING", "PROCESSING"]:
@@ -193,19 +193,16 @@ def get_assessment_context(user, content_copy):
                 context["status"] = "FALLIDA"
                 context["status_text"] = _("Error: {}").format(latest_assessment.get_status_display())
         
-        # [REFACTOR] Prioridad 2: Si no hay estado activo que mostrar, comprobamos límites
-        # Solo entramos aquí si el status sigue siendo el default "PUEDE_SOLICITAR" (o lo hemos sobrescrito arriba pero queremos chequear límites para el futuro, aunque la UI suele bloquearse antes)
-        # Simplificación: Si ya hemos definido un estado activo (Generando, Corrigiendo, Resultados), NO mostramos "En Espera".
-        
+        # 2. Solo si no hay nada activo/pendiente mostramos el bloqueo por límites
         if context["status"] == "PUEDE_SOLICITAR" and not can_create_new:
             context["status"] = "EN_ESPERA"
-            
+            # Cálculo del timer
             daily_slot, weekly_slot = None, None
-            if limit_data["daily"]["is_reached"]:
+            if limit_data["daily"]["is_reached"] and limit_data.get("assessments_in_last_day"):
                 oldest_in_day = limit_data["assessments_in_last_day"].order_by("created_at").first()
                 if oldest_in_day:
                     daily_slot = oldest_in_day.created_at + timedelta(days=1)
-            if limit_data["weekly"]["is_reached"]:
+            if limit_data["weekly"]["is_reached"] and limit_data.get("assessments_in_last_week"):
                 oldest_in_week = limit_data["assessments_in_last_week"].order_by("created_at").first()
                 if oldest_in_week:
                     weekly_slot = oldest_in_week.created_at + timedelta(days=7)
@@ -216,6 +213,7 @@ def get_assessment_context(user, content_copy):
                     "label": _("Próxima evaluación disponible en:"),
                     "end_time_iso": max(potential_slots).isoformat(),
                 }
+
 
     visible_assessments = Assessment.objects.filter(
         user=user,

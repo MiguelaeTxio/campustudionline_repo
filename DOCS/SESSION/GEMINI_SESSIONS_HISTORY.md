@@ -441,3 +441,6 @@
 *  **Session:** Resolución de Integridad de Datos en Slugs de ContentMaterial
 *  **Description:** Implementación de lógica robusta de generación de slugs únicos en el modelo ContentMaterial para mitigar errores de integridad (Duplicate entry 1062) durante la creación de contenido, asegurando la unicidad antes de la persistencia en base de datos.
 
+*  **Session:** Reanudación Hito 6: Integración de Evaluaciones con Nueva Navegación
+*  **Description:** Reactivación del desarrollo del sistema de autoevaluaciones tras la finalización del Hito 22. Se procederá a integrar el flujo de evaluaciones con el nuevo modelo UserStudyNavigation en la aplicación contents, eliminando la dependencia de la navegación jerárquica obsoleta y verificando la accesibilidad de las copias de estudio.
+

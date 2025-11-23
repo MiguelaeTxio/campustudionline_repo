@@ -1,5 +1,7 @@
 import logging
 from django.db import transaction
+from django.apps import apps
+from django.db.models import Subquery, OuterRef
 from contents.models import UserStudyNavigation, FavoriteFolder, ContentCopy
 
 logger = logging.getLogger(__name__)
@@ -87,7 +89,19 @@ class NavigationTreeBuilder:
         return node
 
     def _build_copies_section(self):
-        copies_qs = ContentCopy.objects.filter(user=self.user).select_related(
+        # Evitamos importación circular obteniendo el modelo dinámicamente
+        Assessment = apps.get_model('assessment', 'Assessment')
+        
+        # Subquery para obtener el estado de la evaluación más reciente
+        newest_assessment = Assessment.objects.filter(
+            content_copy=OuterRef('pk')
+        ).order_by('-created_at')
+
+        # Anotamos el queryset para evitar N+1 consultas
+        copies_qs = ContentCopy.objects.filter(user=self.user).annotate(
+            latest_assessment_status=Subquery(newest_assessment.values('status')[:1]),
+            latest_assessment_viewed=Subquery(newest_assessment.values('was_viewed')[:1])
+        ).select_related(
             'original_content', 'subject_context'
         ).order_by('-updated_at')
 
@@ -102,7 +116,9 @@ class NavigationTreeBuilder:
                 "title": copy.original_content.title,
                 "original_id": str(copy.original_content.id),
                 "updated_at": copy.updated_at.isoformat(),
-                "url": copy.get_absolute_url() if hasattr(copy, 'get_absolute_url') else '#'
+                "url": copy.get_absolute_url() if hasattr(copy, 'get_absolute_url') else '#',
+                "assessment_status": copy.latest_assessment_status,
+                "assessment_viewed": copy.latest_assessment_viewed,
             }
 
             if copy.subject_context:
