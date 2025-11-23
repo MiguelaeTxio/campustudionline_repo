@@ -117,6 +117,28 @@ class Assessment(models.Model):
         help_text=_("Registro detallado de los cambios de estado y errores de esta evaluación.")
     )
     
+    
+    def add_log_event(self, message, level="INFO"):
+        """
+        Añade un evento al log de forma atómica.
+        """
+        from django.utils import timezone
+        
+        if self.event_log is None or not isinstance(self.event_log, list):
+            self.event_log = []
+
+        entry = {
+            "timestamp": timezone.now().isoformat(),
+            "level": level,
+            "message": str(message)
+        }
+        
+        self.event_log.insert(0, entry)
+        self.event_log = self.event_log[:50]
+        
+        self.save(update_fields=["event_log"])
+
+
     def save(self, *args, **kwargs):
         """
         Sobrescribe el método save para:
@@ -299,6 +321,28 @@ class AssessmentSettings(models.Model):
 
     def __str__(self):
         return str(_("Configuración de Evaluaciones"))
+
+    
+    def add_log_event(self, message, level="INFO"):
+        """
+        Añade un evento al log de forma atómica y segura contra condiciones de carrera.
+        """
+        from django.utils import timezone
+        
+        if self.event_log is None or not isinstance(self.event_log, list):
+            self.event_log = []
+            
+        entry = {
+            "timestamp": timezone.now().isoformat(),
+            "level": level,
+            "message": str(message)
+        }
+        
+        self.event_log.insert(0, entry)
+        self.event_log = self.event_log[:50]
+        
+        self.save(update_fields=["event_log"])
+
 
     def save(self, *args, **kwargs):
         """

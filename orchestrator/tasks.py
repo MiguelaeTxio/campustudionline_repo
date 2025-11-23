@@ -346,24 +346,11 @@ def log_timestamp(message):
         pass
 
 def _log_assessment_event(assessment_id, message, level="INFO"):
-    """Registra un evento en el log estructurado del Assessment específico."""
+    """Wrapper para usar el método atómico del modelo."""
     try:
-        logger.info(f"[Assessment {assessment_id}] {message}")
         with transaction.atomic():
-            # Usamos select_for_update para evitar condiciones de carrera en el JSON
             assessment = Assessment.objects.select_for_update().get(pk=assessment_id)
-            entry = {
-                "timestamp": timezone.now().isoformat(),
-                "level": level,
-                "message": str(message)
-            }
-            if assessment.event_log is None:
-                assessment.event_log = []
-            # Insertar al principio
-            assessment.event_log.insert(0, entry)
-            # Mantener tamaño razonable
-            assessment.event_log = assessment.event_log[:50]
-            assessment.save(update_fields=["event_log"])
+            assessment.add_log_event(message, level)
     except Assessment.DoesNotExist:
         logger.error(f"No se pudo loguear evento para Assessment {assessment_id}: No existe.")
     except Exception as e:
@@ -762,7 +749,7 @@ def generate_full_course_task(self, task_id: str):
 
 @shared_task(bind=True, acks_late=True, max_retries=3, default_retry_delay=60)
 def generate_assessment_from_content_task(self, assessment_id):
-    _log_assessment_event(assessment_id, "GENERATION_TASK: Inicio del proceso de generación.")
+    _log_assessment_event(assessment_id, f"TAREA GENERACIÓN: Evaluación encolada para ID {assessment_id}, reintento v{self.request.retries + 1}. ({assessment.content_copy.original_content.title}).")
     automation_settings = AutomationSettings.load()
     if not automation_settings.is_running:
         log_timestamp(f"GENERATION_TASK: Orquestador global detenido. Reintentando en 5 min. ID: {assessment_id}")
@@ -797,11 +784,13 @@ def generate_assessment_from_content_task(self, assessment_id):
         if not api_key:
             raise ValueError("No se encontró una clave de API activa y disponible.")
         
+        _log_assessment_event(assessment_id, "Llamada a API iniciada para generación de preguntas.")
         success, response_text, _ = generate_text_content(prompt, api_key=api_key)
         if not success:
             raise AIServiceCriticalError(f"La llamada a la API de texto falló: {response_text}")
         
         questions_data = _parse_assessment_text(response_text)
+        _log_assessment_event(assessment_id, f"EXTRACCIÓN: Bloque de {len(questions_data)} preguntas extraídas de la respuesta de la IA.")
         if not questions_data:
             raise ValueError(f"No se pudieron extraer preguntas. Respuesta IA: '{response_text[:500]}...'")
         
@@ -817,7 +806,13 @@ def generate_assessment_from_content_task(self, assessment_id):
             # Limpiar preguntas previas si es un reintento
             assessment_to_update.questions.all().delete()
             
-            for q_data in questions_data:
+            for index, q_data in enumerate(questions_data, 1):
+                # Recortamos la pregunta para que no sature el log
+                question_text = q_data['question_text'][:70] + '...'
+                
+                # Log granular antes de crear
+                _log_assessment_event(assessment_id, f"Generando pregunta {index} de {len(questions_data)}: {question_text}")
+
                 Question.objects.create(assessment=assessment_to_update, **q_data)
             
             assessment_to_update.total_questions_expected = len(questions_data)
@@ -930,7 +925,8 @@ def correct_assessment_task(self, assessment_id):
                 Assessment.objects.filter(pk=assessment_id).update(questions_processed=F("questions_processed") + 1)
                 continue
             prompt = (f"Evalúa la siguiente respuesta de un usuario, comparándola con la pregunta y la respuesta modelo.\n\n" f'Pregunta: "{answer.question.question_text}"\n' f'Respuesta Modelo: "{answer.question.model_answer}"\n' f'Respuesta del Usuario: "{answer.answer_text}"\n\n' f"{prompt_format_instructions}")
-            success, response_text, _ = generate_text_content(prompt, api_key=api_key)
+            _log_assessment_event(assessment_id, "Llamada a API iniciada para generación de preguntas.")
+        success, response_text, _ = generate_text_content(prompt, api_key=api_key)
             if not success:
                 raise AIServiceCriticalError(f"API falló para UserAnswer ID {answer.id}: {response_text}")
             correction = _parse_correction_text(response_text)

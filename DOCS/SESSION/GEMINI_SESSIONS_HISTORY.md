@@ -379,7 +379,7 @@
 # 2025-11-22
 # CAMPUSTUDIONLINE --ROADMAP
 # CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V22.md
-## RNS_FIX
+## RNA
 *  **Session:** Reparación Crítica en Search y Avance en Hito 22
 *  **Description:** Sesión de emergencia para corregir el error de sintaxis en `search/views.py` que mantiene bloqueado el arranque de Django. Tras la reparación, se procederá a ejecutar las migraciones pendientes del módulo `contents` para consolidar la eliminación de la deuda técnica (Jerarquía Intelectual y Contenido Libre Legacy) y se avanzará en la implementación de la lógica de `UserStudyNavigation`.
 
@@ -387,7 +387,7 @@
 # 2025-11-22
 # CAMPUSTUDIONLINE --ROADMAP
 # CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V22.md
-## RCSV
+## RNA
 *  **Session:** Hito 22: Reparación Crítica en Search y Consolidación de Modelos
 *  **Description:** Sesión de emergencia para corregir un error de sintaxis bloqueante en 'search/views.py' resultante de la refactorización previa. El objetivo inmediato es restaurar la operatividad de Django para ejecutar las migraciones pendientes en la aplicación 'contents', finalizando la limpieza de modelos obsoletos (Jerarquía Intelectual). Posteriormente, se procederá con la implementación de la lógica de navegación 'UserStudyNavigation'.
 
@@ -437,7 +437,7 @@
 # 2025-11-23
 # CAMPUSTUDIONLINE --ROADMAP
 # CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V21.md
-## SLUG_INTEGRITY_FIX
+## EPI
 *  **Session:** Resolución de Integridad de Datos en Slugs de ContentMaterial
 *  **Description:** Implementación de lógica robusta de generación de slugs únicos en el modelo ContentMaterial para mitigar errores de integridad (Duplicate entry 1062) durante la creación de contenido, asegurando la unicidad antes de la persistencia en base de datos.
 
@@ -451,4 +451,19 @@
 ## EPI
 *  **Session:** Unificación de UI de Evaluación y Sistema de Logs
 *  **Description:** Implementación del sistema de logs en el modelo Assessment para visibilidad en el admin y unificación de la lógica de estado de evaluación en el frontend (Lista de Copias, Sidebar y Tarjetas) para garantizar coherencia visual con la NavBar.
+
+# 2025-11-23
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+## EPI
+*  **Session:** Reparación Sistema Autoevaluación: Logs Mudos y Navegación Desincronizada
+*  **Description:** Sesión de emergencia para corregir fallos críticos en el Hito 6. Se implementará la escritura atómica en `event_log` dentro de las tareas de Celery para solucionar la ausencia de logs. Además, se auditará y reparará la lógica de señales y caché en `assessment/signals.py` y `contents/services/navigation_builder.py` para resolver la desincronización en la navegación.
+
+
+# 2025-11-23
+# CAMPUSTUDIONLINE --ROADMAP
+# Hito 6: Sistema de Autoevaluaciones con IA (EN PROGRESO)
+## EPI
+*  **Session:** Reparación de Logs de Evaluación y Sincronización de Navegación
+*  **Description:** Implementación de escritura atómica en el event_log para tareas de Celery y corrección de la desincronización en la barra de navegación y sidebar mediante auditoría de señales y caché.
 

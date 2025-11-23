@@ -1,3 +1,4 @@
+from django.db import transaction
 # /home/MiguelAeTxio/PROJECTS/CampuStudiOnline/assessment/signals.py
 import logging
 from django.db.models.signals import post_save
@@ -16,7 +17,7 @@ def update_navigation_on_assessment_change(sender, instance, created, **kwargs):
     try:
         # Solo actualizamos si hay cambios relevantes para la navegación
         # (aunque por simplicidad y seguridad, actualizamos siempre que se guarde)
-        refresh_user_navigation(instance.user)
+        transaction.on_commit(lambda: refresh_user_navigation(instance.user))
         logger.debug(f"Navegación actualizada por cambio en Assessment {instance.id}")
     except Exception as e:
         logger.error(f"Error actualizando navegación desde señal de Assessment: {e}")
