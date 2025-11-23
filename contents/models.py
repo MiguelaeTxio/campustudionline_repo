@@ -134,6 +134,24 @@ class ContentMaterial(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            base_slug = slugify(self.title)
+            # Si el slug base queda vacío (ej: título con solo caracteres especiales), usar UUID
+            if not base_slug:
+                base_slug = str(uuid.uuid4())[:8]
+            
+            proposed_slug = base_slug
+            counter = 1
+            
+            # Bucle para encontrar un slug único
+            while ContentMaterial.objects.filter(slug=proposed_slug).exists():
+                proposed_slug = f"{base_slug}-{counter}"
+                counter += 1
+            
+            self.slug = proposed_slug
+        super().save(*args, **kwargs)
+
     def __str__(self):
         return self.title
 

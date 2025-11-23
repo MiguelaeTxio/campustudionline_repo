@@ -434,3 +434,10 @@
 *   **Session:** Resolución de Error de Integridad por Slug Duplicado en Generación de Contenido
 *   **Description:** Análisis y corrección del fallo `IntegrityError 1062` en la tabla `contents_contentmaterial` durante la ejecución de tareas de orquestación. El objetivo es depurar la lógica de asignación de slugs vacíos y asegurar la unicidad mediante validación robusta en el modelo y señales.
 
+# 2025-11-23
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V21.md
+## SLUG_INTEGRITY_FIX
+*  **Session:** Resolución de Integridad de Datos en Slugs de ContentMaterial
+*  **Description:** Implementación de lógica robusta de generación de slugs únicos en el modelo ContentMaterial para mitigar errores de integridad (Duplicate entry 1062) durante la creación de contenido, asegurando la unicidad antes de la persistencia en base de datos.
+
