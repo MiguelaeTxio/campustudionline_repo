@@ -44,11 +44,9 @@ def _get_base_assessment_subqueries(user_filter):
         output_field=CharField()
     )
 
-    pk_annotation = Case(
-        When(Exact(coalesced_subquery, Value(1)), then=Subquery(latest_pk_subquery, output_field=IntegerField())),
-        default=Value(None),
-        output_field=IntegerField()
-    )
+    # [CORRECCIÓN] Devolvemos siempre el PK de la evaluación más reciente,
+    # independientemente de si hay estados múltiples, para evitar enlaces rotos.
+    pk_annotation = Subquery(latest_pk_subquery, output_field=IntegerField())
 
     return {'assessment_state': state_annotation, 'latest_assessment_pk': pk_annotation}
 

@@ -109,6 +109,13 @@ class Assessment(models.Model):
     last_error = models.TextField(
         blank=True, null=True, verbose_name=_("Último Error Registrado")
     )
+
+    event_log = models.JSONField(
+        default=list,
+        blank=True,
+        verbose_name=_("Historial de Eventos"),
+        help_text=_("Registro detallado de los cambios de estado y errores de esta evaluación.")
+    )
     
     def save(self, *args, **kwargs):
         """

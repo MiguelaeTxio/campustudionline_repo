@@ -208,10 +208,13 @@ def user_copies_list(request, university_slug=None, branch_slug=None, degree_slu
     y usa esta vista solo para filtrar el contenido final.
     """
     # Base QuerySet: Solo las copias del usuario
-    base_copies = ContentCopy.objects.filter(user=request.user).select_related(
+    # [MODIFICADO] Se añade anotación de estados de evaluación para la UI
+    base_qs = ContentCopy.objects.filter(user=request.user).select_related(
         "original_content",
         "subject_context"
     ).order_by("-updated_at")
+    
+    base_copies = annotate_content_copy_queryset_with_assessment_states(base_qs, request.user)
 
     context = {
         "page_title": "Mi Sala de Estudio", 

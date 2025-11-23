@@ -344,6 +344,31 @@ def log_timestamp(message):
         s.save(update_fields=["event_log"])
     except Exception:
         pass
+
+def _log_assessment_event(assessment_id, message, level="INFO"):
+    """Registra un evento en el log estructurado del Assessment específico."""
+    try:
+        logger.info(f"[Assessment {assessment_id}] {message}")
+        with transaction.atomic():
+            # Usamos select_for_update para evitar condiciones de carrera en el JSON
+            assessment = Assessment.objects.select_for_update().get(pk=assessment_id)
+            entry = {
+                "timestamp": timezone.now().isoformat(),
+                "level": level,
+                "message": str(message)
+            }
+            if assessment.event_log is None:
+                assessment.event_log = []
+            # Insertar al principio
+            assessment.event_log.insert(0, entry)
+            # Mantener tamaño razonable
+            assessment.event_log = assessment.event_log[:50]
+            assessment.save(update_fields=["event_log"])
+    except Assessment.DoesNotExist:
+        logger.error(f"No se pudo loguear evento para Assessment {assessment_id}: No existe.")
+    except Exception as e:
+        logger.error(f"Error escribiendo log de Assessment {assessment_id}: {e}")
+
 def _parse_assessment_text(text: str) -> list:
     questions = []
     pattern = re.compile(
@@ -737,7 +762,7 @@ def generate_full_course_task(self, task_id: str):
 
 @shared_task(bind=True, acks_late=True, max_retries=3, default_retry_delay=60)
 def generate_assessment_from_content_task(self, assessment_id):
-    log_timestamp(f"GENERATION_TASK: INICIO para Assessment ID {assessment_id}.")
+    _log_assessment_event(assessment_id, "GENERATION_TASK: Inicio del proceso de generación.")
     automation_settings = AutomationSettings.load()
     if not automation_settings.is_running:
         log_timestamp(f"GENERATION_TASK: Orquestador global detenido. Reintentando en 5 min. ID: {assessment_id}")
@@ -806,7 +831,7 @@ def generate_assessment_from_content_task(self, assessment_id):
             assessment_pk_val = assessment_to_update.pk
             content_title_val = assessment_to_update.content_copy.original_content.title
             
-            log_timestamp(f"GENERATION_TASK: ÉXITO PERSISTIDO para Assessment ID {assessment_id}. {len(questions_data)} preguntas creadas.")
+            _log_assessment_event(assessment_id, f"GENERATION_TASK: Éxito. {len(questions_data)} preguntas generadas y persistidas.", "SUCCESS")
 
         # Notificación (Desacoplada de la persistencia)
         try:
@@ -828,7 +853,7 @@ def generate_assessment_from_content_task(self, assessment_id):
                      raise self.retry(exc=e, countdown=60)
             
             # 2. Si llegamos aquí, es cuota diaria o max reintentos.
-            log_timestamp(f"GENERATION_TASK: Cuota diaria excedida o max reintentos. Solicitando cuarentena.")
+            _log_assessment_event(assessment_id, "GENERATION_TASK: Fallo por cuota API (Diaria/Max Reintentos).", "ERROR")
             assessment.status = Assessment.AssessmentStatus.GENERATION_FAILED_RETRYABLE
             assessment.last_error = f"Cuota agotada: {str(e)}"
             assessment.save(update_fields=["status", "last_error"])
@@ -841,7 +866,7 @@ def generate_assessment_from_content_task(self, assessment_id):
                      log_timestamp(f"GENERATION_TASK: Cuota temporal. Reintentando en 60s. Intento {self.request.retries + 1}")
                      raise self.retry(exc=e, countdown=60)
             
-            log_timestamp(f"GENERATION_TASK: Cuota diaria excedida o max reintentos. Solicitando cuarentena.")
+            _log_assessment_event(assessment_id, "GENERATION_TASK: Fallo por cuota API (Diaria/Max Reintentos).", "ERROR")
             assessment.status = Assessment.AssessmentStatus.GENERATION_FAILED_RETRYABLE
             assessment.last_error = f"Cuota agotada: {str(e)}"
             assessment.save(update_fields=["status", "last_error"])
@@ -865,7 +890,7 @@ def generate_assessment_from_content_task(self, assessment_id):
 
 @shared_task(bind=True, acks_late=True, max_retries=3, default_retry_delay=60)
 def correct_assessment_task(self, assessment_id):
-    log_timestamp(f"CORRECTION_TASK: INICIO para Assessment ID: {assessment_id}.")
+    _log_assessment_event(assessment_id, "CORRECTION_TASK: Inicio del proceso de corrección.")
     automation_settings = AutomationSettings.load()
     if not automation_settings.is_running:
         log_timestamp(f"CORRECTION_TASK: Orquestador global detenido. Reintentando en 5 min. ID: {assessment_id}")
@@ -927,7 +952,7 @@ def correct_assessment_task(self, assessment_id):
                 assessment_to_complete.status = Assessment.AssessmentStatus.RESULTS_AVAILABLE
                 assessment_to_complete.results_expiration_date = expiration_date
                 assessment_to_complete.save(update_fields=["status", "results_expiration_date"])
-                log_timestamp(f"CORRECTION_TASK: ÉXITO PERSISTIDO para Assessment ID {assessment_id}.")
+                _log_assessment_event(assessment_id, "CORRECTION_TASK: Corrección finalizada y resultados disponibles.", "SUCCESS")
                 
                 should_notify = True
                 assessment_user = assessment_to_complete.user

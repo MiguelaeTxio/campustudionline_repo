@@ -3,16 +3,13 @@
 
 <div class="list-group" id="tour-sala-estudio-dir-list">
     
-    {# Nivel Raíz: Muestra Universidades y Categorías de Contenido Libre #}
+    {# Nivel Raíz #}
     {% if level_name == 'root' %}
         {% if academic_roots %}
             <h5 class="text-muted mt-3">Contenido Académico</h5>
             {% for university in academic_roots %}
                 <a href="{% url 'study_room:academic_directory_university' university_slug=university.slug %}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
-                    <div>
-                        {{ university.name }}
-                        {% render_assessment_indicators university %}
-                    </div>
+                    <div>{{ university.name }}{% render_assessment_indicators university %}</div>
                     <span class="badge bg-primary rounded-pill"><i class="fas fa-chevron-right"></i></span>
                 </a>
             {% endfor %}
@@ -21,16 +18,13 @@
             <h5 class="text-muted mt-4">Contenido Libre</h5>
             {% for master_cat in free_content_roots %}
                 <a href="{% url 'study_room:free_master_directory' master_slug=master_cat.slug %}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
-                    <div>
-                        {{ master_cat.name }}
-                        {% render_assessment_indicators master_cat %}
-                    </div>
+                    <div>{{ master_cat.name }}{% render_assessment_indicators master_cat %}</div>
                     <span class="badge bg-primary rounded-pill"><i class="fas fa-chevron-right"></i></span>
                 </a>
             {% endfor %}
         {% endif %}
 
-    {# --- JERARQUÍA ACADÉMICA --- #}
+    {# Jerarquía Académica #}
     {% elif level_name == 'branches' %}
         {% for branch in page_obj %}
             <a href="{% url 'study_room:academic_directory_branch' university_slug=current_university.slug branch_slug=branch.slug %}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
@@ -60,19 +54,16 @@
             </a>
         {% endfor %}
 
-    {# --- JERARQUÍA DE CONTENIDO LIBRE --- #}
+    {# Jerarquía Contenido Libre #}
     {% elif level_name == 'sub_categories' %}
         {% for sub_cat in page_obj %}
             <a href="{% url 'study_room:free_sub_directory' master_slug=current_master_category.slug sub_slug=sub_cat.slug %}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
-                <div>
-                    {{ sub_cat.name }}
-                    {% render_assessment_indicators sub_cat %}
-                </div>
+                <div>{{ sub_cat.name }}{% render_assessment_indicators sub_cat %}</div>
                 <span class="badge bg-primary rounded-pill"><i class="fas fa-chevron-right"></i></span>
             </a>
         {% endfor %}
 
-    {# --- NIVEL FINAL: LISTA DE COPIAS (Unificado) --- #}
+    {# Lista de Copias (Unificado) #}
     {% elif level_name == 'academic_copies' or level_name == 'free_copies' %}
         {% for copy in page_obj %}
             <div class="list-group-item flex-column align-items-start shadow-sm mb-2">
@@ -111,7 +102,7 @@
             </div>
         {% endfor %}
 
-    {# --- DASHBOARD: ÚLTIMAS COPIAS (CORREGIDO Y DENTRO DEL BLOQUE) --- #}
+    {# Dashboard #}
     {% elif level_name == 'dashboard' %}
         {% if page_obj %}
             <h5 class="text-muted mt-3 mb-3">Actividad Reciente</h5>
@@ -136,14 +127,12 @@
                         <a href="{% url 'study_room:edit_copy' pk=copy.pk %}" class="btn btn-sm btn-primary content-link-preloader flex-fill">
                             <i class="fas fa-edit me-1"></i> Estudiar
                         </a>
-                        
                         <form action="{% url 'study_room:change_copy_visibility' pk=copy.pk %}" method="post" class="flex-fill">
                             {% csrf_token %}
                             <button type="submit" class="btn btn-sm {% if copy.is_public %}btn-outline-info{% else %}btn-outline-secondary{% endif %} w-100" title="Cambiar visibilidad">
                                 {% if copy.is_public %}<i class="fas fa-globe me-1"></i> Pública{% else %}<i class="fas fa-lock me-1"></i> Privada{% endif %}
                             </button>
                         </form>
-                        
                         <button type="button" class="btn btn-sm btn-outline-danger flex-fill" data-bs-toggle="modal" data-bs-target="#deleteCopyModal" data-copy-id="{{ copy.pk }}" data-copy-title="{{ copy.original_content.title }}">
                             <i class="fas fa-trash"></i>
                         </button>
@@ -156,7 +145,7 @@
             </div>
         {% endif %}
 
-    {% endif %} {# CIERRE CORRECTO DEL BLOQUE IF/ELIF #}
+    {% endif %}
 
     {% if page_obj.has_other_pages %}
     <div class="mt-3">
