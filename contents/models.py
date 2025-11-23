@@ -140,6 +140,9 @@ class ContentMaterial(models.Model):
     def get_full_markdown_content(self):
         return self.markdown_content
 
+    def get_absolute_url(self):
+        return reverse("contents:content_detail", kwargs={"pk": self.pk})
+
     class Meta:
         verbose_name = "Material de Contenido"
         verbose_name_plural = "D. Materiales de Contenido"

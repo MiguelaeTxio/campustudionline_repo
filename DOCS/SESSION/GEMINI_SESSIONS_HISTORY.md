@@ -421,3 +421,13 @@
 *  **Session:** H22: Reparación Crítica Navegación y Orquestador
 *  **Description:** Ejecución de emergencia de la Fase 6 omitida: refactorización de `contents/study_room_views.py` para consumir `UserStudyNavigation` y eliminar dependencias legacy causantes de 404. Corrección de `TypeError: 'topic'` en `orchestrator/tasks.py` por campo obsoleto.
 
+# 2025-11-22
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V22.md
+## EPI
+*  Session: Estabilización de Navegación y Resolución de Ciclos en Contenido Libre
+*  Description: Ejecución de la Fase 9 del Hito 22. Diagnóstico y corrección del error de redirección circular ("Pink Floyd") en la navegación de Contenido Libre tras la refactorización UserStudyNavigation. Verificación de integridad en la arquitectura de la Sala de Estudio.
+
+*  **Session:** Hito 22 Fase 9: Corrección de Navegación Circular en Contenido Libre
+*  **Description:** Sesión enfocada en la Fase 9 del Hito 22, destinada a la estabilización de la refactorización de navegación. Se abordará prioritariamente la resolución del error de "navegación circular" (Pink Floyd) detectado en los enlaces de Contenido Libre, asegurando la correcta jerarquía y accesibilidad en la nueva arquitectura centrada en el usuario.
+

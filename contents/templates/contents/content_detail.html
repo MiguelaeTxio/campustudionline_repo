@@ -11,8 +11,23 @@
 
 {% block content %}
 <div class="container mt-4">
+    {% if breadcrumbs %}
+    <nav aria-label="breadcrumb" class="mb-3">
+        <ol class="breadcrumb">
+            {% for crumb in breadcrumbs %}
+                {% if forloop.last %}
+                    <li class="breadcrumb-item active" aria-current="page">{{ crumb.name }}</li>
+                {% else %}
+                    <li class="breadcrumb-item"><a href="{{ crumb.url }}">{{ crumb.name }}</a></li>
+                {% endif %}
+            {% endfor %}
+        </ol>
+    </nav>
+    {% endif %}
     <div class="mb-4 d-flex align-items-center">
-        {% if request.META.HTTP_REFERER %}
+        {% if back_url %}
+        <a href="{{ back_url }}" class="btn btn-secondary me-3"><i class="fas fa-arrow-left"></i> Volver</a>
+        {% elif request.META.HTTP_REFERER %}
         <a href="{{ request.META.HTTP_REFERER|escape }}" class="btn btn-secondary me-3"><i class="fas fa-arrow-left"></i> Volver</a>
         {% endif %}
         {% if can_create_copy %}

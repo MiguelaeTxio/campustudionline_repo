@@ -55,7 +55,7 @@
             <h2 class="h4 mb-3">{{ child_model_name }} en esta categoría:</h2>
             {% endif %}
 
-            <div id="category-detail-list-container" hx-get="{{ request.get_full_path }}" hx-trigger="every 15s" hx-swap="innerHTML">
+            <div id="category-detail-list-container" hx-get="{{ request.get_full_path }}"  hx-swap="innerHTML">
                 {% if child_items_with_urls or content_list %}
                     <div class="list-group">
                         {% for item in child_items_with_urls %}

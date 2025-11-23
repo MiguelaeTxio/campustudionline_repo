@@ -381,11 +381,35 @@ def content_detail(request, pk, subject_pk=None):
     content_obj = get_object_or_404(ContentMaterial, pk=pk)
     
     subject_context = None
+    back_url = None
+    breadcrumbs = []
+
     if subject_pk:
         subject_context = get_object_or_404(Subject, pk=subject_pk)
-        # Verificación de seguridad: Asegurarse de que el material pertenece a la asignatura.
+        # Verificación de seguridad
         if not content_obj.subject.filter(pk=subject_pk).exists():
              raise Http404("Este material no pertenece a la asignatura especificada.")
+
+    # Lógica de Navegación para Contenido Libre (Breadcrumbs)
+    if content_obj.is_free_content and not subject_context:
+        breadcrumbs.append({"name": "Directorio Libre", "url": reverse("search:search_home")})
+        
+        if content_obj.master_category:
+            breadcrumbs.append({
+                "name": content_obj.master_category.name, 
+                "url": content_obj.master_category.get_absolute_url()
+            })
+            back_url = content_obj.master_category.get_absolute_url()
+            
+        if content_obj.sub_category:
+            breadcrumbs.append({
+                "name": content_obj.sub_category.name, 
+                "url": content_obj.sub_category.get_absolute_url()
+            })
+            back_url = content_obj.sub_category.get_absolute_url()
+            
+        # Elemento actual (sin enlace)
+        breadcrumbs.append({"name": content_obj.title, "url": "#"})
 
     metadata, remaining_markdown = parse_yaml_front_matter(content_obj.markdown_content)
     rendered_html_content = markdown_to_html_internal(remaining_markdown)
@@ -404,7 +428,9 @@ def content_detail(request, pk, subject_pk=None):
         "metadata": metadata, "can_edit_delete": is_creator,
         "can_create_copy": content_obj.is_public or is_creator,
         "is_favorite": is_favorite,
-        "subject": subject_context, # Se añade el contexto de la asignatura a la plantilla
+        "subject": subject_context,
+        "back_url": back_url,  # Pasamos la URL de retorno explícita
+        "breadcrumbs": breadcrumbs, # Pasamos los breadcrumbs
         "show_preloader": True, "show_tour": True,
     }
     return render(request, "contents/content_detail.html", context)
