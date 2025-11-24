@@ -44,29 +44,45 @@ def global_context(request):
             context["protection_level"] = general_room.is_private
 
         # --- Navbar Notification Logic (Intelligent Badge) ---
+        # [FIX] Filtrar zombies y expirados para que el badge sea útil
+        from datetime import timedelta
+        from django.utils import timezone
+        
+        now = timezone.now()
+        yesterday = now - timedelta(days=1)
         base_query = Assessment.objects.filter(user=user)
 
-        # Individual notification counters (only for UNSEEN items)
+        # Individual notification counters
         notifications = {
             "COMPLETED": {
-                "count": base_query.filter(status=Assessment.AssessmentStatus.COMPLETED, was_viewed=False).count(),
+                # Exámenes listos para hacer y no expirados
+                "count": base_query.filter(
+                    status=Assessment.AssessmentStatus.COMPLETED,
+                    expiration_date__gt=now
+                ).count(),
                 "status": "COMPLETED",
             },
             "RESULTS_AVAILABLE": {
-                "count": base_query.filter(status=Assessment.AssessmentStatus.RESULTS_AVAILABLE, was_viewed=False).count(),
+                # Resultados listos, no vistos y no expirados
+                "count": base_query.filter(
+                    status=Assessment.AssessmentStatus.RESULTS_AVAILABLE, 
+                    was_viewed=False,
+                    results_expiration_date__gt=now
+                ).count(),
                 "status": "RESULTS_AVAILABLE",
             },
             "PROCESSING": {
-                "count": base_query.filter(status__in=[
-                    Assessment.AssessmentStatus.PROCESSING,
-                    Assessment.AssessmentStatus.CORRECTING,
-                    Assessment.AssessmentStatus.AWAITING_CORRECTION,
-                ]).count(),
+                # En proceso, pero solo si se crearon en las últimas 24h (filtro anti-zombies)
+                "count": base_query.filter(
+                    status__in=[
+                        Assessment.AssessmentStatus.PROCESSING,
+                        Assessment.AssessmentStatus.CORRECTING,
+                        Assessment.AssessmentStatus.AWAITING_CORRECTION,
+                        Assessment.AssessmentStatus.PENDING
+                    ],
+                    created_at__gte=yesterday
+                ).count(),
                 "status": "PROCESSING",
-            },
-            "PENDING": {
-                "count": base_query.filter(status=Assessment.AssessmentStatus.PENDING).count(),
-                "status": "PENDING", # Note: 'PENDING' doesn't have a specific badge style, but is counted.
             },
         }
 

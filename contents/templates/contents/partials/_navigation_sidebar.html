@@ -45,7 +45,7 @@
                     <button class="accordion-button collapsed py-2 px-3 shadow-none bg-white" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-subj-{{ forloop.counter }}" aria-expanded="false">
                         <i class="fas fa-book text-primary me-2"></i>
                         <span class="text-truncate">{{ subject_name }}</span>
-                        <span class="badge bg-secondary rounded-pill ms-auto" style="font-size: 0.7em;">{{ copies|length }}</span>
+                        
                     </button>
                 </h2>
                 <div id="collapse-subj-{{ forloop.counter }}" class="accordion-collapse collapse" data-bs-parent="#navigation-tree-root">
@@ -57,16 +57,25 @@
         <i class="far fa-file-alt me-2 text-muted"></i>{{ copy.title }}
     </span>
     {% if copy.assessment_status %}
-        {% if copy.assessment_status == 'PENDING' or copy.assessment_status == 'PROCESSING' or copy.assessment_status == 'CORRECTING' or copy.assessment_status == 'AWAITING_CORRECTION' %}
-            <i class="fas fa-hourglass-half text-warning ms-2" title="Evaluación en curso"></i>
-        {% elif copy.assessment_status == 'COMPLETED' or copy.assessment_status == 'RESULTS_AVAILABLE' %}
+        {# 1. Generación en curso o Corrección en curso #}
+        {% if copy.assessment_status in '["PENDING", "PROCESSING", "AWAITING_CORRECTION", "CORRECTING"]' %}
+            <div class="spinner-grow text-info ms-2" style="width: 0.8rem; height: 0.8rem;" role="status" title="Procesando..."></div>
+        
+        {# 2. Listo para realizar (Examen generado) #}
+        {% elif copy.assessment_status == 'COMPLETED' %}
+            <i class="fas fa-play-circle text-warning ms-2 fs-6" title="¡Examen listo para realizar!"></i>
+        
+        {# 3. Resultados Disponibles (Notas) #}
+        {% elif copy.assessment_status == 'RESULTS_AVAILABLE' %}
             {% if not copy.assessment_viewed %}
-                <i class="fas fa-circle text-danger ms-2" style="font-size: 0.5rem;" title="Resultados nuevos"></i>
+                <i class="fas fa-star text-success ms-2 fs-6" title="Resultados disponibles"></i>
             {% else %}
-                <i class="fas fa-check-circle text-success ms-2" title="Evaluación completada"></i>
+                <i class="fas fa-clipboard-check text-success ms-2" title="Evaluación finalizada"></i>
             {% endif %}
+            
+        {# 4. Fallos #}
         {% elif 'FAILED' in copy.assessment_status %}
-             <i class="fas fa-exclamation-triangle text-danger ms-2" title="Error en evaluación"></i>
+             <i class="fas fa-exclamation-triangle text-danger ms-2" title="Error técnico"></i>
         {% endif %}
     {% endif %}
 
@@ -93,16 +102,25 @@
         <i class="fas fa-feather-alt text-success me-2 text-muted"></i>{{ copy.title }}
     </span>
     {% if copy.assessment_status %}
-        {% if copy.assessment_status == 'PENDING' or copy.assessment_status == 'PROCESSING' or copy.assessment_status == 'CORRECTING' or copy.assessment_status == 'AWAITING_CORRECTION' %}
-            <i class="fas fa-hourglass-half text-warning ms-2" title="Evaluación en curso"></i>
-        {% elif copy.assessment_status == 'COMPLETED' or copy.assessment_status == 'RESULTS_AVAILABLE' %}
+        {# 1. Generación en curso o Corrección en curso #}
+        {% if copy.assessment_status in '["PENDING", "PROCESSING", "AWAITING_CORRECTION", "CORRECTING"]' %}
+            <div class="spinner-grow text-info ms-2" style="width: 0.8rem; height: 0.8rem;" role="status" title="Procesando..."></div>
+        
+        {# 2. Listo para realizar (Examen generado) #}
+        {% elif copy.assessment_status == 'COMPLETED' %}
+            <i class="fas fa-play-circle text-warning ms-2 fs-6" title="¡Examen listo para realizar!"></i>
+        
+        {# 3. Resultados Disponibles (Notas) #}
+        {% elif copy.assessment_status == 'RESULTS_AVAILABLE' %}
             {% if not copy.assessment_viewed %}
-                <i class="fas fa-circle text-danger ms-2" style="font-size: 0.5rem;" title="Resultados nuevos"></i>
+                <i class="fas fa-star text-success ms-2 fs-6" title="Resultados disponibles"></i>
             {% else %}
-                <i class="fas fa-check-circle text-success ms-2" title="Evaluación completada"></i>
+                <i class="fas fa-clipboard-check text-success ms-2" title="Evaluación finalizada"></i>
             {% endif %}
+            
+        {# 4. Fallos #}
         {% elif 'FAILED' in copy.assessment_status %}
-             <i class="fas fa-exclamation-triangle text-danger ms-2" title="Error en evaluación"></i>
+             <i class="fas fa-exclamation-triangle text-danger ms-2" title="Error técnico"></i>
         {% endif %}
     {% endif %}
 

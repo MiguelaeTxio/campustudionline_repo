@@ -1,34 +1,25 @@
-# Hito 6: Sistema de Autoevaluaciones con IA (EN PROGRESO)
+# Hito 6: Sistema de Autoevaluaciones con IA (COMPLETADO)
 
-## Hoja de Ruta para la Próxima Sesión (REPARACIÓN URGENTE)
+**Fecha de Finalización:** 24/11/2025
+**Estado Final:** ✅ COMPLETADO Y VALIDADO
 
-**Estado de la Prueba E2E (23/11/2025):** 🔴 **FALLIDO**
+## Resumen de Logros
+Se ha estabilizado completamente el ciclo de vida de las autoevaluaciones, desde la generación asíncrona hasta la visualización de estados en la interfaz de usuario, garantizando la coherencia visual y la persistencia de datos.
 
-**Diagnóstico Detallado (Tour Fotográfico):**
+## Solución Técnica Implementada
 
-1.  **Log de Admin (CRÍTICO - MUDO):**
-    *   **Síntoma:** El log del modelo `Assessment` aparece vacío ("No hay eventos registrados") en el panel de administración.
-    *   **Causa Probable:** Las tareas de Celery no están persistiendo correctamente los eventos en el campo `event_log` (Fallo de Transacción/Silenciamiento).
-    *   **Nueva Requisito:** El log debe ser granular, mostrando el progreso pregunta por pregunta.
+### 1. Persistencia y Fiabilidad (Backend)
+*   **Logs Atómicos (PAIR):** Implementación de `log_assessment_task_event` en `orchestrator/tasks.py` para garantizar que los logs se escriban en la BBDD en micro-transacciones, evitando la pérdida de información en caso de fallo de la tarea principal.
+*   **Signals Optimizadas:** Refactorización de `assessment/signals.py` para usar `transaction.on_commit`, asegurando que la navegación del usuario solo se recalcule cuando los datos son definitivos.
+*   **Corrección de Bugs:** Solucionado `UnboundLocalError` en el inicio de tareas y `TypeError` en la vista de la Sala de Estudio.
 
-2.  **Navegación (Sidebar y NavBar - INCOHERENTES):**
-    *   **Síntoma:** Desincronización total. El Sidebar muestra contadores genéricos y la NavBar estados desactualizados.
-    *   **Causa Probable:** La señal `post_save` no está disparando `refresh_user_navigation` correctamente.
+### 2. Coherencia de Interfaz (Frontend)
+*   **Sidebar Unificada:** Limpieza de contadores numéricos irrelevantes y estandarización de la paleta de colores e iconos para coincidir con la NavBar:
+    *   🔵 **Procesando:** Azul Cielo (`text-info`).
+    *   🟡 **Listo para realizar:** Amarillo (`text-warning`).
+    *   🟢 **Resultados:** Verde (`text-success`).
+*   **NavBar Inteligente:** Refactorización de `core/context_processors.py` para filtrar tareas "zombies" (antiguas o expiradas) y mostrar badges fidedignos.
+*   **Logs en Admin:** Corrección de la plantilla `view_log.html` para renderizar correctamente la estructura JSON de los nuevos logs.
 
-3.  **Puntos Positivos:**
-    *   La lista de copias y el detalle funcionan y muestran los badges correctos.
-
-**Plan de Acción Inmediato:**
-1.  **Backend (Logs):** Auditar el punto de fallo final para la persistencia del log (hipótesis: fallo transaccional anidado o conflicto de bloqueo).
-2.  **Backend (Logs Granulares):** Aplicar y validar la instrumentación de logs detallados en `orchestrator/tasks.py`.
-3.  **Backend (Navegación):** Auditar la lógica de `transaction.on_commit` para asegurar que se ejecuta y que el constructor de navegación ve los datos actualizados.
-4.  **Validación:** Repetir prueba E2E.
-
----
-
-## Registro de Cambios (Sesión Previa)
-
-### Correcciones Implementadas
-*   **Modelo (`assessment/models.py`):** Eliminación de la supresión de errores (`try...except: pass`) en `add_log_event`.
-*   **Señales (`assessment/signals.py`):** Implementado `transaction.on_commit` para `refresh_user_navigation`.
-*   **Tareas (`orchestrator/tasks.py`):** Implementada la instrumentación de logs granulares. (Pendiente de confirmación de persistencia).
+## Próximos Pasos
+*   Inicio del **Hito 3: Ecosistema de Salas de Chat Globales y Contextuales**.

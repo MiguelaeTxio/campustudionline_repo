@@ -194,10 +194,37 @@ def _request_quarantine_via_mailbox(api_key: ApiKey):
     except Exception as e:
         logger.critical(f"FALLO CRÍTICO DE ARQUITECTURA: No se pudo escribir en el buzón de cuarentena '{QUARANTINE_MAILBOX_FILE}': {e}", exc_info=True)
 
+def log_assessment_task_event(assessment_id, message, level="INFO", payload=None):
+    """
+    [PAIR] Implementación espejo de log_task_event para Assessments.
+    Garantiza persistencia atómica de logs independientemente del flujo principal.
+    """
+    try:
+        from assessment.models import Assessment
+        timestamp = datetime.utcnow().isoformat() + "Z"
+        entry = {
+            "timestamp": timestamp,
+            "level": level,
+            "message": message,
+        }
+        if payload:
+            try:
+                entry["payload"] = json.dumps(payload, indent=2, ensure_ascii=False, sort_keys=True)
+            except TypeError:
+                entry["payload"] = str(payload)
+
+        with transaction.atomic():
+            assessment = Assessment.objects.select_for_update().get(pk=assessment_id)
+            if assessment.event_log is None:
+                assessment.event_log = []
+            if isinstance(assessment.event_log, list):
+                assessment.event_log.insert(0, entry)
+                assessment.event_log = assessment.event_log[:100]
+            assessment.save(update_fields=['event_log'])
+    except Exception as e:
+        logger.error(f"Error al escribir en event_log DB para Assessment {assessment_id}: {e}")
+
 def log_task_event(task_id: str, message: str, is_error: bool = False, payload: dict = None):
-    """
-    Registra un evento en el historial de la tarea (Base de Datos).
-    """
     try:
         timestamp = datetime.utcnow().isoformat() + "Z"
         entry = {
@@ -205,29 +232,19 @@ def log_task_event(task_id: str, message: str, is_error: bool = False, payload: 
             "level": "ERROR" if is_error else "INFO",
             "message": message,
         }
-        
         if payload:
             try:
                 entry["payload"] = json.dumps(payload, indent=2, ensure_ascii=False, sort_keys=True)
             except TypeError:
                 entry["payload"] = str(payload)
-
-        # Escritura Atómica en Base de Datos
         with transaction.atomic():
-            # Usamos select_for_update para bloquear la fila y evitar condiciones de carrera
-            # al leer y escribir la lista JSON.
             task = PendingContentTask.objects.select_for_update().get(id=task_id)
-            
             if task.task_log is None:
                 task.task_log = []
-                
             if isinstance(task.task_log, list):
                 task.task_log.append(entry)
-                
             task.save(update_fields=['task_log'])
-            
     except Exception as e:
-        # Si falla la escritura en DB, usamos el logger de Django como último recurso
         logger.error(f"Error al escribir en task_log DB para {task_id}: {e}")
 
 def _parse_master_schema(markdown_text: str) -> list:
@@ -286,8 +303,6 @@ def _assemble_final_markdown_from_chunks(course_title: str, metadata: dict, mast
     final_parts = yaml_header + introduction + content_body
     return "\n\n".join(final_parts)
 
-
-
 def _get_or_create_free_categories_from_classification(classification_data: dict, course_title: str) -> tuple:
     master_name = classification_data.get("categoria_general")
     sub_name = classification_data.get("subcategoria")
@@ -334,13 +349,12 @@ def _send_completion_notifications(new_content: ContentMaterial):
 def log_timestamp(message):
     logger.info(f"[{timezone.now().strftime('%Y-%m-%d %H:%M:%S.%f')}] {message}")
     try:
-        # [PATCH] Persistencia en BBDD para visibilidad en Admin
         from assessment.models import AssessmentSettings
         s = AssessmentSettings.get_settings()
         entry = {"timestamp": timezone.now().isoformat(), "message": str(message)}
         if s.event_log is None: s.event_log = []
         s.event_log.insert(0, entry)
-        s.event_log = s.event_log[:100] # Guardar últimos 100 eventos
+        s.event_log = s.event_log[:100]
         s.save(update_fields=["event_log"])
     except Exception:
         pass
@@ -394,9 +408,6 @@ class ContentGenerationError(Exception):
 
 @shared_task(bind=True)
 def global_orchestrator_task(self):
-    """
-    [ORQUESTRADOR GLOBAL V2] Bucle principal que gestiona el estado del sistema y lanza tareas.
-    """
     try:
         _process_quarantine_requests()
         _check_and_perform_daily_reset()
@@ -432,24 +443,19 @@ def global_orchestrator_task(self):
                 self.retry(eta=next_run_datetime_aware, max_retries=None)
                 return
         automation_settings.refresh_from_db()
-
-        # --- FASE DE RESCATE (TODOS LOS TIPOS DE TAREAS) ---
         zombie_threshold = timezone.now() - timedelta(minutes=5)
-        
         zombie_content_tasks = PendingContentTask.objects.filter(status__in=[PendingContentTask.StatusChoices.PROCESSING, PendingContentTask.StatusChoices.PENDING], updated_at__lt=zombie_threshold)
         for task in zombie_content_tasks:
             message = f"VIGILANTE (CONTENT): Tarea '{task.id}' detectada como ZOMBIE. Marcada para rescate."
             _log_structured_event(message, "WARNING", {"task_id": str(task.id)})
             task.status = PendingContentTask.StatusChoices.FAILED_RETRYABLE
             task.save(update_fields=["status"])
-
         zombie_assessment_tasks = Assessment.objects.filter(status=Assessment.AssessmentStatus.PROCESSING, created_at__lt=zombie_threshold)
         for task in zombie_assessment_tasks:
             message = f"VIGILANTE (ASSESSMENT): Tarea '{task.id}' detectada como ZOMBIE. Marcada para rescate."
             _log_structured_event(message, "WARNING", {"task_id": str(task.id)})
             task.status = Assessment.AssessmentStatus.GENERATION_FAILED_RETRYABLE
             task.save(update_fields=["status"])
-        
         assessment_gen_to_rescue = Assessment.objects.filter(status=Assessment.AssessmentStatus.GENERATION_FAILED_RETRYABLE).order_by('created_at').first()
         if assessment_gen_to_rescue:
             _log_structured_event(f"RESCATE (ASSESSMENT-GEN): Re-encolando la tarea de generación de evaluación {assessment_gen_to_rescue.id}.")
@@ -457,13 +463,11 @@ def global_orchestrator_task(self):
             assessment_gen_to_rescue.save(update_fields=["status"])
             generate_assessment_from_content_task.delay(assessment_gen_to_rescue.id)
             return
-
         assessment_corr_to_rescue = Assessment.objects.filter(status=Assessment.AssessmentStatus.CORRECTION_FAILED_RETRYABLE).order_by('created_at').first()
         if assessment_corr_to_rescue:
             _log_structured_event(f"RESCATE (ASSESSMENT-CORR): Re-encolando la tarea de corrección de evaluación {assessment_corr_to_rescue.id}.")
             correct_assessment_task.delay(assessment_corr_to_rescue.id)
             return
-
         task_to_rescue = PendingContentTask.objects.filter(status__in=[PendingContentTask.StatusChoices.FAILED_RETRYABLE, PendingContentTask.StatusChoices.FAILED_QUOTA]).order_by('created_at').first()
         if task_to_rescue:
             _log_structured_event(f"RESCATE (CONTENT): Re-encolando la tarea de contenido {task_to_rescue.id}.")
@@ -475,9 +479,6 @@ def global_orchestrator_task(self):
             automation_settings.last_run_timestamp = timezone.now()
             automation_settings.save(update_fields=['last_run_status', 'last_run_timestamp'])
             return
-
-        # --- BÚSQUEDA DE NUEVO TRABAJO (CON PRIORIDAD) ---
-        # Prioridad 1: Solicitudes de Contenido Aprobadas
         approved_request = ContentRequest.objects.filter(status=ContentRequest.StatusChoices.APPROVED).order_by('created_at').first()
         if approved_request and approved_request.subject.content_materials.count() == 0:
             subject_to_process = approved_request.subject
@@ -495,8 +496,6 @@ def global_orchestrator_task(self):
             automation_settings.last_run_timestamp = timezone.now()
             automation_settings.save(update_fields=['last_run_status', 'last_run_timestamp'])
             return
-
-        # Prioridad 2: Evaluaciones Pendientes
         pending_assessment = Assessment.objects.filter(status=Assessment.AssessmentStatus.PENDING).order_by('created_at').first()
         if pending_assessment:
             _log_structured_event(f"PRIORIDAD 2 (ASSESSMENT): Reclamada la evaluación pendiente {pending_assessment.id}.", "INFO")
@@ -506,8 +505,6 @@ def global_orchestrator_task(self):
             automation_settings.last_run_timestamp = timezone.now()
             automation_settings.save(update_fields=['last_run_status', 'last_run_timestamp'])
             return
-
-        # Prioridad 3: Generación Masiva de Contenido
         if PendingContentTask.objects.filter(status__in=[PendingContentTask.StatusChoices.PROCESSING, PendingContentTask.StatusChoices.PENDING]).exists():
             status_msg = "EN ESPERA: Hay tareas de contenido activas. La generación masiva se pospone."
             if automation_settings.last_run_status != status_msg:
@@ -515,7 +512,6 @@ def global_orchestrator_task(self):
                 automation_settings.last_run_status = status_msg
                 automation_settings.save(update_fields=['last_run_status'])
             return
-
         while True:
             subject_qs = _get_next_subject_queryset(automation_settings)
             subject_to_process = subject_qs.order_by('?').first()
@@ -749,31 +745,38 @@ def generate_full_course_task(self, task_id: str):
 
 @shared_task(bind=True, acks_late=True, max_retries=3, default_retry_delay=60)
 def generate_assessment_from_content_task(self, assessment_id):
-    _log_assessment_event(assessment_id, f"TAREA GENERACIÓN: Evaluación encolada para ID {assessment_id}, reintento v{self.request.retries + 1}. ({assessment.content_copy.original_content.title}).")
+    # Log inicial (usando el nuevo helper para probarlo inmediatamente)
+    log_assessment_task_event(assessment_id, f"TAREA GENERACIÓN: Inicio ejecución v{self.request.retries + 1}.")
+    
     automation_settings = AutomationSettings.load()
     if not automation_settings.is_running:
-        log_timestamp(f"GENERATION_TASK: Orquestador global detenido. Reintentando en 5 min. ID: {assessment_id}")
+        log_assessment_task_event(assessment_id, "Orquestador detenido. Reintentando...", level="WARNING")
         raise self.retry(countdown=300)
+    
     assessment = None
     try:
+        # 1. Validación de Estado y Bloqueo Inicial
         with transaction.atomic():
-            assessment = Assessment.objects.select_related('content_copy__original_content', 'user').select_for_update().get(pk=assessment_id)
+            assessment = Assessment.objects.select_for_update().get(pk=assessment_id)
             if assessment.status == Assessment.AssessmentStatus.PAUSED:
-                log_timestamp(f"GENERATION_TASK: Tarea en PAUSA. Reintentando en 1 min. ID: {assessment_id}")
                 raise self.retry(countdown=60)
             if assessment.status not in [Assessment.AssessmentStatus.PENDING, Assessment.AssessmentStatus.GENERATION_FAILED_RETRYABLE, Assessment.AssessmentStatus.PROCESSING]:
-                return f"Tarea omitida. Estado actual: {assessment.get_status_display()}."
+                return f"Tarea omitida. Estado: {assessment.get_status_display()}."
+            
+            # Cambiar a PROCESSING
             assessment.status = Assessment.AssessmentStatus.PROCESSING
+            # Limpiar preguntas previas si es reintento
+            assessment.questions.all().delete()
             assessment.save(update_fields=["status"])
-    except Assessment.DoesNotExist:
-        logger.error(f"GENERATION_TASK: No se encontró Assessment con ID: {assessment_id}.")
-        return
-    try:
-        # [REFACTORIZACIÓN CRÍTICA] Eliminada la lógica de reanudación basada en last_error.
-        # Se fuerza una generación atómica y limpia.
         
+        log_assessment_task_event(assessment_id, "Estado establecido a PROCESSING. Preparando prompt.")
+
+        # 2. Preparación de Datos (Lectura sin bloqueo)
+        # Re-leemos para asegurar frescura fuera del lock
+        assessment = Assessment.objects.get(pk=assessment_id)
         original_content = assessment.content_copy.original_content
         full_content = original_content.get_full_markdown_content()
+        
         if not full_content or not full_content.strip():
             raise ValueError("El contenido para la evaluación está vacío.")
         
@@ -782,106 +785,85 @@ def generate_assessment_from_content_task(self, assessment_id):
         
         api_key = ApiKey.objects.filter(is_enabled=True, is_quarantined=False).first()
         if not api_key:
-            raise ValueError("No se encontró una clave de API activa y disponible.")
+            raise ValueError("No se encontró una clave de API activa.")
         
-        _log_assessment_event(assessment_id, "Llamada a API iniciada para generación de preguntas.")
+        log_assessment_task_event(assessment_id, f"Enviando prompt a API (Clave: {api_key.name})...")
+        
         success, response_text, _ = generate_text_content(prompt, api_key=api_key)
         if not success:
-            raise AIServiceCriticalError(f"La llamada a la API de texto falló: {response_text}")
+            raise AIServiceCriticalError(f"API Error: {response_text}")
         
         questions_data = _parse_assessment_text(response_text)
-        _log_assessment_event(assessment_id, f"EXTRACCIÓN: Bloque de {len(questions_data)} preguntas extraídas de la respuesta de la IA.")
-        if not questions_data:
-            raise ValueError(f"No se pudieron extraer preguntas. Respuesta IA: '{response_text[:500]}...'")
         
-        # [REFACTORIZACIÓN CRÍTICA] Guardado atómico de preguntas.
-        # [V2 RESILIENCIA] La notificación se extrae del bloque atómico.
-        assessment_user = None
-        assessment_pk_val = None
-        content_title_val = None
+        if not questions_data:
+            raise ValueError("La IA no devolvió preguntas válidas.")
+            
+        log_assessment_task_event(assessment_id, f"IA devolvió {len(questions_data)} preguntas. Iniciando persistencia.")
 
+        # 3. Persistencia Iterativa (Patrón PAIR: Crear -> Loggear -> Repetir)
+        # Actualizamos el total esperado primero
         with transaction.atomic():
-            assessment_to_update = Assessment.objects.select_for_update().get(pk=assessment_id)
-            
-            # Limpiar preguntas previas si es un reintento
-            assessment_to_update.questions.all().delete()
-            
-            for index, q_data in enumerate(questions_data, 1):
-                # Recortamos la pregunta para que no sature el log
-                question_text = q_data['question_text'][:70] + '...'
-                
-                # Log granular antes de crear
-                _log_assessment_event(assessment_id, f"Generando pregunta {index} de {len(questions_data)}: {question_text}")
+            a = Assessment.objects.select_for_update().get(pk=assessment_id)
+            a.total_questions_expected = len(questions_data)
+            a.questions_processed = 0
+            a.save(update_fields=['total_questions_expected', 'questions_processed'])
 
-                Question.objects.create(assessment=assessment_to_update, **q_data)
+        for index, q_data in enumerate(questions_data, 1):
+            # Paso A: Crear Pregunta (Atómico)
+            with transaction.atomic():
+                # Obtenemos lock para consistencia padre-hijo
+                parent = Assessment.objects.select_for_update().get(pk=assessment_id)
+                Question.objects.create(assessment=parent, **q_data)
+                parent.questions_processed = index
+                parent.save(update_fields=['questions_processed'])
             
-            assessment_to_update.total_questions_expected = len(questions_data)
-            assessment_to_update.questions_processed = len(questions_data)
-            assessment_to_update.status = Assessment.AssessmentStatus.COMPLETED
-            assessment_to_update.last_error = None
-            assessment_to_update.save(update_fields=['status', 'last_error', 'total_questions_expected', 'questions_processed', 'expiration_date', 'results_expiration_date'])
-            
-            # Capturar datos necesarios para la notificación fuera de la transacción
-            assessment_user = assessment_to_update.user
-            assessment_pk_val = assessment_to_update.pk
-            content_title_val = assessment_to_update.content_copy.original_content.title
-            
-            _log_assessment_event(assessment_id, f"GENERATION_TASK: Éxito. {len(questions_data)} preguntas generadas y persistidas.", "SUCCESS")
+            # Paso B: Loggear (Independiente y seguro, usando el helper)
+            log_assessment_task_event(assessment_id, f"Pregunta {index}/{len(questions_data)} persistida.")
+        
+        # 4. Finalización
+        with transaction.atomic():
+            final_assessment = Assessment.objects.select_for_update().get(pk=assessment_id)
+            final_assessment.status = Assessment.AssessmentStatus.COMPLETED
+            final_assessment.last_error = None
+            final_assessment.save(update_fields=['status', 'last_error', 'expiration_date', 'results_expiration_date'])
+        
+        log_assessment_task_event(assessment_id, "Proceso completado con ÉXITO.", level="SUCCESS")
 
-        # Notificación (Desacoplada de la persistencia)
+        # 5. Notificación (Best Effort)
         try:
-            if assessment_user and assessment_pk_val:
-                action_url = settings.BASE_URL + reverse("assessment:take_assessment", kwargs={"pk": assessment_pk_val})
-                context = {"assessment_pk": assessment_pk_val, "content_title": content_title_val, "action_url": action_url}
-                send_unified_notification(user=assessment_user, subject_template="assessment/email/assessment_ready_subject.txt", body_template_prefix="assessment/email/assessment_ready_body", context=context)
+            action_url = settings.BASE_URL + reverse("assessment:take_assessment", kwargs={"pk": assessment_id})
+            context = {"assessment_pk": assessment_id, "content_title": original_content.title, "action_url": action_url}
+            send_unified_notification(user=assessment.user, subject_template="assessment/email/assessment_ready_subject.txt", body_template_prefix="assessment/email/assessment_ready_body", context=context)
         except Exception as e:
-            logger.error(f"GENERATION_TASK: El contenido se generó pero falló el envío de notificación para ID {assessment_id}: {e}")
-            # No relanzamos la excepción para no revertir el éxito de la tarea
+            logger.error(f"Fallo en notificación post-generación: {e}")
 
     except ResourceExhausted as e:
-        logger.warning(f"GENERATION_TASK: Cuota agotada para Assessment ID {assessment_id}. Iniciando protocolo de resiliencia.")
+        log_assessment_task_event(assessment_id, f"Error de Cuota: {e}", level="ERROR")
         if assessment:
-            # 1. Si es error de cuota temporal (429), reintenta en 60s
-            if "429" in str(e) or "Too Many Requests" in str(e) or "Resource has been exhausted" in str(e):
-                 if self.request.retries < self.max_retries:
-                     log_timestamp(f"GENERATION_TASK: Cuota temporal. Reintentando en 60s. Intento {self.request.retries + 1}")
-                     raise self.retry(exc=e, countdown=60)
-            
-            # 2. Si llegamos aquí, es cuota diaria o max reintentos.
-            _log_assessment_event(assessment_id, "GENERATION_TASK: Fallo por cuota API (Diaria/Max Reintentos).", "ERROR")
-            assessment.status = Assessment.AssessmentStatus.GENERATION_FAILED_RETRYABLE
-            assessment.last_error = f"Cuota agotada: {str(e)}"
-            assessment.save(update_fields=["status", "last_error"])
+            with transaction.atomic():
+                a = Assessment.objects.select_for_update().get(pk=assessment_id)
+                a.status = Assessment.AssessmentStatus.GENERATION_FAILED_RETRYABLE
+                a.last_error = str(e)
+                a.save(update_fields=["status", "last_error"])
+        # Reintentar si corresponde...
+        if "429" in str(e) and self.request.retries < self.max_retries:
+             raise self.retry(exc=e, countdown=60)
 
-    except ResourceExhausted as e:
-        logger.warning(f"GENERATION_TASK: Cuota agotada para Assessment ID {assessment_id}. Iniciando protocolo de resiliencia.")
-        if assessment:
-            if "429" in str(e) or "Too Many Requests" in str(e) or "Resource has been exhausted" in str(e):
-                 if self.request.retries < self.max_retries:
-                     log_timestamp(f"GENERATION_TASK: Cuota temporal. Reintentando en 60s. Intento {self.request.retries + 1}")
-                     raise self.retry(exc=e, countdown=60)
-            
-            _log_assessment_event(assessment_id, "GENERATION_TASK: Fallo por cuota API (Diaria/Max Reintentos).", "ERROR")
-            assessment.status = Assessment.AssessmentStatus.GENERATION_FAILED_RETRYABLE
-            assessment.last_error = f"Cuota agotada: {str(e)}"
-            assessment.save(update_fields=["status", "last_error"])
-
-    except (DeadlineExceeded, AIServiceCriticalError, ValueError) as e:
-        logger.error(f"GENERATION_TASK: ERROR RECUPERABLE para Assessment ID {assessment_id}: {e}", exc_info=False)
-        if assessment:
-            assessment.status = Assessment.AssessmentStatus.GENERATION_FAILED_RETRYABLE
-            assessment.last_error = traceback.format_exc()
-            assessment.save(update_fields=["status", "last_error"])
-        raise self.retry(exc=e)
     except Exception as e:
-        logger.critical(f"GENERATION_TASK: ERROR FATAL/INESPERADO para Assessment ID {assessment_id}: {e}", exc_info=True)
+        error_msg = f"Error Fatal: {str(e)}\n{traceback.format_exc()}"
+        log_assessment_task_event(assessment_id, error_msg, level="ERROR")
+        logger.critical(f"Assessment Task Failed: {e}", exc_info=True)
         if assessment:
             try:
+                with transaction.atomic():
+                    a = Assessment.objects.select_for_update().get(pk=assessment_id)
+                    a.status = Assessment.AssessmentStatus.GENERATION_FAILED_RETRYABLE
+                    a.last_error = str(e)
+                    a.save(update_fields=["status", "last_error"])
                 self.retry(exc=e)
-            except MaxRetriesExceededError:
-                assessment.status = Assessment.AssessmentStatus.FAILED_FATAL
-                assessment.last_error = traceback.format_exc()
-                assessment.save(update_fields=["status", "last_error"])
+            except Exception:
+                # Si falla el retry o update, fallback final
+                Assessment.objects.filter(pk=assessment_id).update(status=Assessment.AssessmentStatus.FAILED_FATAL)
 
 @shared_task(bind=True, acks_late=True, max_retries=3, default_retry_delay=60)
 def correct_assessment_task(self, assessment_id):
@@ -914,29 +896,45 @@ def correct_assessment_task(self, assessment_id):
         api_key = ApiKey.objects.filter(is_enabled=True, is_quarantined=False).first()
         if not api_key:
             raise ValueError("No se encontró una clave de API activa.")
+        
         answers_to_correct = user_answers.filter(score__isnull=True)
-        Assessment.objects.filter(pk=assessment_id).update(questions_processed=user_answers.count() - answers_to_correct.count())
+        # Actualizar progreso inicial
+        initial_processed = user_answers.count() - answers_to_correct.count()
+        Assessment.objects.filter(pk=assessment_id).update(questions_processed=initial_processed)
+
         for i, answer in enumerate(answers_to_correct, 1):
             assessment.refresh_from_db(fields=['status'])
             if assessment.status == Assessment.AssessmentStatus.PAUSED:
                 log_timestamp(f"CORRECTION_TASK: Tarea pausada durante la corrección. ID: {assessment_id}")
                 raise self.retry(countdown=60)
+            
             if not answer.answer_text:
                 Assessment.objects.filter(pk=assessment_id).update(questions_processed=F("questions_processed") + 1)
                 continue
+
             prompt = (f"Evalúa la siguiente respuesta de un usuario, comparándola con la pregunta y la respuesta modelo.\n\n" f'Pregunta: "{answer.question.question_text}"\n' f'Respuesta Modelo: "{answer.question.model_answer}"\n' f'Respuesta del Usuario: "{answer.answer_text}"\n\n' f"{prompt_format_instructions}")
-            _log_assessment_event(assessment_id, "Llamada a API iniciada para generación de preguntas.")
-        success, response_text, _ = generate_text_content(prompt, api_key=api_key)
+            
+            # Log antes de la llamada
+            _log_assessment_event(assessment_id, f"Corrigiendo respuesta {i}/{answers_to_correct.count()}...")
+            
+            success, response_text, _ = generate_text_content(prompt, api_key=api_key)
             if not success:
                 raise AIServiceCriticalError(f"API falló para UserAnswer ID {answer.id}: {response_text}")
+            
             correction = _parse_correction_text(response_text)
-            if correction and correction.get("score") is not None:
-                answer.score = correction["score"]
-                answer.feedback = correction["feedback"]
-                answer.correction_expiration_date = expiration_date
-                answer.save(update_fields=["score", "feedback", "correction_expiration_date"])
-            Assessment.objects.filter(pk=assessment_id).update(questions_processed=F("questions_processed") + 1)
-            time.sleep(5)
+            
+            with transaction.atomic():
+                if correction and correction.get("score") is not None:
+                    answer.score = correction["score"]
+                    answer.feedback = correction["feedback"]
+                    answer.correction_expiration_date = expiration_date
+                    answer.save(update_fields=["score", "feedback", "correction_expiration_date"])
+                
+                # Actualizar contador de progreso en Assessment
+                Assessment.objects.filter(pk=assessment_id).update(questions_processed=F("questions_processed") + 1)
+            
+            time.sleep(2)
+
         # [V2 RESILIENCIA] Notificación desacoplada de la transacción final.
         should_notify = False
         assessment_user = None

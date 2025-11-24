@@ -49,7 +49,7 @@ CampuStudiOnline es una plataforma web de e-learning diseñada para centralizar 
 ### Hito 2: Optimización para Motores de Búsqueda (SEO) (PAUSADO)
 (Ver anexo `CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V02.md` para el detalle del progreso.)
 
-### Hito 3: Ecosistema de Salas de Chat Globales y Contextuales (PAUSADO)
+### Hito 3: Ecosistema de Salas de Chat Globales y Contextuales (EN PROGRESO)
 (Ver anexo `CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V03.md` para el detalle del progreso.)
 
 ### Hito 4: Gestión Avanzada de Cuentas de Usuario (COMPLETADO)
@@ -64,7 +64,7 @@ CampuStudiOnline es una plataforma web de e-learning diseñada para centralizar 
 ### Hito 19: Re-arquitectura de los Directorios de Navegación (COMPLETADO)
 (Ver anexo `CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V19.md` para el detalle del progreso.)
 
-### Hito 6: Sistema de Autoevaluaciones con IA (EN PROGRESO)
+### Hito 6: Sistema de Autoevaluaciones con IA (COMPLETADO)
 (Ver anexo `CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md` para el detalle del progreso.)
 
 ### Hito 7: Mejoras de Usabilidad y Feedback de Usuario (PAUSADO)

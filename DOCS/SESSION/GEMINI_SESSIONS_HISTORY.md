@@ -467,3 +467,10 @@
 *  **Session:** Reparación de Logs de Evaluación y Sincronización de Navegación
 *  **Description:** Implementación de escritura atómica en el event_log para tareas de Celery y corrección de la desincronización en la barra de navegación y sidebar mediante auditoría de señales y caché.
 
+# 2025-11-24
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+## MAMC
+*  **Session:** Reparación Logs y Navegación Assessment
+*  **Description:** Sesión crítica de depuración del Hito 6. Se aborda la falta de persistencia en los logs del modelo Assessment (fallo silencioso en tareas de Celery) y la desincronización de la navegación de usuario (Sidebar/NavBar) tras la generación de autoevaluaciones. Se revisará la transaccionalidad en orchestrator/tasks.py y assessment/signals.py.
+

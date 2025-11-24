@@ -34,10 +34,40 @@
         </table>
 
         <h2>Registro de Eventos</h2>
-        {% if task.assessmentsettings.event_log %}
-            <pre style="background-color: #f8f9fa; border: 1px solid #dee2e6; padding: 15px; border-radius: 4px; white-space: pre-wrap; word-wrap: break-word;">{{ task.assessmentsettings.event_log|linebreaksbr }}</pre>
+        {% if task.event_log %}
+            <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
+                <thead>
+                    <tr style="background-color: #e9ecef;">
+                        <th style="padding: 10px; border: 1px solid #dee2e6; text-align: left;">Timestamp (UTC)</th>
+                        <th style="padding: 10px; border: 1px solid #dee2e6; text-align: left;">Nivel</th>
+                        <th style="padding: 10px; border: 1px solid #dee2e6; text-align: left;">Mensaje</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for entry in task.event_log %}
+                    <tr>
+                        <td style="padding: 8px; border: 1px solid #dee2e6; white-space: nowrap;">{{ entry.timestamp|slice:":19" }}</td>
+                        <td style="padding: 8px; border: 1px solid #dee2e6;">
+                            {% if entry.level == 'ERROR' %}
+                                <span style="color: red; font-weight: bold;">{{ entry.level }}</span>
+                            {% elif entry.level == 'SUCCESS' %}
+                                <span style="color: green; font-weight: bold;">{{ entry.level }}</span>
+                            {% else %}
+                                {{ entry.level }}
+                            {% endif %}
+                        </td>
+                        <td style="padding: 8px; border: 1px solid #dee2e6;">
+                            {{ entry.message }}
+                            {% if entry.payload %}
+                                <br><small style="font-family: monospace; color: #666;">Payload: {{ entry.payload }}</small>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
         {% else %}
-            <p>No hay eventos registrados para esta tarea.</p>
+            <p style="padding: 15px; background-color: #f8f9fa; border: 1px solid #dee2e6;">No hay eventos registrados para esta tarea.</p>
         {% endif %}
         
         {% if task.last_error %}

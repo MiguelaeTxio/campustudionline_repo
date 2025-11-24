@@ -13,11 +13,18 @@ def update_navigation_on_assessment_change(sender, instance, created, **kwargs):
     """
     Actualiza el árbol de navegación del usuario cuando cambia el estado
     de una evaluación (ej: de PENDING a COMPLETED).
+    Optimizado para evitar reconstrucciones en actualizaciones de progreso puro.
     """
     try:
+        # Verificamos qué campos se actualizaron si está disponible
+        update_fields = kwargs.get('update_fields')
+        
+        # Si es una actualización específica de campos y NO incluye 'status', ignoramos.
+        if update_fields and 'status' not in update_fields and not created:
+            return
+
         # Solo actualizamos si hay cambios relevantes para la navegación
-        # (aunque por simplicidad y seguridad, actualizamos siempre que se guarde)
         transaction.on_commit(lambda: refresh_user_navigation(instance.user))
-        logger.debug(f"Navegación actualizada por cambio en Assessment {instance.id}")
+        logger.debug(f"Navegación actualizada por cambio de estado en Assessment {instance.id}")
     except Exception as e:
         logger.error(f"Error actualizando navegación desde señal de Assessment: {e}")
