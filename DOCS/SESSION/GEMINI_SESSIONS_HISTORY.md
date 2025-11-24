@@ -482,3 +482,10 @@
 * Session: Reactivación del Ecosistema de Chat Contextual
 * Description: Análisis e implementación de la nueva arquitectura de chat basada en el contexto de estudio (Hito 3). Se abordará la refactorización de los modelos de chat para vincularlos automáticamente a asignaturas y categorías, eliminando la creación manual de salas y estableciendo activadores automáticos en la creación de usuarios y copias de contenido.
 
+# 2025-11-24
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V05.md
+## NRA
+*  **Session:** Recuperación de Visibilidad de API Keys y Gestión de Logs
+*  **Description:** Sesión enfocada en resolver la regresión visual de las API Keys en el orquestador y diseñar el sistema de offloading de logs a local, cumpliendo los objetivos del Hito 5.
+

@@ -3,54 +3,38 @@
 **Propósito:** Abordar bugs acumulados, realizar mejoras de usabilidad y optimización de infraestructura.
 **Estado:** **EN PROGRESO**
 
-## Hoja de Ruta Inmediata (Noviembre 2025)
+## Hoja de Ruta Inmediata (Noviembre 2025) - Próxima Sesión: UX/UI
 
-### 1. Recuperación de Visibilidad de API Keys (Regresión)
-*   **Problema:** Se ha perdido la información visual sobre el estado de las API Keys (ej. si están en cuarentena o agotadas) en el panel de administración de Django.
-*   **Acción:** Restaurar las columnas de estado, filtros y lógica visual en `orchestrator/admin.py`.
-
-### 2. Sistema Integral de Gestión de Logs (Offloading a Local)
-*   **Objetivo:** Aliviar el almacenamiento en PythonAnywhere moviendo la persistencia de logs históricos al PC local del administrador.
-*   **Mecanismo de Descarga:** Implementar flujo para descargar logs desde la BBDD directamente al PC.
-*   **Política de Placeholder:** Al descargar y archivar un log, el contenido en la BBDD se vacía y se sustituye por un marcador: `[Copia en local desde DD-MM-AA]`.
-*   **Visualización On-Fly:** Herramienta para visualizar logs archivados (locales) subiéndolos temporalmente o leyéndolos localmente, sin necesidad de restaurarlos permanentemente en la base de datos.
-*   **Seguridad:** Custodia de la información sensible en entorno local.
+### 1. Unificación de UX/UI (Estandarización Visual)
+*   **Estandarización de Botones:** Unificar aspecto, tamaño y paleta de colores de todos los botones de la plataforma. Asegurar que una misma acción tenga siempre la misma leyenda y color en toda la plataforma.
+*   **Corrección de Leyendas:** Corregir literales incorrectos o confusos (ej. en Sala de Estudio cambiar `resumen reciente` por `actividad reciente`).
+*   **Reubicación del Explorador:** Mover el acceso al Explorador a la NavBar, ubicándolo junto al menú personal. Debe ser un icono/menú hamburguesa sin leyenda de texto.
+*   **Renombrado de Contexto:** Al acceder desde el Explorador, eliminar "Sala de Estudio" del título y sustituirlo por "Accesos Directos" o similar.
 
 ## Histórico de Tareas
-- **Tareas Completadas:**
+
+- **Tareas Completadas (Noviembre 2025 - Sesión Logs/API):**
+    - **(COMPLETADO) Recuperación de Visibilidad de API Keys:** Se restauraron los indicadores visuales de estado (Cuarentena/Activa) en el panel de administración del Orquestador (`ApiKeyAdmin`), resolviendo la regresión visual.
+    - **(COMPLETADO) Sistema Integral de Gestión de Logs:** 
+        - Se implementó el mecanismo de **Offloading** para descargar logs pesados a JSON y purgar la base de datos (acciones `download_logs` y `purge_logs`).
+        - Se creó una herramienta de **Visualización Offline** integrada en el admin para consultar los logs descargados sin rehidratar la BBDD.
+        - Se optimizó el logging en `tasks.py` eliminando la persistencia de prompts masivos.
+        - Se ejecutó una limpieza retrospectiva (`clean_task_logs`) saneando más de 13,000 entradas de log históricas.
+
+- **Tareas Completadas (Anteriores):**
     - Refactorización del Sistema de Anotaciones.
     - Corrección y Robustecimiento de `CopiaContenido`.
-    - **Estabilización del Servidor (Resolución de `Segmentation Faults`):** Se erradicó la causa de los `segfaults` intermitentes. Se reemplazó la librería `PyMuPDF`, identificada como el componente inestable, por una nueva arquitectura de generación de imágenes (`weasyprint` + `pdf2image`) que garantiza la estabilidad del servidor.
-    - **Refactorización del Servidor de Estáticos:** Se eliminó la dependencia `Whitenoise`, un vestigio de la arquitectura ASGI, simplificando la configuración de `settings.py` y resolviendo un conflicto de `collectstatic` en el entorno de producción WSGI.
-    - **Implementación de Visita Guiada Interactiva:** Se ha añadido una visita guiada en la vista de detalle de contenido utilizando `Shepherd.js` para mejorar la experiencia de los nuevos usuarios, sustituyendo la idea de un simple popup.
-    - **Corrección de Bug Crítico (Sala de Estudio):** Se ha resuelto el bug que provocaba la aparición del teclado virtual en navegadores Android, impidiendo la edición no deseada de contenido.
-    - **Implementación de Guía de Uso en Sala de Estudio:** Se ha añadido una visita guiada interactiva, coherente y estilizada en la Sala de Estudio.
-    - **Expansión del Sistema de Visitas Guiadas:** Se ha refactorizado y ampliado la guía de la Sala de Estudio para que sea un "viaje de usuario" completo y no destructivo, cubriendo los diferentes estados del panel de autoevaluación. Se ha creado una vista de demostración (`take_assessment_demo`) y una nueva guía para la página de "Realizar Evaluación", conectando ambas para una experiencia fluida.
-    - **Corrección de Regresión Crítica (Panel de Evaluaciones):** Se ha resuelto un bug de larga duración que impedía la visualización de los enlaces a las correcciones disponibles en la Sala de Estudio. La causa raíz, identificada mediante `git bisect`, fue una lógica incompleta introducida en una refactorización anterior. La solución ha consistido en robustecer la función `get_assessment_context`.
-    - **Implementación de Guía en Página de Resultados:** Se ha completado el ciclo de visitas guiadas del módulo de autoevaluaciones con la creación de un nuevo tour en la página de visualización de resultados, mejorando la experiencia del usuario final.
-    - **Estabilización de Regresiones Críticas (Agosto 2025):** Se resolvieron múltiples regresiones críticas introducidas por la refactorización del modelo de `ContenidoMaterial`. Se corrigieron errores 500 en la Sala de Estudio y el Directorio Intelectual, se repararon los enlaces de navegación, se restauró la coherencia visual del Directorio Académico y se corrigió la lógica de los `breadcrumbs` del Directorio Personal.
-    - **Corrección de Regresión de Datos y Bugs Críticos (Agosto 2025):** Se erradicó un remanente de datos que causaba la aparición de categorías incorrectas. Se solucionó un bug de layout responsivo en la barra de navegación principal. Se corrigió un bug crítico en la tarea de generación de contenido que provocaba la creación de material duplicado.
-- **Re-arquitectura del Dashboard de `content_automation`:** Se ha transformado el panel de control de una simple vista de tareas activas a un dashboard jerárquico completo que muestra todas las tareas (fallidas, completadas, etc.) agrupadas por su clasificación intelectual, mejorando drásticamente la observabilidad del sistema.
-- **Estabilización Post-Refactorización (Agosto 2025):** Se corrigieron múltiples errores críticos en cascada (`ImportError`, `RuntimeError`, `NoReverseMatch`) causados por la refactorización de namespaces y configuraciones, restaurando la operatividad de la plataforma.
-- **Corrección de Regresión Crítica (Chats Académicos):** Resuelto un `KeyError` causado por referencias a un namespace de URL obsoleto (`chat_academico`) tras la refactorización a inglés, restaurando la funcionalidad del navegador de chats.
-- **Estabilización Final y Completa Post-Refactorización (Septiembre 2025):** Se han resuelto todas las regresiones críticas de la refactorización de identificadores, incluyendo errores de `NoReverseMatch`, `ValueError` en consultas ORM, y la restauración completa del sistema de compartición global y la lógica de renderizado de contenido. Se da por concluida la fase de estabilización.
-- **Estabilización Final Post-Refactorización (Septiembre 2025):** Se ha completado la estabilización de la plataforma, resolviendo los errores estáticos () y los errores críticos en tiempo de ejecución (, , ), restaurando la plena funcionalidad del sistema.
+    - **Estabilización del Servidor (Resolución de `Segmentation Faults`):** Se erradicó la causa de los `segfaults` intermitentes reemplazando `PyMuPDF` por `weasyprint` + `pdf2image`.
+    - **Refactorización del Servidor de Estáticos:** Eliminación de `Whitenoise` en favor de `collectstatic` nativo.
+    - **Visitas Guiadas (`Shepherd.js`):** Implementación completa en Sala de Estudio, Evaluaciones y Resultados.
+    - **Corrección de Bugs Críticos:** Teclado virtual en Android, enlaces de corrección en evaluaciones, regresiones visuales en directorios.
+    - **Re-arquitectura del Dashboard de `content_automation`:** Transformación a un panel jerárquico y observabilidad mejorada.
+    - **Estabilización Post-Refactorización (Identificadores):** Resolución masiva de `NoReverseMatch`, `ImportError` y errores de templates tras la estandarización a inglés.
+    - **Robustecimiento del Generador de Contenido:** Lógica de bloqueo de duplicados, gestión de errores de cuota (`ResourceExhausted`) y reintentos inteligentes.
+    - **Sistema de Generación Automática (v1):** Creación de la app `content_automation` (ahora integrada en `orchestrator`).
+    - **Optimización de Generación (Markdown):** Eliminación de dependencia JSON en favor de parsing Markdown robusto.
+    - **Creación de Jerarquía de Chats Académicos:** Generación masiva de 4433 salas.
 
-    - **Robustecimiento del Generador de Contenido (Guardián Lógico):** Se ha implementado una lógica de bloqueo que impide la creación de nuevas tareas de generación para asignaturas que ya tienen contenido o una tarea en cualquier estado, erradicando la causa de la creación de contenido duplicado.
-    - **Implementación del Sistema de Generación Automática de Contenido (v1):** Se ha creado una nueva aplicación de administración (`content_automation`) que automatiza el ciclo completo de creación de contenido académico. El sistema gestiona la generación de prompts, la comunicación con la API de Gemini y la persistencia del material resultante, proporcionando una interfaz de usuario para monitorizar y gestionar el estado de cada asignatura.
-    - **Estabilización Crítica Post-Recuperación (Agosto 2025):** Se resolvió una cascada de errores críticos (FieldError, NoReverseMatch, ProgrammingError, OperationalError) causados por una desincronización profunda entre el código y el esquema de la base de datos, restaurando la funcionalidad completa de la plataforma.
-    - **Fase de Estabilización Post-Refactorización (COMPLETADA):** Realizar una auditoría y depuración exhaustiva de la plataforma para identificar y corregir todas las regresiones y errores (ej. `NoReverseMatch`, `TemplateDoesNotExist`, etc.) introducidos durante la estandarización masiva de identificadores. Primero establecer el commit anterior al inicio de la refactorización, para tomarlo como referencia y comprobar, el estado de los archivos tras la refactorización, con la original antes de los cambios de identificadores. Hay que seguir obligatoriamente el protocolo `PDCG`
-    - **(COMPLETADA)** Se ha completado la estabilización estática (`manage.py check`) y la corrección de los principales errores de renderizado en tiempo real (`NoReverseMatch`, `Template-Block-Mismatch`), restaurando la funcionalidad visual de la mayor parte de la plataforma.
-        - **Implementación del Preloader de Pre-Navegación (COMPLETADO):** Se ha implementado un sistema de preloader unificado que se activa al hacer clic en enlaces de carga lenta, mejorando drásticamente la experiencia de usuario y proporcionando feedback visual inmediato durante la espera. Se centralizó la lógica en `base.html` para una fácil mantenibilidad.
-    - **(COMPLETADA) Caza y Erradicación de Errores 500:** Se ha completado una auditoría dinámica de la plataforma, identificando y resolviendo errores 500 críticos en la creación de Copias de Estudio y en el sistema de Mensajería Privada, asegurando la estabilidad en tiempo de ejecución.
-    - **Estabilización Completa de la Sala de Estudio (Septiembre 2025):** Se ha resuelto la cascada de regresiones críticas que afectaban al sistema de anotaciones. Se restauró la lógica funcional de manipulación del DOM (`lxml`) a partir de un commit de referencia (`b4284cd`), adaptándola a la nomenclatura actual y garantizando la creación robusta de anotaciones. La Sala de Estudio se declara estable y completamente funcional.
-        - **Resolución de Error Crítico de Enrutamiento (404 Not Found):** Se ha corregido un error crítico en el `academic_directory` que impedía el funcionamiento del sistema de solicitud de contenido. La causa raíz fue un orden incorrecto en los patrones de URL, que ha sido resuelto para garantizar la correcta resolución de la vista.
-- **Re-arquitectura y Blindaje del Generador de Contenido (Septiembre 2025):** Se ha re-arquitecturizado el sistema para eliminar la dependencia de JSON en la generación de contenido, reemplazándola por un formato Markdown con separador. Esta simplificación ha erradicado los errores de parseo recurrentes, aumentando drásticamente la fiabilidad, velocidad y resiliencia del sistema de generación de contenido.
-- **Tareas Pendientes:**
-        - **Auditoría y Corrección de Inconsistencias (Septiembre 2025):** Resuelta una inconsistencia de datos en la que las salas de chat académicas existían pero carecían de los vínculos necesarios (`AcademicChatLink`) para ser funcionales. Se purgó el estado incorrecto y se regeneró la estructura completa.
-        - **(COMPLETADA) Creación de la Jerarquía de Chats Académicos:** Tras la importación masiva de datos, se ha ejecutado con éxito el comando `create_academic_chat_rooms --purge`, generando 4433 salas de chat privadas vinculadas a sus respectivas asignaturas y resolviendo un estado de datos inconsistente previo.
-        - **Refactorización del Directorio Intelectual:** Corregir la lógica de visualización de categorías padre vacías, restaurar el arquetipo de  e implementar botones de ayuda y solicitud de contenido.
-        - **Mejoras de UX en la Sala de Estudio:** Añadir botones de compartición y ayuda contextual.
-        - **Estabilización del Generador de Contenido (Anti-Alucinaciones):** Se ha re-arquitecturizado el manejo de errores `MAX_TOKENS`. Se erradicó la frágil estrategia de "continuación de texto", que provocaba alucinaciones en el modelo, y se reemplazó por un robusto sistema de reintentos con espera temporal. Ahora el sistema es resiliente a fallos transitorios del modelo de IA.
-- **OBSOLETO) Re-arquitectura del Generador de Contenido (v16 - Sub-árboles Atómicos): Esta estrategia ha sido invalidada y reemplazada por la v18.** Se ha validado una nueva estrategia para reconciliar la generación de contenido de máxima calidad con la viabilidad técnica. La nueva arquitectura generará un `master_schema` exhaustivo y sin límites, y lo procesará en lotes lógicos (sub-árboles) para evitar el agotamiento de la cuota de la API. (INVALIDADO - Reemplazado por v18).
-
+- **Tareas Pendientes (Backlog):**
+    - **Refactorización del Directorio Intelectual:** Corregir visualización de categorías vacías y restaurar arquetipos.
+    - **Mejoras de UX en Sala de Estudio:** Botones de compartición y ayuda contextual.

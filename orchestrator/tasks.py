@@ -649,7 +649,7 @@ def generate_full_course_task(self, task_id: str):
             academic_context = task.structured_content.get("academic_context", "")
             initial_prompt = generate_atomic_content_prompt(course_title=task.course_title or task.subject.name, section_title=title, master_schema=task.structured_content["master_schema"], academic_context=academic_context)
             log_task_event(task_id, f'Procesando sección {order}/{len(parsed_schema)}: "{title}"')
-            log_task_event(task_id, "Enviando prompt atómico a la API.", payload={"prompt": initial_prompt})
+            log_task_event(task_id, "Enviando prompt atómico a la API.")
             success, content_or_error, _ = generate_text_content(initial_prompt, api_key=api_key, task_id=task_id)
             if not success:
                  raise ResourceExhausted(f"Fallo en la generación de la sección: {content_or_error}")

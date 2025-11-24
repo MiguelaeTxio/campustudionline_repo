@@ -83,6 +83,11 @@
 ./orchestrator/tasks.py
 ./orchestrator/admin_urls.py
 ./orchestrator/tests.py
+./orchestrator/management
+./orchestrator/management/commands
+./orchestrator/management/commands/__init__.py
+./orchestrator/management/commands/clean_task_logs.py
+./orchestrator/management/__init__.py
 ./search
 ./search/urls.py
 ./search/templates

@@ -1,5 +1,6 @@
 # /home/MiguelAeTxio/PROJECTS/CampuStudiOnline/orchestrator/admin_views.py
 import logging
+import json
 from collections import defaultdict
 import os
 import re
@@ -387,43 +388,42 @@ def delete_free_request_view(request, request_id):
 @staff_member_required
 def manage_logs_view(request):
     context = admin.site.each_context(request)
-    if request.method == 'POST':
-        logs_to_delete = request.POST.getlist('logs_to_delete')
-        deleted_count = 0
-        for log_name in logs_to_delete:
-            file_path = os.path.join(LOG_DIRECTORY, log_name)
-            if os.path.exists(file_path):
-                try:
-                    os.remove(file_path)
-                    deleted_count += 1
-                except OSError as e:
-                    messages.error(request, f"No se pudo eliminar {log_name}: {e}")
-        if deleted_count > 0:
-            messages.success(request, f"{deleted_count} archivo(s) de log eliminado(s) correctamente.")
-        return HttpResponseRedirect(reverse('orchestrator:manage_logs'))
+    
+    if request.method == 'POST' and request.FILES.get('log_file'):
+        log_file = request.FILES['log_file']
+        try:
+            # Leer y decodificar el archivo
+            file_data = log_file.read().decode('utf-8')
+            tasks_data = json.loads(file_data)
+            
+            # Si es un solo objeto, convertirlo a lista para uniformidad
+            if isinstance(tasks_data, dict):
+                tasks_data = [tasks_data]
+            
+            # Preparar los datos para la visualización
+            # Invertimos los logs individuales como en la vista en vivo
+            for task in tasks_data:
+                if 'task_log' in task and isinstance(task['task_log'], list):
+                    task['task_log_reversed'] = list(reversed(task['task_log']))
+            
+            context.update({
+                'title': f"Visor de Logs Offline: {log_file.name}",
+                'tasks_data': tasks_data,
+                'is_viewing': True
+            })
+            return render(request, 'admin/orchestrator/manage_logs.html', context)
+            
+        except (json.JSONDecodeError, UnicodeDecodeError) as e:
+            messages.error(request, f"Error al procesar el archivo: {str(e)}")
+        except Exception as e:
+            messages.error(request, f"Error inesperado: {str(e)}")
 
-    log_files_data = []
-    if os.path.exists(LOG_DIRECTORY):
-        for filename in os.listdir(LOG_DIRECTORY):
-            if filename.endswith('.log'):
-                file_path = os.path.join(LOG_DIRECTORY, filename)
-                try:
-                    stat = os.stat(file_path)
-                    log_files_data.append({
-                        'name': filename,
-                        'size_kb': round(stat.st_size / 1024, 2),
-                        'modified_date': datetime.fromtimestamp(stat.st_mtime)
-                    })
-                except FileNotFoundError:
-                    continue # El archivo fue borrado entre el listado y el stat
-    
-    log_files_data.sort(key=lambda x: x['modified_date'], reverse=True)
-    
     context.update({
-        'title': 'Gestión de Archivos de Log',
-        'log_files': log_files_data
+        'title': 'Gestión de Archivos de Log (Offline)',
+        'is_viewing': False
     })
     return render(request, 'admin/orchestrator/manage_logs.html', context)
+
 
 @staff_member_required
 @require_http_methods(["GET", "POST"])
