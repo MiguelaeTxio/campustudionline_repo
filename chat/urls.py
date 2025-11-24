@@ -7,7 +7,7 @@ app_name = "chat"
 
 urlpatterns = [
     path("", views.chat_index, name="index"),
-    path("create/", views.create_room, name="create_room"),
+    # Ruta de creación eliminada según Hito 3
     path("room/<slug:room_slug>/", views.room_detail, name="room_detail"),
     
     # --- URLs para la API de Polling HTTP ---
@@ -29,11 +29,10 @@ urlpatterns = [
     
     # --- URLs de gestión ---
     path("room/<slug:room_slug>/leave/", views.leave_room, name="leave_room"),
-    path(
-        "room/<slug:room_slug>/request_join/",
-        views.request_join,
-        name="request_join",
-    ),
+    # request_join eliminado/obsoleto en la nueva lógica, pero se puede mantener si se desea compatibilidad con salas legacy, 
+    # aunque la directriz dice "Eliminar capacidad manual". Lo quitamos para ser estrictos.
+    # path("room/<slug:room_slug>/request_join/", views.request_join, name="request_join"), 
+    
     path(
         "membership_request/<int:membership_id>/manage/<str:action>/",
         views.manage_membership,

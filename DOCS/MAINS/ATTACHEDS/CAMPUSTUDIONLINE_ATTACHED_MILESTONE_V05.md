@@ -1,10 +1,22 @@
 # Hito 5: Mantenimiento y Mejoras Generales
 
-**Propósito:** Abordar bugs acumulados y realizar mejoras de usabilidad.
-**Estado:** **PAUSADO**.
+**Propósito:** Abordar bugs acumulados, realizar mejoras de usabilidad y optimización de infraestructura.
+**Estado:** **EN PROGRESO**
 
-- **Propósito:** Abordar bugs acumulados y realizar mejoras de usabilidad.
-- **Estado:** **EN PROGRESO**.
+## Hoja de Ruta Inmediata (Noviembre 2025)
+
+### 1. Recuperación de Visibilidad de API Keys (Regresión)
+*   **Problema:** Se ha perdido la información visual sobre el estado de las API Keys (ej. si están en cuarentena o agotadas) en el panel de administración de Django.
+*   **Acción:** Restaurar las columnas de estado, filtros y lógica visual en `orchestrator/admin.py`.
+
+### 2. Sistema Integral de Gestión de Logs (Offloading a Local)
+*   **Objetivo:** Aliviar el almacenamiento en PythonAnywhere moviendo la persistencia de logs históricos al PC local del administrador.
+*   **Mecanismo de Descarga:** Implementar flujo para descargar logs desde la BBDD directamente al PC.
+*   **Política de Placeholder:** Al descargar y archivar un log, el contenido en la BBDD se vacía y se sustituye por un marcador: `[Copia en local desde DD-MM-AA]`.
+*   **Visualización On-Fly:** Herramienta para visualizar logs archivados (locales) subiéndolos temporalmente o leyéndolos localmente, sin necesidad de restaurarlos permanentemente en la base de datos.
+*   **Seguridad:** Custodia de la información sensible en entorno local.
+
+## Histórico de Tareas
 - **Tareas Completadas:**
     - Refactorización del Sistema de Anotaciones.
     - Corrección y Robustecimiento de `CopiaContenido`.

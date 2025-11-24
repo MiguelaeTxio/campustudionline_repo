@@ -18,7 +18,7 @@ from .models import ChatMessage, ChatRoom, RoomMembership
 logger = logging.getLogger(__name__)
 
 # --- INICIO: Funciones Auxiliares para la nueva API de Polling ---
-
+# (Se mantienen idénticas para no romper la funcionalidad de chat en tiempo real)
 
 def _get_enriched_user_list_for_room(room):
     User = get_user_model()
@@ -87,6 +87,8 @@ def send_chat_message_api(request, room_slug):
     room = get_object_or_404(ChatRoom, slug=room_slug)
     user = request.user
     membership = RoomMembership.objects.filter(user=user, room=room).first()
+    
+    # En salas privadas, se requiere membresía activa
     if room.is_private and (
         not membership or membership.status != RoomMembership.STATUS_MEMBER
     ):
@@ -94,6 +96,7 @@ def send_chat_message_api(request, room_slug):
             {"status": "error", "message": "No eres miembro de esta sala privada."},
             status=403,
         )
+        
     if membership and membership.is_silenced:
         return JsonResponse(
             {"status": "error", "message": "Has sido silenciado en esta sala."},
@@ -141,6 +144,8 @@ def get_chat_updates_api(request, room_slug):
     room = get_object_or_404(ChatRoom, slug=room_slug)
     user = request.user
     last_message_id = int(request.GET.get("last_message_id", "0"))
+    
+    # Verificación de permisos
     if (
         room.is_private
         and not RoomMembership.objects.filter(
@@ -188,98 +193,50 @@ def get_chat_updates_api(request, room_slug):
         }
     )
 
-
 # --- FIN: Funciones para la nueva API de Polling ---
 
 
 def chat_index(request):
-    general_room = ChatRoom.objects.filter(is_platform_default=True).first()
-    other_public_rooms_query = ChatRoom.objects.filter(
-        is_private=False, is_platform_default=False
-    )
-    all_private_rooms_query = ChatRoom.objects.filter(is_private=True).exclude(
-        academic_chat_link__isnull=False
-    )
-    user_memberships_map = {}
-    if request.user.is_authenticated:
-        memberships = RoomMembership.objects.filter(user=request.user).select_related(
-            "room"
-        )
-        for m in memberships:
-            user_memberships_map[m.room_id] = m
-    my_joined_public_rooms, other_public_rooms_to_join = [], []
-    for room in other_public_rooms_query:
-        membership = user_memberships_map.get(room.id)
-        if membership and membership.status == RoomMembership.STATUS_MEMBER:
-            my_joined_public_rooms.append(room)
-        else:
-            other_public_rooms_to_join.append(room)
-    my_active_private_rooms, other_private_rooms_info = [], []
-    for room in all_private_rooms_query:
-        user_room_status_key = "can_request_to_join"
-        user_room_membership_obj = None
-        is_actively_a_member = False
-        if request.user.is_authenticated:
-            membership = user_memberships_map.get(room.id)
-            if membership:
-                user_room_membership_obj = membership
-                if membership.status == RoomMembership.STATUS_MEMBER:
-                    user_room_status_key = "is_member"
-                    my_active_private_rooms.append(room)
-                    is_actively_a_member = True
-                elif membership.status == RoomMembership.STATUS_PENDING:
-                    user_room_status_key = "request_is_pending"
-                elif membership.status == RoomMembership.STATUS_REJECTED:
-                    user_room_status_key = "request_was_rejected"
-        if not is_actively_a_member:
-            final_status_key_for_other = (
-                "login_to_interact"
-                if not request.user.is_authenticated and room.is_private
-                else user_room_status_key
-            )
-            other_private_rooms_info.append(
-                {
-                    "room": room,
-                    "user_room_status_key": final_status_key_for_other,
-                    "membership": user_room_membership_obj,
-                }
-            )
+    user = request.user
+    
+    # 1. Salas Globales (Visibles para todos, unirse es automático al registrarse)
+    # Filtramos por platform_default
+    global_rooms = ChatRoom.objects.filter(is_platform_default=True)
+    
+    academic_rooms = []
+    interest_rooms = []
+    
+    if user.is_authenticated:
+        # Obtener IDs de salas donde el usuario es miembro activo
+        joined_room_ids = RoomMembership.objects.filter(
+            user=user, 
+            status=RoomMembership.STATUS_MEMBER
+        ).values_list('room_id', flat=True)
+        
+        # 2. Mis Asignaturas (Salas con target_subject donde soy miembro)
+        academic_rooms = ChatRoom.objects.filter(
+            id__in=joined_room_ids,
+            target_subject__isnull=False
+        ).select_related('target_subject').order_by('target_subject__name')
+        
+        # 3. Mis Intereses (Salas con target_sub_category o target_master_category donde soy miembro)
+        interest_rooms = ChatRoom.objects.filter(
+            id__in=joined_room_ids
+        ).filter(
+            Q(target_sub_category__isnull=False) | Q(target_master_category__isnull=False)
+        ).select_related('target_sub_category', 'target_master_category').order_by('name')
+
     context = {
-        "general_room": general_room,
-        "my_joined_public_rooms": my_joined_public_rooms,
-        "other_public_rooms_to_join": other_public_rooms_to_join,
-        "my_active_private_rooms": my_active_private_rooms,
-        "other_private_rooms_info": other_private_rooms_info,
-        "user_is_authenticated": request.user.is_authenticated,
-        "all_private_rooms_exist": all_private_rooms_query.exists(),
-        "show_tour": True,
+        "global_rooms": global_rooms,
+        "academic_rooms": academic_rooms,
+        "interest_rooms": interest_rooms,
+        "user_is_authenticated": user.is_authenticated,
+        "show_tour": True, # Se puede mantener o actualizar el tour
     }
     return render(request, "chat/index.html", context)
 
 
-@login_required
-def create_room(request):
-    if request.method == "POST":
-        form = ChatRoomForm(request.POST)
-        if form.is_valid():
-            new_room = form.save(commit=False)
-            new_room.creator = request.user
-            new_room.save()
-            RoomMembership.objects.create(
-                user=request.user,
-                room=new_room,
-                status=RoomMembership.STATUS_MEMBER,
-                role=RoomMembership.ROLE_MEMBER,
-            )
-            messages.success(request, f"¡Sala '{new_room.name}' creada con éxito!")
-            return redirect(reverse("chat:room_detail", kwargs={"room_slug": new_room.slug}))
-    else:
-        form = ChatRoomForm()
-    return render(
-        request,
-        "chat/create_room.html",
-        {"form": form, "page_title": "Crear Nueva Sala de Chat"},
-    )
+# create_room ELIMINADO
 
 
 @login_required
@@ -292,31 +249,27 @@ def room_detail(request, room_slug):
     user = request.user
     membership = RoomMembership.objects.filter(user=user, room=chat_room).first()
 
-    if chat_room.is_private:
+    # Lógica simplificada: Si es privada, DEBE tener membresía.
+    # Ya no hay "unirse automáticamente" a públicas desde aquí, 
+    # porque la única forma de entrar a una sala privada es vía automatización.
+    # Las globales (platform_default) ya tienen membresía creada al inicio.
+    
+    if chat_room.is_private and not chat_room.is_platform_default:
         if not membership or membership.status != RoomMembership.STATUS_MEMBER:
             messages.error(
                 request,
-                f"No tienes permiso para acceder a la sala privada '{chat_room.name}'.",
+                f"No tienes permiso para acceder a la sala '{chat_room.name}'. Acceso restringido.",
             )
             return redirect("chat:index")
-    else:
-        if not membership:
-            membership = RoomMembership.objects.create(
-                user=user,
-                room=chat_room,
-                status=RoomMembership.STATUS_MEMBER,
-                role=RoomMembership.ROLE_MEMBER,
-            )
-            messages.info(
-                request,
-                f"Te has unido automáticamente a la sala pública '{chat_room.name}'.",
-            )
-        elif membership.status != RoomMembership.STATUS_MEMBER:
-            membership.status = RoomMembership.STATUS_MEMBER
-            membership.save(update_fields=["status"])
-            messages.info(
-                request, f"Tu membresía a '{chat_room.name}' ha sido reactivada."
-            )
+    
+    # Autorecovery para globales si por alguna razón falló la señal
+    if chat_room.is_platform_default and not membership:
+        membership = RoomMembership.objects.create(
+            user=user,
+            room=chat_room,
+            status=RoomMembership.STATUS_MEMBER,
+            role=RoomMembership.ROLE_MEMBER,
+        )
 
     initial_messages = (
         ChatMessage.objects.filter(room=chat_room, is_deleted_by_moderator=False)
@@ -368,39 +321,28 @@ def leave_room(request, room_slug):
     room = get_object_or_404(ChatRoom, slug=room_slug)
     if room.is_platform_default:
         messages.warning(
-            request, "No puedes abandonar la sala general de la plataforma."
+            request, "No puedes abandonar las salas globales de la plataforma."
         )
         return redirect(reverse("chat:room_detail", kwargs={"room_slug": room.slug}))
+    
+    # En el nuevo modelo contextual, ¿tiene sentido abandonar una sala de asignatura?
+    # Si abandonas, ¿cómo vuelves? (Solo borrando la copia de estudio y creándola de nuevo?)
+    # Por ahora permitimos salir, asumiendo que el usuario quiere "silenciar" esa sala de su lista.
+    # Pero el trigger de entrada solo salta al CREAR copia.
+    
     membership = get_object_or_404(RoomMembership, user=request.user, room=room)
     membership.delete()
     messages.success(request, f"Has abandonado la sala '{room.name}'.")
     return redirect("chat:index")
 
 
-@login_required
-def request_join(request, room_slug):
-    room = get_object_or_404(ChatRoom, slug=room_slug, is_private=True)
-    if request.user == room.creator:
-        messages.info(request, f"Ya eres el creador de la sala '{room.name}'.")
-        return redirect(reverse("chat:room_detail", kwargs={"room_slug": room.slug}))
-    membership, created = RoomMembership.objects.get_or_create(
-        user=request.user, room=room, defaults={"status": RoomMembership.STATUS_PENDING}
-    )
-    if created:
-        messages.success(
-            request, f"Tu solicitud para unirte a '{room.name}' ha sido enviada."
-        )
-    else:
-        messages.warning(
-            request,
-            f"Ya tienes una solicitud para esta sala (estado: {membership.get_status_display()}).",
-        )
-    return redirect("chat:index")
+# request_join ELIMINADO (Ya no hay solicitud manual)
 
 
 @login_required
 @require_POST
 def manage_membership(request, membership_id, action):
+    # Mantenido para gestión legacy si queda alguna pendiente, o para moderadores.
     membership_request = get_object_or_404(
         RoomMembership, id=membership_id, room__creator=request.user
     )

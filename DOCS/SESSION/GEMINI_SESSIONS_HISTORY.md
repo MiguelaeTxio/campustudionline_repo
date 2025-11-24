@@ -474,3 +474,11 @@
 *  **Session:** Reparación Logs y Navegación Assessment
 *  **Description:** Sesión crítica de depuración del Hito 6. Se aborda la falta de persistencia en los logs del modelo Assessment (fallo silencioso en tareas de Celery) y la desincronización de la navegación de usuario (Sidebar/NavBar) tras la generación de autoevaluaciones. Se revisará la transaccionalidad en orchestrator/tasks.py y assessment/signals.py.
 
+
+# 2025-11-24
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V03.md
+## EDC
+* Session: Reactivación del Ecosistema de Chat Contextual
+* Description: Análisis e implementación de la nueva arquitectura de chat basada en el contexto de estudio (Hito 3). Se abordará la refactorización de los modelos de chat para vincularlos automáticamente a asignaturas y categorías, eliminando la creación manual de salas y estableciendo activadores automáticos en la creación de usuarios y copias de contenido.
+

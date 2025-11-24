@@ -105,6 +105,7 @@
 ./chat/templates/chat/index.html
 ./chat/templates/chat/room_detail.html
 ./chat/templates/chat/create_room.html
+./chat/signals.py
 ./chat/admin.py
 ./chat/__init__.py
 ./chat/views.py
@@ -112,6 +113,7 @@
 ./chat/forms.py
 ./chat/models.py
 ./chat/migrations
+./chat/migrations/0003_chatroom_target_master_category_and_more.py
 ./chat/migrations/0002_initial.py
 ./chat/migrations/__init__.py
 ./chat/migrations/0001_initial.py
@@ -119,6 +121,7 @@
 ./chat/management
 ./chat/management/commands
 ./chat/management/commands/ensure_default_chat_room.py
+./chat/management/commands/rebuild_chat_context.py
 ./.env.example
 ./academic_structure
 ./academic_structure/urls.py
