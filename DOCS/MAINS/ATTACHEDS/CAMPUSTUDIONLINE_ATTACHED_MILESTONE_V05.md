@@ -3,31 +3,30 @@
 **Propósito:** Abordar bugs acumulados, realizar mejoras de usabilidad y optimización de infraestructura.
 **Estado:** **EN PROGRESO**
 
-## Hoja de Ruta Inmediata - Próxima Sesión: Fix Badges
+## Hoja de Ruta Inmediata - Próxima Sesión: Fix Content Redundancy
 
-### 1. Corrección de Inconsistencia en Badges (NavBar)
-*   **Problema:** Al solicitar una evaluación, el badge de progreso no aparece inmediatamente. Solo se muestra cuando el estado pasa a corrección.
-*   **Objetivo:** Asegurar que el badge de "Evaluación en progreso" (spinner) aparezca desde el momento en que se solicita la evaluación.
+### 1. Eliminación de Duplicidad en Visualización de Contenidos
+*   **Problema:** Al visualizar un material, el texto del "Resumen" se renderiza dos veces de forma redundante: una vez en la tarjeta de cabecera y otra inmediatamente después como introducción del cuerpo (verificado visualmente).
+*   **Objetivo:** Modificar la plantilla de detalle de contenido (presumiblemente `content_detail.html`) para unificar o limpiar esta redundancia visual.
 
 ## Histórico de Tareas
 
+- **Tareas Completadas (Noviembre 2025 - Sesión Fix Badges):**
+    - **(COMPLETADO) Corrección de Inconsistencia en Badges (NavBar):**
+        - Se eliminó el filtro temporal (24h) en `context_processors.py` que ocultaba evaluaciones "en progreso" si el proceso demoraba.
+        - Se añadió un *spinner* animado al badge (`_navbar_indicators.html`) para feedback visual inmediato de actividad.
+
 - **Tareas Completadas (Noviembre 2025 - Sesión UX/UI Unificación):**
     - **(COMPLETADO) Navegación y Contexto:**
-        - Reubicación del acceso "Explorador" a la zona de usuario en la NavBar (icono hamburguesa).
+        - Reubicación del acceso "Explorador" a la zona de usuario en la NavBar.
         - Renombrado del panel lateral a "Accesos Directos".
-    - **(COMPLETADO) Corrección de Literales:**
-        - "Resumen Reciente" -> "Sala de Estudio".
-        - "Actividad Reciente" -> "Copias para Estudio".
-    - **(COMPLETADO) Estandarización de Botones:**
-        - Definición y aplicación de Guía de Estilo: Acciones Principales (Azul), Secundarias (Borde Azul), Borrar (Rojo), Favoritos (Amarillo), Tours (Cyan).
-        - Unificación visual en vistas de creación (Contenido, Anuncios, Salas, Enlaces) y listados.
-    - **(COMPLETADO) Unificación Vista de Detalle:**
-        - Estandarización del botón "Copiar para estudio" (mismo texto y estilo para académico y libre).
-        - Implementación de **Breadcrumbs Académicos** para paridad visual con el directorio libre.
+    - **(COMPLETADO) Corrección de Literales:** "Sala de Estudio" y "Copias para Estudio".
+    - **(COMPLETADO) Estandarización de Botones:** Guía de Estilo (Azul/Secundario/Rojo) unificada.
+    - **(COMPLETADO) Unificación Vista de Detalle:** Breadcrumbs Académicos y botón "Copiar para estudio".
 
 - **Tareas Completadas (Noviembre 2025 - Sesión Logs/API):**
     - **(COMPLETADO) Recuperación de Visibilidad de API Keys:** Restauración de indicadores en Admin.
-    - **(COMPLETADO) Sistema Integral de Gestión de Logs:** Offloading a JSON, purga de BBDD y visualización offline.
+    - **(COMPLETADO) Sistema Integral de Gestión de Logs:** Offloading a JSON y purga de BBDD.
 
 - **Tareas Completadas (Anteriores):**
     - Refactorización del Sistema de Anotaciones.

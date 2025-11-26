@@ -504,3 +504,11 @@
 *  **Session:** Unificación UX/UI: Estandarización de botones y mejoras en navegación
 *  **Description:** Sesión centrada en la mejora de la Experiencia de Usuario (UX) y la Interfaz de Usuario (UI). Se abordará la estandarización visual de los botones en toda la plataforma, asegurando coherencia en tamaño, paleta de colores y leyendas. Se corregirán literales confusos en la Sala de Estudio. Además, se reubicará el acceso al Explorador a la barra de navegación principal (NavBar) mediante un icono tipo hamburguesa y se ajustará el contexto de navegación en dicha sección.
 
+
+# 2025-11-26
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V05.md
+## CSO
+*  **Session:** Mantenimiento V05: Corrección de Indicadores de Estado en Evaluaciones
+*  **Description:** Corrección de la inconsistencia en los badges de notificación de la NavBar relativa a las autoevaluaciones. Se ajustará la lógica de visualización (probablemente en `_navbar_indicators.html` y sus dependencias) para asegurar que el spinner de "En progreso" aparezca inmediatamente tras la solicitud (`REQUESTED`), y no solo durante la corrección, mejorando el feedback al usuario.
+

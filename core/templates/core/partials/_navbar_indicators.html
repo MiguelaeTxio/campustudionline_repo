@@ -5,7 +5,10 @@
     {% elif study_room_iv_data.status == 'RESULTS_AVAILABLE' %}
         <span class="badge bg-success text-white rounded-pill badge-notification" title="{{ study_room_iv_data.count }} resultados por ver">{{ study_room_iv_data.count }}</span>
     {% elif study_room_iv_data.status == 'PROCESSING' %}
-        <span class="badge bg-info text-dark rounded-pill badge-notification" title="{{ study_room_iv_data.count }} evaluaciones en progreso">{{ study_room_iv_data.count }}</span>
+        <span class="badge bg-info text-dark rounded-pill badge-notification d-flex align-items-center gap-1" title="{{ study_room_iv_data.count }} evaluaciones en progreso">
+            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" style="width: 0.7em; height: 0.7em;"></span>
+            {{ study_room_iv_data.count }}
+        </span>
     {% elif study_room_iv_data.status == 'MULTIPLE' %}
         <span class="badge bg-secondary text-white rounded-pill badge-notification" title="{{ study_room_iv_data.count }} notificaciones activas">{{ study_room_iv_data.count }}</span>
     {% endif %}
