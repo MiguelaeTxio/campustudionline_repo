@@ -1,0 +1,19 @@
+{% extends "emails/base_email.html" %}
+
+{% block title %}{{ title }}{% endblock title %}
+
+{% block header_title %}Notificación de Automatización{% endblock header_title %}
+
+{% block content %}
+<p style="margin-bottom: 15px;">Hola Administrador,</p>
+<p style="margin-bottom: 15px;">El sistema de automatización ha generado el siguiente aviso:</p>
+
+<div style="background-color: #fff3cd; color: #856404; padding: 15px; border: 1px solid #ffeeba; border-radius: 5px; margin-bottom: 20px;">
+    <h4 style="margin-top: 0;">{{ title }}</h4>
+    <p style="margin-bottom: 0;">{{ message_body }}</p>
+</div>
+
+<p style="text-align: center; margin-top: 25px; margin-bottom: 25px;">
+    <a href="{{ dashboard_url }}" style="display: inline-block; background-color: #007bff; color: #ffffff; padding: 10px 20px; text-decoration: none; border-radius: 5px; font-weight: bold;">Ir al Panel de Control</a>
+</p>
+{% endblock content %}

@@ -17,6 +17,7 @@ from django.utils import timezone
 from django.urls import reverse
 from django.utils.text import slugify
 from django.core.mail import send_mail
+from django.template.loader import render_to_string
 from django.conf import settings
 from django.db import IntegrityError
 from django.contrib.auth import get_user_model
@@ -74,12 +75,20 @@ def _send_admin_notification(title, body):
             return
         email_subject = f"[CampuStudiOnline Automation] {title}"
         recipient_list = [admin.email for admin in admins]
+        context = {
+            'title': title,
+            'message_body': body,
+            'dashboard_url': 'https://www.campustudionline.com/admin/orchestrator/automationsettings/1/change/'
+        }
+        html_message = render_to_string('orchestrator/email/admin_notification.html', context)
+        
         send_mail(
             subject=email_subject,
             message=body,
             from_email=settings.DEFAULT_FROM_EMAIL,
             recipient_list=recipient_list,
             fail_silently=True,
+            html_message=html_message
         )
         logger.info(f"Notificación de administrador enviada a {len(recipient_list)} admin(s): '{title}'")
     except Exception as e:
@@ -333,9 +342,22 @@ def _send_completion_notifications(new_content: ContentMaterial):
                            f"Puedes acceder a él directamente a través del siguiente enlace:\n{full_url}\n\n"
                            f"Gracias por tu paciencia y por ayudarnos a mejorar CampuStudiOnline.\n\n"
                            f"Atentamente,\nEl equipo de CampuStudiOnline")
+        context = {
+            'content_title': new_content.title,
+            'content_url': full_url
+        }
+        html_message = render_to_string('orchestrator/email/content_completion.html', context)
+
         for user in requesters:
             send_notification_to_user(user, push_title, push_body, url=content_url)
-            send_mail(subject=email_subject, message=email_body_text, from_email=settings.DEFAULT_FROM_EMAIL, recipient_list=[user.email], fail_silently=False)
+            send_mail(
+                subject=email_subject, 
+                message=email_body_text, 
+                from_email=settings.DEFAULT_FROM_EMAIL, 
+                recipient_list=[user.email], 
+                fail_silently=False,
+                html_message=html_message
+            )
         content_request.status = ContentRequest.StatusChoices.FULFILLED
         content_request.save(update_fields=["status"])
         logger.info(f"La solicitud de contenido para '{first_subject.name}' ha sido marcada como 'Satisfecha'.")

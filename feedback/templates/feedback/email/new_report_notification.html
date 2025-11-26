@@ -1,0 +1,24 @@
+{% extends "emails/base_email.html" %}
+
+{% block title %}Nuevo Reporte: {{ content_title }}{% endblock title %}
+
+{% block header_title %}Nuevo Reporte de Error{% endblock header_title %}
+
+{% block content %}
+<p style="margin-bottom: 15px;">Se ha recibido un nuevo reporte de error.</p>
+
+<div style="background-color: #f8f9fa; padding: 15px; border-left: 4px solid #dc3545; margin-bottom: 20px;">
+    <p style="margin: 5px 0;"><strong>Usuario:</strong> {{ reporter_username }}</p>
+    <p style="margin: 5px 0;"><strong>Contenido:</strong> {{ content_title }}</p>
+    <p style="margin: 5px 0;"><strong>Asunto:</strong> {{ report_title }}</p>
+</div>
+
+<p style="margin-bottom: 10px;"><strong>Descripción:</strong></p>
+<div style="background-color: #fff; border: 1px solid #eee; padding: 10px; margin-bottom: 20px;">
+    {{ report_description|linebreaksbr }}
+</div>
+
+<p style="text-align: center; margin-top: 25px; margin-bottom: 25px;">
+    <a href="{{ admin_url }}" style="display: inline-block; background-color: #007bff; color: #ffffff; padding: 10px 20px; text-decoration: none; border-radius: 5px; font-weight: bold;">Gestionar en Admin</a>
+</p>
+{% endblock content %}

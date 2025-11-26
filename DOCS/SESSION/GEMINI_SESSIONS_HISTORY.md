@@ -535,3 +535,11 @@
 *  **Session:** Implementación de Sistema de Reporte de Errores y App Feedback
 *  **Description:** Inicio del Hito 7. Desarrollo del backend para ContentReport y la aplicación de feedback. Integración de botón de reporte en el frontend de contenidos.
 
+
+# 2025-11-26
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V08.md
+## EPI
+*  **Session:** Estandarización de Imagen Corporativa en Emails
+*  **Description:** Inicio de la sesión para auditar y estandarizar las plantillas de correo electrónico del sistema, asegurando coherencia visual y técnica mediante la implementación de una plantilla base HTML responsiva y la migración de notificaciones existentes en los módulos de feedback, usuarios y evaluación.
+

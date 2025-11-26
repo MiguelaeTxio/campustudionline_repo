@@ -1,47 +1,25 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <title>¡Bienvenido/a a CampuStudiOnline!</title>
-    <style>
-        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; margin: 0; padding: 0; background-color: #f4f4f4; }
-        .container { max-width: 600px; margin: 20px auto; padding: 20px; background-color: #fff; border: 1px solid #ddd; border-radius: 5px; }
-        .header { background-color: #007bff; color: #ffffff; padding: 10px 20px; text-align: center; border-radius: 5px 5px 0 0; }
-        .header h1 { margin: 0; font-size: 24px; }
-        .content { padding: 20px; }
-        .content p { margin-bottom: 15px; }
-        .content ul { margin-bottom: 15px; padding-left: 20px; }
-        .footer { text-align: center; font-size: 0.9em; color: #777; margin-top: 20px; padding: 10px; border-top: 1px solid #eee; }
-        a { color: #007bff; }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <div class="header">
-            <h1>¡Bienvenido/a a CampuStudiOnline!</h1>
-        </div>
-        <div class="content">
-            <p>Hola <strong>{{ user.username }}</strong>,</p>
-            <p>¡Te damos la más cordial bienvenida a CampuStudiOnline! Estamos encantados de tenerte como parte de nuestra comunidad de estudiantes y creadores de contenido.</p>
-            
-            <p>En CampuStudiOnline, podrás:</p>
-            <ul>
-                <li><strong>Explorar y aprender:</strong> Accede a una variedad de materiales y recursos educativos compartidos por otros usuarios.</li>
-                <li><strong>Crear y compartir:</strong> Publica tus propios apuntes, resúmenes, guías y cualquier material que consideres valioso para otros estudiantes.</li>
-                <li><strong>Conectar:</strong> Utiliza nuestro tablón de anuncios para estar al tanto de novedades, buscar colaboradores o simplemente conectar con otros miembros.</li>
-                <li><strong>Personalizar tu experiencia:</strong> Gestiona tu perfil y tus contenidos para adaptarlos a tus necesidades.</li>
-            </ul>
+{% extends "emails/base_email.html" %}
 
-            <p>Te animamos a explorar la plataforma y empezar a interactuar. Si tienes alguna pregunta, no dudes en consultar nuestra sección de ayuda o contactar con el soporte.</p>
-            
-            <p>¡Empieza tu viaje en CampuStudiOnline ahora mismo!</p>
-            <p><a href="{{ site_url }}{% url 'home' %}">Visitar CampuStudiOnline</a></p> {# We assume we'll pass site_url from the signal #}
+{% block title %}¡Bienvenido/a a CampuStudiOnline!{% endblock title %}
 
-            <p>Saludos cordiales,<br>El equipo de CampuStudiOnline</p>
-        </div>
-        <div class="footer">
-            <p>© {% now "Y" %} CampuStudiOnline. Todos los derechos reservados.</p>
-        </div>
-    </div>
-</body>
-</html>
+{% block header_title %}¡Bienvenido/a a CampuStudiOnline!{% endblock header_title %}
+
+{% block content %}
+<p style="margin-bottom: 15px;">Hola <strong>{{ user.username }}</strong>,</p>
+<p style="margin-bottom: 15px;">¡Te damos la más cordial bienvenida a CampuStudiOnline! Estamos encantados de tenerte como parte de nuestra comunidad de estudiantes y creadores de contenido.</p>
+
+<p style="margin-bottom: 15px;">En CampuStudiOnline, podrás:</p>
+<ul style="margin-bottom: 15px; padding-left: 20px;">
+    <li style="margin-bottom: 5px;"><strong>Explorar y aprender:</strong> Accede a una variedad de materiales y recursos educativos compartidos por otros usuarios.</li>
+    <li style="margin-bottom: 5px;"><strong>Crear y compartir:</strong> Publica tus propios apuntes, resúmenes, guías y cualquier material que consideres valioso para otros estudiantes.</li>
+    <li style="margin-bottom: 5px;"><strong>Conectar:</strong> Utiliza nuestro tablón de anuncios para estar al tanto de novedades, buscar colaboradores o simplemente conectar con otros miembros.</li>
+    <li style="margin-bottom: 5px;"><strong>Personalizar tu experiencia:</strong> Gestiona tu perfil y tus contenidos para adaptarlos a tus necesidades.</li>
+</ul>
+
+<p style="margin-bottom: 15px;">Te animamos a explorar la plataforma y empezar a interactuar. Si tienes alguna pregunta, no dudes en consultar nuestra sección de ayuda o contactar con el soporte.</p>
+
+<p style="margin-bottom: 15px;">¡Empieza tu viaje en CampuStudiOnline ahora mismo!</p>
+<p style="text-align: center; margin-top: 25px; margin-bottom: 25px;">
+    <a href="{{ site_url }}{% url 'home' %}" style="display: inline-block; background-color: #007bff; color: #ffffff; padding: 10px 20px; text-decoration: none; border-radius: 5px; font-weight: bold;">Visitar CampuStudiOnline</a>
+</p>
+{% endblock content %}

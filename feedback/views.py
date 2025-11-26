@@ -5,6 +5,7 @@ from django.contrib import messages
 from django.core.mail import send_mail
 from django.contrib.auth import get_user_model
 from django.urls import reverse
+from django.template.loader import render_to_string
 from contents.models import ContentMaterial
 from messaging.push_utils import send_notification_to_user
 from .models import FeedbackReport
@@ -54,6 +55,15 @@ def report_content_error(request, content_pk):
                     
                     # 2. Correo Electrónico
                     try:
+                        context = {
+                            'content_title': content.title,
+                            'reporter_username': request.user.username,
+                            'report_title': report.title,
+                            'report_description': report.description,
+                            'admin_url': f"https://www.campustudionline.com{admin_url}"
+                        }
+                        html_body = render_to_string('feedback/email/new_report_notification.html', context)
+                        
                         send_mail(
                             subject=f"[CampuStudiOnline] Nuevo Reporte: {content.title}",
                             message=f"""
@@ -69,7 +79,8 @@ def report_content_error(request, content_pk):
                             """,
                             from_email=None,
                             recipient_list=[su.email],
-                            fail_silently=False 
+                            fail_silently=False,
+                            html_message=html_body
                         )
                         logger.info(f"[Feedback] Email enviado a {su.email}")
                     except Exception as mail_e:

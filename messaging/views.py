@@ -428,6 +428,7 @@ def send_invitation(request, username):
         "chat_url": chat_url,
     }
     message_body = render_to_string("messaging/email/invitation_email.txt", context)
+    html_message = render_to_string("messaging/email/invitation_email.html", context)
     try:
         send_mail(
             subject,
@@ -435,6 +436,7 @@ def send_invitation(request, username):
             settings.DEFAULT_FROM_EMAIL,
             [recipient.email],
             fail_silently=False,
+            html_message=html_message,
         )
         return JsonResponse(
             {"status": "success", "message": "Invitation sent successfully."}

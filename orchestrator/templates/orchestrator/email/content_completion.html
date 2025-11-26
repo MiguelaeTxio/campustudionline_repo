@@ -1,0 +1,16 @@
+{% extends "emails/base_email.html" %}
+
+{% block title %}¡Contenido Disponible!{% endblock title %}
+
+{% block header_title %}Contenido Generado{% endblock header_title %}
+
+{% block content %}
+<p style="margin-bottom: 15px;">¡Hola!</p>
+<p style="margin-bottom: 15px;">Nos complace informarte que el material de estudio para la asignatura <strong>{{ content_title }}</strong> que solicitaste ha sido generado y ya está disponible en la plataforma.</p>
+
+<p style="text-align: center; margin-top: 25px; margin-bottom: 25px;">
+    <a href="{{ content_url }}" style="display: inline-block; background-color: #28a745; color: #ffffff; padding: 10px 20px; text-decoration: none; border-radius: 5px; font-weight: bold;">Acceder al Contenido</a>
+</p>
+
+<p style="margin-bottom: 15px;">Gracias por tu paciencia y por ayudarnos a mejorar CampuStudiOnline.</p>
+{% endblock content %}

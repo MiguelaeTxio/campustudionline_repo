@@ -43,6 +43,10 @@
 ./academic_chat/management/__init__.py
 ./orchestrator
 ./orchestrator/templates
+./orchestrator/templates/orchestrator
+./orchestrator/templates/orchestrator/email
+./orchestrator/templates/orchestrator/email/content_completion.html
+./orchestrator/templates/orchestrator/email/admin_notification.html
 ./orchestrator/templates/admin
 ./orchestrator/templates/admin/orchestrator
 ./orchestrator/templates/admin/orchestrator/manage_logs.html
@@ -170,6 +174,7 @@
 ./academic_structure/management/commands/import_ugr_data.py
 ./academic_structure/management/commands/detect_hidden_duplicates.py
 ./delete_stuck_assessment.py
+./audit_email_sources.py
 ./templates
 ./templates/base.html
 ./templates/emails
@@ -290,6 +295,8 @@
 ./feedback/urls.py
 ./feedback/templates
 ./feedback/templates/feedback
+./feedback/templates/feedback/email
+./feedback/templates/feedback/email/new_report_notification.html
 ./feedback/templates/feedback/report_form.html
 ./feedback/admin.py
 ./feedback/__init__.py
@@ -340,6 +347,7 @@
 ./messaging/templates/messaging
 ./messaging/templates/messaging/conversation_list.html
 ./messaging/templates/messaging/email
+./messaging/templates/messaging/email/invitation_email.html
 ./messaging/templates/messaging/email/invitation_email.txt
 ./messaging/templates/messaging/conversation_detail.html
 ./messaging/templates/service-worker.js
@@ -481,6 +489,7 @@
 ./static/vendor/hyperscript/hyperscript.min.js
 ./static/vendor/htmx
 ./static/vendor/htmx/htmx.min.js
+./send_test_emails.py
 ./portfolio
 ./portfolio/urls.py
 ./portfolio/templates
@@ -645,6 +654,7 @@
 ./DOCS/MAINS/ATTACHEDS/CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V03.md
 ./DOCS/MAINS/ATTACHEDS/CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V02.md
 ./DOCS/MAINS/ATTACHEDS/CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V10.md
+./DOCS/MAINS/ATTACHEDS/CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V23.md
 ./DOCS/MAINS/ATTACHEDS/CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V12.md
 ./DOCS/MAINS/ATTACHEDS/CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V18.md
 ./DOCS/MAINS/ATTACHEDS/CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V01.md

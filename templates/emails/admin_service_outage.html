@@ -1,22 +1,26 @@
-<!DOCTYPE html>
-<html lang="es">
-<head><title>Aviso Importante: Mantenimiento Programado</title><!-- Styles similar to welcome_email.html --></head>
-<body>
-<div class="container">
-<div class="header"><h1>Aviso de Mantenimiento Programado</h1></div>
-<div class="content">
-<p>Hola {{ user.username }},</p>
-<p>Te informamos que realizaremos un mantenimiento programado en CampuStudiOnline.</p>
-<p><strong>Fecha y Hora:</strong> {{ maintenance_datetime }}</p>
-<p><strong>Duración estimada:</strong> {{ maintenance_duration }}</p>
-<p>Durante este periodo, el sitio podría no estar disponible o presentar intermitencias.</p>
-{% if additional_message %}
-<p><strong>Información adicional:</strong></p>
-<p>{{ additional_message|linebreaksbr }}</p>
+{% extends "emails/base_email.html" %}
+
+{% block title %}Aviso Importante: Mantenimiento Programado{% endblock title %}
+
+{% block header_title %}Aviso de Mantenimiento Programado{% endblock header_title %}
+
+{% block content %}
+<p style="margin-bottom: 15px;">Hola <strong>{{ user.username }}</strong>,</p>
+<p style="margin-bottom: 15px;">Te informamos que realizaremos un mantenimiento programado en CampuStudiOnline.</p>
+
+<div style="background-color: #fff3cd; color: #856404; padding: 15px; border: 1px solid #ffeeba; border-radius: 5px; margin-bottom: 20px;">
+    <p style="margin: 5px 0;"><strong>Fecha y Hora:</strong> {{ fecha_hora_mantenimiento }}</p>
+    <p style="margin: 5px 0;"><strong>Duración estimada:</strong> {{ duracion_mantenimiento }}</p>
+</div>
+
+<p style="margin-bottom: 15px;">Durante este periodo, el sitio podría no estar disponible o presentar intermitencias.</p>
+
+{% if mensaje_adicional %}
+<p style="margin-bottom: 10px;"><strong>Información adicional:</strong></p>
+<div style="background-color: #f8f9fa; border-left: 4px solid #007bff; padding: 10px; margin-bottom: 15px;">
+    {{ mensaje_adicional|linebreaksbr }}
+</div>
 {% endif %}
-<p>Agradecemos tu comprensión.</p>
-<p>El equipo de CampuStudiOnline</p>
-</div>
-<div class="footer"> <!-- ... --> </div>
-</div>
-</body>
+
+<p style="margin-bottom: 15px;">Agradecemos tu comprensión.</p>
+{% endblock content %}

@@ -1,15 +1,10 @@
-<!DOCTYPE html>
-<html lang="es">
-<head><title>{{ email_subject }}</title><!-- Styles similar to welcome_email.html --></head>
-<body>
-<div class="container">
-<div class="header"><h1>{{ email_subject }}</h1></div>
-<div class="content">
-<p>Hola {{ user.username }},</p>
-<p>{{ message_body|linebreaksbr }}</p> {# The admin will write this body #}
-<p>Saludos,<br>El equipo de CampuStudiOnline</p>
-</div>
-<div class="footer"> <!-- ... --> </div>
-</div>
-</body>
-</html>
+{% extends "emails/base_email.html" %}
+
+{% block title %}{{ email_subject }}{% endblock title %}
+
+{% block header_title %}{{ email_subject }}{% endblock header_title %}
+
+{% block content %}
+<p style="margin-bottom: 15px;">Hola {{ user.username }},</p>
+<p style="margin-bottom: 15px;">{{ message_body|linebreaksbr }}</p>
+{% endblock content %}

@@ -1,0 +1,18 @@
+{% extends "emails/base_email.html" %}
+
+{% block title %}Invitación a chatear{% endblock title %}
+
+{% block header_title %}Nueva Invitación de Chat{% endblock header_title %}
+
+{% block content %}
+<p style="margin-bottom: 15px;">Hola <strong>{{ recipient_name }}</strong>,</p>
+<p style="margin-bottom: 15px;">¡Buenas noticias! El usuario <strong>{{ sender_name }}</strong> quiere iniciar una conversación contigo en la plataforma CampuStudiOnline.</p>
+<p style="margin-bottom: 15px;">Para poder leer y enviar mensajes seguros, primero necesitas activar tu cuenta para la mensajería cifrada. Es un proceso rápido que solo tienes que hacer una vez.</p>
+<p style="margin-bottom: 15px;">Puedes hacerlo en cualquier momento iniciando sesión y visitando la sección de "Mis Conversaciones".</p>
+
+<p style="text-align: center; margin-top: 25px; margin-bottom: 25px;">
+    <a href="{{ chat_url }}" style="display: inline-block; background-color: #007bff; color: #ffffff; padding: 10px 20px; text-decoration: none; border-radius: 5px; font-weight: bold;">Ir a Mis Conversaciones</a>
+</p>
+
+<p style="margin-bottom: 15px;">¡Te esperamos!</p>
+{% endblock content %}
