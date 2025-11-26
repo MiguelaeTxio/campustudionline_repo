@@ -51,10 +51,10 @@
                         {% endfor %}
 
                         <div class="d-grid gap-2">
-                            <button type="submit" class="btn btn-success btn-lg"> {# Color changed #}
+                            <button type="submit" class="btn btn-primary btn-lg"> {# Color changed #}
                                 <i class="fas fa-link"></i> Añadir Enlace
                             </button>
-                            <a href="{% url 'portfolio:public_portfolio_detail' username=request.user.username %}" class="btn btn-outline-secondary">
+                            <a href="{% url 'portfolio:public_portfolio_detail' username=request.user.username %}" class="btn btn-outline-primary">
                                 Cancelar y Volver a mi Portafolio
                             </a>
                         </div>

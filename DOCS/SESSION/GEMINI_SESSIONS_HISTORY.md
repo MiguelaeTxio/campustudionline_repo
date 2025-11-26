@@ -489,3 +489,18 @@
 *  **Session:** Recuperación de Visibilidad de API Keys y Gestión de Logs
 *  **Description:** Sesión enfocada en resolver la regresión visual de las API Keys en el orquestador y diseñar el sistema de offloading de logs a local, cumpliendo los objetivos del Hito 5.
 
+# 2025-11-24
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V05.md
+## CSO
+* Session: Unificación UX/UI y Navegación
+* Description: Implementación de mejoras de interfaz de usuario centradas en la estandarización visual de botones, corrección de literales en la Sala de Estudio y reubicación estratégica del acceso al Explorador en la barra de navegación principal.
+
+
+# 2025-11-25
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V05.md
+## CSO
+*  **Session:** Unificación UX/UI: Estandarización de botones y mejoras en navegación
+*  **Description:** Sesión centrada en la mejora de la Experiencia de Usuario (UX) y la Interfaz de Usuario (UI). Se abordará la estandarización visual de los botones en toda la plataforma, asegurando coherencia en tamaño, paleta de colores y leyendas. Se corregirán literales confusos en la Sala de Estudio. Además, se reubicará el acceso al Explorador a la barra de navegación principal (NavBar) mediante un icono tipo hamburguesa y se ajustará el contexto de navegación en dicha sección.
+

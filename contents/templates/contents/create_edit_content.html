@@ -35,8 +35,8 @@
 
                     <hr>
                     <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
-                        <a href="{% if content_form.instance.pk %}{% url 'contents:content_detail' pk=content_form.instance.pk %}{% else %}{% url 'contents:personal_workspace' %}{% endif %}" class="btn btn-outline-secondary">Cancelar</a>
-                        <button type="submit" id="submit-button" class="btn btn-success btn-lg"><i class="fas fa-save"></i> Guardar</button>
+                        <a href="{% if content_form.instance.pk %}{% url 'contents:content_detail' pk=content_form.instance.pk %}{% else %}{% url 'contents:personal_workspace' %}{% endif %}" class="btn btn-outline-primary">Cancelar</a>
+                        <button type="submit" id="submit-button" class="btn btn-primary btn-lg"><i class="fas fa-save"></i> Guardar</button>
                     </div>
                 </form>
             </div>

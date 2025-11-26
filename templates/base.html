@@ -84,11 +84,7 @@
                             <i class="fas fa-folder me-2"></i>Directorio de Contenidos Libres
                         </a>
                     </li>
-                                        <li class="nav-item">
-                        <button class="btn nav-link" type="button" data-bs-toggle="offcanvas" data-bs-target="#studyNavigationSidebar" aria-controls="studyNavigationSidebar">
-                            <i class="fas fa-bars me-1"></i> Explorador
-                        </button>
-                    </li>
+                                        
 <li class="nav-item" id="tour-nav-personal-directory"><a class="nav-link {% if request.resolver_match.app_name == 'contents' %}active{% endif %}" href="{% url 'contents:personal_workspace' %}"><i class="fas fa-address-book me-2"></i>Directorio Personal</a></li>
                     <li class="nav-item" id="tour-nav-study-room">
                         <a class="nav-link {% if request.resolver_match.url_name == 'copy_directory_root' %}active{% endif %}" href="{% url 'study_room:copy_directory_root' %}">
@@ -102,7 +98,12 @@
                 {% if user.is_authenticated %}
                     <form class="d-flex me-3" role="search" method="get" action="{% url 'search:global_search' %}" id="tour-nav-global-search"><input class="form-control form-control-sm" type="search" name="q" placeholder="Búsqueda global..." aria-label="Búsqueda global"><button class="btn btn-sm btn-outline-light ms-2" type="submit"><i class="fas fa-search"></i></button></form>
                     <ul class="navbar-nav mb-2 mb-lg-0 align-items-center">
-                        <li class="nav-item" id="tour-nav-private-messages"><a class="nav-link {% if request.resolver_match.app_name == 'messaging' and request.resolver_match.url_name == 'conversation_list' %}active{% endif %}" href="{% url 'messaging:conversation_list' %}"><i class="fab fa-whatsapp me-2"></i>Mensajes Privados{% if unread_p2p_message_count > 0 %}<span class="badge bg-danger rounded-pill badge-notification">{{ unread_p2p_message_count }}</span>{% endif %}</a></li>
+                        <li class="nav-item me-2">
+                        <button class="btn nav-link" type="button" data-bs-toggle="offcanvas" data-bs-target="#studyNavigationSidebar" aria-controls="studyNavigationSidebar" title="Accesos Directos">
+                            <i class="fas fa-bars"></i>
+                        </button>
+                    </li>
+                    <li class="nav-item" id="tour-nav-private-messages"><a class="nav-link {% if request.resolver_match.app_name == 'messaging' and request.resolver_match.url_name == 'conversation_list' %}active{% endif %}" href="{% url 'messaging:conversation_list' %}"><i class="fab fa-whatsapp me-2"></i>Mensajes Privados{% if unread_p2p_message_count > 0 %}<span class="badge bg-danger rounded-pill badge-notification">{{ unread_p2p_message_count }}</span>{% endif %}</a></li>
                         <li class="nav-item dropdown" id="tour-nav-user-menu"><a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="fas fa-user-circle me-2"></i> Hola, {{ user.username }}</a><ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown"><li><a class="dropdown-item {% if 'mi-cuenta' in request.path %}active{% endif %}" href="{% url 'users:account_detail' %}"><i class="fas fa-user-cog me-2"></i>Panel de Control</a></li>{% if user.is_staff or user|has_group:"Colaboradores" %}<li><hr class="dropdown-divider"></li><li><a class="dropdown-item" href="{% url 'admin:index' %}"><i class="fas fa-user-shield me-2"></i>Panel de Administración</a></li>{% endif %}<li><hr class="dropdown-divider"></li><li><form method="post" action="{% url 'logout' %}" class="d-inline">{% csrf_token %}<button type="submit" class="dropdown-item"><i class="fas fa-sign-out-alt me-2"></i>Cerrar Sesión</button></form></li></ul></li>
                     </ul>
                 {% else %}

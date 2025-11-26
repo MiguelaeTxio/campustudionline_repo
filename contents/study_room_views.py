@@ -272,7 +272,7 @@ def user_copies_list(request, university_slug=None, branch_slug=None, degree_slu
     # --- MODO 3: RAÍZ (Dashboard) ---
     else:
         items_list = base_copies
-        context.update({"page_title": "Resumen Reciente", "level_name": "dashboard"})
+        context.update({"page_title": "Sala de Estudio", "level_name": "dashboard"})
 
     if items_list is not None:
         context["page_obj"] = Paginator(items_list, 10).get_page(request.GET.get("page"))

@@ -24,30 +24,30 @@
         </ol>
     </nav>
     {% endif %}
-    <div class="mb-4 d-flex align-items-center">
+    <div class="mb-4 d-flex align-items-center flex-wrap gap-2">
         {% if back_url %}
-        <a href="{{ back_url }}" class="btn btn-secondary me-3"><i class="fas fa-arrow-left"></i> Volver</a>
+        <a href="{{ back_url }}" class="btn btn-outline-primary btn-sm"><i class="fas fa-arrow-left"></i> Volver</a>
         {% elif request.META.HTTP_REFERER %}
-        <a href="{{ request.META.HTTP_REFERER|escape }}" class="btn btn-secondary me-3"><i class="fas fa-arrow-left"></i> Volver</a>
+        <a href="{{ request.META.HTTP_REFERER|escape }}" class="btn btn-outline-primary btn-sm"><i class="fas fa-arrow-left"></i> Volver</a>
         {% endif %}
         {% if can_create_copy %}
             {% if not material.is_free_content and subject %}
                 {# [CASO ACADÉMICO] Se pasa el contexto de la asignatura para una creación de copia precisa #}
-                <a href="{% url 'study_room:create_content_copy' pk=material.pk subject_pk=subject.pk %}" class="btn btn-primary content-link-preloader" id="tour-step-1-copy-button">
-                    <i class="fas fa-copy"></i> Crear copia para esta Asignatura
+                <a href="{% url 'study_room:create_content_copy' pk=material.pk subject_pk=subject.pk %}" class="btn btn-primary btn-sm content-link-preloader" id="tour-step-1-copy-button">
+                    <i class="fas fa-copy"></i> Copiar para estudio
                 </a>
             {% else %}
                 {# [CASO LIBRE O GENÉRICO] El comportamiento por defecto se mantiene #}
-                <a href="{% url 'study_room:create_free_content_copy' pk=material.pk %}" class="btn btn-success content-link-preloader" id="tour-step-1-copy-button">
-                    <i class="fas fa-copy"></i> Crear copia para estudio
+                <a href="{% url 'study_room:create_free_content_copy' pk=material.pk %}" class="btn btn-primary btn-sm content-link-preloader" id="tour-step-1-copy-button">
+                    <i class="fas fa-copy"></i> Copiar para estudio
                 </a>
             {% endif %}
         {% endif %}
         
         {% if request.user.is_authenticated %}
-        <form id="favorite-toggle-form" data-url="{% url 'contents:toggle_favorite_htmx' pk=material.pk %}" class="d-inline ms-2">
+        <form id="favorite-toggle-form" data-url="{% url 'contents:toggle_favorite_htmx' pk=material.pk %}" class="d-inline">
             {% csrf_token %}
-            <button id="favorite-toggle-button" type="submit" class="btn {% if is_favorite %}btn-warning{% else %}btn-outline-warning{% endif %}">
+            <button id="favorite-toggle-button" type="submit" class="btn btn-sm {% if is_favorite %}btn-warning{% else %}btn-outline-warning{% endif %}">
                 <i id="favorite-toggle-icon" class="{% if is_favorite %}fas fa-star{% else %}far fa-star{% endif %}"></i>
                 <span id="favorite-toggle-text">{% if is_favorite %}Quitar de Favoritos{% else %}Añadir a Favoritos{% endif %}</span>
             </button>
@@ -55,7 +55,7 @@
         {% endif %}
 
         {% if show_tour %}
-        <button id="start-content-detail-tour-btn" class="btn btn-outline-info ms-2"><i class="fas fa-question-circle"></i> Visita Guiada</button>
+        <button id="start-content-detail-tour-btn" class="btn btn-outline-info btn-sm"><i class="fas fa-question-circle"></i> Visita Guiada</button>
         {% endif %}
     </div>
     <div class="card shadow-sm">
@@ -74,10 +74,10 @@
             {% endif %}
         </div>
         {% endif %}
-            <h1 class="card-title mb-0 h3 me-3">{{ material.title }}</h1>
+            <h1 class="card-title mb-0 h3">{{ material.title }}</h1>
             <div class="d-flex align-items-center">
                 
-                <div class="share-buttons me-3" id="tour-step-2-share-buttons">
+                <div class="share-buttons" id="tour-step-2-share-buttons">
                     <a id="share-twitter" href="#" class="btn btn-info btn-sm text-white" target="_blank" rel="noopener noreferrer" title="Compartir en Twitter"><i class="fab fa-twitter"></i></a>
                     <a id="share-linkedin" href="#" class="btn btn-primary btn-sm" target="_blank" rel="noopener noreferrer" title="Compartir en LinkedIn"><i class="fab fa-linkedin-in"></i></a>
                     <button id="copy-link-button" class="btn btn-dark btn-sm" title="Copiar enlace"><i id="copy-link-icon" class="fas fa-link"></i></button>
@@ -86,7 +86,7 @@
                 {% if can_edit_delete %}
                 <div id="tour-step-3-edit-buttons">
                     <a href="{% url 'contents:edit_content' pk=material.pk %}" class="btn btn-sm btn-outline-primary"><i class="fas fa-edit"></i> Editar</a>
-                    <a href="{% url 'contents:delete_content' pk=material.pk %}" class="btn btn-sm btn-outline-danger ms-2"><i class="fas fa-trash-alt"></i> Eliminar</a>
+                    <a href="{% url 'contents:delete_content' pk=material.pk %}" class="btn btn-sm btn-outline-danger"><i class="fas fa-trash-alt"></i> Eliminar</a>
                 </div>
                 {% endif %}
             </div>

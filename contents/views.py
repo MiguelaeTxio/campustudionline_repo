@@ -411,6 +411,55 @@ def content_detail(request, pk, subject_pk=None):
         # Elemento actual (sin enlace)
         breadcrumbs.append({"name": content_obj.title, "url": "#"})
 
+    elif subject_context:
+        # Breadcrumbs Académicos
+        try:
+            # Navegamos la jerarquía hacia arriba
+            year_obj = subject_context.academic_year
+            degree_obj = year_obj.degree
+            branch_obj = degree_obj.branch
+            uni_obj = branch_obj.university
+
+            # 1. Raíz
+            breadcrumbs.append({"name": "Directorio Académico", "url": reverse("academic_directory:university_list")})
+            
+            # 2. Universidad
+            breadcrumbs.append({
+                "name": uni_obj.name,
+                "url": reverse("academic_directory:branch_list", kwargs={'university_slug': uni_obj.slug})
+            })
+
+            # 3. Rama (Opcional visualmente, pero lógica en jerarquía) - Enlazamos al grado
+            # Ajuste: A veces las ramas no tienen vista propia en el flujo simple, apuntamos al listado de grados
+            breadcrumbs.append({
+                "name": branch_obj.name,
+                "url": reverse("academic_directory:degree_list", kwargs={'university_slug': uni_obj.slug, 'branch_slug': branch_obj.slug})
+            })
+
+            # 4. Grado
+            breadcrumbs.append({
+                "name": degree_obj.name,
+                "url": reverse("academic_directory:year_list", kwargs={'university_slug': uni_obj.slug, 'branch_slug': branch_obj.slug, 'degree_slug': degree_obj.slug})
+            })
+
+            # 5. Año
+            breadcrumbs.append({
+                "name": f"Año {year_obj.year}",
+                "url": reverse("academic_directory:subject_list", kwargs={'university_slug': uni_obj.slug, 'branch_slug': branch_obj.slug, 'degree_slug': degree_obj.slug, 'year': year_obj.year})
+            })
+
+            # 6. Asignatura (Actual, sin enlace o enlace a sí misma)
+            breadcrumbs.append({"name": subject_context.name, "url": "#"})
+            
+            # Back URL apunta al listado de asignaturas del año
+            back_url = reverse("academic_directory:subject_list", kwargs={'university_slug': uni_obj.slug, 'branch_slug': branch_obj.slug, 'degree_slug': degree_obj.slug, 'year': year_obj.year})
+
+        except Exception as e:
+            logger.error(f"Error generando breadcrumbs académicos: {e}")
+            # Fallback seguro
+            breadcrumbs.append({"name": "Volver a Asignatura", "url": "#"})
+
+
     metadata, remaining_markdown = parse_yaml_front_matter(content_obj.markdown_content)
     rendered_html_content = markdown_to_html_internal(remaining_markdown)
     is_creator = request.user.is_authenticated and request.user == content_obj.creator
