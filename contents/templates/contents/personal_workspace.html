@@ -3,13 +3,18 @@
 
 {% block content %}
 <div class="container mt-4">
-    <h1>Mi Explorador Personal</h1>
+    <div class="d-flex justify-content-between align-items-center mb-3"><h1 id="tour-dir-title">Mi Explorador Personal</h1><button id="start-personal-directory-tour-btn" class="btn btn-outline-info btn-sm"><i class="fas fa-route me-1"></i> Guía</button></div>
     <p class="lead text-muted">Aquí se encuentran tus publicaciones y tus materiales favoritos clasificados.</p>
     
     <hr>
     
-    <div id="folder-list">
+    <div id="tour-dir-list">
         {% include "contents/partials/_folder_nodes.html" with nodes=nodes %}
     </div>
 </div>
+
+{% block extra_js %}
+    <script src="{% static 'js/tours/personal_directory_tour.js' %}"></script>
+{% endblock extra_js %}
+
 {% endblock %}

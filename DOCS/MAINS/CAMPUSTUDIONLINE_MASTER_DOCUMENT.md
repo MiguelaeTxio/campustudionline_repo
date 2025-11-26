@@ -44,52 +44,58 @@ CampuStudiOnline es una plataforma web de e-learning diseñada para centralizar 
 ## 3. Hoja de Ruta Estratégica Consolidada
 
 ### Hito 1: Migración del Sistema de Mensajería y Chat a WSGI (COMPLETADO)
-(Ver anexo `CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V01.md` para el detalle del progreso.)
+(Ver anexo `CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V01.md`)
 
 ### Hito 2: Optimización para Motores de Búsqueda (SEO) (PAUSADO)
-(Ver anexo `CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V02.md` para el detalle del progreso.)
+(Ver anexo `CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V02.md`)
 
 ### Hito 3: Ecosistema de Salas de Chat Globales y Contextuales (COMPLETADO)
-(Ver anexo `CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V03.md` para el detalle del progreso.)
+(Ver anexo `CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V03.md`)
 
 ### Hito 4: Gestión Avanzada de Cuentas de Usuario (COMPLETADO)
-(Ver anexo `CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V04.md` para el detalle del progreso.)
+(Ver anexo `CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V04.md`)
 
-### Hito 5: Mantenimiento y Mejoras Generales (EN PROGRESO)
-(Ver anexo `CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V05.md` para el detalle del progreso.)
+### Hito 5: Mantenimiento y Mejoras Generales (COMPLETADO)
+(Ver anexo `CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V05.md`. Incluye refactorización de tours, estabilización de anuncios y mejoras UI).
 
 ### Hito 18: Re-arquitectura del Generador de Contenido (COMPLETADO)
-(Ver anexo `CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V18.md` para el detalle del progreso.)
+(Ver anexo `CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V18.md`)
 
 ### Hito 19: Re-arquitectura de los Directorios de Navegación (COMPLETADO)
-(Ver anexo `CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V19.md` para el detalle del progreso.)
+(Ver anexo `CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V19.md`)
 
 ### Hito 6: Sistema de Autoevaluaciones con IA (COMPLETADO)
-(Ver anexo `CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md` para el detalle del progreso.)
+(Ver anexo `CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md`)
 
-### Hito 7: Mejoras de Usabilidad y Feedback de Usuario (PAUSADO)
-(Ver anexo `CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V07.md` para el detalle del progreso.)
+### Hito 7: Mejoras de Usabilidad y Feedback de Usuario (EN PROGRESO)
+(Ver anexo `CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V07.md`. **Próximo Objetivo:** Implementación de sistema de reporte de errores en contenidos y aplicación de gestión de feedback.)
 
 ### Hito de Depuración: Sistema de Notificaciones Push (COMPLETADO)
-(Ver anexo `CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V10.md` para el detalle del progreso.)
+(Ver anexo `CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V10.md`)
 
 ### Hito de Estabilización: Generador de Contenido v5 (COMPLETADO)
-(Ver anexo `CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V11.md` para el detalle del progreso.)
+(Ver anexo `CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V11.md`)
 
-### Hito de Infraestructura: Migración a Python 3.9+ y SDK de Google Gen AI (PAUSADO)
-(Ver anexo `CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V12.md` para el detalle del progreso.)
+### Hito 12: Migración a Python 3.9+ y SDK de Google Gen AI (COMPLETADO)
+(Ver anexo `CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V12.md`. Actualización de entorno e integración de Gemini 2.5 Flash Lite.)
 
 ### Hito Final 1: Refinamiento y Coherencia del Código (PAUSADO)
-(Ver anexo `CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V14.md` para el detalle del progreso.)
+(Ver anexo `CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V14.md`)
 
 ### Hito Final 2: Documentación de Proyecto (PAUSADO)
-(Ver anexo `CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V13.md` para el detalle del progreso.)
+(Ver anexo `CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V13.md`)
 
 ### Hito 20: Refinamiento del Proceso de Scraping de Datos (PAUSADO)
-(Ver anexo `CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V20.md` para el detalle del progreso.)
+(Ver anexo `CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V20.md`)
 
-### Hito 21: Refactorización del Orquestador de Tareas Asíncronas y Resiliencia del Sistema (COMPLETADO)
-(Ver anexo `CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V21.md` para el detalle del progreso.)
+### Hito 21: Refactorización del Orquestador de Tareas Asíncronas (COMPLETADO)
+(Ver anexo `CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V21.md`)
+
+### Hito 22: Refactorización de Navegación de Sala de Estudio (COMPLETADO)
+(Ver anexo `CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V22.md`)
+
+### Hito 23: Cumplimiento Normativo y Legal (PLANIFICADO)
+(Ver anexo `CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V23.md`. Implementación de política de cookies, aviso legal y RGPD.)
 
 ---
 
@@ -98,7 +104,4 @@ CampuStudiOnline es una plataforma web de e-learning diseñada para centralizar 
 ### 4.1. Módulo `contents` (Sala de Estudio)
 
 *   **Límite de 6 copias de estudio por usuario:** Para evitar el abuso de recursos y mantener la relevancia del espacio de trabajo del usuario, cada cuenta está limitada a un máximo de 6 `ContentCopy` activas simultáneamente.
-*   **Adición automática a favoritos:** Al crear una `ContentCopy` de un material de estudio, el `ContentMaterial` original se añade automáticamente a la carpeta "Mis Favoritos" del usuario para facilitar su acceso y referencia futura.
-
-### Hito 22: Refactorización de Navegación de Sala de Estudio (User-Centric) (COMPLETADO)
-(Ver anexo `CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V22.md` para el detalle de la arquitectura.)
+*   **Adición automática a favoritos:** Al crear una `ContentCopy` de un material de estudio, el `ContentMaterial` original se añade automáticamente a la carpeta "Mis Favoritos" del usuario.

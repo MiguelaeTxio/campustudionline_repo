@@ -6,6 +6,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .models import Announcement
 from .forms import AnnouncementForm
+from django.core.paginator import Paginator
 
 
 @login_required
@@ -13,9 +14,13 @@ def announcement_list(request):
     """
     Displays a list of all published announcements, ordered by creation date.
     """
-    published_announcements = Announcement.objects.all()
+    announcement_qs = Announcement.objects.all().order_by('-created_at')
+    paginator = Paginator(announcement_qs, 10)  # Show 10 announcements per page.
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
     context = {
-        "announcements": published_announcements,
+        "announcements": page_obj,
         "show_tour": True,
     }
     return render(request, "announcements/announcement_list.html", context)

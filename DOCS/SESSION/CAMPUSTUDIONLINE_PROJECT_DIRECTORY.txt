@@ -315,6 +315,7 @@
 ./manage.py
 ./requirements.txt
 ./check_system_state_v2.py
+./t.html (Controles)"
 ./content_automation
 ./content_automation/urls.py
 ./content_automation/templates
@@ -664,6 +665,7 @@
 ./DOCS/MAINS/CONTENT_PROMPTS.md
 ./DOCS/MAINS/CAMPUSTUDIONLINE_MASTER_DOCUMENT.md
 ./ASGI
+./(Lógica Responsive)"
 ./global_settings
 ./global_settings/templates
 ./global_settings/templates/admin

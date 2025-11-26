@@ -39,7 +39,7 @@
 
 <div class="chat-index-container">
     <div class="d-flex justify-content-center align-items-center mb-3">
-        <h1 class="mb-0">Salas de Chat</h1>
+        <h1 class="mb-0" id="tour-chat-index-title">Salas de Chat</h1><button id="start-chat-index-tour-btn" class="btn btn-outline-info btn-sm ms-3"><i class="fas fa-route me-1"></i> Guía</button>
     </div>
 
     {% if user_is_authenticated %}
@@ -50,7 +50,7 @@
 
     <!-- 1. SALAS GLOBALES -->
     {% if global_rooms %}
-        <h2>Salas Globales</h2>
+        <h2 id="tour-chat-global">Salas Globales</h2>
         <ul class="room-list">
             {% for room in global_rooms %}
                 <li class="room-list-item">
@@ -68,7 +68,7 @@
 
     <!-- 2. MIS ASIGNATURAS -->
     {% if user_is_authenticated %}
-        <h2>Mis Asignaturas</h2>
+        <h2 id="tour-chat-academic">Mis Asignaturas</h2>
         {% if academic_rooms %}
             <ul class="room-list">
                 {% for room in academic_rooms %}
@@ -90,7 +90,7 @@
 
     <!-- 3. MIS INTERESES (CONTENIDO LIBRE) -->
     {% if user_is_authenticated %}
-        <h2>Mis Intereses</h2>
+        <h2 id="tour-chat-interests">Mis Intereses</h2>
         {% if interest_rooms %}
             <ul class="room-list">
                 {% for room in interest_rooms %}
@@ -116,3 +116,7 @@
 
 </div>
 {% endblock content %}
+
+{% block extra_js %}
+    <script src="{% static 'js/tours/chat_index_tour.js' %}"></script>
+{% endblock extra_js %}
