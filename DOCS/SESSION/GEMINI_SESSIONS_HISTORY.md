@@ -528,3 +528,10 @@
 *  **Session:** Refactorización de Tours Interactivos Shepherd.js tras Cambios de UI
 *  **Description:** Auditoría y reparación de los scripts de tours guiados (Shepherd.js) que han quedado obsoletos debido a cambios estructurales recientes en la interfaz (NavBar, Sidebar y unificación de vistas). El objetivo es actualizar los selectores del DOM en los archivos home_tour.js, content_detail_tour.js y study_room_tour.js para restaurar la funcionalidad de la ayuda interactiva en el Home, el Detalle de Contenido y la Sala de Estudio.
 
+# 2025-11-26
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V07.md
+## CYC
+*  **Session:** Implementación de Sistema de Reporte de Errores y App Feedback
+*  **Description:** Inicio del Hito 7. Desarrollo del backend para ContentReport y la aplicación de feedback. Integración de botón de reporte en el frontend de contenidos.
+

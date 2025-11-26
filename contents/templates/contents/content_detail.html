@@ -78,6 +78,7 @@
             <div class="d-flex align-items-center">
                 
                 <div class="share-buttons" id="tour-step-2-share-buttons">
+                    <a href="{% url 'feedback:report_content_error' material.pk %}" class="btn btn-outline-warning btn-sm" title="Reportar Error"><i class="fas fa-exclamation-triangle"></i></a>
                     <a id="share-twitter" href="#" class="btn btn-info btn-sm text-white" target="_blank" rel="noopener noreferrer" title="Compartir en Twitter"><i class="fab fa-twitter"></i></a>
                     <a id="share-linkedin" href="#" class="btn btn-primary btn-sm" target="_blank" rel="noopener noreferrer" title="Compartir en LinkedIn"><i class="fab fa-linkedin-in"></i></a>
                     <button id="copy-link-button" class="btn btn-dark btn-sm" title="Copiar enlace"><i id="copy-link-icon" class="fas fa-link"></i></button>

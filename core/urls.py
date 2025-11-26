@@ -118,10 +118,9 @@ urlpatterns = [
         "academic-directory/",
         include("academic_directory.urls", namespace="academic_directory"),
     ),
+    path("feedback/", include("feedback.urls", namespace="feedback")),
     path("assessment/", include("assessment.urls", namespace="assessment")),
-    path("push-tester/", include("push_tester.urls", namespace="push_tester")),
-    path("delivery-notes/", include("delivery_note_processor.urls", namespace="delivery_note_processor")),
-    
+    path("push-tester/", include("push_tester.urls", namespace="push_tester")),    
     # --- Core App URL dispatcher ---
     path("core/", include((core_urlpatterns, "core"), namespace="core")),
     

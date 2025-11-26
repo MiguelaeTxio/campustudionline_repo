@@ -1,7 +1,7 @@
 # Hito 7: Mejoras de Usabilidad y Feedback de Usuario
 
 **Propósito:** Crear canales directos de comunicación entre el usuario y la administración para reportar errores en el contenido y enviar sugerencias de mejora.
-**Estado:** **EN PROGRESO**
+**Estado:** **COMPLETADO**
 
 ## Hoja de Ruta Inmediata
 
@@ -13,3 +13,6 @@
 ### 2. Aplicación de Gestión de Feedback (`feedback` app)
 *   **Objetivo:** Centralizar sugerencias generales y reportes técnicos no vinculados a contenidos específicos.
 *   **Dashboard Admin:** Vista para que los administradores revisen, clasifiquen y cierren reportes.
+
+### 4. Cierre del Hito
+*   **Validación:** Se ha verificado el envío correcto de notificaciones (Email) mediante test de diagnóstico. El sistema de reportes está funcional y desplegado.

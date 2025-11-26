@@ -145,12 +145,7 @@ CELERY_TASK_QUEUES = (
 CELERY_TASK_DEFAULT_QUEUE = 'default'
 CELERY_TASK_DEFAULT_ROUTING_KEY = 'task.default'
 
-CELERY_TASK_ROUTES = {
-    'delivery_note_processor.tasks.process_delivery_note_image_task': {
-        'queue': 'high_priority',
-        'routing_key': 'task.high_priority',
-    },
-    'orchestrator.tasks.generate_assessment_from_content_task': {
+CELERY_TASK_ROUTES = {    'orchestrator.tasks.generate_assessment_from_content_task': {
         'queue': 'high_priority',
         'routing_key': 'task.high_priority',
     },
@@ -209,8 +204,7 @@ INSTALLED_APPS = [
     "academic_directory.apps.AcademicDirectoryConfig",
     "assessment.apps.AssessmentConfig",
     "push_tester.apps.PushTesterConfig",
-    "favorites_prototype.apps.FavoritesPrototypeConfig",
-    "delivery_note_processor.apps.DeliveryNoteProcessorConfig",
+    "favorites_prototype.apps.FavoritesPrototypeConfig",    "feedback.apps.FeedbackConfig",
 ]
 
 AUTH_USER_MODEL = "users.CustomUser"
