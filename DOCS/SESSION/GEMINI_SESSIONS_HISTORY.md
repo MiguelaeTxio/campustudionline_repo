@@ -512,3 +512,11 @@
 *  **Session:** Mantenimiento V05: Corrección de Indicadores de Estado en Evaluaciones
 *  **Description:** Corrección de la inconsistencia en los badges de notificación de la NavBar relativa a las autoevaluaciones. Se ajustará la lógica de visualización (probablemente en `_navbar_indicators.html` y sus dependencias) para asegurar que el spinner de "En progreso" aparezca inmediatamente tras la solicitud (`REQUESTED`), y no solo durante la corrección, mejorando el feedback al usuario.
 
+
+# 2025-11-26
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V05.md
+## PLUTO
+*  **Session:** Corrección de Redundancia en Visualización de Contenidos
+*  **Description:** Eliminación de la duplicidad del texto de resumen en la vista de detalle de contenidos, donde se renderiza tanto en la tarjeta de cabecera como en el cuerpo principal. Se modificará la plantilla `content_detail.html`.
+
