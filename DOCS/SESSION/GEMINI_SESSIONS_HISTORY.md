@@ -551,3 +551,11 @@
 *  **Session:** Implementación de Cumplimiento Normativo (RGPD/LSSI) - Hito 23
 *  **Description:** Inicio de las tareas del Hito 23 enfocadas en el cumplimiento legal. Se abordará la creación de vistas y plantillas para Aviso Legal, Política de Privacidad y Cookies, la implementación del banner de consentimiento de cookies en el frontend y la actualización de los formularios de registro de usuarios para incluir la aceptación obligatoria de términos.
 
+
+# 2025-11-27
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V14.md
+## EDC
+*  **Session:** Corrección Visual en Privacidad y Refactorización DRY de Favoritos
+*  **Description:** Sesión centrada en la resolución de la regresión visual en el formulario de configuración de privacidad del usuario (Tarea 4.1). Posteriormente, se abordará la deuda técnica identificada en la gestión de favoritos (Tarea 2.3), centralizando la lógica de anotación 'is_favorite' en una utilidad común para eliminar la duplicidad de código existente entre las aplicaciones 'contents', 'academic_directory' y 'search'.
+

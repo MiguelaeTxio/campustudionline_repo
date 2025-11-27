@@ -10,6 +10,7 @@ from django.views.decorators.http import require_POST
 
 from academic_structure.models import University, Branch, Degree, Subject, AcademicYear
 from contents.models import ContentMaterial, FavoriteFolder
+from contents.utils import annotate_is_favorite
 from assessment.models import Assessment
 from orchestrator.models import ContentRequest
 
@@ -154,14 +155,7 @@ def public_content_list_view(request, university_slug, branch_slug, degree_slug,
     content_material = subject.content_hash_family.content_material if subject.content_hash_family else None
     public_contents_qs = ContentMaterial.objects.filter(pk=content_material.pk) if content_material else ContentMaterial.objects.none()
 
-    if request.user.is_authenticated:
-        user_favorites_subquery = FavoriteFolder.objects.filter(
-            user=request.user,
-            materials=OuterRef('pk')
-        )
-        public_contents_qs = public_contents_qs.annotate(
-            is_favorite=Exists(user_favorites_subquery)
-        )
+    public_contents_qs = annotate_is_favorite(public_contents_qs, request.user)
 
     paginator = Paginator(public_contents_qs, 10)
     page_number = request.GET.get("page")

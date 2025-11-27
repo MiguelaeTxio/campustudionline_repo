@@ -38,7 +38,7 @@
             <form method="post" enctype="multipart/form-data">
                 {% csrf_token %}
                 
-                {% for field in form_perfil.visible_fields %}
+                {% for field in form_profile.visible_fields %}
                     {% if field.field.widget.input_type != 'checkbox' %}
                         <div class="mb-3">
                             <label for="{{ field.id_for_label }}" class="form-label">
@@ -60,7 +60,7 @@
                 <h3 class="h6 mb-3">{% trans "Configuración de Privacidad del Portafolio" %}</h3>
                 <p class="small text-muted">{% trans "Selecciona qué información de tu perfil deseas hacer pública en tu portafolio." %}</p>
 
-                {% for field in form_perfil.visible_fields %}
+                {% for field in form_profile.visible_fields %}
                     {% if field.field.widget.input_type == 'checkbox' %}
                         <div class="mb-3 form-check">
                             {{ field }} {# Renderiza el widget CheckboxInput #}

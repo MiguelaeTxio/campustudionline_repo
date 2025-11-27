@@ -8,6 +8,7 @@ from django.core.paginator import Paginator
 from django.utils import timezone
 import logging
 
+from contents.utils import annotate_is_favorite
 from contents.models import (
     ContentMaterial,
     ContentCopy,
@@ -66,16 +67,10 @@ def free_content_category_detail_view(request, master_slug, sub_slug=None):
         content_list = sub_category.content_materials.filter(is_public=True).order_by("title")
         is_leaf_node = True
 
-        if request.user.is_authenticated:
-            content_list = content_list.annotate(
-                is_favorite=Exists(FavoriteFolder.objects.filter(user=request.user, materials__pk=OuterRef('pk')))
-            )
+        content_list = annotate_is_favorite(content_list, request.user)
     else:
         content_list = master_category.content_materials.filter(is_public=True, sub_category__isnull=True).order_by("title")
-        if request.user.is_authenticated:
-            content_list = content_list.annotate(
-                is_favorite=Exists(FavoriteFolder.objects.filter(user=request.user, materials__pk=OuterRef('pk')))
-            )
+        content_list = annotate_is_favorite(content_list, request.user)
         is_leaf_node = not child_items.exists() and content_list.exists()
 
     if breadcrumbs:

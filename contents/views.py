@@ -14,7 +14,7 @@ import markdown
 import bleach
 
 from academic_structure.models import Subject # Importación necesaria
-from .utils import generate_share_image_bytes
+from .utils import generate_share_image_bytes, annotate_is_favorite
 from .models import (
     ContentMaterial, FavoriteFolder
 )
@@ -148,23 +148,13 @@ def favorite_folder_detail_view(request, folder_id):
     if folder.folder_type == FavoriteFolder.FOLDER_TYPE_PUBLICATIONS:
         # Si es la carpeta de Mis Publicaciones, muestra los materiales creados por el usuario
         materials_in_folder = ContentMaterial.objects.filter(creator=user).order_by('-updated_at')
-        if request.user.is_authenticated:
-            materials_in_folder = materials_in_folder.annotate(
-                is_favorite=Exists(
-                    FavoriteFolder.objects.filter(user=request.user, materials__pk=OuterRef('pk'))
-                )
-            )
+        materials_in_folder = annotate_is_favorite(materials_in_folder, request.user)
         # Para Mis Publicaciones, los ancestros son solo la raíz (y no se muestran)
         ancestors = []
     else:
         # Para Mis Favoritos o cualquier carpeta de usuario
         materials_in_folder = folder.materials.all().order_by('-updated_at')
-        if request.user.is_authenticated:
-            materials_in_folder = materials_in_folder.annotate(
-                is_favorite=Exists(
-                    FavoriteFolder.objects.filter(user=request.user, materials__pk=OuterRef('pk'))
-                )
-            )
+        materials_in_folder = annotate_is_favorite(materials_in_folder, request.user)
         ancestors = folder.get_ancestors()
     
     # Obtener todas las carpetas raíz del usuario para el modal de "Mover"

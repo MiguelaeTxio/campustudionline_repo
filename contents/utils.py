@@ -9,6 +9,9 @@ from django.conf import settings
 from django.template.loader import render_to_string
 from weasyprint import HTML, CSS
 from pdf2image import convert_from_path
+from django.db.models import Exists, OuterRef
+from .models import FavoriteFolder
+
 
 # Configuración del logger para este módulo
 logger = logging.getLogger(__name__)
@@ -104,3 +107,20 @@ def generate_share_image_bytes(context=None):
                 logger.error(
                     f"Error al eliminar el archivo temporal {temp_pdf_path}: {e}"
                 )
+
+
+def annotate_is_favorite(queryset, user):
+    """
+    Anota un QuerySet de ContentMaterial con un booleano 'is_favorite'
+    indicando si el material está en alguna carpeta de favoritos del usuario.
+    """
+    if user.is_authenticated:
+        return queryset.annotate(
+            is_favorite=Exists(
+                FavoriteFolder.objects.filter(
+                    user=user, 
+                    materials__pk=OuterRef('pk')
+                )
+            )
+        )
+    return queryset

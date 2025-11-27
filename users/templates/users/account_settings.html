@@ -38,10 +38,10 @@
                 <div class="card-body">
                     <form method="post" novalidate>
                         {% csrf_token %}
-                        {% for hidden_field in form_usuario.hidden_fields %}
+                        {% for hidden_field in form_user.hidden_fields %}
                             {{ hidden_field }}
                         {% endfor %}
-                        {% for field in form_usuario.visible_fields %}
+                        {% for field in form_user.visible_fields %}
                             <div class="mb-3">
                                 <label for="{{ field.id_for_label }}" class="form-label">
                                     {{ field.label }}
