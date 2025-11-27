@@ -4,9 +4,9 @@
 **Estado:** **COMPLETADO**
 
 ## Objetivos Alcanzados
-1.  **Política de Cookies:** Implementado banner de consentimiento (localStorage) y página informativa.
+1.  **Política de Cookies:** Implementado banner de consentimiento (localStorage) y página informativa sin cookies de terceros.
 2.  **Aviso Legal y Privacidad:** Creadas páginas estáticas `/legal/`.
 3.  **Formularios:** Añadido checkbox de aceptación de términos obligatorio en el registro.
 
-## Pendiente (Asignado al Hito Final 1 - V14)
-*   Corrección de regresión visual en formulario de privacidad (users).
+## Notas de Traspaso
+*   La regresión visual en el formulario de privacidad (`users`) ha sido trasladada al Hito Final 1 (V14) para su corrección inmediata.

@@ -82,7 +82,7 @@ CampuStudiOnline es una plataforma web de e-learning diseñada para centralizar 
 ### Hito 12: Migración a Python 3.9+ y SDK de Google Gen AI (COMPLETADO)
 (Ver anexo `CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V12.md`. Actualización de entorno e integración de Gemini 2.5 Flash Lite.)
 
-### Hito Final 1: Refinamiento y Coherencia del Código (PAUSADO)
+### Hito Final 1: Refinamiento y Coherencia del Código (EN PROGRESO)
 (Ver anexo `CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V14.md`)
 
 ### Hito Final 2: Documentación de Proyecto (PAUSADO)

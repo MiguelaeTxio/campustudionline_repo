@@ -39,3 +39,10 @@
     *   **Detalles:** Se creó un nuevo componente de paginación reutilizable (`templates/includes/pagination_controls.html`) con soporte para Bootstrap 5 y enlaces a la primera/última página. Se refactorizaron las plantillas `contents/templates/contents/personal_workspace.html`, `content_automation/templates/admin/content_automation/create_academic_task.html` y `content_automation/templates/admin/content_automation/dashboard.html` para usar este nuevo componente, eliminando código duplicado y el archivo obsoleto `academic_structure/templates/admin/includes/custom_pagination.html`.
 
 ---
+
+## 4. Tareas Pendientes (Heredadas de Hito 23)
+
+*   **Tarea 4.1: Corrección de Regresión Visual en Formulario de Privacidad:**
+    *   **Prioridad:** Alta (Bloqueante visual).
+    *   **Ubicación:** `users/templates/users/account_settings.html`.
+    *   **Descripción:** Se ha detectado un fallo en el renderizado del formulario de configuración de privacidad del portafolio tras la implementación del Hito 23. Es necesario revisar la estructura HTML/Bootstrap para restaurar la correcta visualización.
