@@ -559,3 +559,11 @@
 *  **Session:** Corrección Visual en Privacidad y Refactorización DRY de Favoritos
 *  **Description:** Sesión centrada en la resolución de la regresión visual en el formulario de configuración de privacidad del usuario (Tarea 4.1). Posteriormente, se abordará la deuda técnica identificada en la gestión de favoritos (Tarea 2.3), centralizando la lógica de anotación 'is_favorite' en una utilidad común para eliminar la duplicidad de código existente entre las aplicaciones 'contents', 'academic_directory' y 'search'.
 
+
+# 2025-11-27
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V02.md
+## NRA
+*  **Session:** Reactivación Hito 2: Optimización SEO
+*  **Description:** Reanudación de las tareas de optimización para motores de búsqueda (SEO) definidas en el Hito 2. El objetivo es implementar mejoras en la visibilidad pública de la plataforma, incluyendo sitemaps y meta-tags, para potenciar el posicionamiento orgánico del contenido académico y los materiales de estudio.
+

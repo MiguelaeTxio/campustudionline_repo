@@ -7,14 +7,34 @@ from django.views.static import serve
 from users import views as user_views
 from core import views as core_views
 from django.contrib.sitemaps.views import sitemap
-from .sitemaps import StaticPublicViewSitemap
+from .sitemaps import (
+    StaticPublicViewSitemap,
+    UniversitySitemap,
+    BranchSitemap,
+    DegreeSitemap,
+    AcademicYearSitemap,
+    SubjectSitemap,
+    PublicContentMaterialSitemap,
+    FreeContentCategorySitemap,
+    FreeContentSubCategorySitemap
+)
 from contents import study_room_urls as study_room_urls_module
 from messaging.views import ServiceWorkerView
 from django.views.i18n import JavaScriptCatalog
 
 from django.contrib.auth import views as auth_views
 
-sitemaps_dict = {"static_public": StaticPublicViewSitemap}
+sitemaps_dict = {
+    "static_public": StaticPublicViewSitemap,
+    "universities": UniversitySitemap,
+    "branches": BranchSitemap,
+    "degrees": DegreeSitemap,
+    "academic_years": AcademicYearSitemap,
+    "subjects": SubjectSitemap,
+    "public_contents": PublicContentMaterialSitemap,
+    "free_content_categories": FreeContentCategorySitemap,
+    "free_content_subcategories": FreeContentSubCategorySitemap,
+}
 
 # --- Core App URLs ---
 core_urlpatterns = [

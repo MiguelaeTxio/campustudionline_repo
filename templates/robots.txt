@@ -1,26 +1,38 @@
-# robots.txt for CampuStudiOnline
-
 User-agent: *
 
+# Admin y Gestión
 Disallow: /admin/
-Disallow: /cuentas/mi-cuenta/
-Disallow: /cuentas/password_change/
-Disallow: /cuentas/password_reset/
-Disallow: /contenidos/
+Disallow: /orchestrator/
+Disallow: /content_automation/
 
-Disallow: /chat/create/
-Disallow: /chat/room/*/leave/
-Disallow: /chat/room/*/request_join/
-Disallow: /chat/membership_request/
-Disallow: /chat/room/*/toggle_moderator/
-Disallow: /chat/room/*/toggle_silence/
-Disallow: /chat/room/*/delete_message/
+# Cuentas de Usuario (Protegido)
+Disallow: /accounts/
 
-Disallow: /announcements/nuevo/
-Disallow: /contenidos/*/editar/
-Disallow: /contenidos/*/borrar/
+# Interacciones Privadas
+Disallow: /chat/
+Disallow: /academic-chat/
+Disallow: /messaging/
+Disallow: /feedback/
 
+# Evaluaciones
+Disallow: /assessment/
+
+# Contenidos: Permitir ver, bloquear edición/creación/borrado/workspace personal
+Disallow: /contents/create/
+Disallow: /contents/*/edit/
+Disallow: /contents/*/delete/
+Disallow: /contents/workspace/
+
+# Búsqueda
+Disallow: /search/
+
+# Herramientas
+Disallow: /push-tester/
+Disallow: /prototype/
+
+# Archivos Estáticos y Medios (Permitir para renderizado)
 Allow: /static/
 Allow: /media/
 
-Sitemap: https://campustudionline.com/sitemap.xml
+# Sitemap Principal
+Sitemap: https://www.campustudionline.com/sitemap.xml

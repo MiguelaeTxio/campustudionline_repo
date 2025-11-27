@@ -46,7 +46,7 @@ CampuStudiOnline es una plataforma web de e-learning diseñada para centralizar 
 ### Hito 1: Migración del Sistema de Mensajería y Chat a WSGI (COMPLETADO)
 (Ver anexo `CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V01.md`)
 
-### Hito 2: Optimización para Motores de Búsqueda (SEO) (EN PROGRESO)
+### Hito 2: Optimización para Motores de Búsqueda (SEO) (COMPLETADO)
 (Ver anexo `CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V02.md`)
 
 ### Hito 3: Ecosistema de Salas de Chat Globales y Contextuales (COMPLETADO)
@@ -85,7 +85,7 @@ CampuStudiOnline es una plataforma web de e-learning diseñada para centralizar 
 ### Hito Final 1: Refinamiento y Coherencia del Código (COMPLETADO)
 (Ver anexo `CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V14.md`)
 
-### Hito Final 2: Documentación de Proyecto (PAUSADO)
+### Hito Final 2: Documentación de Proyecto (EN PROGRESO)
 (Ver anexo `CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V13.md`)
 
 ### Hito 20: Refinamiento del Proceso de Scraping de Datos (PAUSADO)
