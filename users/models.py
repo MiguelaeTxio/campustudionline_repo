@@ -45,9 +45,9 @@ class CustomUser(AbstractUser):
         null=True,
         blank=True,
         related_name="university_members",
-        verbose_name="Universidad afiliada (verificada)",
+        verbose_name="Institución afiliada (verificada)",
         help_text=_(
-            "Afiliación universitaria verificada por un administrador. No editable por el usuario en su perfil."
+            "Afiliación institucional verificada por un administrador. No editable por el usuario en su perfil."
         ),
     )
     # --- FIN DE LA MODIFICACIÓN ---
@@ -78,7 +78,7 @@ class UserProfile(models.Model):
         max_length=50, blank=True, verbose_name="Curso Actual"
     )
     university = models.CharField(
-        max_length=200, blank=True, verbose_name="Universidad"
+        max_length=200, blank=True, verbose_name="Institución"
     )
     hobbies = models.TextField(
         blank=True, verbose_name="Gustos e Intereses"
@@ -109,7 +109,7 @@ class UserProfile(models.Model):
         default=False, verbose_name="Mostrar curso actual en el portafolio público"
     )
     show_university_in_portfolio = models.BooleanField(
-        default=False, verbose_name="Mostrar universidad en el portafolio público"
+        default=False, verbose_name="Mostrar institución en el portafolio público"
     )
     show_hobbies_in_portfolio = models.BooleanField(
         default=False,

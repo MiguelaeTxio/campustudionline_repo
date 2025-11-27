@@ -567,3 +567,11 @@
 *  **Session:** Reactivación Hito 2: Optimización SEO
 *  **Description:** Reanudación de las tareas de optimización para motores de búsqueda (SEO) definidas en el Hito 2. El objetivo es implementar mejoras en la visibilidad pública de la plataforma, incluyendo sitemaps y meta-tags, para potenciar el posicionamiento orgánico del contenido académico y los materiales de estudio.
 
+
+# 2025-11-27
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V13.md
+## PLUTO
+*  **Session:** Generación de Documentación Técnica - Hito Final 2
+*  **Description:** Reactivación del Hito Final 2 para la elaboración de la documentación técnica del proyecto "La Enciclopedia Galáctica". La sesión se centrará en el análisis de la arquitectura de datos para desarrollar el Manual de Arquitectura y la Referencia de Componentes.
+

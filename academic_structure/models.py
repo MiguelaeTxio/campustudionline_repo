@@ -63,9 +63,9 @@ class University(TimeStampedModel):
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     code = models.CharField(
-        max_length=20, unique=True, verbose_name="Código de Universidad"
+        max_length=20, unique=True, verbose_name="Código de Institución"
     )
-    name = models.CharField(max_length=255, verbose_name="Nombre de Universidad")
+    name = models.CharField(max_length=255, verbose_name="Nombre de Institución")
     url = models.URLField(
         max_length=512, blank=True, null=True, verbose_name="URL del Portal de Estudios"
     )
@@ -83,8 +83,8 @@ class University(TimeStampedModel):
     )
 
     class Meta:
-        verbose_name = "Universidad"
-        verbose_name_plural = "Universidades"
+        verbose_name = "Institución"
+        verbose_name_plural = "Instituciones"
         ordering = ["name"]
 
     def __str__(self):
@@ -123,7 +123,7 @@ class Branch(TimeStampedModel):
         University,
         on_delete=models.CASCADE,
         related_name="branches",
-        verbose_name="Universidad",
+        verbose_name="Institución",
     )
     name = models.CharField(max_length=255, verbose_name="Nombre de Rama")
     slug = models.SlugField(
