@@ -202,9 +202,9 @@ def academic_year_list_view(request, university_slug, branch_slug, degree_slug):
     accessible_links = get_accessible_chat_links_queryset(request.user)
     years = (
         accessible_links.filter(subject__academic_year__degree=degree)
-        .values_list("subject__year", flat=True)
+        .values_list("subject__academic_year__year", flat=True)
         .distinct()
-        .order_by("subject__year")
+        .order_by("subject__academic_year__year")
     )
     if not years:
         raise Http404(
@@ -270,7 +270,7 @@ def academic_chat_list_view(request, university_slug, branch_slug, degree_slug, 
     )
     accessible_links = get_accessible_chat_links_queryset(request.user)
     chat_links_list = (
-        accessible_links.filter(subject__academic_year__degree=degree, subject__year=year)
+        accessible_links.filter(subject__academic_year__degree=degree, subject__academic_year__year=year)
         .select_related("subject", "chat_room")
         .order_by("subject__name")
     )
@@ -343,7 +343,7 @@ def academic_chat_list_view(request, university_slug, branch_slug, degree_slug, 
 @login_required
 @user_can_access_academic_chat
 def academic_chat_room(request, chat_slug, academic_link, *args, **kwargs):
-    year = academic_link.subject.year
+    year = academic_link.subject.academic_year.year
     breadcrumb = [
         {"name": "Chats Académicos", "url": reverse("academic_chat:university_list")},
         {
