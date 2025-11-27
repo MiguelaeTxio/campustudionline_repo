@@ -97,7 +97,7 @@ CampuStudiOnline es una plataforma web de e-learning diseñada para centralizar 
 ### Hito 22: Refactorización de Navegación de Sala de Estudio (COMPLETADO)
 (Ver anexo `CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V22.md`)
 
-### Hito 23: Cumplimiento Normativo y Legal (EN PROGRESO)
+### Hito 23: Cumplimiento Normativo y Legal (COMPLETADO)
 (Ver anexo `CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V23.md`. Implementación de política de cookies, aviso legal y RGPD.)
 
 ---

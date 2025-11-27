@@ -518,6 +518,10 @@
 ./core/templates/core
 ./core/templates/core/partials
 ./core/templates/core/partials/_navbar_indicators.html
+./core/templates/core/legal
+./core/templates/core/legal/privacy_policy.html
+./core/templates/core/legal/cookies_policy.html
+./core/templates/core/legal/legal_notice.html
 ./core/celery.py
 ./core/maintenance_middleware.py
 ./core/sitemaps.py

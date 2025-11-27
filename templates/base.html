@@ -131,6 +131,12 @@
                     <button id="copy-link-button" class="btn btn-dark btn-sm" title="Copiar enlace"><i id="copy-link-icon" class="fas fa-link"></i></button>
                 </div>
             </div>
+            
+            <div class="mb-2 small">
+                <a href="/core/legal/aviso-legal/" class="text-muted text-decoration-none me-2">Aviso Legal</a> | 
+                <a href="/core/legal/privacidad/" class="text-muted text-decoration-none mx-2">Privacidad</a> | 
+                <a href="/core/legal/cookies/" class="text-muted text-decoration-none ms-2">Cookies</a>
+            </div>
             <p class="mb-0 text-muted small">© {% now "Y" %} CampuStudiOnline. Todos los derechos reservados.</p>
         </div>
     </footer>
@@ -307,5 +313,30 @@
     {% if user.is_authenticated %}
         {% include "contents/partials/_navigation_sidebar.html" %}
     {% endif %}
+
+    <!-- Cookie Consent Banner -->
+    <div id="cookie-consent-banner" class="fixed-bottom bg-dark text-white p-3" style="display: none; z-index: 9999;">
+        <div class="container d-flex flex-column flex-md-row justify-content-between align-items-center">
+            <div class="mb-2 mb-md-0">
+                <p class="mb-0 small">Utilizamos cookies propias para mejorar nuestros servicios. Si continúa navegando, consideramos que acepta su uso. Puede obtener más información en nuestra <a href="/core/legal/cookies/" class="text-white text-decoration-underline">Política de Cookies</a>.</p>
+            </div>
+            <div>
+                <button id="accept-cookies-btn" class="btn btn-primary btn-sm">Aceptar</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            if (!localStorage.getItem('cookiesAccepted')) {
+                document.getElementById('cookie-consent-banner').style.display = 'block';
+            }
+            document.getElementById('accept-cookies-btn').addEventListener('click', function() {
+                localStorage.setItem('cookiesAccepted', 'true');
+                document.getElementById('cookie-consent-banner').style.display = 'none';
+            });
+        });
+    </script>
+
 </body>
 </html>

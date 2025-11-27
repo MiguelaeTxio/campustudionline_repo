@@ -1,3 +1,4 @@
+from django.utils.safestring import mark_safe
 # /users/forms.py
 
 from django import forms
@@ -19,6 +20,11 @@ class UserRegistrationForm(UserCreationForm):
     )
     email2 = forms.EmailField(
         required=True, label=_("Confirmar correo electrónico")
+    )
+    terms_accepted = forms.BooleanField(
+        required=True,
+        label=mark_safe('He leído y acepto el <a href="/core/legal/aviso-legal/" target="_blank">Aviso Legal</a> y la <a href="/core/legal/privacidad/" target="_blank">Política de Privacidad</a>.'),
+        error_messages={'required': _("Debes aceptar los términos y condiciones para registrarte.")}
     )
     first_name = forms.CharField(required=False, label=_("Nombre (opcional)"))
     last_name = forms.CharField(required=False, label=_("Apellidos (opcional)"))

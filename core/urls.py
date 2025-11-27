@@ -19,6 +19,9 @@ sitemaps_dict = {"static_public": StaticPublicViewSitemap}
 # --- Core App URLs ---
 core_urlpatterns = [
     path('update-navbar-indicators/', core_views.update_navbar_indicators, name='update_navbar_indicators'),
+    path('legal/aviso-legal/', core_views.LegalNoticeView.as_view(), name='legal_notice'),
+    path('legal/privacidad/', core_views.PrivacyPolicyView.as_view(), name='privacy_policy'),
+    path('legal/cookies/', core_views.CookiesPolicyView.as_view(), name='cookies_policy'),
 ]
 
 urlpatterns = [
