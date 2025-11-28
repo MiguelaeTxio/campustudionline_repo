@@ -372,6 +372,7 @@
 ./messaging/management/commands/__init__.py
 ./messaging/management/commands/delete_chat_session.py
 ./messaging/management/__init__.py
+./fix_content_visibility.py
 ./alvarez_credentials.json
 ./0002
 ./assessment
@@ -670,6 +671,7 @@
 ./DOCS/MAINS/CONTENT_PROMPTS.md
 ./DOCS/MAINS/CAMPUSTUDIONLINE_MASTER_DOCUMENT.md
 ./ASGI
+./diagnose_automation.py
 ./global_settings
 ./global_settings/templates
 ./global_settings/templates/admin

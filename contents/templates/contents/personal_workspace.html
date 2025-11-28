@@ -1,5 +1,6 @@
 {# /home/MiguelAeTxio/CampuStudiOnline/contents/templates/contents/personal_workspace.html #}
 {% extends "base.html" %}
+{% load static %}
 
 {% block content %}
 <div class="container mt-4">
@@ -12,9 +13,8 @@
         {% include "contents/partials/_folder_nodes.html" with nodes=nodes %}
     </div>
 </div>
+{% endblock %}
 
 {% block extra_js %}
     <script src="{% static 'js/tours/personal_directory_tour.js' %}"></script>
-{% endblock extra_js %}
-
 {% endblock %}

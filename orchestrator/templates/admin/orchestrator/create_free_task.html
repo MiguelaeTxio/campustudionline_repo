@@ -70,6 +70,7 @@
                  hx-get="{% url 'orchestrator:get_sub_categories_for_master' %}"
                  hx-target="#subcategory-selector-row" 
                  hx-trigger="change from:#id_master_category"
+                 hx-include="#id_master_category"
                  hx-swap="innerHTML">
                 
                 <div id="subcategory-selector-row" class="form-row">

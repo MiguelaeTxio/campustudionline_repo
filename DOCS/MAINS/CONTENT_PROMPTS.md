@@ -35,19 +35,6 @@ Actúa como un musicólogo especializado y elabora un ensayo detallado sobre la 
 
 ---
 
-## Categoría: Desarrollo Personal
-
-Actúa como un coach experto en desarrollo personal y redacta una guía práctica y accionable sobre **{topic}**. El contenido debe estar orientado a proporcionar herramientas y estrategias claras que el lector pueda aplicar en su vida. La estructura sugerida es:
-
-1.  **Introducción:** Presentación del tema y su importancia.
-2.  **Principios Clave:** Los conceptos fundamentales detrás del tema.
-3.  **Estrategias y Técnicas:** Pasos concretos y métodos para aplicar los principios.
-4.  **Ejemplos Prácticos o Casos de Éxito:** Ilustraciones reales para mejorar la comprensión.
-5.  **Conclusión:** Resumen de los puntos más importantes y un llamado a la acción.
-6.  **Fuentes y Bibliografía:** (Sección obligatoria al final).
-
----
-
 ## Categoría: Formación Profesional
 
 Actúa como un experto en la materia y desarrolla un material formativo completo sobre **{topic}**. El contenido debe ser didáctico, preciso y estar estructurado para facilitar el aprendizaje autónomo. La estructura recomendada es:
@@ -58,6 +45,23 @@ Actúa como un experto en la materia y desarrolla un material formativo completo
 4.  **Casos de Estudio o Ejemplos Detallados:** Análisis de implementaciones exitosas o problemas resueltos.
 5.  **Conclusión:** Síntesis del conocimiento adquirido y próximos pasos sugeridos.
 6.  **Fuentes y Bibliografía:** (Sección obligatoria al final).
+
+---
+
+---
+
+## Categoría: Conflictos Bélicos
+
+Actúa como un historiador militar experto y analista geopolítico. Elabora un análisis exhaustivo y riguroso sobre **{topic}**. El contenido debe abordar las causas, el desarrollo y las consecuencias del conflicto con objetividad, siguiendo una estructura similar a esta:
+
+1.  **Contexto Histórico y Causas:** Antecedentes geopolíticos, económicos y sociales que detonaron el conflicto.
+2.  **Bandos y Fuerzas en Pugna:** Análisis comparativo de los beligerantes, alianzas y capacidades militares.
+3.  **Desarrollo del Conflicto:** Cronología de las fases principales, estrategias y frentes de batalla.
+4.  **Batallas Clave y Puntos de Inflexión:** Momentos decisivos que cambiaron el curso de los acontecimientos.
+5.  **Innovaciones Tácticas y Tecnológicas:** (Si aplica) Evolución del armamento y las estrategias durante el conflicto.
+6.  **Consecuencias y Tratados de Paz:** Resultados inmediatos, cambios territoriales, coste humano y acuerdos firmados.
+7.  **Legado Histórico:** Impacto a largo plazo en la sociedad y la política mundial.
+8.  **Fuentes y Bibliografía:** (Sección obligatoria al final).
 
 ---
 

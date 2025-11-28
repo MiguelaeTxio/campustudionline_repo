@@ -120,9 +120,22 @@ def get_academic_filters_htmx(request):
 
 @staff_member_required
 def get_sub_categories_htmx(request):
-    master_category_id = request.GET.get('master_category_id')
-    sub_categories = FreeContentSubCategory.objects.filter(master_category_id=master_category_id).order_by('name')
-    return render(request, 'admin/orchestrator/partials/_category_options_form_row.html', {'sub_categories': sub_categories})
+    # El nombre del campo en el formulario es 'master_category'
+    master_category_id = request.GET.get('master_category')
+    
+    # Instanciamos el formulario para aprovechar su renderizado de campo
+    form = FreeCourseCreationForm()
+    
+    if master_category_id:
+        try:
+            # Filtramos el queryset del campo sub_category
+            sub_categories = FreeContentSubCategory.objects.filter(master_category_id=master_category_id).order_by('name')
+            form.fields['sub_category'].queryset = sub_categories
+        except (ValueError, TypeError):
+            pass # Se mantiene el queryset vacío por defecto
+            
+    # Pasamos el campo 'bound' (vinculado al form) al template parcial
+    return render(request, 'admin/orchestrator/partials/_category_options_form_row.html', {'field': form['sub_category']})
 
 @staff_member_required
 def task_log_full_page_view(request, task_id):
@@ -223,13 +236,23 @@ def create_free_task_view(request):
     context = admin.site.each_context(request)
     if request.method == 'POST':
         form = FreeCourseCreationForm(request.POST)
+        
+        # [FIX VALIDACIÓN] Actualizar queryset de subcategoría basado en la selección POST para permitir la validación
+        if 'master_category' in request.POST:
+            try:
+                master_id = request.POST.get('master_category')
+                if master_id:
+                    form.fields['sub_category'].queryset = FreeContentSubCategory.objects.filter(master_category_id=master_id)
+            except (ValueError, TypeError):
+                pass
+
         if form.is_valid():
             data = form.cleaned_data
             try:
                 # 1. Crear el material de contenido primero
                 content_material = ContentMaterial.objects.create(
                     title=data['course_title'],
-                    author=request.user,
+                    creator=request.user,
                     is_free_content=True,
                     is_public=False, # Se hará público al completar la tarea
                     master_category=data['master_category'],

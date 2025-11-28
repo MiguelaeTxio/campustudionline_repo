@@ -1,5 +1,5 @@
 # /home/MiguelAeTxio/CampuStudiOnline/DOCS/MAINS/ATTACHEDS/HITO_V18_GENERADOR_CONTENIDO_ANEXO.md
-**Título:** Anexo de Seguimiento: Hito de Re-arquitectura v18 - Estrategia de Guías Docentes
+**Título:** Anexo de Seguimiento: Hito de Re-arquitectura v18 - Estrategia de Guías Docentes (COMPLETADO)
 
 **Filosofía:** Este documento es la única fuente de verdad para la planificación, ejecución y seguimiento del hito de re-arquitectura del generador de contenido. Se actualizará al final de cada sesión de trabajo para reflejar el progreso real.
 
@@ -42,6 +42,19 @@ Una prueba de validación de extremo a extremo, generando el curso "Anatomía e 
 ****El Hito 18 ha sido completado con éxito.** Se ha verificado la correcta escritura de logs enriquecidos, se ha implementado la interfaz de gestión de archivos de log en el panel de administración y se han corregido todos los errores residuales que bloqueaban su cierre.** La nueva arquitectura del generador de contenido se declara estable y finalizada.
 
 ---
+
+
+#### **2.5. Cierre del Hito y Estabilización Final (Sesión 2025-11-28)**
+**HITO COMPLETADO.**
+
+Se han resuelto todos los bloqueos técnicos y lógicos que impedían la operación continua del sistema.
+**Logros Clave:**
+*   **Orquestador Resiliente:** Implementación de "Autolimpieza de Zombies" y detección de errores lógicos fatales para evitar bucles infinitos.
+*   **Contenido Libre Funcional:** Corrección de formularios HTMX, validación dinámica, recuperación de clasificación y deduplicación de contenido.
+*   **Interfaz Desbloqueada:** Simplificación del admin para permitir la gestión manual de categorías y corrección de errores en plantillas de usuario.
+*   **Visibilidad:** Corrección del bug que dejaba el contenido oculto tras la generación.
+
+El sistema de generación masiva está ahora operativo y estable.
 
 #### **3. Hoja de Ruta Detallada del Hito**
 
@@ -178,3 +191,9 @@ El sistema se concibe como un circuito de "Vagonetas" (`PendingContentTask`) que
 *   **Control Operativo y Bloqueos:**
     *   El Interruptor Maestro sigue siendo el control absoluto de pausa/reanudación.
     *   Las solicitudes de contenido libre siguen actuando como "freno de mano" para todo el sistema.
+
+
+### **7.Error en la generación de Contenido Libre
+
+*   **Error inesperado al crear la tarea: ContentMaterial() got unexpected keyword arguments: 'author'**
+    *   Ha dado este error al intentar crear una biografía.

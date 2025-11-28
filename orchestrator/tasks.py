@@ -142,6 +142,29 @@ def _check_and_perform_daily_reset():
         _log_structured_event(f"Error CRÍTICO en la lógica de reseteo diario integrado: {e}", "CRITICAL", {"traceback": traceback.format_exc()})
         logger.critical(f"Error CRÍTICO en _check_and_perform_daily_reset: {e}", exc_info=True)
 
+
+def _purge_zombie_tasks():
+    try:
+        # Umbral de seguridad: 30 minutos sin cambios
+        threshold = timezone.now() - timedelta(minutes=30)
+        
+        # Identificar tareas atascadas (ni completadas, ni fatales, ni procesando)
+        zombies = PendingContentTask.objects.exclude(
+            status__in=[
+                PendingContentTask.StatusChoices.PROCESSING, 
+                PendingContentTask.StatusChoices.COMPLETED, 
+                PendingContentTask.StatusChoices.FAILED_FATAL
+            ]
+        ).filter(updated_at__lt=threshold)
+        
+        count = zombies.count()
+        if count > 0:
+            # Borrado masivo
+            zombies.delete()
+            _log_structured_event(f"LIMPIEZA AUTOMÁTICA: Se han eliminado {count} tareas zombie inactivas por >30min.", "WARNING")
+    except Exception as e:
+        logger.error(f"Error en limpieza de zombies: {e}")
+
 def _get_next_subject_queryset(settings):
     base_queryset = Subject.objects.filter(content_materials__isnull=True)
     active_task_subject_names = PendingContentTask.objects.exclude(
@@ -431,6 +454,7 @@ class ContentGenerationError(Exception):
 @shared_task(bind=True)
 def global_orchestrator_task(self):
     try:
+        _purge_zombie_tasks()  # [NUEVO] Limpieza preventiva de zombies
         _process_quarantine_requests()
         _check_and_perform_daily_reset()
         db.close_old_connections()
@@ -686,6 +710,15 @@ def generate_full_course_task(self, task_id: str):
             final_markdown = _assemble_final_markdown_from_chunks(final_course_title, task.structured_content["metadata"], task.structured_content["master_schema"], list(task.content_chunks.all()))
             log_task_event(task_id, "Iniciando fase de clasificación de contenido.")
             manual_classification = task.structured_content.get('manual_classification')
+            
+            # [REPARACIÓN] Intentar recuperar clasificación del material vinculado si falta en el JSON
+            if not task.subject and not manual_classification and task.content_material:
+                log_task_event(task_id, "RECUPERACIÓN: Usando clasificación del Material de Contenido vinculado.")
+                manual_classification = {
+                    'master_category_id': str(task.content_material.master_category.id),
+                    'sub_category_id': str(task.content_material.sub_category.id) if task.content_material.sub_category else None
+                }
+
             if task.subject:
                 log_task_event(task_id, "Clasificación académica: Asignando contenido a asignatura oficial.")
                 master_category, sub_category = None, None
@@ -700,7 +733,32 @@ def generate_full_course_task(self, task_id: str):
             with transaction.atomic():
                 task_final = PendingContentTask.objects.select_for_update().get(id=task_id)
                 is_free = task_final.subject is None
-                new_content = ContentMaterial.objects.create(title=final_course_title, short_description=task_final.structured_content["metadata"].get("descripcion_corta", ""), markdown_content=final_markdown, master_category=master_category, sub_category=sub_category, creator=task_final.assigned_to, is_free_content=is_free)
+                
+                # [FIX DEDUP] Reutilizar material existente si la tarea ya lo tiene vinculado (creado por la vista)
+                if task_final.content_material:
+                    log_task_event(task_id, f"Actualizando material existente (ID: {task_final.content_material.id}) en lugar de crear uno nuevo.")
+                    new_content = task_final.content_material
+                    new_content.title = final_course_title
+                    new_content.short_description = task_final.structured_content["metadata"].get("descripcion_corta", "")
+                    new_content.markdown_content = final_markdown
+                    new_content.master_category = master_category
+                    new_content.sub_category = sub_category
+                    new_content.creator = task_final.assigned_to
+                    new_content.is_free_content = is_free
+                    new_content.is_public = True  # [FIX] Asegurar visibilidad al finalizar
+                    new_content.save()
+                else:
+                    log_task_event(task_id, "Creando nuevo material de contenido.")
+                    new_content = ContentMaterial.objects.create(
+                        title=final_course_title, 
+                        short_description=task_final.structured_content["metadata"].get("descripcion_corta", ""), 
+                        markdown_content=final_markdown, 
+                        master_category=master_category, 
+                        sub_category=sub_category, 
+                        creator=task_final.assigned_to, 
+                        is_free_content=is_free,
+                        is_public=True  # [FIX] Asegurar visibilidad
+                    )
                 if not is_free:
                     family = task_final.subject.content_hash_family
                     if family:
@@ -748,20 +806,36 @@ def generate_full_course_task(self, task_id: str):
             error_traceback = traceback.format_exc()
             logger.critical(f"TRACEBACK CAPTURADO PARA TAREA {task.id}:\n{error_traceback}")
             log_task_event(task.id, f"Error en la tarea: {str(e)}", is_error=True)
+            
+            # Identificar si es un error recuperable (transitorio) o fatal (código/lógica)
+            is_transient = isinstance(e, (TimeoutError, ConnectionError, OSError))
+            
             try:
-                task.status = PendingContentTask.StatusChoices.FAILED_RETRYABLE
-                task.last_error = error_traceback
-                task.save(update_fields=["status", "last_error"])
-                self.retry(exc=e)
+                if is_transient:
+                    task.status = PendingContentTask.StatusChoices.FAILED_RETRYABLE
+                    task.last_error = f"Error Transitorio: {str(e)}\n{error_traceback}"
+                    task.save(update_fields=["status", "last_error"])
+                    # Reintentar con backoff
+                    self.retry(exc=e, countdown=300, max_retries=5)
+                else:
+                    # Errores de lógica (TypeError, ValueError, etc) no se arreglan solos.
+                    # Fallo fatal inmediato para no bloquear la cola.
+                    task.status = PendingContentTask.StatusChoices.FAILED_FATAL
+                    task.notes = f"Fallo Fatal por Error de Código/Lógica: {str(e)}"
+                    task.last_error = error_traceback
+                    task.save(update_fields=["status", "notes", "last_error"])
+                    _send_admin_notification("Tarea Fallida Permanentemente (Error Lógico)", f"La tarea para '{task}' ha fallado por un error no recuperable: {str(e)}")
+            
             except self.MaxRetriesExceededError:
                 logger.critical(f"Máximo de reintentos alcanzado para la tarea {task.id}. Marcando como FATAL.")
                 task.status = PendingContentTask.StatusChoices.FAILED_FATAL
-                task.notes = f"Falló permanentemente. Error final: {str(e)}"
+                task.notes = f"Falló permanentemente tras reintentos. Error final: {str(e)}"
                 task.last_error = error_traceback
                 task.save(update_fields=["status", "notes", "last_error"])
                 _send_admin_notification("Tarea Fallida Permanentemente", f"La tarea para '{task}' ha fallado tras múltiples reintentos.")
         else:
             logger.critical(f"Error irrecuperable en tarea con ID {task_id} donde 'task' es None: {e}", exc_info=True)
+
     finally:
         db.close_old_connections()
 

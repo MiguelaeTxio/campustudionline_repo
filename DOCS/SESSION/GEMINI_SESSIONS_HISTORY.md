@@ -575,3 +575,11 @@
 *  **Session:** Generación de Documentación Técnica - Hito Final 2
 *  **Description:** Reactivación del Hito Final 2 para la elaboración de la documentación técnica del proyecto "La Enciclopedia Galáctica". La sesión se centrará en el análisis de la arquitectura de datos para desarrollar el Manual de Arquitectura y la Referencia de Componentes.
 
+
+# 2025-11-27
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V18.md
+## AAAA
+*  **Session:** Corrección de Error en Creación de Contenido Libre - Campo Author Inexistente
+*  **Description:** Se aborda un error crítico reportado durante la creación de contenido libre (biografías), donde la instanciación de `ContentMaterial` falla por un argumento inesperado 'author'. Se investigará `contents/models.py` y la lógica de creación de tareas en `orchestrator` para alinear los argumentos con la definición del modelo, restaurando la funcionalidad de generación de contenido libre.
+
