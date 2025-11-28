@@ -56,7 +56,7 @@ CampuStudiOnline es una plataforma web de e-learning diseñada para centralizar 
 (Ver anexo `CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V04.md`)
 
 ### Hito 5: Mantenimiento y Mejoras Generales (COMPLETADO)
-(Ver anexo `CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V05.md`. Incluye refactorización de tours, estabilización de anuncios y mejoras UI).
+(Ver anexo `CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V05.md`)
 
 ### Hito 18: Re-arquitectura del Generador de Contenido (COMPLETADO)
 (Ver anexo `CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V18.md`)
@@ -68,10 +68,10 @@ CampuStudiOnline es una plataforma web de e-learning diseñada para centralizar 
 (Ver anexo `CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md`)
 
 ### Hito 7: Mejoras de Usabilidad y Feedback de Usuario (COMPLETADO)
-(Ver anexo `CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V07.md`. **Próximo Objetivo:** Implementación de sistema de reporte de errores en contenidos y aplicación de gestión de feedback.)
+(Ver anexo `CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V07.md`)
 
 ### Hito 8: Estandarización de Imagen Corporativa en Emails (COMPLETADO)
-(Ver anexo `CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V08.md`. Se unificaron todas las notificaciones bajo una plantilla base HTML responsiva.)
+(Ver anexo `CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V08.md`)
 
 ### Hito de Depuración: Sistema de Notificaciones Push (COMPLETADO)
 (Ver anexo `CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V10.md`)
@@ -80,13 +80,13 @@ CampuStudiOnline es una plataforma web de e-learning diseñada para centralizar 
 (Ver anexo `CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V11.md`)
 
 ### Hito 12: Migración a Python 3.9+ y SDK de Google Gen AI (COMPLETADO)
-(Ver anexo `CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V12.md`. Actualización de entorno e integración de Gemini 2.5 Flash Lite.)
+(Ver anexo `CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V12.md`)
 
 ### Hito Final 1: Refinamiento y Coherencia del Código (COMPLETADO)
 (Ver anexo `CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V14.md`)
 
-### Hito Final 2: Documentación de Proyecto (EN PROGRESO)
-(Ver anexo `CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V13.md`)
+### Hito Final 2: Documentación de Proyecto (COMPLETADO)
+(Ver anexo `CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V13.md`. Manual de Arquitectura, Referencia de Componentes y Guía de Dependencias finalizados.)
 
 ### Hito 20: Refinamiento del Proceso de Scraping de Datos (PAUSADO)
 (Ver anexo `CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V20.md`)
@@ -98,7 +98,10 @@ CampuStudiOnline es una plataforma web de e-learning diseñada para centralizar 
 (Ver anexo `CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V22.md`)
 
 ### Hito 23: Cumplimiento Normativo y Legal (COMPLETADO)
-(Ver anexo `CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V23.md`. Implementación de política de cookies, aviso legal y RGPD.)
+(Ver anexo `CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V23.md`)
+
+### Hito de Soporte y Mantenimiento: Ruegos y Preguntas (PAUSADO)
+(Ver anexo `CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V24.md`. Depuración a demanda y mantenimiento correctivo.)
 
 ---
 
