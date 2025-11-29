@@ -241,9 +241,14 @@ def log_assessment_task_event(assessment_id, message, level="INFO", payload=None
         }
         if payload:
             try:
-                entry["payload"] = json.dumps(payload, indent=2, ensure_ascii=False, sort_keys=True)
+                # [SAFETY] Truncate massive payloads to prevent database bloat
+                payload_str = json.dumps(payload, ensure_ascii=False, sort_keys=True)
+                if len(payload_str) > 2000:
+                    entry["payload"] = payload_str[:2000] + " ... [TRUNCATED]"
+                else:
+                    entry["payload"] = payload_str
             except TypeError:
-                entry["payload"] = str(payload)
+                entry["payload"] = str(payload)[:2000]
 
         with transaction.atomic():
             assessment = Assessment.objects.select_for_update().get(pk=assessment_id)
@@ -266,9 +271,14 @@ def log_task_event(task_id: str, message: str, is_error: bool = False, payload: 
         }
         if payload:
             try:
-                entry["payload"] = json.dumps(payload, indent=2, ensure_ascii=False, sort_keys=True)
+                # [SAFETY] Truncate massive payloads to prevent database bloat
+                payload_str = json.dumps(payload, ensure_ascii=False, sort_keys=True)
+                if len(payload_str) > 2000:
+                    entry["payload"] = payload_str[:2000] + " ... [TRUNCATED]"
+                else:
+                    entry["payload"] = payload_str
             except TypeError:
-                entry["payload"] = str(payload)
+                entry["payload"] = str(payload)[:2000]
         with transaction.atomic():
             task = PendingContentTask.objects.select_for_update().get(id=task_id)
             if task.task_log is None:

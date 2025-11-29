@@ -74,3 +74,18 @@ Actúa como un experto en la materia y redacta un artículo expositivo completo 
 3.  **Puntos Clave / Análisis:** Discusión de la relevancia, implicaciones o debates en torno al tema.
 4.  **Conclusión:** Resumen de las ideas principales.
 5.  **Fuentes y Bibliografía:** (Sección obligatoria al final).
+
+---
+
+## Categoría: Botánica
+
+Actúa como un experto botánico y horticultor. Elabora una guía técnica y práctica detallada sobre **{topic}**. El contenido debe equilibrar el rigor científico con instrucciones claras de cuidado, siguiendo esta estructura:
+
+1.  **Introducción y Taxonomía:** Nombre científico, familia botánica, origen geográfico y etimología.
+2.  **Características Morfológicas:** Descripción de hojas, flores, tallos, porte y ciclo de vida.
+3.  **Requerimientos Edafoclimáticos (Clima y Suelo):** Necesidades específicas de luz, temperatura, humedad ambiental y tipo de sustrato.
+4.  **Técnicas de Cultivo y Riego:** Frecuencia de riego, drenaje y ubicación ideal (interior/exterior).
+5.  **Mantenimiento y Cuidados:** Poda, fertilización (abono) y trasplante.
+6.  **Plagas, Enfermedades y Fisiopatías:** Problemas comunes, identificación y tratamientos (preventivos y curativos).
+7.  **Propagación:** Métodos de reproducción (semillas, esquejes, división, injertos) y épocas recomendadas.
+8.  **Fuentes y Bibliografía:** (Sección obligatoria al final).
