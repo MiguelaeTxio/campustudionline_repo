@@ -135,6 +135,14 @@ class ContentMaterial(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def save(self, *args, **kwargs):
+        # [BLINDAJE] Validación de Integridad Estructural
+        # Impedir la persistencia de contenidos vacíos o triviales ("Zombies")
+        if not self.markdown_content or len(self.markdown_content.strip()) < 50:
+            raise ValidationError(
+                "Integridad Violada: Se intentó guardar un ContentMaterial sin contenido sustancial. "
+                "El sistema ha rechazado la creación de este registro 'zombie'."
+            )
+
         if not self.slug:
             base_slug = slugify(self.title)
             # Si el slug base queda vacío (ej: título con solo caracteres especiales), usar UUID

@@ -614,3 +614,10 @@
 *  **Session:** Optimización de Vista de Publicaciones y Refinamiento UI
 *  **Description:** Implementación de paginación en la sección 'Mis Publicaciones' para prevenir sobrecarga del sistema. Eliminación de mensajes de estado redundantes en vistas sin jerarquía de directorios.
 
+# 2025-11-30
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V24.md
+## NRA
+*  **Session:** Depuración de Integridad en Árbol de Carpetas Favoritas
+*  **Description:** Análisis y resolución del error crítico `Column 'depth' cannot be null` en el modelo `FavoriteFolder` durante la creación automática de carpetas al copiar contenido. Se auditará la implementación de `get_or_create` en la vista `study_room_views.py` para asegurar la compatibilidad con la estructura jerárquica del modelo, sustituyendo la creación estándar por los métodos de inserción de nodos de árbol requeridos.
+

@@ -34,5 +34,11 @@
 *   **Optimización 'Mis Publicaciones':** Se ha implementado la paginación (12 elementos por página) en la vista `favorite_folder_detail_view` y en su plantilla correspondiente, utilizando el componente reutilizable del sistema para prevenir problemas de rendimiento con grandes volúmenes de contenido.
 *   **Limpieza UI:** Se ha encapsulado la sección de subcarpetas en la plantilla `favorite_folder_detail.html` para que permanezca oculta exclusivamente en la carpeta "Mis Publicaciones" (`PUB`), eliminando el mensaje redundante "No hay subcarpetas para mostrar" en una vista que es plana por definición.
 
+### 30/11/2025 (Sesión 2) - Integridad de Datos y Blindaje Anti-Zombies
+*   **Corrección de Árbol de Favoritos:** Solucionado el error crítico `IntegrityError (depth cannot be null)` en `study_room_views.py`. Se ha reemplazado el uso incorrecto de `get_or_create` por `FavoriteFolder.add_root()` para garantizar la compatibilidad con `django-treebeard` al crear la carpeta "Mis Favoritos".
+*   **Limpieza de Contenido Corrupto:** Eliminación manual del registro "The Beatles" que impedía su edición en el admin por falta de datos obligatorios.
+*   **Blindaje de Modelo:** Implementación de una validación estricta en `ContentMaterial.save()` (`contents/models.py`) para rechazar y levantar una excepción ante cualquier intento de guardar contenido con `markdown_content` vacío o trivial (< 50 caracteres), erradicando la creación de contenidos "zombie" desde la raíz.
+
 ## Tareas Pendientes (Próxima Sesión)
-*   **Mantenimiento General:** Resolución de incidencias imprevistas y optimizaciones menores a demanda (`ROADMAP` abierto).
+*   **Seguridad de Contenidos (DRM):** Implementar mecanismos para impedir capturas de pantalla tanto en entorno de escritorio (`PC`) como en dispositivos móviles (`Android`).
+*   **Mejora de UX Global:** Implementación mediante protocolo `PAIR` de un indicador de carga (`Loading Spinner`) unificado para todas las transiciones de página de la plataforma.

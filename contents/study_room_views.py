@@ -146,11 +146,18 @@ def create_content_copy(request, pk, subject_pk=None):
         subject_context=subject_context
     )
     
-    favorites_folder, _ = FavoriteFolder.objects.get_or_create(
-        user=request.user,
-        folder_type=FavoriteFolder.FOLDER_TYPE_FAVORITES,
-        defaults={'name': 'Mis Favoritos'}
-    )
+    # [FIX] Usar add_root para compatibilidad con django-treebeard (MP_Node)
+    favorites_folder = FavoriteFolder.objects.filter(
+        user=request.user, 
+        folder_type=FavoriteFolder.FOLDER_TYPE_FAVORITES
+    ).first()
+    
+    if not favorites_folder:
+        favorites_folder = FavoriteFolder.add_root(
+            user=request.user,
+            folder_type=FavoriteFolder.FOLDER_TYPE_FAVORITES,
+            name='Mis Favoritos'
+        )
     favorites_folder.materials.add(original_content)
     
     messages.success(request, f"Se ha creado una copia de '{original_content.title}' y el original se ha añadido a 'Mis Favoritos'.")
