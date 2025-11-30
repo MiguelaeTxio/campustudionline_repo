@@ -555,6 +555,7 @@
 ./except
 ./users
 ./users/urls.py
+./users/tokens.py
 ./users/templates
 ./users/templates/users
 ./users/templates/users/password_reset_subject.txt

@@ -1,7 +1,7 @@
 # Hito de Soporte y Mantenimiento: Ruegos y Preguntas
 
 **Propósito:** Hito contenedor para tareas de depuración a demanda, resolución de dudas imprevistas y mantenimiento correctivo menor que no encaje en hitos específicos.
-**Estado:** **PAUSADO**
+**Estado:** **EN PROGRESO**
 
 ## Bitácora de Sesión
 
@@ -18,10 +18,18 @@
     1.  Añadida plantilla de generación para la categoría **Botánica** en `CONTENT_PROMPTS.md`.
 *   **Estado Final:** Sistema estable. Uso de disco normalizado (65% de cuota).
 
-### 29/11/2025 - Registro de Incidencias Pendientes (Para Próxima Sesión)
-*   **Incidencia Crítica (Admin Users):** Error 500 al intentar editar el usuario administrador (`/admin/users/customuser/1/change/`).
-    *   **Error:** `django.core.exceptions.FieldError: Unknown field(s) (mostrar_degree_en_portafolio, ...) specified for UserProfile`.
-    *   **Diagnóstico:** Desincronización entre `users/admin.py` y el modelo `UserProfile`. El admin intenta mostrar campos de visibilidad del portafolio que ya no existen con esos nombres en el modelo.
-*   **Incidencia Secundaria (Template):** Error de sintaxis en `contents/personal_workspace.html`.
-    *   **Error:** `TemplateSyntaxError: Invalid block tag on line 17: 'static'`.
-    *   **Diagnóstico:** Falta cargar el tag (`{% load static %}`) o está mal cerrado un bloque en la plantilla.
+### 30/11/2025 - Reparación Integral de Admin y Flujo de Registro
+*   **Corrección Admin Users:** Solucionado error 500 en `/admin/users/customuser/` actualizando `users/admin.py` para usar los nombres de campo correctos (`show_*` en lugar de `mostrar_*`).
+*   **Corrección Plantilla Personal Workspace:** Subsanado error de sintaxis en `contents/templates/contents/personal_workspace.html`.
+*   **Recuperación Crítica de `register.html`:** El archivo `users/templates/users/register.html` estaba vacío debido a un error en la migración de repositorios. Se recuperó la versión funcional del 24 de Agosto desde el historial del repositorio antiguo y se modernizó (namespaces `users:`).
+*   **Blindaje del Sistema de Tokens:**
+    *   Implementado `AccountActivationTokenGenerator` robusto en `users/tokens.py` (hash basado en `pk + timestamp + is_active`, ignorando cambios volátiles como password).
+    *   Corregida lógica en `users/views.py` para usar el nuevo generador y evitar errores en flujos de reactivación.
+    *   Solucionado error en redirección de reactivación que pasaba el token incorrecto a la vista de cambio de contraseña.
+*   **Mejoras UX Móvil (Registro):**
+    *   Reposicionada la barra de fortaleza de contraseña encima del input.
+    *   Reposicionados los mensajes de error (ej: "contraseñas no coinciden") encima de los campos para evitar ocultamiento por el teclado virtual.
+
+## Tareas Pendientes (Próxima Sesión)
+*   **Optimización "Mis Publicaciones":** Implementar paginación para evitar sobrecarga y crash en la vista de lista plana.
+*   **Limpieza UI:** Eliminar la leyenda "No hay subcarpetas para mostrar" en vistas que no disponen de árbol de directorios.

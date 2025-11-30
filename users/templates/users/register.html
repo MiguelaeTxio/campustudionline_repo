@@ -1,1 +1,133 @@
-{# /users/templates/users/register.html #}
+{# /users/templates/users/registro.html #}
+{# ATENCIÓN!!! La aplicación de usuarios se llama 'users' pero el Namespace a usar es 'usuarios'. #}
+{# ATENCIÓN!!! La aplicación de usuarios se llama 'users' pero el Namespace a usar es 'usuarios'. #}
+
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ titulo_pagina|default:"Registro de Usuario" }} | {{ block.super }}{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header text-center">
+                    <h1 class="h2 card-title mb-0">{{ titulo_pagina|default:"Registro de Usuario" }}</h1>
+                </div>
+                <div class="card-body">
+                    <form id="registration-form" method="post" novalidate>
+                        {% csrf_token %}
+                        
+                        <div id="non-field-errors-container"></div>
+
+                        {% for campo in form %}
+                            <div class="mb-3" data-field-name="{{ campo.name }}">
+                                {% if campo.name != 'captcha' or campo.label %}
+                                    <label for="{{ campo.id_for_label }}" class="form-label">{{ campo.label }}</label>
+                                {% endif %}{% if campo.name == 'password1' %}
+                                <div class="progress mt-2" style="height: 5px;">
+                                    <div id="password-strength-bar" class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                                </div>
+                                <small id="password-strength-text" class="form-text"></small>
+                                {% endif %}
+                                
+                                <div class="invalid-feedback d-block" data-field-errors="{{ campo.name }}"></div>
+
+                                
+
+                                {{ campo }}
+
+                                {% if campo.help_text %}
+                                    <div class="form-text">{{ campo.help_text|safe }}</div>
+                                {% endif %}
+                                
+                                {% if campo.name == 'password2' %}
+                                <div id="password-match-text" class="form-text mt-1"></div>
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+
+                        <div class="d-grid gap-2 mt-4">
+                            <button id="submit-button" type="submit" class="btn btn-primary btn-lg">Registrarse</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="card-footer text-center">
+                    <small>¿Ya tienes una cuenta? <a href="{% url 'login' %}">Inicia sesión aquí</a>.</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/password_toggle.js' %}"></script>
+<script src="{% static 'js/password_strength.js' %}"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const form = document.getElementById('registration-form');
+    const submitButton = document.getElementById('submit-button');
+    const validationUrl = "{% url 'users:validate_registration' %}";
+
+    form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        submitButton.disabled = true;
+        submitButton.innerHTML = `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Verificando...`;
+
+        document.querySelectorAll('[data-field-errors]').forEach(el => el.innerHTML = '');
+        document.getElementById('non-field-errors-container').innerHTML = '';
+
+        const formData = new FormData(form);
+        const data = Object.fromEntries(formData.entries());
+
+        fetch(validationUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': data.csrfmiddlewaretoken,
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify(data)
+        })
+        .then(response => response.json())
+        .then(result => {
+            if (result.status === 'success') {
+                window.location.href = result.redirect_url;
+            } else {
+                const errors = result.errors;
+                for (const fieldName in errors) {
+                    const errorMessages = errors[fieldName];
+                    if (fieldName === '__all__') {
+                        const container = document.getElementById('non-field-errors-container');
+                        let errorHtml = '<div class="alert alert-danger"><ul>';
+                        errorMessages.forEach(error => { errorHtml += `<li>${error.message}</li>`; });
+                        errorHtml += '</ul></div>';
+                        container.innerHTML = errorHtml;
+                    } else {
+                        const container = document.querySelector(`[data-field-errors="${fieldName}"]`);
+                        if (container) {
+                            let errorHtml = '<ul>';
+                             errorMessages.forEach(error => { errorHtml += `<li>${error.message}</li>`; });
+                            errorHtml += '</ul>';
+                            container.innerHTML = errorHtml;
+                        }
+                    }
+                }
+            }
+        })
+        .catch(error => {
+            console.error('Error en la validación AJAX:', error);
+            const container = document.getElementById('non-field-errors-container');
+            container.innerHTML = '<div class="alert alert-danger">Ocurrió un error inesperado al conectar con el servidor. Por favor, inténtalo de nuevo.</div>';
+        })
+        .finally(() => {
+            submitButton.disabled = false;
+            submitButton.innerHTML = 'Registrarse';
+        });
+    });
+});
+</script>
+{% endblock extra_js %}

@@ -20,7 +20,8 @@ from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_str
 from django.template.loader import render_to_string
 from django.core.mail import EmailMultiAlternatives
-from django.contrib.auth.tokens import PasswordResetTokenGenerator
+from .tokens import account_activation_token
+from django.contrib.auth.tokens import default_token_generator
 from .tasks import cleanup_inactive_user
 
 
@@ -96,12 +97,12 @@ def validate_registration_view(request):
         user.save()
 
         current_site = get_current_site(request)
-        token_generator = PasswordResetTokenGenerator()
+        
         context = {
             "user": user,
             "domain": current_site.domain,
             "uid": urlsafe_base64_encode(force_bytes(user.pk)),
-            "token": token_generator.make_token(user),
+            "token": account_activation_token.make_token(user),
             "protocol": "https" if request.is_secure() else "http",
         }
 
@@ -129,12 +130,12 @@ def validate_registration_view(request):
                 )
 
                 current_site = get_current_site(request)
-                token_generator = PasswordResetTokenGenerator()
+                
                 context = {
                     "user": inactive_user,
                     "domain": current_site.domain,
                     "uid": urlsafe_base64_encode(force_bytes(inactive_user.pk)),
-                    "token": token_generator.make_token(inactive_user),
+                    "token": account_activation_token.make_token(inactive_user),
                     "protocol": "https" if request.is_secure() else "http",
                 }
 
@@ -165,36 +166,39 @@ def validate_registration_view(request):
 
 def activate_account_view(request, uidb64, token):
     User = get_user_model()
-    token_generator = PasswordResetTokenGenerator()
+    
     try:
         uid = force_str(urlsafe_base64_decode(uidb64))
         user = User.objects.get(pk=uid)
     except (TypeError, ValueError, OverflowError, User.DoesNotExist):
         user = None
-    if (
-        user is not None
-        and not user.is_active
-        and token_generator.check_token(user, token)
-    ):
-        user.is_active = True
-        user.save()
-        login(request, user, backend="django.contrib.auth.backends.ModelBackend")
-        messages.success(
-            request,
-            "¡Felicidades! Tu cuenta ha sido activada correctamente. Ya puedes usar la plataforma.",
-        )
+    # Lógica de activación desglosada para precisión en el error
+    if user is None:
+        messages.error(request, "El enlace de activación es inválido (Usuario no encontrado).")
         return redirect("home")
-    else:
-        messages.error(
-            request,
-            "El enlace de activación es inválido, ha expirado o la cuenta ya está activa.",
-        )
+
+    if user.is_active:
+        messages.info(request, "Tu cuenta ya está activa. Puedes iniciar sesión.")
         return redirect("home")
+
+    if not account_activation_token.check_token(user, token):
+        messages.error(request, "El enlace de activación es inválido o ha expirado (Token incorrecto).")
+        return redirect("home")
+
+    # Si pasa todas las comprobaciones, activamos
+    user.is_active = True
+    user.save()
+    login(request, user, backend="django.contrib.auth.backends.ModelBackend")
+    messages.success(
+        request,
+        "¡Felicidades! Tu cuenta ha sido activada correctamente. Ya puedes usar la plataforma.",
+    )
+    return redirect("home")
 
 
 def reactivate_account_view(request, uidb64, token):
     User = get_user_model()
-    token_generator = PasswordResetTokenGenerator()
+    
     try:
         uid = force_str(urlsafe_base64_decode(uidb64))
         user = User.objects.get(pk=uid)
@@ -204,14 +208,16 @@ def reactivate_account_view(request, uidb64, token):
     if (
         user is not None
         and not user.is_active
-        and token_generator.check_token(user, token)
+        and account_activation_token.check_token(user, token)
     ):
         messages.info(
             request,
             "Cuenta verificada. Por favor, establece una nueva contraseña para completar la reactivación.",
         )
+        # Generamos un token estándar válido para el cambio de contraseña
+        reset_token = default_token_generator.make_token(user)
         reset_url = reverse(
-            "users:password_reset_confirm", kwargs={"uidb64": uidb64, "token": token}
+            "users:password_reset_confirm", kwargs={"uidb64": uidb64, "token": reset_token}
         )
         return redirect(reset_url)
     else:
