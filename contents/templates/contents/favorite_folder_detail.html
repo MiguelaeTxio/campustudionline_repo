@@ -56,6 +56,11 @@
         </div>
         {% endfor %}
     </div>
+    
+    {# Controles de Paginación #}
+    <div class="mt-4 mb-4">
+        {% include "includes/pagination_controls.html" with page_obj=page_obj query_param_name=paginator_query_param %}
+    </div>
     {% endif %}
     
     <hr class="my-4">
@@ -72,19 +77,26 @@
             </div>
         </form>
     </div>
+    
+    {# Controles de Paginación #}
+    <div class="mt-4 mb-4">
+        {% include "includes/pagination_controls.html" with page_obj=page_obj query_param_name=paginator_query_param %}
+    </div>
     {% endif %}
     
-    {% if nodes %}
-    <h3>Subcarpetas</h3>
-    {% endif %}
-
-    <div id="folder-list">
+    {% if folder.folder_type != 'PUB' %}
         {% if nodes %}
-            {% include "contents/partials/_folder_nodes.html" with nodes=nodes %}
-        {% else %}
-            <p>No hay subcarpetas para mostrar.</p>
+        <h3>Subcarpetas</h3>
         {% endif %}
-    </div>
+    
+        <div id="folder-list">
+            {% if nodes %}
+                {% include "contents/partials/_folder_nodes.html" with nodes=nodes %}
+            {% else %}
+                <p class="text-muted fst-italic">No hay subcarpetas para mostrar.</p>
+            {% endif %}
+        </div>
+    {% endif %}
 
 </div>
 

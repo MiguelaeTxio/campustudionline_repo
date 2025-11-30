@@ -30,6 +30,9 @@
     *   Reposicionada la barra de fortaleza de contraseña encima del input.
     *   Reposicionados los mensajes de error (ej: "contraseñas no coinciden") encima de los campos para evitar ocultamiento por el teclado virtual.
 
+### 30/11/2025 - Optimización de Vista de Publicaciones y Refinamiento UI
+*   **Optimización 'Mis Publicaciones':** Se ha implementado la paginación (12 elementos por página) en la vista `favorite_folder_detail_view` y en su plantilla correspondiente, utilizando el componente reutilizable del sistema para prevenir problemas de rendimiento con grandes volúmenes de contenido.
+*   **Limpieza UI:** Se ha encapsulado la sección de subcarpetas en la plantilla `favorite_folder_detail.html` para que permanezca oculta exclusivamente en la carpeta "Mis Publicaciones" (`PUB`), eliminando el mensaje redundante "No hay subcarpetas para mostrar" en una vista que es plana por definición.
+
 ## Tareas Pendientes (Próxima Sesión)
-*   **Optimización "Mis Publicaciones":** Implementar paginación para evitar sobrecarga y crash en la vista de lista plana.
-*   **Limpieza UI:** Eliminar la leyenda "No hay subcarpetas para mostrar" en vistas que no disponen de árbol de directorios.
+*   **Mantenimiento General:** Resolución de incidencias imprevistas y optimizaciones menores a demanda (`ROADMAP` abierto).

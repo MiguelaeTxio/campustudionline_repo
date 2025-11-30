@@ -156,6 +156,11 @@ def favorite_folder_detail_view(request, folder_id):
         materials_in_folder = folder.materials.all().order_by('-updated_at')
         materials_in_folder = annotate_is_favorite(materials_in_folder, request.user)
         ancestors = folder.get_ancestors()
+
+    # --- IMPLEMENTACIÓN DE PAGINACIÓN ---
+    paginator = Paginator(materials_in_folder, 12) # 12 elementos por página
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
     
     # Obtener todas las carpetas raíz del usuario para el modal de "Mover"
     root_folders = FavoriteFolder.get_root_nodes().filter(user=user, folder_type=FavoriteFolder.FOLDER_TYPE_FAVORITES)
@@ -164,11 +169,15 @@ def favorite_folder_detail_view(request, folder_id):
         'folder': folder,
         'nodes': children,
         'ancestors': ancestors,
-        'materials': materials_in_folder,
+        'materials': page_obj, # Pasamos el objeto paginado (que es iterable como una lista)
+        'page_obj': page_obj,  # Necesario para el componente de paginación
+        'paginator_query_param': 'page', # Nombre del parámetro GET
         'root_folders': root_folders, # Para el modal
         'current_folder_id': folder.id, # Para exclusión en el modal
     }
     return render(request, 'contents/favorite_folder_detail.html', context)
+
+# --- VISTAS HTMX PARA CRUD DE CARPETAS ---
 
 # --- VISTAS HTMX PARA CRUD DE CARPETAS ---
 
