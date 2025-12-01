@@ -637,3 +637,11 @@
 *  **Session:** Estabilización del Motor de Generación de Contenido y Diagnóstico Celery
 *  **Description:** Diagnóstico y resolución de incidencias en el motor de generación de contenido (Celery). Análisis de bucles infinitos en tareas de contenido libre y fallos en el parser de respuestas de IA. Implementación de mejoras de robustez en el parsing y límites de reintentos para protección de cuota API.
 
+
+# 2025-12-01
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V24.md
+## CYC
+*  **Session:** Soporte y Mantenimiento V24 - Monitorización y Consultas
+*  **Description:** Sesión de continuidad bajo el hito de soporte y mantenimiento. El sistema ha alcanzado una estabilidad operativa tras las correcciones en el orquestador y los parsers de contenido. El objetivo de la sesión es atender consultas puntuales, realizar verificaciones de estado o abordar incidencias emergentes durante la fase de monitorización pasiva.
+

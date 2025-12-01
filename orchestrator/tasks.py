@@ -717,8 +717,32 @@ def generate_full_course_task(self, task_id: str):
             log_task_event(task_id, f'Procesando sección {order}/{len(parsed_schema)}: "{title}"')
             log_task_event(task_id, "Enviando prompt atómico a la API.")
             success, content_or_error, _ = generate_text_content(initial_prompt, api_key=api_key, task_id=task_id)
+            
+            # [MODIFICACION V24] Lógica de Evasión de Recitación
             if not success:
-                 raise ResourceExhausted(f"Fallo en la generación de la sección: {content_or_error}")
+                 if "RECITATION_ERROR" in content_or_error:
+                     evasion_key = f"_recitation_evasion_attempted_{order}"
+                     if not task.structured_content.get(evasion_key):
+                         log_task_event(task_id, f"ALERTA: Recitación detectada en sección {order}. Activando modo de paráfrasis.", level="WARNING")
+                         
+                         sc = task.structured_content
+                         sc[evasion_key] = True
+                         task.structured_content = sc
+                         task.save(update_fields=["structured_content"])
+                         
+                         evasion_prompt = initial_prompt + "\n\nIMPORTANTE: Evita citas textuales extensas. Analiza, sintetiza y explica los conceptos con tus propias palabras para asegurar originalidad y valor didáctico."
+                         
+                         success_retry, content_retry, _ = generate_text_content(evasion_prompt, api_key=api_key, task_id=task_id)
+                         if success_retry:
+                             content_or_error = content_retry
+                             log_task_event(task_id, f"RECUPERACIÓN EXITOSA: Sección {order} generada tras paráfrasis.")
+                             # Éxito: continuamos con content_or_error actualizado
+                         else:
+                             raise ResourceExhausted(f"Fallo persistente por Recitación en sección {order}: {content_retry}")
+                     else:
+                         raise ResourceExhausted(f"Fallo por Recitación en sección {order} tras intento de evasión.")
+                 else:
+                     raise ResourceExhausted(f"Fallo en la generación de la sección: {content_or_error}")
             content_text, sources_text = _parse_markdown_with_separator(content_or_error)
             GeneratedContentChunk.objects.create(task=task, order=order, content=content_text, ai_sources=sources_text)
             log_task_event(task_id, f"Fragmento {order}/{len(parsed_schema)} guardado.")

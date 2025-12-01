@@ -98,6 +98,10 @@ def generate_text_content(prompt: str, api_key: ApiKey, task_id: str = None) -> 
             error_msg = f"Respuesta bloqueada por seguridad. Razón: {reason}."
             return False, error_msg, api_key.name
 
+        # [MODIFICACION V24] Manejo preventivo de Recitación (Copyright)
+        if response.candidates and response.candidates[0].finish_reason == 4:
+            return False, "RECITATION_ERROR: Bloqueo por derechos de autor (Recitación).", api_key.name
+
         return True, response.text.strip(), api_key.name
 
     except exceptions.ResourceExhausted as e:
