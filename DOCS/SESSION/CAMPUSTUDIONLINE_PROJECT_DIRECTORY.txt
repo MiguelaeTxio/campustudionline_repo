@@ -677,7 +677,6 @@
 ./DOCS/MAINS/CONTENT_PROMPTS.md
 ./DOCS/MAINS/CAMPUSTUDIONLINE_MASTER_DOCUMENT.md
 ./ASGI
-./diagnose_automation.py
 ./global_settings
 ./global_settings/templates
 ./global_settings/templates/admin

@@ -629,3 +629,11 @@
 *  **Session:** Implementación de Seguridad DRM en Frontend y UX Loading Spinner
 *  **Description:** Abordaje de dos mejoras críticas de experiencia y seguridad. Primero, la implementación de medidas disuasorias contra la copia no autorizada de contenido (DRM Frontend) mediante ofuscación CSS, marcas de agua dinámicas y bloqueo de eventos de teclado/ratón en las vistas de detalle de material de estudio, adaptadas tanto para escritorio como para navegadores móviles. Segundo, la integración de un indicador de carga ("Loading Spinner") global para estandarizar el feedback visual durante las transiciones y peticiones asíncronas en toda la plataforma, activando el protocolo PAIR para asegurar consistencia con los recursos existentes (e.g., preloader.css).
 
+
+# 2025-12-01
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V24.md
+## AAAA
+*  **Session:** Estabilización del Motor de Generación de Contenido y Diagnóstico Celery
+*  **Description:** Diagnóstico y resolución de incidencias en el motor de generación de contenido (Celery). Análisis de bucles infinitos en tareas de contenido libre y fallos en el parser de respuestas de IA. Implementación de mejoras de robustez en el parsing y límites de reintentos para protección de cuota API.
+

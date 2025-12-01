@@ -46,10 +46,21 @@ def _execute_gemini_call(prompt: str, api_key: ApiKey, generation_config: dict, 
 def clean_json_response(raw_text: str) -> str:
     """
     [PUBLIC] Extrae un bloque de código JSON de una cadena de texto.
+    [V2 ROBUST] Robusto ante bloques markdown, texto introductorio y sufijos.
     """
-    match = re.search(r"```(?:json)?\s*(\{.*?\})\s*```", raw_text, re.DOTALL)
+    import re
+    # 1. Intentar encontrar un bloque de código ```json ... ``` (case insensitive)
+    match = re.search(r"```(?:json)?\s*(\{.*?\})\s*```", raw_text, re.DOTALL | re.IGNORECASE)
     if match:
         return match.group(1)
+    
+    # 2. Búsqueda heurística de llaves
+    start = raw_text.find('{')
+    end = raw_text.rfind('}')
+    
+    if start != -1 and end != -1 and end > start:
+        return raw_text[start : end + 1]
+        
     return raw_text.strip()
 
 # --- Public Functions (Refactored with Internal Resilience) ---

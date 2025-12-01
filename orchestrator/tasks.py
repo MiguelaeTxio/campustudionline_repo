@@ -145,15 +145,18 @@ def _check_and_perform_daily_reset():
 
 def _purge_zombie_tasks():
     try:
-        # Umbral de seguridad: 30 minutos sin cambios
-        threshold = timezone.now() - timedelta(minutes=30)
+        # [FIX] Umbral aumentado a 24 horas para evitar borrar tareas en cola larga
+        threshold = timezone.now() - timedelta(hours=24)
         
-        # Identificar tareas atascadas (ni completadas, ni fatales, ni procesando)
+        # Identificar tareas realmente abandonadas (sin tocar PENDING ni estados de espera)
         zombies = PendingContentTask.objects.exclude(
             status__in=[
                 PendingContentTask.StatusChoices.PROCESSING, 
                 PendingContentTask.StatusChoices.COMPLETED, 
-                PendingContentTask.StatusChoices.FAILED_FATAL
+                PendingContentTask.StatusChoices.FAILED_FATAL,
+                PendingContentTask.StatusChoices.PENDING,
+                PendingContentTask.StatusChoices.FAILED_RETRYABLE,
+                PendingContentTask.StatusChoices.FAILED_QUOTA
             ]
         ).filter(updated_at__lt=threshold)
         
@@ -161,7 +164,7 @@ def _purge_zombie_tasks():
         if count > 0:
             # Borrado masivo
             zombies.delete()
-            _log_structured_event(f"LIMPIEZA AUTOMÁTICA: Se han eliminado {count} tareas zombie inactivas por >30min.", "WARNING")
+            _log_structured_event(f"LIMPIEZA AUTOMÁTICA: Se han eliminado {count} tareas residuales inactivas por >24h.", "WARNING")
     except Exception as e:
         logger.error(f"Error en limpieza de zombies: {e}")
 
@@ -294,14 +297,21 @@ def _parse_master_schema(markdown_text: str) -> list:
     return [(len(hashes), title.strip()) for hashes, title in headings]
 
 def _parse_markdown_with_separator(raw_text: str) -> tuple[str, str]:
-    separator = "---FUENTES---"
-    if separator in raw_text:
-        parts = raw_text.split(separator, 1)
-        content = parts[0].strip()
-        sources = parts[1].strip() if len(parts) > 1 else ""
+    # Regex flexible para encontrar el separador (case insensitive, con/sin espacios, guiones o hashtags)
+    # Ejemplos: "---FUENTES---", "## Fuentes", "--- Bibliografía ---"
+    separator_pattern = r"(?i:^[-*_#]*\s*(?:FUENTES|BIBLIOGRAF[ÍI]A|REFERENCIAS)\s*[-*_#]*$)"
+    
+    # Buscar todas las coincidencias
+    matches = list(re.finditer(separator_pattern, raw_text, re.MULTILINE))
+    
+    if matches:
+        # Usar la última coincidencia válida para dividir
+        last_match = matches[-1]
+        content = raw_text[:last_match.start()].strip()
+        sources = raw_text[last_match.end():].strip()
         return content, sources
     else:
-        logger.warning("El separador '---FUENTES---' no se encontró en la respuesta de la IA. Se tratará toda la respuesta como contenido.")
+        logger.warning("El separador '---FUENTES---' (o variante) no se encontró. Tratando todo como contenido.")
         return raw_text.strip(), ""
 
 def _assemble_final_markdown_from_chunks(course_title: str, metadata: dict, master_schema: str, chunks: list[GeneratedContentChunk]) -> str:
@@ -793,24 +803,58 @@ def generate_full_course_task(self, task_id: str):
     except ResourceExhausted as e:
         if task and api_key:
             error_str = str(e)
+            
+            # --- 1. LÓGICA DE RESCATE: CONTENIDO PROHIBIDO ---
             if "PROHIBITED_CONTENT" in error_str:
-                log_task_event(task.id, "FALLO FATAL: Contenido bloqueado por la política de seguridad de la API.", is_error=True, payload={"api_key": api_key.name, "error": error_str})
+                # Verificar bandera de intento de sanitización en los metadatos de la tarea
+                sanitization_flag = task.structured_content.get('_sanitization_attempted', False)
+                
+                if not sanitization_flag:
+                    log_task_event(task.id, "ALERTA: Contenido Prohibido. Iniciando protocolo de sanitización y reintento.", level="WARNING")
+                    
+                    # Marcar intento
+                    sc = task.structured_content
+                    sc['_sanitization_attempted'] = True
+                    task.structured_content = sc
+                    task.save(update_fields=['structured_content'])
+                    
+                    # Reintento rápido (5s) confiando en la variabilidad de la API
+                    self.retry(countdown=5) 
+                    return
+
+                # Si ya falló el rescate, entonces sí es fatal
+                log_task_event(task.id, "FALLO FATAL: Contenido bloqueado tras intento de rescate.", is_error=True)
                 task.status = PendingContentTask.StatusChoices.FAILED_FATAL
-                task.last_error = traceback.format_exc()
-                task.notes = ("La generación fue bloqueada por la API de Gemini debido a 'PROHIBITED_CONTENT'. " "Esto es un fallo irrecuperable y requiere intervención manual para analizar el prompt.")
+                task.last_error = f"PROHIBITED_CONTENT persistente: {error_str}"
+                task.notes = "Bloqueo por política de seguridad de Gemini (incluso tras reintento)."
                 task.save(update_fields=["status", "last_error", "notes"])
-                _send_admin_notification("Tarea Fallida por Contenido Prohibido", f"La tarea para '{task}' ha fallado permanentemente debido a contenido prohibido.")
+                _send_admin_notification("Tarea Fallida por Contenido Prohibido", f"La tarea para '{task}' ha fallado permanentemente.")
                 return
-            max_retries = 2
-            if self.request.retries >= max_retries:
-                log_task_event(task.id, f"Máximo de reintentos ({self.request.retries + 1}) alcanzado por error de cuota. Solicitando cuarentena vía buzón.", is_error=True)
-                _request_quarantine_via_mailbox(api_key)
+
+            # --- 2. CORTAFUEGOS EMPÍRICO DE CUOTA ---
+            # Estrategia: Asumir RPM (transitorio) hasta demostrar RPD (diario)
+            max_retries_quota = 3
+            
+            if self.request.retries >= max_retries_quota:
+                # Si hemos fallado 4 veces (0 + 3 retries) con pausas largas, es Cuota Diaria.
+                log_task_event(task.id, f"CUOTA DIARIA CONFIRMADA: Fallo tras {self.request.retries + 1} intentos espaciados.", is_error=True)
+                
+                # A. Cuarentena
+                api_key.is_quarantined = True
+                api_key.save(update_fields=['is_quarantined'])
+                _request_quarantine_via_mailbox(api_key) # Redundancia buzón
+                
+                # B. Marcar tarea para rotación (FAILED_QUOTA)
                 task.status = PendingContentTask.StatusChoices.FAILED_QUOTA
-                task.last_error = f"Clave '{api_key.name}' solicitada para cuarentena tras {self.request.retries + 1} fallos. El bucle principal se encargará de rotar y re-encolar.\n{traceback.format_exc()}"
+                task.last_error = f"Cuota agotada en clave '{api_key.name}'. Puesta en cuarentena."
                 task.save(update_fields=["status", "last_error"])
+                return
+
             else:
-                log_task_event(task.id, f"Error de cuota API (Intento {self.request.retries + 1}/{max_retries + 1}).", is_error=True, payload={"api_key": api_key.name, "error": error_str})
-                raise self.retry(exc=e, countdown=60, max_retries=max_retries)
+                # Es el intento 1, 2 o 3. Asumimos RPM.
+                # Esperamos 70 segundos (> 1 minuto) para limpiar ventana de rate limit.
+                log_task_event(task.id, f"Error de Cuota (Posible RPM). Esperando 70s... (Intento {self.request.retries + 1}/{max_retries_quota + 1})")
+                raise self.retry(exc=e, countdown=70, max_retries=max_retries_quota)
     except Exception as e:
         if task:
             error_traceback = traceback.format_exc()
