@@ -234,10 +234,23 @@ def create_academic_task_view(request):
 @staff_member_required
 def create_free_task_view(request):
     context = admin.site.each_context(request)
+    
+    # 1. Detectar si venimos de una solicitud existente
+    source_request_id = request.GET.get('source_request_id') or request.POST.get('source_request_id')
+    source_request = None
+    initial_data = {}
+    
+    if source_request_id:
+        source_request = get_object_or_404(FreeContentRequest, id=source_request_id)
+        initial_data = {
+            'course_title': source_request.title,
+            'prompt_text': source_request.detailed_prompt
+        }
+    
     if request.method == 'POST':
         form = FreeCourseCreationForm(request.POST)
         
-        # [FIX VALIDACIÓN] Actualizar queryset de subcategoría basado en la selección POST para permitir la validación
+        # [FIX VALIDACIÓN] Actualizar queryset de subcategoría basado en la selección POST
         if 'master_category' in request.POST:
             try:
                 master_id = request.POST.get('master_category')
@@ -249,36 +262,48 @@ def create_free_task_view(request):
         if form.is_valid():
             data = form.cleaned_data
             try:
-                # 1. Crear el material de contenido primero
-                content_material = ContentMaterial.objects.create(
-                    title=data['course_title'],
-                    creator=request.user,
-                    is_free_content=True,
-                    is_public=False, # Se hará público al completar la tarea
-                    master_category=data['master_category'],
-                    sub_category=data.get('sub_category')
-                )
-                # 2. Crear la tarea y vincularla
+                # [CORRECCIÓN ANTI-ZOMBIE]
+                # Diferimos la creación del ContentMaterial hasta que la IA genere contenido válido.
+                manual_classification = {
+                    'master_category_id': str(data['master_category'].id),
+                    'sub_category_id': str(data['sub_category'].id) if data.get('sub_category') else None
+                }
+                
+                # Crear la tarea
                 PendingContentTask.objects.create(
                     course_title=data['course_title'],
                     prompt_text=data['prompt_text'],
                     assigned_to=request.user,
-                    task_origin=PendingContentTask.TaskOrigin.MANUAL_CREATION,
-                    content_material=content_material
+                    task_origin=PendingContentTask.TaskOrigin.APPROVED_REQUEST if source_request else PendingContentTask.TaskOrigin.MANUAL_CREATION,
+                    content_material=None,
+                    structured_content={'manual_classification': manual_classification}
                 )
-                messages.success(request, f"Tarea para el curso libre '{data['course_title']}' creada con éxito.")
+                
+                # Si venía de una solicitud, marcarla como aprobada
+                if source_request:
+                    source_request.status = FreeContentRequest.STATUS_APPROVED
+                    source_request.save(update_fields=['status'])
+                    messages.success(request, f"Solicitud '{source_request.title}' aprobada y tarea encolada.")
+                else:
+                    messages.success(request, f"Tarea para el curso libre '{data['course_title']}' creada con éxito.")
+                
                 return HttpResponseRedirect(reverse('orchestrator:task_dashboard'))
+                
             except IntegrityError:
                 messages.error(request, "Ya existe una tarea activa con este título. Por favor, elige otro.")
             except Exception as e:
                 messages.error(request, f"Error inesperado al crear la tarea: {e}")
     else:
-        form = FreeCourseCreationForm()
+        form = FreeCourseCreationForm(initial=initial_data)
 
     context.update({
         'title': 'Crear Tarea para Curso Libre',
         'form': form,
+        'source_request': source_request,
     })
+    if source_request:
+        context['reject_url'] = reverse('orchestrator:reject_free_request', args=[source_request.id])
+
     return render(request, 'admin/orchestrator/create_free_task.html', context)
 
 @staff_member_required

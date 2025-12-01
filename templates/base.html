@@ -47,8 +47,10 @@
     </style>
     {% block extra_css %}{% endblock extra_css %}
     <script>window.protectionLevel='{{ protection_level|default:"full" }}';</script>
+
 </head>
 <body>
+    
     <div aria-live="polite" aria-atomic="true" class="position-relative"><div id="toast-container" class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 1100"></div></div>
     <div id="preloader" class="preloader-overlay">
         <div class="preloader-spinner"></div>
@@ -338,5 +340,37 @@
         });
     </script>
 
+<script>
+(function() {
+    'use strict';
+
+    // --- UX ENHANCEMENT: GLOBAL LOADING SPINNER ---
+    const preloader = document.getElementById('preloader');
+    if (preloader) {
+        const show = () => preloader.style.display = 'flex';
+        const hide = () => preloader.style.display = 'none';
+        
+        // Intercept internal links
+        document.addEventListener('click', (e) => {
+            const link = e.target.closest('a');
+            if (link && link.href && !link.href.startsWith('javascript:') && !link.href.includes('#') && link.target !== '_blank') {
+                if (e.ctrlKey || e.metaKey || e.shiftKey || e.button === 1 || link.hasAttribute('download')) return;
+                try {
+                    if (new URL(link.href).origin === window.location.origin) show();
+                } catch(err) {}
+            }
+        });
+        
+        // Intercept form submissions
+        document.addEventListener('submit', (e) => {
+            const form = e.target;
+            if ((!form.target || form.target === '_self') && form.checkValidity()) show();
+        });
+        
+        // Hide on back button (bfcache)
+        window.addEventListener('pageshow', (e) => { if(e.persisted) hide(); });
+    }
+})();
+</script>
 </body>
 </html>

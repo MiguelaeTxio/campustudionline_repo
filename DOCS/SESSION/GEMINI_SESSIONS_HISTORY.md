@@ -621,3 +621,11 @@
 *  **Session:** Depuración de Integridad en Árbol de Carpetas Favoritas
 *  **Description:** Análisis y resolución del error crítico `Column 'depth' cannot be null` en el modelo `FavoriteFolder` durante la creación automática de carpetas al copiar contenido. Se auditará la implementación de `get_or_create` en la vista `study_room_views.py` para asegurar la compatibilidad con la estructura jerárquica del modelo, sustituyendo la creación estándar por los métodos de inserción de nodos de árbol requeridos.
 
+
+# 2025-11-30
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V24.md
+## PLUTO
+*  **Session:** Implementación de Seguridad DRM en Frontend y UX Loading Spinner
+*  **Description:** Abordaje de dos mejoras críticas de experiencia y seguridad. Primero, la implementación de medidas disuasorias contra la copia no autorizada de contenido (DRM Frontend) mediante ofuscación CSS, marcas de agua dinámicas y bloqueo de eventos de teclado/ratón en las vistas de detalle de material de estudio, adaptadas tanto para escritorio como para navegadores móviles. Segundo, la integración de un indicador de carga ("Loading Spinner") global para estandarizar el feedback visual durante las transiciones y peticiones asíncronas en toda la plataforma, activando el protocolo PAIR para asegurar consistencia con los recursos existentes (e.g., preloader.css).
+

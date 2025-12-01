@@ -137,7 +137,7 @@
                 <tr>
                     <td><strong>{{ request.title }}</strong><br><small>{{ request.detailed_prompt|truncatewords:15 }}</small></td><td>{{ request.requester.username }}</td><td>{{ request.created_at|date:"d M Y, H:i" }}</td>
                     <td class="task-actions"><div class="triage-actions">
-                        <a href="{% url 'orchestrator:create_free_task' %}?request_id={{ request.id }}" class="button">Revisar</a>
+                        <a href="{% url 'orchestrator:create_free_task' %}?source_request_id={{ request.id }}" class="button">Revisar</a>
                         <form action="{% url 'orchestrator:create_free_task' %}" method="post" style="margin: 0;">{% csrf_token %}<input type="hidden" name="source_request_id" value="{{ request.id }}"><input type="hidden" name="course_title" value="{{ request.title }}"><input type="hidden" name="prompt_text" value="{{ request.detailed_prompt }}"><button type="submit" class="button" style="background-color: #28a745;">Aprobar</button></form>
                         <a href="{% url 'orchestrator:reject_free_request' request.id %}" class="button" style="background-color: #ffc107; color: #212529;">Rechazar</a>
                         <a href="{% url 'orchestrator:delete_free_request' request.id %}" class="button deletelink">Eliminar</a>
