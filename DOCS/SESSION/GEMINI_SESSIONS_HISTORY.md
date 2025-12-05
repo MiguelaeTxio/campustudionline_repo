@@ -645,3 +645,11 @@
 *  **Session:** Soporte y Mantenimiento V24 - Monitorización y Consultas
 *  **Description:** Sesión de continuidad bajo el hito de soporte y mantenimiento. El sistema ha alcanzado una estabilidad operativa tras las correcciones en el orquestador y los parsers de contenido. El objetivo de la sesión es atender consultas puntuales, realizar verificaciones de estado o abordar incidencias emergentes durante la fase de monitorización pasiva.
 
+
+# 2025-12-04
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V24.md
+## MAMC
+*  **Session:** Sesión de Monitorización y Mantenimiento Correctivo (Hito 24)
+*  **Description:** Continuación de las tareas de soporte bajo el Hito 24 "Ruegos y Preguntas". Tras la estabilización de los flujos de generación de contenido, manejo de errores de copyright (Recitation) y mejoras en la orquestación, esta sesión se dedica a la atención de nuevas incidencias, consultas de arquitectura o ajustes menores que surjan de la operación en producción o pruebas de usuario. Se mantiene el estado de alerta pasiva.
+

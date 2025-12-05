@@ -38,6 +38,7 @@ class Assessment(models.Model):
         PAUSED = "PAUSED", "Pausada por el Administrador"
         
         # Estado Final de Usuario
+        CANCELLED = "CANCELLED", "Cancelada por Administrador"
         USER_CANCELLED = "USER_CANCELLED", "Cancelado por el Usuario"
 
     content_copy = models.ForeignKey(

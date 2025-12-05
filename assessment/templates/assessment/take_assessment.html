@@ -43,8 +43,11 @@
                     {% endfor %}
                 </ol>
 
-                <div class="d-flex justify-content-end mt-4">
-                    <button type="submit" class="btn btn-success btn-lg">
+                <!-- Espaciador para asegurar que el contenido final no quede oculto tras el botón flotante -->
+                <div style="height: 100px;"></div>
+
+                <div class="position-fixed bottom-0 end-0 p-4 mb-2 me-2" style="z-index: 1050;">
+                    <button type="submit" class="btn btn-success btn-lg shadow-lg rounded-pill px-4 py-3 fw-bold">
                         <i class="fas fa-check-circle me-2"></i>Enviar para Evaluación
                     </button>
                 </div>

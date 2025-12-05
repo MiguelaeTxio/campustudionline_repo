@@ -21,9 +21,19 @@ def _get_base_assessment_subqueries(user_filter):
     # 2. O tienen la fecha corrupta/vacía (expiration_date IS NULL)
     now = timezone.now()
     
+    # Estados que consideramos "muertos" o irrelevantes para el indicador de estado activo
+    IGNORED_STATUSES = [
+        Assessment.AssessmentStatus.CANCELLED,
+        Assessment.AssessmentStatus.USER_CANCELLED,
+        Assessment.AssessmentStatus.GENERATION_FAILED_FATAL,
+        Assessment.AssessmentStatus.CORRECTION_FAILED_FATAL,
+        Assessment.AssessmentStatus.EXPIRED_UNTAKEN,
+        Assessment.AssessmentStatus.CORRECTION_EXPIRED,
+    ]
+
     related_assessments = Assessment.objects.filter(**user_filter).exclude(
-        Q(status=Assessment.AssessmentStatus.COMPLETED) &
-        (Q(expiration_date__lte=now) | Q(expiration_date__isnull=True))
+        Q(status__in=IGNORED_STATUSES) |
+        (Q(status=Assessment.AssessmentStatus.COMPLETED) & (Q(expiration_date__lte=now) | Q(expiration_date__isnull=True)))
     ).order_by()
 
     distinct_states_subquery = related_assessments.annotate(

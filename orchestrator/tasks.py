@@ -953,6 +953,9 @@ def generate_assessment_from_content_task(self, assessment_id):
         
         if not full_content or not full_content.strip():
             raise ValueError("El contenido para la evaluación está vacío.")
+            
+        # Log del tamaño real para monitoreo
+        log_assessment_task_event(assessment_id, f"Preparando envío de {len(full_content)} caracteres a la IA.")
         
         prompt_format_instructions = ("**FORMATO DE SALIDA OBLIGATORIO:**\n" "Cada par pregunta-respuesta DEBE seguir esta estructura exacta, usando los separadores como se indica:\n" "[---PREGUNTA---]\n" "Aquí el texto completo de la pregunta.\n" "[---RESPUESTA---]\n" "Aquí el texto completo de la respuesta modelo.\n" "[---FIN-PREGUNTA---]\n\n")
         prompt = (f"Tu tarea es crear un examen basado en el siguiente texto, cubriendo sus conceptos clave.\n\n" f"{prompt_format_instructions}\n\n" f"Material de estudio:\n---\n{full_content}\n---")

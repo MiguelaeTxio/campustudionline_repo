@@ -28,7 +28,18 @@
     *   **Detección:** Implementada captura de `finish_reason: 4` en `gemini_service.py` para identificar bloqueos por recitación literal de fuentes protegidas.
     *   **Mitigación:** Implementada estrategia de evasión automática en `orchestrator/tasks.py`. Si se detecta el error, el sistema reintenta la generación de esa sección específica inyectando instrucciones de paráfrasis y síntesis en el prompt.
 
+### 04/12/2025 - 05/12/2025 - Resolución de Crisis de Disco y Mejoras de UI/UX
+*   **Crisis de Almacenamiento (Error 122):**
+    *   **Diagnóstico:** Llenado de disco (3GB/100%) provocado por bucle de tareas de evaluación fallidas que generaban *Core Dumps* y logs masivos (SIGBUS).
+    *   **Resolución:** Eliminación de 1.5GB de archivos basura (`core.*`, logs). Recuperación operativa del sistema.
+*   **Estabilización del Orquestador:**
+    *   **Cancelación Manual:** Corrección de Error 500 (`AttributeError: CANCELLED`) añadiendo el estado al modelo `Assessment` y permitiendo la cancelación desde Admin.
+    *   **Blindaje:** Implementación de logs de tamaño de contenido (sin truncado) para monitorización y mejora en el manejo de excepciones fatales en Celery.
+*   **Mejoras UI/UX Evaluación:**
+    *   **Botón Flotante:** Conversión del botón de "Enviar Evaluación" en un elemento flotante (FAB) para facilitar el envío en exámenes largos.
+    *   **Corrección de Badges:** Ajuste en `utils.py` para que los indicadores de estado ("Múltiples Estados") ignoren evaluaciones canceladas o fallidas, limpiando la interfaz de usuario.
+
 ## Hoja de Ruta (Tareas Pendientes)
 
 ### Monitorización
-*   **Estado:** A la espera de resultados de la prueba con usuarios reales. Mantenimiento del hito abierto para incidencias emergentes.
+*   **Estado:** A la espera de nuevas incidencias. Mantenimiento del hito abierto a petición del usuario.

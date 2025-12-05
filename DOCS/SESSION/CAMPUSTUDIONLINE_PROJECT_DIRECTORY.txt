@@ -197,6 +197,7 @@
 ./templates/includes
 ./templates/includes/pagination_controls.html
 ./AI_INCIDENTS.txt
+./generate_proposal.py
 ./check_system_state.py
 ./google_credentials.json
 ./contents
@@ -310,6 +311,7 @@
 ./feedback/migrations/0001_initial.py
 ./requirements.txt
 ./check_system_state_v2.py
+./update_milestones_branding.py
 ./content_automation
 ./content_automation/urls.py
 ./content_automation/templates
@@ -677,6 +679,7 @@
 ./DOCS/MAINS/CONTENT_PROMPTS.md
 ./DOCS/MAINS/CAMPUSTUDIONLINE_MASTER_DOCUMENT.md
 ./ASGI
+./core.16649
 ./global_settings
 ./global_settings/templates
 ./global_settings/templates/admin
@@ -736,6 +739,7 @@
 ./file00.txt
 ./EOF
 ./check_models.py
+./core.16650
 ./.env
 ./push_tester
 ./push_tester/urls.py
