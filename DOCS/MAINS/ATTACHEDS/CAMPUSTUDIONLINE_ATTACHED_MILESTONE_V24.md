@@ -59,8 +59,5 @@
 
 ## Hoja de Ruta (Tareas Pendientes)
 
-### Depuración UI (Prioridad Alta)
-*   **Sidebar Inconsistente:** Investigar caché de nivel superior, renderizado de templates o problemas de transmisión del JSON al frontend que mantienen la desincronización visual.
-
 ### Monitorización
 *   **Estado:** A la espera de nuevas incidencias. Mantenimiento del hito abierto a petición del usuario.
