@@ -99,20 +99,12 @@ class NavigationTreeBuilder:
         Assessment = apps.get_model('assessment', 'Assessment')
         
         # [FIX V24] Filtrado estricto para coincidir con Dashboard
-        visible_statuses = ['PENDING', 'PROCESSING', 'COMPLETED', 'AWAITING_CORRECTION', 'CORRECTING', 'RESULTS_AVAILABLE']
+        visible_statuses = ['PENDING', 'PROCESSING', 'COMPLETED', 'AWAITING_CORRECTION', 'CORRECTING', 'RESULTS_AVAILABLE', 'GENERATION_FAILED_FATAL', 'CORRECTION_FAILED_FATAL', 'CANCELLED', 'GENERATION_FAILED_QUOTA']
         
         assessments_qs = Assessment.objects.filter(
             status__in=visible_statuses
-        ).exclude(
-            status__in=['EXPIRED_UNTAKEN', 'CORRECTION_EXPIRED', 'CANCELLED', 'USER_CANCELLED', 'GENERATION_FAILED_FATAL']
-        ).order_by('-created_at')
+        ).exclude(status__in=['EXPIRED_UNTAKEN', 'CORRECTION_EXPIRED', 'USER_CANCELLED']).order_by('-created_at')
 
-        # Usamos Prefetch en lugar de Subquery
-        (
-            Prefetch('assessments', queryset=assessments_qs, to_attr='_active_assessments')
-        ).select_related(
-            'original_content', 'subject_context'
-        )
         copies_qs = ContentCopy.objects.filter(user=self.user).prefetch_related(
             Prefetch('assessments', queryset=assessments_qs, to_attr='_active_assessments')
         ).select_related(

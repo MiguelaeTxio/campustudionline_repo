@@ -197,6 +197,7 @@
 ./templates/includes
 ./templates/includes/pagination_controls.html
 ./AI_INCIDENTS.txt
+./debug_builder_output.py
 ./generate_proposal.py
 ./check_system_state.py
 ./google_credentials.json
@@ -738,6 +739,7 @@
 ./file00.txt
 ./EOF
 ./check_models.py
+./prove_blindness.py
 ./.env
 ./push_tester
 ./push_tester/urls.py

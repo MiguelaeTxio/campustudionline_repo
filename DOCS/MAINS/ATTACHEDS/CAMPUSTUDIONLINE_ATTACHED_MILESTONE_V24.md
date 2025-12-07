@@ -49,6 +49,14 @@
     *   **Intervención:** Se aplicó una reingeniería del `NavigationTreeBuilder` para usar `Prefetch` y filtrar explícitamente evaluaciones activas, alineando la lógica con el Dashboard. Se ajustó el CSS de `_navigation_sidebar.html`.
     *   **Estado Actual:** La incidencia persiste visualmente a pesar de la corrección lógica del backend. Se pospone para la próxima sesión roadmap.
 
+
+### 07/12/2025 (Mediodía) - Resolución Definitiva de Sidebar y UX
+*   **Inconsistencia Visual Sidebar:**
+    *   **Diagnóstico:** Se identificaron dos causas concurrentes. 1) `navigation_builder.py` filtraba estados de error/cancelación, provocando que la Sidebar ignorara copias en esos estados. 2) El diseño de acordeón ocultaba los iconos de estado de las asignaturas académicas al estar colapsados por defecto.
+    *   **Solución Backend:** Modificación de `contents/services/navigation_builder.py` para incluir explícitamente estados de fallo (`GENERATION_FAILED_FATAL`, `CANCELLED`, etc.) en la lista de renderizado.
+    *   **Solución Frontend/UX:** Refactorización integral de `_navigation_sidebar.html`. Se eliminó la estructura de acordeón (redundante para relaciones 1:1) en favor de un listado plano y directo. Esto garantiza la visibilidad inmediata de los indicadores de estado (iconos) sin requerir clics adicionales.
+
+
 ## Hoja de Ruta (Tareas Pendientes)
 
 ### Depuración UI (Prioridad Alta)
