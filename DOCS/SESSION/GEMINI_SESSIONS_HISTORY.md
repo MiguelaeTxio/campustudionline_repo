@@ -653,3 +653,11 @@
 *  **Session:** Sesión de Monitorización y Mantenimiento Correctivo (Hito 24)
 *  **Description:** Continuación de las tareas de soporte bajo el Hito 24 "Ruegos y Preguntas". Tras la estabilización de los flujos de generación de contenido, manejo de errores de copyright (Recitation) y mejoras en la orquestación, esta sesión se dedica a la atención de nuevas incidencias, consultas de arquitectura o ajustes menores que surjan de la operación en producción o pruebas de usuario. Se mantiene el estado de alerta pasiva.
 
+
+# 2025-12-07
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V24.md
+## NRA
+*  **Session:** Continuidad de Soporte y Mantenimiento Correctivo
+*  **Description:** Sesión de mantenimiento bajo el hito V24 enfocada en la monitorización del sistema y resolución de incidencias a demanda.
+

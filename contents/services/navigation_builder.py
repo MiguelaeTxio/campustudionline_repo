@@ -1,7 +1,7 @@
 import logging
 from django.db import transaction
 from django.apps import apps
-from django.db.models import Subquery, OuterRef
+from django.db.models import Prefetch
 from contents.models import UserStudyNavigation, FavoriteFolder, ContentCopy
 
 logger = logging.getLogger(__name__)
@@ -93,14 +93,28 @@ class NavigationTreeBuilder:
         Assessment = apps.get_model('assessment', 'Assessment')
         
         # Subquery para obtener el estado de la evaluación más reciente
-        newest_assessment = Assessment.objects.filter(
-            content_copy=OuterRef('pk')
-        ).order_by('-created_at')
+        
 
         # Anotamos el queryset para evitar N+1 consultas
-        copies_qs = ContentCopy.objects.filter(user=self.user).annotate(
-            latest_assessment_status=Subquery(newest_assessment.values('status')[:1]),
-            latest_assessment_viewed=Subquery(newest_assessment.values('was_viewed')[:1])
+        Assessment = apps.get_model('assessment', 'Assessment')
+        
+        # [FIX V24] Filtrado estricto para coincidir con Dashboard
+        visible_statuses = ['PENDING', 'PROCESSING', 'COMPLETED', 'AWAITING_CORRECTION', 'CORRECTING', 'RESULTS_AVAILABLE']
+        
+        assessments_qs = Assessment.objects.filter(
+            status__in=visible_statuses
+        ).exclude(
+            status__in=['EXPIRED_UNTAKEN', 'CORRECTION_EXPIRED', 'CANCELLED', 'USER_CANCELLED', 'GENERATION_FAILED_FATAL']
+        ).order_by('-created_at')
+
+        # Usamos Prefetch en lugar de Subquery
+        (
+            Prefetch('assessments', queryset=assessments_qs, to_attr='_active_assessments')
+        ).select_related(
+            'original_content', 'subject_context'
+        )
+        copies_qs = ContentCopy.objects.filter(user=self.user).prefetch_related(
+            Prefetch('assessments', queryset=assessments_qs, to_attr='_active_assessments')
         ).select_related(
             'original_content', 'subject_context'
         ).order_by('-updated_at')
@@ -117,8 +131,8 @@ class NavigationTreeBuilder:
                 "original_id": str(copy.original_content.id),
                 "updated_at": copy.updated_at.isoformat(),
                 "url": copy.get_absolute_url() if hasattr(copy, 'get_absolute_url') else '#',
-                "assessment_status": copy.latest_assessment_status,
-                "assessment_viewed": copy.latest_assessment_viewed,
+                "assessment_status": copy._active_assessments[0].status if getattr(copy, '_active_assessments', []) else None,
+                "assessment_viewed": copy._active_assessments[0].was_viewed if getattr(copy, '_active_assessments', []) else None,
             }
 
             if copy.subject_context:

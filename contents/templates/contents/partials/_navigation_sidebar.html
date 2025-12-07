@@ -53,12 +53,13 @@
                         {% for copy in copies %}
                             <a href="{{ copy.url }}" class="list-group-item list-group-item-action border-0 ps-5 py-2 small text-truncate d-flex align-items-center justify-content-between">
 
-    <span class="text-truncate">
+    <div class="text-truncate flex-grow-1 me-2">
         <i class="far fa-file-alt me-2 text-muted"></i>{{ copy.title }}
-    </span>
+    </div>
+    <div class="flex-shrink-0 d-flex align-items-center">
     {% if copy.assessment_status %}
         {# 1. Generación en curso o Corrección en curso #}
-        {% if copy.assessment_status in '["PENDING", "PROCESSING", "AWAITING_CORRECTION", "CORRECTING"]' %}
+        {% if copy.assessment_status == 'PENDING' or copy.assessment_status == 'PROCESSING' or copy.assessment_status == 'AWAITING_CORRECTION' or copy.assessment_status == 'CORRECTING' %}
             <div class="spinner-grow text-info ms-2" style="width: 0.8rem; height: 0.8rem;" role="status" title="Procesando..."></div>
         
         {# 2. Listo para realizar (Examen generado) #}
@@ -98,12 +99,13 @@
             {% for copy in user_navigation_tree.study_copies.free %}
                 <a href="{{ copy.url }}" class="list-group-item list-group-item-action border-0 px-3 py-2 d-flex align-items-center justify-content-between">
 
-    <span class="text-truncate">
+    <div class="text-truncate flex-grow-1 me-2">
         <i class="fas fa-feather-alt text-success me-2 text-muted"></i>{{ copy.title }}
-    </span>
+    </div>
+    <div class="flex-shrink-0 d-flex align-items-center">
     {% if copy.assessment_status %}
         {# 1. Generación en curso o Corrección en curso #}
-        {% if copy.assessment_status in '["PENDING", "PROCESSING", "AWAITING_CORRECTION", "CORRECTING"]' %}
+        {% if copy.assessment_status == 'PENDING' or copy.assessment_status == 'PROCESSING' or copy.assessment_status == 'AWAITING_CORRECTION' or copy.assessment_status == 'CORRECTING' %}
             <div class="spinner-grow text-info ms-2" style="width: 0.8rem; height: 0.8rem;" role="status" title="Procesando..."></div>
         
         {# 2. Listo para realizar (Examen generado) #}

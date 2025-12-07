@@ -9,7 +9,7 @@ from datetime import datetime, timedelta
 import pytz
 
 from celery import shared_task
-from celery.exceptions import MaxRetriesExceededError
+from celery.exceptions import MaxRetriesExceededError, Retry
 from django import db
 from django.db import transaction
 from django.db.models import Count, Q, F
@@ -608,6 +608,8 @@ def global_orchestrator_task(self):
                          automation_settings.last_run_status = final_message
                          automation_settings.save(update_fields=['last_run_status'])
                     break
+    except Retry:
+        raise
     except Exception as e:
         status_msg = f"ERROR CRÍTICO EN BUCLE: {e}"
         _log_structured_event(status_msg, level="CRITICAL", details={"traceback": traceback.format_exc()})
@@ -859,9 +861,12 @@ def generate_full_course_task(self, task_id: str):
             # Estrategia: Asumir RPM (transitorio) hasta demostrar RPD (diario)
             max_retries_quota = 3
             
-            if self.request.retries >= max_retries_quota:
-                # Si hemos fallado 4 veces (0 + 3 retries) con pausas largas, es Cuota Diaria.
-                log_task_event(task.id, f"CUOTA DIARIA CONFIRMADA: Fallo tras {self.request.retries + 1} intentos espaciados.", is_error=True)
+            # [FIX V24] Verificar historial para evitar falsos positivos por errores previos de red
+            prev_error_was_quota = task.last_error and ("ResourceExhausted" in task.last_error or "429" in task.last_error)
+
+            if self.request.retries >= max_retries_quota and prev_error_was_quota:
+                # Si hemos fallado múltiples veces Y el error persiste como cuota -> Cuota Diaria.
+                log_task_event(task.id, f"CUOTA DIARIA CONFIRMADA: Fallo persistente tras {self.request.retries + 1} intentos.", is_error=True)
                 
                 # A. Cuarentena
                 api_key.is_quarantined = True
@@ -875,10 +880,14 @@ def generate_full_course_task(self, task_id: str):
                 return
 
             else:
-                # Es el intento 1, 2 o 3. Asumimos RPM.
-                # Esperamos 70 segundos (> 1 minuto) para limpiar ventana de rate limit.
-                log_task_event(task.id, f"Error de Cuota (Posible RPM). Esperando 70s... (Intento {self.request.retries + 1}/{max_retries_quota + 1})")
-                raise self.retry(exc=e, countdown=70, max_retries=max_retries_quota)
+                # Es el intento 1, 2 o 3, O es el primero de cuota tras fallos de red.
+                # Marcamos el error en DB para que el siguiente reintento sepa que ya hubo problemas de cuota.
+                task.last_error = f"ResourceExhausted (Transient): {str(e)}"
+                task.save(update_fields=["last_error"])
+
+                log_task_event(task.id, f"Error de Cuota (Posible RPM). Esperando 70s... (Intento {self.request.retries + 1})")
+                # Aumentamos ligeramente max_retries localmente para absorber el historial mixto
+                raise self.retry(exc=e, countdown=70, max_retries=max_retries_quota + 2)
     except Exception as e:
         if task:
             error_traceback = traceback.format_exc()

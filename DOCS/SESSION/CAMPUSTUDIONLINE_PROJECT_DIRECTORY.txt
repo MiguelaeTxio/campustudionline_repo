@@ -679,7 +679,6 @@
 ./DOCS/MAINS/CONTENT_PROMPTS.md
 ./DOCS/MAINS/CAMPUSTUDIONLINE_MASTER_DOCUMENT.md
 ./ASGI
-./core.16649
 ./global_settings
 ./global_settings/templates
 ./global_settings/templates/admin
@@ -739,7 +738,6 @@
 ./file00.txt
 ./EOF
 ./check_models.py
-./core.16650
 ./.env
 ./push_tester
 ./push_tester/urls.py

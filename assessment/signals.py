@@ -20,7 +20,9 @@ def update_navigation_on_assessment_change(sender, instance, created, **kwargs):
         update_fields = kwargs.get('update_fields')
         
         # Si es una actualización específica de campos y NO incluye 'status', ignoramos.
-        if update_fields and 'status' not in update_fields and not created:
+        # [FIX] Ampliamos trigger para 'was_viewed'
+        relevant_fields = {'status', 'was_viewed'}
+        if update_fields and not relevant_fields.intersection(update_fields) and not created:
             return
 
         # Solo actualizamos si hay cambios relevantes para la navegación

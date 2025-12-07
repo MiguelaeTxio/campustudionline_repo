@@ -39,7 +39,20 @@
     *   **Botón Flotante:** Conversión del botón de "Enviar Evaluación" en un elemento flotante (FAB) para facilitar el envío en exámenes largos.
     *   **Corrección de Badges:** Ajuste en `utils.py` para que los indicadores de estado ("Múltiples Estados") ignoren evaluaciones canceladas o fallidas, limpiando la interfaz de usuario.
 
+### 07/12/2025 - Estabilidad de Orquestador y Debugging de UI
+*   **Estabilidad del Orquestador (Celery Loops):**
+    *   **Diagnóstico:** Se identificó que la excepción `Retry` de Celery estaba siendo atrapada erróneamente como un error genérico, generando logs de "ERROR CRÍTICO EN BUCLE" falsos positivos durante la hibernación por falta de claves.
+    *   **Corrección:** Se implementó la captura específica de `celery.exceptions.Retry` en `orchestrator/tasks.py` para permitir el flujo normal de reintento.
+    *   **Cortafuegos de Cuota Refinado:** Se corrigió la lógica de detección de cuota diaria ("Límite Diario") para evitar falsos positivos provocados por la acumulación de reintentos de red. Ahora se requiere persistencia del error específico (`ResourceExhausted`) en `last_error` antes de declarar la cuarentena.
+*   **Depuración de Sidebar (Incidencia Persistente):**
+    *   **Diagnóstico:** Se identificó una discrepancia entre los datos mostrados en el Dashboard (correctos) y los de la Sidebar (incorrectos/vacíos). El análisis reveló fallos en la construcción del JSON de navegación (`Subquery` devolviendo `None` o datos obsoletos) y problemas de layout CSS en títulos largos.
+    *   **Intervención:** Se aplicó una reingeniería del `NavigationTreeBuilder` para usar `Prefetch` y filtrar explícitamente evaluaciones activas, alineando la lógica con el Dashboard. Se ajustó el CSS de `_navigation_sidebar.html`.
+    *   **Estado Actual:** La incidencia persiste visualmente a pesar de la corrección lógica del backend. Se pospone para la próxima sesión roadmap.
+
 ## Hoja de Ruta (Tareas Pendientes)
+
+### Depuración UI (Prioridad Alta)
+*   **Sidebar Inconsistente:** Investigar caché de nivel superior, renderizado de templates o problemas de transmisión del JSON al frontend que mantienen la desincronización visual.
 
 ### Monitorización
 *   **Estado:** A la espera de nuevas incidencias. Mantenimiento del hito abierto a petición del usuario.
