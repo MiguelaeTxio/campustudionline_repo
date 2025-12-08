@@ -676,3 +676,19 @@
 *  **Session:** Mantenimiento y Soporte: Monitorización Post-Despliegue
 *  **Description:** Sesión de continuidad bajo el hito de soporte. Seguimiento tras la resolución de inconsistencias en la Sidebar y mejoras de UX. El sistema se encuentra en fase de monitorización pasiva a la espera de nuevas incidencias o tareas de mantenimiento correctivo.
 
+
+# 2025-12-07
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V24.md
+## CYC
+*  **Session:** Soporte y Mantenimiento - Fase de Monitorización
+*  **Description:** Sesión de continuidad bajo el hito V24. El sistema se encuentra estabilizado tras las correcciones críticas de gestión de cuotas y almacenamiento. Se mantiene la vigilancia activa y se atienden solicitudes de mantenimiento correctivo o dudas puntuales sobre la arquitectura actual.
+
+
+# 07/12/2025
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V24.md
+## EPI
+*  **Session:** Sesión de Monitorización y Mantenimiento - Fase de Estabilización
+*  **Description:** Inicio de sesión de continuidad en el hito de soporte. Tras la restauración de la lógica de asignación de cuotas de API y la resolución de la crisis de almacenamiento, el objetivo es monitorizar la estabilidad del sistema y atender nuevas solicitudes de mantenimiento o depuración que surjan.
+

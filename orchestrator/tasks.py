@@ -537,8 +537,16 @@ def global_orchestrator_task(self):
         task_to_rescue = PendingContentTask.objects.filter(status__in=[PendingContentTask.StatusChoices.FAILED_RETRYABLE, PendingContentTask.StatusChoices.FAILED_QUOTA]).order_by('created_at').first()
         if task_to_rescue:
             _log_structured_event(f"RESCATE (CONTENT): Re-encolando la tarea de contenido {task_to_rescue.id}.")
+            
+            # [FIX V24.5] RESETEO CRÍTICO: Limpiar historial de errores al cambiar de contexto/clave
+            # Evita que una clave nueva herede los 'strikes' de la anterior.
+            sc = task_to_rescue.structured_content
+            if sc.get("consecutive_quota_errors", 0) > 0:
+                sc["consecutive_quota_errors"] = 0
+                task_to_rescue.structured_content = sc
+            
             task_to_rescue.status = PendingContentTask.StatusChoices.PENDING
-            task_to_rescue.save(update_fields=["status"])
+            task_to_rescue.save(update_fields=["status", "structured_content"])
             generate_full_course_task.delay(str(task_to_rescue.id))
             status_msg = f"AUTO-RECUPERACIÓN: Tarea para '{task_to_rescue}' re-encolada."
             automation_settings.last_run_status = status_msg
@@ -630,6 +638,8 @@ def generate_full_course_task(self, task_id: str):
         api_key = automation_settings.active_api_key
         if not api_key or not api_key.is_enabled or api_key.is_quarantined:
             log_task_event(task_id, f"ESTADO DEL SISTEMA: La clave activa ('{api_key.name if api_key else 'N/A'}') no está disponible. Reintentando en 15 minutos.", is_error=True)
+            # [FIX V24.9] Curación: Hard Wait 62s antes de reintentar
+            time.sleep(62)
             raise self.retry(countdown=900)
         task = PendingContentTask.objects.select_related('subject__academic_year__degree__branch__university', 'subject__content_hash_family').get(id=task_id)
         if task.subject and task.subject.content_hash_family:
@@ -654,9 +664,19 @@ def generate_full_course_task(self, task_id: str):
             task.save(update_fields=["log_file_path"])
         log_task_event(task_id, f"Usando clave de API activa: '{api_key.name}'.")
         if task.status in [PendingContentTask.StatusChoices.PENDING, PendingContentTask.StatusChoices.FAILED_RETRYABLE, PendingContentTask.StatusChoices.FAILED_QUOTA]:
-            task.status = PendingContentTask.StatusChoices.PROCESSING
-            task.save(update_fields=["status"])
-            log_task_event(task_id, "Tarea iniciada. Estado cambiado a 'Procesando'.")
+            # [FIX V24.6] Tabula Rasa: Al iniciar/reiniciar, el contador de errores DEBE ser 0.
+            sc = task.structured_content
+            if sc.get("consecutive_quota_errors", 0) > 0:
+                sc["consecutive_quota_errors"] = 0
+                task.structured_content = sc
+                # Guardamos status y contenido estructurado a la vez
+                task.status = PendingContentTask.StatusChoices.PROCESSING
+                task.save(update_fields=["status", "structured_content"])
+                log_task_event(task_id, "Tarea iniciada (Contador reseteado). Estado cambiado a 'Procesando'.")
+            else:
+                task.status = PendingContentTask.StatusChoices.PROCESSING
+                task.save(update_fields=["status"])
+                log_task_event(task_id, "Tarea iniciada. Estado cambiado a 'Procesando'.")
         if task.status == PendingContentTask.StatusChoices.PAUSED:
             logger.info(f"Tarea {task_id} está en PAUSA. Re-encolando para futura comprobación.")
             self.retry(countdown=600)
@@ -717,36 +737,29 @@ def generate_full_course_task(self, task_id: str):
             log_task_event(task_id, f'Procesando sección {order}/{len(parsed_schema)}: "{title}"')
             log_task_event(task_id, "Enviando prompt atómico a la API.")
             success, content_or_error, _ = generate_text_content(initial_prompt, api_key=api_key, task_id=task_id)
-            
-            # [MODIFICACION V24] Lógica de Evasión de Recitación
             if not success:
-                 if "RECITATION_ERROR" in content_or_error:
-                     evasion_key = f"_recitation_evasion_attempted_{order}"
-                     if not task.structured_content.get(evasion_key):
-                         log_task_event(task_id, f"ALERTA: Recitación detectada en sección {order}. Activando modo de paráfrasis.", level="WARNING")
-                         
-                         sc = task.structured_content
-                         sc[evasion_key] = True
-                         task.structured_content = sc
-                         task.save(update_fields=["structured_content"])
-                         
-                         evasion_prompt = initial_prompt + "\n\nIMPORTANTE: Evita citas textuales extensas. Analiza, sintetiza y explica los conceptos con tus propias palabras para asegurar originalidad y valor didáctico."
-                         
-                         success_retry, content_retry, _ = generate_text_content(evasion_prompt, api_key=api_key, task_id=task_id)
-                         if success_retry:
-                             content_or_error = content_retry
-                             log_task_event(task_id, f"RECUPERACIÓN EXITOSA: Sección {order} generada tras paráfrasis.")
-                             # Éxito: continuamos con content_or_error actualizado
-                         else:
-                             raise ResourceExhausted(f"Fallo persistente por Recitación en sección {order}: {content_retry}")
-                     else:
-                         raise ResourceExhausted(f"Fallo por Recitación en sección {order} tras intento de evasión.")
-                 else:
-                     raise ResourceExhausted(f"Fallo en la generación de la sección: {content_or_error}")
+                 raise ResourceExhausted(f"Fallo en la generación de la sección: {content_or_error}")
             content_text, sources_text = _parse_markdown_with_separator(content_or_error)
             GeneratedContentChunk.objects.create(task=task, order=order, content=content_text, ai_sources=sources_text)
             log_task_event(task_id, f"Fragmento {order}/{len(parsed_schema)} guardado.")
-            time.sleep(2)
+            # [FIX V24.4] RESETEO INCONDICIONAL (BRUTE FORCE)
+            task.refresh_from_db(fields=["structured_content"])
+            sc = task.structured_content
+            
+            # Capturamos valor previo para confirmar en el log si hubo limpieza
+            prev_errors = sc.get('consecutive_quota_errors', 0)
+            
+            # ASIGNACIÓN DIRECTA A CERO SIEMPRE QUE HAYA ÉXITO
+            sc["consecutive_quota_errors"] = 0
+            task.structured_content = sc
+            task.save(update_fields=["structured_content"])
+            
+            # Solo ensuciamos el log si realmente veníamos de un error, para confirmar el reset
+            if prev_errors > 0:
+                log_task_event(task_id, f"Recuperado de error de cuota.\nReseteo ejecutado.\nValor anterior: {prev_errors}\nValor actual: {sc['consecutive_quota_errors']}/4")
+            # [FIX V24.9] Prevención: 5s entre peticiones
+            # [FIX V24.10] Rate Limit: 5s pausa = max 12 RPM (<15 limit)
+            time.sleep(5)
         task.refresh_from_db()
         if task.content_chunks.count() == len(parsed_schema):
             log_task_event(task_id, "Ensamblaje final.")
@@ -826,59 +839,39 @@ def generate_full_course_task(self, task_id: str):
             raise ContentGenerationError("Proceso incompleto, no se generaron todas las secciones.")
     except ResourceExhausted as e:
         if task and api_key:
-            error_str = str(e)
-            
-            # --- 1. LÓGICA DE RESCATE: CONTENIDO PROHIBIDO ---
-            if "PROHIBITED_CONTENT" in error_str:
-                # Verificar bandera de intento de sanitización en los metadatos de la tarea
-                sanitization_flag = task.structured_content.get('_sanitization_attempted', False)
-                
-                if not sanitization_flag:
-                    log_task_event(task.id, "ALERTA: Contenido Prohibido. Iniciando protocolo de sanitización y reintento.", level="WARNING")
-                    
-                    # Marcar intento
-                    sc = task.structured_content
-                    sc['_sanitization_attempted'] = True
-                    task.structured_content = sc
-                    task.save(update_fields=['structured_content'])
-                    
-                    # Reintento rápido (5s) confiando en la variabilidad de la API
-                    self.retry(countdown=5) 
-                    return
+            # [FIX V24.1] Lógica de Cuota Inteligente: Solo cuarentena si los fallos son CONSECUTIVOS
+            task.refresh_from_db()
+            sc = task.structured_content
+            # Inicializar si no existe
+            current_consecutive_fails = sc.get('consecutive_quota_errors', 0) + 1
+            sc["consecutive_quota_errors"] = current_consecutive_fails
+            task.structured_content = sc
+            task.save(update_fields=["structured_content"])
 
-                # Si ya falló el rescate, entonces sí es fatal
-                log_task_event(task.id, "FALLO FATAL: Contenido bloqueado tras intento de rescate.", is_error=True)
-                task.status = PendingContentTask.StatusChoices.FAILED_FATAL
-                task.last_error = f"PROHIBITED_CONTENT persistente: {error_str}"
-                task.notes = "Bloqueo por política de seguridad de Gemini (incluso tras reintento)."
-                task.save(update_fields=["status", "last_error", "notes"])
-                _send_admin_notification("Tarea Fallida por Contenido Prohibido", f"La tarea para '{task}' ha fallado permanentemente.")
-                return
-
-            # --- 2. CORTAFUEGOS EMPÍRICO DE CUOTA ---
-            # Estrategia: Asumir RPM (transitorio) hasta demostrar RPD (diario)
-            max_retries_quota = 3
+            # Umbral de tolerancia (4 intentos consecutivos fallidos = Bloqueo real)
+            max_consecutive_fails = 4
             
-            if self.request.retries >= max_retries_quota:
-                # Si hemos fallado 4 veces (0 + 3 retries) con pausas largas, es Cuota Diaria.
-                log_task_event(task.id, f"CUOTA DIARIA CONFIRMADA: Fallo tras {self.request.retries + 1} intentos espaciados.", is_error=True)
+            if current_consecutive_fails >= max_consecutive_fails:
+                log_task_event(task.id, f"CUOTA DIARIA CONFIRMADA: {current_consecutive_fails} fallos CONSECUTIVOS en la misma sección.", is_error=True)
                 
                 # A. Cuarentena
                 api_key.is_quarantined = True
-                api_key.save(update_fields=['is_quarantined'])
-                _request_quarantine_via_mailbox(api_key) # Redundancia buzón
+                api_key.save(update_fields=["is_quarantined"])
+                _request_quarantine_via_mailbox(api_key)
                 
-                # B. Marcar tarea para rotación (FAILED_QUOTA)
+                # B. Marcar tarea
                 task.status = PendingContentTask.StatusChoices.FAILED_QUOTA
-                task.last_error = f"Cuota agotada en clave '{api_key.name}'. Puesta en cuarentena."
+                task.last_error = f"Cuota agotada en clave {api_key.name} tras {current_consecutive_fails} intentos seguidos."
                 task.save(update_fields=["status", "last_error"])
                 return
 
             else:
-                # Es el intento 1, 2 o 3. Asumimos RPM.
-                # Esperamos 70 segundos (> 1 minuto) para limpiar ventana de rate limit.
-                log_task_event(task.id, f"Error de Cuota (Posible RPM). Esperando 70s... (Intento {self.request.retries + 1}/{max_retries_quota + 1})")
-                raise self.retry(exc=e, countdown=70, max_retries=max_retries_quota)
+                log_task_event(task.id, f"Posible error de cuota diaria\nIntento {current_consecutive_fails}/4")
+                # Usamos un max_retries infinito en Celery para que no mate la tarea, 
+                # ya que el control real lo hacemos nosotros con current_consecutive_fails
+                # [FIX V24.10] Hard Wait (62s) por Timezone Skew
+                time.sleep(62)
+                raise self.retry(exc=e, countdown=70, max_retries=None)
     except Exception as e:
         if task:
             error_traceback = traceback.format_exc()
@@ -1021,6 +1014,8 @@ def generate_assessment_from_content_task(self, assessment_id):
                 a.save(update_fields=["status", "last_error"])
         # Reintentar si corresponde...
         if "429" in str(e) and self.request.retries < self.max_retries:
+             # [FIX V24.8] Hard Wait (61s) para garantizar enfriamiento API
+             time.sleep(61)
              raise self.retry(exc=e, countdown=60)
 
     except Exception as e:
