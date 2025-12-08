@@ -145,8 +145,8 @@ def _check_and_perform_daily_reset():
 
 def _purge_zombie_tasks():
     try:
-        # [FIX] Umbral aumentado a 24 horas para evitar borrar tareas en cola larga
-        threshold = timezone.now() - timedelta(hours=24)
+        automation_settings = AutomationSettings.load()
+        threshold = timezone.now() - timedelta(hours=automation_settings.zombie_task_threshold_hours)
         
         # Identificar tareas realmente abandonadas (sin tocar PENDING ni estados de espera)
         zombies = PendingContentTask.objects.exclude(
@@ -487,6 +487,10 @@ def global_orchestrator_task(self):
                 automation_settings.save(update_fields=['last_run_status'])
             return
         active_key = automation_settings.active_api_key
+        if active_key:
+            # HITO 24 - FIX DE ESTADO OBSOLETO: Forzar la lectura del estado real de la clave desde la BBDD
+            # para evitar decisiones basadas en el objeto cacheado en memoria por el worker de Celery.
+            active_key.refresh_from_db()
         if not active_key or not active_key.is_enabled or active_key.is_quarantined:
             _log_structured_event(f"SINCRO: Clave activa ('{active_key.name if active_key else 'N/A'}') no es válida. Buscando reemplazo.", "INFO")
             next_available_key = ApiKey.objects.filter(is_enabled=True, is_quarantined=False).order_by('id').first()

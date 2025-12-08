@@ -700,3 +700,17 @@
 *  **Session:** Auditoría Forense de Orquestación y Sincronización Horaria Celery-Django
 *  **Description:** Inicio de sesión de emergencia bajo protocolo de crisis. El objetivo único es realizar una auditoría forense del archivo `orchestrator/tasks.py` mediante el análisis de su historial de git (`git log -p`) para identificar la causa raíz de los bucles de reintentos y la corrupción lógica en el manejo de tiempos (`countdown`/`eta`). Se suspende cualquier generación de código hasta completar el análisis y aprobar un plan de acción.
 
+
+# 2025-12-08
+# CAMPUSTUDIONLINE --CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V24.md
+## EDC
+*  **Session:** Implementación de Modelo de Datos Resiliente para Orquestación de Tareas
+*  **Description:** Se procede a la implementación de los campos de control de resiliencia en el modelo PendingContentTask de la aplicación orchestrator. El objetivo es prevenir bucles infinitos y mejorar la gestión de errores de API mediante la adición de contadores persistentes (global_actuation_count, consecutive_api_errors), marcas de tiempo de error (last_api_error_at), rastreo de claves fallidas (last_error_api_key) y latidos (last_heartbeat). Esta modificación establece la base para la reingeniería del orquestador, permitiendo un control de flujo robusto y la detección de tareas zombies.
+
+
+# 08/12/2025
+# CAMPUSTUDIONLINE --CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V24.md
+## EDC
+*  **Session:** Implementación de Campos de Resiliencia y Control en Modelo PendingContentTask
+*  **Description:** Se procede a modificar `orchestrator/models.py` para integrar los campos de control de fallos definidos en la auditoría forense (`global_actuation_count`, `consecutive_api_errors`, `last_api_error_at`, `last_error_api_key`, `current_step`, `last_heartbeat`). Esta modificación establece la base de datos necesaria para la posterior refactorización del orquestador, dotando a las tareas de memoria persistente frente a reinicios y bucles infinitos, y permitiendo una gestión granular de errores de API.
+

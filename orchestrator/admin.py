@@ -84,6 +84,9 @@ class AutomationSettingsAdmin(admin.ModelAdmin):
         ('Mantenimiento', {
             'fields': ('quarantine_reset_time', 'last_quarantine_reset_date')
         }),
+        ('Parámetros de Resiliencia (Hito 24)', {
+            'fields': ('max_task_actuations', 'max_consecutive_api_errors', 'zombie_task_threshold_hours')
+        }),
         ('Estado del Sistema', {
             'fields': ('last_run_status', 'last_run_timestamp', 'event_log'),
             'classes': ('collapse',)

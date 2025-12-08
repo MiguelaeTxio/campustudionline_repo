@@ -82,7 +82,9 @@
 ./orchestrator/models.py
 ./orchestrator/migrations
 ./orchestrator/migrations/0002_pendingcontenttask_unique_active_academic_task_per_subject_and_more.py
+./orchestrator/migrations/0004_automationsettings_max_consecutive_api_errors_and_more.py
 ./orchestrator/migrations/__init__.py
+./orchestrator/migrations/0003_pendingcontenttask_consecutive_api_errors_and_more.py
 ./orchestrator/migrations/0001_initial.py
 ./orchestrator/tasks.py
 ./orchestrator/admin_urls.py
@@ -414,6 +416,7 @@
 ./assessment/apps.py
 ./assessment/models.py
 ./assessment/migrations
+./assessment/migrations/0015_alter_assessment_status.py
 ./assessment/migrations/0011_auto_20251113_1540.py
 ./assessment/migrations/0002_initial.py
 ./assessment/migrations/0010_assessment_last_error_alter_assessment_status.py

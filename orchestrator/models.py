@@ -36,6 +36,10 @@ class ApiKey(models.Model):
         help_text="Marcado si la clave falla persistentemente. Una tarea diaria la liberará."
     )
     
+
+    def __str__(self):
+        return "Configuración Maestra del Sistema"
+
     class Meta:
         verbose_name = "Clave de API de Gemini"
         verbose_name_plural = "B. Claves de API de Gemini"
@@ -101,6 +105,26 @@ class AutomationSettings(models.Model):
     last_run_status = models.TextField(
         blank=True, verbose_name="Estado del Último Ciclo"
     )
+
+    # ==========================================================================
+    # HITO 24: PARÁMETROS DE RESILIENCIA CONFIGURABLES
+    # ==========================================================================
+    max_task_actuations = models.PositiveIntegerField(
+        default=20,
+        verbose_name="Umbral de Actuaciones Máximas por Tarea",
+        help_text="(Fusible Global) Número máximo de veces que el orquestador intentará iniciar una misma tarea antes de marcarla como fallo fatal."
+    )
+    max_consecutive_api_errors = models.PositiveIntegerField(
+        default=4,
+        verbose_name="Umbral de Errores de API Consecutivos",
+        help_text="(Fusible de Cuota) Número de fallos de API seguidos en una misma sección antes de poner la clave en cuarentena."
+    )
+    zombie_task_threshold_hours = models.PositiveIntegerField(
+        default=24,
+        verbose_name="Umbral de Horas para Tareas Zombie",
+        help_text="Número de horas de inactividad para que una tarea 'procesando' sea considerada zombie y purgada."
+    )
+
     event_log = models.JSONField(
         default=list, blank=True, verbose_name="Historial de Eventos del Motor"
     )
@@ -276,6 +300,46 @@ class PendingContentTask(TimeStampedModel):
     )
     last_error = models.TextField(
         blank=True, null=True, verbose_name="Último Error Fatal"
+    )
+
+    # ==========================================================================
+    # CAMPOS DE RESILIENCIA Y CONTROL DE EJECUCIÓN (HITO 24)
+    # ==========================================================================
+    global_actuation_count = models.PositiveIntegerField(
+        default=0,
+        verbose_name="Contador Global de Actuaciones",
+        help_text="Fusible físico. Cuenta las veces que el orquestador ha intentado procesar esta tarea. Si supera el límite, se aborta."
+    )
+    consecutive_api_errors = models.PositiveIntegerField(
+        default=0,
+        verbose_name="Errores Consecutivos de API",
+        help_text="Contador de fallos seguidos en llamadas a la API. Se usa para la lógica de reintento exponencial o aborto."
+    )
+    last_api_error_at = models.DateTimeField(
+        null=True,
+        blank=True,
+        verbose_name="Momento del Último Error de API",
+        help_text='Timestamp del último fallo de API para calcular ventanas de "amnistía".'
+    )
+    last_error_api_key = models.ForeignKey(
+        ApiKey,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="failed_tasks",
+        verbose_name="Última Clave de API Fallida",
+        help_text="La clave que provocó el último error, para evitar culpar a nuevas claves."
+    )
+    current_step = models.PositiveIntegerField(
+        default=0,
+        verbose_name="Paso Actual de Ejecución",
+        help_text="Puntero para reanudar la generación en el punto exacto (ej: índice del temario)."
+    )
+    last_heartbeat = models.DateTimeField(
+        null=True,
+        blank=True,
+        verbose_name="Último Latido (Heartbeat)",
+        help_text='Marca de tiempo para detectar tareas "zombies" que murieron silenciosamente.'
     )
 
     class Meta:
