@@ -692,3 +692,11 @@
 *  **Session:** Sesión de Monitorización y Mantenimiento - Fase de Estabilización
 *  **Description:** Inicio de sesión de continuidad en el hito de soporte. Tras la restauración de la lógica de asignación de cuotas de API y la resolución de la crisis de almacenamiento, el objetivo es monitorizar la estabilidad del sistema y atender nuevas solicitudes de mantenimiento o depuración que surjan.
 
+
+# 08/12/2025
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V24.md
+## MAMC
+*  **Session:** Auditoría Forense de Orquestación y Sincronización Horaria Celery-Django
+*  **Description:** Inicio de sesión de emergencia bajo protocolo de crisis. El objetivo único es realizar una auditoría forense del archivo `orchestrator/tasks.py` mediante el análisis de su historial de git (`git log -p`) para identificar la causa raíz de los bucles de reintentos y la corrupción lógica en el manejo de tiempos (`countdown`/`eta`). Se suspende cualquier generación de código hasta completar el análisis y aprobar un plan de acción.
+
