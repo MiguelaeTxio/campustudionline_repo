@@ -1,26 +1,25 @@
 # Hito de Soporte y Mantenimiento: Ruegos y Preguntas
 
-**Estado:** **IMPLEMENTACIÓN DE RESILIENCIA COMPLETADA - PENDIENTE DE VERIFICACIÓN**
+**Estado:** **EN REINGENIERÍA - DEFECTO LÓGICO EN ROTACIÓN DE CLAVES DETECTADO**
 
-## Bitácora de Sesión (08/12/2025)
-*   **Actividad:** Implementación de Modelo de Datos Blindado y Refactorización del Orquestador.
-*   **Resumen de Implementación:**
-    1.  **Modelos (`orchestrator/models.py`):**
-        *   Se han añadido los campos de resiliencia (`global_actuation_count`, `consecutive_api_errors`, `last_api_error_at`, `last_error_api_key`, `current_step`, `last_heartbeat`) al modelo `PendingContentTask`.
-        *   Se han añadido los umbrales de configuración (`max_task_actuations`, `max_consecutive_api_errors`, `zombie_task_threshold_hours`) al modelo `AutomationSettings` para permitir su ajuste desde el panel de administración.
-    2.  **Migraciones:** Se ha estabilizado por completo el sistema de migraciones del proyecto, resolviendo conflictos históricos en las aplicaciones `contenttypes`, `auth`, `admin` y `sites`, y aplicando los nuevos cambios en `orchestrator`. El sistema se encuentra ahora en un estado consistente.
-    3.  **Administración (`orchestrator/admin.py`):** Se ha corregido la interfaz de administración para `AutomationSettings`, asegurando que los nuevos parámetros de resiliencia sean visibles y editables, y solucionando errores de visualización del objeto.
-    4.  **Tareas Celery (`orchestrator/tasks.py`):**
-        *   Se ha refactorizado la tarea `generate_full_course_task` para utilizar los nuevos campos, implementando la lógica de fusible (`global_actuation_count`), reanudación de progreso (`current_step`) y gestión de errores de API basada en base de datos.
-        *   Se ha diagnosticado y corregido un fallo crítico en `global_orchestrator_task` causado por un estado de objeto obsoleto en memoria. Se ha forzado la recarga del estado de la `active_api_key` desde la base de datos (`refresh_from_db()`) para garantizar que la lógica de rotación de claves funcione con datos reales.
-*   **Diagnóstico Final:** A pesar de la implementación de múltiples correcciones lógicas y de estado, el sistema sigue sin operar como se esperaba, indicando un fallo subyacente que no ha sido resuelto.
+## Bitácora de Sesión (09/12/2025)
+*   **Actividad:** Depuración Profunda del Orquestador (Celery) y Lógica de Reintentos.
+*   **Correcciones Implementadas (`orchestrator/tasks.py`):**
+    1.  **Corrección de Silenciamiento de Excepciones:** Se solucionó el bug donde `self.retry()` era capturado por un bloque `except` genérico, matando la tarea en lugar de hibernarla.
+    2.  **Fusible Global (Circuit Breaker):** Se activó la protección contra bucles de reinicio (`global_actuation_count`), abortando tareas que superan los 20 arranques fallidos.
+    3.  **Hot-Swap (Rotación en Caliente):** Se implementó el cambio inmediato de clave ante error de cuota.
+*   **Fallo de Diseño Identificado (Ping-Pong de Claves Agotadas):**
+    *   La implementación actual del Hot-Swap rota la clave ante el *primer* fallo.
+    *   **Consecuencia Crítica:** Al rotar inmediatamente, la clave fallida nunca acumula los 4 errores consecutivos necesarios para entrar en Cuarentena.
+    *   **Resultado:** Las claves agotadas regresan al pool marcadas como "Activas", provocando que el sistema las vuelva a elegir y falle repetidamente, impidiendo que el mecanismo de Cuarentena limpie el pool de recursos inservibles.
 
 ## Hoja de Ruta (Siguiente Sesión)
 
-### 1. ANÁLISIS FORENSE DE LOGS Y CÓDIGO
-*   **Objetivo:** Determinar la causa raíz del fallo persistente del orquestador.
-*   **Pasos:**
-    1.  **Solicitud de Evidencia:** Solicitar el archivo de log de Celery (`/var/log/{username}_celery_worker.log`) y el código actual de `orchestrator/tasks.py`.
-    2.  **Análisis Exhaustivo:** Realizar una auditoría cruzada entre los mensajes de error del log y el flujo de ejecución del código para identificar la discrepancia o el punto exacto del fallo.
-    3.  **Hipótesis y Verificación:** Formular una hipótesis verificable basada en la evidencia y proponer un plan de acción empírico para confirmarla.
-    4.  **Implementación de Corrección:** Una vez confirmada la causa raíz, implementar la solución definitiva.
+### 1. CORRECCIÓN DEL MECISMO DE CUARENTENA
+*   **Objetivo:** Asegurar que las claves agotadas sean marcadas como tal antes de ser rotadas.
+*   **Acciones:**
+    1.  Modificar la lógica de `tasks.py` para que los errores de cuota se registren persistentemente en el modelo `ApiKey` (o en un contador asociado) antes de realizar el Hot-Swap.
+    2.  Garantizar que una clave solo se libere al pool si realmente funciona, y que se ponga en Cuarentena si falla, independientemente de si rotamos a otra o no.
+
+### 2. VERIFICACIÓN DE ESTABILIDAD
+*   Monitorizar que las claves agotadas pasen a estado `IS_QUARANTINED = True` automáticamente.

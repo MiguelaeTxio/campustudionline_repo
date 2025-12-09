@@ -714,3 +714,10 @@
 *  **Session:** Implementación de Campos de Resiliencia y Control en Modelo PendingContentTask
 *  **Description:** Se procede a modificar `orchestrator/models.py` para integrar los campos de control de fallos definidos en la auditoría forense (`global_actuation_count`, `consecutive_api_errors`, `last_api_error_at`, `last_error_api_key`, `current_step`, `last_heartbeat`). Esta modificación establece la base de datos necesaria para la posterior refactorización del orquestador, dotando a las tareas de memoria persistente frente a reinicios y bucles infinitos, y permitiendo una gestión granular de errores de API.
 
+# 08/12/2025
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V24.md
+## NRA
+*  **Session:** Análisis Forense del Orquestador y Depuración de Celery
+*  **Description:** Ejecución de análisis forense sobre los logs de Celery y el código fuente de `orchestrator` para identificar la causa raíz de la inoperatividad persistente. Verificación de la integridad de los datos en `PendingContentTask` y `AutomationSettings` tras las últimas migraciones. Depuración de la lógica de reanudación y gestión de errores en `generate_full_course_task`.
+

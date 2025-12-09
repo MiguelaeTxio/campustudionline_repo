@@ -1,38 +1,57 @@
-# /home/MiguelAeTxio/CampuStudiOnline/check_models.py
+import django
 import os
-import google.generativeai as genai
-import dotenv
+import sys
 
-# Cargar las variables de entorno desde el archivo .env
-dotenv.load_dotenv()
+# Configurar entorno
+sys.path.append('/home/MiguelAeTxio/PROJECTS/CampuStudiOnline')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'core.settings')
+django.setup()
 
-print("Iniciando script de diagnóstico de modelos de Gemini...")
+from orchestrator.models import PendingContentTask, AutomationSettings
 
-try:
-    # Configurar la API key desde la variable de entorno
-    api_key = os.environ.get("GEMINI_API_KEY")
-    if not api_key:
-        raise ValueError("No se pudo encontrar la variable de entorno GEMINI_API_KEY.")
+def check_integrity():
+    print("--- INICIO AUDITORÍA DE MODELOS (HITO 24) ---")
+    
+    # 1. Verificar PendingContentTask
+    print("\n[PendingContentTask] Verificando campos de resiliencia...")
+    task_fields = [f.name for f in PendingContentTask._meta.get_fields()]
+    required_task_fields = [
+        'global_actuation_count', 
+        'consecutive_api_errors', 
+        'last_api_error_at', 
+        'last_error_api_key', 
+        'current_step', 
+        'last_heartbeat'
+    ]
+    
+    all_ok = True
+    for field in required_task_fields:
+        if field in task_fields:
+            print(f"  OK: Campo '{field}' detectado.")
+        else:
+            print(f"  ERROR: Campo '{field}' NO detectado.")
+            all_ok = False
+            
+    # 2. Verificar AutomationSettings
+    print("\n[AutomationSettings] Verificando parámetros de configuración...")
+    settings_fields = [f.name for f in AutomationSettings._meta.get_fields()]
+    required_settings_fields = [
+        'max_task_actuations',
+        'max_consecutive_api_errors',
+        'zombie_task_threshold_hours'
+    ]
+    
+    for field in required_settings_fields:
+        if field in settings_fields:
+            print(f"  OK: Campo '{field}' detectado.")
+        else:
+            print(f"  ERROR: Campo '{field}' NO detectado.")
+            all_ok = False
 
-    genai.configure(api_key=api_key)
-    print("API de Gemini configurada con éxito.")
-
-    print("\nModelos disponibles que soportan 'generateContent':")
-    print("--------------------------------------------------")
-
-    count = 0
-    # Iterar sobre todos los modelos y filtrar los que necesitamos
-    for m in genai.list_models():
-        if "generateContent" in m.supported_generation_methods:
-            print(f"- {m.name}")
-            count += 1
-
-    if count == 0:
-        print("No se encontraron modelos compatibles con 'generateContent'.")
+    if all_ok:
+        print("\n>>> INTEGRIDAD DE ESQUEMA VERIFICADA: TODOS LOS CAMPOS PRESENTES.")
     else:
-        print(f"\nTotal de modelos compatibles encontrados: {count}")
+        print("\n>>> FALLO DE INTEGRIDAD: FALTAN CAMPOS.")
 
-except Exception as e:
-    print(f"\n[ERROR] Ocurrió un error durante la ejecución: {e}")
-
-print("\nScript de diagnóstico finalizado.")
+if __name__ == "__main__":
+    check_integrity()

@@ -9,7 +9,7 @@ from datetime import datetime, timedelta
 import pytz
 
 from celery import shared_task
-from celery.exceptions import MaxRetriesExceededError
+from celery.exceptions import MaxRetriesExceededError, Retry
 from django import db
 from django.db import transaction
 from django.db.models import Count, Q, F
@@ -641,11 +641,40 @@ def generate_full_course_task(self, task_id: str):
         automation_settings = AutomationSettings.load()
         api_key = automation_settings.active_api_key
         if not api_key or not api_key.is_enabled or api_key.is_quarantined:
-            log_task_event(task_id, f"ESTADO DEL SISTEMA: La clave activa ('{api_key.name if api_key else 'N/A'}') no está disponible. Reintentando en 15 minutos.", is_error=True)
-            # [FIX V24.9] Curación: Hard Wait 62s antes de reintentar
-            time.sleep(62)
-            raise self.retry(countdown=900)
+            # [FIX HITO 24] HOT-SWAP: Intentar rotación inmediata en lugar de hibernar
+            log_task_event(task_id, f"Clave activa ('{api_key.name if api_key else 'N/A'}') inválida. Buscando reemplazo inmediato...")
+            
+            # Buscar siguiente clave disponible
+            next_key = ApiKey.objects.filter(is_enabled=True, is_quarantined=False).order_by('id').first()
+            
+            if next_key:
+                # Si hay clave, la cogemos, actualizamos el global y SEGUIMOS TRABAJANDO
+                automation_settings.active_api_key = next_key
+                automation_settings.save(update_fields=['active_api_key'])
+                api_key = next_key
+                log_task_event(task_id, f"HOT-SWAP EXITOSO: Cambiado a clave '{api_key.name}'. Continuando ejecución sin pausa.")
+            else:
+                # Solo si NO hay claves, hibernamos
+                log_task_event(task_id, "HIBERNACIÓN REAL: Pool agotado. Reintentando en 15 minutos.", is_error=True)
+                time.sleep(62)
+                raise self.retry(countdown=900)
         task = PendingContentTask.objects.select_related('subject__academic_year__degree__branch__university', 'subject__content_hash_family').get(id=task_id)
+        
+        # [FIX HITO 24] FUSIBLE GLOBAL: Protección contra bucles de reinicio
+        # Incrementamos el contador de actuaciones cada vez que el worker toca la tarea.
+        # Usamos update() directo para evitar race conditions en el contador, luego refrescamos.
+        PendingContentTask.objects.filter(id=task_id).update(global_actuation_count=F('global_actuation_count') + 1)
+        task.refresh_from_db(fields=['global_actuation_count'])
+        
+        limit_actuations = automation_settings.max_task_actuations
+        if task.global_actuation_count > limit_actuations:
+            msg = f"FUSIBLE FUNDIDO: La tarea ha superado el límite de seguridad ({task.global_actuation_count}/{limit_actuations} arranques). Posible bucle infinito o spam de cola. Se aborta ejecución."
+            log_task_event(task_id, msg, is_error=True)
+            task.status = PendingContentTask.StatusChoices.FAILED_FATAL
+            task.notes = f"{task.notes} | {msg}"
+            task.save(update_fields=["status", "notes"])
+            return
+
         if task.subject and task.subject.content_hash_family:
             family = task.subject.content_hash_family
             log_task_event(task_id, f"GUARDIÁN: Verificando Familia de Contenido (Hash: {family.hash[:12]}...) para la asignatura '{task.subject.name}'.")
@@ -870,12 +899,32 @@ def generate_full_course_task(self, task_id: str):
                 return
 
             else:
-                log_task_event(task.id, f"Posible error de cuota diaria\nIntento {current_consecutive_fails}/4")
-                # Usamos un max_retries infinito en Celery para que no mate la tarea, 
-                # ya que el control real lo hacemos nosotros con current_consecutive_fails
-                # [FIX V24.10] Hard Wait (62s) por Timezone Skew
-                time.sleep(62)
-                raise self.retry(exc=e, countdown=70, max_retries=None)
+                log_task_event(task.id, f"Error de cuota (Intento {current_consecutive_fails}/4). Iniciando Protocolo de Rotación de Emergencia...")
+                
+                # [FIX HITO 24] HOT-SWAP EN EXCEPCIÓN:
+                # No esperar a 4 fallos. Si falla una vez, intentamos rotar para no perder tiempo durmiendo.
+                # Excluimos la clave actual (api_key) porque sabemos que está fallando.
+                next_key = ApiKey.objects.filter(is_enabled=True, is_quarantined=False).exclude(id=api_key.id).order_by('id').first()
+                
+                if next_key:
+                    # 1. Actualizar configuración global
+                    automation_settings = AutomationSettings.load()
+                    automation_settings.active_api_key = next_key
+                    automation_settings.save(update_fields=['active_api_key'])
+                    
+                    # 2. Loggear éxito
+                    log_task_event(task.id, f"ROTACIÓN DE EMERGENCIA EXITOSA: Cambiado de '{api_key.name}' a '{next_key.name}'. Reiniciando tarea inmediatamente.")
+                    
+                    # 3. Reiniciar tarea INMEDIATAMENTE (countdown=2s para dar tiempo a DB propagation)
+                    # Nota: Al reiniciar, la tarea leerá la nueva active_api_key del Global Settings.
+                    raise self.retry(countdown=2, max_retries=None)
+                else:
+                    # Si no hay más claves, entonces sí, dormimos.
+                    log_task_event(task.id, f"NO HAY REEMPLAZOS DISPONIBLES. Durmiendo 62s antes de reintentar... (Intento {current_consecutive_fails}/4)")
+                    time.sleep(62)
+                    raise self.retry(exc=e, countdown=70, max_retries=None)
+    except Retry:
+        raise
     except Exception as e:
         if task:
             error_traceback = traceback.format_exc()
