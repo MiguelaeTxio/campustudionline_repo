@@ -35,6 +35,11 @@ class ApiKey(models.Model):
         verbose_name="En Cuarentena por Límite de Cuota",
         help_text="Marcado si la clave falla persistentemente. Una tarea diaria la liberará."
     )
+    consecutive_failures = models.PositiveIntegerField(
+        default=0,
+        verbose_name="Fallos Consecutivos",
+        help_text="Contador de errores de cuota (ResourceExhausted) para gestionar la cuarentena."
+    )
     
 
     def __str__(self):

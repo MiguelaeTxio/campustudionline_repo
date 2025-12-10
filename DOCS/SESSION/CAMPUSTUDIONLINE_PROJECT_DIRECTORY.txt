@@ -83,6 +83,7 @@
 ./orchestrator/migrations
 ./orchestrator/migrations/0002_pendingcontenttask_unique_active_academic_task_per_subject_and_more.py
 ./orchestrator/migrations/0004_automationsettings_max_consecutive_api_errors_and_more.py
+./orchestrator/migrations/0005_apikey_consecutive_failures.py
 ./orchestrator/migrations/__init__.py
 ./orchestrator/migrations/0003_pendingcontenttask_consecutive_api_errors_and_more.py
 ./orchestrator/migrations/0001_initial.py

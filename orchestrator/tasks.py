@@ -11,7 +11,7 @@ import pytz
 from celery import shared_task
 from celery.exceptions import MaxRetriesExceededError, Retry
 from django import db
-from django.db import transaction
+from django.db import transaction, OperationalError, InterfaceError
 from django.db.models import Count, Q, F
 from django.utils import timezone
 from django.urls import reverse
@@ -630,338 +630,335 @@ def global_orchestrator_task(self):
     finally:
         db.close_old_connections()
 
+
+
+
 @shared_task(bind=True, time_limit=21600, acks_late=True, rate_limit='12/m')
-def generate_full_course_task(self, task_id: str):
+def generate_full_course_task(self, task_id):
     db.close_old_connections()
-    logger.info(f"[V20 REFACTOR] Iniciando Tarea {task_id}, Intento: {self.request.retries + 1}")
+    logger.info(f"[V24.13 ULTRA-BLINDADO] Iniciando Tarea {task_id}.")
     task = None
     api_key = None
     try:
-        time.sleep(10)
+        # --- BLOQUE DE INICIALIZACIÓN Y FUSIBLE ---
+        time.sleep(2)
         automation_settings = AutomationSettings.load()
         api_key = automation_settings.active_api_key
+        
         if not api_key or not api_key.is_enabled or api_key.is_quarantined:
-            # [FIX HITO 24] HOT-SWAP: Intentar rotación inmediata en lugar de hibernar
-            log_task_event(task_id, f"Clave activa ('{api_key.name if api_key else 'N/A'}') inválida. Buscando reemplazo inmediato...")
-            
-            # Buscar siguiente clave disponible
-            next_key = ApiKey.objects.filter(is_enabled=True, is_quarantined=False).order_by('id').first()
-            
-            if next_key:
-                # Si hay clave, la cogemos, actualizamos el global y SEGUIMOS TRABAJANDO
-                automation_settings.active_api_key = next_key
-                automation_settings.save(update_fields=['active_api_key'])
-                api_key = next_key
-                log_task_event(task_id, f"HOT-SWAP EXITOSO: Cambiado a clave '{api_key.name}'. Continuando ejecución sin pausa.")
-            else:
-                # Solo si NO hay claves, hibernamos
-                log_task_event(task_id, "HIBERNACIÓN REAL: Pool agotado. Reintentando en 15 minutos.", is_error=True)
-                time.sleep(62)
-                raise self.retry(countdown=900)
+             next_key = ApiKey.objects.filter(is_enabled=True, is_quarantined=False).order_by('id').first()
+             if next_key:
+                 automation_settings.active_api_key = next_key
+                 automation_settings.save(update_fields=['active_api_key'])
+                 api_key = next_key
+             else:
+                 log_task_event(task_id, "HIBERNACIÓN: No hay claves disponibles al inicio.", is_error=True)
+                 time.sleep(60)
+                 raise self.retry(countdown=900)
+
         task = PendingContentTask.objects.select_related('subject__academic_year__degree__branch__university', 'subject__content_hash_family').get(id=task_id)
         
-        # [FIX HITO 24] FUSIBLE GLOBAL: Protección contra bucles de reinicio
-        # Incrementamos el contador de actuaciones cada vez que el worker toca la tarea.
-        # Usamos update() directo para evitar race conditions en el contador, luego refrescamos.
         PendingContentTask.objects.filter(id=task_id).update(global_actuation_count=F('global_actuation_count') + 1)
         task.refresh_from_db(fields=['global_actuation_count'])
         
         limit_actuations = automation_settings.max_task_actuations
         if task.global_actuation_count > limit_actuations:
-            msg = f"FUSIBLE FUNDIDO: La tarea ha superado el límite de seguridad ({task.global_actuation_count}/{limit_actuations} arranques). Posible bucle infinito o spam de cola. Se aborta ejecución."
+            msg = f"FUSIBLE FUNDIDO: {task.global_actuation_count}/{limit_actuations}."
             log_task_event(task_id, msg, is_error=True)
             task.status = PendingContentTask.StatusChoices.FAILED_FATAL
             task.notes = f"{task.notes} | {msg}"
             task.save(update_fields=["status", "notes"])
             return
 
-        if task.subject and task.subject.content_hash_family:
-            family = task.subject.content_hash_family
-            log_task_event(task_id, f"GUARDIÁN: Verificando Familia de Contenido (Hash: {family.hash[:12]}...) para la asignatura '{task.subject.name}'.")
-            if family.content_material:
-                existing_material = family.content_material
-                log_task_event(task_id, f"GUARDIÁN: La familia ya tiene material existente (ID: {existing_material.id}). Vinculando esta asignatura y finalizando.")
-                with transaction.atomic():
-                    existing_material.subject.add(task.subject)
-                    task_to_complete = PendingContentTask.objects.select_for_update().get(id=task_id)
-                    task_to_complete.status = PendingContentTask.StatusChoices.COMPLETED
-                    task_to_complete.content_material = existing_material
-                    task_to_complete.notes = "Tarea completada por el Guardián de Familia. Se encontró y vinculó contenido preexistente a través de la familia."
-                    task_to_complete.save(update_fields=["status", "content_material", "notes", "updated_at"])
-                log_task_event(task_id, "GUARDIÁN: Vínculo asegurado y tarea marcada como completada. Ejecución finalizada.")
-                return
         if not task.log_file_path:
             log_dir = os.path.join(settings.BASE_DIR, "logs", "content_automation")
             os.makedirs(log_dir, exist_ok=True)
             task.log_file_path = os.path.join(log_dir, f"task_{task_id}.log")
             task.save(update_fields=["log_file_path"])
-        log_task_event(task_id, f"Usando clave de API activa: '{api_key.name}'.")
+
         if task.status in [PendingContentTask.StatusChoices.PENDING, PendingContentTask.StatusChoices.FAILED_RETRYABLE, PendingContentTask.StatusChoices.FAILED_QUOTA]:
-            # [FIX V24.6] Tabula Rasa: Al iniciar/reiniciar, el contador de errores DEBE ser 0.
-            sc = task.structured_content
-            if sc.get("consecutive_quota_errors", 0) > 0:
-                sc["consecutive_quota_errors"] = 0
-                task.structured_content = sc
-                # Guardamos status y contenido estructurado a la vez
-                task.status = PendingContentTask.StatusChoices.PROCESSING
-                task.save(update_fields=["status", "structured_content"])
-                log_task_event(task_id, "Tarea iniciada (Contador reseteado). Estado cambiado a 'Procesando'.")
-            else:
-                task.status = PendingContentTask.StatusChoices.PROCESSING
-                task.save(update_fields=["status"])
-                log_task_event(task_id, "Tarea iniciada. Estado cambiado a 'Procesando'.")
-        if task.status == PendingContentTask.StatusChoices.PAUSED:
-            logger.info(f"Tarea {task_id} está en PAUSA. Re-encolando para futura comprobación.")
-            self.retry(countdown=600)
-            return
+            task.status = PendingContentTask.StatusChoices.PROCESSING
+            task.save(update_fields=["status"])
+            log_task_event(task_id, "Tarea iniciada (Status -> PROCESSING).")
+
+        # --- FASE 1: GENERACIÓN DE PLAN ---
         if not task.structured_content or "master_schema" not in task.structured_content:
-            log_task_event(task_id, "Fase de Inicialización: No se encontró plan de trabajo. Generándolo ahora.")
-            manual_classification = task.structured_content.get('manual_classification')
-            course_title = task.course_title or (task.subject.name if task.subject else "Curso sin título")
-            if task.subject:
-                topic_description = task.subject.name
-                degree = task.subject.academic_year.degree
-                academic_context = (f"- Universidad: {degree.branch.university.name}\n- Rama: {degree.branch.name}\n- Titulación: {degree.name} ({degree.get_degree_type_display()})")
-                learning_objectives = json.dumps(task.subject.learning_objectives, ensure_ascii=False) if task.subject.learning_objectives else ""
-                syllabus = json.dumps(task.subject.course_content_outline, ensure_ascii=False) if task.subject.course_content_outline else ""
-            else:
-                topic_description = task.prompt_text
-                academic_context = ""
-                learning_objectives = ""
-                syllabus = ""
-            metadata_prompt_base = generate_course_metadata_prompt(topic_description, academic_context)
-            metadata_prompt = (f"{metadata_prompt_base}\n\n" "IMPORTANTE: Devuelve la respuesta exclusivamente como un bloque de código JSON " "dentro de un bloque ```json ... ```. No incluyas ningún otro texto fuera de este bloque.")
-            success, response_text, _ = generate_text_content(metadata_prompt, api_key=api_key, task_id=task_id)
-            if not success:
-                raise ResourceExhausted(f"Fallo crítico en inicialización al generar metdatos: {response_text}")
-            cleaned_json_str = clean_json_response(response_text)
-            metadata = json.loads(cleaned_json_str)
-            classification_data = metadata.get("clasificacion_intelectual", {})
-            if not all(classification_data.get(key) for key in ["categoria_general", "subcategoria", "palabras_clave"]):
-                raise ContentGenerationError("Clasificación intelectual inválida o incompleta por parte de la IA.")
-            schema_prompt = generate_master_schema_prompt(topic_description, academic_context, learning_objectives, syllabus)
-            success, schema_or_error, _ = generate_text_content(schema_prompt, api_key=api_key, task_id=task_id)
-            if not success:
-                raise ResourceExhausted(f"Fallo crítico en inicialización al generar esquema: {schema_or_error}")
-            master_schema_md = schema_or_error
-            section_count = len(_parse_master_schema(master_schema_md))
-            task.section_count = section_count
-            new_structured_content = {"metadata": metadata, "master_schema": master_schema_md, "academic_context": academic_context}
-            if manual_classification:
-                new_structured_content['manual_classification'] = manual_classification
-                log_task_event(task_id, "Clasificación manual del usuario preservada durante la inicialización.")
-            task.structured_content = new_structured_content
-            task.save(update_fields=["structured_content", "section_count"])
-            log_task_event(task_id, f"Plan de trabajo generado y guardado. Secciones: {section_count}.")
+            log_task_event(task_id, "Generando Plan de Trabajo...")
+            
+            while True: 
+                task.refresh_from_db(fields=["status"])
+                if task.status == PendingContentTask.StatusChoices.PAUSED:
+                    log_task_event(task_id, "PAUSA ADMIN DETECTADA.")
+                    self.retry(countdown=600)
+                    return
+
+                automation_settings = AutomationSettings.load()
+                api_key = automation_settings.active_api_key
+                if not api_key or not api_key.is_enabled or api_key.is_quarantined:
+                     api_key = ApiKey.objects.filter(is_enabled=True, is_quarantined=False).order_by('id').first()
+                     if api_key:
+                         automation_settings.active_api_key = api_key
+                         automation_settings.save(update_fields=['active_api_key'])
+                     else:
+                         log_task_event(task_id, "SIN CLAVES (INIT). Esperando...", is_error=True)
+                         time.sleep(300)
+                         continue
+
+                course_title = task.course_title or (task.subject.name if task.subject else "Curso sin título")
+                if task.subject:
+                    topic_description = task.subject.name
+                    degree = task.subject.academic_year.degree
+                    academic_context = (f"- Universidad: {degree.branch.university.name}\n- Rama: {degree.branch.name}\n- Titulación: {degree.name}")
+                    learning_objectives = json.dumps(task.subject.learning_objectives, ensure_ascii=False) if task.subject.learning_objectives else ""
+                    syllabus = json.dumps(task.subject.course_content_outline, ensure_ascii=False) if task.subject.course_content_outline else ""
+                else:
+                    topic_description = task.prompt_text
+                    academic_context = ""
+                    learning_objectives = ""
+                    syllabus = ""
+                    
+                metadata_prompt = generate_course_metadata_prompt(topic_description, academic_context) + "\n\nJSON Only."
+                
+                # --- CAPTURA DE EXCEPCIONES LOCAL ---
+                try:
+                    success, response_text, _ = generate_text_content(metadata_prompt, api_key=api_key, task_id=task_id)
+                except Exception as ex:
+                    success = False
+                    response_text = str(ex)
+
+                if not success:
+                    error_str = str(response_text)
+                    is_quota = "429" in error_str or "Resource" in error_str or "Quota" in error_str
+                    
+                    if is_quota:
+                        api_key.refresh_from_db()
+                        api_key.consecutive_failures += 1
+                        api_key.save(update_fields=["consecutive_failures"])
+                        if api_key.consecutive_failures >= 4:
+                            api_key.is_quarantined = True
+                            api_key.save(update_fields=["is_quarantined"])
+                            _request_quarantine_via_mailbox(api_key)
+                            next_k = ApiKey.objects.filter(is_enabled=True, is_quarantined=False).exclude(id=api_key.id).first()
+                            if next_k:
+                                automation_settings.active_api_key = next_k
+                                automation_settings.save(update_fields=['active_api_key'])
+                                log_task_event(task_id, f"ROTACIÓN (INIT): Nueva clave {next_k.name}.")
+                            else:
+                                log_task_event(task_id, "POOL AGOTADO TRAS ROTACIÓN. Esperando...", is_error=True)
+                                time.sleep(60)
+                        else:
+                            log_task_event(task_id, f"STRIKE INIT {api_key.consecutive_failures}/4. Esperando 60s...", is_error=True)
+                            time.sleep(60)
+                        continue 
+                    else:
+                        # Error no cuota: esperamos un poco y reintentamos localmente para no matar la tarea
+                        log_task_event(task_id, f"ERROR INIT NO-CUOTA: {error_str}. Reintentando en 30s...", is_error=True)
+                        time.sleep(30)
+                        continue
+
+                cleaned_json_str = clean_json_response(response_text)
+                metadata = json.loads(cleaned_json_str)
+                
+                schema_prompt = generate_master_schema_prompt(topic_description, academic_context, learning_objectives, syllabus)
+                
+                try:
+                    success, schema_or_error, _ = generate_text_content(schema_prompt, api_key=api_key, task_id=task_id)
+                except Exception as ex:
+                    success = False
+                    schema_or_error = str(ex)
+                
+                if not success:
+                    error_str = str(schema_or_error)
+                    is_quota = "429" in error_str or "Resource" in error_str or "Quota" in error_str
+                    
+                    if is_quota:
+                        api_key.refresh_from_db()
+                        api_key.consecutive_failures += 1
+                        api_key.save(update_fields=["consecutive_failures"])
+                        if api_key.consecutive_failures >= 4:
+                            api_key.is_quarantined = True
+                            api_key.save(update_fields=["is_quarantined"])
+                            _request_quarantine_via_mailbox(api_key)
+                            next_k = ApiKey.objects.filter(is_enabled=True, is_quarantined=False).exclude(id=api_key.id).first()
+                            if next_k:
+                                automation_settings.active_api_key = next_k
+                                automation_settings.save(update_fields=['active_api_key'])
+                                log_task_event(task_id, f"ROTACIÓN (INIT): Nueva clave {next_k.name}.")
+                            else:
+                                time.sleep(60)
+                        else:
+                            log_task_event(task_id, f"STRIKE INIT {api_key.consecutive_failures}/4. Esperando 60s...", is_error=True)
+                            time.sleep(60)
+                        continue 
+                    else:
+                        log_task_event(task_id, f"ERROR INIT ESQUEMA NO-CUOTA: {error_str}. Reintentando en 30s...", is_error=True)
+                        time.sleep(30)
+                        continue
+                
+                if api_key.consecutive_failures > 0:
+                    api_key.consecutive_failures = 0
+                    api_key.save(update_fields=['consecutive_failures'])
+
+                master_schema_md = schema_or_error
+                section_count = len(_parse_master_schema(master_schema_md))
+                
+                new_structured_content = {"metadata": metadata, "master_schema": master_schema_md, "academic_context": academic_context}
+                if task.structured_content.get('manual_classification'):
+                    new_structured_content['manual_classification'] = task.structured_content['manual_classification']
+                    
+                task.section_count = section_count
+                task.structured_content = new_structured_content
+                task.save(update_fields=["structured_content", "section_count"])
+                log_task_event(task_id, f"Plan generado: {section_count} secciones.")
+                break 
+
+        # --- FASE 2: GENERACIÓN DE CHUNKS ---
         task.refresh_from_db()
         parsed_schema = _parse_master_schema(task.structured_content["master_schema"])
+        
         for index, (_, title) in enumerate(parsed_schema):
             db.close_old_connections()
             order = index + 1
+            
             if GeneratedContentChunk.objects.filter(task=task, order=order).exists():
                 continue
-            task.refresh_from_db(fields=["status"])
-            if task.status == PendingContentTask.StatusChoices.PAUSED:
-                log_task_event(task_id, "Tarea pausada por un administrador. Guardando progreso y saliendo.")
-                self.retry(countdown=600)
-                return
-            academic_context = task.structured_content.get("academic_context", "")
-            initial_prompt = generate_atomic_content_prompt(course_title=task.course_title or task.subject.name, section_title=title, master_schema=task.structured_content["master_schema"], academic_context=academic_context)
-            log_task_event(task_id, f'Procesando sección {order}/{len(parsed_schema)}: "{title}"')
-            log_task_event(task_id, "Enviando prompt atómico a la API.")
-            success, content_or_error, _ = generate_text_content(initial_prompt, api_key=api_key, task_id=task_id)
-            if not success:
-                 raise ResourceExhausted(f"Fallo en la generación de la sección: {content_or_error}")
-            content_text, sources_text = _parse_markdown_with_separator(content_or_error)
-            GeneratedContentChunk.objects.create(task=task, order=order, content=content_text, ai_sources=sources_text)
-            log_task_event(task_id, f"Fragmento {order}/{len(parsed_schema)} guardado.")
-            # [FIX V24.4] RESETEO INCONDICIONAL (BRUTE FORCE)
-            task.refresh_from_db(fields=["structured_content"])
-            sc = task.structured_content
-            
-            # Capturamos valor previo para confirmar en el log si hubo limpieza
-            prev_errors = sc.get('consecutive_quota_errors', 0)
-            
-            # ASIGNACIÓN DIRECTA A CERO SIEMPRE QUE HAYA ÉXITO
-            sc["consecutive_quota_errors"] = 0
-            task.structured_content = sc
-            task.save(update_fields=["structured_content"])
-            
-            # Solo ensuciamos el log si realmente veníamos de un error, para confirmar el reset
-            if prev_errors > 0:
-                log_task_event(task_id, f"Recuperado de error de cuota.\nReseteo ejecutado.\nValor anterior: {prev_errors}\nValor actual: {sc['consecutive_quota_errors']}/4")
-            # [FIX V24.9] Prevención: 5s entre peticiones
-            # [FIX V24.10] Rate Limit: 5s pausa = max 12 RPM (<15 limit)
-            time.sleep(5)
+
+            while True:
+                task.refresh_from_db(fields=["status"])
+                if task.status == PendingContentTask.StatusChoices.PAUSED:
+                    log_task_event(task_id, "PAUSA ADMIN DETECTADA.")
+                    self.retry(countdown=600)
+                    return
+
+                automation_settings = AutomationSettings.load()
+                api_key = automation_settings.active_api_key
+                
+                if not api_key or not api_key.is_enabled or api_key.is_quarantined:
+                     api_key = ApiKey.objects.filter(is_enabled=True, is_quarantined=False).order_by('id').first()
+                     if api_key:
+                         automation_settings.active_api_key = api_key
+                         automation_settings.save(update_fields=['active_api_key'])
+                     else:
+                         log_task_event(task_id, "SIN CLAVES. Esperando...", is_error=True)
+                         time.sleep(300)
+                         continue
+
+                academic_context = task.structured_content.get("academic_context", "")
+                initial_prompt = generate_atomic_content_prompt(
+                    course_title=task.course_title or task.subject.name, 
+                    section_title=title, 
+                    master_schema=task.structured_content["master_schema"], 
+                    academic_context=academic_context
+                )
+                
+                log_task_event(task_id, f'Generando {order}/{len(parsed_schema)}: "{title}" (Key: {api_key.name})')
+
+                # --- CAPTURA DE EXCEPCIONES LOCAL ---
+                try:
+                    success, content_or_error, _ = generate_text_content(initial_prompt, api_key=api_key, task_id=task_id)
+                except Exception as ex:
+                    success = False
+                    content_or_error = str(ex)
+
+                if success:
+                    content_text, sources_text = _parse_markdown_with_separator(content_or_error)
+                    GeneratedContentChunk.objects.create(task=task, order=order, content=content_text, ai_sources=sources_text)
+                    log_task_event(task_id, f"Sección {order} guardada OK.")
+                    
+                    if api_key.consecutive_failures > 0:
+                        log_task_event(task_id, f"CLAVE RECUPERADA: {api_key.name} (Reset contador).")
+                        api_key.consecutive_failures = 0
+                        api_key.save(update_fields=['consecutive_failures'])
+                    
+                    time.sleep(5)
+                    break 
+
+                else:
+                    error_str = str(content_or_error)
+                    is_quota = "429" in error_str or "Resource" in error_str or "Quota" in error_str
+                    
+                    if is_quota:
+                        api_key.refresh_from_db()
+                        api_key.consecutive_failures += 1
+                        api_key.save(update_fields=["consecutive_failures"])
+                        fails = api_key.consecutive_failures
+                        if fails >= 4:
+                            log_task_event(task_id, f"CLAVE AGOTADA ({fails} fallos): {api_key.name}. Rotando...", is_error=True)
+                            api_key.is_quarantined = True
+                            api_key.save(update_fields=["is_quarantined"])
+                            _request_quarantine_via_mailbox(api_key)
+                            next_k = ApiKey.objects.filter(is_enabled=True, is_quarantined=False).exclude(id=api_key.id).first()
+                            if next_k:
+                                automation_settings.active_api_key = next_k
+                                automation_settings.save(update_fields=['active_api_key'])
+                                log_task_event(task_id, f"ROTACIÓN OK: Nueva clave {next_k.name}.")
+                            else:
+                                log_task_event(task_id, "POOL AGOTADO TRAS ROTACIÓN. Esperando...", is_error=True)
+                                time.sleep(60)
+                        else:
+                            log_task_event(task_id, f"STRIKE {fails}/4 ({api_key.name}). Esperando 60s...", is_error=True)
+                            time.sleep(60)
+                    else:
+                        log_task_event(task_id, f"ERROR CHUNK NO-CUOTA: {error_str}. Reintentando en 30s.", is_error=True)
+                        time.sleep(30)
+
+        # --- FINALIZACIÓN ---
         task.refresh_from_db()
-        if task.content_chunks.count() == len(parsed_schema):
-            log_task_event(task_id, "Ensamblaje final.")
+        if task.content_chunks.count() >= len(parsed_schema):
+            log_task_event(task_id, "Ensamblando curso final...")
             final_course_title = task.subject.name if task.subject else task.course_title
             final_markdown = _assemble_final_markdown_from_chunks(final_course_title, task.structured_content["metadata"], task.structured_content["master_schema"], list(task.content_chunks.all()))
-            log_task_event(task_id, "Iniciando fase de clasificación de contenido.")
-            manual_classification = task.structured_content.get('manual_classification')
             
-            # [REPARACIÓN] Intentar recuperar clasificación del material vinculado si falta en el JSON
-            if not task.subject and not manual_classification and task.content_material:
-                log_task_event(task_id, "RECUPERACIÓN: Usando clasificación del Material de Contenido vinculado.")
-                manual_classification = {
-                    'master_category_id': str(task.content_material.master_category.id),
-                    'sub_category_id': str(task.content_material.sub_category.id) if task.content_material.sub_category else None
-                }
-
-            if task.subject:
-                log_task_event(task_id, "Clasificación académica: Asignando contenido a asignatura oficial.")
-                master_category, sub_category = None, None
-            elif manual_classification:
-                log_task_event(task_id, "Clasificación MANUAL para contenido libre iniciada.")
-                master_category = FreeContentMasterCategory.objects.get(id=manual_classification['master_category_id'])
-                sub_category = None
-                if manual_classification.get('sub_category_id'):
-                    sub_category = FreeContentSubCategory.objects.get(id=manual_classification['sub_category_id'])
-            else:
-                raise ContentGenerationError("Estado de tarea anómalo: Contenido libre sin clasificación manual.")
+            master_category, sub_category = None, None
+            manual = task.structured_content.get('manual_classification')
+            if task.subject: pass 
+            elif manual:
+                try:
+                    master_category = FreeContentMasterCategory.objects.get(id=manual['master_category_id'])
+                    if manual.get('sub_category_id'): sub_category = FreeContentSubCategory.objects.get(id=manual['sub_category_id'])
+                except: pass
+            
             with transaction.atomic():
                 task_final = PendingContentTask.objects.select_for_update().get(id=task_id)
                 is_free = task_final.subject is None
-                
-                # [FIX DEDUP] Reutilizar material existente si la tarea ya lo tiene vinculado (creado por la vista)
                 if task_final.content_material:
-                    log_task_event(task_id, f"Actualizando material existente (ID: {task_final.content_material.id}) en lugar de crear uno nuevo.")
-                    new_content = task_final.content_material
-                    new_content.title = final_course_title
-                    new_content.short_description = task_final.structured_content["metadata"].get("descripcion_corta", "")
-                    new_content.markdown_content = final_markdown
-                    new_content.master_category = master_category
-                    new_content.sub_category = sub_category
-                    new_content.creator = task_final.assigned_to
-                    new_content.is_free_content = is_free
-                    new_content.is_public = True  # [FIX] Asegurar visibilidad al finalizar
-                    new_content.save()
+                    nm = task_final.content_material
+                    nm.markdown_content = final_markdown
+                    nm.save()
                 else:
-                    log_task_event(task_id, "Creando nuevo material de contenido.")
-                    new_content = ContentMaterial.objects.create(
-                        title=final_course_title, 
-                        short_description=task_final.structured_content["metadata"].get("descripcion_corta", ""), 
-                        markdown_content=final_markdown, 
-                        master_category=master_category, 
-                        sub_category=sub_category, 
-                        creator=task_final.assigned_to, 
-                        is_free_content=is_free,
-                        is_public=True  # [FIX] Asegurar visibilidad
-                    )
-                if not is_free:
-                    family = task_final.subject.content_hash_family
-                    if family:
-                        log_task_event(task_id, f"Vinculando nuevo contenido a la Familia Hash {family.hash[:12]}...")
-                        family.content_material = new_content
-                        family.save(update_fields=['content_material'])
-                        all_subjects_in_family = family.subjects.all()
-                        count = all_subjects_in_family.count()
-                        new_content.subject.add(*all_subjects_in_family)
-                        log_task_event(task_id, f"VINCULACIÓN POR FAMILIA: Contenido vinculado a la familia y a sus {count} asignatura(s) miembro.")
-                    else:
-                        log_task_event(task_id, f"ADVERTENCIA: La asignatura '{task_final.subject.name}' no tiene familia. Vinculando solo a esta asignatura.", "WARNING")
-                        new_content.subject.add(task_final.subject)
-                else:
-                    log_task_event(task_id, "Contenido libre creado, no se vincula a ninguna asignatura académica.")
-                task_final.content_material = new_content
+                    nm = ContentMaterial.objects.create(title=final_course_title, short_description=task_final.structured_content["metadata"].get("descripcion_corta", ""), markdown_content=final_markdown, master_category=master_category, sub_category=sub_category, creator=task_final.assigned_to, is_free_content=is_free, is_public=True)
+                if not is_free and task_final.subject:
+                     fam = task_final.subject.content_hash_family
+                     if fam: 
+                         fam.content_material = nm
+                         fam.save()
+                         nm.subject.add(*fam.subjects.all())
+                     else:
+                         nm.subject.add(task_final.subject)
+                task_final.content_material = nm
                 task_final.status = PendingContentTask.StatusChoices.COMPLETED
                 task_final.save(update_fields=["status", "content_material"])
-            _send_completion_notifications(new_content)
-        else:
-            raise ContentGenerationError("Proceso incompleto, no se generaron todas las secciones.")
-    except ResourceExhausted as e:
-        if task and api_key:
-            # [FIX V24.1] Lógica de Cuota Inteligente: Solo cuarentena si los fallos son CONSECUTIVOS
-            task.refresh_from_db()
-            sc = task.structured_content
-            # Inicializar si no existe
-            current_consecutive_fails = sc.get('consecutive_quota_errors', 0) + 1
-            sc["consecutive_quota_errors"] = current_consecutive_fails
-            task.structured_content = sc
-            task.save(update_fields=["structured_content"])
+            _send_completion_notifications(nm)
+            log_task_event(task_id, "TAREA COMPLETADA EXITOSAMENTE.")
 
-            # Umbral de tolerancia (4 intentos consecutivos fallidos = Bloqueo real)
-            max_consecutive_fails = 4
-            
-            if current_consecutive_fails >= max_consecutive_fails:
-                log_task_event(task.id, f"CUOTA DIARIA CONFIRMADA: {current_consecutive_fails} fallos CONSECUTIVOS en la misma sección.", is_error=True)
-                
-                # A. Cuarentena
-                api_key.is_quarantined = True
-                api_key.save(update_fields=["is_quarantined"])
-                _request_quarantine_via_mailbox(api_key)
-                
-                # B. Marcar tarea
-                task.status = PendingContentTask.StatusChoices.FAILED_QUOTA
-                task.last_error = f"Cuota agotada en clave {api_key.name} tras {current_consecutive_fails} intentos seguidos."
-                task.save(update_fields=["status", "last_error"])
-                return
-
-            else:
-                log_task_event(task.id, f"Error de cuota (Intento {current_consecutive_fails}/4). Iniciando Protocolo de Rotación de Emergencia...")
-                
-                # [FIX HITO 24] HOT-SWAP EN EXCEPCIÓN:
-                # No esperar a 4 fallos. Si falla una vez, intentamos rotar para no perder tiempo durmiendo.
-                # Excluimos la clave actual (api_key) porque sabemos que está fallando.
-                next_key = ApiKey.objects.filter(is_enabled=True, is_quarantined=False).exclude(id=api_key.id).order_by('id').first()
-                
-                if next_key:
-                    # 1. Actualizar configuración global
-                    automation_settings = AutomationSettings.load()
-                    automation_settings.active_api_key = next_key
-                    automation_settings.save(update_fields=['active_api_key'])
-                    
-                    # 2. Loggear éxito
-                    log_task_event(task.id, f"ROTACIÓN DE EMERGENCIA EXITOSA: Cambiado de '{api_key.name}' a '{next_key.name}'. Reiniciando tarea inmediatamente.")
-                    
-                    # 3. Reiniciar tarea INMEDIATAMENTE (countdown=2s para dar tiempo a DB propagation)
-                    # Nota: Al reiniciar, la tarea leerá la nueva active_api_key del Global Settings.
-                    raise self.retry(countdown=2, max_retries=None)
-                else:
-                    # Si no hay más claves, entonces sí, dormimos.
-                    log_task_event(task.id, f"NO HAY REEMPLAZOS DISPONIBLES. Durmiendo 62s antes de reintentar... (Intento {current_consecutive_fails}/4)")
-                    time.sleep(62)
-                    raise self.retry(exc=e, countdown=70, max_retries=None)
-    except Retry:
-        raise
     except Exception as e:
-        if task:
-            error_traceback = traceback.format_exc()
-            logger.critical(f"TRACEBACK CAPTURADO PARA TAREA {task.id}:\n{error_traceback}")
-            log_task_event(task.id, f"Error en la tarea: {str(e)}", is_error=True)
-            
-            # Identificar si es un error recuperable (transitorio) o fatal (código/lógica)
-            is_transient = isinstance(e, (TimeoutError, ConnectionError, OSError))
-            
-            try:
-                if is_transient:
-                    task.status = PendingContentTask.StatusChoices.FAILED_RETRYABLE
-                    task.last_error = f"Error Transitorio: {str(e)}\n{error_traceback}"
-                    task.save(update_fields=["status", "last_error"])
-                    # Reintentar con backoff
-                    self.retry(exc=e, countdown=300, max_retries=5)
-                else:
-                    # Errores de lógica (TypeError, ValueError, etc) no se arreglan solos.
-                    # Fallo fatal inmediato para no bloquear la cola.
-                    task.status = PendingContentTask.StatusChoices.FAILED_FATAL
-                    task.notes = f"Fallo Fatal por Error de Código/Lógica: {str(e)}"
-                    task.last_error = error_traceback
-                    task.save(update_fields=["status", "notes", "last_error"])
-                    _send_admin_notification("Tarea Fallida Permanentemente (Error Lógico)", f"La tarea para '{task}' ha fallado por un error no recuperable: {str(e)}")
-            
-            except self.MaxRetriesExceededError:
-                logger.critical(f"Máximo de reintentos alcanzado para la tarea {task.id}. Marcando como FATAL.")
-                task.status = PendingContentTask.StatusChoices.FAILED_FATAL
-                task.notes = f"Falló permanentemente tras reintentos. Error final: {str(e)}"
-                task.last_error = error_traceback
-                task.save(update_fields=["status", "notes", "last_error"])
-                _send_admin_notification("Tarea Fallida Permanentemente", f"La tarea para '{task}' ha fallado tras múltiples reintentos.")
+        err_str = str(e)
+        # Filtro de último recurso por si algo se escapa, pero ahora es difícil
+        is_transient = isinstance(e, (TimeoutError, ConnectionError, OSError, OperationalError, InterfaceError)) or "Resource" in err_str or "429" in err_str or "Quota" in err_str
+        
+        if is_transient:
+             log_task_event(task_id, f"Error Transitorio Global (Escape): {err_str}. Reintentando...", is_error=True)
+             raise self.retry(exc=e, countdown=300)
         else:
-            logger.critical(f"Error irrecuperable en tarea con ID {task_id} donde 'task' es None: {e}", exc_info=True)
+             log_task_event(task_id, f"ERROR FATAL DE CÓDIGO: {err_str}", is_error=True)
+             if task:
+                 task.status = PendingContentTask.StatusChoices.FAILED_FATAL
+                 task.last_error = traceback.format_exc()
+                 task.save(update_fields=["status", "last_error"])
 
     finally:
         db.close_old_connections()
+
 
 @shared_task(bind=True, acks_late=True, max_retries=3, default_retry_delay=60)
 def generate_assessment_from_content_task(self, assessment_id):

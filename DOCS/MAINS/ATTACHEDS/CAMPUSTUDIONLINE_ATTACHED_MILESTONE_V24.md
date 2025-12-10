@@ -23,3 +23,21 @@
 
 ### 2. VERIFICACIÓN DE ESTABILIDAD
 *   Monitorizar que las claves agotadas pasen a estado `IS_QUARANTINED = True` automáticamente.
+
+## Bitácora de Sesión (10/12/2025)
+*   **Logro Crítico:** Implementación exitosa del **Bucle de Resistencia Local** en el Orquestador (`orchestrator/tasks.py`).
+*   **Problema Solucionado:**
+    *   El sistema reiniciaba las tareas completas ante errores de cuota (API) o micro-cortes de red (DB), disparando el fusible de seguridad (`global_actuation_count`) y generando bucles de `OSError` con el broker de Celery.
+*   **Solución Técnica ("Blindaje Total"):**
+    *   **Contención Local:** Se encapsularon las llamadas a la API (tanto en fase de inicialización como de generación) dentro de bucles `while True` con captura de excepciones `try/except` interna.
+    *   **Efecto:** La tarea nunca "muere" por un error transitorio. En su lugar, entra en suspensión (`sleep`) o rota la clave dentro del mismo proceso, manteniendo el contexto y evitando el tráfico innecesario con Redis.
+    *   **Corrección de Bugs:** Se solucionó un `TypeError` crítico en el log de finalización y se añadió persistencia de fallos en el modelo `ApiKey`.
+*   **Validación:** La tarea compleja 'Iconografía' (80 secciones) se completó exitosamente tras sobrevivir a 3 rotaciones de clave y múltiples esperas, validando la resiliencia del nuevo diseño.
+
+## Hoja de Ruta (Siguientes Pasos)
+### 1. MONITORIZACIÓN DE ESTABILIDAD
+*   Vigilar el comportamiento del orquestador con la cola de tareas llena.
+*   Confirmar que el contador de fusibles (`global_actuation_count`) se mantiene bajo control.
+
+### 2. MANTENIMIENTO CORRECTIVO
+*   Resolver cualquier incidencia puntual que surja en la generación masiva ahora que el motor principal funciona.
