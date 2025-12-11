@@ -728,3 +728,10 @@
 *  **Session:** Restauración del Mecanismo de Content Gating y Efecto Fade-out
 *  **Description:** Corrección de una regresión en la aplicación 'contents'. Se busca restaurar el comportamiento para usuarios no autenticados (visitantes) al intentar acceder a detalles de contenido o áreas restringidas como la Sala de Estudio. El objetivo es recuperar la visualización parcial del contenido con un efecto de desvanecimiento (fade-out) y el enlace de llamada a la acción (CTA) para el registro, que actualmente no se están renderizando correctamente.
 
+
+# 2025-12-11
+# CAMPUSTUDIONLINE --CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V24.md
+## PLUTO
+*  **Session:** Soporte y Mantenimiento de Plataforma - Hito 24
+*  **Description:** Sesión dedicada al mantenimiento correctivo integral y soporte técnico bajo el Hito 24. Incluye la monitorización de la estabilidad del orquestador tras la refactorización reciente y la resolución de incidencias técnicas en cualquier módulo de la plataforma, priorizando la estabilidad y la experiencia de usuario.
+

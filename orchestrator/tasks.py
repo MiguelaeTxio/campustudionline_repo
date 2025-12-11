@@ -658,6 +658,15 @@ def generate_full_course_task(self, task_id):
 
         task = PendingContentTask.objects.select_related('subject__academic_year__degree__branch__university', 'subject__content_hash_family').get(id=task_id)
         
+        # [V24.5 - FIX] DRENAJE RÁPIDO DE COLA
+        # Si la tarea ya fue abatida por el fusible en una ejecución paralela o previa,
+        # abortamos inmediatamente para evitar incrementar contadores o saturar logs
+        # mientras se vacía la cola de mensajes acumulados.
+        if task.status == PendingContentTask.StatusChoices.FAILED_FATAL:
+            # Logueamos solo como debug/warning suave para no alarmar
+            logger.warning(f"DRENAJE: Tarea {task_id} ya es FATAL. Omitiendo ejecución para vaciar cola.")
+            return
+
         PendingContentTask.objects.filter(id=task_id).update(global_actuation_count=F('global_actuation_count') + 1)
         task.refresh_from_db(fields=['global_actuation_count'])
         
