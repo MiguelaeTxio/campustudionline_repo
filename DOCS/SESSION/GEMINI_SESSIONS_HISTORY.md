@@ -721,3 +721,10 @@
 *  **Session:** Análisis Forense del Orquestador y Depuración de Celery
 *  **Description:** Ejecución de análisis forense sobre los logs de Celery y el código fuente de `orchestrator` para identificar la causa raíz de la inoperatividad persistente. Verificación de la integridad de los datos en `PendingContentTask` y `AutomationSettings` tras las últimas migraciones. Depuración de la lógica de reanudación y gestión de errores en `generate_full_course_task`.
 
+# 2025-12-10
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V24.md
+## PLUTO
+*  **Session:** Restauración del Mecanismo de Content Gating y Efecto Fade-out
+*  **Description:** Corrección de una regresión en la aplicación 'contents'. Se busca restaurar el comportamiento para usuarios no autenticados (visitantes) al intentar acceder a detalles de contenido o áreas restringidas como la Sala de Estudio. El objetivo es recuperar la visualización parcial del contenido con un efecto de desvanecimiento (fade-out) y el enlace de llamada a la acción (CTA) para el registro, que actualmente no se están renderizando correctamente.
+

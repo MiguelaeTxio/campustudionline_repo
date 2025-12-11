@@ -480,6 +480,7 @@ def content_detail(request, pk, subject_pk=None):
         "back_url": back_url,  # Pasamos la URL de retorno explícita
         "breadcrumbs": breadcrumbs, # Pasamos los breadcrumbs
         "show_preloader": True, "show_tour": True,
+        "is_gated": not request.user.is_authenticated, # Flag para Content Gating
     }
     return render(request, "contents/content_detail.html", context)
 
