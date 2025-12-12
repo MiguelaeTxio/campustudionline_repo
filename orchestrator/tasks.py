@@ -27,6 +27,7 @@ from .models import AutomationSettings, ApiKey, PendingContentTask, GeneratedCon
 from academic_structure.models import Subject
 from users.models import CustomUser
 from assessment.models import Assessment, Question, UserAnswer, AssessmentSettings
+from contents.services.navigation_builder import refresh_user_navigation
 from contents.models import (
     ContentMaterial,
     FreeContentMasterCategory,
@@ -1215,7 +1216,22 @@ def expire_untaken_assessments():
     count = assessments_to_expire.count()
     if count == 0:
         return "No hay evaluaciones no realizadas para expirar."
+    
+    # [FIX V24] Capturar usuarios afectados antes del update para refrescar sidebar
+    affected_users_ids = list(assessments_to_expire.values_list('user', flat=True).distinct())
+    
     updated_rows = assessments_to_expire.update(status="EXPIRED_UNTAKEN")
+    
+    # [FIX V24] Refrescar navegación
+    if affected_users_ids:
+        log_timestamp(f"EXPIRE_UNTAKEN_TASK: Refrescando navegación para {len(affected_users_ids)} usuarios.")
+        for user_id in affected_users_ids:
+            try:
+                user = User.objects.get(pk=user_id)
+                refresh_user_navigation(user)
+            except Exception as e:
+                logger.error(f"Error refrescando navegación para usuario {user_id}: {e}")
+
     log_timestamp(f"EXPIRE_UNTAKEN_TASK: Se han hecho caducar {updated_rows} evaluaciones.")
     return f"Se han marcado como caducadas {updated_rows} evaluaciones."
 
@@ -1226,9 +1242,26 @@ def purge_and_penalize_corrections():
     expired_assessments = Assessment.objects.filter(status="RESULTS_AVAILABLE", results_expiration_date__lt=now).distinct()
     if not expired_assessments.exists():
         return "No hay correcciones para procesar."
+    
     assessments_to_penalize = expired_assessments.filter(was_viewed=False)
+    
+    # [FIX V24] Capturar usuarios afectados antes del update para refrescar sidebar
+    affected_users_ids = list(assessments_to_penalize.values_list('user', flat=True).distinct())
+
     penalized_count = assessments_to_penalize.update(status="CORRECTION_EXPIRED")
+    
+    # [FIX V24] Refrescar navegación
+    if affected_users_ids:
+        log_timestamp(f"PURGE_PENALIZE_TASK: Refrescando navegación para {len(affected_users_ids)} usuarios.")
+        for user_id in affected_users_ids:
+            try:
+                user = User.objects.get(pk=user_id)
+                refresh_user_navigation(user)
+            except Exception as e:
+                logger.error(f"Error refrescando navegación para usuario {user_id}: {e}")
+    
     if penalized_count > 0:
+        log_timestamp(f"PURGE_PENALIZE_TASK: Penalizadas {penalized_count} evaluaciones no vistas.")
         log_timestamp(f"PURGE_PENALIZE_TASK: Penalizadas {penalized_count} evaluaciones no vistas.")
     answers_to_purge = UserAnswer.objects.filter(question__assessment__in=expired_assessments, score__isnull=False)
     purged_count = answers_to_purge.update(score=None, feedback="La corrección y el feedback de esta respuesta han caducado.")

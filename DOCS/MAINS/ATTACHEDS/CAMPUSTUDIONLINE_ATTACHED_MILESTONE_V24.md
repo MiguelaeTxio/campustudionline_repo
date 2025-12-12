@@ -30,3 +30,9 @@
 ### 2. MONITORIZACIÓN CONTINUA
 *   Vigilancia de estabilidad del Orquestador de Tareas (post-refactorización).
 *   Verificación de la experiencia de usuario (UX) en flujos de navegación.
+
+## Bitácora de Sesión (11/12/2025 - Noche)
+*   **Incidencia Resuelta (Sidebar Desincronizada):**
+    *   **Síntoma:** Evaluaciones expiradas (`EXPIRED_UNTAKEN`) se mostraban como activas (icono amarillo) en la barra lateral.
+    *   **Causa Raíz:** Las tareas de mantenimiento (`expire_untaken_assessments` y `purge_and_penalize_corrections`) utilizaban `QuerySet.update()`, lo cual no emite señales Django, impidiendo que `navigation_builder` actualizase el árbol JSON del usuario.
+    *   **Solución:** Se parcheó `orchestrator/tasks.py` para identificar los usuarios afectados antes de la actualización masiva y forzar la regeneración de su navegación mediante `refresh_user_navigation`.
