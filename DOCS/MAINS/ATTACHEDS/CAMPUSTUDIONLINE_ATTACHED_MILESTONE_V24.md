@@ -1,38 +1,16 @@
 # Hito de Soporte y Mantenimiento: Ruegos y Preguntas
 
-**Estado:** **EN PROGRESO - SOPORTE DE PLATAFORMA ACTIVO**
+**Estado:** COMPLETADO
 
-## Bitácora de Sesión (09/12/2025 - 10/12/2025)
-*   **Actividad:** Depuración Profunda del Orquestador (Celery).
-*   **Logros:** Corrección de silenciamiento de excepciones, Fusible Global, Hot-Swap y Bucle de Resistencia Local.
+## Resumen de la Sesión CYC (13/12/2025) - Estabilización de Plataforma
+*   **Bloqueo Resuelto 1 (Redis, NameError, Conexiones):**
+    *   **Hot-Swap a Redis DB 0 (core/settings.py):** Corrección de la URL del Broker que fallaba al apuntar a la DB 1 (`DB index out of range`).
+    *   **Optimización de Pool de Conexiones (core/settings.py):** Implementación de `CELERY_BROKER_POOL_LIMIT = 1` para compartir un único pool entre todos los workers y el beat, resolviendo la alerta de saturación del 93% y el retardo en notificaciones.
+    *   **Doble Worker (start_unified_workers.sh):** Creación de un script lanzadera para desplegar dos workers (uno para carga pesada y otro exclusivo para chat/notificaciones) en una sola tarea Always-on.
+*   **Bloqueo Resuelto 2 (UX/Frontend):**
+    *   **Resiliencia Chat Backend (messaging/views.py):** Implementación de un bloque `try...except` para evitar que los fallos de notificaciones bloqueen el envío de mensajes.
+    *   **UX Envío de Mensaje (conversation_detail.html):** Aplicación de lógica "Optimista" para que la caja de texto se limpie instantáneamente al enviar.
+    *   **Preloader Global (conversation_detail.html):** Inyección de CSS para ocultar el preloader global que se mostraba incorrectamente en la vista de chat privado.
 
-## Bitácora de Sesión (11/12/2025) - Mañana
-*   **Incidencia Resuelta (Content Gating):** Se detectó y corrigió una regresión crítica en la aplicación `contents` donde los usuarios anónimos podían acceder al contenido completo de materiales privados/públicos sin restricción visual.
-*   **Solución Técnica:**
-    *   **Backend (`contents/views.py`):** Inyección explicita del flag `is_gated` en el contexto de `content_detail`.
-    *   **Frontend (`content_detail.html`):** Restauración de estilos CSS para efecto *fade-out* (desvanecimiento) y reimplementación del bloque CTA (*Call To Action*) para registro/login.
-
-## Bitácora de Sesión (11/12/2025) - Tarde
-*   **Incidencia Crítica Resuelta (Orquestador - Bucle Infinito):**
-    *   **Diagnóstico:** Fallo en la lógica de comprobación del "Fusible Global" que permitía reintentos infinitos (contadores > 120/10) tras un fallo de ACK en la cola de mensajes.
-    *   **Solución:** Implementación de un parche de "Drenaje Rápido" en `tasks.py` que aborta inmediatamente la ejecución si la tarea ya está marcada como `FAILED_FATAL`, permitiendo vaciar la cola de RabbitMQ sin saturar la DB.
-    *   **Rescate:** Se rescató y reinició exitosamente la tarea `716774f2` afectada por el fallo, asegurando la entrega del contenido al usuario.
-*   **Optimización de Rendimiento (Búsqueda Global):**
-    *   **Diagnóstico:** Latencia extrema en `global_search_view` debido a la carga ansiosa (Eager Loading) de campos de texto masivos (`markdown_content`, `html_content`) para todos los resultados de la búsqueda.
-    *   **Solución:** Refactorización de la vista utilizando `QuerySet.defer()` y `QuerySet.only()` para diferir la carga de campos pesados y traer únicamente metadatos ligeros (título, ID, fecha). Se corrigió un conflicto de `FieldError` ajustando la estrategia de carga para modelos académicos ligeros.
-
-## Hoja de Ruta (Siguientes Pasos)
-
-### 1. MANTENIMIENTO CORRECTIVO INTEGRAL
-*   **Objetivo:** Atención a cualquier incidencia, error lógico o regresión que surja en cualquier módulo de la plataforma.
-*   **Alcance:** Frontend, Backend, Base de Datos y Orquestación.
-
-### 2. MONITORIZACIÓN CONTINUA
-*   Vigilancia de estabilidad del Orquestador de Tareas (post-refactorización).
-*   Verificación de la experiencia de usuario (UX) en flujos de navegación.
-
-## Bitácora de Sesión (11/12/2025 - Noche)
-*   **Incidencia Resuelta (Sidebar Desincronizada):**
-    *   **Síntoma:** Evaluaciones expiradas (`EXPIRED_UNTAKEN`) se mostraban como activas (icono amarillo) en la barra lateral.
-    *   **Causa Raíz:** Las tareas de mantenimiento (`expire_untaken_assessments` y `purge_and_penalize_corrections`) utilizaban `QuerySet.update()`, lo cual no emite señales Django, impidiendo que `navigation_builder` actualizase el árbol JSON del usuario.
-    *   **Solución:** Se parcheó `orchestrator/tasks.py` para identificar los usuarios afectados antes de la actualización masiva y forzar la regeneración de su navegación mediante `refresh_user_navigation`.
+## Hoja de Ruta (Hito CERRADO)
+Este hito se cierra. Los problemas de estabilidad y rendimiento prioritarios se han resuelto. La próxima hoja de ruta se centrará en el nuevo Hito 26.

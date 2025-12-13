@@ -475,6 +475,19 @@ class ContentGenerationError(Exception):
 @shared_task(bind=True)
 def global_orchestrator_task(self):
     try:
+        # [V24.5 - HOTFIX] DEBOUNCE: Evitar ejecuciones superpuestas o saturación de cola
+        # Si la última ejecución fue hace menos de 45s, abortar para drenar la cola.
+        try:
+            settings_check = AutomationSettings.load()
+            if settings_check.last_run_timestamp:
+                delta = timezone.now() - settings_check.last_run_timestamp
+                if delta.total_seconds() < 45:
+                    logger.warning(f'ORCHESTRATOR DEBOUNCE: Ejecución omitida (Delta: {delta.total_seconds():.1f}s < 45s). Drenando cola.')
+                    return
+        except Exception:
+            pass # Si falla el chequeo, continuamos por seguridad
+
+        
         _purge_zombie_tasks()  # [NUEVO] Limpieza preventiva de zombies
         _process_quarantine_requests()
         _check_and_perform_daily_reset()

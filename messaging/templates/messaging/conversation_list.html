@@ -126,12 +126,13 @@
 <script src="{% static 'js/crypto_manager.js' %}"></script>
 <script>
 document.addEventListener('DOMContentLoaded', async function() {
+
     // Logic for the hide button
     document.querySelectorAll('.hide-conversation-form button[type="submit"]').forEach(button => {
         button.addEventListener('click', function(event) {
             event.preventDefault();
             event.stopPropagation();
-            if (confirm('Are you sure you want to hide this conversation?')) {
+            if (confirm('¿Estás seguro de que deseas ocultar esta conversación?')) {
                 this.closest('form').submit();
             }
         });
@@ -139,35 +140,67 @@ document.addEventListener('DOMContentLoaded', async function() {
 
     const csrfTokenElement = document.querySelector('[name=csrfmiddlewaretoken]');
     const csrfToken = csrfTokenElement ? csrfTokenElement.value : null;
-    const cryptoStatus = await window.cryptoManager.initializeCrypto(csrfToken);
-    const currentUserId = "{{ request.user.id }}";
+    
+    // [OPTIMIZACIÓN V24] Inicialización diferida para permitir renderizado del DOM
+    setTimeout(async () => {
+        let cryptoStatus;
+        try {
+            cryptoStatus = await window.cryptoManager.initializeCrypto(csrfToken);
+        } catch(e) {
+            console.error('Crypto init failed:', e);
+            cryptoStatus = { success: false };
+        }
+        
+        const currentUserId = "{{ request.user.id }}";
+        const containers = document.querySelectorAll('.preview-container');
 
-    if (cryptoStatus.success) {
-        document.querySelectorAll('.preview-container').forEach(async container => {
-            const previewElement = container.querySelector('.preview-text');
-            if (!previewElement) return;
+        if (cryptoStatus.success) {
+            // [OPTIMIZACIÓN UI] Procesar en lotes pequeños (Chunking) para no bloquear el Hilo Principal
+            // Esto evita que el navegador se congele y permite que el spinner de carga desaparezca.
+            const chunkSize = 5;
+            let index = 0;
 
-            const payloadJson = container.dataset.encryptedPayload;
+            function processBatch() {
+                const batch = Array.from(containers).slice(index, index + chunkSize);
+                if (batch.length === 0) return;
 
-            try {
-                const encryptedPayload = JSON.parse(payloadJson);
-                
-                if (encryptedPayload && Object.keys(encryptedPayload).length > 0) {
-                    const decryptedText = await window.cryptoManager.decrypt(encryptedPayload, currentUserId);
-                    previewElement.textContent = decryptedText.length > 40 ? decryptedText.substring(0, 40) + '...' : decryptedText;
-                } else if (!container.querySelector('i.fa-ban') && !container.querySelector('i.fa-link')) { 
-                    previewElement.textContent = 'Start the conversation...';
+                batch.forEach(async container => {
+                    const previewElement = container.querySelector('.preview-text');
+
+                    const payloadJson = container.dataset.encryptedPayload;
+
+                    try {
+                        const encryptedPayload = JSON.parse(payloadJson);
+                        
+                        if (encryptedPayload && Object.keys(encryptedPayload).length > 0) {
+                            // Descifrado individual
+                            const decryptedText = await window.cryptoManager.decrypt(encryptedPayload, currentUserId);
+                            previewElement.textContent = decryptedText.length > 40 ? decryptedText.substring(0, 40) + '...' : decryptedText;
+                            previewElement.style.color = 'inherit'; // Restaurar color normal
+
+                        }
+                    } catch (error) {
+                        console.error('Error processing message preview:', error);
+                        previewElement.textContent = 'Error al descifrar';
+                    }
+                });
+
+                index += chunkSize;
+                if (index < containers.length) {
+                    // Ceder control al navegador por 50ms antes del siguiente lote
+                    setTimeout(processBatch, 50); 
                 }
-            } catch (error) {
-                console.error('Error processing message preview:', error);
-                previewElement.textContent = '>> Message not available to you <<';
             }
-        });
-    } else {
-        document.querySelectorAll('.preview-text').forEach(el => {
-            if (el) el.textContent = '[Page security error]';
-        });
-    }
+            
+            // Iniciar procesamiento por lotes
+            processBatch();
+            
+        } else {
+            document.querySelectorAll('.preview-text').forEach(el => {
+                if (el) el.textContent = '[Cifrado no disponible]';
+            });
+        }
+    }, 100); // Pequeño delay inicial
 });
 </script>
 

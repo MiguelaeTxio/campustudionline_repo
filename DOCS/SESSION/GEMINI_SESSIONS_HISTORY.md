@@ -743,3 +743,27 @@
 *  **Session:** Soporte Continuo: Mantenimiento Correctivo y Monitorización
 *  **Description:** Sesión de continuidad bajo el Hito 24 (Ruegos y Preguntas). Enfoque en mantenimiento correctivo integral y monitorización de la estabilidad del orquestador y la UX, tras las recientes optimizaciones de búsqueda y correcciones críticas en el orquestador.
 
+
+# 2025-12-13
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V24.md
+## AAAA
+*  **Session:** Inicio de Sesión de Soporte y Mantenimiento - Hito 24
+*  **Description:** Inicio de sesión estándar bajo el Hito de Soporte y Mantenimiento (V24). El sistema se encuentra en estado de espera para recibir instrucciones específicas de mantenimiento correctivo, monitorización o resolución de dudas (Ruegos y Preguntas). Se han cargado los contextos del proyecto CampuStudiOnline.
+
+
+# 2025-12-13
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V24.md
+## CYC
+*  **Session:** Corrección Crítica Redis DB Index Out of Range
+*  **Description:** Resolución de bloqueo en Celery/Redis (`kombu.exceptions.OperationalError: DB index is out of range`). Tras la migración a Redis DB 1 indicada en la bitácora anterior, el servicio rechaza la conexión. Se prioriza la corrección de `core/settings.py` para restaurar la operatividad de la mensajería y el orquestador antes de proceder con las tareas de mantenimiento programadas.
+
+
+# 2025-12-13
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V26.md
+## EPI
+*  **Session:** Corrección de textos de interfaz en lista de conversaciones privadas
+*  **Description:** Se aborda la eliminación de textos estáticos en inglés en la vista de lista de conversaciones de la aplicación messaging. Se modificará la lógica de la vista para recuperar el último mensaje y se actualizará la plantilla para mostrarlo, cumpliendo con la Regla de Oro del Idioma (UI en castellano).
+

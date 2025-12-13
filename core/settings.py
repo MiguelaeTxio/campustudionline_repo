@@ -135,6 +135,8 @@ CELERY_TASK_SERIALIZER = "json"
 CELERY_RESULT_SERIALIZER = "json"
 CELERY_TIMEZONE = "Europe/Madrid"
 CELERY_WORKER_CONCURRENCY = 1
+# [OPTIMIZATION] Force a single shared connection pool for Redis to avoid exceeding plan limits.
+CELERY_BROKER_POOL_LIMIT = 1
 
 # --- Celery Priority Queues Configuration (V2 - Arquitectura de Prioridades) ---
 CELERY_TASK_QUEUES = (

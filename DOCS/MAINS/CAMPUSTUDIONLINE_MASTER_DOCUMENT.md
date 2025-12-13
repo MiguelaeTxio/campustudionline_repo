@@ -100,8 +100,14 @@ CampuStudiOnline es una plataforma web de e-learning diseñada para centralizar 
 ### Hito 23: Cumplimiento Normativo y Legal (COMPLETADO)
 (Ver anexo `CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V23.md`)
 
-### Hito de Soporte y Mantenimiento: Ruegos y Preguntas (EN PROGRESO - FASE DE REINGENIERÍA)
+### Hito de Soporte y Mantenimiento: Ruegos y Preguntas (COMPLETADO)
 (Ver anexo `CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V24.md`. Depuración a demanda y mantenimiento correctivo.)
+
+### Hito 25: Estrategia de Campaña Meta Ads (EN PROGRESO)
+(Ver anexo `CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V25.md`)
+
+### Hito 26: Cumplimiento Regla de Oro del Idioma (COMPLETADO)
+(Ver anexo `CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V26.md`. Corrección de textos de interfaz en mensajería.)
 
 ---
 

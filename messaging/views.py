@@ -118,59 +118,70 @@ def conversation_list(request):
             .distinct()
         )
 
-    last_message_subquery = (
-        DirectMessage.objects.filter(session=OuterRef("pk"))
-        .order_by("-timestamp")
-        .values("id")[:1]
-    )
-
-    unread_messages_subquery = (
-        DirectMessage.objects.filter(session=OuterRef("pk"), is_read=False)
-        .exclude(sender=user)
-        .values("session")
-        .annotate(count=Count("id"))
-        .values("count")
-    )
-
     hide_conditions = Q(user1=user, is_hidden_by_user1=True) | Q(
         user2=user, is_hidden_by_user2=True
     )
 
+    # 1. Obtener sesiones básicas (rápido)
     chat_sessions_qs = (
         DirectChatSession.objects.filter(Q(user1=user) | Q(user2=user))
         .exclude(hide_conditions)
-        .annotate(
-            last_message_id=Subquery(last_message_subquery),
-            unread_count=Coalesce(
-                Subquery(unread_messages_subquery, output_field=models.IntegerField()),
-                0,
-            ),
-        )
         .select_related("user1", "user2")
         .order_by("-updated_at")
     )
+    
+    # Forzar evaluación para obtener IDs y evitar re-ejecución de subqueries
+    chat_sessions = list(chat_sessions_qs)
+    session_ids = [s.id for s in chat_sessions]
 
-    last_messages_ids = [
-        s.last_message_id for s in chat_sessions_qs if s.last_message_id
-    ]
-    last_messages = {
-        msg.session_id: msg
-        for msg in DirectMessage.objects.filter(id__in=last_messages_ids).select_related(
-            "sender", "shared_content"
-        )
-    }
+    # 2. Obtener últimos mensajes en lote (Batch fetch)
+    # Para simplificar y optimizar: Subquery solo del ID del último mensaje es eficiente si está indexado.
+    from django.db.models import Subquery
+    
+    last_msg_sub = DirectMessage.objects.filter(session_id=OuterRef("pk")).order_by("-timestamp").values("id")[:1]
+    
+    # Re-consultamos solo los IDs necesarios con la anotación eficiente
+    sessions_with_last_msg_id = DirectChatSession.objects.filter(id__in=session_ids).annotate(
+        last_msg_id=Subquery(last_msg_sub)
+    )
+    last_msg_map_ids = {s.id: s.last_msg_id for s in sessions_with_last_msg_id}
+    
+    valid_msg_ids = [mid for mid in last_msg_map_ids.values() if mid]
+    
+    full_last_messages = DirectMessage.objects.filter(id__in=valid_msg_ids).select_related(
+        "sender", "shared_content"
+    ).in_bulk() # Diccionario {id: obj}
+
+    # 3. Obtener conteo de no leídos en lote (Batch count)
+    unread_counts = (
+        DirectMessage.objects.filter(session_id__in=session_ids, is_read=False)
+        .exclude(sender=user)
+        .values("session_id")
+        .annotate(count=Count("id"))
+    )
+    unread_map = {item["session_id"]: item["count"] for item in unread_counts}
 
     sessions_with_details = []
-    for session in chat_sessions_qs:
-        last_message = last_messages.get(session.id)
+    for session in chat_sessions:
+        # Recuperar último mensaje
+        lmid = last_msg_map_ids.get(session.id)
+        last_message = full_last_messages.get(lmid) if lmid else None
+        
+        unread = unread_map.get(session.id, 0)
+        
         other_user_obj = session.get_other_user(user)
         encrypted_payload_json = "{}"
+        
+        # Optimización JSON: Solo serializar si es necesario y seguro
         if (
             last_message
             and not last_message.is_deleted
             and isinstance(last_message.content, dict)
         ):
-            encrypted_payload_json = json.dumps(last_message.content)
+            try:
+                encrypted_payload_json = json.dumps(last_message.content)
+            except (TypeError, ValueError):
+                encrypted_payload_json = "{}"
 
         if other_user_obj:
             sessions_with_details.append(
@@ -180,7 +191,7 @@ def conversation_list(request):
                     "last_message": last_message,
                     "encrypted_payload_json": encrypted_payload_json,
                     "updated_at": session.updated_at,
-                    "unread_count": session.unread_count,
+                    "unread_count": unread,
                     "detail_url": reverse(
                         "messaging:conversation_detail",
                         kwargs={"username": other_user_obj.username},
@@ -305,11 +316,15 @@ def send_message(request, username):
     )
     session.save(update_fields=["updated_at"])
 
-    send_push_notification_task.delay(
-        recipient_id=other_user.id,
-        sender_username=sender.username,
-        encrypted_payload=encrypted_payload,
-    )
+    try:
+        send_push_notification_task.delay(
+            recipient_id=other_user.id,
+            sender_username=sender.username,
+            encrypted_payload=encrypted_payload,
+        )
+    except Exception as e:
+        # Non-blocking failure: Log and continue
+        logger.error(f"Failed to schedule push notification task: {e}")
 
     message_data = serialize_message_list([new_message])[0]
     return JsonResponse({"status": "success", "message": message_data})
@@ -408,7 +423,7 @@ def send_invitation(request, username):
         return JsonResponse(
             {
                 "status": "error",
-                "message": "This user is already active in messaging.",
+                "message": "Este usuario ya está activo en la mensajería.",
             },
             status=400,
         )
@@ -416,11 +431,10 @@ def send_invitation(request, username):
         return JsonResponse(
             {
                 "status": "error",
-                "message": "This user does not have a registered email address.",
+                "message": "Este usuario no tiene una dirección de correo electrónico registrada.",
             },
             status=400,
         )
-    subject = f"{sender.username} wants to chat with you on CampuStudiOnline!"
     chat_url = request.build_absolute_uri(reverse("messaging:conversation_list"))
     context = {
         "recipient_name": recipient.get_full_name() or recipient.username,
@@ -429,6 +443,7 @@ def send_invitation(request, username):
     }
     message_body = render_to_string("messaging/email/invitation_email.txt", context)
     html_message = render_to_string("messaging/email/invitation_email.html", context)
+    subject = f"Invitación de chat de {context['sender_name']}"
     try:
         send_mail(
             subject,
@@ -439,12 +454,12 @@ def send_invitation(request, username):
             html_message=html_message,
         )
         return JsonResponse(
-            {"status": "success", "message": "Invitation sent successfully."}
+            {"status": "success", "message": "Invitación enviada correctamente."}
         )
     except Exception as e:
         logger.error(f"Error sending invitation email: {e}", exc_info=True)
         return JsonResponse(
-            {"status": "error", "message": "There was a problem sending the email."},
+            {"status": "error", "message": "Hubo un problema al enviar el correo electrónico. Por favor, inténtalo más tarde."},
             status=500,
         )
 

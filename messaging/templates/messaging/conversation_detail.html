@@ -6,6 +6,12 @@
 
 {% block extra_css %}
 <style>
+    /* HOTFIX: Anula el preloader global que se queda bloqueado en esta vista */
+    #preloader {
+        display: none !important;
+    }
+</style>
+<style>
     #history-spinner { display: none; text-align: center; padding: 10px; }
     
     .chat-container {
@@ -359,10 +365,10 @@ document.addEventListener('DOMContentLoaded', async function() {
         if (!msgText) return;
 
         if (!other_user_public_key) {
-             const confirmationMessage = `We are sorry, we cannot send your message to ${other_username}. Would you like to send an invitation email?`;
+             const confirmationMessage = `Lo sentimos, no podemos enviar tu mensaje a ${other_username} porque no tiene activada la mensajería segura. ¿Te gustaría enviarle una invitación por correo electrónico?`;
             if (confirm(confirmationMessage)) {
                 fetch(`/messaging/send-invite/${other_username}/`, { method: 'POST', headers: {'Content-Type': 'application/json', 'X-CSRFToken': csrfToken} })
-                .then(r => r.json()).then(d => alert(d.message || 'Invitation sent.')).catch(e => alert('Error sending invitation.'));
+                .then(r => r.json()).then(d => alert(d.message || 'Invitación enviada.')).catch(e => alert('Error al enviar la invitación.'));
             }
             messageInputDom.value = '';
             return;
@@ -374,25 +380,35 @@ document.addEventListener('DOMContentLoaded', async function() {
             requestBody.reply_to_id = currentReplyTo.messageId;
         }
 
+        // --- OPTIMISTIC SEND START ---
+        // 1. Limpieza inmediata para UX fluida
+        messageInputDom.value = '';
+        messageInputDom.focus();
+        messageInputDom.style.height = 'auto'; 
+        cancelReplyAction();
+
+        // 2. Envío en segundo plano
         try {
             const response = await fetch(send_message_url, {
                 method: 'POST', headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrfToken },
                 body: JSON.stringify(requestBody)
             });
+            
             if (response.ok) {
                 const data = await response.json();
+                // Añadimos el mensaje real devuelto por el servidor
                 await appendMessages([data.message], false);
-                messageInputDom.value = '';
-                cancelReplyAction();
-                // No need to call dispatchEvent, the UI script will handle it.
-                messageInputDom.focus();
             } else {
-                alert('Error sending message.');
+                // Si falla, restauramos el texto para que no se pierda
+                messageInputDom.value = msgText;
+                alert('Error al enviar el mensaje. Inténtalo de nuevo.');
             }
         } catch (error) {
-            console.error('Network error sending message:', error);
-            alert('Network error. Could not send message.');
+            console.error('Network error:', error);
+            messageInputDom.value = msgText;
+            alert('Error de conexión.');
         }
+        // --- OPTIMISTIC SEND END ---
     });
 
     // --- HANDLING ACTIONS (EDIT, DELETE, REPLY) ---
@@ -404,7 +420,7 @@ document.addEventListener('DOMContentLoaded', async function() {
         const messageId = messageElement.dataset.messageId;
 
         if (target.classList.contains('delete-msg-btn')) {
-            if (confirm('Are you sure you want to delete this message?')) {
+            if (confirm('¿Estás seguro de que deseas eliminar este mensaje?')) {
                 const response = await fetch(message_action_url, {
                     method: 'POST', headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrfToken },
                     body: JSON.stringify({ action: 'delete', message_id: messageId })
@@ -413,7 +429,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                     const contentArea = messageElement.querySelector('.message-content-wrapper');
                     if(contentArea) contentArea.outerHTML = '<div class="message-content-wrapper deleted"><em>[Mensaje eliminado]</em></div>';
                     messageElement.querySelector('.msg-btn-container')?.remove();
-                } else { alert('Failed to delete message.'); }
+                } else { alert('No se pudo eliminar el mensaje.'); }
             }
         } else if (target.classList.contains('edit-msg-btn')) {
             cancelEditAction();
@@ -449,7 +465,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                     if(data.message) {
                         await updateMessageElement(data.message);
                     }
-                } else { alert('Failed to edit message.'); }
+                } else { alert('No se pudo editar el mensaje.'); }
             }
             cancelEditAction();
 
@@ -500,7 +516,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                 if(shareCopiesSpinner) shareCopiesSpinner.remove();
                 if (data.copies.length === 0) { shareCopiesList.innerHTML = '<div class="list-group-item">No tienes copias de estudio.</div>'; return; }
                 data.copies.forEach(copy => { const item = document.createElement('a'); item.href = '#'; item.className = 'list-group-item list-group-item-action'; item.textContent = copy.title; item.dataset.copyId = copy.id; item.addEventListener('click', (e) => { e.preventDefault(); loadStep2ForCopy(copy.id); }); shareCopiesList.appendChild(item); });
-            } catch (error) { console.error("Error loading copies:", error); if(shareCopiesSpinner) shareCopiesSpinner.remove(); shareCopiesList.innerHTML = '<div class="list-group-item list-group-item-danger">Failed to load.</div>'; }
+            } catch (error) { console.error("Error loading copies:", error); if(shareCopiesSpinner) shareCopiesSpinner.remove(); shareCopiesList.innerHTML = '<div class="list-group-item list-group-item-danger">Error al cargar.</div>'; }
         });
         const loadStep2ForCopy = async (copyId) => {
             shareStep1.style.display = 'none'; shareStep2.style.display = 'block'; shareAnnotationsList.innerHTML = ''; if(shareAnnotationsSpinner) shareAnnotationsList.appendChild(shareAnnotationsSpinner);
@@ -523,12 +539,12 @@ document.addEventListener('DOMContentLoaded', async function() {
         const handleShareAction = async (contentType, contentId) => {
             if (!selectedCopyForSharing) return;
             let needsConfirmation = !selectedCopyForSharing.is_public;
-            let canProceed = !needsConfirmation || confirm(`To share, your copy "${selectedCopyForSharing.title}" will become public. Continue?`);
+            let canProceed = !needsConfirmation || confirm(`Para compartir, tu copia "${selectedCopyForSharing.title}" se hará pública. ¿Deseas continuar?`);
             if (canProceed) {
                 try {
                     const response = await fetch(share_content_url, { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrfToken }, body: JSON.stringify({ content_type: contentType, content_id: contentId, copy_id: selectedCopyForSharing.id }) });
                     const result = await response.json();
-                    if (response.ok && result.message_data) { await appendMessages([result.message_data], false); } else { alert(`Error: ${result.message || 'Unknown error'}`); }
+                    if (response.ok && result.message_data) { await appendMessages([result.message_data], false); } else { alert(`Error: ${result.message || 'Error desconocido'}`); }
                 } catch (error) { console.error("Error in sharing:", error); alert("Network error."); } finally { bsShareModal.hide(); }
             }
         };
@@ -545,7 +561,7 @@ document.addEventListener('DOMContentLoaded', async function() {
         await pollForMessages();
         if (loadingMessagesIndicator) loadingMessagesIndicator.style.display = 'none';
         const placeholder = chatLog.querySelector('.text-center.text-muted');
-        if (chatLog.children.length <= 1 && placeholder) { placeholder.textContent = 'No messages yet. Be the first!'; }
+        if (chatLog.children.length <= 1 && placeholder) { placeholder.textContent = 'Aún no hay mensajes. ¡Sé el primero!'; }
     })();
 });
 </script>
