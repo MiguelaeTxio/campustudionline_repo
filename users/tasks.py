@@ -7,6 +7,7 @@ from django.contrib.auth import get_user_model
 import logging
 from django.conf import settings
 from facebook_business.adobjects.serverside.event import Event
+from facebook_business.adobjects.serverside.action_source import ActionSource
 from facebook_business.adobjects.serverside.event_request import EventRequest
 from facebook_business.adobjects.serverside.user_data import UserData
 from facebook_business.adobjects.serverside.custom_data import CustomData
@@ -94,7 +95,7 @@ def send_meta_conversion_event(event_name, user_details, event_id=None, source_u
             user_data=user_data,
             custom_data=custom_data,
             event_source_url=source_url,
-            action_source=Event.ActionSource.WEBSITE,
+            action_source=ActionSource.WEBSITE,
         )
         
         if event_id:

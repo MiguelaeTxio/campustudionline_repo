@@ -25,14 +25,17 @@ Establecer la infraestructura técnica, de seguimiento y de contenidos necesaria
 *   [X] Implementación de Feed de Productos RSS 2.0 extendido para Meta Catalog.
 *   [X] Habilitación de ruta pública `/contents/feed/meta-catalog/`.
 *   [X] Definición implícita de Landing Pages (Vistas de Detalle de Contenido).
+*   [X] Depuración y corrección de error 500 en la generación del Feed.
+*   [X] Subida y validación exitosa del catálogo en Meta Commerce Manager.
 
 ### 3.4. Configuración y Lanzamiento de Campaña (EN PROGRESO)
-*   [ ] Configuración del Origen de Datos (Feed) en Meta Commerce Manager.
+*   [X] Configuración del Origen de Datos (Feed) en Meta Commerce Manager.
 *   [ ] Verificación de eventos (ViewContent, RequestAssessment) en Events Manager.
 *   [ ] Creación de Creatividades y Copy.
 *   [ ] Configuración de la Campaña de Conversiones en Ads Manager.
 *   [ ] Lanzamiento y Fase de Aprendizaje.
 
 ## 4. Notas de Sesión
+*   **14/12/2025 (EDC):** Sesión de depuración y validación final de la infraestructura. Se detectó y corrigió un error 500 en la generación del feed XML debido a múltiples fallos en cascada (`AttributeError` en `feeds.py`, `TypeError` por argumentos duplicados). Se corrigió un `AttributeError` en el SDK de Facebook en `users/tasks.py` y se limpiaron bloques de código CAPI erróneos en `contents/views.py`. Tras las correcciones, se guió en la subida y procesamiento exitoso del catálogo (1615 productos) en Meta Commerce Manager.
 *   **14/12/2025 (MAMC):** Se completó la implementación técnica de la API de Conversiones (CAPI) para los eventos `ViewContent`, `Lead` y `RequestAssessment`. Se solucionó un error crítico de sintaxis en `users/tasks.py` y se corrigió la configuración de logs en `settings.py` para reactivar el script de monitoreo. Se implementó el Feed de Productos XML en `/contents/feed/meta-catalog/`.
 *   **13/12/2025:** Sesión enfocada en la creación e integración de la infraestructura de tracking de Meta Ads (Pixel + CAPI). Se creó el porfolio empresarial en Meta, se obtuvieron las claves de ID y Token.

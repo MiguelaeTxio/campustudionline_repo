@@ -783,3 +783,11 @@
 *  **Session:** Implementación de Eventos de Conversión Meta Ads: Lead, ViewContent e InitiateCheckout
 *  **Description:** Continuación del Hito 25. Implementación de eventos de conversión estándar de Meta (Pixel + CAPI) en puntos clave de la navegación: 'ViewContent' en materiales de estudio, 'Lead' en formularios de contacto e 'InitiateCheckout'. Se extenderá la lógica de tareas asíncronas centralizada para soportar estos nuevos eventos server-side.
 
+
+# 2025-12-14
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V25.md
+## EDC
+*  **Session:** Verificación de Eventos y Feed para Meta Ads
+*  **Description:** Validación técnica de la implementación del catálogo de productos y la transmisión de eventos (CAPI/Pixel) para el lanzamiento de la campaña. Revisión de modelos implicados en la generación del feed y conversiones.
+

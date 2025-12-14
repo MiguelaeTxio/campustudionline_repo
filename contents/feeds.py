@@ -2,6 +2,7 @@
 from django.contrib.syndication.views import Feed
 from django.utils.feedgenerator import Rss201rev2Feed
 from django.urls import reverse
+from django.utils.html import strip_tags
 from .models import ContentMaterial
 
 class MetaCatalogFeedGenerator(Rss201rev2Feed):
@@ -35,6 +36,10 @@ class MetaCatalogFeedGenerator(Rss201rev2Feed):
             handler.addQuickElement(u"g:product_type", item['product_type'])
 
 class MetaCatalogFeed(Feed):
+    def __call__(self, request, *args, **kwargs):
+        self.request = request
+        return super().__call__(request, *args, **kwargs)
+
     feed_type = MetaCatalogFeedGenerator
     title = "CampuStudiOnline Course Catalog"
     link = "/contents/"
@@ -47,7 +52,8 @@ class MetaCatalogFeed(Feed):
         return item.title
 
     def item_description(self, item):
-        return item.short_description
+        # Limpiar cualquier HTML residual para el feed XML
+        return strip_tags(item.short_description)
 
     def item_link(self, item):
         return reverse('contents:content_detail', args=[item.pk])
@@ -72,8 +78,11 @@ class MetaCatalogFeed(Feed):
 
         return {
             'g_id': str(item.pk),
-            'title': item.title,
-            'description': item.short_description,
+            # title y description eliminados para evitar colisión con argumentos estándar
             'image_link': full_image_url,
-            'product_type': category_path
+            'product_type': category_path,
+            'brand': 'CampuStudiOnline', 
+            'condition': 'new',
+            'availability': 'in stock',
+            'price': '0.00 EUR'
         }

@@ -748,6 +748,7 @@
 ./celery@miguelaetxio-182748-deployment-7bd7f54d64-9stlv:
 ./file00.txt
 ./EOF
+./diagnose_feed_error.py
 ./check_models.py
 ./emergency_flush.py
 ./prove_blindness.py

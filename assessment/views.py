@@ -96,7 +96,9 @@ def generate_ai_assessment(request, copy_pk):
                     'content_ids': [str(user_copy.original_content.id)],
                     'content_name': f"Assessment for {user_copy.original_content.title}",
                     'content_category': 'Education',
-                    'content_type': 'product'
+                    'content_type': 'product',
+                    'value': 0.0,
+                    'currency': 'EUR'
                 }
             )
         except Exception as e:
