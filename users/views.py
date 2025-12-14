@@ -22,7 +22,20 @@ from django.template.loader import render_to_string
 from django.core.mail import EmailMultiAlternatives
 from .tokens import account_activation_token
 from django.contrib.auth.tokens import default_token_generator
-from .tasks import cleanup_inactive_user
+
+from .tasks import cleanup_inactive_user, send_meta_conversion_event
+import hashlib
+import time
+
+
+
+def get_client_ip(request):
+    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+    if x_forwarded_for:
+        ip = x_forwarded_for.split(',')[0]
+    else:
+        ip = request.META.get('REMOTE_ADDR')
+    return ip
 
 
 def send_multipart_email(
@@ -46,8 +59,11 @@ def home_view(request):
     Renderiza la página de inicio.
     """
     show_tour = not request.COOKIES.get("home_tour_completed", False)
+    # --- META PIXEL EVENT CONSUMPTION ---
+    pixel_event = request.session.pop("meta_pixel_event", None)
+    # ------------------------------------
     return render(
-        request, "home.html", {"page_title": "Inicio", "show_tour": show_tour}
+        request, "home.html", {"page_title": "Inicio", "show_tour": show_tour, "meta_event": pixel_event}
     )
 
 
@@ -189,6 +205,40 @@ def activate_account_view(request, uidb64, token):
     user.is_active = True
     user.save()
     login(request, user, backend="django.contrib.auth.backends.ModelBackend")
+    
+    # --- META CAPI INTEGRATION (CompleteRegistration) ---
+    try:
+        # 1. Preparar datos para CAPI
+        email_hash = hashlib.sha256(user.email.strip().lower().encode('utf-8')).hexdigest()
+        event_id = f"reg_{user.id}_{int(time.time())}"
+        
+        user_details = {
+            'email_hash': email_hash,
+            'client_ip_address': get_client_ip(request),
+            'client_user_agent': request.META.get('HTTP_USER_AGENT', ''),
+            'fbc': request.COOKIES.get('_fbc'),
+            'fbp': request.COOKIES.get('_fbp'),
+        }
+        
+        # 2. Enviar evento servidor (Background)
+        send_meta_conversion_event.delay(
+            event_name='CompleteRegistration',
+            user_details=user_details,
+            event_id=event_id,
+            source_url=request.build_absolute_uri()
+        )
+        
+        # 3. Preparar evento navegador (Pixel) para deduplicación
+        request.session['meta_pixel_event'] = {
+            'name': 'CompleteRegistration',
+            'id': event_id
+        }
+        
+    except Exception as e:
+        # Fallo silencioso para no afectar al usuario
+        print(f"Error triggering Meta Registration Event: {e}")
+    # ----------------------------------------------------
+
     messages.success(
         request,
         "¡Felicidades! Tu cuenta ha sido activada correctamente. Ya puedes usar la plataforma.",

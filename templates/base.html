@@ -46,7 +46,51 @@
     }
     </style>
     {% block extra_css %}{% endblock extra_css %}
+    {% if META_PIXEL_ID %}
+    <!-- Meta Pixel Code -->
+    <script>
+    !function(f,b,e,v,n,t,s)
+    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+    n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t,s)}(window, document,'script',
+    'https://connect.facebook.net/en_US/fbevents.js');
+
+    // GDPR Logic: Only track if cookies are accepted
+    if (localStorage.getItem('cookiesAccepted')) {
+        fbq('init', '{{ META_PIXEL_ID }}');
+        fbq('track', 'PageView');
+    } else {
+        // Optional: Listen for acceptance event if you want immediate tracking upon click
+        document.addEventListener('cookiesAccepted', function() {
+            fbq('init', '{{ META_PIXEL_ID }}');
+            fbq('track', 'PageView');
+        });
+    }
+    </script>
+    <noscript><img height="1" width="1" style="display:none"
+    src="https://www.facebook.com/tr?id={{ META_PIXEL_ID }}&ev=PageView&noscript=1"
+    /></noscript>
+    <!-- End Meta Pixel Code -->
+    {% endif %}
+
     <script>window.protectionLevel='{{ protection_level|default:"full" }}';</script>
+
+
+    <!-- Meta Pixel Event (Server Deduplication) -->
+    {% if meta_event %}
+    <script>
+        if (localStorage.getItem('cookiesAccepted')) {
+            fbq('track', '{{ meta_event.name }}', {}, {eventID: '{{ meta_event.id }}'});
+        } else {
+            document.addEventListener('cookiesAccepted', function() {
+                fbq('track', '{{ meta_event.name }}', {}, {eventID: '{{ meta_event.id }}'});
+            });
+        }
+    </script>
+    {% endif %}
 
 </head>
 <body>
@@ -335,6 +379,7 @@
             }
             document.getElementById('accept-cookies-btn').addEventListener('click', function() {
                 localStorage.setItem('cookiesAccepted', 'true');
+                document.dispatchEvent(new Event('cookiesAccepted'));
                 document.getElementById('cookie-consent-banner').style.display = 'none';
             });
         });

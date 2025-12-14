@@ -369,6 +369,14 @@ if not os.environ.get("GEMINI_GLOBAL_PPM"):
         f"GEMINI_GLOBAL_PPM no configurada. Usando valor por defecto: {GEMINI_GLOBAL_PPM}"
     )
 
+# --- Meta (Facebook/Instagram) Ads Configuration ---
+META_PIXEL_ID = os.environ.get("META_PIXEL_ID")
+META_CONVERSIONS_API_TOKEN = os.environ.get("META_CONVERSIONS_API_TOKEN")
+
+if not META_PIXEL_ID and not DEBUG:
+    logger_settings.warning("META_PIXEL_ID no configurado en producción. El tracking de Meta Ads estará deshabilitado.")
+
+
 SITE_ID = 1
 SITE_NAME = "CampuStudiOnline"
 

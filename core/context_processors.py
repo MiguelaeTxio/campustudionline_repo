@@ -20,6 +20,7 @@ def global_context(request):
     context = {
         "SITE_URL": settings.SITE_URL,
         "VAPID_PUBLIC_KEY": settings.VAPID_PUBLIC_KEY,
+        "META_PIXEL_ID": getattr(settings, "META_PIXEL_ID", None),
         "show_preloader": True,
         "show_tour": False,
         "unread_p2p_message_count": 0,

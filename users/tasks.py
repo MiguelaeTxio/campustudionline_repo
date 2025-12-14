@@ -5,6 +5,14 @@
 from celery import shared_task
 from django.contrib.auth import get_user_model
 import logging
+from django.conf import settings
+from facebook_business.adobjects.serverside.event import Event
+from facebook_business.adobjects.serverside.event_request import EventRequest
+from facebook_business.adobjects.serverside.user_data import UserData
+from facebook_business.adobjects.serverside.custom_data import CustomData
+from facebook_business.api import FacebookAdsApi
+import time
+
 
 # Opcional: Configurar un logger específico para las tareas si quieres seguir su ejecución
 task_logger = logging.getLogger("celery_tasks")
@@ -32,3 +40,59 @@ def cleanup_inactive_user(user_id):
         task_logger.warning(
             f"Se intentó limpiar el usuario con ID {user_id}, pero ya no existía. Posiblemente activado y luego eliminado, o nunca existió."
         )
+
+
+@shared_task
+def send_meta_conversion_event(event_name, user_details, event_id=None, source_url=None):
+    """
+    Envía un evento a la API de Conversiones de Meta (CAPI).
+    
+    Args:
+        event_name (str): Nombre del evento estándar (ej: 'CompleteRegistration', 'Purchase').
+        user_details (dict): Diccionario con datos del usuario hash (em, ph) o crudos (client_ip_address, client_user_agent).
+                             Claves esperadas: 'email_hash', 'client_ip_address', 'client_user_agent'.
+        event_id (str): ID único para deduplicación (opcional pero recomendado).
+        source_url (str): URL donde ocurrió el evento.
+    """
+    
+    pixel_id = getattr(settings, 'META_PIXEL_ID', None)
+    access_token = getattr(settings, 'META_CONVERSIONS_API_TOKEN', None)
+    
+    if not pixel_id or not access_token:
+        task_logger.warning("Meta CAPI: Pixel ID or Access Token not configured. Skipping event.")
+        return
+
+    try:
+        FacebookAdsApi.init(access_token=access_token)
+        
+        user_data = UserData(
+            emails=[user_details.get('email_hash')],
+            client_ip_address=user_details.get('client_ip_address'),
+            client_user_agent=user_details.get('client_user_agent'),
+            fbc=user_details.get('fbc'),
+            fbp=user_details.get('fbp'),
+        )
+
+        event = Event(
+            event_name=event_name,
+            event_time=int(time.time()),
+            user_data=user_data,
+            event_source_url=source_url,
+            action_source=Event.ActionSource.WEBSITE,
+        )
+        
+        if event_id:
+            event.event_id = event_id
+
+        events = [event]
+
+        event_request = EventRequest(
+            events=events,
+            pixel_id=pixel_id,
+        )
+
+        event_response = event_request.execute()
+        task_logger.info(f"Meta CAPI Event '{event_name}' sent successfully: {event_response}")
+
+    except Exception as e:
+        task_logger.error(f"Meta CAPI Error sending '{event_name}': {str(e)}")

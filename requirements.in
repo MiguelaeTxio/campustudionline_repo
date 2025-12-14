@@ -50,3 +50,6 @@ google-api-core
 # ---- Estructuras de Datos Jerárquicas ----
 django-treebeard
 django-celery-beat
+
+# ---- Marketing & Analytics ----
+facebook-business>=20.0.0

@@ -767,3 +767,11 @@
 *  **Session:** Corrección de textos de interfaz en lista de conversaciones privadas
 *  **Description:** Se aborda la eliminación de textos estáticos en inglés en la vista de lista de conversaciones de la aplicación messaging. Se modificará la lógica de la vista para recuperar el último mensaje y se actualizará la plantilla para mostrarlo, cumpliendo con la Regla de Oro del Idioma (UI en castellano).
 
+
+# 2025-12-13
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V25.md
+## PLUTO
+*  **Session:** Hito 25: Inicio de Estrategia Meta Ads e Infraestructura de Tracking
+*  **Description:** Subsanación de inconsistencia documental creando el anexo del Hito 25 (V25). Inicio de la implementación de la estrategia de Meta Ads. Se define la hoja de ruta técnica que incluye la implementación híbrida de seguimiento (Pixel + CAPI), configuración de eventos estándar de conversión y preparación de templates para Landing Pages.
+
