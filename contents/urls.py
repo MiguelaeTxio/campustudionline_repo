@@ -1,6 +1,7 @@
 # /home/MiguelAeTxio/PROJECTS/CampuStudiOnline/contents/urls.py
 from django.urls import path
 from . import views
+from .feeds import MetaCatalogFeed
 
 app_name = "contents"
 
@@ -33,5 +34,8 @@ urlpatterns = [
     # --- SEO & Social Share Image URLs ---
     path("share_image/<uuid:pk>/", views.generate_share_image, name="generate_share_image"),
     path("share_image/default/", views.generate_default_share_image, name="generate_default_share_image"),
+    
+    # --- Product Feeds (Meta/Google Ads) ---
+    path("feed/meta-catalog/", MetaCatalogFeed(), name="meta_catalog_feed"),
 
 ]

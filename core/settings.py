@@ -441,12 +441,12 @@ LOGGING = {
     "loggers": {
         # El logger raíz captura los logs de NUESTRAS aplicaciones.
         "": {
-            "handlers": ["console", "file"],
+            "handlers": ["console", "file", "error_file"],
             "level": "DEBUG",
         },
         # El logger 'django' captura los logs del framework.
         "django": {
-            "handlers": ["console", "file"],
+            "handlers": ["console", "file", "error_file"],
             "level": "INFO",
             "propagate": False,
         },

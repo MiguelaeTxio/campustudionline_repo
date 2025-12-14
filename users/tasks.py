@@ -43,7 +43,7 @@ def cleanup_inactive_user(user_id):
 
 
 @shared_task
-def send_meta_conversion_event(event_name, user_details, event_id=None, source_url=None):
+def send_meta_conversion_event(event_name, user_details, event_id=None, source_url=None, custom_data_params=None):
     """
     Envía un evento a la API de Conversiones de Meta (CAPI).
     
@@ -53,6 +53,7 @@ def send_meta_conversion_event(event_name, user_details, event_id=None, source_u
                              Claves esperadas: 'email_hash', 'client_ip_address', 'client_user_agent'.
         event_id (str): ID único para deduplicación (opcional pero recomendado).
         source_url (str): URL donde ocurrió el evento.
+        custom_data_params (dict): Diccionario con parámetros para CustomData (content_ids, content_name, value, currency, etc.).
     """
     
     pixel_id = getattr(settings, 'META_PIXEL_ID', None)
@@ -73,10 +74,25 @@ def send_meta_conversion_event(event_name, user_details, event_id=None, source_u
             fbp=user_details.get('fbp'),
         )
 
+        custom_data = None
+        if custom_data_params:
+            custom_data = CustomData(
+                content_ids=custom_data_params.get('content_ids'),
+                content_name=custom_data_params.get('content_name'),
+                content_category=custom_data_params.get('content_category'),
+                content_type=custom_data_params.get('content_type'),
+                value=custom_data_params.get('value'),
+                currency=custom_data_params.get('currency'),
+                num_items=custom_data_params.get('num_items'),
+                order_id=custom_data_params.get('order_id'),
+                status=custom_data_params.get('status'),
+            )
+
         event = Event(
             event_name=event_name,
             event_time=int(time.time()),
             user_data=user_data,
+            custom_data=custom_data,
             event_source_url=source_url,
             action_source=Event.ActionSource.WEBSITE,
         )

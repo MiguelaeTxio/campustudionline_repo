@@ -1,4 +1,7 @@
 import logging
+import hashlib
+import uuid
+from users.tasks import send_meta_conversion_event
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -89,6 +92,32 @@ def report_content_error(request, content_pk):
             except Exception as e:
                 logger.error(f"[Feedback] Error general en bloque de notificaciones: {e}", exc_info=True)
 
+# --- Meta Ads CAPI: Lead (Report) ---
+            try:
+                event_id = str(uuid.uuid4())
+                email_hash = None
+                if request.user.is_authenticated and request.user.email:
+                    email_hash = hashlib.sha256(request.user.email.strip().lower().encode('utf-8')).hexdigest()
+                
+                user_details = {
+                    'email_hash': email_hash,
+                    'client_ip_address': request.META.get('HTTP_X_FORWARDED_FOR', request.META.get('REMOTE_ADDR', '')).split(',')[0].strip(),
+                    'client_user_agent': request.META.get('HTTP_USER_AGENT', ''),
+                    'fbp': request.COOKIES.get('_fbp'),
+                    'fbc': request.COOKIES.get('_fbc')
+                }
+                
+                send_meta_conversion_event.delay(
+                    event_name='Lead',
+                    user_details=user_details,
+                    event_id=event_id,
+                    source_url=request.build_absolute_uri(),
+                    custom_data_params={'content_name': 'Content Error Report', 'content_category': 'Feedback'}
+                )
+            except Exception as e:
+                logger.error(f"Error sending Meta Lead event: {e}")
+            # ------------------------------------
+
             messages.success(request, "Gracias por tu reporte. Lo revisaremos lo antes posible.")
             return redirect(content.get_absolute_url())
     else:
@@ -110,6 +139,32 @@ def submit_general_feedback(request):
             report.user = request.user
             report.report_type = FeedbackReport.TYPE_SUGGESTION
             report.save()
+# --- Meta Ads CAPI: Lead (General Feedback) ---
+            try:
+                event_id = str(uuid.uuid4())
+                email_hash = None
+                if request.user.is_authenticated and request.user.email:
+                    email_hash = hashlib.sha256(request.user.email.strip().lower().encode('utf-8')).hexdigest()
+                
+                user_details = {
+                    'email_hash': email_hash,
+                    'client_ip_address': request.META.get('HTTP_X_FORWARDED_FOR', request.META.get('REMOTE_ADDR', '')).split(',')[0].strip(),
+                    'client_user_agent': request.META.get('HTTP_USER_AGENT', ''),
+                    'fbp': request.COOKIES.get('_fbp'),
+                    'fbc': request.COOKIES.get('_fbc')
+                }
+                
+                send_meta_conversion_event.delay(
+                    event_name='Lead',
+                    user_details=user_details,
+                    event_id=event_id,
+                    source_url=request.build_absolute_uri(),
+                    custom_data_params={'content_name': 'General Feedback', 'content_category': 'Feedback'}
+                )
+            except Exception as e:
+                logger.error(f"Error sending Meta Lead event: {e}")
+            # ------------------------------------
+
             messages.success(request, "Gracias por tu feedback. Tu opinión es muy importante para nosotros.")
             return redirect('home')
     else:

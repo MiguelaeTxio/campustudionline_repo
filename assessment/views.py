@@ -1,5 +1,8 @@
 # /home/MiguelAeTxio/PROJECTS/CampuStudiOnline/assessment/views.py
 import logging
+import uuid
+import hashlib
+from users.tasks import send_meta_conversion_event
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse
@@ -69,6 +72,37 @@ def generate_ai_assessment(request, copy_pk):
             content_copy=user_copy,
             status="PENDING",
         )
+        # --- Meta Ads CAPI: RequestAssessment ---
+        try:
+            event_id = str(uuid.uuid4())
+            email_hash = None
+            if request.user.is_authenticated and request.user.email:
+                email_hash = hashlib.sha256(request.user.email.strip().lower().encode('utf-8')).hexdigest()
+            
+            user_details = {
+                'email_hash': email_hash,
+                'client_ip_address': request.META.get('HTTP_X_FORWARDED_FOR', request.META.get('REMOTE_ADDR', '')).split(',')[0].strip(),
+                'client_user_agent': request.META.get('HTTP_USER_AGENT', ''),
+                'fbp': request.COOKIES.get('_fbp'),
+                'fbc': request.COOKIES.get('_fbc')
+            }
+            
+            send_meta_conversion_event.delay(
+                event_name='RequestAssessment', # Evento personalizado
+                user_details=user_details,
+                event_id=event_id,
+                source_url=request.build_absolute_uri(),
+                custom_data_params={
+                    'content_ids': [str(user_copy.original_content.id)],
+                    'content_name': f"Assessment for {user_copy.original_content.title}",
+                    'content_category': 'Education',
+                    'content_type': 'product'
+                }
+            )
+        except Exception as e:
+            logger.error(f"Error sending Meta RequestAssessment event: {e}")
+        # ----------------------------------------
+        
         generate_assessment_from_content_task.delay(assessment.id)
         messages.success(
             request,

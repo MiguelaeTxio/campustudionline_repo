@@ -1,5 +1,8 @@
 # /home/MiguelAeTxio/PROJECTS/CampuStudiOnline/contents/views.py
 import logging
+import hashlib
+import uuid
+from users.tasks import send_meta_conversion_event
 import yaml
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
@@ -130,6 +133,66 @@ def personal_workspace_view(request):
 
     # NOTA: Los materiales se listarán DENTRO de las carpetas de sistema, NO en esta vista raíz.
     
+
+    # --- Meta Ads CAPI Integration: ViewContent ---
+    try:
+        # 1. Generar Event ID único para deduplicación
+        event_id = str(uuid.uuid4())
+        
+        # 2. Recopilar User Data
+        # Email hashing (si usuario autenticado)
+        email_hash = None
+        if request.user.is_authenticated and request.user.email:
+            email_normalized = request.user.email.strip().lower()
+            email_hash = hashlib.sha256(email_normalized.encode('utf-8')).hexdigest()
+        
+        # Cookies de Meta (si existen)
+        fbp = request.COOKIES.get('_fbp')
+        fbc = request.COOKIES.get('_fbc')
+        
+        # IP y User Agent
+        client_ip = request.META.get('HTTP_X_FORWARDED_FOR', request.META.get('REMOTE_ADDR', '')).split(',')[0].strip()
+        user_agent = request.META.get('HTTP_USER_AGENT', '')
+
+        user_details = {
+            'email_hash': email_hash,
+            'client_ip_address': client_ip,
+            'client_user_agent': user_agent,
+            'fbp': fbp,
+            'fbc': fbc
+        }
+
+        # 3. Preparar Custom Data
+        category_name = "General"
+        if content_obj.master_category:
+            category_name = content_obj.master_category.name
+        elif subject_context:
+            category_name = f"Academic/{subject_context.name}"
+
+        custom_data = {
+            'content_ids': [str(content_obj.id)],
+            'content_name': content_obj.title,
+            'content_category': category_name,
+            'content_type': 'product', # 'product' es estándar para cursos/artículos
+            'value': 0.0, # Asumimos 0 por ahora si no es de pago directo
+            'currency': 'EUR'
+        }
+        
+        # 4. Enviar evento asíncrono
+        source_url = request.build_absolute_uri()
+        send_meta_conversion_event.delay(
+            event_name='ViewContent',
+            user_details=user_details,
+            event_id=event_id,
+            source_url=source_url,
+            custom_data_params=custom_data
+        )
+        
+    except Exception as e:
+        logger.error(f"Error dispatching Meta ViewContent event: {e}")
+        event_id = None
+    # ---------------------------------------------
+
     context = {
         'nodes': root_nodes, # Debería contener al menos Mis Publicaciones y Mis Favoritos
     }
@@ -164,6 +227,66 @@ def favorite_folder_detail_view(request, folder_id):
     
     # Obtener todas las carpetas raíz del usuario para el modal de "Mover"
     root_folders = FavoriteFolder.get_root_nodes().filter(user=user, folder_type=FavoriteFolder.FOLDER_TYPE_FAVORITES)
+
+
+    # --- Meta Ads CAPI Integration: ViewContent ---
+    try:
+        # 1. Generar Event ID único para deduplicación
+        event_id = str(uuid.uuid4())
+        
+        # 2. Recopilar User Data
+        # Email hashing (si usuario autenticado)
+        email_hash = None
+        if request.user.is_authenticated and request.user.email:
+            email_normalized = request.user.email.strip().lower()
+            email_hash = hashlib.sha256(email_normalized.encode('utf-8')).hexdigest()
+        
+        # Cookies de Meta (si existen)
+        fbp = request.COOKIES.get('_fbp')
+        fbc = request.COOKIES.get('_fbc')
+        
+        # IP y User Agent
+        client_ip = request.META.get('HTTP_X_FORWARDED_FOR', request.META.get('REMOTE_ADDR', '')).split(',')[0].strip()
+        user_agent = request.META.get('HTTP_USER_AGENT', '')
+
+        user_details = {
+            'email_hash': email_hash,
+            'client_ip_address': client_ip,
+            'client_user_agent': user_agent,
+            'fbp': fbp,
+            'fbc': fbc
+        }
+
+        # 3. Preparar Custom Data
+        category_name = "General"
+        if content_obj.master_category:
+            category_name = content_obj.master_category.name
+        elif subject_context:
+            category_name = f"Academic/{subject_context.name}"
+
+        custom_data = {
+            'content_ids': [str(content_obj.id)],
+            'content_name': content_obj.title,
+            'content_category': category_name,
+            'content_type': 'product', # 'product' es estándar para cursos/artículos
+            'value': 0.0, # Asumimos 0 por ahora si no es de pago directo
+            'currency': 'EUR'
+        }
+        
+        # 4. Enviar evento asíncrono
+        source_url = request.build_absolute_uri()
+        send_meta_conversion_event.delay(
+            event_name='ViewContent',
+            user_details=user_details,
+            event_id=event_id,
+            source_url=source_url,
+            custom_data_params=custom_data
+        )
+        
+    except Exception as e:
+        logger.error(f"Error dispatching Meta ViewContent event: {e}")
+        event_id = None
+    # ---------------------------------------------
 
     context = {
         'folder': folder,
@@ -367,6 +490,66 @@ def get_folder_options_htmx_view(request):
     # Obtener todas las carpetas raíz del usuario para el modal de "Mover"
     root_folders = FavoriteFolder.get_root_nodes().filter(user=user, folder_type=FavoriteFolder.FOLDER_TYPE_FAVORITES)
 
+
+    # --- Meta Ads CAPI Integration: ViewContent ---
+    try:
+        # 1. Generar Event ID único para deduplicación
+        event_id = str(uuid.uuid4())
+        
+        # 2. Recopilar User Data
+        # Email hashing (si usuario autenticado)
+        email_hash = None
+        if request.user.is_authenticated and request.user.email:
+            email_normalized = request.user.email.strip().lower()
+            email_hash = hashlib.sha256(email_normalized.encode('utf-8')).hexdigest()
+        
+        # Cookies de Meta (si existen)
+        fbp = request.COOKIES.get('_fbp')
+        fbc = request.COOKIES.get('_fbc')
+        
+        # IP y User Agent
+        client_ip = request.META.get('HTTP_X_FORWARDED_FOR', request.META.get('REMOTE_ADDR', '')).split(',')[0].strip()
+        user_agent = request.META.get('HTTP_USER_AGENT', '')
+
+        user_details = {
+            'email_hash': email_hash,
+            'client_ip_address': client_ip,
+            'client_user_agent': user_agent,
+            'fbp': fbp,
+            'fbc': fbc
+        }
+
+        # 3. Preparar Custom Data
+        category_name = "General"
+        if content_obj.master_category:
+            category_name = content_obj.master_category.name
+        elif subject_context:
+            category_name = f"Academic/{subject_context.name}"
+
+        custom_data = {
+            'content_ids': [str(content_obj.id)],
+            'content_name': content_obj.title,
+            'content_category': category_name,
+            'content_type': 'product', # 'product' es estándar para cursos/artículos
+            'value': 0.0, # Asumimos 0 por ahora si no es de pago directo
+            'currency': 'EUR'
+        }
+        
+        # 4. Enviar evento asíncrono
+        source_url = request.build_absolute_uri()
+        send_meta_conversion_event.delay(
+            event_name='ViewContent',
+            user_details=user_details,
+            event_id=event_id,
+            source_url=source_url,
+            custom_data_params=custom_data
+        )
+        
+    except Exception as e:
+        logger.error(f"Error dispatching Meta ViewContent event: {e}")
+        event_id = None
+    # ---------------------------------------------
+
     context = {
         'folders': root_folders,
         'current_folder_id': current_folder_id,
@@ -471,6 +654,66 @@ def content_detail(request, pk, subject_pk=None):
         messages.error(request, "No tienes permiso para acceder a este contenido privado.")
         return redirect("contents:personal_workspace")
 
+
+    # --- Meta Ads CAPI Integration: ViewContent ---
+    try:
+        # 1. Generar Event ID único para deduplicación
+        event_id = str(uuid.uuid4())
+        
+        # 2. Recopilar User Data
+        # Email hashing (si usuario autenticado)
+        email_hash = None
+        if request.user.is_authenticated and request.user.email:
+            email_normalized = request.user.email.strip().lower()
+            email_hash = hashlib.sha256(email_normalized.encode('utf-8')).hexdigest()
+        
+        # Cookies de Meta (si existen)
+        fbp = request.COOKIES.get('_fbp')
+        fbc = request.COOKIES.get('_fbc')
+        
+        # IP y User Agent
+        client_ip = request.META.get('HTTP_X_FORWARDED_FOR', request.META.get('REMOTE_ADDR', '')).split(',')[0].strip()
+        user_agent = request.META.get('HTTP_USER_AGENT', '')
+
+        user_details = {
+            'email_hash': email_hash,
+            'client_ip_address': client_ip,
+            'client_user_agent': user_agent,
+            'fbp': fbp,
+            'fbc': fbc
+        }
+
+        # 3. Preparar Custom Data
+        category_name = "General"
+        if content_obj.master_category:
+            category_name = content_obj.master_category.name
+        elif subject_context:
+            category_name = f"Academic/{subject_context.name}"
+
+        custom_data = {
+            'content_ids': [str(content_obj.id)],
+            'content_name': content_obj.title,
+            'content_category': category_name,
+            'content_type': 'product', # 'product' es estándar para cursos/artículos
+            'value': 0.0, # Asumimos 0 por ahora si no es de pago directo
+            'currency': 'EUR'
+        }
+        
+        # 4. Enviar evento asíncrono
+        source_url = request.build_absolute_uri()
+        send_meta_conversion_event.delay(
+            event_name='ViewContent',
+            user_details=user_details,
+            event_id=event_id,
+            source_url=source_url,
+            custom_data_params=custom_data
+        )
+        
+    except Exception as e:
+        logger.error(f"Error dispatching Meta ViewContent event: {e}")
+        event_id = None
+    # ---------------------------------------------
+
     context = {
         "material": content_obj, "rendered_html_content": rendered_html_content,
         "metadata": metadata, "can_edit_delete": is_creator,
@@ -481,6 +724,7 @@ def content_detail(request, pk, subject_pk=None):
         "breadcrumbs": breadcrumbs, # Pasamos los breadcrumbs
         "show_preloader": True, "show_tour": True,
         "is_gated": not request.user.is_authenticated, # Flag para Content Gating
+        "meta_event_id": event_id,
     }
     return render(request, "contents/content_detail.html", context)
 
@@ -518,6 +762,66 @@ def create_content(request):
                 return redirect(new_content.get_absolute_url())
     else:
         form = ContentMaterialForm()
+
+    # --- Meta Ads CAPI Integration: ViewContent ---
+    try:
+        # 1. Generar Event ID único para deduplicación
+        event_id = str(uuid.uuid4())
+        
+        # 2. Recopilar User Data
+        # Email hashing (si usuario autenticado)
+        email_hash = None
+        if request.user.is_authenticated and request.user.email:
+            email_normalized = request.user.email.strip().lower()
+            email_hash = hashlib.sha256(email_normalized.encode('utf-8')).hexdigest()
+        
+        # Cookies de Meta (si existen)
+        fbp = request.COOKIES.get('_fbp')
+        fbc = request.COOKIES.get('_fbc')
+        
+        # IP y User Agent
+        client_ip = request.META.get('HTTP_X_FORWARDED_FOR', request.META.get('REMOTE_ADDR', '')).split(',')[0].strip()
+        user_agent = request.META.get('HTTP_USER_AGENT', '')
+
+        user_details = {
+            'email_hash': email_hash,
+            'client_ip_address': client_ip,
+            'client_user_agent': user_agent,
+            'fbp': fbp,
+            'fbc': fbc
+        }
+
+        # 3. Preparar Custom Data
+        category_name = "General"
+        if content_obj.master_category:
+            category_name = content_obj.master_category.name
+        elif subject_context:
+            category_name = f"Academic/{subject_context.name}"
+
+        custom_data = {
+            'content_ids': [str(content_obj.id)],
+            'content_name': content_obj.title,
+            'content_category': category_name,
+            'content_type': 'product', # 'product' es estándar para cursos/artículos
+            'value': 0.0, # Asumimos 0 por ahora si no es de pago directo
+            'currency': 'EUR'
+        }
+        
+        # 4. Enviar evento asíncrono
+        source_url = request.build_absolute_uri()
+        send_meta_conversion_event.delay(
+            event_name='ViewContent',
+            user_details=user_details,
+            event_id=event_id,
+            source_url=source_url,
+            custom_data_params=custom_data
+        )
+        
+    except Exception as e:
+        logger.error(f"Error dispatching Meta ViewContent event: {e}")
+        event_id = None
+    # ---------------------------------------------
+
     context = {
         "content_form": form, "page_title": "Crear Nuevo Material", "is_editing": False
     }
@@ -537,6 +841,66 @@ def edit_content(request, pk):
             return redirect(content_to_save.get_absolute_url())
     else:
         form = ContentMaterialForm(instance=content_obj)
+
+    # --- Meta Ads CAPI Integration: ViewContent ---
+    try:
+        # 1. Generar Event ID único para deduplicación
+        event_id = str(uuid.uuid4())
+        
+        # 2. Recopilar User Data
+        # Email hashing (si usuario autenticado)
+        email_hash = None
+        if request.user.is_authenticated and request.user.email:
+            email_normalized = request.user.email.strip().lower()
+            email_hash = hashlib.sha256(email_normalized.encode('utf-8')).hexdigest()
+        
+        # Cookies de Meta (si existen)
+        fbp = request.COOKIES.get('_fbp')
+        fbc = request.COOKIES.get('_fbc')
+        
+        # IP y User Agent
+        client_ip = request.META.get('HTTP_X_FORWARDED_FOR', request.META.get('REMOTE_ADDR', '')).split(',')[0].strip()
+        user_agent = request.META.get('HTTP_USER_AGENT', '')
+
+        user_details = {
+            'email_hash': email_hash,
+            'client_ip_address': client_ip,
+            'client_user_agent': user_agent,
+            'fbp': fbp,
+            'fbc': fbc
+        }
+
+        # 3. Preparar Custom Data
+        category_name = "General"
+        if content_obj.master_category:
+            category_name = content_obj.master_category.name
+        elif subject_context:
+            category_name = f"Academic/{subject_context.name}"
+
+        custom_data = {
+            'content_ids': [str(content_obj.id)],
+            'content_name': content_obj.title,
+            'content_category': category_name,
+            'content_type': 'product', # 'product' es estándar para cursos/artículos
+            'value': 0.0, # Asumimos 0 por ahora si no es de pago directo
+            'currency': 'EUR'
+        }
+        
+        # 4. Enviar evento asíncrono
+        source_url = request.build_absolute_uri()
+        send_meta_conversion_event.delay(
+            event_name='ViewContent',
+            user_details=user_details,
+            event_id=event_id,
+            source_url=source_url,
+            custom_data_params=custom_data
+        )
+        
+    except Exception as e:
+        logger.error(f"Error dispatching Meta ViewContent event: {e}")
+        event_id = None
+    # ---------------------------------------------
+
     context = {
         "content_form": form, "content_obj": content_obj, "page_title": "Editando Material",
         "is_editing": True

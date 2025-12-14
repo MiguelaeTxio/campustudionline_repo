@@ -775,3 +775,11 @@
 *  **Session:** Hito 25: Inicio de Estrategia Meta Ads e Infraestructura de Tracking
 *  **Description:** Subsanación de inconsistencia documental creando el anexo del Hito 25 (V25). Inicio de la implementación de la estrategia de Meta Ads. Se define la hoja de ruta técnica que incluye la implementación híbrida de seguimiento (Pixel + CAPI), configuración de eventos estándar de conversión y preparación de templates para Landing Pages.
 
+
+# 2025-12-14
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V25.md
+## MAMC
+*  **Session:** Implementación de Eventos de Conversión Meta Ads: Lead, ViewContent e InitiateCheckout
+*  **Description:** Continuación del Hito 25. Implementación de eventos de conversión estándar de Meta (Pixel + CAPI) en puntos clave de la navegación: 'ViewContent' en materiales de estudio, 'Lead' en formularios de contacto e 'InitiateCheckout'. Se extenderá la lógica de tareas asíncronas centralizada para soportar estos nuevos eventos server-side.
+

@@ -280,6 +280,7 @@
 ./contents/migrations/0001_initial.py
 ./contents/migrations/0006_update_public_status_by_rules.py
 ./contents/migrations/0005_contentmaterial_is_free_content.py
+./contents/feeds.py
 ./contents/admin_urls.py
 ./contents/study_room_urls.py
 ./contents/tests.py
