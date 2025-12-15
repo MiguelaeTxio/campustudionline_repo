@@ -539,7 +539,7 @@ def content_detail(request, pk, subject_pk=None):
         "breadcrumbs": breadcrumbs, # Pasamos los breadcrumbs
         "show_preloader": True, "show_tour": True,
         "is_gated": not request.user.is_authenticated, # Flag para Content Gating
-        "meta_event_id": event_id,
+        "meta_event": {"name": "ViewContent", "id": event_id} if event_id else None,
     }
     return render(request, "contents/content_detail.html", context)
 

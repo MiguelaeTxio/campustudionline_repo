@@ -791,3 +791,11 @@
 *  **Session:** Verificación de Eventos y Feed para Meta Ads
 *  **Description:** Validación técnica de la implementación del catálogo de productos y la transmisión de eventos (CAPI/Pixel) para el lanzamiento de la campaña. Revisión de modelos implicados en la generación del feed y conversiones.
 
+
+# 2025-12-14
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V25.md
+## NRA
+*  **Session:** Verificación de Eventos Meta CAPI y Preparación de Campaña
+*  **Description:** Continuación del Hito 25. Tras la corrección del feed de catálogo, el objetivo es verificar la correcta recepción y deduplicación de eventos (ViewContent, Lead, RequestAssessment) en el Events Manager de Meta. Se asistirá en la validación de la implementación híbrida (Pixel + CAPI) y se comenzará con la preparación de los activos para la campaña.
+

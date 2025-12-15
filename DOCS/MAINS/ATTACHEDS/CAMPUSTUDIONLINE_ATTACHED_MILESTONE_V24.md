@@ -1,16 +1,18 @@
-# Hito de Soporte y Mantenimiento: Ruegos y Preguntas
+# Hito 24: Soporte y Mantenimiento: Ruegos y Preguntas
 
-**Estado:** COMPLETADO
+## 1. Visión y Objetivos
+Auditar y validar los sistemas críticos de la plataforma en la fase final de pruebas previa al lanzamiento comercial. Priorizar la estabilidad y la experiencia del usuario final sobre la generación automática de contenido.
 
-## Resumen de la Sesión CYC (13/12/2025) - Estabilización de Plataforma
-*   **Bloqueo Resuelto 1 (Redis, NameError, Conexiones):**
-    *   **Hot-Swap a Redis DB 0 (core/settings.py):** Corrección de la URL del Broker que fallaba al apuntar a la DB 1 (`DB index out of range`).
-    *   **Optimización de Pool de Conexiones (core/settings.py):** Implementación de `CELERY_BROKER_POOL_LIMIT = 1` para compartir un único pool entre todos los workers y el beat, resolviendo la alerta de saturación del 93% y el retardo en notificaciones.
-    *   **Doble Worker (start_unified_workers.sh):** Creación de un script lanzadera para desplegar dos workers (uno para carga pesada y otro exclusivo para chat/notificaciones) en una sola tarea Always-on.
-*   **Bloqueo Resuelto 2 (UX/Frontend):**
-    *   **Resiliencia Chat Backend (messaging/views.py):** Implementación de un bloque `try...except` para evitar que los fallos de notificaciones bloqueen el envío de mensajes.
-    *   **UX Envío de Mensaje (conversation_detail.html):** Aplicación de lógica "Optimista" para que la caja de texto se limpie instantáneamente al enviar.
-    *   **Preloader Global (conversation_detail.html):** Inyección de CSS para ocultar el preloader global que se mostraba incorrectamente en la vista de chat privado.
+## 2. Estado del Hito
+*   **Estado:** EN PROGRESO
+*   **Fecha de Inicio:** 14/12/2025
 
-## Hoja de Ruta (Hito CERRADO)
-Este hito se cierra. Los problemas de estabilidad y rendimiento prioritarios se han resuelto. La próxima hoja de ruta se centrará en el nuevo Hito 26.
+## 3. Hoja de Ruta Táctica
+
+### 3.1. Auditoría del Orquestador de Contenido
+*   [ ] **Verificación Funcional del Control de Pausa/Reanudación:** Realizar pruebas empíricas para confirmar que el botón de control de la generación masiva de contenido en el panel de administración funciona como se espera, deteniendo y reanudando las tareas de Celery correctamente.
+*   [ ] **Análisis de Priorización de Tareas:** Auditar el flujo de tareas para asegurar que las peticiones de los usuarios (ej: generación de evaluaciones) tienen prioridad sobre las tareas de fondo de generación automática de contenido, en respuesta a los recortes de cuota de la API.
+
+### 3.2. Re-evaluación Estratégica de Modelos de IA
+*   [ ] **Investigación de Cuotas y Costes:** Recopilar información actualizada sobre las cuotas, límites y estructura de precios del modelo `gemini-2.5-flash-lite` y posibles alternativas viables.
+*   [ ] **Análisis de Viabilidad:** Elaborar un informe comparativo para determinar si un cambio de modelo podría ser beneficioso en términos de coste y rendimiento para la fase comercial.
