@@ -326,7 +326,7 @@ def toggle_automation_status_view(request):
     settings_instance.save(update_fields=['is_running'])
     
     context = {"settings": settings_instance}
-    return render(request, "admin/orchestrator/_automation_status_panel.html", context)
+    return render(request, "admin/orchestrator/_automation_control_panel.html", context)
 
 @staff_member_required
 @require_POST
@@ -506,3 +506,14 @@ def revise_and_regenerate_view(request, task_id):
         'task': task
     })
     return render(request, 'admin/orchestrator/revise_task_form.html', context)
+
+@staff_member_required
+@require_POST
+def toggle_mass_generation_view(request):
+    settings_instance = AutomationSettings.load()
+    settings_instance.is_mass_generation_enabled = not settings_instance.is_mass_generation_enabled
+    settings_instance.save(update_fields=['is_mass_generation_enabled'])
+    
+    # Devolvemos el panel de control completo para actualizar ambos botones
+    context = {"settings": settings_instance}
+    return render(request, "admin/orchestrator/_automation_control_panel.html", context)

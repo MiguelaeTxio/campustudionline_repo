@@ -799,3 +799,11 @@
 *  **Session:** Verificación de Eventos Meta CAPI y Preparación de Campaña
 *  **Description:** Continuación del Hito 25. Tras la corrección del feed de catálogo, el objetivo es verificar la correcta recepción y deduplicación de eventos (ViewContent, Lead, RequestAssessment) en el Events Manager de Meta. Se asistirá en la validación de la implementación híbrida (Pixel + CAPI) y se comenzará con la preparación de los activos para la campaña.
 
+
+# 2025-12-15
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V24.md
+## AAAA
+*  **Session:** Hito 24: Auditoría del Orquestador de Contenido y Estrategia de IA
+*  **Description:** Sesión enfocada en la validación empírica de los controles de flujo del orquestador de contenido (pausa/reanudación) y el análisis de la priorización de tareas en Celery. Se abordará también la investigación de cuotas de la API de Gemini para evaluar la viabilidad de nuevos modelos.
+

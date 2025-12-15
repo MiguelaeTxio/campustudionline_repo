@@ -604,6 +604,18 @@ def global_orchestrator_task(self):
                 automation_settings.last_run_status = status_msg
                 automation_settings.save(update_fields=['last_run_status'])
             return
+
+        # [HITO 24] CONTROL DE GENERACIÓN MASIVA
+        # Si este interruptor está apagado, el orquestador se detiene aquí.
+        # Esto permite que las Requests y Assessments (arriba) se procesen,
+        # pero evita el consumo de cuota en tareas de relleno (abajo).
+        if not automation_settings.is_mass_generation_enabled:
+            status_msg = "AHORRO DE ENERGÍA: Generación masiva desactivada. A la espera de solicitudes manuales."
+            if automation_settings.last_run_status != status_msg:
+                _log_structured_event(status_msg, "INFO")
+                automation_settings.last_run_status = status_msg
+                automation_settings.save(update_fields=['last_run_status'])
+            return
         while True:
             subject_qs = _get_next_subject_queryset(automation_settings)
             subject_to_process = subject_qs.order_by('?').first()

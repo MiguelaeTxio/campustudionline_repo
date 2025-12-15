@@ -1,29 +1,35 @@
-{# /home/MiguelAeTxio/PROJECTS/CampuStudiOnline/orchestrator/templates/admin/orchestrator/_automation_control_panel.html #}
 <fieldset class="module aligned" id="automation-control-panel">
     <h2>Acciones de Control</h2>
     <div class="form-row">
-        <div>
-            <form 
-                hx-post="{% url 'orchestrator:toggle_automation_status' %}" 
-                hx-target="#automation-control-panel-wrapper" 
-                hx-swap="innerHTML"
-                hx-indicator=".htmx-indicator"
-                style="display: inline-block; margin-right: 10px;">
-                {% csrf_token %}
-                <input type="submit" 
-                       class="button {% if not settings.is_running %}default{% endif %}" 
-                       style="{% if settings.is_running %}background-color: #ba2121; color: white;{% endif %}"
-                       value="{% if settings.is_running %}Detener Motor de Automatización{% else %}Iniciar Motor de Automatización{% endif %}">
-            </form>
-            <span class="htmx-indicator">
-                Procesando...
-            </span>
+        <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+            <div>
+                <form hx-post="{% url 'orchestrator:toggle_automation_status' %}" hx-target="#automation-control-panel-wrapper" hx-swap="innerHTML" hx-indicator=".htmx-indicator">
+                    {% csrf_token %}
+                    <input type="submit" class="button {% if not settings.is_running %}default{% endif %}" style="min-width: 220px; {% if settings.is_running %}background-color: #ba2121; color: white;{% endif %}" value="{% if settings.is_running %}⛔ DETENER SISTEMA (Emergencia){% else %}✅ INICIAR SISTEMA{% endif %}">
+                </form>
+            </div>
+            <div>
+                <form hx-post="{% url 'orchestrator:toggle_mass_generation' %}" hx-target="#automation-control-panel-wrapper" hx-swap="innerHTML" hx-indicator=".htmx-indicator">
+                    {% csrf_token %}
+                    {% if settings.is_running %}
+                        <input type="submit" class="button" style="min-width: 220px; {% if settings.is_mass_generation_enabled %}background-color: #f0ad4e; color: white; border: 1px solid #eea236;{% else %}background-color: #5bc0de; color: white; border: 1px solid #46b8da;{% endif %}" value="{% if settings.is_mass_generation_enabled %}⏸️ PAUSAR Generación Masiva{% else %}▶️ REANUDAR Generación Masiva{% endif %}">
+                    {% else %}
+                        <button class="button" disabled style="min-width: 220px; background-color: #ddd; color: #888; cursor: not-allowed;">Sistema Detenido</button>
+                    {% endif %}
+                </form>
+            </div>
+            <span class="htmx-indicator" style="align-self: center;"><img src="/static/admin/img/icon-unknown.svg" alt="Cargando..."> Procesando...</span>
         </div>
-        <div class="help" style="margin-top: 10px;">
-            {% if settings.is_running %}
-                <strong>¡PELIGRO!</strong> El motor está en funcionamiento. Detenerlo pausará la creación de nuevas tareas masivas.
+        <div class="help" style="margin-top: 15px; border-top: 1px solid #eee; padding-top: 10px;">
+            {% if not settings.is_running %}
+                <p style="color: #ba2121;"><strong>SISTEMA APAGADO:</strong> No se procesará ninguna tarea (ni usuarios ni masivas).</p>
             {% else %}
-                El motor está detenido. Actívalo para comenzar la generación automática de contenido según las semillas configuradas.
+                <p style="color: green;"><strong>SISTEMA ACTIVO:</strong> Se atienden solicitudes de usuarios y evaluaciones.</p>
+                {% if settings.is_mass_generation_enabled %}
+                    <p style="color: #f0ad4e;"><strong>• Generación Masiva: ACTIVA.</strong> El sistema generará contenido de relleno usando semillas cuando no haya usuarios esperando.</p>
+                {% else %}
+                    <p style="color: #5bc0de;"><strong>• Generación Masiva: EN PAUSA.</strong> Ahorro de API. Solo se procesan tareas bajo demanda.</p>
+                {% endif %}
             {% endif %}
         </div>
     </div>

@@ -8,6 +8,7 @@ urlpatterns = [
     path("dashboard/", views.task_dashboard_view, name="task_dashboard"),
     path("automation-control/", views.automation_control_view, name="automation_control_center"),
     path("toggle-automation-status/", views.toggle_automation_status_view, name="toggle_automation_status"),
+    path("toggle-mass-generation/", views.toggle_mass_generation_view, name="toggle_mass_generation"),
     path("set-active-api-key/", views.set_active_api_key_view, name="set_active_api_key"),
     path("set-seed-filters/", views.set_seed_filters_view, name="set_seed_filters"),
     path("tasks/create-academic/", views.create_academic_task_view, name="create_academic_task"),

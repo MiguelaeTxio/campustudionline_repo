@@ -1,7 +1,24 @@
 <fieldset id="status-container" class="module aligned">
     <h2>Estado Actual</h2>
     <div class="form-row">
-        <div><label>Interruptor Maestro:</label>{% if settings.is_running %}<p><strong style="color: green;">Activo</strong></p>{% else %}<p><strong style="color: red;">Detenido</strong></p>{% endif %}</div>
+        <div>
+            <label>Sistema General:</label>
+            {% if settings.is_running %}
+                <span style="color: white; background: green; padding: 2px 8px; border-radius: 4px; font-weight: bold;">ONLINE</span>
+            {% else %}
+                <span style="color: white; background: red; padding: 2px 8px; border-radius: 4px; font-weight: bold;">OFFLINE</span>
+            {% endif %}
+        </div>
+    </div>
+    <div class="form-row">
+        <div>
+            <label>Generación Masiva:</label>
+            {% if settings.is_mass_generation_enabled %}
+                <span style="color: white; background: #f0ad4e; padding: 2px 8px; border-radius: 4px; font-weight: bold;">ACTIVA</span>
+            {% else %}
+                <span style="color: white; background: #5bc0de; padding: 2px 8px; border-radius: 4px; font-weight: bold;">PAUSADA (Ahorro)</span>
+            {% endif %}
+        </div>
     </div>
     <div class="form-row">
         <div><label>Clave de API en Uso:</label>{% if settings.active_api_key %}<p><strong>{{ settings.active_api_key.name }}</strong></p>{% else %}<p><strong style="color: orange;">No asignada</strong></p>{% endif %}</div>

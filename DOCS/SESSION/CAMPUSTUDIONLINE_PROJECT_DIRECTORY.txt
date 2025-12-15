@@ -81,6 +81,7 @@
 ./orchestrator/forms.py
 ./orchestrator/models.py
 ./orchestrator/migrations
+./orchestrator/migrations/0006_automationsettings_is_mass_generation_enabled.py
 ./orchestrator/migrations/0002_pendingcontenttask_unique_active_academic_task_per_subject_and_more.py
 ./orchestrator/migrations/0004_automationsettings_max_consecutive_api_errors_and_more.py
 ./orchestrator/migrations/0005_apikey_consecutive_failures.py
@@ -521,6 +522,7 @@
 ./portfolio/tests.py
 ./core
 ./core/context_processors.py
+./core/wsgi.pycp
 ./core/services
 ./core/services/gemini_schemas.py
 ./core/services/gemini_service.py
@@ -629,6 +631,7 @@
 ./DOCS/SESSION/TEMP_SESSIONS_HISTORY.md
 ./DOCS/SESSION/COMPLETED
 ./DOCS/SESSION/COMPLETED/CAMPUSTUDIONLINE_IS_FAVORITE_BUG_FIX_SESSION_SUMMARY.md
+./DOCS/SESSION/COMPLETED/CAMPUSTUDIONLINE_ORCHESTRATOR_HYBRID_CONTROL_IMPLEMENTED_SESSION_SUMMARY.md
 ./DOCS/SESSION/COMPLETED/CAMPUSTUDIONLINE_PUBLIC_CONTENT_REGRESSION_FIX_SESSION_SUMMARY.md
 ./DOCS/SESSION/COMPLETED/CAMPUSTUDIONLINE_PREMATURE_BATCH_COMPLETION_SESSION_SUMMARY.md
 ./DOCS/SESSION/COMPLETED/CAMPUSTUDIONLINE_CONTENT_AUTOMATION_SESSION_SUMMARY.md

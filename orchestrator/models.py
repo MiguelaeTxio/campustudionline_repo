@@ -63,6 +63,11 @@ class AutomationSettings(models.Model):
         verbose_name="Interruptor Maestro de Automatización",
         help_text="Si está activado, la tarea 'always-on' buscará y procesará tareas pendientes."
     )
+    is_mass_generation_enabled = models.BooleanField(
+        default=False,
+        verbose_name="Generación Masiva Activa",
+        help_text="Si está desactivado, el sistema solo procesará solicitudes de usuarios y evaluaciones, ignorando el relleno automático."
+    )
     quarantine_reset_time = models.TimeField(
         default=time(9, 5),
         verbose_name="Hora de Reseteo de Cuarentena",
