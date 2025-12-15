@@ -807,3 +807,11 @@
 *  **Session:** Hito 24: Auditoría del Orquestador de Contenido y Estrategia de IA
 *  **Description:** Sesión enfocada en la validación empírica de los controles de flujo del orquestador de contenido (pausa/reanudación) y el análisis de la priorización de tareas en Celery. Se abordará también la investigación de cuotas de la API de Gemini para evaluar la viabilidad de nuevos modelos.
 
+
+# 2025-12-15
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V24.md
+## CYC
+*  **Session:** Mantenimiento y Estabilidad del Sistema (Hito 24)
+*  **Description:** Sesión dedicada a la vigilancia operativa y resolución de incidencias bajo demanda, priorizando la estabilidad de la plataforma y la experiencia de usuario según las directrices del Hito 24.
+

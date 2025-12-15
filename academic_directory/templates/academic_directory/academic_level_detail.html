@@ -84,30 +84,51 @@
                                     <span class="badge bg-primary rounded-pill"><i class="fas fa-chevron-right"></i></span>
                                 </a>
                             
+                            {# --- LÓGICA DE ESTADOS PARA ASIGNATURAS --- #}
                             {% elif next_url_name == 'academic_directory:public_content_list' %}
-                                {% if item.has_public_content %}
-                                    <a href="{% url 'academic_directory:public_content_list' university_slug=university_slug branch_slug=branch_slug degree_slug=degree_slug year=year subject_slug=item.slug %}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
-                                        <div>
-                                            {{ item.name }}
-                                            
-                                        </div>
-                                        <span class="badge bg-success rounded-pill"><i class="fas fa-check-circle me-1"></i> Ver Contenido</span>
-                                    </a>
-                                {% else %}
-                                    <div class="list-group-item d-flex justify-content-between align-items-center list-group-item-light">
-                                        <span>
-                                            {{ item.name }}
-                                            
-                                        </span>
-                                        <form action="{% url 'academic_directory:request_content' %}" method="POST" class="m-0">
-                                            {% csrf_token %}
-                                            <input type="hidden" name="subject_id" value="{{ item.id }}">
-                                            <button type="submit" class="btn btn-primary btn-sm">
-                                                <i class="fas fa-plus-circle me-1"></i> Solicitar Contenido
+                                {% with status=item.get_public_status %}
+                                
+                                    {% if status == 'HAS_CONTENT' %}
+                                        {# ESTADO 1: CONTENIDO DISPONIBLE (VERDE) #}
+                                        <a href="{% url 'academic_directory:public_content_list' university_slug=university_slug branch_slug=branch_slug degree_slug=degree_slug year=year subject_slug=item.slug %}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                                            <div>
+                                                {{ item.name }}
+                                                
+                                            </div>
+                                            <span class="badge bg-success rounded-pill"><i class="fas fa-check-circle me-1"></i> Ver Contenido</span>
+                                        </a>
+
+                                    {% elif status == 'IN_PROGRESS' %}
+                                        {# ESTADO 2: GENERANDO (NARANJA/AZUL CLARO - DESHABILITADO) #}
+                                        <div class="list-group-item d-flex justify-content-between align-items-center list-group-item-light">
+                                            <span class="text-muted">
+                                                {{ item.name }}
+                                                
+                                            </span>
+                                            <button disabled class="btn btn-secondary btn-sm position-relative">
+                                                <span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
+                                                Generando contenido...
                                             </button>
-                                        </form>
-                                    </div>
-                                {% endif %}
+                                        </div>
+
+                                    {% else %}
+                                        {# ESTADO 3: SOLICITABLE (AZUL) #}
+                                        <div class="list-group-item d-flex justify-content-between align-items-center list-group-item-light">
+                                            <span>
+                                                {{ item.name }}
+                                                
+                                            </span>
+                                            <form action="{% url 'academic_directory:request_content' %}" method="POST" class="m-0">
+                                                {% csrf_token %}
+                                                <input type="hidden" name="subject_id" value="{{ item.id }}">
+                                                <button type="submit" class="btn btn-primary btn-sm">
+                                                    <i class="fas fa-plus-circle me-1"></i> Solicitar Contenido
+                                                </button>
+                                            </form>
+                                        </div>
+                                    {% endif %}
+                                
+                                {% endwith %}
                             {% endif %}
                         {% empty %}
                             <div class="alert alert-light" role="alert">

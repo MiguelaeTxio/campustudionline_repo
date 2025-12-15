@@ -73,6 +73,7 @@
 ./orchestrator/templates/admin/orchestrator/create_free_task.html
 ./orchestrator/templates/admin/orchestrator/confirm_request_deletion.html
 ./orchestrator/templates/admin/orchestrator/task_log_full_page.html
+./orchestrator/signals.py
 ./orchestrator/admin.py
 ./orchestrator/admin_views.py
 ./orchestrator/__init__.py

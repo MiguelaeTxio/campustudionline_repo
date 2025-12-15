@@ -18,6 +18,7 @@ Auditar y validar los sistemas críticos de la plataforma en la fase final de pr
 *   [x] **Incidencia Meta Ads:** Resolución de problemas de visualización y contexto en el Administrador de Anuncios para la campaña de tráfico frío.
 
 ### 3.3. Soporte y Mantenimiento Continuo (EN CURSO)
+*   [x] **Automatización de Solicitudes Académicas:** Implementación de "tubería directa" (Señales) para aprobar y lanzar tareas de generación automáticamente al solicitar una asignatura. Mejora de UX para feedback inmediato ("Generando...").
 *   [ ] **Resolución de Incidencias:** Atención a errores reportados o detectados en la operativa diaria.
 *   [ ] **Monitorización:** Vigilancia del comportamiento del modelo de negocio (Evaluaciones) en el entorno de producción.
 

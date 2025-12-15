@@ -481,7 +481,7 @@ class Subject(TimeStampedModel):
 
         if latest_request:
             status = latest_request.status
-            if status == ContentRequest.StatusChoices.IN_PROGRESS:
+            if status in [ContentRequest.StatusChoices.IN_PROGRESS, ContentRequest.StatusChoices.APPROVED]:
                 return 'IN_PROGRESS'
             if status == ContentRequest.StatusChoices.PENDING:
                 return 'REQUEST_PENDING'
