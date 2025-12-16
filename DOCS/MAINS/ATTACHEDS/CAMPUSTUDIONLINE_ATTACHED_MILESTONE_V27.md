@@ -6,20 +6,20 @@ Resolver la fricción detectada en el flujo de usuario que impide descubrir y ut
 ## 2. Estado del Hito
 *   **Estado:** EN PROGRESO
 *   **Fecha de Inicio:** 16/12/2025
-*   **Última Actualización:** 16/12/2025 (Definición de Hoja de Ruta)
+*   **Última Actualización:** 16/12/2025 (Sesión de Inicialización y Planificación)
 
 ## 3. Hoja de Ruta Táctica
 
 ### 3.1. Análisis y Diagnóstico
-*   [ ] **Auditoría de Visibilidad:** Identificar puntos ciegos en el Dashboard y Navbar donde la funcionalidad pasa desapercibida.
+*   [ ] **Auditoría de Visibilidad:** Identificar puntos ciegos en el Dashboard y Navbar. (Archivos identificados, pendiente de análisis).
 
 ### 3.2. Mejoras de Interfaz (UI/UX)
-*   [ ] **Dashboard Revamp:** Rediseñar la tarjeta de "Evaluaciones" en el panel principal para que sea prominente.
-*   [ ] **CTA Global:** Implementar un botón o indicador persistente (si aplica) para iniciar una evaluación rápida.
-*   [ ] **Claridad en el Flujo:** Revisar los textos y pasos necesarios para lanzar una evaluación.
+*   [ ] **Dashboard Revamp:** Rediseñar la tarjeta de "Evaluaciones" en el panel principal.
+*   [ ] **CTA Global:** Implementar botón/indicador persistente.
+*   [ ] **Claridad en el Flujo:** Revisar textos y pasos.
 
 ### 3.3. Onboarding Guiado
-*   [ ] **Tour Interactivo:** Implementar un tour con `Shepherd.js` específico para explicar cómo funcionan las evaluaciones la primera vez que se entra.
+*   [ ] **Tour Interactivo:** Implementar tour con `Shepherd.js`.
 
 ## 4. Notas de Ejecución
-Este hito tiene prioridad absoluta sobre nuevas funcionalidades complejas.
+*   **16/12/2025:** Se ha actualizado el Documento Maestro para cerrar el Hito 24 y formalizar el inicio del Hito 27. Se ha incluido el Hito 28 (UniversIA) como pendiente. Se ha preparado la lista de archivos para la auditoría de visibilidad UX.

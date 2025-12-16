@@ -822,3 +822,11 @@
 *  **Session:** Sesión de Mantenimiento y Soporte - Hito 24
 *  **Description:** Inicio de sesión bajo el Hito 24 (Ruegos y Preguntas). El sistema está configurado para priorizar la estabilidad y la atención de incidencias bajo demanda. Se consolidan las tareas de orquestación híbrida y gestión de costes. Preparada para intervenciones de mantenimiento correctivo o evolutivo.
 
+
+# 2025-12-16
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V27.md
+## CYC
+*  **Session:** Hito 27: Optimización de UX y Onboarding
+*  **Description:** Corrección del documento maestro para reflejar el hito actual. Inicio de los trabajos de mejora en la interfaz y experiencia de usuario para el módulo de autoevaluaciones, incluyendo auditoría de visibilidad y onboarding guiado.
+
