@@ -1,25 +1,24 @@
 # Hito 27: Optimización de UX y Onboarding para Evaluaciones
 
 ## 1. Visión y Objetivos
-Resolver la fricción detectada en el flujo de usuario que impide descubrir y utilizar la funcionalidad de "Autoevaluaciones con IA". El objetivo es aumentar el ratio de conversión (Usuario Registrado -> Usuario Evaluado) mediante mejoras visuales, llamadas a la acción (CTA) claras y un onboarding guiado.
+Resolver la fricción detectada en el flujo de usuario que impide descubrir y utilizar la funcionalidad de "Autoevaluaciones con IA". El objetivo principal fue reorientar la narrativa del onboarding para guiar al usuario desde el descubrimiento académico hasta la evaluación.
 
 ## 2. Estado del Hito
-*   **Estado:** EN PROGRESO
+*   **Estado:** COMPLETADO
 *   **Fecha de Inicio:** 16/12/2025
-*   **Última Actualización:** 16/12/2025 (Sesión de Inicialización y Planificación)
+*   **Fecha de Finalización:** 16/12/2025
 
-## 3. Hoja de Ruta Táctica
+## 3. Logros Alcanzados
 
-### 3.1. Análisis y Diagnóstico
-*   [ ] **Auditoría de Visibilidad:** Identificar puntos ciegos en el Dashboard y Navbar. (Archivos identificados, pendiente de análisis).
+### 3.1. Reingeniería Narrativa de Tours
+Se ha modificado el guion de los tours interactivos para crear un "embudo" de conversión mental en el usuario:
+*   **Home (`home_tour.js`):** Se presenta el Directorio Académico como la fuente de "material examinable" y la Sala de Estudio como el "motor de exámenes".
+*   **Directorio Académico (`academic_directory_tour.js`):** Se refuerza el mensaje de que los contenidos hallados son la base para futuras evaluaciones.
+*   **Detalle de Contenido (`content_detail_tour.js`):** Se explicita la relación Causa-Efecto: "Copia este contenido para desbloquear el examen".
+*   **Sala de Estudio (`study_room_tour.js`):** Confirmación de llegada al "Motor de IA".
 
-### 3.2. Mejoras de Interfaz (UI/UX)
-*   [ ] **Dashboard Revamp:** Rediseñar la tarjeta de "Evaluaciones" en el panel principal.
-*   [ ] **CTA Global:** Implementar botón/indicador persistente.
-*   [ ] **Claridad en el Flujo:** Revisar textos y pasos.
+### 3.2. Optimización Móvil
+*   **Fix Crítico en `home_tour.js`:** Se implementó lógica para detectar dispositivos móviles y abrir automáticamente el menú de navegación (`navbar-toggler`), permitiendo que el tour continúe fluyendo hacia las opciones académicas ocultas, evitando que el tour se cortara prematuramente.
 
-### 3.3. Onboarding Guiado
-*   [ ] **Tour Interactivo:** Implementar tour con `Shepherd.js`.
-
-## 4. Notas de Ejecución
-*   **16/12/2025:** Se ha actualizado el Documento Maestro para cerrar el Hito 24 y formalizar el inicio del Hito 27. Se ha incluido el Hito 28 (UniversIA) como pendiente. Se ha preparado la lista de archivos para la auditoría de visibilidad UX.
+## 4. Notas de Cierre
+La estrategia de "Dashboard dedicado" fue descartada en favor de una optimización del flujo de descubrimiento (Onboarding), atacando la raíz del problema (desconocimiento del flujo) en lugar de añadir más interfaces.

@@ -830,3 +830,10 @@
 *  **Session:** Hito 27: Optimización de UX y Onboarding
 *  **Description:** Corrección del documento maestro para reflejar el hito actual. Inicio de los trabajos de mejora en la interfaz y experiencia de usuario para el módulo de autoevaluaciones, incluyendo auditoría de visibilidad y onboarding guiado.
 
+
+# 2025-12-16
+# CAMPUSTUDIONLINE --CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V27.md
+## EPI
+*  **Session:** Optimización UX Evaluaciones: Diagnóstico y Visibilidad
+*  **Description:** Inicio de la fase de ejecución del Hito 27. Se abordará la auditoría de visibilidad de la funcionalidad de autoevaluaciones. El objetivo es identificar barreras de usabilidad en el Dashboard y la barra de navegación que impiden el descubrimiento de la función. Se procederá al análisis de las plantillas actuales y se planificarán las modificaciones visuales y de flujo (CTA, Tours) para mejorar el onboarding.
+

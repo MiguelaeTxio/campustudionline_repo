@@ -76,9 +76,9 @@ CampuStudiOnline es una plataforma web de e-learning diseñada para centralizar 
 ### Hito de Soporte y Mantenimiento: Ruegos y Preguntas (COMPLETADO)
 (Ver anexo `CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V24.md`)
 ---
-### Hito 27: Optimización de UX y Onboarding para Evaluaciones (EN PROGRESO)
+### Hito 27: Optimización de UX y Onboarding para Evaluaciones (COMPLETADO)
 (Ver anexo `CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V27.md`)
-### Hito 28: Implementación de Asistente Contextual 'UniversIA' (PENDIENTE)
+### Hito 28: Implementación de Asistente Contextual 'UniversIA' (EN PROGRESO)
 (Ver anexo `CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V28.md`)
 ---
 ## 4. Reglas de Negocio Clave
