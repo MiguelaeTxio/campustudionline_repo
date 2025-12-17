@@ -845,3 +845,18 @@
 *  **Session:** Hito 28: Arranque de UniversIA - Definición e Infraestructura
 *  **Description:** Inicio del Hito 28. Se abordará la implementación del asistente contextual 'UniversIA'. En esta sesión, nos centraremos en la definición táctica del 'System Prompt' y la personalidad del asistente, así como en la preparación de la infraestructura backend para la integración con la API de Google Gemini (aprovechando el SDK existente). También se planteará el diseño inicial del widget flotante para la interfaz de usuario.
 
+
+# 2025-12-17
+# CAMPUSTUDIONLINE --CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V24.md
+# PLUTO
+*  **Session:** Soporte y Mantenimiento: Inicio de Sesión de Ruegos y Preguntas
+*  **Description:** Inicio de sesión bajo el hito de soporte continuo. Carga de documentos maestros y establecimiento del contexto para abordar deuda técnica, bugs menores o nuevas peticiones del usuario según surjan. Estado actual del hito: EN PROGRESO.
+
+
+# 17/12/2025
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V24.md
+## MAMC
+*  **Session:** Sesión de Soporte: Monitorización UniversIA y Mantenimiento Continuo
+*  **Description:** Inicio de sesión de mantenimiento bajo el hito V24. El foco principal es la revisión post-despliegue del asistente 'UniversIA', incluyendo monitorización de logs y consumo de cuotas. Se mantiene un backlog abierto para resolver deuda técnica, bugs menores y peticiones de calidad de vida (QoL) que surjan.
+

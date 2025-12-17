@@ -8,6 +8,7 @@ Hito continuo para la resolución de deuda técnica, bugs menores, mejoras de ca
 *   **Fecha de Reactivación:** 17/12/2025
 
 ## 3. Hoja de Ruta Táctica (Backlog Dinámico)
+*   [x] Optimización de creatividades para Meta Ads (Conversión MP4/H.264, formato 1:1 y Branding).
 *   [ ] Revisión de logs tras despliegue de UniversIA.
 *   [ ] Monitorización de consumo de cuota de API con el nuevo asistente.
 *   [ ] (Espacio para nuevas peticiones del usuario).
