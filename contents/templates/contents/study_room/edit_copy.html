@@ -7,6 +7,7 @@
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/annotations.css' %}">
+<link rel="stylesheet" href="{% static 'universia/css/universia.css' %}">
 {% endblock extra_css %}
 
 {% block content %}
@@ -102,6 +103,12 @@
     </div>
 </div>
 
+
+    {# --- UNIVERSIA WIDGET (SALA DE ESTUDIO) --- #}
+    <div id="universia-widget-container" data-content-title="{{ content_copy.original_content.title|default:'Material de Estudio' }}" style="position: fixed; bottom: 30px; right: 30px; z-index: 9999;">
+    </div>
+    {# ------------------------------------------ #}
+
 <!-- Herramientas y Modales -->
 <div id="floating-toolbar" class="floating-toolbar">
     <input type="color" id="floating-annotation-color" class="color-picker-input" value="#FFD700">
@@ -141,4 +148,5 @@
     <script src="{% static 'js/annotation_handler.js' %}"></script>
     <script src="{% static 'js/assessment_status_handler.js' %}"></script>
     <script src="{% static 'contents/study_room_tour.js' %}"></script>
+    <script src="{% static 'universia/js/universia.js' %}"></script>
 {% endblock extra_js %}

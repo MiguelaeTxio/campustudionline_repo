@@ -1,25 +1,29 @@
 # Hito 28: Implementación de Asistente Contextual 'UniversIA'
 
 ## 1. Visión y Objetivos
-Implementar 'UniversIA', un asistente virtual contextual basado en LLMs que acompañe al estudiante durante su navegación y estudio. A diferencia de las evaluaciones (que son puntuales), UniversIA ofrecerá soporte continuo, resolución de dudas sobre la plataforma y asistencia en el estudio.
+Implementar 'UniversIA', un asistente virtual contextual basado en LLMs que acompañe al estudiante durante su navegación y estudio.
 
 ## 2. Estado del Hito
-*   **Estado:** EN PROGRESO
+*   **Estado:** COMPLETADO
 *   **Fecha de Inicio:** 16/12/2025
+*   **Fecha de Finalización:** 17/12/2025
 
-## 3. Hoja de Ruta Táctica
+## 3. Logros Alcanzados
+### 3.1. Infraestructura Backend
+*   [x] Creación de la aplicación Django `universia`.
+*   [x] Implementación de `UniversiaService` con integración a Google Gemini (SDK GenAI).
+*   [x] Gestión de sesiones e historial de chat en base de datos (`UniversiaSession`, `UniversiaMessage`).
+*   [x] Endpoints de API para envío de mensajes y recuperación de historial.
 
-### 3.1. Definición de Alcance
-*   [ ] Definir el "System Prompt" de UniversIA (Personalidad, Límites).
-*   [ ] Definir el contexto técnico accesible (¿Tiene acceso al contenido que el usuario está viendo?).
+### 3.2. Frontend e Interfaz
+*   [x] Widget flotante implementado en CSS/JS puro (sin dependencias pesadas).
+*   [x] Integración en la "Sala de Estudio" (`edit_copy.html`).
+*   [x] Renderizado de respuestas Markdown a HTML en el servidor (python-markdown) para visualización enriquecida.
 
-### 3.2. Infraestructura
-*   [ ] Integración con API de Gemini (aprovechando la migración a SDK de Google Gen AI ya realizada).
-*   [ ] Endpoint de chat persistente o flotante.
-
-### 3.3. Interfaz de Usuario
-*   [ ] Widget flotante ("Burbuja") en la interfaz.
-*   [ ] Ventana de chat contextual.
+### 3.3. Lógica de Negocio y Seguridad
+*   [x] **Context Awareness:** Inyección dinámica del título del contenido en el System Prompt.
+*   [x] **Strict Guardrails:** Configuración del asistente para rechazar temas no relacionados con el material de estudio activo.
 
 ## 4. Notas de Ejecución
-*   Inicio de trabajos tras la optimización de UX del Hito 27.
+*   Se ha optado por un enfoque *server-side rendering* para el Markdown para aligerar la carga del cliente.
+*   El asistente vive exclusivamente en la vista de edición de copias para maximizar la utilidad contextual.

@@ -837,3 +837,11 @@
 *  **Session:** Optimización UX Evaluaciones: Diagnóstico y Visibilidad
 *  **Description:** Inicio de la fase de ejecución del Hito 27. Se abordará la auditoría de visibilidad de la funcionalidad de autoevaluaciones. El objetivo es identificar barreras de usabilidad en el Dashboard y la barra de navegación que impiden el descubrimiento de la función. Se procederá al análisis de las plantillas actuales y se planificarán las modificaciones visuales y de flujo (CTA, Tours) para mejorar el onboarding.
 
+
+# 2025-12-17
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V28.md
+## PLUTO
+*  **Session:** Hito 28: Arranque de UniversIA - Definición e Infraestructura
+*  **Description:** Inicio del Hito 28. Se abordará la implementación del asistente contextual 'UniversIA'. En esta sesión, nos centraremos en la definición táctica del 'System Prompt' y la personalidad del asistente, así como en la preparación de la infraestructura backend para la integración con la API de Google Gemini (aprovechando el SDK existente). También se planteará el diseño inicial del widget flotante para la interfaz de usuario.
+

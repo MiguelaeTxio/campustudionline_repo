@@ -207,6 +207,7 @@ INSTALLED_APPS = [
     "assessment.apps.AssessmentConfig",
     "push_tester.apps.PushTesterConfig",
     "favorites_prototype.apps.FavoritesPrototypeConfig",    "feedback.apps.FeedbackConfig",
+    "universia.apps.UniversiaConfig",
 ]
 
 AUTH_USER_MODEL = "users.CustomUser"
