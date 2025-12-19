@@ -860,3 +860,34 @@
 *  **Session:** Sesión de Soporte: Monitorización UniversIA y Mantenimiento Continuo
 *  **Description:** Inicio de sesión de mantenimiento bajo el hito V24. El foco principal es la revisión post-despliegue del asistente 'UniversIA', incluyendo monitorización de logs y consumo de cuotas. Se mantiene un backlog abierto para resolver deuda técnica, bugs menores y peticiones de calidad de vida (QoL) que surjan.
 
+
+# 2025-12-18
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V24.md
+## AAAA
+*  **Session:** Soporte y Mantenimiento: Monitorización UniversIA y Backlog
+*  **Description:** Continuación del hito de soporte. Análisis de logs tras el despliegue del asistente UniversIA, monitorización de cuotas de API y gestión de deuda técnica o nuevas peticiones.
+
+
+# 2025-12-18
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V24.md
+## AAAA
+*  **Session:** Soporte y Mantenimiento: Monitorización UniversIA y Backlog
+*  **Description:** Continuación del hito de soporte. Análisis de logs tras el despliegue del asistente UniversIA, monitorización de cuotas de API y gestión de deuda técnica o nuevas peticiones.
+
+
+# 2025-12-19
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V24.md
+## AAAA
+*  **Session:** Resolución de Incidencias y Mantenimiento Correctivo (V24)
+*  **Description:** Sesión orientada a la resolución de incidencias ad-hoc y tareas de mantenimiento dentro del marco del Hito V24. Se han cargado los documentos de sesión y se ha verificado el estado del backlog táctico. El objetivo principal es abordar la deuda técnica y las peticiones pendientes para asegurar la estabilidad operativa de la plataforma CampuStudiOnline.
+
+# 2025-12-19
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V29.md
+## AAAA
+*  **Session:** Extensión Global de UniversIA (Hito V29)
+*  **Description:** Re-orientación estratégica de la sesión tras la decisión de universalizar UniversIA. Se ha pausado el Hito V24 y se ha activado el Hito V29. Se ha creado el anexo correspondiente y actualizado el Documento Maestro. El objetivo técnico es implementar una lógica de discriminación de contexto para que el asistente ofrezca soporte de navegación en toda la plataforma y ayuda pedagógica exclusiva en la Sala de Estudio.
+

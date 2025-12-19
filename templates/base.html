@@ -46,6 +46,8 @@
     }
     </style>
     {% block extra_css %}{% endblock extra_css %}
+    <link rel="stylesheet" href="{% static "universia/css/universia.css" %}">
+    
     {% if META_PIXEL_ID %}
     <!-- Meta Pixel Code -->
     <script>
@@ -355,7 +357,10 @@
                 });
             });
         </script>
-    {% endblock extra_js %}
+    
+    
+
+{% endblock extra_js %}
     {% if user.is_authenticated %}
         {% include "contents/partials/_navigation_sidebar.html" %}
     {% endif %}
@@ -437,5 +442,12 @@
     }
 })();
 </script>
+
+    <!-- UniversIA Global Widget -->
+    {% if user.is_authenticated %}
+    <div id="universia-widget-container" data-content-title="{{ content_copy.original_content.title|default:"" }}"></div>
+    <script src="{% static "universia/js/universia.js" %}"></script>
+    {% endif %}
+
 </body>
 </html>

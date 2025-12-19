@@ -85,3 +85,6 @@ CampuStudiOnline es una plataforma web de e-learning diseñada para centralizar 
 ### 4.1. Módulo `contents` (Sala de Estudio)
 *   **Límite de 6 copias de estudio por usuario:** Para evitar el abuso de recursos y mantener la relevancia del espacio de trabajo del usuario, cada cuenta está limitada a un máximo de 6 `ContentCopy` activas simultáneamente.
 *   **Adición automática a favoritos:** Al crear una `ContentCopy` de un material de estudio, el `ContentMaterial` original se añade automáticamente a la carpeta "Mis Favoritos" del usuario.
+
+### Hito 29: Extensión de UniversIA a la Plataforma (COMPLETADO)
+(Ver anexo `CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V29.md`)
