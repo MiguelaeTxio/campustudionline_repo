@@ -891,3 +891,11 @@
 *  **Session:** Extensión Global de UniversIA (Hito V29)
 *  **Description:** Re-orientación estratégica de la sesión tras la decisión de universalizar UniversIA. Se ha pausado el Hito V24 y se ha activado el Hito V29. Se ha creado el anexo correspondiente y actualizado el Documento Maestro. El objetivo técnico es implementar una lógica de discriminación de contexto para que el asistente ofrezca soporte de navegación en toda la plataforma y ayuda pedagógica exclusiva en la Sala de Estudio.
 
+
+# 20/12/2025
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V24.md
+## AAAA
+*  **Session:** Sesión de Mantenimiento y Soporte V24 - Resolución de Incidencias Ad-hoc
+*  **Description:** Inicio de sesión bajo el hito V24 (Ruegos y Preguntas). Se establece la carga del entorno para el proyecto CAMPUSTUDIONLINE en dispositivo Android. El objetivo principal de la interacción es la gestión de deuda técnica, bugs menores y peticiones específicas según el backlog dinámico del hito.
+

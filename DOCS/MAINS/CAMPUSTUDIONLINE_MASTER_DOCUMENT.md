@@ -73,7 +73,7 @@ CampuStudiOnline es una plataforma web de e-learning diseñada para centralizar 
 (Ver anexo `CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V25.md`)
 ### Hito 26: Cumplimiento Regla de Oro del Idioma (COMPLETADO)
 (Ver anexo `CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V26.md`. Corrección de textos de interfaz en mensajería.)
-### Hito de Soporte y Mantenimiento: Ruegos y Preguntas (EN PROGRESO)
+### Hito de Soporte y Mantenimiento: Ruegos y Preguntas (PAUSADO)
 (Ver anexo `CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V24.md`)
 ---
 ### Hito 27: Optimización de UX y Onboarding para Evaluaciones (COMPLETADO)
@@ -81,6 +81,11 @@ CampuStudiOnline es una plataforma web de e-learning diseñada para centralizar 
 ### Hito 28: Implementación de Asistente Contextual 'UniversIA' (COMPLETADO)
 (Ver anexo `CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V28.md`)
 ---
+### Hito 30: Estrategia Comercial de Recomendación y Gestión de Afiliados (EN PROGRESO)
+(Ver anexo )
+
+---
+
 ## 4. Reglas de Negocio Clave
 ### 4.1. Módulo `contents` (Sala de Estudio)
 *   **Límite de 6 copias de estudio por usuario:** Para evitar el abuso de recursos y mantener la relevancia del espacio de trabajo del usuario, cada cuenta está limitada a un máximo de 6 `ContentCopy` activas simultáneamente.
