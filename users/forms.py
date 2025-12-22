@@ -1,10 +1,9 @@
-from django.utils.safestring import mark_safe
 # /users/forms.py
-
+from django.utils.safestring import mark_safe
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import get_user_model
-from .models import UserProfile
+from .models import UserProfile, RecommendationCode
 from django_recaptcha.fields import ReCaptchaField
 from django_recaptcha.widgets import ReCaptchaV2Checkbox
 from django.utils.translation import gettext_lazy as _
@@ -28,6 +27,14 @@ class UserRegistrationForm(UserCreationForm):
     )
     first_name = forms.CharField(required=False, label=_("Nombre (opcional)"))
     last_name = forms.CharField(required=False, label=_("Apellidos (opcional)"))
+    
+    referral_code = forms.CharField(
+        required=False,
+        label=_("Código de Invitación (Opcional)"),
+        max_length=4,
+        help_text=_("Si tienes un código de 4 dígitos de un representante, introdúcelo aquí."),
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ej: A4K7'})
+    )
     captcha = ReCaptchaField(widget=ReCaptchaV2Checkbox, label="")
 
     class Meta(UserCreationForm.Meta):
@@ -67,13 +74,20 @@ class UserRegistrationForm(UserCreationForm):
 
         return cleaned_data
 
-    # --- INICIO DE LA MODIFICACIÓN ---
-    # Se refactoriza la validación para gestionar cuentas inactivas de forma segura.
+    def clean_referral_code(self):
+        code = self.cleaned_data.get("referral_code")
+        if code:
+            code = code.strip().upper()
+            try:
+                rec_code = RecommendationCode.objects.get(code=code)
+                if rec_code.redeemed_by:
+                    raise forms.ValidationError(_("Este código de invitación ya ha sido utilizado."))
+            except RecommendationCode.DoesNotExist:
+                raise forms.ValidationError(_("El código de invitación no es válido."))
+            return code
+        return None
+
     def clean_username(self):
-        """
-        Verifica la unicidad del nombre de usuario. Si pertenece a una cuenta
-        inactiva, lanza un error que orienta al usuario a usar su email.
-        """
         username = self.cleaned_data.get("username")
         User = get_user_model()
 
@@ -88,7 +102,6 @@ class UserRegistrationForm(UserCreationForm):
                     _("Este nombre de usuario ya está en uso. Por favor, elige otro.")
                 )
             else:
-                # Error genérico para no confirmar el estado de la cuenta.
                 raise forms.ValidationError(
                     _(
                         "Este nombre de usuario ya está registrado. Si te pertenece, por favor, utiliza el correo electrónico asociado a la cuenta para continuar."
@@ -98,11 +111,6 @@ class UserRegistrationForm(UserCreationForm):
         return username
 
     def clean_email(self):
-        """
-        Verifica la unicidad del email. Si pertenece a una cuenta activa,
-        lanza un error. Si pertenece a una inactiva, lanza un error con un
-        código especial para que la vista inicie el flujo de reactivación.
-        """
         email = self.cleaned_data.get("email")
         User = get_user_model()
 
@@ -119,15 +127,11 @@ class UserRegistrationForm(UserCreationForm):
                     )
                 )
             else:
-                # Error especial para ser capturado por la vista.
-                # Este mensaje no se mostrará directamente al usuario.
                 raise forms.ValidationError(
                     _("Cuenta inactiva detectada."), code="inactive_account"
                 )
 
         return email
-
-    # --- FIN DE LA MODIFICACIÓN ---
 
     def save(self, commit=True):
         user = super().save(commit=False)
@@ -140,7 +144,6 @@ class UserRegistrationForm(UserCreationForm):
         return user
 
 
-# ... (El resto del archivo no cambia) ...
 class UserEditForm(forms.ModelForm):
     email = forms.EmailField(label=_("Correo electrónico"), required=True)
 

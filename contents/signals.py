@@ -212,8 +212,21 @@ def handle_subject_deletion(sender, instance, **kwargs):
 def update_navigation_on_copy_change(sender, instance, **kwargs):
     """
     Actualiza el arbol de navegacion cuando se crea o borra una copia.
+    También gestiona la atribución de conversión por 'Primera Copia'.
     """
     refresh_user_navigation(instance.user)
+
+    # --- ATRIBUCIÓN DE CONVERSIÓN (HITO 30) ---
+    if kwargs.get('created', False):
+        user_profile = getattr(instance.user, 'userprofile', None)
+        if user_profile and user_profile.referred_by and not user_profile.has_claimed_copy_incentive:
+            try:
+                user_profile.has_claimed_copy_incentive = True
+                user_profile.save(update_fields=['has_claimed_copy_incentive'])
+                logger.info(f"Conversión de Primera Copia atribuida al comercial {user_profile.referred_by.username} por el usuario {instance.user.username}")
+            except Exception as e:
+                logger.error(f"Error atribuyendo conversión de copia: {e}")
+    # ------------------------------------------
 
 @receiver([post_save, post_delete], sender=FavoriteFolder)
 def update_navigation_on_folder_change(sender, instance, **kwargs):

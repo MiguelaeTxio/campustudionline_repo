@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ page_title }}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="mb-4">Dashboard Comercial: {{ user.username }}</h1>
+
+    <!-- Panel de Métricas Principales -->
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h5 class="card-title">Conversiones por Registro</h5>
+                    <p class="card-text display-4">{{ registration_conversions }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h5 class="card-title">Conversiones por 1ª Copia</h5>
+                    <p class="card-text display-4">{{ copy_conversions }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h5 class="card-title">Conversiones por 1ª Evaluación</h5>
+                    <p class="card-text display-4">{{ assessment_conversions }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pestañas para Códigos -->
+    <ul class="nav nav-tabs" id="codeTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="available-tab" data-bs-toggle="tab" data-bs-target="#available" type="button" role="tab" aria-controls="available" aria-selected="true">
+                Códigos Disponibles ({{ available_codes.count }})
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="used-tab" data-bs-toggle="tab" data-bs-target="#used" type="button" role="tab" aria-controls="used" aria-selected="false">
+                Códigos Usados ({{ used_codes.count }})
+            </button>
+        </li>
+    </ul>
+
+    <div class="tab-content" id="codeTabsContent">
+        <!-- Panel de Códigos Disponibles -->
+        <div class="tab-pane fade show active" id="available" role="tabpanel" aria-labelledby="available-tab">
+            <div class="card mt-3">
+                <div class="card-body">
+                    {% if available_codes %}
+                        <ul class="list-group">
+                            {% for code in available_codes %}
+                                <li class="list-group-item">{{ code.code }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p class="text-muted">No tienes códigos disponibles. ¡Solicita un nuevo lote!</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Panel de Códigos Usados -->
+        <div class="tab-pane fade" id="used" role="tabpanel" aria-labelledby="used-tab">
+            <div class="card mt-3">
+                <div class="card-body">
+                    {% if used_codes %}
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Código</th>
+                                    <th>Canjeado por</th>
+                                    <th>Fecha de Canje</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for code in used_codes %}
+                                    <tr>
+                                        <td>{{ code.code }}</td>
+                                        <td>{{ code.redeemed_by.username|default:"N/A" }}</td>
+                                        <td>{{ code.date_redeemed|date:"d/m/Y H:i" }}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    {% else %}
+                        <p class="text-muted">Aún no se ha canjeado ninguno de tus códigos.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Botón de Solicitud de Códigos -->
+    <div class="mt-4">
+        <form method="post" action="{% url 'users:request_new_code_batch' %}">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-primary" {% if available_codes.count > 0 %}disabled{% endif %}>
+                Solicitar Nuevo Lote de Códigos
+            </button>
+            {% if available_codes.count > 0 %}
+                <small class="form-text text-muted">Debes agotar tus códigos actuales antes de solicitar más.</small>
+            {% else %}
+                <small class="form-text text-muted">Haz clic para generar un nuevo lote de 5 códigos.</small>
+            {% endif %}
+        </form>
+    </div>
+
+</div>
+{% endblock %}

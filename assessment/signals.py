@@ -9,24 +9,32 @@ from contents.services.navigation_builder import refresh_user_navigation
 logger = logging.getLogger(__name__)
 
 @receiver(post_save, sender=Assessment)
-def update_navigation_on_assessment_change(sender, instance, created, **kwargs):
+def assessment_post_save_handler(sender, instance, created, **kwargs):
     """
-    Actualiza el árbol de navegación del usuario cuando cambia el estado
-    de una evaluación (ej: de PENDING a COMPLETED).
-    Optimizado para evitar reconstrucciones en actualizaciones de progreso puro.
+    Signal handler integral para el modelo Assessment.
+    1. Atribuye conversión de 'Primera Evaluación' si aplica.
+    2. Actualiza la navegación del usuario.
     """
+    # --- ATRIBUCIÓN DE CONVERSIÓN (HITO 30) ---
+    if created:
+        user_profile = getattr(instance.user, 'userprofile', None)
+        if user_profile and user_profile.referred_by and not user_profile.has_claimed_assessment_incentive:
+            try:
+                user_profile.has_claimed_assessment_incentive = True
+                user_profile.save(update_fields=['has_claimed_assessment_incentive'])
+                logger.info(f"Conversión de Primera Evaluación atribuida a {user_profile.referred_by.username} por el usuario {instance.user.username}")
+            except Exception as e:
+                logger.error(f"Error atribuyendo conversión de evaluación: {e}")
+    # ------------------------------------------
+
+    # --- Lógica de navegación ---
     try:
-        # Verificamos qué campos se actualizaron si está disponible
         update_fields = kwargs.get('update_fields')
-        
-        # Si es una actualización específica de campos y NO incluye 'status', ignoramos.
-        # [FIX] Ampliamos trigger para 'was_viewed'
         relevant_fields = {'status', 'was_viewed'}
         if update_fields and not relevant_fields.intersection(update_fields) and not created:
             return
 
-        # Solo actualizamos si hay cambios relevantes para la navegación
         transaction.on_commit(lambda: refresh_user_navigation(instance.user))
-        logger.debug(f"Navegación actualizada por cambio de estado en Assessment {instance.id}")
+        logger.debug(f"Navegación actualizada por cambio en Assessment {instance.id}")
     except Exception as e:
         logger.error(f"Error actualizando navegación desde señal de Assessment: {e}")

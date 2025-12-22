@@ -1,9 +1,8 @@
 # /users/models.py
-
+import random
+import string
 from django.db import models
 from django.conf import settings
-
-# Importamos los modelos necesarios para las relaciones
 from django.contrib.auth.models import AbstractUser, Group, Permission
 from django.utils.translation import gettext_lazy as _
 from django.utils import timezone
@@ -13,10 +12,6 @@ class CustomUser(AbstractUser):
     """
     Este es el modelo de usuario principal del proyecto.
     """
-
-    # --- CORRECCIÓN CLAVE PARA LOS CONFLICTOS (E304) ---
-    # Re-declaramos los campos many-to-many heredados de AbstractUser
-    # para proporcionar un 'related_name' único y evitar colisiones.
     groups = models.ManyToManyField(
         Group,
         verbose_name="Grupos",
@@ -25,7 +20,7 @@ class CustomUser(AbstractUser):
             "The groups this user belongs to. A user will get all permissions "
             "granted to each of their groups."
         ),
-        related_name="customuser_set",  # Nombre único para la relación inversa
+        related_name="customuser_set",
         related_query_name="user",
     )
     user_permissions = models.ManyToManyField(
@@ -33,12 +28,9 @@ class CustomUser(AbstractUser):
         verbose_name="Permisos de usuario",
         blank=True,
         help_text=_("Specific permissions for this user."),
-        related_name="customuser_set",  # Nombre único para la relación inversa
+        related_name="customuser_set",
         related_query_name="user",
     )
-    # --- FIN DE LA CORRECCIÓN ---
-
-    # --- INICIO DE LA MODIFICACIÓN: CAMPO DE AFILIACIÓN UNIVERSITARIA VERIFICADA ---
     affiliated_university = models.ForeignKey(
         "academic_structure.University",
         on_delete=models.SET_NULL,
@@ -50,7 +42,6 @@ class CustomUser(AbstractUser):
             "Afiliación institucional verificada por un administrador. No editable por el usuario en su perfil."
         ),
     )
-    # --- FIN DE LA MODIFICACIÓN ---
 
     class Meta:
         verbose_name = "Usuario"
@@ -58,9 +49,6 @@ class CustomUser(AbstractUser):
 
     def __str__(self):
         return self.username
-
-
-# --- El resto de los modelos permanece exactamente igual ---
 
 
 class UserProfile(models.Model):
@@ -175,9 +163,6 @@ class UserProfile(models.Model):
             "Registra la última vez que el usuario revisó la actividad de sus salas de chat en su portafolio."
         ),
     )
-
-
-    # --- CAMPO PARA CONTENIDO FAVORITO ---
     favorite_content = models.ManyToManyField(
         "contents.ContentMaterial",
         related_name="favorited_by",
@@ -185,8 +170,6 @@ class UserProfile(models.Model):
         verbose_name="Contenido Favorito",
         help_text=_("Contenido que el usuario ha marcado como favorito."),
     )
-
-    # --- CAMPOS PARA EL CONTROL DE CUOTAS DE IA ---
     ia_requests_today = models.IntegerField(
         default=0,
         verbose_name="Peticiones de IA hoy",
@@ -200,7 +183,34 @@ class UserProfile(models.Model):
         verbose_name="Fecha de última petición de IA",
         help_text=_("Fecha de la última petición para reiniciar el contador diario."),
     )
-
+    
+    # --- CAMPOS DE SISTEMA DE REFERIDOS (Refactorizado) ---
+    pending_referral_code = models.CharField(
+        max_length=4, 
+        null=True, 
+        blank=True, 
+        verbose_name="Código de referido pendiente",
+        help_text=_("Código temporal almacenado durante el registro y antes de la activación.")
+    )
+    referred_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='referrals',
+        verbose_name="Referido por (Comercial)",
+        help_text=_("El comercial dueño del código con el que este usuario se registró.")
+    )
+    has_claimed_copy_incentive = models.BooleanField(
+        default=False,
+        verbose_name="Incentivo de Copia Reclamado",
+        help_text=_("True si ya se ha contabilizado la conversión por primera copia.")
+    )
+    has_claimed_assessment_incentive = models.BooleanField(
+        default=False,
+        verbose_name="Incentivo de Evaluación Reclamado",
+        help_text=_("True si ya se ha contabilizado la conversión por primera evaluación.")
+    )
     profile_created_at = models.DateTimeField(
         auto_now_add=True, verbose_name="Fecha de creación del perfil"
     )
@@ -244,3 +254,61 @@ class ArchivedKey(models.Model):
         verbose_name = "Clave Archivada"
         verbose_name_plural = "Claves Archivadas"
         ordering = ["-archived_at"]
+
+
+class RecommendationCode(models.Model):
+    """
+    Código único de recomendación (activo fungible) gestionado por un comercial.
+    """
+    code = models.CharField(
+        max_length=4,
+        unique=True,
+        db_index=True,
+        verbose_name="Código de Conversión",
+        help_text="Código alfanumérico de 4 caracteres (Ej: 4A7K)."
+    )
+    vendor = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='vendor_codes',
+        limit_choices_to={'groups__name': 'Comerciales'},
+        verbose_name="Comercial (Vendor)"
+    )
+    redeemed_by = models.OneToOneField(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='redeemed_code',
+        verbose_name="Canjeado por (Usuario)"
+    )
+    date_redeemed = models.DateTimeField(
+        null=True,
+        blank=True,
+        verbose_name="Fecha de Canje"
+    )
+
+    def __str__(self):
+        status = "USADO" if self.redeemed_by else "DISPONIBLE"
+        return f"{self.code} ({status}) - {self.vendor.username}"
+
+    class Meta:
+        verbose_name = "Código de Recomendación"
+        verbose_name_plural = "Códigos de Recomendación"
+
+    @classmethod
+    def generate_batch(cls, vendor, amount=10):
+        if not vendor.groups.filter(name='Comerciales').exists():
+            return 0
+
+        chars = string.ascii_uppercase + string.digits
+        created_count = 0
+        
+        for _ in range(amount):
+            for _ in range(100):
+                code = ''.join(random.choices(chars, k=4))
+                if not cls.objects.filter(code=code).exists():
+                    cls.objects.create(code=code, vendor=vendor)
+                    created_count += 1
+                    break
+        return created_count

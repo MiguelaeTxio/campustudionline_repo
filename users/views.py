@@ -10,7 +10,9 @@ from .forms import (
     UserEditForm,
     ProfileEditForm,
 )
-from .models import UserProfile, ArchivedKey
+from .models import UserProfile, ArchivedKey, RecommendationCode
+from django.utils import timezone
+from .decorators import commercial_required
 from django.http import JsonResponse, HttpResponse
 from django.views.decorators.http import require_POST, require_GET
 from django.db import transaction
@@ -20,6 +22,7 @@ from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_str
 from django.template.loader import render_to_string
 from django.core.mail import EmailMultiAlternatives
+from django.core.mail import EmailMultiAlternatives, mail_admins
 from .tokens import account_activation_token
 from django.contrib.auth.tokens import default_token_generator
 
@@ -112,6 +115,25 @@ def validate_registration_view(request):
         user.is_active = False
         user.save()
 
+        # --- LÓGICA DE REFERIDOS ---
+        referral_code = form.cleaned_data.get("referral_code")
+        if referral_code:
+            try:
+                rec_code = RecommendationCode.objects.get(code=referral_code)
+                # Marcar código como usado
+                rec_code.is_used = True
+                rec_code.redeemed_by = user
+                rec_code.date_redeemed = timezone.now()
+                rec_code.save()
+                
+                # Vincular al perfil del usuario
+                profile, created = UserProfile.objects.get_or_create(user=user)
+                profile.referred_by = rec_code.vendor
+                profile.save()
+            except RecommendationCode.DoesNotExist:
+                pass
+        # ---------------------------
+
         current_site = get_current_site(request)
         
         context = {
@@ -188,7 +210,6 @@ def activate_account_view(request, uidb64, token):
         user = User.objects.get(pk=uid)
     except (TypeError, ValueError, OverflowError, User.DoesNotExist):
         user = None
-    # Lógica de activación desglosada para precisión en el error
     if user is None:
         messages.error(request, "El enlace de activación es inválido (Usuario no encontrado).")
         return redirect("home")
@@ -201,14 +222,39 @@ def activate_account_view(request, uidb64, token):
         messages.error(request, "El enlace de activación es inválido o ha expirado (Token incorrecto).")
         return redirect("home")
 
-    # Si pasa todas las comprobaciones, activamos
     user.is_active = True
     user.save()
     login(request, user, backend="django.contrib.auth.backends.ModelBackend")
-    
-    # --- META CAPI INTEGRATION (CompleteRegistration) ---
+    # --- LÓGICA DE CONSUMO DE CÓDIGO DE REFERIDO (Refactorizada) ---
     try:
-        # 1. Preparar datos para CAPI
+        profile = user.userprofile
+        if profile.pending_referral_code:
+            try:
+                rec_code = RecommendationCode.objects.get(code=profile.pending_referral_code, redeemed_by__isnull=True)
+                
+                # Consumir el código
+                rec_code.redeemed_by = user
+                rec_code.date_redeemed = timezone.now()
+                rec_code.save()
+                
+                # Asignar la atribución permanente
+                profile.referred_by = rec_code.vendor
+                profile.pending_referral_code = None # Limpiar el campo temporal
+                profile.save()
+                
+                messages.info(request, f"Has sido invitado por {rec_code.vendor.username}. ¡Bienvenido!")
+
+            except RecommendationCode.DoesNotExist:
+                # El código ya fue usado por otro o es inválido, fallo silencioso para el usuario
+                profile.pending_referral_code = None
+                profile.save()
+    except UserProfile.DoesNotExist:
+        # No debería ocurrir si el registro funciona bien, pero es una salvaguarda
+        pass
+    # -----------------------------------------------------------------
+
+    
+    try:
         email_hash = hashlib.sha256(user.email.strip().lower().encode('utf-8')).hexdigest()
         event_id = f"reg_{user.id}_{int(time.time())}"
         
@@ -220,7 +266,6 @@ def activate_account_view(request, uidb64, token):
             'fbp': request.COOKIES.get('_fbp'),
         }
         
-        # 2. Enviar evento servidor (Background)
         send_meta_conversion_event.delay(
             event_name='CompleteRegistration',
             user_details=user_details,
@@ -228,16 +273,13 @@ def activate_account_view(request, uidb64, token):
             source_url=request.build_absolute_uri()
         )
         
-        # 3. Preparar evento navegador (Pixel) para deduplicación
         request.session['meta_pixel_event'] = {
             'name': 'CompleteRegistration',
             'id': event_id
         }
         
     except Exception as e:
-        # Fallo silencioso para no afectar al usuario
         print(f"Error triggering Meta Registration Event: {e}")
-    # ----------------------------------------------------
 
     messages.success(
         request,
@@ -264,7 +306,6 @@ def reactivate_account_view(request, uidb64, token):
             request,
             "Cuenta verificada. Por favor, establece una nueva contraseña para completar la reactivación.",
         )
-        # Generamos un token estándar válido para el cambio de contraseña
         reset_token = default_token_generator.make_token(user)
         reset_url = reverse(
             "users:password_reset_confirm", kwargs={"uidb64": uidb64, "token": reset_token}
@@ -293,20 +334,13 @@ class CustomPasswordResetConfirmView(auth_views.PasswordResetConfirmView):
         return response
 
 
-# --- VISTAS DE GESTIÓN DE CUENTA Y PERFIL ---
 @login_required
 def account_detail(request):
-    """
-    Vista principal de "Mi Cuenta", que actúa como un panel de control.
-    """
     return render(request, "users/account_detail.html", {"page_title": "Mi Cuenta"})
 
 
 @login_required
 def account_settings(request):
-    """
-    Gestiona la edición de los datos del modelo User (username, email, etc.).
-    """
     if request.method == "POST":
         form_user = UserEditForm(request.POST, instance=request.user)
         if form_user.is_valid():
@@ -327,9 +361,6 @@ def account_settings(request):
 
 @login_required
 def edit_profile(request):
-    """
-    Gestiona la edición de los datos del modelo UserProfile (avatar, bio, etc.).
-    """
     if request.method == "POST":
         form_profile = ProfileEditForm(
             request.POST, request.FILES, instance=request.user.userprofile
@@ -350,9 +381,6 @@ def edit_profile(request):
 
 @login_required
 def request_deletion(request):
-    """
-    Muestra la página de confirmación para la eliminación de la cuenta.
-    """
     return render(
         request,
         "users/confirm_deletion.html",
@@ -363,9 +391,6 @@ def request_deletion(request):
 @login_required
 @require_POST
 def delete_account(request):
-    """
-    Procesa la eliminación (desactivación) de la cuenta de user.
-    """
     user = request.user
     password = request.POST.get("password")
 
@@ -391,7 +416,6 @@ def delete_account(request):
     return redirect("home")
 
 
-# --- VISTAS DE INTERACCIÓN DE USUARIOS ---
 @login_required
 @require_POST
 def toggle_block_user(request, username):
@@ -410,7 +434,6 @@ def toggle_block_user(request, username):
     return redirect(request.META.get("HTTP_REFERER", "home"))
 
 
-# --- VISTAS DE SEGURIDAD Y CRIPTOGRAFÍA ---
 @login_required
 def setup_security(request):
     return render(
@@ -503,3 +526,69 @@ def verify_password(request):
             {"status": "error", "message": f"Ocurrió un error inesperado: {str(e)}"},
             status=500,
         )
+
+# --- VISTAS COMERCIALES ---
+@login_required
+@commercial_required
+def commercial_dashboard(request):
+    """
+    Dashboard para usuarios del grupo 'Comerciales'.
+    Muestra métricas de sus códigos y conversiones.
+    """
+    vendor = request.user
+    
+    # Métricas de Códigos
+    available_codes = RecommendationCode.objects.filter(vendor=vendor, is_used=False).order_by('code')
+    used_codes = RecommendationCode.objects.filter(vendor=vendor, is_used=True).select_related('redeemed_by').order_by('-date_redeemed')
+    
+    # Métricas de Conversión
+    registration_conversions = used_codes.count()
+    
+    copy_conversions = vendor.referrals.filter(has_claimed_copy_incentive=True).count()
+    assessment_conversions = vendor.referrals.filter(has_claimed_assessment_incentive=True).count()
+    
+    context = {
+        'page_title': 'Dashboard Comercial',
+        'available_codes': available_codes,
+        'used_codes': used_codes,
+        'registration_conversions': registration_conversions,
+        'copy_conversions': copy_conversions,
+        'assessment_conversions': assessment_conversions,
+    }
+    
+    return render(request, "users/commercial_dashboard.html", context)
+
+
+@require_POST
+@login_required
+@commercial_required
+def request_new_code_batch(request):
+    """
+    Gestiona la solicitud de un nuevo lote de códigos por parte de un comercial.
+    Es un autoservicio condicional: solo funciona si no tiene códigos disponibles.
+    Notifica a los administradores para auditoría.
+    """
+    commercial = request.user
+    
+    if RecommendationCode.objects.filter(vendor=commercial, is_used=False).exists():
+        messages.error(request, "Aún tienes códigos disponibles. Debes agotarlos antes de solicitar un nuevo lote.")
+        return redirect("users:commercial_dashboard")
+        
+    batch_size = 5
+    codes_created = RecommendationCode.generate_batch(vendor=commercial, amount=batch_size)
+    
+    if codes_created > 0:
+        subject = f"Auditoría: Nuevo lote de códigos para {commercial.username}"
+        message = f"""El sistema ha generado automáticamente un nuevo lote de {codes_created} códigos de recomendación para el comercial '{commercial.username}'.
+        
+Este es un correo de notificación para fines de auditoría y seguimiento de pagos. No se requiere ninguna acción inmediata."""
+        try:
+            mail_admins(subject, message, fail_silently=False)
+        except Exception as e:
+            print(f"ERROR: No se pudo enviar el email de auditoría de códigos. {e}")
+            
+        messages.success(request, f"Se ha generado un nuevo lote de {codes_created} códigos.")
+    else:
+        messages.error(request, "No se pudieron generar nuevos códigos en este momento. Por favor, contacta con un administrador.")
+        
+    return redirect("users:commercial_dashboard")

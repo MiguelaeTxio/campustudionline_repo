@@ -907,3 +907,10 @@
 *  **Session:** Hito 30: Modelado del Sistema de Afiliados y Lógica de Registro
 *  **Description:** Inicio de la implementación técnica del sistema de recomendación comercial. Se procederá a: 1) Analizar y definir los modelos de datos para los códigos de recomendación (RecommendationCode) y su relación con los usuarios (Comerciales y Afiliados). 2) Implementar la lógica de validación de códigos durante el proceso de registro de nuevos usuarios. 3) Diseñar el sistema de traza de conversiones mediante signals para eventos clave (registro, primera copia, primera evaluación).
 
+# 2025-12-20
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V30.md
+## EPI
+*  **Session:** Implementación Arquitectura Datos Atribución Comercial
+*  **Description:** Inicio Hito 30. Fase 1: Definición de modelos para sistema de referidos. Creación de `RecommendationCode` en `users` y actualización de `UserProfile` con flags de incentivos y campo `referred_by`.
+

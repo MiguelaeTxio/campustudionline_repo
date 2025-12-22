@@ -75,7 +75,19 @@ urlpatterns = [
         user_views.toggle_block_user,
         name="toggle_block_user",
     ),
-    # --- API URLs ---
+        # --- Commercial Dashboard ---
+    path(
+        "commercial/dashboard/",
+        user_views.commercial_dashboard,
+        name="commercial_dashboard",
+    ),
+    path(
+        "commercial/request-codes/",
+        user_views.request_new_code_batch,
+        name="request_new_code_batch",
+    ),
+
+# --- API URLs ---
     path(
         "api/validate-registration/",
         user_views.validate_registration_view,

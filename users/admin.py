@@ -4,12 +4,13 @@
 
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
-from .models import CustomUser, UserProfile, ArchivedKey
+from .models import CustomUser, UserProfile, ArchivedKey, RecommendationCode
 
 # Ya no necesitamos importar 'User' ni des-registrarlo.
 
 
 class UserProfileInline(admin.StackedInline):
+    fk_name = "user"
     model = UserProfile
     can_delete = False
     verbose_name_plural = "Perfil Adicional"
@@ -60,6 +61,17 @@ class UserProfileInline(admin.StackedInline):
             },
         ),
         ("Seguimiento de Actividad", {"fields": ("last_checked_chat_activity",)}),
+        (
+            "Sistema de Atribución y Referidos",
+            {
+                "classes": ("collapse",),
+                "fields": (
+                    "referred_by",
+                    "has_claimed_copy_incentive",
+                    "has_claimed_assessment_incentive",
+                ),
+            },
+        ),
     )
     readonly_fields = (
         "profile_created_at",
@@ -185,6 +197,17 @@ class UserProfileAdmin(admin.ModelAdmin):
                 )
             },
         ),
+        (
+            "Sistema de Atribución y Referidos",
+            {
+                "classes": ("collapse",),
+                "fields": (
+                    "referred_by",
+                    "has_claimed_copy_incentive",
+                    "has_claimed_assessment_incentive",
+                ),
+            },
+        ),
     )
 
 
@@ -194,3 +217,16 @@ class ArchivedKeyAdmin(admin.ModelAdmin):
     search_fields = ("profile__user__username",)
     list_filter = ("archived_at",)
     readonly_fields = ("profile", "encrypted_private_key", "archived_at")
+
+
+@admin.register(RecommendationCode)
+class RecommendationCodeAdmin(admin.ModelAdmin):
+    list_display = ("code", "vendor", "get_status", "redeemed_by", "date_redeemed")
+    list_filter = ("vendor", "date_redeemed") # Eliminamos 'is_used'
+    search_fields = ("code", "vendor__username", "vendor__email", "redeemed_by__username")
+    autocomplete_fields = ("vendor", "redeemed_by")
+    readonly_fields = ("date_redeemed",)
+
+    @admin.display(description='Estado', ordering='redeemed_by')
+    def get_status(self, obj):
+        return "USADO" if obj.redeemed_by else "DISPONIBLE"
