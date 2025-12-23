@@ -73,7 +73,7 @@ CampuStudiOnline es una plataforma web de e-learning diseñada para centralizar 
 (Ver anexo `CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V25.md`)
 ### Hito 26: Cumplimiento Regla de Oro del Idioma (COMPLETADO)
 (Ver anexo `CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V26.md`. Corrección de textos de interfaz en mensajería.)
-### Hito 24: Sistema de Ruegos y Preguntas (EN PROGRESO)
+### Hito 24: Sistema de Ruegos y Preguntas (PAUSADO)
 (Ver anexo `CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V24.md`)
 ---
 ### Hito 27: Optimización de UX y Onboarding para Evaluaciones (COMPLETADO)
@@ -83,6 +83,9 @@ CampuStudiOnline es una plataforma web de e-learning diseñada para centralizar 
 ---
 ### Hito 30: Estrategia Comercial de Recomendación y Gestión de Afiliados (COMPLETADO)
 (Ver anexo `CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V30.md`)
+
+### Hito 31: Sistema de Agenda Académica Personal (Schedule) (EN PROGRESO)
+(Ver anexo `CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V31.md`)
 
 ---
 

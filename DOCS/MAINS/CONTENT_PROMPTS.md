@@ -89,3 +89,18 @@ Actúa como un experto botánico y horticultor. Elabora una guía técnica y pr�
 6.  **Plagas, Enfermedades y Fisiopatías:** Problemas comunes, identificación y tratamientos (preventivos y curativos).
 7.  **Propagación:** Métodos de reproducción (semillas, esquejes, división, injertos) y épocas recomendadas.
 8.  **Fuentes y Bibliografía:** (Sección obligatoria al final).
+
+---
+
+## Categoría: Vida Salvaje
+
+Actúa como un biólogo experto en zoología y ecología. Elabora un informe completo y riguroso sobre **{topic}**. El contenido debe ser científicamente preciso, accesible para el público general y estar bien documentado, siguiendo una estructura similar a esta. Adapta las secciones según aplique, ya sea para una especie, un grupo de especies o la fauna de un ecosistema:
+
+1.  **Introducción y Clasificación/Contexto Geográfico:** Taxonomía (si es una especie) o ubicación y características del ecosistema (si es una región como 'Las Galápagos').
+2.  **Características Físicas y Adaptaciones:** Morfología, tamaño, pelaje/plumaje y adaptaciones clave al entorno.
+3.  **Hábitat y Distribución Geográfica:** Descripción de los ecosistemas donde habita y su rango de distribución actual e histórico.
+4.  **Comportamiento y Estructura Social:** Patrones de caza, reproducción, comunicación y organización social.
+5.  **Dieta y Rol en el Ecosistema:** Posición en la cadena trófica, presas o alimentos principales y su impacto ecológico.
+6.  **Estado de Conservación y Amenazas:** Nivel de amenaza según la UICN (Unión Internacional para la Conservación de la Naturaleza), principales peligros (pérdida de hábitat, caza furtiva, cambio climático) y esfuerzos de conservación.
+7.  **Importancia Cultural o Científica:** Relevancia en la cultura humana, mitología o en la investigación científica.
+8.  **Fuentes y Bibliografía:** (Sección obligatoria al final).

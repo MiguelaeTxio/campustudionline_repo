@@ -914,3 +914,11 @@
 *  **Session:** Implementación Arquitectura Datos Atribución Comercial
 *  **Description:** Inicio Hito 30. Fase 1: Definición de modelos para sistema de referidos. Creación de `RecommendationCode` en `users` y actualización de `UserProfile` con flags de incentivos y campo `referred_by`.
 
+
+# 2025-12-24
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V24.md
+## AAAA
+*  **Session:** Sesión de Mantenimiento y Soporte (Hito 24)
+*  **Description:** Reactivación del Hito 24 tras restauración de versión correcta. Sesión dedicada a la resolución de incidencias, deuda técnica y peticiones ad-hoc según el backlog dinámico de soporte.
+
