@@ -119,6 +119,7 @@
             <div class="collapse navbar-collapse" id="navigationBar">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item" id="tour-nav-home"><a class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}" href="{% url 'home' %}"><i class="fas fa-home me-2"></i>Inicio</a></li>
+                    <li class="nav-item" id="tour-nav-schedule"><a class="nav-link {% if request.resolver_match.app_name == 'schedule' %}active{% endif %}" href="{% url 'schedule:calendar_view' %}"><i class="fas fa-calendar-alt me-2"></i>Agenda</a></li>
                     <li class="nav-item" id="tour-nav-chat"><a class="nav-link {% if request.resolver_match.app_name == 'chat' %}active{% endif %}" href="{% url 'chat:index' %}"><i class="fas fa-comments me-2"></i>Chat</a></li>
                     <li class="nav-item" id="tour-nav-announcements"><a class="nav-link {% if request.resolver_match.app_name == 'announcements' %}active{% endif %}" href="{% url 'announcements:announcement_list' %}"><i class="fas fa-bullhorn me-2"></i>Tablón de Anuncios</a></li>
                     <li class="nav-item" id="tour-nav-academic-directory">

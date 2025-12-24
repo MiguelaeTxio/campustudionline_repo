@@ -208,6 +208,7 @@ INSTALLED_APPS = [
     "push_tester.apps.PushTesterConfig",
     "favorites_prototype.apps.FavoritesPrototypeConfig",    "feedback.apps.FeedbackConfig",
     "universia.apps.UniversiaConfig",
+    "schedule.apps.ScheduleConfig",
 ]
 
 AUTH_USER_MODEL = "users.CustomUser"
@@ -389,6 +390,10 @@ CORRECTION_VISIBILITY_DURATION_SECONDS = 86400
 
 # Task scheduler for Celery Beat
 CELERY_BEAT_SCHEDULE = {
+    "check-scheduled-reminders-hourly": {
+        "task": "schedule.tasks.check_scheduled_reminders",
+        "schedule": crontab(minute=0), # Cada hora en punto
+    },
     "purge-and-penalize-corrections-periodic": {
         "task": "orchestrator.tasks.purge_and_penalize_corrections",
         "schedule": timedelta(hours=1),

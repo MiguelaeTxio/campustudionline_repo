@@ -922,3 +922,11 @@
 *  **Session:** Sesión de Mantenimiento y Soporte (Hito 24)
 *  **Description:** Reactivación del Hito 24 tras restauración de versión correcta. Sesión dedicada a la resolución de incidencias, deuda técnica y peticiones ad-hoc según el backlog dinámico de soporte.
 
+
+# 2025-12-24
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V31.md
+## CYC
+*  **Session:** Creación App Schedule y Modelo AcademicEvent
+*  **Description:** Inicio del Hito 31. Inicialización de la aplicación 'schedule' para la agenda académica. Definición del modelo 'AcademicEvent' con soporte para diferentes tipos de eventos (Examen, Clase, Entrega, Estudio, Otro), validaciones de integridad temporal y relaciones con usuarios y asignaturas. Registro en Django Admin y configuración inicial en settings.
+

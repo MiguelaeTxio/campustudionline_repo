@@ -1,0 +1,5 @@
+{% load crispy_forms_tags %}
+<form method="post">{% csrf_token %}
+    <p>¿Seguro que quieres eliminar "{{ object.title }}"?</p>
+    <button type="submit" class="btn btn-danger">Confirmar</button>
+</form>

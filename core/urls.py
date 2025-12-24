@@ -144,7 +144,8 @@ urlpatterns = [
     path("feedback/", include("feedback.urls", namespace="feedback")),
     path("assessment/", include("assessment.urls", namespace="assessment")),
     path("push-tester/", include("push_tester.urls", namespace="push_tester")),
-    path("universia/", include("universia.urls", namespace="universia")),    
+    path("universia/", include("universia.urls", namespace="universia")),
+    path("schedule/", include("schedule.urls", namespace="schedule")),    
     # --- Core App URL dispatcher ---
     path("core/", include((core_urlpatterns, "core"), namespace="core")),
     

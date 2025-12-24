@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Agenda | CampuStudiOnline{% endblock %}
+{% block extra_css %}
+<script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js'></script>
+<link rel="stylesheet" href="{% static 'schedule/css/schedule.css' %}">
+{% endblock %}
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="schedule-container">
+        <div class="calendar-wrapper bg-white p-3 rounded shadow-sm mb-3 mb-md-0"><div id="calendar"></div></div>
+        <div class="agenda-wrapper bg-white p-3 rounded shadow-sm">
+            <div class="agenda-day-header text-capitalize" id="selected-date-display">Cargando...</div>
+            <div id="agenda-list-content"></div>
+        </div>
+    </div>
+</div>
+<button class="fab-add-event" id="fab-add-event"><i class="fas fa-plus"></i></button>
+<div class="modal fade" id="eventModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Evento</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="text-center py-4"><div class="spinner-border text-primary"></div></div></div></div></div></div>
+{% endblock %}
+{% block extra_js %}<script src="{% static 'schedule/js/schedule.js' %}"></script>{% endblock %}

@@ -1,36 +1,27 @@
 # Hito 31: Sistema de Agenda Académica Personal (Schedule)
 
 ## 1. Visión
-Dotar al estudiante de una herramienta de gestión del tiempo integrada, que le permita visualizar sus obligaciones académicas y recibir recordatorios proactivos, centralizando su vida universitaria en la plataforma.
+Implementación de una agenda académica integrada que centralice clases, exámenes y entregas, con sistema de alertas proactivas.
 
 ## 2. Estado del Hito
-*   **Estado:** EN PROGRESO
+*   **Estado:** EN PROGRESO (Bloqueo Crítico en Frontend)
 *   **Fecha de Inicio:** 24/12/2025
+*   **Última Actualización:** 24/12/2025
 
-## 3. Estrategia Técnica
-*   **App:** `schedule`
-*   **UI:** FullCalendar.js + HTMX
-*   **Async:** Celery Beat para cron jobs de notificaciones.
+## 3. Arquitectura Implementada
+*   **Backend:** App `schedule` con modelo `AcademicEvent`. API REST (`/api/feed/`) para consumo del calendario.
+*   **Infraestructura:** Segregación de Workers en `primary` (Beat + Notificaciones) y `heavy` (IA).
+*   **Notificaciones:** Tarea periódica `check_scheduled_reminders` configurada en Celery Beat.
 
-## 4. Hoja de Ruta Táctica para la Siguiente Sesión
+## 4. Hoja de Ruta Táctica para la Siguiente Sesión (ESTRICTA)
 
-### FASE 1: Backend y Modelado (Core)
-*   [ ] Inicializar app `schedule`.
-*   [ ] Definir modelo `AcademicEvent` con tipología de eventos universitarios.
-*   [ ] Implementar validaciones de fechas y relaciones con `Subject`.
-*   [ ] Registrar en Admin.
+### PRIORIDAD 1: Reparación del Frontend (Calendar Blank Screen)
+El calendario carga la estructura pero no renderiza la grilla ni los eventos ("Cargando...").
+1.  **Diagnóstico de Consola:** Verificar errores JS en el navegador (posible fallo de carga de CDN FullCalendar o conflicto de sintaxis en `schedule.js`).
+2.  **Validación de API:** Confirmar que el endpoint `/schedule/api/feed/` devuelve el JSON con el formato exacto que espera FullCalendar v6.
+3.  **Corrección de Inicialización:** Asegurar que el script JS espera al DOM y a la librería externa antes de instanciar la clase `Calendar`.
 
-### FASE 2: API Interna y Vistas
-*   [ ] Crear endpoint `JSON` para alimentar el calendario frontend.
-*   [ ] Crear vistas CRUD (Create, Read, Update, Delete) usando formularios de Django.
-
-### FASE 3: Interfaz de Usuario (Frontend)
-*   [ ] Integrar librería `FullCalendar.js`.
-*   [ ] Implementar vista mensual, semanal y de agenda (diaria).
-*   [ ] Crear modales con HTMX para la gestión de eventos (Drag & Drop si es posible).
-*   [ ] Estilar eventos según `event_type` (Ej: Examen = Rojo, Práctica = Azul).
-
-### FASE 4: Motor de Notificaciones
-*   [ ] Crear tarea de Celery `check_scheduled_reminders`.
-*   [ ] Integrar con servicio de Email (`core`).
-*   [ ] Integrar con servicio de WebPush (`messaging`).
+### PRIORIDAD 2: Verificación de Notificaciones
+1.  **Prueba de Fuego:** Crear un evento para dentro de 1 hora.
+2.  **Monitorización:** Verificar logs de Celery (`worker_pri`) para confirmar la ejecución de `check_scheduled_reminders`.
+3.  **Recepción:** Confirmar recepción de Push Notification y Email.
