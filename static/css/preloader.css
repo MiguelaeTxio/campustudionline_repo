@@ -1,0 +1,47 @@
+/* /home/MiguelAeTxio/CampuStudiOnline/static/css/preloader.css */
+
+/* The container that covers the entire screen */
+.preloader-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.95);
+    z-index: 9999;
+    
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+
+    display: none; 
+}
+
+/* The rotating spinner */
+.preloader-spinner {
+    /* --- CORRECTED LINE --- */
+    /* Changed #f3f3f3 to #ddd, a darker and more visible gray */
+    border: 8px solid #ddd;
+    /* -------------------- */
+    border-top: 8px solid #007bff;
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    animation: spin 1.5s linear infinite;
+}
+
+/* Rotation animation */
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* The text that will change dynamically */
+.preloader-text {
+    margin-top: 25px;
+    color: #333;
+    font-size: 1.2em;
+    font-family: Arial, sans-serif;
+    text-align: center;
+}

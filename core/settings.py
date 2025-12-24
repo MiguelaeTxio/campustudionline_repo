@@ -189,6 +189,8 @@ INSTALLED_APPS = [
     "django_user_agents",
     "treebeard",
     "django_celery_beat",
+    "crispy_forms",
+    "crispy_bootstrap5",
     # 3. Project Applications
     "core",
     "orchestrator.apps.OrchestratorConfig",
@@ -487,3 +489,7 @@ PASSWORD_RESET_TIMEOUT = 600
 # --- Compatibility Aliases ---
 # BASE_URL is required by orchestrator tasks for notifications
 BASE_URL = SITE_URL
+
+# --- Crispy Forms Configuration ---
+CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
+CRISPY_TEMPLATE_PACK = "bootstrap5"

@@ -1,0 +1,112 @@
+/* /home/MiguelAeTxio/CampuStudiOnline/static/css/annotations.css */
+.material-content {
+    position: relative;
+    padding: 20px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    margin-bottom: 20px;
+}
+
+.annotation-toolbar {
+    margin-bottom: 15px;
+    padding: 10px;
+    background-color: #f5f5f5;
+    border-radius: 5px;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.color-picker {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.highlight-annotation {
+    cursor: pointer;
+    border-radius: 2px;
+}
+
+.note-annotation {
+    cursor: help;
+    border-bottom: 2px dotted;
+}
+
+.mark-annotation {
+    font-weight: bold;
+}
+
+.annotations-list {
+    max-height: 500px;
+    overflow-y: auto;
+}
+
+.annotation-item {
+    margin-bottom: 15px;
+    border: 1px solid #eee;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.annotation-header {
+    background-color: #eee;
+    padding: 5px 10px;
+    font-size: 0.9em;
+}
+
+.annotation-content {
+    padding: 10px;
+}
+
+/* Floating Toolbar Styles */
+.floating-toolbar {
+    position: fixed;
+    z-index: 1050; /* Ensure it's above most content */
+    background-color: #343a40;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    padding: 8px;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    visibility: hidden;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s;
+    bottom: -100px; /* Initially position it off-screen */
+}
+
+.floating-toolbar.visible {
+    visibility: visible;
+    opacity: 1;
+    transform: translateY(0);
+    bottom: initial; /* Let JS control 'bottom' when visible */
+}
+
+.floating-toolbar .color-picker-input {
+    border: none;
+    background: none;
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.floating-toolbar .btn-tool {
+    background-color: transparent;
+    border: none;
+    color: #f8f9fa;
+    font-size: 16px;
+    padding: 5px 10px;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.2s;
+}
+
+.floating-toolbar .btn-tool:hover {
+    background-color: #495057;
+}

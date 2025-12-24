@@ -1,0 +1,228 @@
+/* --- LAYOUT PRINCIPAL --- */
+html, body {
+    height: 100%;
+    /* overflow: hidden;  <-- ELIMINADO: Dejar que el navegador gestione el scroll principal si es necesario */
+}
+
+.main-content {
+    /* height: calc(100vh - 56px); <-- ELIMINADO: Altura flexible */
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.schedule-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    background-color: #f8f9fa;
+}
+
+/* --- CALENDARIO (FullCalendar) --- */
+.calendar-wrapper {
+    background: white;
+    padding: 10px;
+    margin: 10px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+/* 1. CORRECCIÓN BARRA DE HERRAMIENTAS (Top Toolbar) */
+.fc .fc-toolbar {
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 1rem !important;
+}
+
+.fc .fc-toolbar-chunk {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* En móvil, título ocupa 100% y va arriba */
+@media (max-width: 576px) {
+    .fc .fc-toolbar {
+        flex-direction: column;
+    }
+    
+    .fc .fc-toolbar-title {
+        font-size: 1.2rem !important;
+        order: -1; /* Título primero */
+        width: 100%;
+        text-align: center;
+        margin-bottom: 5px;
+    }
+    
+    .fc .fc-button {
+        font-size: 0.8rem !important;
+        padding: 0.25rem 0.5rem !important;
+    }
+}
+
+/* 2. CORRECCIÓN CABECERA DÍAS (Column Misalignment) */
+.fc-theme-standard th {
+    border: none !important; /* Quitar bordes feos de la cabecera */
+    padding-bottom: 10px !important;
+}
+
+.fc-col-header-cell-cushion {
+    text-decoration: none !important; /* Quitar subrayado azul */
+    color: #6c757d !important;      /* Color gris profesional */
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    display: block;                  /* Asegurar bloque para centrado */
+    padding: 4px 0 !important;
+}
+
+.fc-scrollgrid {
+    border: none !important; /* Limpieza visual de la tabla global */
+}
+
+/* 3. CORRECCIÓN CELDAS DEL MES */
+.fc-daygrid-day-frame {
+    min-height: 80px; /* Altura mínima para que respire */
+}
+
+.fc-daygrid-day-top {
+    justify-content: center; /* Centrar número */
+    flex-direction: row;
+}
+
+.fc-daygrid-day-number {
+    font-size: 0.9rem;
+    color: #495057;
+    text-decoration: none !important;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    margin-top: 4px;
+}
+
+/* Día actual */
+.fc-day-today .fc-daygrid-day-number {
+    background-color: #0d6efd;
+    color: white !important;
+    font-weight: bold;
+}
+
+/* Día seleccionado (Custom JS) */
+.day-highlight {
+    background-color: rgba(13, 110, 253, 0.05) !important;
+}
+
+/* Botón flotante */
+#fab-add-event {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background-color: #0d6efd;
+    color: white;
+    border: none;
+    box-shadow: 0 4px 12px rgba(13, 110, 253, 0.3);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    transition: transform 0.2s;
+}
+
+#fab-add-event:active {
+    transform: scale(0.95);
+}
+
+/* Ajustes de Tabla para evitar desalineación */
+.fc-view-harness {
+    background: white;
+}
+
+/* CONTROL DE SCROLL POR VISTA */
+
+/* Vista Mensual: Ocultar scroll para mantener alineación (si cabe todo) */
+.fc-dayGrid-view .fc-scroller {
+    overflow-y: hidden !important;
+}
+
+/* Vista Semana/Día: ¡PERMITIR SCROLL VERTICAL! */
+.fc-timeGrid-view .fc-scroller {
+    overflow-y: auto !important;
+}
+
+
+
+/* --- CORRECCIONES VISTA SEMANAL/DIARIA --- */
+
+/* 1. Restaurar bordes verticales solo en la vista de hora (Semana/Día) para guiar el ojo */
+.fc-timeGrid-view .fc-col-header-cell {
+    border-left: 1px solid #e9ecef !important;
+    border-right: 1px solid #e9ecef !important;
+}
+
+/* 2. Ajuste de textos de cabecera para pantallas pequeñas */
+@media (max-width: 576px) {
+    /* En vista semanal, reducir fuente para que quepan 7 columnas */
+    .fc-timeGridWeek-view .fc-col-header-cell-cushion {
+        font-size: 0.6rem !important; /* Texto muy compacto */
+        padding: 2px 0 !important;
+        white-space: normal !important; /* Permitir salto de línea si es necesario */
+        line-height: 1.1;
+    }
+    
+    /* Forzar que el día (LUN) y la fecha (23) se apilen verticalmente si FullCalendar los pone juntos */
+    .fc-timeGridWeek-view .fc-col-header-cell-cushion span {
+        display: block;
+    }
+}
+
+/* 3. Ajuste de la parrilla horaria */
+.fc-timegrid-slot {
+    height: 3em !important; /* Celdas de hora más altas para facilitar el toque */
+}
+
+.fc-timegrid-slot-label {
+    font-size: 0.75rem;
+    color: #6c757d;
+    vertical-align: middle;
+}
+
+/* --- OPTIMIZACIÓN VISTA SEMANAL MÓVIL --- */
+
+/* 1. Reducir ancho columna de horas (Eje Y) */
+.fc-timegrid-axis {
+    width: 40px !important; /* Forzar ancho estrecho */
+    max-width: 40px !important;
+}
+.fc-timegrid-slot-label-frame {
+    text-align: center; 
+}
+
+/* 2. Cabecera de días compacta */
+.fc-timeGridWeek-view .fc-col-header-cell-cushion {
+    font-size: 0.7rem !important;
+    line-height: 1.2;
+    padding: 4px 0 !important;
+    display: flex !important;
+    flex-direction: column; /* Apilar LUN y 24 verticalmente */
+    align-items: center;
+    text-decoration: none !important;
+    color: #495057;
+}
+
+/* Forzar mayúsculas en día semana */
+.fc-timeGridWeek-view .fc-col-header-cell-cushion {
+    text-transform: uppercase;
+}
+
+/* 3. Ajuste de celda "Todo el día" */
+.fc-scrollgrid-sync-table {
+    width: 100% !important;
+}

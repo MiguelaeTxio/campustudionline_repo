@@ -27,6 +27,12 @@ class AcademicEvent(models.Model):
         related_name='academic_events',
         verbose_name=_('Asignatura')
     )
+    subject_name_display = models.CharField(
+        _("Nombre de Asignatura / Curso"), 
+        max_length=200, 
+        blank=True, 
+        help_text=_("Nombre manual si no es una asignatura oficial.")
+    )
     title = models.CharField(_('Título'), max_length=200)
     description = models.TextField(_('Descripción'), blank=True)
     start_time = models.DateTimeField(_('Fecha de inicio'))

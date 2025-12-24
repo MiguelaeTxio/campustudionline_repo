@@ -1,0 +1,251 @@
+/* /static/css/explorer.css */
+/* ATENCIÓN!!! La aplicación de usuarios se llama 'users' pero el Namespace a usar es 'usuarios' */
+
+/* --- General Explorer Styles (Extracted from template) --- */
+
+.explorer-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.explorer-breadcrumbs {
+    font-size: 1.2em;
+    color: #ccc;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.explorer-breadcrumbs a { text-decoration: none; color: #417690; }
+.explorer-breadcrumbs a:hover { text-decoration: underline; }
+.explorer-breadcrumbs .separator { color: #888; }
+
+.item-list { list-style-type: none; padding: 0; }
+.item-list li {
+    background: #333;
+    border: 1px solid #555;
+    margin-bottom: 10px;
+    padding: 15px;
+    border-radius: 4px;
+    transition: background-color 0.2s ease-in-out;
+}
+.item-list li:hover { background: #3c3c3c; }
+
+.item-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.item-name {
+    font-size: 1.1em;
+    font-weight: bold;
+    color: #e8e8e8;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.item-actions { display: flex; gap: 10px; }
+.item-actions a, .item-actions .button, .item-actions button { margin-left: 0; }
+
+/* Active Tasks Panel */
+.active-tasks-panel {
+    background: #2a2a2a;
+    border: 1px solid #444;
+    padding: 15px;
+    margin-bottom: 2rem;
+    border-radius: 4px;
+}
+
+.active-tasks-panel h2 {
+    margin-top: 0;
+    color: #e8e8e8;
+    border-bottom: 1px solid #555;
+    padding-bottom: 10px;
+}
+
+.active-task-item {
+    display: flex;
+    flex-direction: column;
+    padding: 15px 0;
+    border-bottom: 1px solid #3c3c3c;
+}
+.active-task-item:last-child { border-bottom: none; }
+
+.active-task-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+.active-task-details .subject-name { font-weight: bold; }
+.active-task-details .degree-name { font-size: 0.9em; color: #bbb; }
+.cancel-form { display: inline; }
+.cancel-form button { background: #a44; border-color: #a44; }
+.cancel-form button:hover { background: #c66; }
+
+/* Styles for Prompt and Copy Button */
+.prompt-container { margin-top: 15px; width: 100%; }
+.prompt-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 5px;
+}
+.prompt-header label { color: #ccc; font-weight: bold; margin: 0; }
+
+.copy-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 8px;
+    font-size: 0.8em;
+    transition: background-color 0.2s, color 0.2s;
+}
+.copy-button .icon { font-size: 1.1em; }
+.copy-button.is-copied { background-color: #3d8b40; border-color: #3d8b40; color: #fff; }
+
+.prompt-container textarea {
+    width: 100%;
+    box-sizing: border-box;
+    height: 180px;
+    font-family: monospace;
+    font-size: 0.9em;
+    background: #222;
+    color: #e0e0e0;
+    padding: 10px;
+    border: 1px solid #555;
+    border-radius: 4px;
+    resize: vertical;
+}
+.prompt-container textarea:focus { border-color: #417690; outline: none; }
+
+/* Directory Styles */
+.quota-info {
+    background: #444;
+    color: #e8e8e8;
+    padding: 10px 15px;
+    border-radius: 4px;
+    margin-bottom: 1rem;
+    text-align: center;
+    font-size: 1.1em;
+}
+.quota-info.limit-reached { background-color: #7d3c3c; }
+
+.status-badge {
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 0.8em;
+    font-weight: bold;
+    color: #fff;
+}
+.status-available { background-color: #3d8b40; } /* Verde */
+.status-in-progress { background-color: #3b7da7; } /* Azul */
+.status-assigned { background-color: #888; color: #ccc; } /* Gris */
+.button.disabled { background: #555; color: #999; pointer-events: none; cursor: not-allowed; }
+
+.import-panel {
+    background: #3c3c3c;
+    border: 1px solid #555;
+    padding: 20px;
+    margin-bottom: 2rem;
+    border-radius: 4px;
+    text-align: center;
+}
+.import-panel .button {
+    font-size: 1.2em;
+    padding: 10px 20px;
+}
+.import-panel p {
+    margin-top: 10px;
+    color: #ccc;
+    font-size: 0.9em;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* --- NEW: Media Queries for Responsiveness --- */
+@media (max-width: 768px) {
+    .explorer-header,
+    .item-header,
+    .active-task-header {
+        flex-direction: column;
+        align-items: flex-start; /* Align items to the left */
+        gap: 15px; /* Increase vertical space */
+    }
+
+    .explorer-breadcrumbs {
+        flex-wrap: wrap; /* Allow breadcrumbs to wrap */
+    }
+
+    .item-actions,
+    .action-buttons-container {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .item-actions .button,
+    .item-actions a,
+    .action-buttons-container .button,
+    .action-buttons-container a {
+        width: 100%; /* Buttons take full width */
+        text-align: center;
+        margin-left: 0;
+    }
+
+    .active-task-header .item-actions {
+        align-self: flex-end; /* Move the cancel button to the right */
+        width: auto; /* Restore auto width for the cancel button */
+    }
+}
+
+/* --- Styles for main buttons of app_index.html --- */
+.main-action-buttons-container {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 20px;
+    text-align: center;
+    flex-wrap: wrap; /* Allow buttons to wrap on small screens */
+}
+
+.main-action-button {
+    display: inline-block;
+    padding: 15px 30px;
+    font-size: 1.2em; /* Slightly reduced for better fit */
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: bold;
+    flex-grow: 1; /* Allow buttons to grow */
+    flex-basis: 250px; /* Minimum width base before wrapping */
+    max-width: 350px; /* Maximum width per button */
+}
+
+.button-matriculation {
+    background-color: #ff9800;
+    border-bottom: 3px solid #f57c00;
+}
+
+.button-generation {
+    background-color: #4CAF50;
+    border-bottom: 3px solid #388E3C;
+}
+
+.button-import {
+    background-color: #0d6efd;
+    border-bottom: 3px solid #0a58ca;
+}

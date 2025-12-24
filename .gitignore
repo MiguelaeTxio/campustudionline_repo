@@ -24,7 +24,6 @@ db.sqlite3-journal
 # Media and Static files
 media/
 staticfiles_production/
-static/
 
 # IDE and Editor Folders
 .vscode/

@@ -1,0 +1,65 @@
+/* /home/MiguelAeTxio/CampuStudiOnline/static/css/shepherd_custom.css */
+
+/* --- Global Styles for Shepherd.js --- */
+
+/* Semi-transparent background behind the tour */
+.shepherd-modal-overlay-container {
+    background-color: rgba(0, 0, 0, 0.15);
+}
+
+/* Main pop-up container */
+.shepherd-element {
+    z-index: 9998; 
+    pointer-events: auto;
+}
+
+/* --- MANDATORY CORPORATE STYLES --- */
+
+/* Pop-up header and close icon color */
+.shepherd-has-title .shepherd-content .shepherd-header {
+    background-color: #0d6efd; /* Azul corporativo de Bootstrap */
+    color: white;
+}
+
+.shepherd-title {
+    color: white;
+    font-weight: bold;
+}
+
+.shepherd-cancel-icon {
+    color: rgba(255, 255, 255, 0.75) !important;
+}
+
+.shepherd-cancel-icon:hover {
+    color: white !important;
+}
+
+/* Explanatory text body */
+.shepherd-text {
+    background-color: white; /* Explicit white background */
+    color: black; /* Explicit black text */
+    padding: 1em;
+}
+
+/* --- Force ALL buttons to corporate style --- */
+.shepherd-button {
+    background: #0d6efd !important; /* Corporate blue background (with !important for maximum priority) */
+    color: white !important; /* White text (with !important) */
+    border: none;
+    border-radius: .25rem;
+    padding: .5rem 1rem;
+    transition: opacity 0.2s ease-in-out;
+}
+
+/* Override any secondary button style to match the primary one */
+/* This ensures the 'Back' button looks the same as the 'Next' button */
+.shepherd-button.shepherd-button-secondary {
+    background: #0d6efd !important;
+    color: white !important;
+}
+
+/* Hover effect for visual feedback */
+.shepherd-button:hover {
+    opacity: 0.9;
+    color: white !important;
+}
