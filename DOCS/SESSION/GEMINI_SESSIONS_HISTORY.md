@@ -937,3 +937,19 @@
 *  **Session:** Reparación Frontend Agenda y Verificación Alertas
 *  **Description:** Diagnóstico y resolución del bloqueo crítico en el frontend de la aplicación 'schedule' (pantalla en blanco, fallo de renderizado FullCalendar). Verificación del endpoint '/api/feed/'. Validación integral del sistema de notificaciones proactivas (Celery Beat, Push, Email) para eventos académicos.
 
+
+# 25/12/2025
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V29.md
+## EPI
+*  **Session:** Hotfix: Optimización del Protocolo PADP y Manifiestos
+*  **Description:** Intervención de mantenimiento del sistema. Se ha diagnosticado y resuelto el desbordamiento del manifiesto de proyecto causado por la indexación no filtrada de archivos estáticos. Se ha parcheado el archivo 'SYSTEM_PROMPTS.md' implementando un filtrado estricto por extensiones en el protocolo 'PADP'. Se han regenerado los manifiestos de Sistema y Proyecto con la nueva configuración para restaurar la operatividad del protocolo PISA en futuras sesiones.
+
+
+# 25/12/2025
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V29.md
+## PLUTO
+*  **Session:** UniversIA: Branding, Interactividad y Skill Agenda
+*  **Description:** Implementación de mejoras visuales y funcionales para el asistente UniversIA según la hoja de ruta 'Extension de UniversIA'. Se abordarán tres frentes: 1) Actualización de la identidad visual del botón flotante en la interfaz base. 2) Implementación de funcionalidad 'Long Press to Drag' en JavaScript para permitir el reposicionamiento del asistente. 3) Desarrollo de la lógica backend en 'services.py' para la interpretación de comandos de lenguaje natural destinados a la creación de eventos en la agenda académica (Schedule).
+

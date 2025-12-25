@@ -29,12 +29,29 @@ def chat_api(request):
         if not message:
             return JsonResponse({'error': 'El mensaje no puede estar vacío.'}, status=400)
 
-        response_text = UniversiaService.process_user_message(request.user, message, context_url, context_title)
+        # HITO V29: Soporte Híbrido (Texto o Estructura Dict)
+        result = UniversiaService.process_user_message(request.user, message, context_url, context_title)
         
-        return JsonResponse({
+        response_text = ""
+        client_action = None
+
+        if isinstance(result, dict) and 'text' in result:
+            response_text = result['text']
+            client_action = result.get('action')
+        else:
+            # Fallback compatibilidad: Si el servicio devuelve string
+            response_text = str(result)
+        
+        json_response = {
             'response': _render_markdown(response_text),
             'status': 'success'
-        })
+        }
+        
+        if client_action:
+            json_response['client_action'] = client_action
+            
+        return JsonResponse(json_response)
+
     except json.JSONDecodeError:
         return JsonResponse({'error': 'JSON inválido.'}, status=400)
     except Exception as e:

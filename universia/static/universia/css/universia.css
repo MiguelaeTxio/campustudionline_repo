@@ -220,3 +220,23 @@
 .uv-message.user pre { background-color: rgba(0,0,0,0.2); color: white; }
 .uv-message.user blockquote { border-left-color: rgba(255,255,255,0.5); color: #eee; }
 .uv-message.user a { color: #ffd700; text-decoration: underline; }
+
+/* --- UniversIA Hybrid Extensions (Hito V29) --- */
+#universia-launcher i.fa-brain {
+    font-size: 26px;
+    animation: u-pulse 3s infinite ease-in-out;
+}
+
+@keyframes u-pulse {
+    0% { transform: scale(1); text-shadow: 0 0 0px rgba(255,255,255,0.2); }
+    50% { transform: scale(1.1); text-shadow: 0 0 10px rgba(255,255,255,0.8); }
+    100% { transform: scale(1); text-shadow: 0 0 0px rgba(255,255,255,0.2); }
+}
+
+#universia-launcher.is-dragging {
+    cursor: grabbing !important;
+    opacity: 0.9;
+    transform: scale(1.15) !important;
+    box-shadow: 0 0 25px rgba(118, 75, 162, 0.7);
+    transition: none !important;
+}

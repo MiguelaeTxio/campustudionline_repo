@@ -1,9 +1,10 @@
 document.addEventListener('DOMContentLoaded', function() {
-        const container = document.getElementById('universia-widget-container');
+    const container = document.getElementById('universia-widget-container');
     const currentContentTitle = container ? container.getAttribute('data-content-title') : null;
     
     // Inyectar HTML del widget si solo tenemos el contenedor
     if (container && !document.getElementById('universia-window')) {
+        // HITO V29: Icono actualizado a fa-brain
         container.innerHTML = `
             <div id="universia-window">
                 <div class="universia-header">
@@ -15,7 +16,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     </button>
                 </div>
                 <div class="universia-messages" id="universia-messages">
-                    <!-- Mensajes se cargarán aquí -->
                     <div class="uv-message model">
                         ¡Hola! Soy UniversIA. ¿En qué puedo ayudarte con tus estudios hoy?
                     </div>
@@ -28,13 +28,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 </div>
             </div>
             <button id="universia-launcher">
-                <i class="fas fa-comment-dots"></i>
+                <i class="fas fa-brain"></i>
             </button>
         `;
     }
 
     const launcher = document.getElementById('universia-launcher');
-    if (!launcher) return; // Si no hay widget, salir.
+    if (!launcher) return; 
 
     const windowEl = document.getElementById('universia-window');
     const closeBtn = document.getElementById('universia-close-btn');
@@ -45,9 +45,75 @@ document.addEventListener('DOMContentLoaded', function() {
     let isHistoryLoaded = false;
     let isRequestPending = false;
 
+    // --- HITO V29: Lógica de Drag & Drop ---
+    // Restaurar posición guardada
+    try {
+        const savedPos = JSON.parse(localStorage.getItem('univ_pos'));
+        if(savedPos && container) { 
+            container.style.bottom='auto'; 
+            container.style.right='auto'; 
+            container.style.left=savedPos.x; 
+            container.style.top=savedPos.y; 
+        }
+    } catch(e){}
+
+    let isDrag=false, sX, sY, iL, iT;
+    
+    const startDrag = (e) => {
+        if(e.type==='mousedown' && e.button!==0) return; // Solo click izq
+        const t = e.type.includes('touch')?e.touches[0]:e;
+        sX = t.clientX; 
+        sY = t.clientY;
+        
+        // Bloquear posición absoluta actual para iniciar movimiento relativo
+        const rect = container.getBoundingClientRect();
+        iL = rect.left; 
+        iT = rect.top;
+        container.style.bottom='auto'; container.style.right='auto'; 
+        container.style.left=iL+'px'; container.style.top=iT+'px';
+        
+        document.addEventListener(e.type==='mousedown'?'mousemove':'touchmove', onDrag, {passive:false});
+        document.addEventListener(e.type==='mousedown'?'mouseup':'touchend', stopDrag);
+    };
+
+    const onDrag = (e) => {
+        const t = e.type.includes('touch')?e.touches[0]:e;
+        if(!isDrag && (Math.abs(t.clientX - sX) > 5 || Math.abs(t.clientY - sY) > 5)) { 
+            isDrag = true; 
+            launcher.classList.add('is-dragging'); 
+            if(windowEl) windowEl.classList.remove('active'); // Colapsar ventana al arrastrar
+        }
+        if(isDrag){
+            if(e.cancelable) e.preventDefault();
+            const dx = t.clientX - sX;
+            const dy = t.clientY - sY;
+            container.style.left = (iL + dx) + 'px';
+            container.style.top = (iT + dy) + 'px';
+        }
+    };
+
+    const stopDrag = () => {
+        document.removeEventListener('mousemove', onDrag); document.removeEventListener('touchmove', onDrag);
+        document.removeEventListener('mouseup', stopDrag); document.removeEventListener('touchend', stopDrag);
+        if(isDrag){
+            setTimeout(()=>{ isDrag = false; launcher.classList.remove('is-dragging'); }, 50);
+            localStorage.setItem('univ_pos', JSON.stringify({x:container.style.left, y:container.style.top}));
+        }
+    };
+    
+    launcher.addEventListener('mousedown', startDrag);
+    launcher.addEventListener('touchstart', startDrag, {passive:false});
+    
+    // Interceptar clicks si se arrastró
+    launcher.addEventListener('click', (e) => {
+        if(isDrag){ e.stopImmediatePropagation(); e.preventDefault(); }
+    }, true);
+
+
     // --- Funciones de Interfaz ---
 
     function toggleChat() {
+        if (isDrag) return; // Seguridad extra
         windowEl.classList.toggle('active');
         if (windowEl.classList.contains('active')) {
             input.focus();
@@ -68,11 +134,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (!messagesContainer) return;
         const msgDiv = document.createElement('div');
         msgDiv.className = `uv-message ${role}`;
-        
-        // msgDiv.textContent = text; 
-                // Render HTML content (Markdown processed by server)
-        msgDiv.innerHTML = text;
-        
+        msgDiv.innerHTML = text; // Markdown renderizado por backend
         messagesContainer.appendChild(msgDiv);
         scrollToBottom();
     }
@@ -82,11 +144,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const typingDiv = document.createElement('div');
         typingDiv.className = 'typing-indicator';
         typingDiv.id = 'uv-typing';
-        typingDiv.innerHTML = `
-            <div class="typing-dot"></div>
-            <div class="typing-dot"></div>
-            <div class="typing-dot"></div>
-        `;
+        typingDiv.innerHTML = '<div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div>';
         messagesContainer.appendChild(typingDiv);
         scrollToBottom();
     }
@@ -95,8 +153,6 @@ document.addEventListener('DOMContentLoaded', function() {
         const typingIndicator = document.getElementById('uv-typing');
         if (typingIndicator) typingIndicator.remove();
     }
-
-    // --- Funciones de API ---
 
     function getCookie(name) {
         let cookieValue = null;
@@ -117,7 +173,6 @@ document.addEventListener('DOMContentLoaded', function() {
         try {
             const response = await fetch('/universia/api/history/');
             const data = await response.json();
-            
             if (data.messages && data.messages.length > 0 && messagesContainer) {
                 messagesContainer.innerHTML = ''; 
                 data.messages.forEach(msg => {
@@ -136,7 +191,6 @@ document.addEventListener('DOMContentLoaded', function() {
         const text = input.value.trim();
         if (!text || isRequestPending) return;
 
-        // UI Updates
         addMessage(text, 'user');
         input.value = '';
         input.style.height = '40px'; 
@@ -163,6 +217,11 @@ document.addEventListener('DOMContentLoaded', function() {
             removeTyping();
 
             if (data.status === 'success') {
+                // HITO V29: Lógica de Redirección Backend (Client Action)
+                if (data.client_action && data.client_action.type === 'redirect') {
+                    window.location.href = data.client_action.url;
+                    return; 
+                }
                 addMessage(data.response, 'model');
             } else {
                 addMessage('Lo siento, ocurrió un error: ' + (data.error || 'Desconocido'), 'model');
@@ -171,15 +230,13 @@ document.addEventListener('DOMContentLoaded', function() {
         } catch (error) {
             removeTyping();
             addMessage('Error de conexión. Por favor, inténtalo de nuevo.', 'model');
-            console.error('Error enviando mensaje a UniversIA:', error);
+            console.error('Error UniversIA:', error);
         } finally {
             isRequestPending = false;
             sendBtn.disabled = false;
             input.focus();
         }
     }
-
-    // --- Event Listeners ---
 
     if (launcher) launcher.addEventListener('click', toggleChat);
     if (closeBtn) closeBtn.addEventListener('click', toggleChat);
@@ -192,7 +249,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 sendMessage();
             }
         });
-
         input.addEventListener('input', function() {
             this.style.height = '40px';
             this.style.height = (this.scrollHeight) + 'px';
