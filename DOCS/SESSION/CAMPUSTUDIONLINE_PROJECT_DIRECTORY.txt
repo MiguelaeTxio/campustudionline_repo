@@ -261,6 +261,7 @@
 ./universia/migrations/__init__.py
 ./universia/migrations/0001_initial.py
 ./universia/services.py
+./audit_schedule_events.py
 ./update_milestones_branding.py
 ./content_automation/urls.py
 ./content_automation/templates/emails/content_automation/new_content_request_body.html
@@ -309,6 +310,7 @@
 ./messaging/management/commands/delete_chat_session.py
 ./messaging/management/__init__.py
 ./fix_content_visibility.py
+./audit_rotation_system.py
 ./alvarez_credentials.json
 ./assessment/urls.py
 ./assessment/templates/assessment/take_assessment.html
@@ -557,7 +559,9 @@
 ./DOCS/MAINS/ATTACHEDS/CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V04.md
 ./DOCS/MAINS/CONTENT_PROMPTS.md
 ./DOCS/MAINS/CAMPUSTUDIONLINE_MASTER_DOCUMENT.md
+./audit_rotation_failure.py
 ./test_agenda_integrity.py
+./audit_integrity.py
 ./global_settings/templates/admin/global_settings/send_custom_email.html
 ./global_settings/admin.py
 ./global_settings/admin_views.py
@@ -600,6 +604,7 @@
 ./public_seo_previews/material_27_30-dias-de-python.html
 ./public_seo_previews/material_5.html
 ./public_seo_previews/material_14_curso-de-selenium-qa.html
+./audit_fix_rotation.py
 ./file00.txt
 ./diagnose_feed_error.py
 ./check_models.py

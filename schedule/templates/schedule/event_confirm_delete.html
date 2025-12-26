@@ -1,5 +1,18 @@
-{% load crispy_forms_tags %}
-<form method="post">{% csrf_token %}
-    <p>¿Seguro que quieres eliminar "{{ object.title }}"?</p>
-    <button type="submit" class="btn btn-danger">Confirmar</button>
+<div class="text-center">
+    <div class="mb-3">
+        <i class="bi bi-exclamation-triangle text-danger" style="font-size: 3rem;"></i>
+    </div>
+    <h5 class="mb-3">¿Confirmas la eliminación?</h5>
+    <p class="text-muted">Estás a punto de borrar: <br><strong>"{{ object.title }}"</strong></p>
+</div>
+
+<form method="post" action="{% url 'schedule:event_delete' object.id %}" 
+      onsubmit="event.preventDefault(); var form=this; fetch(form.action, {method:'POST', body:new FormData(form), headers:{'X-Requested-With':'XMLHttpRequest'}}).then(function(r){return r.text()}).then(function(html){ var container=document.getElementById('eventModal').querySelector('.modal-body'); container.innerHTML=html; var scr=container.querySelector('script'); if(scr) { eval(scr.innerText); } });">
+    {% csrf_token %}
+    <div class="d-grid gap-2 mt-4">
+        <button type="submit" class="btn btn-danger">
+            <i class="bi bi-trash"></i> Eliminar definitivamente
+        </button>
+        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
+    </div>
 </form>

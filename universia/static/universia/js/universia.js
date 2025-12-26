@@ -217,12 +217,22 @@ document.addEventListener('DOMContentLoaded', function() {
             removeTyping();
 
             if (data.status === 'success') {
-                // HITO V29: Lógica de Redirección Backend (Client Action)
+                let responseHtml = data.response;
+                
+                // Si hay una acción de redirección, inyectamos el botón en el HTML
                 if (data.client_action && data.client_action.type === 'redirect') {
-                    window.location.href = data.client_action.url;
-                    return; 
+                    const actionUrl = data.client_action.url;
+                    responseHtml += `
+                        <div class="mt-2 text-center">
+                            <a href="${actionUrl}" class="btn btn-sm btn-outline-primary" style="font-size: 0.8rem; border-radius: 20px; padding: 5px 15px;">
+                                <i class="fas fa-calendar-alt"></i> Ver en la Agenda
+                            </a>
+                        </div>
+                    `;
                 }
-                addMessage(data.response, 'model');
+                
+                // Mostramos el mensaje (con o sin botón)
+                addMessage(responseHtml, 'model');
             } else {
                 addMessage('Lo siento, ocurrió un error: ' + (data.error || 'Desconocido'), 'model');
             }

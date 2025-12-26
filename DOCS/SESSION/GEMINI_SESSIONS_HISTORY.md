@@ -953,3 +953,18 @@
 *  **Session:** UniversIA: Branding, Interactividad y Skill Agenda
 *  **Description:** Implementación de mejoras visuales y funcionales para el asistente UniversIA según la hoja de ruta 'Extension de UniversIA'. Se abordarán tres frentes: 1) Actualización de la identidad visual del botón flotante en la interfaz base. 2) Implementación de funcionalidad 'Long Press to Drag' en JavaScript para permitir el reposicionamiento del asistente. 3) Desarrollo de la lógica backend en 'services.py' para la interpretación de comandos de lenguaje natural destinados a la creación de eventos en la agenda académica (Schedule).
 
+
+# 2025-12-25
+# CAMPUSTUDIONLINE --CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V29.md
+## MAMC
+*  **Session:** Diagnóstico de UniversIA en Web y Auditoría de Entorno
+*  **Description:** Sesión dedicada a resolver la discrepancia de funcionamiento de UniversIA entre CLI (funcional) y entorno Web (fallo). Se auditará la inyección de variables de entorno en WSGI, la estructura del historial de chat para el SDK de Gemini y la persistencia de metadatos de contexto.
+
+
+# 2025-12-25
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V29.md
+## MAMC
+*  **Session:** Diagnóstico y Corrección de UniversIA en Entorno Web
+*  **Description:** Sesión centrada en la investigación y resolución del fallo crítico donde el asistente UniversIA funciona en CLI pero falla en entorno Web (WSGI). Se auditará la carga de variables de entorno, la compatibilidad del historial del SDK de Gemini y la persistencia del contexto.
+
