@@ -983,3 +983,11 @@
 *  **Session:** Debugging Pantalla Blanca Borrado Eventos Schedule
 *  **Description:** Investigación y resolución del bloqueo técnico en el módulo Schedule donde el borrado de eventos provoca una pantalla blanca. Verificación del flujo AJAX con la estrategia de bypass de cabeceras (is_ajax=true) para evitar redirecciones 302 erróneas y garantizar respuestas JSON. Refinamiento final de UI móvil.
 
+
+# 2025-12-27
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V32.md
+## CSO
+*  **Session:** Integración de UniversIA y Agenda en el Sistema de Visitas Guiadas
+*  **Description:** Ejecución del Hito 32. Se actualizará el tour de la página de inicio para incluir la explicación detallada de los roles del asistente UniversIA (Global vs Contextual). Se creará un nuevo tour específico para el módulo de Agenda (Schedule) explicando la navegación y gestión de eventos. Se registrarán los cambios en la plantilla base.
+

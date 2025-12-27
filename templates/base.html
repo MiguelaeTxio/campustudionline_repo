@@ -305,6 +305,9 @@
 
     <script src="{% static 'js/shepherd.min.js' %}"></script>
     <script src="{% static 'js/shepherd_helpers.js' %}"></script>
+    {% if request.resolver_match.app_name == 'schedule' %}
+        <script src="{% static 'js/tours/schedule_tour.js' %}"></script>
+    {% endif %}
     {% block extra_js %}
         <script>
             document.body.addEventListener('click', function(event) {

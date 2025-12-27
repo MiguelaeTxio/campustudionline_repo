@@ -1,13 +1,16 @@
-# Hito de Soporte y Mantenimiento: Ruegos y Preguntas
+# Hito 24: Sistema de Ruegos y Preguntas
 
-## 1. Visión y Objetivos
-Hito continuo para la resolución de deuda técnica, bugs menores, mejoras de calidad de vida (QoL) y peticiones varias que no requieren un hito estructural propio.
+## 1. Visión
+Este hito actúa como un estado de "Stand By" o "Guardia" para el mantenimiento del proyecto. Su objetivo es servir de punto de entrada para resolver dudas, incidencias imprevistas o realizar mantenimientos correctivos no planificados en hojas de ruta específicas.
 
 ## 2. Estado del Hito
-*   **Estado:** PAUSADO
-*   **Fecha de Reactivación:** 17/12/2025
-*   **Fecha de Pausa:** 24/12/2025 (Inicio Hito 31)
+*   **Estado:** EN PROGRESO
+*   **Prioridad:** ALTA (Soporte)
 
-## 3. Hoja de Ruta Táctica (Backlog Dinámico)
-*   [x] Optimización de creatividades para Meta Ads (Conversión MP4/H.264, formato 1:1 y Branding).
-*   [ ] Resolución de incidencias y peticiones ad-hoc.
+## 3. Hoja de Ruta Táctica para la Siguiente Sesión (LEY SUPREMA)
+
+### A. Diagnóstico y Soporte
+*   **Objetivo:** Atender las solicitudes del usuario.
+*   **Acción:** Preguntar al usuario qué ocurre, qué necesita solventar o qué duda requiere atención técnica inmediata.
+*   **Alcance:** Abierto a cualquier módulo de la plataforma (CampuStudiOnline).
+

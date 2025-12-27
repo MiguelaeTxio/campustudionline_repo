@@ -2,7 +2,7 @@
 // Tour for the home page (Responsive Version).
 
 document.addEventListener('DOMContentLoaded', function () {
-    const tourId = 'home';
+    const tourId = 'home_v32';
     if (window.activeTours && window.activeTours[tourId]) {
         return; 
     }
@@ -67,6 +67,15 @@ document.addEventListener('DOMContentLoaded', function () {
         attachTo: { element: '#tour-nav-academic-directory', on: 'bottom' }
     });
 
+    // Agenda Personal
+    steps.push({
+        id: 'step-nav-schedule',
+        title: 'Nueva Agenda',
+        text: '¡Novedad! Organiza tu tiempo, planifica exámenes y entregas en tu calendario personal.',
+        attachTo: { element: '#tour-nav-schedule', on: 'bottom' }
+    });
+
+
     // Verificamos autenticación
     const isAuthenticated = !!document.getElementById('tour-nav-user-menu');
 
@@ -105,6 +114,22 @@ document.addEventListener('DOMContentLoaded', function () {
             attachTo: { element: '#tour-nav-login', on: 'bottom' }
         });
     }
+
+    
+    // UniversIA (Asistente)
+    steps.push({
+        id: 'step-universia-widget',
+        title: 'UniversIA: Tu Asistente IA',
+        text: `
+            <p>Este es tu asistente inteligente. Tiene dos modos de funcionamiento:</p>
+            <ul>
+                <li><strong>🐶 Perro Guía y Secretaria (Global):</strong> Te ayuda a navegar y gestiona tus eventos por chat.</li>
+                <li><strong>🎓 Profesora (Sólo en Sala de Estudio):</strong> Se convierte en experta académica para resolver dudas.</li>
+            </ul>
+            <p><small><i class="fas fa-arrows-alt"></i> <strong>Tip:</strong> El icono es flotante. ¡Puedes arrastrarlo si te molesta!</small></p>
+        `,
+        attachTo: { element: '#universia-widget-container', on: 'top' }
+    });
 
     // Filtrar pasos cuyos elementos no existen (seguridad adicional)
     const finalSteps = steps.filter(step => step && step.attachTo && document.querySelector(step.attachTo.element));

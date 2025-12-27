@@ -371,6 +371,7 @@
 ./static/js/tours/study_room_directory_tour.js
 ./static/js/tours/academic_directory_tour.js
 ./static/js/tours/home_tour.js
+./static/js/tours/schedule_tour.js
 ./static/js/tours/personal_directory_tour.js
 ./static/js/tours/global_search_tour.js
 ./static/js/shepherd.min.js

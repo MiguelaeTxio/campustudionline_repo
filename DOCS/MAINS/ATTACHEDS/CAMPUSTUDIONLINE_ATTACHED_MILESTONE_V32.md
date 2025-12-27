@@ -4,28 +4,21 @@
 Actualización integral del sistema de onboarding (Shepherd.js) para reflejar las últimas funcionalidades críticas de la plataforma: la Agenda Personal y el Asistente UniversIA.
 
 ## 2. Estado del Hito
-*   **Estado:** EN PROGRESO
-*   **Prioridad:** MÁXIMA
+*   **Estado:** COMPLETADO
+*   **Fecha de Finalización:** 27/12/2025
 
-## 3. Hoja de Ruta Táctica para la Siguiente Sesión (LEY SUPREMA)
+## 3. Resumen de Ejecución
+Se han implementado satisfactoriamente las guías interactivas para mejorar la adoptabilidad de las nuevas herramientas:
 
-### A. Actualización del Tour de Inicio (Home Tour)
-*   **Archivo:** `static/js/tours/home_tour.js`
-*   **Objetivo:** Incluir pasos para la Agenda y, crucialmente, para UniversIA.
-*   **Especificaciones del Paso UniversIA:**
-    *   **Target:** Botón de chat de UniversIA.
-    *   **Contenido Explicativo Obligatorio:**
-        1.  **Ubicación:** Indicar claramente dónde se inicia el chat.
-        2.  **Rol Global ("Perro Guía" 🦮 y "Secretaria"):** Explicar que en toda la plataforma sirve para ayuda de navegación y para **gestionar eventos y tareas** (Secretaria).
-        3.  **Rol Contextual ("Profesora" 🎓):** Aclarar explícitamente que **SÓLO** en la **Sala de Estudio** actúa como tutora/profesora para resolver dudas académicas.
+1.  **Tour de Agenda (`schedule_tour.js`):**
+    *   Creado nuevo tour específico para la vista de calendario.
+    *   Incluye 5 pasos: Bienvenida, Navegación, Detalle, Creación Manual y **Atajo UniversIA** (explicando el rol de "Secretaria" y la capacidad de mover el icono).
 
-### B. Creación del Tour de Agenda (Schedule Tour)
-*   **Archivo:** `static/js/tours/schedule_tour.js` (Neonato)
-*   **Objetivo:** Explicar el funcionamiento de la nueva vista de calendario.
-*   **Pasos Clave:**
-    *   Navegación del calendario (Mes/Semana/Día).
-    *   Creación de eventos (Click en día / Botón flotante).
-    *   Distinción de tipos de eventos.
+2.  **Tour de Inicio (`home_tour.js`):**
+    *   Actualizado para señalar el nuevo acceso a la Agenda.
+    *   Añadida explicación detallada sobre los roles de UniversIA (Global vs Contextual) y la usabilidad del widget (Drag & Drop).
+    *   **Versionado:** Se actualizó el ID del tour a `home_v32` para forzar su visualización a todos los usuarios.
 
-### C. Registro
-*   Registrar el nuevo tour en `base.html` o en el gestor de tours correspondiente.
+3.  **Optimización:**
+    *   Integración en `base.html` mediante carga condicional de recursos (el JS del tour de agenda solo se carga en esa sección).
+
