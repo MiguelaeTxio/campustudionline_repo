@@ -538,8 +538,8 @@ def commercial_dashboard(request):
     vendor = request.user
     
     # Métricas de Códigos
-    available_codes = RecommendationCode.objects.filter(vendor=vendor, is_used=False).order_by('code')
-    used_codes = RecommendationCode.objects.filter(vendor=vendor, is_used=True).select_related('redeemed_by').order_by('-date_redeemed')
+    available_codes = RecommendationCode.objects.filter(vendor=vendor, redeemed_by__isnull=True).order_by('code')
+    used_codes = RecommendationCode.objects.filter(vendor=vendor, redeemed_by__isnull=False).select_related('redeemed_by').order_by('-date_redeemed')
     
     # Métricas de Conversión
     registration_conversions = used_codes.count()
@@ -570,7 +570,7 @@ def request_new_code_batch(request):
     """
     commercial = request.user
     
-    if RecommendationCode.objects.filter(vendor=commercial, is_used=False).exists():
+    if RecommendationCode.objects.filter(vendor=commercial, redeemed_by__isnull=True).exists():
         messages.error(request, "Aún tienes códigos disponibles. Debes agotarlos antes de solicitar un nuevo lote.")
         return redirect("users:commercial_dashboard")
         

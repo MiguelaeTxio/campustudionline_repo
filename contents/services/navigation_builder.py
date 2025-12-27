@@ -1,7 +1,8 @@
 import logging
 from django.db import transaction
 from django.apps import apps
-from django.db.models import Prefetch
+from django.db.models import Prefetch, Q
+from django.utils import timezone
 from contents.models import UserStudyNavigation, FavoriteFolder, ContentCopy
 
 logger = logging.getLogger(__name__)
@@ -101,9 +102,16 @@ class NavigationTreeBuilder:
         # [FIX V24] Filtrado estricto para coincidir con Dashboard
         visible_statuses = ['PENDING', 'PROCESSING', 'COMPLETED', 'AWAITING_CORRECTION', 'CORRECTING', 'RESULTS_AVAILABLE', 'GENERATION_FAILED_FATAL', 'CORRECTION_FAILED_FATAL', 'CANCELLED', 'GENERATION_FAILED_QUOTA']
         
+        now = timezone.now()
         assessments_qs = Assessment.objects.filter(
             status__in=visible_statuses
-        ).exclude(status__in=['EXPIRED_UNTAKEN', 'CORRECTION_EXPIRED', 'USER_CANCELLED']).order_by('-created_at')
+        ).exclude(
+            status__in=['EXPIRED_UNTAKEN', 'CORRECTION_EXPIRED', 'USER_CANCELLED']
+        ).exclude(
+            Q(status='COMPLETED') & (Q(expiration_date__lte=now) | Q(expiration_date__isnull=True))
+        ).exclude(
+            Q(status='RESULTS_AVAILABLE') & Q(results_expiration_date__lte=now)
+        ).order_by('-created_at')
 
         copies_qs = ContentCopy.objects.filter(user=self.user).prefetch_related(
             Prefetch('assessments', queryset=assessments_qs, to_attr='_active_assessments')

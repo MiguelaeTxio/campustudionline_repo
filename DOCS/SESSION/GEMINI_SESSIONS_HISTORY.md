@@ -991,3 +991,11 @@
 *  **Session:** Integración de UniversIA y Agenda en el Sistema de Visitas Guiadas
 *  **Description:** Ejecución del Hito 32. Se actualizará el tour de la página de inicio para incluir la explicación detallada de los roles del asistente UniversIA (Global vs Contextual). Se creará un nuevo tour específico para el módulo de Agenda (Schedule) explicando la navegación y gestión de eventos. Se registrarán los cambios en la plantilla base.
 
+
+# 27/12/2025
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V24.md
+## CAMA
+*  **Session:** Hito 24: Sistema de Ruegos y Preguntas - Sesión de Soporte
+*  **Description:** Sesión de guardia bajo el Hito 24. El objetivo es atender incidencias, dudas o mantenimientos correctivos no planificados en la plataforma CampuStudiOnline. Se cargan los modelos base de usuarios y contenidos como contexto inicial, quedando a la espera de instrucciones específicas del usuario para abordar la tarea requerida.
+

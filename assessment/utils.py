@@ -33,7 +33,8 @@ def _get_base_assessment_subqueries(user_filter):
 
     related_assessments = Assessment.objects.filter(**user_filter).exclude(
         Q(status__in=IGNORED_STATUSES) |
-        (Q(status=Assessment.AssessmentStatus.COMPLETED) & (Q(expiration_date__lte=now) | Q(expiration_date__isnull=True)))
+        (Q(status=Assessment.AssessmentStatus.COMPLETED) & (Q(expiration_date__lte=now) | Q(expiration_date__isnull=True))) |
+        (Q(status=Assessment.AssessmentStatus.RESULTS_AVAILABLE) & Q(results_expiration_date__lte=now))
     ).order_by()
 
     distinct_states_subquery = related_assessments.annotate(
@@ -136,6 +137,37 @@ def get_assessment_context(user, content_copy):
     Calcula el contexto completo para el bloque de estado de la autoevaluación.
     """
     now = timezone.now()
+    # [HITO 24] CADUCIDAD PEREZOSA (LAZY EXPIRATION)
+    # Antes de calcular el contexto, saneamos el estado de las evaluaciones caducadas
+    # que no hayan sido procesadas por la tarea asíncrona (Celery).
+    
+    # 1. Detectar evaluaciones no realizadas caducadas
+    expired_untaken = Assessment.objects.filter(
+        user=user, 
+        content_copy=content_copy,
+        status="COMPLETED",
+        expiration_date__lt=now
+    )
+    if expired_untaken.exists():
+        expired_untaken.update(status="EXPIRED_UNTAKEN")
+    
+    # 2. Detectar resultados caducados no vistos (Penalización)
+    expired_results = Assessment.objects.filter(
+        user=user,
+        content_copy=content_copy,
+        status="RESULTS_AVAILABLE",
+        results_expiration_date__lt=now,
+        was_viewed=False
+    )
+    if expired_results.exists():
+        # Purgar respuestas asociadas (importamos UserAnswer localmente para evitar ciclos)
+        from .models import UserAnswer
+        UserAnswer.objects.filter(question__assessment__in=expired_results).update(
+            score=None, feedback="Contenido purgado por caducidad."
+        )
+        expired_results.update(status="CORRECTION_EXPIRED")
+
+    # Recuperamos el queryset fresco con los estados actualizados
     all_user_assessments_for_content = Assessment.objects.filter(
         user=user, content_copy=content_copy
     ).select_related("content_copy__original_content")

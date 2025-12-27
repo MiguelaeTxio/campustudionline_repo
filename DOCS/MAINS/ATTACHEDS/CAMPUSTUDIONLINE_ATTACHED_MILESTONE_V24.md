@@ -1,16 +1,14 @@
 # Hito 24: Sistema de Ruegos y Preguntas
 
 ## 1. Visión
-Este hito actúa como un estado de "Stand By" o "Guardia" para el mantenimiento del proyecto. Su objetivo es servir de punto de entrada para resolver dudas, incidencias imprevistas o realizar mantenimientos correctivos no planificados en hojas de ruta específicas.
+Hito de guardia obligatorio para incidencias y soporte.
 
-## 2. Estado del Hito
-*   **Estado:** EN PROGRESO
-*   **Prioridad:** ALTA (Soporte)
+## 2. Tareas Realizadas (Sesión CAMA)
+*   **System Prompts:** Normalizada la existencia de este hito en todos los proyectos.
+*   **Content Prompts:** Nuevas categorías de Gastronomía y Recetarios.
+*   **Users:** Corregido FieldError 'is_used' en el Dashboard Comercial.
+*   **Assessment:** Implementado "Lazy Expiration" en vistas y utilidades para forzar la caducidad visual y técnica de evaluaciones y correcciones.
+*   **Navigation:** Sincronizado el constructor de la barra lateral con la lógica de caducidad.
 
-## 3. Hoja de Ruta Táctica para la Siguiente Sesión (LEY SUPREMA)
-
-### A. Diagnóstico y Soporte
-*   **Objetivo:** Atender las solicitudes del usuario.
-*   **Acción:** Preguntar al usuario qué ocurre, qué necesita solventar o qué duda requiere atención técnica inmediata.
-*   **Alcance:** Abierto a cualquier módulo de la plataforma (CampuStudiOnline).
-
+## 3. Estado Actual
+*   **Estado:** PAUSADO

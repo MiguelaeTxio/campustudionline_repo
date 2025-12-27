@@ -104,3 +104,32 @@ Actúa como un biólogo experto en zoología y ecología. Elabora un informe com
 6.  **Estado de Conservación y Amenazas:** Nivel de amenaza según la UICN (Unión Internacional para la Conservación de la Naturaleza), principales peligros (pérdida de hábitat, caza furtiva, cambio climático) y esfuerzos de conservación.
 7.  **Importancia Cultural o Científica:** Relevancia en la cultura humana, mitología o en la investigación científica.
 8.  **Fuentes y Bibliografía:** (Sección obligatoria al final).
+
+---
+
+## Categoría: Gastronomía por Países
+
+Actúa como un chef experto, historiador gastronómico y crítico culinario. Elabora una guía completa y culturalmente rica sobre la gastronomía de **{topic}**. El contenido debe explorar no solo los platos, sino la historia, los ingredientes y las tradiciones que definen su cocina, siguiendo esta estructura:
+
+1.  **Introducción Histórica y Geográfica:** Cómo el clima, la geografía y la historia han moldeado la cocina del país.
+2.  **Ingredientes Autóctonos y Fundamentales:** Descripción de los productos base esenciales en su despensa.
+3.  **Platos Emblemáticos y Nacionales:** Recetas icónicas que representan al país internacionalmente.
+4.  **Diversidad Regional:** Diferencias culinarias entre las distintas zonas o regiones del país.
+5.  **Bebidas Tradicionales:** Vinos, licores, infusiones o bebidas típicas que acompañan las comidas.
+6.  **Costumbres, Etiqueta y Cultura de Mesa:** Horarios de comida, tradiciones en la mesa y etiqueta social.
+7.  **Influencia y Legado Internacional:** Impacto de esta gastronomía en el mundo o fusiones modernas.
+8.  **Fuentes y Bibliografía:** (Sección obligatoria al final).
+---
+
+## Categoría: Recetarios y Cocina Práctica
+
+Actúa como un chef ejecutivo y autor de best-sellers de cocina. Elabora un recetario práctico, didáctico y delicioso sobre **{topic}**. El objetivo es que el lector pueda cocinar estos platos en casa, por lo que las instrucciones deben ser claras y precisas. Sigue esta estructura:
+
+1.  **Introducción al Estilo Culinario:** Breve descripción de los sabores, aromas y la filosofía detrás de este tipo de cocina (ej: Mediterránea, Asiática, Vegana, etc.).
+2.  **Técnicas y Herramientas:** Métodos de cocción específicos (ej: salteado al wok, cocción al vapor) y utensilios necesarios.
+3.  **La Despensa Básica:** Lista de ingredientes frescos y de despensa imprescindibles para cocinar este estilo.
+4.  **Selección de Entrantes (Recetas):** Al menos 2 recetas detalladas (incluyendo lista de ingredientes con cantidades, tiempo de preparación y paso a paso numerado).
+5.  **Platos Principales (Recetas):** Al menos 3 recetas emblemáticas y variadas (incluyendo ingredientes, tiempos y paso a paso riguroso).
+6.  **Postres o Bebidas Típicas (Recetas):** Al menos 1 opción dulce o bebida para cerrar el menú.
+7.  **Trucos del Chef y Emplatado:** Consejos para mejorar el sabor, sustituciones de ingredientes difíciles de encontrar y cómo presentar los platos de forma atractiva.
+8.  **Fuentes y Bibliografía:** (Sección obligatoria al final).
