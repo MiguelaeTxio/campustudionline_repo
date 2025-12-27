@@ -8,6 +8,17 @@ from django.utils.dateparse import parse_datetime
 from .models import AcademicEvent
 from .forms import AcademicEventForm
 
+def is_ajax(request):
+    """
+    Detector AJAX híbrido:
+    1. Fallback a parámetro URL explícito para sobrevivir a redirecciones 301.
+    2. Intenta cabecera estándar.
+    """
+    return (
+        request.GET.get('is_ajax') == 'true' or
+        request.headers.get('x-requested-with') == 'XMLHttpRequest'
+    )
+
 class AcademicEventCreateView(LoginRequiredMixin, CreateView):
     model = AcademicEvent
     form_class = AcademicEventForm
@@ -25,11 +36,8 @@ class AcademicEventCreateView(LoginRequiredMixin, CreateView):
     def form_valid(self, form):
         form.instance.user = self.request.user
         response = super().form_valid(form)
-        # Detección robusta de AJAX
-        is_ajax = self.request.headers.get('x-requested-with') == 'XMLHttpRequest' or \
-                  self.request.headers.get('X-Requested-With') == 'XMLHttpRequest'
-        if is_ajax:
-            return HttpResponse('<script>document.body.dispatchEvent(new Event("calendarUpdated", {bubbles:true}));</script>')
+        if is_ajax(self.request):
+            return JsonResponse({'success': True})
         return response
 
 class AcademicEventUpdateView(LoginRequiredMixin, UpdateView):
@@ -43,10 +51,8 @@ class AcademicEventUpdateView(LoginRequiredMixin, UpdateView):
 
     def form_valid(self, form):
         response = super().form_valid(form)
-        is_ajax = self.request.headers.get('x-requested-with') == 'XMLHttpRequest' or \
-                  self.request.headers.get('X-Requested-With') == 'XMLHttpRequest'
-        if is_ajax:
-            return HttpResponse('<script>document.body.dispatchEvent(new Event("calendarUpdated", {bubbles:true}));</script>')
+        if is_ajax(self.request):
+            return JsonResponse({'success': True})
         return response
 
 class AcademicEventDeleteView(LoginRequiredMixin, DeleteView):
@@ -61,10 +67,10 @@ class AcademicEventDeleteView(LoginRequiredMixin, DeleteView):
         self.object = self.get_object()
         success_url = self.get_success_url()
         self.object.delete()
-        is_ajax = self.request.headers.get('x-requested-with') == 'XMLHttpRequest' or \
-                  self.request.headers.get('X-Requested-With') == 'XMLHttpRequest'
-        if is_ajax:
-            return HttpResponse('<script>document.body.dispatchEvent(new Event("calendarUpdated", {bubbles:true}));</script>')
+        
+        if is_ajax(request):
+            return JsonResponse({'success': True})
+            
         return HttpResponseRedirect(success_url)
 
 @login_required

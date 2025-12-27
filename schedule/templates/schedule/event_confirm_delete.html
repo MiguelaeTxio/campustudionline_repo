@@ -1,18 +1,14 @@
-<div class="text-center">
+<div class="text-center py-3">
     <div class="mb-3">
-        <i class="bi bi-exclamation-triangle text-danger" style="font-size: 3rem;"></i>
+        <i class="bi bi-exclamation-triangle-fill text-danger" style="font-size: 3.5rem;"></i>
     </div>
-    <h5 class="mb-3">¿Confirmas la eliminación?</h5>
-    <p class="text-muted">Estás a punto de borrar: <br><strong>"{{ object.title }}"</strong></p>
+    <h5 class="fw-bold">¿Confirmar eliminación?</h5>
+    <p class="text-muted small px-3">Vas a borrar el evento:<br><strong class="text-dark">{{ object.title }}</strong></p>
 </div>
-
-<form method="post" action="{% url 'schedule:event_delete' object.id %}" 
-      onsubmit="event.preventDefault(); var form=this; fetch(form.action, {method:'POST', body:new FormData(form), headers:{'X-Requested-With':'XMLHttpRequest'}}).then(function(r){return r.text()}).then(function(html){ var container=document.getElementById('eventModal').querySelector('.modal-body'); container.innerHTML=html; var scr=container.querySelector('script'); if(scr) { eval(scr.innerText); } });">
+<form method="post" action="{% url 'schedule:event_delete' object.id %}" class="ajax-form px-3 pb-3">
     {% csrf_token %}
-    <div class="d-grid gap-2 mt-4">
-        <button type="submit" class="btn btn-danger">
-            <i class="bi bi-trash"></i> Eliminar definitivamente
-        </button>
+    <div class="d-grid gap-2">
+        <button type="submit" class="btn btn-danger btn-lg shadow-sm">Eliminar permanentemente</button>
         <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
     </div>
 </form>

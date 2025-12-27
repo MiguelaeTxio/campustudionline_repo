@@ -249,6 +249,7 @@
 ./check_system_state_v2.py
 ./diagnose_universia.py
 ./deep_trace_universia.py
+./debug_ajax_diagnosis.py
 ./universia/urls.py
 ./universia/static/universia/js/universia.js
 ./universia/static/universia/css/universia.css

@@ -4,15 +4,15 @@
 Gestión integral de eventos académicos y personales con interfaz moderna y fluida.
 
 ## 2. Estado del Hito
-*   **Estado:** EN PROGRESO (Reversión de UI necesaria)
+*   **Estado:** EN PROGRESO (Bloqueo Técnico - Pantalla Blanca tras Borrado)
 *   **Última Actualización:** 26/12/2025
 
 ## 3. Hoja de Ruta Táctica para la Siguiente Sesión (LEY SUPREMA)
-*   **Restauración de UI:** Revertir los cambios visuales en `calendar_main.html` y `schedule.js` que han afectado al layout de FullCalendar. La prioridad es recuperar la estética original.
-*   **Re-implementación de Borrado:** Diseñar un sistema de eliminación que no dependa de atributos `onclick` globales ni de inyección de scripts directos. Se evaluará el uso de un componente mediador en el DOM.
-*   **Optimización FullCalendar:** Ajustar la visualización de eventos para evitar solapamientos visuales en dispositivos móviles.
-*   **Consolidación de Vistas:** Unificar las respuestas AJAX en `views.py` para que sean consistentes en todos los métodos (Create/Update/Delete).
+*   **Diagnóstico de "Pantalla Blanca":** Investigar la causa exacta del comportamiento tras confirmar el borrado. Determinar si el navegador está navegando hacia la respuesta JSON (renderizándola como texto plano) o si el modal se vacía sin cerrarse.
+*   **Verificación de Flujo AJAX:** Confirmar si la estrategia de "Bypass de Cabeceras" (`?is_ajax=true`) está logrando que el backend devuelva JSON o si persiste la redirección `302`.
+*   **Refinamiento de UI:** Una vez recuperada la funcionalidad, pulir los estilos del calendario para asegurar la excelencia visual en móviles (basada en la versión "Night").
 
 ## 4. Estado Técnico
-*   Backend: Detección de AJAX robusta (Case-insensitive) implementada.
-*   Frontend: Fallo detectado en la gestión de ámbitos (Scope) de JavaScript.
+*   **Backend:** Implementada detección híbrida (`is_ajax` param + Headers).
+*   **Frontend:** Implementada inyección de parámetro `is_ajax=true` en `fetch`. UI restaurada a versión estable.
+*   **Pendiente:** El spinner global (`base.html`) se mantiene sin cambios. El spinner local ha sido eliminado.

@@ -968,3 +968,11 @@
 *  **Session:** Diagnóstico y Corrección de UniversIA en Entorno Web
 *  **Description:** Sesión centrada en la investigación y resolución del fallo crítico donde el asistente UniversIA funciona en CLI pero falla en entorno Web (WSGI). Se auditará la carga de variables de entorno, la compatibilidad del historial del SDK de Gemini y la persistencia del contexto.
 
+
+# 26/12/2025
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V31.md
+## EDC
+*  **Session:** Restauración de UI y Refactorización de Lógica de Borrado en Agenda Académica
+*  **Description:** Sesión técnica orientada a la reversión de los cambios visuales en el módulo Schedule que afectaron la integridad del layout de FullCalendar. Se trabajará en la eliminación de atributos 'onclick' globales para el borrado de eventos, sustituyéndolos por un sistema de gestión de eventos en el DOM más robusto y encapsulado. Asimismo, se optimizará la visualización móvil para evitar solapamientos y se unificarán las respuestas AJAX en el backend para asegurar la consistencia en las operaciones de creación, edición y eliminación de eventos académicos.
+

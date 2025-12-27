@@ -368,14 +368,13 @@
     {% endif %}
 
     <!-- Cookie Consent Banner -->
-    <!-- Cookie Consent Banner (AEPD 2024 Compliant) -->
     <div id="cookie-consent-banner" class="fixed-bottom bg-dark text-white p-4 shadow-lg" style="display: none; z-index: 9999; border-top: 1px solid #444;">
         <div class="container">
             <div class="row align-items-center">
                 <div class="col-lg-8 mb-3 mb-lg-0">
                     <p class="mb-0">
                         <strong>Su privacidad es importante para nosotros.</strong><br>
-                        Utilizamos cookies propias y de terceros para fines analíticos y para mostrarle publicidad personalizada en base a un perfil elaborado a partir de sus hábitos de navegación (por ejemplo, páginas visitadas).
+                        Utilizamos cookies propias y de terceros para fines analíticos y para mostrarle publicidad personalizada en base a un perfil elaborado a partir de sus hábitos de navegación.
                         Puede aceptar todas las cookies pulsando el botón "Aceptar", rechazarlas pulsando "Rechazar" o obtener más información en nuestra <a href="/core/legal/cookies/" class="text-info text-decoration-underline">Política de Cookies</a>.
                     </p>
                 </div>
@@ -389,25 +388,19 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Check flags. If neither accepted nor rejected, show banner.
             if (!localStorage.getItem('cookiesAccepted') && !localStorage.getItem('cookiesRejected')) {
                 document.getElementById('cookie-consent-banner').style.display = 'block';
             }
-
-            // ACCEPT Logic
             document.getElementById('accept-cookies-btn').addEventListener('click', function() {
                 localStorage.setItem('cookiesAccepted', 'true');
                 localStorage.removeItem('cookiesRejected');
-                document.dispatchEvent(new Event('cookiesAccepted')); // This triggers the Pixel
+                document.dispatchEvent(new Event('cookiesAccepted'));
                 document.getElementById('cookie-consent-banner').style.display = 'none';
             });
-
-            // REJECT Logic
             document.getElementById('reject-cookies-btn').addEventListener('click', function() {
                 localStorage.setItem('cookiesRejected', 'true');
                 localStorage.removeItem('cookiesAccepted');
                 document.getElementById('cookie-consent-banner').style.display = 'none';
-                // No event dispatched, Pixel remains blocked.
             });
         });
     </script>
@@ -415,41 +408,29 @@
 <script>
 (function() {
     'use strict';
-
-    // --- UX ENHANCEMENT: GLOBAL LOADING SPINNER ---
     const preloader = document.getElementById('preloader');
     if (preloader) {
         const show = () => preloader.style.display = 'flex';
         const hide = () => preloader.style.display = 'none';
-        
-        // Intercept internal links
         document.addEventListener('click', (e) => {
             const link = e.target.closest('a');
-            if (link && link.href && !link.href.startsWith('javascript:') && !link.href.includes('#') && link.target !== '_blank') {
+            if (link && !link.classList.contains('ajax-link') && link.href && !link.href.startsWith('javascript:') && !link.href.includes('#') && link.target !== '_blank') {
                 if (e.ctrlKey || e.metaKey || e.shiftKey || e.button === 1 || link.hasAttribute('download')) return;
-                try {
-                    if (new URL(link.href).origin === window.location.origin) show();
-                } catch(err) {}
+                try { if (new URL(link.href).origin === window.location.origin) show(); } catch(err) {}
             }
         });
-        
-        // Intercept form submissions
         document.addEventListener('submit', (e) => {
             const form = e.target;
-            if ((!form.target || form.target === '_self') && form.checkValidity()) show();
+            if (!form.classList.contains('ajax-form') && (!form.target || form.target === '_self') && form.checkValidity()) show();
         });
-        
-        // Hide on back button (bfcache)
         window.addEventListener('pageshow', (e) => { if(e.persisted) hide(); });
     }
 })();
 </script>
 
-    <!-- UniversIA Global Widget -->
     {% if user.is_authenticated %}
     <div id="universia-widget-container" data-content-title="{{ content_copy.original_content.title|default:"" }}"></div>
     <script src="{% static "universia/js/universia.js" %}"></script>
     {% endif %}
-
 </body>
 </html>
