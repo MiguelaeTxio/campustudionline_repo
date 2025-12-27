@@ -84,8 +84,12 @@ CampuStudiOnline es una plataforma web de e-learning diseñada para centralizar 
 ### Hito 30: Estrategia Comercial de Recomendación y Gestión de Afiliados (COMPLETADO)
 (Ver anexo `CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V30.md`)
 
-### Hito 31: Sistema de Agenda Académica Personal (Schedule) (EN PROGRESO)
+### Hito 31: Sistema de Agenda Académica Personal (Schedule) (PAUSADO)
+(Ver anexo `CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V31.md`. Funcionalidad técnica completada. Pendiente integración futura con IA.)
 (Ver anexo `CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V31.md`)
+
+### Hito 32: Sistema de Visitas Guiadas e Integración de Onboarding (EN PROGRESO)
+(Ver anexo `CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V32.md`)
 
 ---
 

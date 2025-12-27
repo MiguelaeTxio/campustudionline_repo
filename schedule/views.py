@@ -16,6 +16,7 @@ def is_ajax(request):
     """
     return (
         request.GET.get('is_ajax') == 'true' or
+        request.POST.get('is_ajax') == 'true' or
         request.headers.get('x-requested-with') == 'XMLHttpRequest'
     )
 

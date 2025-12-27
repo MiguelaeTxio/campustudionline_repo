@@ -976,3 +976,10 @@
 *  **Session:** Restauración de UI y Refactorización de Lógica de Borrado en Agenda Académica
 *  **Description:** Sesión técnica orientada a la reversión de los cambios visuales en el módulo Schedule que afectaron la integridad del layout de FullCalendar. Se trabajará en la eliminación de atributos 'onclick' globales para el borrado de eventos, sustituyéndolos por un sistema de gestión de eventos en el DOM más robusto y encapsulado. Asimismo, se optimizará la visualización móvil para evitar solapamientos y se unificarán las respuestas AJAX en el backend para asegurar la consistencia en las operaciones de creación, edición y eliminación de eventos académicos.
 
+# 2025-12-27
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V31.md
+## NRA
+*  **Session:** Debugging Pantalla Blanca Borrado Eventos Schedule
+*  **Description:** Investigación y resolución del bloqueo técnico en el módulo Schedule donde el borrado de eventos provoca una pantalla blanca. Verificación del flujo AJAX con la estrategia de bypass de cabeceras (is_ajax=true) para evitar redirecciones 302 erróneas y garantizar respuestas JSON. Refinamiento final de UI móvil.
+

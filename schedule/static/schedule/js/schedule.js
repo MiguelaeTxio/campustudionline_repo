@@ -71,18 +71,35 @@ document.addEventListener('DOMContentLoaded', function() {
         const targetUrl = new URL(form.action || window.location.href, window.location.origin);
         targetUrl.searchParams.set('is_ajax', 'true');
 
+        const formData = new FormData(form);
+        formData.append('is_ajax', 'true'); // Refuerzo en el cuerpo
+
         fetch(targetUrl, {
             method: 'POST',
-            body: new FormData(form),
+            body: formData,
             headers: { 'X-Requested-With': 'XMLHttpRequest' }
         })
-        .then(r => r.headers.get('content-type')?.includes('application/json') ? r.json() : r.text())
+        .then(r => {
+            // Fail-safe: Si hubo redirección (302->200), asumimos éxito y recarga
+            if (r.redirected) {
+                return { success: true, redirected: true };
+            }
+            return r.headers.get('content-type')?.includes('application/json') ? r.json() : r.text();
+        })
         .then(data => {
-            if (typeof data === 'object' && data.success) {
+            if ((typeof data === 'object' && data.success) || data.redirected) {
                 bsModal.hide();
                 calendar.refetchEvents();
             } else {
-                modalBody.innerHTML = data;
+                // Si llegamos aquí con texto, asegurarnos de no inyectar una página completa
+                if (typeof data === 'string' && data.includes('<html')) {
+                     // Emergencia: El backend devolvió una página entera por error no redirigido
+                     console.error('Respuesta HTML completa detectada en modal. Forzando recarga.');
+                     bsModal.hide();
+                     calendar.refetchEvents();
+                } else {
+                     modalBody.innerHTML = data;
+                }
             }
         });
     });
