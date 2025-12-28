@@ -999,3 +999,10 @@
 *  **Session:** Hito 24: Sistema de Ruegos y Preguntas - Sesión de Soporte
 *  **Description:** Sesión de guardia bajo el Hito 24. El objetivo es atender incidencias, dudas o mantenimientos correctivos no planificados en la plataforma CampuStudiOnline. Se cargan los modelos base de usuarios y contenidos como contexto inicial, quedando a la espera de instrucciones específicas del usuario para abordar la tarea requerida.
 
+
+# 2025-12-27
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V20.md
+## AAAA
+*  **Session:** Sesión de Continuidad: Refinamiento del Scraping de Datos (Hito 20)
+*  **Description:** Inicio de la sesión para retomar el Hito 20 centrado en el refinamiento del proceso de scraping de datos. Se procederá a analizar el anexo correspondiente para determinar las tareas técnicas pendientes y se cargarán los modelos fundamentales para asegurar la integridad de la lógica de persistencia.

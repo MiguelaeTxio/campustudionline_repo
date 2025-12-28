@@ -577,6 +577,7 @@
 ./global_settings/tests.py
 ./data/ugr_data.json
 ./data/ugr_data_cleaned.json
+./data/uco_data_final.json
 ./public_seo_previews/material_29_curso-ia-generativa-de-0-a-100-en-8.html
 ./public_seo_previews/material_23_unreal-engineblueprints-de-0-a-experto.html
 ./public_seo_previews/material_7.html

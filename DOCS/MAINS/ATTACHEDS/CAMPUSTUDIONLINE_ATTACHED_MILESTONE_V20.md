@@ -1,20 +1,26 @@
 # Anexo del Hito 20: Refinamiento del Proceso de Scraping de Datos
 
 ## 1. Visión
-Optimizar la ingesta de datos académicos (UCO) mediante ejecución local en Termux y filtros de integridad.
+Consolidar la ingesta masiva de datos académicos de la Universidad de Córdoba (UCO) para el curso 2025/26 mediante el procesamiento de archivos JSON estructurados.
 
-## 2. Objetivos Específicos
-*   Eliminar duplicados geográficos e idiomáticos mediante Regex.
-*   Desarrollar scraper para la Universidad de Córdoba (UCO).
-*   Implementar flujo de trabajo local (Termux) -> Servidor (JSON).
+## 2. Objetivos Alcanzados (Sesión Actual)
+*   **Cosecha Universal UCO**: Identificación de 1.336 códigos de asignatura únicos mediante navegación real por los hubs de facultades.
+*   **Filtrado Estricto**: Exclusión de Dobles Grados, Itinerarios Bilingües y códigos administrativos de intercambio.
+*   **Extracción de Contenidos**: Procesamiento local en Termux mediante el motor `pdfplumber`, capturando Objetivos de Aprendizaje, Esquemas de Contenidos y Bibliografía Fundamental del 100% de las guías existentes.
+*   **Preparación de Ingesta**: Generación y subida al servidor de `/data/uco_data_final.json`.
 
 ## 3. Estado Actual
-*   **Estado:** EN PROGRESO
+*   **Estado:** EN PROGRESO (Fase de Ingesta iniciada).
 
 ## 4. Hoja de Ruta para la Siguiente Sesión (LEY SUPREMA)
-### Paso 1: Auditoría de Scrapers Existentes
-*   Analizar `academic_structure/management/commands/import_ugr_data.py`.
-### Paso 2: Desarrollo Scraper UCO (Local Termux)
-*   Crear script `uco_scraper.py` con lógica de limpieza Regex.
-### Paso 3: Ingesta en Servidor
-*   Crear management command `import_uco_data` para procesar el JSON.
+### Paso 1: Creación del Management Command `import_uco_data`
+*   Desarrollar el script en `academic_structure/management/commands/`.
+*   Implementar lógica de clasificación de Ramas (Knowledge Branches) basada en el Hub de origen del JSON.
+*   Asegurar la creación atómica de la jerarquía: University (UCO) -> Branch -> Degree -> AcademicYear -> Subject.
+
+### Paso 2: Ejecución e Integridad
+*   Ejecutar la ingesta utilizando `python -m dotenv run python manage.py import_uco_data`.
+*   Verificar la persistencia de los campos JSON (`learning_objectives`, `course_content_outline`, `bibliography`) en el modelo `Subject`.
+
+### Paso 3: Deduplicación por Hash (Hito 20.1)
+*   Ejecutar `calculate_content_hashes` para agrupar asignaturas idénticas bajo `ContentHashFamily`.
