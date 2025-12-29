@@ -1006,3 +1006,10 @@
 ## AAAA
 *  **Session:** Sesión de Continuidad: Refinamiento del Scraping de Datos (Hito 20)
 *  **Description:** Inicio de la sesión para retomar el Hito 20 centrado en el refinamiento del proceso de scraping de datos. Se procederá a analizar el anexo correspondiente para determinar las tareas técnicas pendientes y se cargarán los modelos fundamentales para asegurar la integridad de la lógica de persistencia.
+# 2025-12-28
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V20.md
+## CYC
+*  **Session:** Ingesta de Datos Académicos UCO y Deduplicación
+*  **Description:** Desarrollo del comando de gestión `import_uco_data` para la ingesta masiva de la estructura académica y contenidos de la Universidad de Córdoba desde `uco_data_final.json`. Clasificación por ramas de conocimiento, creación de jerarquía (Universidad, Rama, Grado, Asignatura) y persistencia de metadatos (objetivos, temario, bibliografía). Ejecución de validación de integridad y deduplicación mediante `calculate_content_hashes`.
+

@@ -133,6 +133,7 @@
 ./academic_structure/management/commands/process_content_duplicates.py
 ./academic_structure/management/commands/update_content_flags.py
 ./academic_structure/management/commands/resync_subject_slugs.py
+./academic_structure/management/commands/import_uco_data.py
 ./academic_structure/management/commands/import_ugr_data.py
 ./academic_structure/management/commands/detect_hidden_duplicates.py
 ./delete_stuck_assessment.py
@@ -575,6 +576,8 @@
 ./global_settings/migrations/__init__.py
 ./global_settings/migrations/0001_initial.py
 ./global_settings/tests.py
+./web_scrapping/uco_audit_tool.py
+./web_scrapping/uco_pdf_processor.py
 ./data/ugr_data.json
 ./data/ugr_data_cleaned.json
 ./data/uco_data_final.json
