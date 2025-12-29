@@ -1013,3 +1013,11 @@
 *  **Session:** Ingesta de Datos Académicos UCO y Deduplicación
 *  **Description:** Desarrollo del comando de gestión `import_uco_data` para la ingesta masiva de la estructura académica y contenidos de la Universidad de Córdoba desde `uco_data_final.json`. Clasificación por ramas de conocimiento, creación de jerarquía (Universidad, Rama, Grado, Asignatura) y persistencia de metadatos (objetivos, temario, bibliografía). Ejecución de validación de integridad y deduplicación mediante `calculate_content_hashes`.
 
+
+# 2025-12-29
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V20.md
+## EPI
+*  **Session:** Ingesta de Datos UCO: Fase PC y Fusión
+*  **Description:** Implementación y ejecución del protocolo de cosecha de datos de la UCO en entorno local (PC) para superar las limitaciones de memoria en Android. Creación del script `uco_harvester_pc.py` con soporte para los 8 arquetipos de navegación HTML detectados y aplicación de la matriz de exclusión estricta. Fusión posterior de los datos cosechados con el respaldo de contenidos (`uco_data_backup.json`) y preparación de la carga masiva en servidor mediante `uco_pdf_processor.py` e `import_uco_data`.
+

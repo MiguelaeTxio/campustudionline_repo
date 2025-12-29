@@ -1,40 +1,24 @@
-# Anexo del Hito 20: Refinamiento del Proceso de Scraping e Ingesta UCO
+# Anexo del Hito 20: Ingesta UCO mediante Recopilación Manual de URLs
 
-## 1. Visión y Estado
-Consolidar la ingesta de 1.540 asignaturas de la UCO (2025/26). La sesión actual ha demostrado la inviabilidad de Selenium en entorno Android/Termux debido a colapsos del renderer y gestión de memoria. Se traslada la fase de cosecha a entorno PC (PCv).
+## 1. Estado Actual del Sistema
+- **Base de Datos:** PURGADA. Se ha ejecutado con éxito el protocolo de borrado quirúrgico (Bottom-Up), eliminando la Universidad de Córdoba y todas sus dependencias (Asignaturas, Años, Grados, Tareas y Solicitudes) para asegurar una base limpia.
+- **Harvester:** El método de descubrimiento automático mediante Selenium ha sido DESCARTADO debido a la inconsistencia extrema de los slugs y la estructura de navegación de la UCO.
 
-## 2. Definición Técnica de Arquetipos (Matriz UCO)
-El motor de scraping debe ser capaz de identificar y procesar los siguientes 8 arquetipos detectados en la auditoría HTML:
-- **A:** Medicina (Acordeón Simple).
-- **B:** Educación (Acordeón de Doble Nivel).
-- **C:** ETSIAM (Pestañas de Titulación + Menciones).
-- **D:** Filosofía y Letras (Pestañas + Acordeón).
-- **E:** Ciencias del Trabajo (Doble Plan: Activo/Extinguido con IDs duplicados).
-- **F:** EPS Córdoba (Acordeón + Tablas divididas por Cuatrimestre).
-- **G:** EPS Belmez (Pestañas + Acordeón Multitabla).
-- **H:** Ciencias (Doble Plan + Histórico Multicolumna).
+## 2. Estrategia para la Próxima Sesión (LEY SUPREMA)
+La sesión se iniciará con la carga de una lista hardcodeada de URLs de planificación que el usuario ha recopilado manualmente. 
 
-## 3. Matriz de Exclusión Agresiva (Cero Ruido)
-Está TERMINANTEMENTE PROHIBIDO ingerir registros que contengan:
-- **Macro (Contenedores):** antiguo, extinto, extinción, anterior, licenciatura, demo.
-- **Micro (Asignaturas):** practicum, prácticas, externas, tfg, tfm, trabajo fin, seminario, intercambio, clínica, rotatorio, mantenimiento, laboratorio.
-- **Excepción de Protección:** NO excluir "Trabajo Social" ni "Derecho del Trabajo".
+### Lógica del Script (UCO_HARVESTER_V19):
+1. **Entrada de Datos:** El script procesará una tupla de diccionarios con el formato `{"degree": "Nombre", "url": "URL_REAL_PLANIFICACION"}`.
+2. **Motor de Extracción:** Se utilizará BeautifulSoup sobre las URLs directas.
+3. **Reglas de Selección de Año:** El "Año Académico" se extraerá EXCLUSIVAMENTE del texto contenido en el `panel-title` del acordeón (Ej: "Primero", "1º", "Segundo"...).
+4. **Tratamiento de Tablas:** 
+   - Se extraerá la celda con el texto más largo como "Nombre de Asignatura".
+   - En facultades multiversión (Veterinaria), se seleccionará el enlace de la columna que contenga el texto "25-26".
+5. **Filtro Agresivo (Hito 20):** Aplicación estricta de la lista de exclusión (TFG, Prácticas, etc.), respetando la protección de "Trabajo Social" y "Derecho del Trabajo".
 
-## 4. Hoja de Ruta para la Sesión en PC (LEY SUPREMA)
-### Paso 1: Cosecha en PC (Harvester V18)
-- Ejecutar `uco_harvester_pc.py` en entorno local.
-- Asegurar la generación de `uco_master_map.json` (Válidas) y `uco_excluded_log.json` (Auditoría).
+## 3. Hoja de Ruta Inmediata
+1. Recibir la lista de URLs manuales.
+2. Generar y ejecutar el script V19 en entorno local (PCv).
+3. Validar el JSON resultante (`uco_master_map.json`).
+4. Subir al servidor y ejecutar el comando de ingesta.
 
-### Paso 2: Fusión de Contenido (Processor V5)
-- El usuario debe facilitar `uco_data_backup.json` (archivo de 11MB generado en Termux con el contenido de los PDFs).
-- Ejecutar `uco_pdf_processor.py` (Versión Fusión) para inyectar el contenido del backup en el mapa limpio generado por el PC.
-- El resultado debe ser un `uco_data_final.json` con Nombres, Ramas y Años 100% verificados.
-
-### Paso 3: Ingesta en Servidor (Importador V9)
-- Subir `uco_data_final.json` a la carpeta `/data/` del servidor.
-- Ejecutar `python manage.py import_uco_data --purge`.
-- El comando DEBE realizar la purga manual por niveles (ContentRequest -> PendingContentTask -> Subject -> AcademicYear) para evitar errores de integridad referencial (IntegrityError 1048/1451) en MySQL.
-
-## 5. Verificación de Integridad
-- Los años académicos de Medicina deben ser correlativos (1º a 6º).
-- Las ramas deben ser: Artes y Humanidades, Ciencias, Ciencias de la Salud, Ciencias Sociales y Jurídicas, Ingeniería y Arquitectura.
