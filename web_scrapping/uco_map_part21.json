@@ -1,0 +1,522 @@
+[
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Filología Hispánica",
+        "year": 1,
+        "name": "Idioma Moderno I (Inglés)",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100582en_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-filologia-hispanica#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Filología Hispánica",
+        "year": 1,
+        "name": "Idioma Moderno I (Francés)",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100738es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-filologia-hispanica#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Filología Hispánica",
+        "year": 1,
+        "name": "Idioma Moderno I (Alemán)",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100536es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-filologia-hispanica#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Filología Hispánica",
+        "year": 1,
+        "name": "Idioma Moderno I (Árabe)",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100734es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-filologia-hispanica#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Filología Hispánica",
+        "year": 1,
+        "name": "Idioma Moderno I (Italiano)",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100869es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-filologia-hispanica#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Filología Hispánica",
+        "year": 1,
+        "name": "Lengua Clásica (Griego)",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100733es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-filologia-hispanica#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Filología Hispánica",
+        "year": 1,
+        "name": "Lengua Clásica (Latín)",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100591es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-filologia-hispanica#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Filología Hispánica",
+        "year": 1,
+        "name": "Introducción a la Lengua Española",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100584es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-filologia-hispanica#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Filología Hispánica",
+        "year": 1,
+        "name": "Lingüística",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100587es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-filologia-hispanica#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Filología Hispánica",
+        "year": 1,
+        "name": "Textos Literarios Hispánicos",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100590es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-filologia-hispanica#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Filología Hispánica",
+        "year": 1,
+        "name": "Idioma Moderno II (Inglés)",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100583en_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-filologia-hispanica#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Filología Hispánica",
+        "year": 1,
+        "name": "Idioma Moderno II (Francés)",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100739es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-filologia-hispanica#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Filología Hispánica",
+        "year": 1,
+        "name": "Idioma Moderno II (Alemán)",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100537es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-filologia-hispanica#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Filología Hispánica",
+        "year": 1,
+        "name": "Idioma Moderno II (Árabe)",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100735es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-filologia-hispanica#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Filología Hispánica",
+        "year": 1,
+        "name": "Idioma Moderno II (Italiano)",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100870es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-filologia-hispanica#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Filología Hispánica",
+        "year": 1,
+        "name": "Teoría y Práctica del Español",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100585es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-filologia-hispanica#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Filología Hispánica",
+        "year": 1,
+        "name": "Teoría de la Literatura",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100588es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-filologia-hispanica#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Filología Hispánica",
+        "year": 1,
+        "name": "Literatura Hispánica y su Contexto",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100589es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-filologia-hispanica#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Filología Hispánica",
+        "year": 1,
+        "name": "Gramática Española",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100586es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-filologia-hispanica#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Filología Hispánica",
+        "year": 2,
+        "name": "Idioma Moderno III (Inglés)",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100592en_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-filologia-hispanica#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Filología Hispánica",
+        "year": 2,
+        "name": "Idioma Moderno III (Francés)",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100740es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-filologia-hispanica#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Filología Hispánica",
+        "year": 2,
+        "name": "Idioma Moderno III (Alemán)",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100542es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-filologia-hispanica#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Filología Hispánica",
+        "year": 2,
+        "name": "Idioma Moderno III (Árabe)",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100736es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-filologia-hispanica#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Filología Hispánica",
+        "year": 2,
+        "name": "Idioma Moderno III (Italiano)",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100871es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-filologia-hispanica#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Filología Hispánica",
+        "year": 2,
+        "name": "Fonética y Fonología",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100594es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-filologia-hispanica#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Filología Hispánica",
+        "year": 2,
+        "name": "Literatura Hispánica de los Siglos XVIII y XIX",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100602es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-filologia-hispanica#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Filología Hispánica",
+        "year": 2,
+        "name": "Teoría de la Narración",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100608es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-filologia-hispanica#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Filología Hispánica",
+        "year": 2,
+        "name": "Lexicología y Semántica",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100595es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-filologia-hispanica#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Filología Hispánica",
+        "year": 2,
+        "name": "Teorías Lingüísticas Actuales",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100598es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-filologia-hispanica#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Filología Hispánica",
+        "year": 2,
+        "name": "Literatura Hispánica de los Siglos XX y XXI",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100603es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-filologia-hispanica#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Filología Hispánica",
+        "year": 3,
+        "name": "Idioma Moderno IV (Inglés)",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100593en_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-filologia-hispanica#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Filología Hispánica",
+        "year": 3,
+        "name": "Idioma Moderno IV (Francés)",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100741es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-filologia-hispanica#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Filología Hispánica",
+        "year": 3,
+        "name": "Idioma Moderno IV (Alemán)",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100543es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-filologia-hispanica#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Filología Hispánica",
+        "year": 3,
+        "name": "Idioma Moderno IV (Árabe)",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100737es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-filologia-hispanica#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Filología Hispánica",
+        "year": 3,
+        "name": "Idioma Moderno IV (Italiano)",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100872es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-filologia-hispanica#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Filología Hispánica",
+        "year": 3,
+        "name": "Historia de la Lengua",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100597es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-filologia-hispanica#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Filología Hispánica",
+        "year": 3,
+        "name": "Literatura Hispánica Medieval y Renacentista",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100604es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-filologia-hispanica#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Filología Hispánica",
+        "year": 3,
+        "name": "Psicolingüística",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100599es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-filologia-hispanica#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Filología Hispánica",
+        "year": 3,
+        "name": "Variación Lingüística",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100596es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-filologia-hispanica#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Filología Hispánica",
+        "year": 3,
+        "name": "Literatura Hispánica del Siglo de Oro",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100605es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-filologia-hispanica#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Filología Hispánica",
+        "year": 3,
+        "name": "Literatura Comparada",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100609es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-filologia-hispanica#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Filología Hispánica",
+        "year": 4,
+        "name": "Trabajos de Investigación en Literatura Hispánica Clásica",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100606es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-filologia-hispanica#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Filología Hispánica",
+        "year": 4,
+        "name": "El Texto y las Series. Contexto",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100607es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-filologia-hispanica#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Filología Hispánica",
+        "year": 4,
+        "name": "Lingüística Aplicada a la Enseñanza",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100601es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-filologia-hispanica#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Filología Hispánica",
+        "year": 4,
+        "name": "Crítica de Textos Literarios Hispánicos",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100614es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-filologia-hispanica#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Filología Hispánica",
+        "year": 4,
+        "name": "Análisis del Discurso",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100610es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-filologia-hispanica#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Filología Hispánica",
+        "year": 4,
+        "name": "Lingüística y Nuevas Tecnologías",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100600es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-filologia-hispanica#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Filología Hispánica",
+        "year": 2,
+        "name": "Historia",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100618es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-filologia-hispanica#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Filología Hispánica",
+        "year": 2,
+        "name": "Fundamentos Grecolatinos de la Literatura Española",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100621es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-filologia-hispanica#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Filología Hispánica",
+        "year": 2,
+        "name": "Territorio y Sociedad en España",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100623es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-filologia-hispanica#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Filología Hispánica",
+        "year": 2,
+        "name": "Filosofía",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100617es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-filologia-hispanica#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Filología Hispánica",
+        "year": 2,
+        "name": "Historia del Arte",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100619es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-filologia-hispanica#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Filología Hispánica",
+        "year": 2,
+        "name": "Orígenes Latino-Vulgares del español",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100620es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-filologia-hispanica#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Filología Hispánica",
+        "year": 2,
+        "name": "Culturas Orales, Minoritarias o Marginadas",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100622es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-filologia-hispanica#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Filología Hispánica",
+        "year": 3,
+        "name": "El Español como Lengua Extranjera",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100611es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-filologia-hispanica#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Filología Hispánica",
+        "year": 3,
+        "name": "Lengua Española y Nuevas Tecnologías",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100612es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-filologia-hispanica#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Filología Hispánica",
+        "year": 3,
+        "name": "Las Hablas Andaluzas y el Español de América",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100613es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-filologia-hispanica#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Filología Hispánica",
+        "year": 3,
+        "name": "Crítica Textual y Edición",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100624es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-filologia-hispanica#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Filología Hispánica",
+        "year": 3,
+        "name": "Documentación y Gestión de Fondos Bibliográficos",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100625es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-filologia-hispanica#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Filología Hispánica",
+        "year": 3,
+        "name": "Trabajos Científicos y Técnicos",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100626es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-filologia-hispanica#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Filología Hispánica",
+        "year": 3,
+        "name": "El Método Filológico",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100627es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-filologia-hispanica#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Filología Hispánica",
+        "year": 3,
+        "name": "Elementos para el Análisis del Texto Poético",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100628es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-filologia-hispanica#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Filología Hispánica",
+        "year": 3,
+        "name": "Filosofía del Lenguaje",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100629es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-filologia-hispanica#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Filología Hispánica",
+        "year": 4,
+        "name": "Trabajos de Investigación en Literatura Hispánica Moderna",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100615es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-filologia-hispanica#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Filología Hispánica",
+        "year": 4,
+        "name": "El Texto y las Series. Relaciones",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100616es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-filologia-hispanica#planificacion"
+    }
+]

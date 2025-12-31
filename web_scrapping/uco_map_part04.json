@@ -1,0 +1,590 @@
+[
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Agroalimentaria y del Medio Rural",
+        "year": 1,
+        "name": "Matemáticas I",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2025-26/643001es_2025-26.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Agroalimentaria y del Medio Rural",
+        "year": 1,
+        "name": "Fundamentos Físicos de la Ingeniería I",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2025-26/643003es_2025-26.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Agroalimentaria y del Medio Rural",
+        "year": 1,
+        "name": "Química General",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2025-26/100943es_2025-26.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Agroalimentaria y del Medio Rural",
+        "year": 1,
+        "name": "Bases Biológicas de la Producción Agraria",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2025-26/100945es_2025-26.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Agroalimentaria y del Medio Rural",
+        "year": 1,
+        "name": "Geología y Climatología",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2025-26/100948es_2025-26.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Agroalimentaria y del Medio Rural",
+        "year": 1,
+        "name": "Matemáticas II",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2025-26/643002es_2025-26.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Agroalimentaria y del Medio Rural",
+        "year": 1,
+        "name": "Fundamentos Físicos de la Ingeniería II",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2025-26/643004es_2025-26.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Agroalimentaria y del Medio Rural",
+        "year": 1,
+        "name": "Ampliación de Química y Bioquímica",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2025-26/100944es_2025-26.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Agroalimentaria y del Medio Rural",
+        "year": 1,
+        "name": "Dibujo de Ingeniería",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2025-26/100946es_2025-26.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Agroalimentaria y del Medio Rural",
+        "year": 1,
+        "name": "Economía y Empresa",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2025-26/100947es_2025-26.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Agroalimentaria y del Medio Rural",
+        "year": 2,
+        "name": "Métodos y Paquetes Estadísticos",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2025-26/100941es_2025-26.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Agroalimentaria y del Medio Rural",
+        "year": 2,
+        "name": "Fundamentos de Fisiología Vegetal",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2025-26/100950es_2025-26.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Agroalimentaria y del Medio Rural",
+        "year": 2,
+        "name": "Edafología",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2025-26/100951es_2025-26.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Agroalimentaria y del Medio Rural",
+        "year": 2,
+        "name": "Ingeniería y tecnología de la producción animal",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2025-26/100953es_2025-26.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Agroalimentaria y del Medio Rural",
+        "year": 2,
+        "name": "Ciencia y tecnología del medio ambiente",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2025-26/100954es_2025-26.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Agroalimentaria y del Medio Rural",
+        "year": 2,
+        "name": "Hidráulica",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2025-26/100956es_2025-26.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Agroalimentaria y del Medio Rural",
+        "year": 2,
+        "name": "Motores y Máquinas",
+        "pdf_url": "https://www.uco.es/etsiam/images/documentos/25-26/guias/MOTORES%20Y%20M%C3%81QUINAS_2025-26.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Agroalimentaria y del Medio Rural",
+        "year": 2,
+        "name": "Botánica Agrícola",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2025-26/100949es_2025-26.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Agroalimentaria y del Medio Rural",
+        "year": 2,
+        "name": "Fitotecnia",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2025-26/100952es_2025-26.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Agroalimentaria y del Medio Rural",
+        "year": 2,
+        "name": "Resistencia de Materiales y Análisis de Estructuras",
+        "pdf_url": "https://www.uco.es/etsiam/images/documentos/25-26/guias/RESISTENCIA%20DE%20MATERIALES%20Y,AN%C3%81LISIS%20DE%20ESTRUCTURAS_2025-26.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Agroalimentaria y del Medio Rural",
+        "year": 2,
+        "name": "Electrotecnia",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2025-26/100958es_2025-26.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Agroalimentaria y del Medio Rural",
+        "year": 2,
+        "name": "Cartografía y Fotogrametría",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2025-26/100959es_2025-26.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Agroalimentaria y del Medio Rural",
+        "year": 3,
+        "name": "Teledetección y Análisis Espacial",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2025-26/100960es_2025-26.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Agroalimentaria y del Medio Rural",
+        "year": 3,
+        "name": "Comercialización y Regulación de Mercados Agrarios",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2025-26/643005es_2025-26.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Agroalimentaria y del Medio Rural",
+        "year": 3,
+        "name": "Fundamentos de Operaciones Básicas en Ingeniería Agroalimentaria",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2025-26/100964es_2025-26.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Agroalimentaria y del Medio Rural",
+        "year": 3,
+        "name": "Construcciones Agroindustriales",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2025-26/100971es_2025-26.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Agroalimentaria y del Medio Rural",
+        "year": 3,
+        "name": "Ingeniería del aprovisionamiento de productos vegetales y animales",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2025-26/643006es_2025-26.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Agroalimentaria y del Medio Rural",
+        "year": 3,
+        "name": "Proyectos",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2025-26/100963es_2025-26.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Agroalimentaria y del Medio Rural",
+        "year": 3,
+        "name": "Operaciones Básicas en Ingeniería Agroalimentaria",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2025-26/100965es_2025-26.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Agroalimentaria y del Medio Rural",
+        "year": 3,
+        "name": "Ingeniería Térmica en Industrias Agroalimentarias",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2025-26/100970es_2025-26.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Agroalimentaria y del Medio Rural",
+        "year": 3,
+        "name": "Ingeniería de las Instalaciones Agroindustriales",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2025-26/100973es_2025-26.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Agroalimentaria y del Medio Rural",
+        "year": 3,
+        "name": "Estrategias del Sistema Agroalimentario",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2025-26/643007es_2025-26.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Agroalimentaria y del Medio Rural",
+        "year": 4,
+        "name": "Gestión Comercial y Valoración de la Empresa Agroalimentaria",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2025-26/100961es_2025-26.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Agroalimentaria y del Medio Rural",
+        "year": 4,
+        "name": "Ingeniería de las Industrias Agroalimentarias de Origen Vegetal",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2025-26/100967es_2025-26.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Agroalimentaria y del Medio Rural",
+        "year": 4,
+        "name": "Ingeniería de las Industrias Agroalimentarias de Origen Animal",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2025-26/100968es_2025-26.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Agroalimentaria y del Medio Rural",
+        "year": 4,
+        "name": "Ingeniería para el control y aseguramiento de productos y procesos agroalimentarios",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2025-26/100966es_2025-26.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Agroalimentaria y del Medio Rural",
+        "year": 4,
+        "name": "Ingeniería de Diseño y Operación en Industrias Agroalimentarias",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2025-26/100969es_2025-26.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Agroalimentaria y del Medio Rural",
+        "year": 4,
+        "name": "Microbiología y Biotecnología Industrial",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2025-26/100974es_2025-26.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Agroalimentaria y del Medio Rural",
+        "year": 3,
+        "name": "Construcciones y Equipos Ganaderos",
+        "pdf_url": "https://www.uco.es/etsiam/images/documentos/25-26/guias/CONSTRUCCIONES%20Y%20EQUIPOS,GANADEROS2025-26.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Agroalimentaria y del Medio Rural",
+        "year": 3,
+        "name": "Caracterización diseño y monitorización de sistemas ganaderos",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2025-26/100976es_2025-26.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Agroalimentaria y del Medio Rural",
+        "year": 3,
+        "name": "Ingeniería y monitorización de los sistemas extensivos de producción ganadera",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2025-26/100977es_2025-26.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Agroalimentaria y del Medio Rural",
+        "year": 3,
+        "name": "Ingeniería y monitorización de los sistemas intensivos de producción ganadera",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2025-26/100978es_2025-26.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Agroalimentaria y del Medio Rural",
+        "year": 3,
+        "name": "Entomología agrícola",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2025-26/100980es_2025-26.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Agroalimentaria y del Medio Rural",
+        "year": 3,
+        "name": "Patología vegetal agrícola",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2025-26/100981es_2025-26.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Agroalimentaria y del Medio Rural",
+        "year": 3,
+        "name": "Sistemas de producción y explotación agrícola",
+        "pdf_url": "https://www.uco.es/etsiam/images/documentos/25-26/guias/643053es_2025-26.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Agroalimentaria y del Medio Rural",
+        "year": 4,
+        "name": "Riegos y electrificación de explotaciones agropecuarias",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2025-26/100983es_2025-26.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Agroalimentaria y del Medio Rural",
+        "year": 4,
+        "name": "Tecnología de la Información, la Comunicación y los Sistemas de Apoyo a la Decisión en Producción Agroganadera",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2025-26/100985es_2025-26.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Agroalimentaria y del Medio Rural",
+        "year": 4,
+        "name": "Cultivos Leñosos",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2025-26/643008es_2025-26.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Agroalimentaria y del Medio Rural",
+        "year": 4,
+        "name": "Innovación en sistemas agroganaderos",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2025-26/643009es_2025-26.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Agroalimentaria y del Medio Rural",
+        "year": 4,
+        "name": "Genética y mejora vegetal",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2025-26/100979es_2025-26.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Agroalimentaria y del Medio Rural",
+        "year": 4,
+        "name": "Técnicas de cultivos herbáceos",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2025-26/100982es_2025-26.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Agroalimentaria y del Medio Rural",
+        "year": 3,
+        "name": "Patología vegetal",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2025-26/100998es_2025-26.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Agroalimentaria y del Medio Rural",
+        "year": 3,
+        "name": "Conocimiento y Gestión de la Biodiversidad en Ingeniería",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2025-26/643010es_2025-26.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Agroalimentaria y del Medio Rural",
+        "year": 3,
+        "name": "Pomología",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2025-26/100985es_2025-26.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Agroalimentaria y del Medio Rural",
+        "year": 3,
+        "name": "Hidrología y Riegos",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2025-26/100996es_2025-26.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Agroalimentaria y del Medio Rural",
+        "year": 3,
+        "name": "Bases de la Producción de Cultivos Hortícolas y Ornamentales",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2025-26/100989es_2025-26.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Agroalimentaria y del Medio Rural",
+        "year": 3,
+        "name": "Recursos Genéticos y Mejora Vegetal",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2025-26/100991es_2025-26.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Agroalimentaria y del Medio Rural",
+        "year": 4,
+        "name": "Parásitos animales de las plantas cultivadas",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2025-26/100997es_2025-26.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Agroalimentaria y del Medio Rural",
+        "year": 4,
+        "name": "Ingeniería de las Obras e Instalaciones",
+        "pdf_url": "https://www.uco.es/etsiam/images/documentos/25-26/guias/INGENIER%C3%8DA%20DE%20LAS%20OBRAS%20E,INSTALACIONES2025-26.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Agroalimentaria y del Medio Rural",
+        "year": 4,
+        "name": "Tecnología de la Producción hortícola",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2025-26/643011es_2025-26.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Agroalimentaria y del Medio Rural",
+        "year": 4,
+        "name": "Especies frutales",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2025-26/643012es_2025-26.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Agroalimentaria y del Medio Rural",
+        "year": 4,
+        "name": "Jardinería y Restauración del Paisaje",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2025-26/100993es_2025-26.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Agroalimentaria y del Medio Rural",
+        "year": 4,
+        "name": "Economía Ambiental y Desarrollo Sostenible",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2025-26/100994es_2025-26.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Agroalimentaria y del Medio Rural",
+        "year": 3,
+        "name": "Electrificación Rural",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2025-26/101005es_2025-26.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Agroalimentaria y del Medio Rural",
+        "year": 3,
+        "name": "Tecnología de estructuras",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2025-26/101007es_2025-26.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Agroalimentaria y del Medio Rural",
+        "year": 3,
+        "name": "Construcción y Organización de Obras Agrarias",
+        "pdf_url": "https://www.uco.es/etsiam/images/documentos/25-26/guias/CONSTRUCCI%C3%93N%20Y%20ORGANIZACI%C3%93N%20DE,OBRAS%20AGRARIAS%202025-26.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Agroalimentaria y del Medio Rural",
+        "year": 3,
+        "name": "Mejora y Protección de cultivos",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2025-26/101001es_2025-26.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Agroalimentaria y del Medio Rural",
+        "year": 3,
+        "name": "Mecanización agraria",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2025-26/101006es_2025-26.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Agroalimentaria y del Medio Rural",
+        "year": 3,
+        "name": "Cimentaciones y Obras de Tierra",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2025-26/101009es_2025-26.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Agroalimentaria y del Medio Rural",
+        "year": 4,
+        "name": "Tecnologías de la producción animal",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2025-26/101003es_2025-26.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Agroalimentaria y del Medio Rural",
+        "year": 4,
+        "name": "Diseño de Maquinaria Agraria. Automática Agraria",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2025-26/101008es_2025-26.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Agroalimentaria y del Medio Rural",
+        "year": 4,
+        "name": "Hidrología y Erosión",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2025-26/101011es_2025-26.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Agroalimentaria y del Medio Rural",
+        "year": 4,
+        "name": "Cultivos",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2025-26/101002es_2025-26.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Agroalimentaria y del Medio Rural",
+        "year": 4,
+        "name": "Ingeniería del Riego y del Drenaje",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2025-26/101004es_2025-26.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Agroalimentaria y del Medio Rural",
+        "year": 4,
+        "name": "Aplicaciones prácticas en Ingeniería rural",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2025-26/643014es_2025-26.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Agroalimentaria y del Medio Rural",
+        "year": 3,
+        "name": "Conceptos Básicos de Biotecnología",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2025-26/643016es_2025-26.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Agroalimentaria y del Medio Rural",
+        "year": 3,
+        "name": "Ciencia de Datos, Diversidad Genética y Biotecnología",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2025-26/643015es_2025-26.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Agroalimentaria y del Medio Rural",
+        "year": 4,
+        "name": "Cultivos In vitro, Transgénesis y Edición de Genomas",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2025-26/643017es_2025-26.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Agroalimentaria y del Medio Rural",
+        "year": 4,
+        "name": "Aplicaciones de la Biotecnología a la Sanidad Vegetal",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2025-26/643043es_2025-26.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Agroalimentaria y del Medio Rural",
+        "year": 4,
+        "name": "Diseño e Ingeniería en Industrias Biotecnológicas",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2025-26/643046es_2025-26.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Agroalimentaria y del Medio Rural",
+        "year": 3,
+        "name": "Aplicaciones de la Microbiología a la Biotecnología",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2025-26/643045es_2025-26.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Agroalimentaria y del Medio Rural",
+        "year": 3,
+        "name": "Ingeniería de Procesos Biotecnológicos",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2025-26/643047es_2025-26.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Agroalimentaria y del Medio Rural",
+        "year": 3,
+        "name": "Aplicaciones de la Biotecnología en Mejora Genética Vegetal",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2025-26/643044es_2025-26.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Agroalimentaria y del Medio Rural",
+        "year": 4,
+        "name": "Análisis, Procesos y Productos Biotecnológicos",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2025-26/643042es_2025-26.pdf"
+    }
+]

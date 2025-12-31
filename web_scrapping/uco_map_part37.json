@@ -1,0 +1,362 @@
+[
+  {
+    "university": "Universidad de Córdoba",
+    "degree": "Grado en Ingeniería Civil",
+    "year": 1,
+    "name": "Expresión Gráfica I",
+    "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/101123es_2025-26.pdf",
+    "url_source": "https://www.uco.es/organiza/centros/EPSBelmez/es/planificacion-ensenanza-ing-civil"
+  },
+  {
+    "university": "Universidad de Córdoba",
+    "degree": "Grado en Ingeniería Civil",
+    "year": 1,
+    "name": "Expresión Gráfica II",
+    "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/101124es_2025-26.pdf",
+    "url_source": "https://www.uco.es/organiza/centros/EPSBelmez/es/planificacion-ensenanza-ing-civil"
+  },
+  {
+    "university": "Universidad de Córdoba",
+    "degree": "Grado en Ingeniería Civil",
+    "year": 1,
+    "name": "Física I",
+    "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/101126es_2025-26.pdf",
+    "url_source": "https://www.uco.es/organiza/centros/EPSBelmez/es/planificacion-ensenanza-ing-civil"
+  },
+  {
+    "university": "Universidad de Córdoba",
+    "degree": "Grado en Ingeniería Civil",
+    "year": 1,
+    "name": "Física II",
+    "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/101127es_2025-26.pdf",
+    "url_source": "https://www.uco.es/organiza/centros/EPSBelmez/es/planificacion-ensenanza-ing-civil"
+  },
+  {
+    "university": "Universidad de Córdoba",
+    "degree": "Grado en Ingeniería Civil",
+    "year": 1,
+    "name": "Geología Aplicada",
+    "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/101128es_2025-26.pdf",
+    "url_source": "https://www.uco.es/organiza/centros/EPSBelmez/es/planificacion-ensenanza-ing-civil"
+  },
+  {
+    "university": "Universidad de Córdoba",
+    "degree": "Grado en Ingeniería Civil",
+    "year": 1,
+    "name": "Herramientas Informáticas de Gestión de Empresas",
+    "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/101157es_2025-26.pdf",
+    "url_source": "https://www.uco.es/organiza/centros/EPSBelmez/es/planificacion-ensenanza-ing-civil"
+  },
+  {
+    "university": "Universidad de Córdoba",
+    "degree": "Grado en Ingeniería Civil",
+    "year": 1,
+    "name": "Informática",
+    "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/101125es_2025-26.pdf",
+    "url_source": "https://www.uco.es/organiza/centros/EPSBelmez/es/planificacion-ensenanza-ing-civil"
+  },
+  {
+    "university": "Universidad de Córdoba",
+    "degree": "Grado en Ingeniería Civil",
+    "year": 1,
+    "name": "Ingeniería Hidráulica",
+    "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/101136es_2025-26.pdf",
+    "url_source": "https://www.uco.es/organiza/centros/EPSBelmez/es/planificacion-ensenanza-ing-civil"
+  },
+  {
+    "university": "Universidad de Córdoba",
+    "degree": "Grado en Ingeniería Civil",
+    "year": 1,
+    "name": "Introducción a la Mecánica Computacional y Cálculo de Estructuras por Ordenador",
+    "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/101166es_2025-26.pdf",
+    "url_source": "https://www.uco.es/organiza/centros/EPSBelmez/es/planificacion-ensenanza-ing-civil"
+  },
+  {
+    "university": "Universidad de Córdoba",
+    "degree": "Grado en Ingeniería Civil",
+    "year": 1,
+    "name": "Matemáticas I",
+    "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/101120es_2025-26.pdf",
+    "url_source": "https://www.uco.es/organiza/centros/EPSBelmez/es/planificacion-ensenanza-ing-civil"
+  },
+  {
+    "university": "Universidad de Córdoba",
+    "degree": "Grado en Ingeniería Civil",
+    "year": 1,
+    "name": "Matemáticas II",
+    "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/101121es_2025-26.pdf",
+    "url_source": "https://www.uco.es/organiza/centros/EPSBelmez/es/planificacion-ensenanza-ing-civil"
+  },
+  {
+    "university": "Universidad de Córdoba",
+    "degree": "Grado en Ingeniería Civil",
+    "year": 1,
+    "name": "Organización y Gestión de Empresas",
+    "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/101129es_2025-26.pdf",
+    "url_source": "https://www.uco.es/organiza/centros/EPSBelmez/es/planificacion-ensenanza-ing-civil"
+  },
+  {
+    "university": "Universidad de Córdoba",
+    "degree": "Grado en Ingeniería Civil",
+    "year": 2,
+    "name": "Matemáticas III",
+    "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/101122es_2025-26.pdf",
+    "url_source": "https://www.uco.es/organiza/centros/EPSBelmez/es/planificacion-ensenanza-ing-civil"
+  },
+  {
+    "university": "Universidad de Córdoba",
+    "degree": "Grado en Ingeniería Civil",
+    "year": 2,
+    "name": "Mecánica de Suelos y Rocas",
+    "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/101134es_2025-26.pdf",
+    "url_source": "https://www.uco.es/organiza/centros/EPSBelmez/es/planificacion-ensenanza-ing-civil"
+  },
+  {
+    "university": "Universidad de Córdoba",
+    "degree": "Grado en Ingeniería Civil",
+    "year": 2,
+    "name": "Procedimientos de construcción",
+    "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/101138es_2025-26.pdf",
+    "url_source": "https://www.uco.es/organiza/centros/EPSBelmez/es/planificacion-ensenanza-ing-civil"
+  },
+  {
+    "university": "Universidad de Córdoba",
+    "degree": "Grado en Ingeniería Civil",
+    "year": 2,
+    "name": "Proyectos",
+    "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/101139es_2025-26.pdf",
+    "url_source": "https://www.uco.es/organiza/centros/EPSBelmez/es/planificacion-ensenanza-ing-civil"
+  },
+  {
+    "university": "Universidad de Córdoba",
+    "degree": "Grado en Ingeniería Civil",
+    "year": 2,
+    "name": "Tecnología Eléctrica",
+    "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/101137es_2025-26.pdf",
+    "url_source": "https://www.uco.es/organiza/centros/EPSBelmez/es/planificacion-ensenanza-ing-civil"
+  },
+  {
+    "university": "Universidad de Córdoba",
+    "degree": "Grado en Ingeniería Civil",
+    "year": 2,
+    "name": "Tecnología de Estructuras",
+    "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/101135es_2025-26.pdf",
+    "url_source": "https://www.uco.es/organiza/centros/EPSBelmez/es/planificacion-ensenanza-ing-civil"
+  },
+  {
+    "university": "Universidad de Córdoba",
+    "degree": "Grado en Ingeniería Civil",
+    "year": 2,
+    "name": "Teoría de Estructuras",
+    "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/101133es_2025-26.pdf",
+    "url_source": "https://www.uco.es/organiza/centros/EPSBelmez/es/planificacion-ensenanza-ing-civil"
+  },
+  {
+    "university": "Universidad de Córdoba",
+    "degree": "Grado en Ingeniería Civil",
+    "year": 2,
+    "name": "Topografía",
+    "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/101130es_2025-26.pdf",
+    "url_source": "https://www.uco.es/organiza/centros/EPSBelmez/es/planificacion-ensenanza-ing-civil"
+  },
+  {
+    "university": "Universidad de Córdoba",
+    "degree": "Grado en Ingeniería Civil",
+    "year": 3,
+    "name": "Caminos",
+    "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/101145es_2025-26.pdf",
+    "url_source": "https://www.uco.es/organiza/centros/EPSBelmez/es/planificacion-ensenanza-ing-civil"
+  },
+  {
+    "university": "Universidad de Córdoba",
+    "degree": "Grado en Ingeniería Civil",
+    "year": 3,
+    "name": "Control y Tratamiento de Aguas",
+    "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/101156es_2025-26.pdf",
+    "url_source": "https://www.uco.es/organiza/centros/EPSBelmez/es/planificacion-ensenanza-ing-civil"
+  },
+  {
+    "university": "Universidad de Córdoba",
+    "degree": "Grado en Ingeniería Civil",
+    "year": 3,
+    "name": "Cálculo de Estructuras",
+    "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/101140es_2025-26.pdf",
+    "url_source": "https://www.uco.es/organiza/centros/EPSBelmez/es/planificacion-ensenanza-ing-civil"
+  },
+  {
+    "university": "Universidad de Córdoba",
+    "degree": "Grado en Ingeniería Civil",
+    "year": 3,
+    "name": "Edificación",
+    "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/101142es_2025-26.pdf",
+    "url_source": "https://www.uco.es/organiza/centros/EPSBelmez/es/planificacion-ensenanza-ing-civil"
+  },
+  {
+    "university": "Universidad de Córdoba",
+    "degree": "Grado en Ingeniería Civil",
+    "year": 3,
+    "name": "Empresa Logística",
+    "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/278008es_2025-26.pdf",
+    "url_source": "https://www.uco.es/organiza/centros/EPSBelmez/es/planificacion-ensenanza-ing-civil"
+  },
+  {
+    "university": "Universidad de Córdoba",
+    "degree": "Grado en Ingeniería Civil",
+    "year": 3,
+    "name": "Hidrología",
+    "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/101153es_2025-26.pdf",
+    "url_source": "https://www.uco.es/organiza/centros/EPSBelmez/es/planificacion-ensenanza-ing-civil"
+  },
+  {
+    "university": "Universidad de Córdoba",
+    "degree": "Grado en Ingeniería Civil",
+    "year": 3,
+    "name": "Ingeniería Geotécnica",
+    "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/101141es_2025-26.pdf",
+    "url_source": "https://www.uco.es/organiza/centros/EPSBelmez/es/planificacion-ensenanza-ing-civil"
+  },
+  {
+    "university": "Universidad de Córdoba",
+    "degree": "Grado en Ingeniería Civil",
+    "year": 3,
+    "name": "Ingeniería Hidráulica Aplicada a los Sistemas de Distribución",
+    "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/101149es_2025-26.pdf",
+    "url_source": "https://www.uco.es/organiza/centros/EPSBelmez/es/planificacion-ensenanza-ing-civil"
+  },
+  {
+    "university": "Universidad de Córdoba",
+    "degree": "Grado en Ingeniería Civil",
+    "year": 3,
+    "name": "Ingeniería Logística y de la Cadena de Suministro",
+    "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/278012es_2025-26.pdf",
+    "url_source": "https://www.uco.es/organiza/centros/EPSBelmez/es/planificacion-ensenanza-ing-civil"
+  },
+  {
+    "university": "Universidad de Córdoba",
+    "degree": "Grado en Ingeniería Civil",
+    "year": 3,
+    "name": "Ingeniería Marítima y Costera",
+    "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/101144es_2025-26.pdf",
+    "url_source": "https://www.uco.es/organiza/centros/EPSBelmez/es/planificacion-ensenanza-ing-civil"
+  },
+  {
+    "university": "Universidad de Córdoba",
+    "degree": "Grado en Ingeniería Civil",
+    "year": 3,
+    "name": "Modelización y Simulación en Transporte y Logística",
+    "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/278010es_2025-26.pdf",
+    "url_source": "https://www.uco.es/organiza/centros/EPSBelmez/es/planificacion-ensenanza-ing-civil"
+  },
+  {
+    "university": "Universidad de Córdoba",
+    "degree": "Grado en Ingeniería Civil",
+    "year": 3,
+    "name": "Obras Hidráulicas",
+    "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/101150es_2025-26.pdf",
+    "url_source": "https://www.uco.es/organiza/centros/EPSBelmez/es/planificacion-ensenanza-ing-civil"
+  },
+  {
+    "university": "Universidad de Córdoba",
+    "degree": "Grado en Ingeniería Civil",
+    "year": 3,
+    "name": "Prefabricación",
+    "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/101143es_2025-26.pdf",
+    "url_source": "https://www.uco.es/organiza/centros/EPSBelmez/es/planificacion-ensenanza-ing-civil"
+  },
+  {
+    "university": "Universidad de Córdoba",
+    "degree": "Grado en Ingeniería Civil",
+    "year": 3,
+    "name": "Servicios Urbanos y Sostenibilidad",
+    "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/278002es_2025-26.pdf",
+    "url_source": "https://www.uco.es/organiza/centros/EPSBelmez/es/planificacion-ensenanza-ing-civil"
+  },
+  {
+    "university": "Universidad de Córdoba",
+    "degree": "Grado en Ingeniería Civil",
+    "year": 3,
+    "name": "Sistemas Energéticos e Hidroeléctricos",
+    "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/101151es_2025-26.pdf",
+    "url_source": "https://www.uco.es/organiza/centros/EPSBelmez/es/planificacion-ensenanza-ing-civil"
+  },
+  {
+    "university": "Universidad de Córdoba",
+    "degree": "Grado en Ingeniería Civil",
+    "year": 3,
+    "name": "Sistemas Inteligentes en Transporte y Logística",
+    "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/278009es_2025-26.pdf",
+    "url_source": "https://www.uco.es/organiza/centros/EPSBelmez/es/planificacion-ensenanza-ing-civil"
+  },
+  {
+    "university": "Universidad de Córdoba",
+    "degree": "Grado en Ingeniería Civil",
+    "year": 3,
+    "name": "Sistemas de Transporte",
+    "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/278004es_2025-26.pdf",
+    "url_source": "https://www.uco.es/organiza/centros/EPSBelmez/es/planificacion-ensenanza-ing-civil"
+  },
+  {
+    "university": "Universidad de Córdoba",
+    "degree": "Grado en Ingeniería Civil",
+    "year": 3,
+    "name": "Urbanismo y Ordenación del Territorio",
+    "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/278001es_2025-26.pdf",
+    "url_source": "https://www.uco.es/organiza/centros/EPSBelmez/es/planificacion-ensenanza-ing-civil"
+  },
+  {
+    "university": "Universidad de Córdoba",
+    "degree": "Grado en Ingeniería Civil",
+    "year": 4,
+    "name": "Ampliación de caminos y aeropuertos",
+    "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/278015es_2025-26.pdf",
+    "url_source": "https://www.uco.es/organiza/centros/EPSBelmez/es/planificacion-ensenanza-ing-civil"
+  },
+  {
+    "university": "Universidad de Córdoba",
+    "degree": "Grado en Ingeniería Civil",
+    "year": 4,
+    "name": "Construcción Civil en la Ingeniería Sanitaria",
+    "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/101148es_2025-26.pdf",
+    "url_source": "https://www.uco.es/organiza/centros/EPSBelmez/es/planificacion-ensenanza-ing-civil"
+  },
+  {
+    "university": "Universidad de Córdoba",
+    "degree": "Grado en Ingeniería Civil",
+    "year": 4,
+    "name": "Ferrocarriles",
+    "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/101146es_2025-26.pdf",
+    "url_source": "https://www.uco.es/organiza/centros/EPSBelmez/es/planificacion-ensenanza-ing-civil"
+  },
+  {
+    "university": "Universidad de Córdoba",
+    "degree": "Grado en Ingeniería Civil",
+    "year": 4,
+    "name": "Planificación y Gestión de Recursos Hídricos",
+    "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/101152es_2025-26.pdf",
+    "url_source": "https://www.uco.es/organiza/centros/EPSBelmez/es/planificacion-ensenanza-ing-civil"
+  },
+  {
+    "university": "Universidad de Córdoba",
+    "degree": "Grado en Ingeniería Civil",
+    "year": 4,
+    "name": "Sistemas Hidráulicos y Ambientales",
+    "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/101154es_2025-26.pdf",
+    "url_source": "https://www.uco.es/organiza/centros/EPSBelmez/es/planificacion-ensenanza-ing-civil"
+  },
+  {
+    "university": "Universidad de Córdoba",
+    "degree": "Grado en Ingeniería Civil",
+    "year": 4,
+    "name": "Sistemas de Depuración",
+    "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/101155es_2025-26.pdf",
+    "url_source": "https://www.uco.es/organiza/centros/EPSBelmez/es/planificacion-ensenanza-ing-civil"
+  },
+  {
+    "university": "Universidad de Córdoba",
+    "degree": "Grado en Ingeniería Civil",
+    "year": 4,
+    "name": "Tecnología de la Construcción",
+    "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/101147es_2025-26.pdf",
+    "url_source": "https://www.uco.es/organiza/centros/EPSBelmez/es/planificacion-ensenanza-ing-civil"
+  }
+]

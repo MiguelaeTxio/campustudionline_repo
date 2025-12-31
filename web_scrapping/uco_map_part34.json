@@ -1,0 +1,274 @@
+[
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Electrónica Industrial",
+        "year": 1,
+        "name": "Fundamentos Físicos de la Ingeniería I",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/101331es_2025-26.pdf",
+        "url_source": "https://www.uco.es/eps/es/programas-asignaturas-ing-elect-industrial"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Electrónica Industrial",
+        "year": 1,
+        "name": "Fundamentos de Informática",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/101332es_2025-26.pdf",
+        "url_source": "https://www.uco.es/eps/es/programas-asignaturas-ing-elect-industrial"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Electrónica Industrial",
+        "year": 1,
+        "name": "Química",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/101334es_2025-26.pdf",
+        "url_source": "https://www.uco.es/eps/es/programas-asignaturas-ing-elect-industrial"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Electrónica Industrial",
+        "year": 1,
+        "name": "Sistemas de Representación",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/101335es_2025-26.pdf",
+        "url_source": "https://www.uco.es/eps/es/programas-asignaturas-ing-elect-industrial"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Electrónica Industrial",
+        "year": 1,
+        "name": "Matemáticas para la ingeniería I",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/101337es_2025-26.pdf",
+        "url_source": "https://www.uco.es/eps/es/programas-asignaturas-ing-elect-industrial"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Electrónica Industrial",
+        "year": 1,
+        "name": "Matemáticas II",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/101330es_2025-26.pdf",
+        "url_source": "https://www.uco.es/eps/es/programas-asignaturas-ing-elect-industrial"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Electrónica Industrial",
+        "year": 1,
+        "name": "Economía de la Empresa",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/101333es_2025-26.pdf",
+        "url_source": "https://www.uco.es/eps/es/programas-asignaturas-ing-elect-industrial"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Electrónica Industrial",
+        "year": 1,
+        "name": "Métodos Estadísticos en la Ingeniería",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/101336es_2025-26.pdf",
+        "url_source": "https://www.uco.es/eps/es/programas-asignaturas-ing-elect-industrial"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Electrónica Industrial",
+        "year": 1,
+        "name": "Ciencia e Ingeniería de los Materiales",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/101342es_2025-26.pdf",
+        "url_source": "https://www.uco.es/eps/es/programas-asignaturas-ing-elect-industrial"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Electrónica Industrial",
+        "year": 1,
+        "name": "Fundamentos Físicos de la Ingeniería II",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/101339es_2025-26.pdf",
+        "url_source": "https://www.uco.es/eps/es/programas-asignaturas-ing-elect-industrial"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Electrónica Industrial",
+        "year": 2,
+        "name": "Matemáticas III",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/101338es_2025-26.pdf",
+        "url_source": "https://www.uco.es/eps/es/programas-asignaturas-ing-elect-industrial"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Electrónica Industrial",
+        "year": 2,
+        "name": "Mecánica de Fluidos",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/101341es_2025-26.pdf",
+        "url_source": "https://www.uco.es/eps/es/programas-asignaturas-ing-elect-industrial"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Electrónica Industrial",
+        "year": 2,
+        "name": "Electrotecnia",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/101343es_2025-26.pdf",
+        "url_source": "https://www.uco.es/eps/es/programas-asignaturas-ing-elect-industrial"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Electrónica Industrial",
+        "year": 2,
+        "name": "Ingeniería Térmica",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/101340es_2025-26.pdf",
+        "url_source": "https://www.uco.es/eps/es/programas-asignaturas-ing-elect-industrial"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Electrónica Industrial",
+        "year": 2,
+        "name": "Mecánica de Materiales",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/101347es_2025-26.pdf",
+        "url_source": "https://www.uco.es/eps/es/programas-asignaturas-ing-elect-industrial"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Electrónica Industrial",
+        "year": 2,
+        "name": "Automática",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/101345es_2025-26.pdf",
+        "url_source": "https://www.uco.es/eps/es/programas-asignaturas-ing-elect-industrial"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Electrónica Industrial",
+        "year": 2,
+        "name": "Fundamentos de Electrónica",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/101344es_2025-26.pdf",
+        "url_source": "https://www.uco.es/eps/es/programas-asignaturas-ing-elect-industrial"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Electrónica Industrial",
+        "year": 2,
+        "name": "Máquinas y Mecanismos",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/101346es_2025-26.pdf",
+        "url_source": "https://www.uco.es/eps/es/programas-asignaturas-ing-elect-industrial"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Electrónica Industrial",
+        "year": 2,
+        "name": "Ingeniería de Fabricación",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/101348es_2025-26.pdf",
+        "url_source": "https://www.uco.es/eps/es/programas-asignaturas-ing-elect-industrial"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Electrónica Industrial",
+        "year": 2,
+        "name": "Regulación Automática",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/101352es_2025-26.pdf",
+        "url_source": "https://www.uco.es/eps/es/programas-asignaturas-ing-elect-industrial"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Electrónica Industrial",
+        "year": 3,
+        "name": "Electrónica Analógica",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/101353es_2025-26.pdf",
+        "url_source": "https://www.uco.es/eps/es/programas-asignaturas-ing-elect-industrial"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Electrónica Industrial",
+        "year": 3,
+        "name": "Electrónica Digital",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/101354es_2025-26.pdf",
+        "url_source": "https://www.uco.es/eps/es/programas-asignaturas-ing-elect-industrial"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Electrónica Industrial",
+        "year": 3,
+        "name": "Electrónica de Potencia",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/101355es_2025-26.pdf",
+        "url_source": "https://www.uco.es/eps/es/programas-asignaturas-ing-elect-industrial"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Electrónica Industrial",
+        "year": 3,
+        "name": "Ingeniería de Control",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/101359es_2025-26.pdf",
+        "url_source": "https://www.uco.es/eps/es/programas-asignaturas-ing-elect-industrial"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Electrónica Industrial",
+        "year": 3,
+        "name": "Instrumentación Electrónica",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/101351es_2025-26.pdf",
+        "url_source": "https://www.uco.es/eps/es/programas-asignaturas-ing-elect-industrial"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Electrónica Industrial",
+        "year": 3,
+        "name": "Automatización Industrial",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/101356es_2025-26.pdf",
+        "url_source": "https://www.uco.es/eps/es/programas-asignaturas-ing-elect-industrial"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Electrónica Industrial",
+        "year": 3,
+        "name": "Tecnología Electrónica Aplicada",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/101358es_2025-26.pdf",
+        "url_source": "https://www.uco.es/eps/es/programas-asignaturas-ing-elect-industrial"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Electrónica Industrial",
+        "year": 3,
+        "name": "Microcontroladores",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/101360es_2025-26.pdf",
+        "url_source": "https://www.uco.es/eps/es/programas-asignaturas-ing-elect-industrial"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Electrónica Industrial",
+        "year": 3,
+        "name": "Materiales Industriales en Aplicaciones Eléctricas y Electrónicas",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/101363es_2025-26.pdf",
+        "url_source": "https://www.uco.es/eps/es/programas-asignaturas-ing-elect-industrial"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Electrónica Industrial",
+        "year": 4,
+        "name": "Proyectos",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/101349es_2025-26.pdf",
+        "url_source": "https://www.uco.es/eps/es/programas-asignaturas-ing-elect-industrial"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Electrónica Industrial",
+        "year": 4,
+        "name": "Electrotecnia Aplicada",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/101350es_2025-26.pdf",
+        "url_source": "https://www.uco.es/eps/es/programas-asignaturas-ing-elect-industrial"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Electrónica Industrial",
+        "year": 4,
+        "name": "Sistemas Automatizados",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/101361es_2025-26.pdf",
+        "url_source": "https://www.uco.es/eps/es/programas-asignaturas-ing-elect-industrial"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Electrónica Industrial",
+        "year": 4,
+        "name": "Diseño de Circuitos Electrónicos y Microelectrónicos",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/101362es_2025-26.pdf",
+        "url_source": "https://www.uco.es/eps/es/programas-asignaturas-ing-elect-industrial"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Electrónica Industrial",
+        "year": 4,
+        "name": "Informática Industrial",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/101357es_2025-26.pdf",
+        "url_source": "https://www.uco.es/eps/es/programas-asignaturas-ing-elect-industrial"
+    }
+]

@@ -1021,3 +1021,18 @@
 *  **Session:** Ingesta de Datos UCO: Fase PC y Fusión
 *  **Description:** Implementación y ejecución del protocolo de cosecha de datos de la UCO en entorno local (PC) para superar las limitaciones de memoria en Android. Creación del script `uco_harvester_pc.py` con soporte para los 8 arquetipos de navegación HTML detectados y aplicación de la matriz de exclusión estricta. Fusión posterior de los datos cosechados con el respaldo de contenidos (`uco_data_backup.json`) y preparación de la carga masiva en servidor mediante `uco_pdf_processor.py` e `import_uco_data`.
 
+
+# 30/12/2025
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V20.md
+## PLUTO
+*  **Session:** Ingesta de Datos UCO - Cambio de Estrategia a Carga Manual
+*  **Description:** Sesión enfocada en la ingesta de datos de la Universidad de Córdoba tras la purga completa de sus registros en la base de datos. Se abandona el descubrimiento automático por Selenium en favor de una carga hardcodeada de 31 URLs de planificación recopiladas manualmente. El objetivo es implementar el script UCO_HARVESTER_V19 para procesar la estructura de acordeones y tablas de la UCO, aplicando filtros agresivos de exclusión de contenidos no académicos. Se toma conocimiento de un cambio de planes inminente en la hoja de ruta por parte del usuario.
+
+# 2025-12-30
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V20.md
+## MAMC
+*  **Session:** UCO Ingesta V19: Scraping Dirigido
+*  **Description:** Implementación de mecanismo de ingesta para la Universidad de Córdoba mediante scraping dirigido por lista manual de URLs. Desarrollo del script 'UCO_HARVESTER_V19' para procesamiento local, integrando lógica de extracción de planificaciones académicas con BeautifulSoup, selectores de año por acordeón y filtrado estricto de asignaturas. Generación de JSON maestro para posterior carga en servidor.
+

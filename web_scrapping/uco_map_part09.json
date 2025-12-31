@@ -1,0 +1,522 @@
+[
+  {
+    "university": "Universidad de Córdoba",
+    "degree": "Grado en Medicina",
+    "year": 1,
+    "name": "Anatomía Humana: Cabeza y Esplacnología",
+    "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/100158es_2025-26.pdf",
+    "url_source": "https://www.uco.es/medicinayenfermeria/es/planificacion-ensenanza-med"
+  },
+  {
+    "university": "Universidad de Córdoba",
+    "degree": "Grado en Medicina",
+    "year": 1,
+    "name": "Anatomía Humana: Organogénesis y Aparato Locomotor",
+    "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/100157es_2025-26.pdf",
+    "url_source": "https://www.uco.es/medicinayenfermeria/es/planificacion-ensenanza-med"
+  },
+  {
+    "university": "Universidad de Córdoba",
+    "degree": "Grado en Medicina",
+    "year": 1,
+    "name": "Bases Moleculares en Biomedicina",
+    "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/100155es_2025-26.pdf",
+    "url_source": "https://www.uco.es/medicinayenfermeria/es/planificacion-ensenanza-med"
+  },
+  {
+    "university": "Universidad de Córdoba",
+    "degree": "Grado en Medicina",
+    "year": 1,
+    "name": "Biología Celular y Citogenética Humana",
+    "pdf_url": "https://www.uco.es/eguiado/guias/2021-22/100153es_2021-22.pdf",
+    "url_source": "https://www.uco.es/medicinayenfermeria/es/planificacion-ensenanza-med"
+  },
+  {
+    "university": "Universidad de Córdoba",
+    "degree": "Grado en Medicina",
+    "year": 1,
+    "name": "Bioquímica General Médica",
+    "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/100154es_2025-26.pdf",
+    "url_source": "https://www.uco.es/medicinayenfermeria/es/planificacion-ensenanza-med"
+  },
+  {
+    "university": "Universidad de Córdoba",
+    "degree": "Grado en Medicina",
+    "year": 1,
+    "name": "Documentación e Inteligencia Artificial en Medicina. Historia de la Medicina",
+    "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/145004es_2025-26.pdf",
+    "url_source": "https://www.uco.es/medicinayenfermeria/es/planificacion-ensenanza-med"
+  },
+  {
+    "university": "Universidad de Córdoba",
+    "degree": "Grado en Medicina",
+    "year": 1,
+    "name": "Fisiología Especial",
+    "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/100162es_2025-26.pdf",
+    "url_source": "https://www.uco.es/medicinayenfermeria/es/planificacion-ensenanza-med"
+  },
+  {
+    "university": "Universidad de Córdoba",
+    "degree": "Grado en Medicina",
+    "year": 1,
+    "name": "Fisiología General",
+    "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/100156es_2025-26.pdf",
+    "url_source": "https://www.uco.es/medicinayenfermeria/es/planificacion-ensenanza-med"
+  },
+  {
+    "university": "Universidad de Córdoba",
+    "degree": "Grado en Medicina",
+    "year": 1,
+    "name": "Histología Médica I",
+    "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/100160es_2025-26.pdf",
+    "url_source": "https://www.uco.es/medicinayenfermeria/es/planificacion-ensenanza-med"
+  },
+  {
+    "university": "Universidad de Córdoba",
+    "degree": "Grado en Medicina",
+    "year": 1,
+    "name": "Introducción a la Patología: Parámetros Vitales y soporte Vital Básico",
+    "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/100165es_2025-26.pdf",
+    "url_source": "https://www.uco.es/medicinayenfermeria/es/planificacion-ensenanza-med"
+  },
+  {
+    "university": "Universidad de Córdoba",
+    "degree": "Grado en Medicina",
+    "year": 2,
+    "name": "Anatomía Humana: Estesiología y Sistema Nervioso",
+    "pdf_url": "http://www.uco.es/eguiado/guias/2025-26/100159es_2025-26.pdf",
+    "url_source": "https://www.uco.es/medicinayenfermeria/es/planificacion-ensenanza-med"
+  },
+  {
+    "university": "Universidad de Córdoba",
+    "degree": "Grado en Medicina",
+    "year": 2,
+    "name": "Bioquímica Clínica y análisis Clínicos",
+    "pdf_url": "http://www.uco.es/eguiado/guias/2025-26/100201es_2025-26.pdf",
+    "url_source": "https://www.uco.es/medicinayenfermeria/es/planificacion-ensenanza-med"
+  },
+  {
+    "university": "Universidad de Córdoba",
+    "degree": "Grado en Medicina",
+    "year": 2,
+    "name": "Comunicación Asistencial",
+    "pdf_url": "http://www.uco.es/eguiado/guias/2025-26/100171es_2025-26.pdf",
+    "url_source": "https://www.uco.es/medicinayenfermeria/es/planificacion-ensenanza-med"
+  },
+  {
+    "university": "Universidad de Córdoba",
+    "degree": "Grado en Medicina",
+    "year": 2,
+    "name": "Farmacología Humana",
+    "pdf_url": "http://www.uco.es/eguiado/guias/2025-26/100197es_2025-26.pdf",
+    "url_source": "https://www.uco.es/medicinayenfermeria/es/planificacion-ensenanza-med"
+  },
+  {
+    "university": "Universidad de Córdoba",
+    "degree": "Grado en Medicina",
+    "year": 2,
+    "name": "Histología Médica II",
+    "pdf_url": "http://www.uco.es/eguiado/guias/2025-26/100161es_2025-26.pdf",
+    "url_source": "https://www.uco.es/medicinayenfermeria/es/planificacion-ensenanza-med"
+  },
+  {
+    "university": "Universidad de Córdoba",
+    "degree": "Grado en Medicina",
+    "year": 2,
+    "name": "Inmunología",
+    "pdf_url": "http://www.uco.es/eguiado/guias/2025-26/100164es_2025-26.pdf",
+    "url_source": "https://www.uco.es/medicinayenfermeria/es/planificacion-ensenanza-med"
+  },
+  {
+    "university": "Universidad de Córdoba",
+    "degree": "Grado en Medicina",
+    "year": 2,
+    "name": "Inmunología Clínica",
+    "pdf_url": "http://www.uco.es/eguiado/guias/2025-26/100183es_2025-26.pdf",
+    "url_source": "https://www.uco.es/medicinayenfermeria/es/planificacion-ensenanza-med"
+  },
+  {
+    "university": "Universidad de Córdoba",
+    "degree": "Grado en Medicina",
+    "year": 2,
+    "name": "Neurofisiología",
+    "pdf_url": "http://www.uco.es/eguiado/guias/2025-26/100163es_2025-26.pdf",
+    "url_source": "https://www.uco.es/medicinayenfermeria/es/planificacion-ensenanza-med"
+  },
+  {
+    "university": "Universidad de Córdoba",
+    "degree": "Grado en Medicina",
+    "year": 2,
+    "name": "Patología General, Semiología Clínica y Medicina de Familia y Comunitaria",
+    "pdf_url": "http://www.uco.es/eguiado/guias/2025-26/100185es_2025-26.pdf",
+    "url_source": "https://www.uco.es/medicinayenfermeria/es/planificacion-ensenanza-med"
+  },
+  {
+    "university": "Universidad de Córdoba",
+    "degree": "Grado en Medicina",
+    "year": 2,
+    "name": "Procedimientos Quirúrgicos",
+    "pdf_url": "http://www.uco.es/eguiado/guias/2025-26/100198es_2025-26.pdf",
+    "url_source": "https://www.uco.es/medicinayenfermeria/es/planificacion-ensenanza-med"
+  },
+  {
+    "university": "Universidad de Córdoba",
+    "degree": "Grado en Medicina",
+    "year": 2,
+    "name": "Psicología Médica",
+    "pdf_url": "http://www.uco.es/eguiado/guias/2025-26/100191es_2025-26.pdf",
+    "url_source": "https://www.uco.es/medicinayenfermeria/es/planificacion-ensenanza-med"
+  },
+  {
+    "university": "Universidad de Córdoba",
+    "degree": "Grado en Medicina",
+    "year": 2,
+    "name": "Radiología General",
+    "pdf_url": "http://www.uco.es/eguiado/guias/2025-26/100194es_2025-26.pdf",
+    "url_source": "https://www.uco.es/medicinayenfermeria/es/planificacion-ensenanza-med"
+  },
+  {
+    "university": "Universidad de Córdoba",
+    "degree": "Grado en Medicina",
+    "year": 3,
+    "name": "Anatomía Patológica",
+    "pdf_url": "http://www.uco.es/eguiado/guias/2025-26/102809es_2025-26.pdf",
+    "url_source": "https://www.uco.es/medicinayenfermeria/es/planificacion-ensenanza-med"
+  },
+  {
+    "university": "Universidad de Córdoba",
+    "degree": "Grado en Medicina",
+    "year": 3,
+    "name": "Aplicación Clínica de las ciencias Básicas Médicas",
+    "pdf_url": "http://www.uco.es/eguiado/guias/2025-26/102814es_2025-26.pdf",
+    "url_source": "https://www.uco.es/medicinayenfermeria/es/planificacion-ensenanza-med"
+  },
+  {
+    "university": "Universidad de Córdoba",
+    "degree": "Grado en Medicina",
+    "year": 3,
+    "name": "Enfermedades Endocrino-Metabólicas",
+    "pdf_url": "http://www.uco.es/eguiado/guias/2025-26/100179es_2025-26.pdf",
+    "url_source": "https://www.uco.es/medicinayenfermeria/es/planificacion-ensenanza-med"
+  },
+  {
+    "university": "Universidad de Córdoba",
+    "degree": "Grado en Medicina",
+    "year": 3,
+    "name": "Enfermedades del Aparato Digestivo",
+    "pdf_url": "http://www.uco.es/eguiado/guias/2025-26/102815es_2025-26.pdf",
+    "url_source": "https://www.uco.es/medicinayenfermeria/es/planificacion-ensenanza-med"
+  },
+  {
+    "university": "Universidad de Córdoba",
+    "degree": "Grado en Medicina",
+    "year": 3,
+    "name": "Epidemiología general",
+    "pdf_url": "http://www.uco.es/eguiado/guias/2025-26/102812es_2025-26.pdf",
+    "url_source": "https://www.uco.es/medicinayenfermeria/es/planificacion-ensenanza-med"
+  },
+  {
+    "university": "Universidad de Córdoba",
+    "degree": "Grado en Medicina",
+    "year": 3,
+    "name": "Hematología Médica",
+    "pdf_url": "http://www.uco.es/eguiado/guias/2025-26/102816es_2025-26.pdf",
+    "url_source": "https://www.uco.es/medicinayenfermeria/es/planificacion-ensenanza-med"
+  },
+  {
+    "university": "Universidad de Córdoba",
+    "degree": "Grado en Medicina",
+    "year": 3,
+    "name": "Introducción a la Investigación y Bioestadística",
+    "pdf_url": "http://www.uco.es/eguiado/guias/2025-26/102813es_2025-26.pdf",
+    "url_source": "https://www.uco.es/medicinayenfermeria/es/planificacion-ensenanza-med"
+  },
+  {
+    "university": "Universidad de Córdoba",
+    "degree": "Grado en Medicina",
+    "year": 3,
+    "name": "Microbiología Médica y Enfermedades Infeccionsas II",
+    "pdf_url": "http://www.uco.es/eguiado/guias/2025-26/102819es_2025-26.pdf",
+    "url_source": "https://www.uco.es/medicinayenfermeria/es/planificacion-ensenanza-med"
+  },
+  {
+    "university": "Universidad de Córdoba",
+    "degree": "Grado en Medicina",
+    "year": 3,
+    "name": "Microbiología Médica y Enfermedades Infecciosas I",
+    "pdf_url": "http://www.uco.es/eguiado/guias/2025-26/102818es_2025-26.pdf",
+    "url_source": "https://www.uco.es/medicinayenfermeria/es/planificacion-ensenanza-med"
+  },
+  {
+    "university": "Universidad de Córdoba",
+    "degree": "Grado en Medicina",
+    "year": 3,
+    "name": "Nutrición",
+    "pdf_url": "http://www.uco.es/eguiado/guias/2025-26/100184es_2025-26.pdf",
+    "url_source": "https://www.uco.es/medicinayenfermeria/es/planificacion-ensenanza-med"
+  },
+  {
+    "university": "Universidad de Córdoba",
+    "degree": "Grado en Medicina",
+    "year": 3,
+    "name": "Obstetricia y Ginecología",
+    "pdf_url": "http://www.uco.es/eguiado/guias/2025-26/100189es_2025-26.pdf",
+    "url_source": "https://www.uco.es/medicinayenfermeria/es/planificacion-ensenanza-med"
+  },
+  {
+    "university": "Universidad de Córdoba",
+    "degree": "Grado en Medicina",
+    "year": 4,
+    "name": "Enfermedades Cardiovasculares",
+    "pdf_url": "http://www.uco.es/eguiado/guias/2025-26/100173es_2025-26.pdf",
+    "url_source": "https://www.uco.es/medicinayenfermeria/es/planificacion-ensenanza-med"
+  },
+  {
+    "university": "Universidad de Córdoba",
+    "degree": "Grado en Medicina",
+    "year": 4,
+    "name": "Enfermedades del Aparato Locomotor",
+    "pdf_url": "http://www.uco.es/eguiado/guias/2025-26/100178es_2025-26.pdf",
+    "url_source": "https://www.uco.es/medicinayenfermeria/es/planificacion-ensenanza-med"
+  },
+  {
+    "university": "Universidad de Córdoba",
+    "degree": "Grado en Medicina",
+    "year": 4,
+    "name": "Enfermedades del Aparato Respiratorio",
+    "pdf_url": "http://www.uco.es/eguiado/guias/2025-26/100174es_2025-26.pdf",
+    "url_source": "https://www.uco.es/medicinayenfermeria/es/planificacion-ensenanza-med"
+  },
+  {
+    "university": "Universidad de Córdoba",
+    "degree": "Grado en Medicina",
+    "year": 4,
+    "name": "Enfermedades del Sistema Nervioso",
+    "pdf_url": "http://www.uco.es/eguiado/guias/2025-26/100176es_2025-26.pdf",
+    "url_source": "https://www.uco.es/medicinayenfermeria/es/planificacion-ensenanza-med"
+  },
+  {
+    "university": "Universidad de Córdoba",
+    "degree": "Grado en Medicina",
+    "year": 4,
+    "name": "Oftalmología",
+    "pdf_url": "http://www.uco.es/eguiado/guias/2025-26/100187es_2025-26.pdf",
+    "url_source": "https://www.uco.es/medicinayenfermeria/es/planificacion-ensenanza-med"
+  },
+  {
+    "university": "Universidad de Córdoba",
+    "degree": "Grado en Medicina",
+    "year": 4,
+    "name": "Oncología Médica",
+    "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/102817es_2025-26.pdf",
+    "url_source": "https://www.uco.es/medicinayenfermeria/es/planificacion-ensenanza-med"
+  },
+  {
+    "university": "Universidad de Córdoba",
+    "degree": "Grado en Medicina",
+    "year": 4,
+    "name": "Otorrinolaringología",
+    "pdf_url": "http://www.uco.es/eguiado/guias/2025-26/100188es_2025-26.pdf",
+    "url_source": "https://www.uco.es/medicinayenfermeria/es/planificacion-ensenanza-med"
+  },
+  {
+    "university": "Universidad de Córdoba",
+    "degree": "Grado en Medicina",
+    "year": 4,
+    "name": "Pediatría",
+    "pdf_url": "http://www.uco.es/eguiado/guias/2025-26/100190es_2025-26.pdf",
+    "url_source": "https://www.uco.es/medicinayenfermeria/es/planificacion-ensenanza-med"
+  },
+  {
+    "university": "Universidad de Córdoba",
+    "degree": "Grado en Medicina",
+    "year": 4,
+    "name": "Psiquiatría",
+    "pdf_url": "http://www.uco.es/eguiado/guias/2025-26/100192es_2025-26.pdf",
+    "url_source": "https://www.uco.es/medicinayenfermeria/es/planificacion-ensenanza-med"
+  },
+  {
+    "university": "Universidad de Córdoba",
+    "degree": "Grado en Medicina",
+    "year": 4,
+    "name": "Rehabilitación",
+    "pdf_url": "http://www.uco.es/eguiado/guias/2025-26/100196es_2025-26.pdf",
+    "url_source": "https://www.uco.es/medicinayenfermeria/es/planificacion-ensenanza-med"
+  },
+  {
+    "university": "Universidad de Córdoba",
+    "degree": "Grado en Medicina",
+    "year": 5,
+    "name": "Anestesiología, uidados críticos, posquirúrgicos y terapéutica del dolor",
+    "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/145002es_2025-26.pdf",
+    "url_source": "https://www.uco.es/medicinayenfermeria/es/planificacion-ensenanza-med"
+  },
+  {
+    "university": "Universidad de Córdoba",
+    "degree": "Grado en Medicina",
+    "year": 5,
+    "name": "Bases Microbiológicas del uso racional de los antimicrobianos",
+    "pdf_url": "http://www.uco.es/eguiado/guias/2025-26/100211es_2025-26.pdf",
+    "url_source": "https://www.uco.es/medicinayenfermeria/es/planificacion-ensenanza-med"
+  },
+  {
+    "university": "Universidad de Córdoba",
+    "degree": "Grado en Medicina",
+    "year": 5,
+    "name": "Calidad Asistencial",
+    "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/100212es_2025-26.pdf",
+    "url_source": "https://www.uco.es/medicinayenfermeria/es/planificacion-ensenanza-med"
+  },
+  {
+    "university": "Universidad de Córdoba",
+    "degree": "Grado en Medicina",
+    "year": 5,
+    "name": "Cirugía Maxilofacial",
+    "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/102822es_2025-26.pdf",
+    "url_source": "https://www.uco.es/medicinayenfermeria/es/planificacion-ensenanza-med"
+  },
+  {
+    "university": "Universidad de Córdoba",
+    "degree": "Grado en Medicina",
+    "year": 5,
+    "name": "Cirugía Plástica, Estética y Reparadora",
+    "pdf_url": "http://www.uco.es/eguiado/guias/2025-26/100213es_2025-26.pdf",
+    "url_source": "https://www.uco.es/medicinayenfermeria/es/planificacion-ensenanza-med"
+  },
+  {
+    "university": "Universidad de Córdoba",
+    "degree": "Grado en Medicina",
+    "year": 5,
+    "name": "Cuidados continuos. Medicina paliativa aplicada al paciente con cáncer",
+    "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/145003es_2025-26.pdf",
+    "url_source": "https://www.uco.es/medicinayenfermeria/es/planificacion-ensenanza-med"
+  },
+  {
+    "university": "Universidad de Córdoba",
+    "degree": "Grado en Medicina",
+    "year": 5,
+    "name": "Dermatología Médico-Quirúrgica y Venereología",
+    "pdf_url": "http://www.uco.es/eguiado/guias/2025-26/100186es_2025-26.pdf",
+    "url_source": "https://www.uco.es/medicinayenfermeria/es/planificacion-ensenanza-med"
+  },
+  {
+    "university": "Universidad de Córdoba",
+    "degree": "Grado en Medicina",
+    "year": 5,
+    "name": "Enfermedades Tromboembólicas en el Siglo XXI",
+    "pdf_url": "http://www.uco.es/eguiado/guias/2025-26/102558es_2025-26.pdf",
+    "url_source": "https://www.uco.es/medicinayenfermeria/es/planificacion-ensenanza-med"
+  },
+  {
+    "university": "Universidad de Córdoba",
+    "degree": "Grado en Medicina",
+    "year": 5,
+    "name": "Enfermedades del Aparato Nefrourinario",
+    "pdf_url": "http://www.uco.es/eguiado/guias/2025-26/100177es_2025-26.pdf",
+    "url_source": "https://www.uco.es/medicinayenfermeria/es/planificacion-ensenanza-med"
+  },
+  {
+    "university": "Universidad de Córdoba",
+    "degree": "Grado en Medicina",
+    "year": 5,
+    "name": "Ensayos clínicos y normas de buena práctica clínica",
+    "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/145001es_2025-26.pdf",
+    "url_source": "https://www.uco.es/medicinayenfermeria/es/planificacion-ensenanza-med"
+  },
+  {
+    "university": "Universidad de Córdoba",
+    "degree": "Grado en Medicina",
+    "year": 5,
+    "name": "Inglés I",
+    "pdf_url": "http://www.uco.es/eguiado/guias/2025-26/100218es_2025-26.pdf",
+    "url_source": "https://www.uco.es/medicinayenfermeria/es/planificacion-ensenanza-med"
+  },
+  {
+    "university": "Universidad de Córdoba",
+    "degree": "Grado en Medicina",
+    "year": 5,
+    "name": "Inglés II",
+    "pdf_url": "http://www.uco.es/eguiado/guias/2025-26/100219es_2025-26.pdf",
+    "url_source": "https://www.uco.es/medicinayenfermeria/es/planificacion-ensenanza-med"
+  },
+  {
+    "university": "Universidad de Córdoba",
+    "degree": "Grado en Medicina",
+    "year": 5,
+    "name": "Integración Clínica: Enfermo Pluripatológico",
+    "pdf_url": "http://www.uco.es/eguiado/guias/2025-26/100193es_2025-26.pdf",
+    "url_source": "https://www.uco.es/medicinayenfermeria/es/planificacion-ensenanza-med"
+  },
+  {
+    "university": "Universidad de Córdoba",
+    "degree": "Grado en Medicina",
+    "year": 5,
+    "name": "Investigación en Biomedicina",
+    "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/102811es_2025-26.pdf",
+    "url_source": "https://www.uco.es/medicinayenfermeria/es/planificacion-ensenanza-med"
+  },
+  {
+    "university": "Universidad de Córdoba",
+    "degree": "Grado en Medicina",
+    "year": 5,
+    "name": "Manejo Empírico de los síndromes infecciosos",
+    "pdf_url": "http://www.uco.es/eguiado/guias/2025-26/100221es_2025-26.pdf",
+    "url_source": "https://www.uco.es/medicinayenfermeria/es/planificacion-ensenanza-med"
+  },
+  {
+    "university": "Universidad de Córdoba",
+    "degree": "Grado en Medicina",
+    "year": 5,
+    "name": "Medicina Intensiva",
+    "pdf_url": "http://www.uco.es/eguiado/guias/2025-26/100222es_2025-26.pdf",
+    "url_source": "https://www.uco.es/medicinayenfermeria/es/planificacion-ensenanza-med"
+  },
+  {
+    "university": "Universidad de Córdoba",
+    "degree": "Grado en Medicina",
+    "year": 5,
+    "name": "Medicina Legal y Ética",
+    "pdf_url": "http://www.uco.es/eguiado/guias/2025-26/100172es_2025-26.pdf",
+    "url_source": "https://www.uco.es/medicinayenfermeria/es/planificacion-ensenanza-med"
+  },
+  {
+    "university": "Universidad de Córdoba",
+    "degree": "Grado en Medicina",
+    "year": 5,
+    "name": "Medicina Preventiva y Salud Pública",
+    "pdf_url": "http://www.uco.es/eguiado/guias/2025-26/100170es_2025-26.pdf",
+    "url_source": "https://www.uco.es/medicinayenfermeria/es/planificacion-ensenanza-med"
+  },
+  {
+    "university": "Universidad de Córdoba",
+    "degree": "Grado en Medicina",
+    "year": 5,
+    "name": "Microbiología Clínica",
+    "pdf_url": "http://www.uco.es/eguiado/guias/2025-26/100224es_2025-26.pdf",
+    "url_source": "https://www.uco.es/medicinayenfermeria/es/planificacion-ensenanza-med"
+  },
+  {
+    "university": "Universidad de Córdoba",
+    "degree": "Grado en Medicina",
+    "year": 5,
+    "name": "Radiología Clínica",
+    "pdf_url": "http://www.uco.es/eguiado/guias/2025-26/100195es_2025-26.pdf",
+    "url_source": "https://www.uco.es/medicinayenfermeria/es/planificacion-ensenanza-med"
+  },
+  {
+    "university": "Universidad de Córdoba",
+    "degree": "Grado en Medicina",
+    "year": 5,
+    "name": "Trasplante de Órganos",
+    "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/102821es_2025-26.pdf",
+    "url_source": "https://www.uco.es/medicinayenfermeria/es/planificacion-ensenanza-med"
+  },
+  {
+    "university": "Universidad de Córdoba",
+    "degree": "Grado en Medicina",
+    "year": 5,
+    "name": "Urgencias, Emergencias e Intoxicaciones",
+    "pdf_url": "http://www.uco.es/eguiado/guias/2025-26/100180es_2025-26.pdf",
+    "url_source": "https://www.uco.es/medicinayenfermeria/es/planificacion-ensenanza-med"
+  }
+]

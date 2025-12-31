@@ -1,0 +1,554 @@
+[
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Derecho",
+        "year": 1,
+        "name": "Historia del Derecho",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100043es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/derecho/es/planificacion-de-la-ensenanza-derecho.html"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Derecho",
+        "year": 1,
+        "name": "Derecho Romano",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100044es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/derecho/es/planificacion-de-la-ensenanza-derecho.html"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Derecho",
+        "year": 1,
+        "name": "Constitución y Ordenación de las Fuentes del Derecho",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100045es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/derecho/es/planificacion-de-la-ensenanza-derecho.html"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Derecho",
+        "year": 1,
+        "name": "Teoría del Derecho",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100046es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/derecho/es/planificacion-de-la-ensenanza-derecho.html"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Derecho",
+        "year": 1,
+        "name": "Economía y Empresa",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100047es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/derecho/es/planificacion-de-la-ensenanza-derecho.html"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Derecho",
+        "year": 1,
+        "name": "Órganos constitucionales y estructura territorial del Estado",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100048es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/derecho/es/planificacion-de-la-ensenanza-derecho.html"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Derecho",
+        "year": 1,
+        "name": "Derecho Civil. Parte General",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100049es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/derecho/es/planificacion-de-la-ensenanza-derecho.html"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Derecho",
+        "year": 1,
+        "name": "La Organización y el Derecho de la Administración",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100050es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/derecho/es/planificacion-de-la-ensenanza-derecho.html"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Derecho",
+        "year": 1,
+        "name": "Oratoria y fuentes de información jurídica",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100051es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/derecho/es/planificacion-de-la-ensenanza-derecho.html"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Derecho",
+        "year": 2,
+        "name": "Sistema constitucional de Derechos y Libertades",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100052es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/derecho/es/planificacion-de-la-ensenanza-derecho.html"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Derecho",
+        "year": 2,
+        "name": "Derecho Penal I",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100053es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/derecho/es/planificacion-de-la-ensenanza-derecho.html"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Derecho",
+        "year": 2,
+        "name": "Derecho de Obligaciones y Contratos",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100054es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/derecho/es/planificacion-de-la-ensenanza-derecho.html"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Derecho",
+        "year": 2,
+        "name": "Régimen jurídico básico y control de la Administración",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100055es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/derecho/es/planificacion-de-la-ensenanza-derecho.html"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Derecho",
+        "year": 2,
+        "name": "Derecho y libertad religiosa",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100056es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/derecho/es/planificacion-de-la-ensenanza-derecho.html"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Derecho",
+        "year": 2,
+        "name": "Modos y medios de la actividad administrativa",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100057es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/derecho/es/planificacion-de-la-ensenanza-derecho.html"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Derecho",
+        "year": 2,
+        "name": "Derecho Penal II",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100058es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/derecho/es/planificacion-de-la-ensenanza-derecho.html"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Derecho",
+        "year": 2,
+        "name": "Introducción al Derecho Procesal",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100059es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/derecho/es/planificacion-de-la-ensenanza-derecho.html"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Derecho",
+        "year": 2,
+        "name": "El empresario y su estatuto jurídico",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100060es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/derecho/es/planificacion-de-la-ensenanza-derecho.html"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Derecho",
+        "year": 2,
+        "name": "Derecho Financiero y Tributario I",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100061es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/derecho/es/planificacion-de-la-ensenanza-derecho.html"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Derecho",
+        "year": 3,
+        "name": "Derecho Financiero y Tributario II",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100062es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/derecho/es/planificacion-de-la-ensenanza-derecho.html"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Derecho",
+        "year": 3,
+        "name": "Derecho Internacional Público",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100063es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/derecho/es/planificacion-de-la-ensenanza-derecho.html"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Derecho",
+        "year": 3,
+        "name": "Derecho Procesal Civil I",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100064es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/derecho/es/planificacion-de-la-ensenanza-derecho.html"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Derecho",
+        "year": 3,
+        "name": "Derecho del Trabajo",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100065es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/derecho/es/planificacion-de-la-ensenanza-derecho.html"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Derecho",
+        "year": 3,
+        "name": "Derecho de Sociedades",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100066es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/derecho/es/planificacion-de-la-ensenanza-derecho.html"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Derecho",
+        "year": 3,
+        "name": "Derechos Reales",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100067es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/derecho/es/planificacion-de-la-ensenanza-derecho.html"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Derecho",
+        "year": 3,
+        "name": "Derecho de la Unión Europea",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100068es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/derecho/es/planificacion-de-la-ensenanza-derecho.html"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Derecho",
+        "year": 3,
+        "name": "Derecho Procesal Civil II",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100069es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/derecho/es/planificacion-de-la-ensenanza-derecho.html"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Derecho",
+        "year": 3,
+        "name": "Derecho Penal III",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100070es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/derecho/es/planificacion-de-la-ensenanza-derecho.html"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Derecho",
+        "year": 4,
+        "name": "Contratación Mercantil y Derecho Concursal",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100071es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/derecho/es/planificacion-de-la-ensenanza-derecho.html"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Derecho",
+        "year": 4,
+        "name": "Derecho de Familia y Sucesiones",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100072es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/derecho/es/planificacion-de-la-ensenanza-derecho.html"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Derecho",
+        "year": 4,
+        "name": "Derecho Procesal Penal",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100073es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/derecho/es/planificacion-de-la-ensenanza-derecho.html"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Derecho",
+        "year": 4,
+        "name": "Derecho de la Seguridad Social",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100074es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/derecho/es/planificacion-de-la-ensenanza-derecho.html"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Derecho",
+        "year": 4,
+        "name": "Filosofía del Derecho",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100076es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/derecho/es/planificacion-de-la-ensenanza-derecho.html"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Derecho",
+        "year": 4,
+        "name": "Derecho Internacional Privado",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100077es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/derecho/es/planificacion-de-la-ensenanza-derecho.html"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Derecho",
+        "year": 1,
+        "name": "Teoría de los Derechos Humanos",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100225es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/derecho/es/planificacion-de-la-ensenanza-derecho.html"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Derecho",
+        "year": 1,
+        "name": "Conflictos: Historia y Presente y sus Técnicas de Resolución",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100226es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/derecho/es/planificacion-de-la-ensenanza-derecho.html"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Derecho",
+        "year": 1,
+        "name": "Derecho y Humanidades",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100227es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/derecho/es/planificacion-de-la-ensenanza-derecho.html"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Derecho",
+        "year": 1,
+        "name": "Derecho Romano y Unión Europea. Fundamentos Jurídicos Clásicos de la Democracia.",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100228es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/derecho/es/planificacion-de-la-ensenanza-derecho.html"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Derecho",
+        "year": 3,
+        "name": "Servicios Públicos y Actividades Reguladas",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100080es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/derecho/es/planificacion-de-la-ensenanza-derecho.html"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Derecho",
+        "year": 3,
+        "name": "La Oficina Judicial",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100082es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/derecho/es/planificacion-de-la-ensenanza-derecho.html"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Derecho",
+        "year": 3,
+        "name": "Contratación Civil",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100089es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/derecho/es/planificacion-de-la-ensenanza-derecho.html"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Derecho",
+        "year": 3,
+        "name": "Instituciones Públicas de Andalucía",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100092es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/derecho/es/planificacion-de-la-ensenanza-derecho.html"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Derecho",
+        "year": 4,
+        "name": "Derecho Registral Inmobiliario",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100079es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/derecho/es/planificacion-de-la-ensenanza-derecho.html"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Derecho",
+        "year": 4,
+        "name": "Derecho Procesal Laboral",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100081es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/derecho/es/planificacion-de-la-ensenanza-derecho.html"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Derecho",
+        "year": 4,
+        "name": "Derecho Penal Económico",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100083es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/derecho/es/planificacion-de-la-ensenanza-derecho.html"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Derecho",
+        "year": 4,
+        "name": "Derecho de los Consumidores",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100085es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/derecho/es/planificacion-de-la-ensenanza-derecho.html"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Derecho",
+        "year": 4,
+        "name": "Procedimientos Tributarios",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100088es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/derecho/es/planificacion-de-la-ensenanza-derecho.html"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Derecho",
+        "year": 4,
+        "name": "Derecho Urbanístico y de la Ordenación del Territorio",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100090es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/derecho/es/planificacion-de-la-ensenanza-derecho.html"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Derecho",
+        "year": 4,
+        "name": "Derecho y Nuevas Tecnologías",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100093es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/derecho/es/planificacion-de-la-ensenanza-derecho.html"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Derecho",
+        "year": 4,
+        "name": "Igualdad y Estado Social",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100094es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/derecho/es/planificacion-de-la-ensenanza-derecho.html"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Derecho",
+        "year": 4,
+        "name": "Intervención administrativa para la protección del medio ambiente y la seguridad industrial",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100152es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/derecho/es/planificacion-de-la-ensenanza-derecho.html"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Derecho",
+        "year": 3,
+        "name": "Técnicas de Comunicación y Negociación",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100133es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/derecho/es/planificacion-de-la-ensenanza-derecho.html"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Derecho",
+        "year": 3,
+        "name": "Inglés Comercial",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100134es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/derecho/es/planificacion-de-la-ensenanza-derecho.html"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Derecho",
+        "year": 3,
+        "name": "Contabilidad de Sociedades",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100138es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/derecho/es/planificacion-de-la-ensenanza-derecho.html"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Derecho",
+        "year": 3,
+        "name": "Economía de la Unión Europea",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100140es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/derecho/es/planificacion-de-la-ensenanza-derecho.html"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Derecho",
+        "year": 3,
+        "name": "Fuentes de Información Económica de la Unión Europea",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100141es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/derecho/es/planificacion-de-la-ensenanza-derecho.html"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Derecho",
+        "year": 3,
+        "name": "Métodos Matemáticos",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100145es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/derecho/es/planificacion-de-la-ensenanza-derecho.html"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Derecho",
+        "year": 3,
+        "name": "Derechos, Libertades Públicas y Actividad Empresarial",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100148es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/derecho/es/planificacion-de-la-ensenanza-derecho.html"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Derecho",
+        "year": 4,
+        "name": "Ética y Responsabilidad Social Corporativa",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100136es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/derecho/es/planificacion-de-la-ensenanza-derecho.html"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Derecho",
+        "year": 4,
+        "name": "Internacionalización de Empresas",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100137es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/derecho/es/planificacion-de-la-ensenanza-derecho.html"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Derecho",
+        "year": 4,
+        "name": "Consolidación de Estados Económicos y Financieros",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100139es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/derecho/es/planificacion-de-la-ensenanza-derecho.html"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Derecho",
+        "year": 4,
+        "name": "Desafíos Internacionales de la Política Económica",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100142es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/derecho/es/planificacion-de-la-ensenanza-derecho.html"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Derecho",
+        "year": 4,
+        "name": "Predicción Económica",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100143es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/derecho/es/planificacion-de-la-ensenanza-derecho.html"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Derecho",
+        "year": 4,
+        "name": "Análisis Matemático y Estadístico Práctico",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100144es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/derecho/es/planificacion-de-la-ensenanza-derecho.html"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Derecho",
+        "year": 4,
+        "name": "Derecho público económico",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100146es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/derecho/es/planificacion-de-la-ensenanza-derecho.html"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Derecho",
+        "year": 4,
+        "name": "Marco Jurídico de la Prevención de Riesgos Laborales",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100147es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/derecho/es/planificacion-de-la-ensenanza-derecho.html"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Derecho",
+        "year": 4,
+        "name": "Derecho Civil y Empresa Familiar",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100149es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/derecho/es/planificacion-de-la-ensenanza-derecho.html"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Derecho",
+        "year": 4,
+        "name": "Sistema Tributario II",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100150es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/derecho/es/planificacion-de-la-ensenanza-derecho.html"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Derecho",
+        "year": 4,
+        "name": "Derecho de Sociedades",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100151es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/derecho/es/planificacion-de-la-ensenanza-derecho.html"
+    }
+]

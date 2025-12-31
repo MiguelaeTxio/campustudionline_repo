@@ -1,0 +1,352 @@
+[
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Forestal",
+        "year": 1,
+        "name": "Matemáticas I",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2024-25/642001es_2024-25.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Forestal",
+        "year": 1,
+        "name": "Fundamentos Físicos de la Ingeniería I",
+        "pdf_url": "https://www.uco.es/etsiam/images/documentos/24-25/guias/642003_FF_ING_I_FORESTAL_2024-25.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Forestal",
+        "year": 1,
+        "name": "Química General",
+        "pdf_url": "https://www.uco.es/etsiam/images/documentos/24-25/guias/_tmp_101053es_2024-25.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Forestal",
+        "year": 1,
+        "name": "Bases Biológicas de la Producción Forestal",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2024-25/101055es_2024-25.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Forestal",
+        "year": 1,
+        "name": "Geología y Climatología",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2024-25/101058es_2024-25.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Forestal",
+        "year": 1,
+        "name": "Matemáticas II",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2024-25/642002es_2024-25.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Forestal",
+        "year": 1,
+        "name": "Fundamentos Físicos de la Ingeniería II",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2024-25/642004es_2024-25.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Forestal",
+        "year": 1,
+        "name": "Ampliación de Química y Bioquímica",
+        "pdf_url": "https://www.uco.es/etsiam/images/documentos/24-25/guias/AMPLIACI%C3%93N_DE_QU%C3%8DMICA_Y_BIOQU%C3%8DMICA_101054es_2024-25-7.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Forestal",
+        "year": 1,
+        "name": "Dibujo de Ingeniería",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2024-25/101056es_2024-25.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Forestal",
+        "year": 1,
+        "name": "Economía y Empresa",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2024-25/101057es_2024-25.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Forestal",
+        "year": 2,
+        "name": "Métodos y Paquetes Estadísticos",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2024-25/101051es_2024-25.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Forestal",
+        "year": 2,
+        "name": "Edafología",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2024-25/642025es_2024-25.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Forestal",
+        "year": 2,
+        "name": "Ecología y Fauna Forestal",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2024-25/642007es_2024-25.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Forestal",
+        "year": 2,
+        "name": "Geomática",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2024-25/101062es_2024-25.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Forestal",
+        "year": 2,
+        "name": "Maquinaría y Mecanización forestales",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2024-25/101064es_2024-25.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Forestal",
+        "year": 2,
+        "name": "Electrotecnia y Electrificación forestal",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2024-25/101066es_2024-25.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Forestal",
+        "year": 2,
+        "name": "Anatomía y Fisiología Vegetal",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2024-25/642005es_2024-25.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Forestal",
+        "year": 2,
+        "name": "Botánica forestal y Geobotánica",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2024-25/101059es_2024-25.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Forestal",
+        "year": 2,
+        "name": "Hidráulica Forestal",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2024-25/101065es_2024-25.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Forestal",
+        "year": 2,
+        "name": "Política y Legislación Forestal",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2024-25/642006es_2024-25.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Forestal",
+        "year": 2,
+        "name": "Patología y entomología forestal",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2024-25/101081es_2024-25.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Forestal",
+        "year": 2,
+        "name": "Vías y Obras Forestales",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2024-25/277001es_2024-25.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Forestal",
+        "year": 3,
+        "name": "Dasometría e Inventariación forestal",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2024-25/101068es_2024-25.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Forestal",
+        "year": 3,
+        "name": "Gestión de Caza y Pesca. Sistemas acuícolas",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2024-25/101077es_2024-25.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Forestal",
+        "year": 3,
+        "name": "Recursos genéticos forestales. Producción de planta forestal",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2024-25/101080es_2024-25.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Forestal",
+        "year": 3,
+        "name": "Hidrología forestal",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2024-25/101084es_2024-25.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Forestal",
+        "year": 3,
+        "name": "Jardinería y Paisajismo",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2024-25/277004es_2024-25.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Forestal",
+        "year": 3,
+        "name": "Aprovechamientos Forestales",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2024-25/101069es_2024-25.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Forestal",
+        "year": 3,
+        "name": "Pascicultura y Sistemas Agrosilvopastorales",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2024-25/101078es_2024-25.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Forestal",
+        "year": 3,
+        "name": "Repoblaciones Forestales. Recuperación de Espacios Degradados",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2024-25/101079es_2024-25.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Forestal",
+        "year": 3,
+        "name": "Fundamentos y defensa contra Incendios Forestales",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2024-25/101083es_2024-25.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Forestal",
+        "year": 3,
+        "name": "Construcciones Forestales",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2024-25/277002es_2024-25.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Forestal",
+        "year": 3,
+        "name": "Selvicultura General",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2024-25/277003es_2024-25.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Forestal",
+        "year": 4,
+        "name": "Proyectos y Evaluación de Impacto ambiental",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2024-25/101063es_2024-25.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Forestal",
+        "year": 4,
+        "name": "Ordenación y planificación del territorio forestal. Ordenación de Montes I",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2024-25/642008es_2024-25.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Forestal",
+        "year": 4,
+        "name": "Restauración Hidrológico-Forestal",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2024-25/101082es_2024-25.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Forestal",
+        "year": 4,
+        "name": "Fundamentos y Tecnología de la Madera",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2024-25/642012es_2024-25.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Forestal",
+        "year": 4,
+        "name": "Sociología Forestal",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2024-25/642011es_2024-25.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Forestal",
+        "year": 4,
+        "name": "Ordenación de Montes II",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2024-25/642009es_2024-25.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Forestal",
+        "year": 4,
+        "name": "Selvicultura Aplicada",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2024-25/642010es_2024-25.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Forestal",
+        "year": 4,
+        "name": "Biotecnología Forestal",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2025-26/642018es_2025-26.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Forestal",
+        "year": 4,
+        "name": "Enfermedades y Plagas Forestales",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/642013es_2025-26.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Forestal",
+        "year": 4,
+        "name": "Herramientas informáticas en Proyectos de Ingeniería Forestal",
+        "pdf_url": "https://www.uco.es/etsiam/images/documentos/25-26/guias/_tmp_642017en_2025-26-1.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Forestal",
+        "year": 4,
+        "name": "Precision Forestry",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2025-26/642015en_2025-26.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Forestal",
+        "year": 4,
+        "name": "Sistemas Agroforestales: La Dehesa",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2025-26/642014es_2025-26.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Forestal",
+        "year": 4,
+        "name": "Sistemas de Información Geográfica y Teledetección Forestal",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2025-26/642016es_2025-26.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Forestal",
+        "year": 4,
+        "name": "Entorno urbano: Arboricultura y gestión del paisaje",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2025-26/642024es_2025-26.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Forestal",
+        "year": 4,
+        "name": "Gestión de empresas, recursos naturales y valoración",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2025-26/642021es_2025-26.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Forestal",
+        "year": 4,
+        "name": "Organización y Métodos para la Extinción de incendios forestales",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2025-26/642020es_2025-26.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Forestal",
+        "year": 4,
+        "name": "Wildlife Mangement and Conservation",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2025-26/642019en_2025-26.pdf"
+    }
+]

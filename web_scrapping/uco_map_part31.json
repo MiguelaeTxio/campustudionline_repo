@@ -1,0 +1,434 @@
+[
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Itinerario Conjunto de Grado de Educación Primaria y Grado de Estudios Ingleses",
+        "year": 1,
+        "name": "Inglés Instrumental I (E.I)",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/100538es_2025-26.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/educacion/es/itinerario-conjunto-planificacion-de-la-ensenanza"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Itinerario Conjunto de Grado de Educación Primaria y Grado de Estudios Ingleses",
+        "year": 1,
+        "name": "Idioma Moderno I (Francés, Alemán, Árabe, Italiano) (E.I)",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/100738es_2025-26.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/educacion/es/itinerario-conjunto-planificacion-de-la-ensenanza"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Itinerario Conjunto de Grado de Educación Primaria y Grado de Estudios Ingleses",
+        "year": 1,
+        "name": "Lingüística General (E.I)",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/100535es_2025-26.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/educacion/es/itinerario-conjunto-planificacion-de-la-ensenanza"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Itinerario Conjunto de Grado de Educación Primaria y Grado de Estudios Ingleses",
+        "year": 1,
+        "name": "Pronunciación del Inglés I (E.I)",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/100547es_2025-26.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/educacion/es/itinerario-conjunto-planificacion-de-la-ensenanza"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Itinerario Conjunto de Grado de Educación Primaria y Grado de Estudios Ingleses",
+        "year": 1,
+        "name": "Imperio, Globalización y Diversidad en los Países de Habla (E.I)",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/100565es_2025-26.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/educacion/es/itinerario-conjunto-planificacion-de-la-ensenanza"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Itinerario Conjunto de Grado de Educación Primaria y Grado de Estudios Ingleses",
+        "year": 1,
+        "name": "Inglés Instrumental II",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/100539es_2025-26.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/educacion/es/itinerario-conjunto-planificacion-de-la-ensenanza"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Itinerario Conjunto de Grado de Educación Primaria y Grado de Estudios Ingleses",
+        "year": 1,
+        "name": "Teoría de la Literatura (E.I.)",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/100533es_2025-26.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/educacion/es/itinerario-conjunto-planificacion-de-la-ensenanza"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Itinerario Conjunto de Grado de Educación Primaria y Grado de Estudios Ingleses",
+        "year": 1,
+        "name": "Idioma Moderno II (Francés, Alemán, Árabe, Italiano) (E.I.)",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/100739es_2025-26.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/educacion/es/itinerario-conjunto-planificacion-de-la-ensenanza"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Itinerario Conjunto de Grado de Educación Primaria y Grado de Estudios Ingleses",
+        "year": 1,
+        "name": "Lengua Clásica (Latín, Griego) (E.I)",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/100534es_2025-26.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/educacion/es/itinerario-conjunto-planificacion-de-la-ensenanza"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Itinerario Conjunto de Grado de Educación Primaria y Grado de Estudios Ingleses",
+        "year": 1,
+        "name": "La Pronunciación del Inglés II (E.I)",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/100548es_2025-26.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/educacion/es/itinerario-conjunto-planificacion-de-la-ensenanza"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Itinerario Conjunto de Grado de Educación Primaria y Grado de Estudios Ingleses",
+        "year": 1,
+        "name": "Lenguajes Teatrales y Cinematográficos (E.I)",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/100558es_2025-26.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/educacion/es/itinerario-conjunto-planificacion-de-la-ensenanza"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Itinerario Conjunto de Grado de Educación Primaria y Grado de Estudios Ingleses",
+        "year": 2,
+        "name": "Psicología de la Educación y del Desarrollo (E.P)",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/100801es_2025-26.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/educacion/es/itinerario-conjunto-planificacion-de-la-ensenanza"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Itinerario Conjunto de Grado de Educación Primaria y Grado de Estudios Ingleses",
+        "year": 2,
+        "name": "Fundamentos teóricos e históricos de la Educación Primaria",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/272060es_2025-26.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/educacion/es/itinerario-conjunto-planificacion-de-la-ensenanza"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Itinerario Conjunto de Grado de Educación Primaria y Grado de Estudios Ingleses",
+        "year": 2,
+        "name": "El Conocimiento del Medio Natural (E.P)",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/100809es_2025-26.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/educacion/es/itinerario-conjunto-planificacion-de-la-ensenanza"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Itinerario Conjunto de Grado de Educación Primaria y Grado de Estudios Ingleses",
+        "year": 2,
+        "name": "Principios del Lenguaje y Lengua Española (E.P)",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/100820es_2025-26.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/educacion/es/itinerario-conjunto-planificacion-de-la-ensenanza"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Itinerario Conjunto de Grado de Educación Primaria y Grado de Estudios Ingleses",
+        "year": 2,
+        "name": "Sociología de la Educación (E.P)",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/100807es_2025-26.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/educacion/es/itinerario-conjunto-planificacion-de-la-ensenanza"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Itinerario Conjunto de Grado de Educación Primaria y Grado de Estudios Ingleses",
+        "year": 2,
+        "name": "Panorama de las Literaturas en Inglés (E.I)",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/100556es_2025-26.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/educacion/es/itinerario-conjunto-planificacion-de-la-ensenanza"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Itinerario Conjunto de Grado de Educación Primaria y Grado de Estudios Ingleses",
+        "year": 2,
+        "name": "Inglés Instrumental III (E.I)",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/100540es_2025-26.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/educacion/es/itinerario-conjunto-planificacion-de-la-ensenanza"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Itinerario Conjunto de Grado de Educación Primaria y Grado de Estudios Ingleses",
+        "year": 2,
+        "name": "Organización de centros educativos",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/272061es_2025-26.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/educacion/es/itinerario-conjunto-planificacion-de-la-ensenanza"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Itinerario Conjunto de Grado de Educación Primaria y Grado de Estudios Ingleses",
+        "year": 2,
+        "name": "El Conocimiento del Medio Social y Cultural (E.P)",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/100812es_2025-26.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/educacion/es/itinerario-conjunto-planificacion-de-la-ensenanza"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Itinerario Conjunto de Grado de Educación Primaria y Grado de Estudios Ingleses",
+        "year": 2,
+        "name": "Matemáticas (E.P)",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/100815es_2025-26.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/educacion/es/itinerario-conjunto-planificacion-de-la-ensenanza"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Itinerario Conjunto de Grado de Educación Primaria y Grado de Estudios Ingleses",
+        "year": 2,
+        "name": "Educación Musical en Primaria (E.P)",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/100822es_2025-26.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/educacion/es/itinerario-conjunto-planificacion-de-la-ensenanza"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Itinerario Conjunto de Grado de Educación Primaria y Grado de Estudios Ingleses",
+        "year": 2,
+        "name": "Métodos de Investigación Educativa y Aplicaciones de las Tic",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/100806es_2025-26.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/educacion/es/itinerario-conjunto-planificacion-de-la-ensenanza"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Itinerario Conjunto de Grado de Educación Primaria y Grado de Estudios Ingleses",
+        "year": 2,
+        "name": "Inglés Instrumental IV",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/100541es_2025-26.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/educacion/es/itinerario-conjunto-planificacion-de-la-ensenanza"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Itinerario Conjunto de Grado de Educación Primaria y Grado de Estudios Ingleses",
+        "year": 3,
+        "name": "Planificación e Innovación en Educación Primaria (E.P.)",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/100803es_2025-26.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/educacion/es/itinerario-conjunto-planificacion-de-la-ensenanza"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Itinerario Conjunto de Grado de Educación Primaria y Grado de Estudios Ingleses",
+        "year": 3,
+        "name": "Diversidad, Convivencia y Educación Inclusiva (E.P)",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/272062es_2025-26.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/educacion/es/itinerario-conjunto-planificacion-de-la-ensenanza"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Itinerario Conjunto de Grado de Educación Primaria y Grado de Estudios Ingleses",
+        "year": 3,
+        "name": "Psicología de la Personalidad (E.P)",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/100802es_2025-26.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/educacion/es/itinerario-conjunto-planificacion-de-la-ensenanza"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Itinerario Conjunto de Grado de Educación Primaria y Grado de Estudios Ingleses",
+        "year": 3,
+        "name": "Orientación Educativa: Relaciones Escuela, Familia y Comunidad en Educación Primaria (E.P)",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/100808es_2025-26.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/educacion/es/itinerario-conjunto-planificacion-de-la-ensenanza"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Itinerario Conjunto de Grado de Educación Primaria y Grado de Estudios Ingleses",
+        "year": 3,
+        "name": "Didáctica del Medio Ambiente en Educación Primaria (E.P)",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/100813es_2025-26.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/educacion/es/itinerario-conjunto-planificacion-de-la-ensenanza"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Itinerario Conjunto de Grado de Educación Primaria y Grado de Estudios Ingleses",
+        "year": 3,
+        "name": "Idioma Moderno III (E.I)",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/100740es_2025-26.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/educacion/es/itinerario-conjunto-planificacion-de-la-ensenanza"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Itinerario Conjunto de Grado de Educación Primaria y Grado de Estudios Ingleses",
+        "year": 3,
+        "name": "Psicología de la Convivencia Escolar en Educación Primaria (E.P)",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/272063es_2025-26.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/educacion/es/itinerario-conjunto-planificacion-de-la-ensenanza"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Itinerario Conjunto de Grado de Educación Primaria y Grado de Estudios Ingleses",
+        "year": 3,
+        "name": "Didáctica de las Operaciones Numéricas y la Medida (E.P)",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/100816es_2025-26.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/educacion/es/itinerario-conjunto-planificacion-de-la-ensenanza"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Itinerario Conjunto de Grado de Educación Primaria y Grado de Estudios Ingleses",
+        "year": 3,
+        "name": "Educación Plástica y Visual",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/100823es_2025-26.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/educacion/es/itinerario-conjunto-planificacion-de-la-ensenanza"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Itinerario Conjunto de Grado de Educación Primaria y Grado de Estudios Ingleses",
+        "year": 3,
+        "name": "Educación Mediática y Aplicaciones Didácticas de las Tic (E.P)",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/100824es_2025-26.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/educacion/es/itinerario-conjunto-planificacion-de-la-ensenanza"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Itinerario Conjunto de Grado de Educación Primaria y Grado de Estudios Ingleses",
+        "year": 3,
+        "name": "Didáctica de la Educación Física (E.P)",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/100825es_2025-26.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/educacion/es/itinerario-conjunto-planificacion-de-la-ensenanza"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Itinerario Conjunto de Grado de Educación Primaria y Grado de Estudios Ingleses",
+        "year": 3,
+        "name": "Idioma Extranjero Para el Profesorado de Primaria (Inglés) (E.P)",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/100818es_2025-26.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/educacion/es/itinerario-conjunto-planificacion-de-la-ensenanza"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Itinerario Conjunto de Grado de Educación Primaria y Grado de Estudios Ingleses",
+        "year": 4,
+        "name": "Semántica y Pragmática I (E.I.)",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/100551es_2025-26.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/educacion/es/itinerario-conjunto-planificacion-de-la-ensenanza"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Itinerario Conjunto de Grado de Educación Primaria y Grado de Estudios Ingleses",
+        "year": 4,
+        "name": "Inglés Instrumental V (E.I)",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/100544es_2025-26.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/educacion/es/itinerario-conjunto-planificacion-de-la-ensenanza"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Itinerario Conjunto de Grado de Educación Primaria y Grado de Estudios Ingleses",
+        "year": 4,
+        "name": "Gramática Inglesa I (E.I)",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/100549es_2025-26.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/educacion/es/itinerario-conjunto-planificacion-de-la-ensenanza"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Itinerario Conjunto de Grado de Educación Primaria y Grado de Estudios Ingleses",
+        "year": 4,
+        "name": "Gramática Inglesa II (E.I)",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/100550es_2025-26.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/educacion/es/itinerario-conjunto-planificacion-de-la-ensenanza"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Itinerario Conjunto de Grado de Educación Primaria y Grado de Estudios Ingleses",
+        "year": 4,
+        "name": "Idioma Moderno IV (E.I)",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/100741es_2025-26.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/educacion/es/itinerario-conjunto-planificacion-de-la-ensenanza"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Itinerario Conjunto de Grado de Educación Primaria y Grado de Estudios Ingleses",
+        "year": 4,
+        "name": "Prosa Ensayística y Periodística (E.I)",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/100560es_2025-26.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/educacion/es/itinerario-conjunto-planificacion-de-la-ensenanza"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Itinerario Conjunto de Grado de Educación Primaria y Grado de Estudios Ingleses",
+        "year": 4,
+        "name": "Semántica y Pragmática II (E.I.)",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/100552es_2025-26.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/educacion/es/itinerario-conjunto-planificacion-de-la-ensenanza"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Itinerario Conjunto de Grado de Educación Primaria y Grado de Estudios Ingleses",
+        "year": 4,
+        "name": "Texto y Discurso (E.I.)",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/100553es_2025-26.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/educacion/es/itinerario-conjunto-planificacion-de-la-ensenanza"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Itinerario Conjunto de Grado de Educación Primaria y Grado de Estudios Ingleses",
+        "year": 4,
+        "name": "Inglés Instrumental VI (E.I)",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/100545es_2025-26.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/educacion/es/itinerario-conjunto-planificacion-de-la-ensenanza"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Itinerario Conjunto de Grado de Educación Primaria y Grado de Estudios Ingleses",
+        "year": 4,
+        "name": "Historia de la Lengua Inglesa (E.I)",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/100554es_2025-26.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/educacion/es/itinerario-conjunto-planificacion-de-la-ensenanza"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Itinerario Conjunto de Grado de Educación Primaria y Grado de Estudios Ingleses",
+        "year": 4,
+        "name": "Poesía y Creatividad Verbal (E.I)",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/100559es_2025-26.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/educacion/es/itinerario-conjunto-planificacion-de-la-ensenanza"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Itinerario Conjunto de Grado de Educación Primaria y Grado de Estudios Ingleses",
+        "year": 4,
+        "name": "Shakespeare (E.I)",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/100563es_2025-26.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/educacion/es/itinerario-conjunto-planificacion-de-la-ensenanza"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Itinerario Conjunto de Grado de Educación Primaria y Grado de Estudios Ingleses",
+        "year": 4,
+        "name": "Formas Narrativas (E.I)",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/100557es_2025-26.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/educacion/es/itinerario-conjunto-planificacion-de-la-ensenanza"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Itinerario Conjunto de Grado de Educación Primaria y Grado de Estudios Ingleses",
+        "year": 5,
+        "name": "Didáctica de las Ciencias Sociales en Educación Primaria (E.P)",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/100811es_2025-26.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/educacion/es/itinerario-conjunto-planificacion-de-la-ensenanza"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Itinerario Conjunto de Grado de Educación Primaria and Grado de Estudios Ingleses",
+        "year": 5,
+        "name": "Didáctica de las Ciencias Experimentales en Educación Primaria (E.P)",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/100810es_2025-26.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/educacion/es/itinerario-conjunto-planificacion-de-la-ensenanza"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Itinerario Conjunto de Grado de Educación Primaria y Grado de Estudios Ingleses",
+        "year": 5,
+        "name": "Didáctica de la Geometría y la Estadística (E.P)",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/100817es_2025-26.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/educacion/es/itinerario-conjunto-planificacion-de-la-ensenanza"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Itinerario Conjunto de Grado de Educación Primaria y Grado de Estudios Ingleses",
+        "year": 5,
+        "name": "Didáctica de la Lengua y la Literatura (E.P)",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/100819es_2025-26.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/educacion/es/itinerario-conjunto-planificacion-de-la-ensenanza"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Itinerario Conjunto de Grado de Educación Primaria y Grado de Estudios Ingleses",
+        "year": 5,
+        "name": "Vanguardia y Experimentación (E.I.)",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/100564es_2025-26.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/educacion/es/itinerario-conjunto-planificacion-de-la-ensenanza"
+    }
+]

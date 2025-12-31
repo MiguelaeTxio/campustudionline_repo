@@ -1,79 +1,153 @@
 import json
+import requests
+import io
+import re
+import time
 import os
-import sys
+import pdfplumber
 
-def process():
-    # El nuevo mapa correcto
-    infile = "uco_master_map.json"
-    # El archivo con los datos procesados (contenido PDF) pero nombres mal
-    backup_file = "uco_data_backup.json" 
-    # El archivo de salida final corregido
-    outfile = "uco_data_final.json"
+# --- CONFIGURACIÓN ---
+INPUT_FILE = 'uco_master_map.json'
+OUTPUT_FILE = 'uco_final_data.json'
+SAVE_INTERVAL = 5
+
+def clean_text(text):
+    if not text: return ""
+    text = re.sub(r'\s+', ' ', text).strip()
+    return text
+
+def extract_section(full_text, headers, next_headers_pool):
+    text_lower = full_text.lower()
+    start_idx = -1
     
-    if not os.path.exists(infile):
-        print("ERROR: Falta uco_master_map.json")
+    for h in headers:
+        idx = text_lower.find(h.lower())
+        if idx != -1:
+            start_idx = idx + len(h)
+            break
+            
+    if start_idx == -1:
+        return ""
+        
+    end_idx = len(full_text)
+    for next_h in next_headers_pool:
+        idx = text_lower.find(next_h.lower(), start_idx)
+        if idx != -1 and idx < end_idx:
+            end_idx = idx
+            
+    raw_section = full_text[start_idx:end_idx]
+    if len(raw_section) < 5:
+        return ""
+    return clean_text(raw_section)
+
+def process_pdf_url(url):
+    try:
+        headers = {'User-Agent': 'Mozilla/5.0 (Android 10; Mobile; rv:109.0)'}
+        response = requests.get(url, headers=headers, timeout=15)
+        response.raise_for_status()
+        
+        with pdfplumber.open(io.BytesIO(response.content)) as pdf:
+            full_text = ""
+            for page in pdf.pages:
+                extracted = page.extract_text()
+                if extracted:
+                    full_text += extracted + "\n"
+                
+        # Heurística de Secciones
+        objectives = extract_section(
+            full_text, 
+            ['OBJETIVOS', 'COMPETENCIAS', 'RESULTADOS DE APRENDIZAJE', 'BREVE DESCRIPCIÓN DE CONTENIDOS'], 
+            ['TEMARIO', 'CONTENIDOS', 'BIBLIOGRAFÍA', 'METODOLOGÍA', 'EVALUACIÓN', 'PROGRAMA']
+        )
+        
+        outline = extract_section(
+            full_text,
+            ['TEMARIO', 'CONTENIDOS', 'PROGRAMA', 'DESCRIPCIÓN DE CONTENIDOS', 'PROGRAMA DE LA ASIGNATURA'],
+            ['BIBLIOGRAFÍA', 'METODOLOGÍA', 'ACTIVIDADES', 'EVALUACIÓN', 'SYSTEM OF EVALUATION']
+        )
+        
+        bibliography = extract_section(
+            full_text,
+            ['BIBLIOGRAFÍA', 'REFERENCIAS', 'BIBLIOGRAPHY'],
+            ['EVALUACIÓN', 'METODOLOGÍA', 'COORDINACIÓN', 'ANEXO', 'CRITERIOS']
+        )
+        
+        return {
+            'full_text_length': len(full_text),
+            'learning_objectives': objectives,
+            'course_content_outline': outline,
+            'bibliography': bibliography,
+            'parse_success': True
+        }
+
+    except Exception as e:
+        return {'parse_success': False, 'error': str(e)}
+
+def main():
+    print("=== UCO PDF PROCESSOR (Engine: pdfplumber) ===")
+    
+    if not os.path.exists(INPUT_FILE):
+        print(f"ERROR: No se encuentra {INPUT_FILE}")
         return
 
-    # Cargar mapa maestro nuevo (Nombres OK)
-    with open(infile, 'r', encoding='utf-8') as f:
-        master_data = json.load(f)
-        subjects_master = master_data.get('subjects', [])
-
-    # Cargar datos viejos (Contenido OK)
-    content_cache = {}
-    if os.path.exists(backup_file):
+    processed_ids = set()
+    processed_data = []
+    
+    if os.path.exists(OUTPUT_FILE):
         try:
-            with open(backup_file, 'r', encoding='utf-8') as f:
-                old_list = json.load(f)
-                for item in old_list:
-                    # Indexar por código
-                    content_cache[item['code']] = item
-            print(f"-> Caché de contenido cargada: {len(content_cache)} registros.")
-        except Exception as e:
-            print(f"-> Error cargando backup: {e}")
-    else:
-        print("-> AVISO: No se encontró uco_data_backup.json. Se procesará sin caché (descarga completa).")
+            with open(OUTPUT_FILE, 'r', encoding='utf-8') as f:
+                processed_data = json.load(f)
+                for item in processed_data:
+                    uid = f"{item.get('url_source')}|{item.get('name')}"
+                    processed_ids.add(uid)
+            print(f"--> Reanudando: {len(processed_data)} registros previos.")
+        except:
+            pass
 
-    final_list = []
-    total = len(subjects_master)
-    merged_count = 0
+    with open(INPUT_FILE, 'r', encoding='utf-8') as f:
+        source_data = json.load(f)
+
+    total = len(source_data)
+    count = 0
+    newly_processed = 0
     
-    print(f"Iniciando fusión de datos para {total} asignaturas...")
+    print(f"--> Total a procesar: {total}")
 
-    for idx, sub_master in enumerate(subjects_master):
-        code = sub_master.get('code')
+    for item in source_data:
+        count += 1
+        uid = f"{item.get('url_source')}|{item.get('name')}"
         
-        # Estrategia de Fusión:
-        # Tomamos el objeto del MASTER (que tiene el Nombre y Rama correctos)
-        # Y le inyectamos el CONTENIDO del BACKUP si existe.
+        if uid in processed_ids:
+            continue
+            
+        pdf_url = item.get('pdf_url')
+        # Print compacto para móvil
+        print(f"[{count}/{total}] {item.get('name')[:30]}...", end=" ", flush=True)
         
-        if code in content_cache:
-            cached_sub = content_cache[code]
-            if cached_sub.get('content_status') == 'OK':
-                sub_master['learning_objectives'] = cached_sub.get('learning_objectives', [])
-                sub_master['course_content_outline'] = cached_sub.get('course_content_outline', [])
-                sub_master['bibliography'] = cached_sub.get('bibliography', {})
-                sub_master['content_status'] = 'OK'
-                merged_count += 1
+        if pdf_url:
+            pdf_data = process_pdf_url(pdf_url)
+            item.update(pdf_data)
+            
+            if pdf_data.get('parse_success'):
+                txt_len = pdf_data.get('full_text_length', 0)
+                print(f"OK ({txt_len})")
             else:
-                # Si falló antes, mantenemos el estado de error
-                sub_master['content_status'] = cached_sub.get('content_status', 'PENDING')
+                print("FAIL")
         else:
-             sub_master['content_status'] = 'PENDING' # No estaba en el backup
-        
-        final_list.append(sub_master)
-        
-        # Feedback visual
-        pct = (idx + 1) / total * 100
-        sys.stdout.write(f"\r[{idx+1}/{total}] {pct:.1f}% - Fusionado: {sub_master.get('name')[:30]}")
-        sys.stdout.flush()
+            print("SKIP (No URL)")
+            item['parse_success'] = False
 
-    # Guardado final
-    with open(outfile, 'w', encoding='utf-8') as f:
-        json.dump(final_list, f, indent=4, ensure_ascii=False)
+        processed_data.append(item)
+        newly_processed += 1
+        
+        if newly_processed % SAVE_INTERVAL == 0:
+            with open(OUTPUT_FILE, 'w', encoding='utf-8') as f:
+                json.dump(processed_data, f, ensure_ascii=False, indent=4)
+
+    with open(OUTPUT_FILE, 'w', encoding='utf-8') as f:
+        json.dump(processed_data, f, ensure_ascii=False, indent=4)
     
-    print(f"\n\n¡Fusión completada! Registros recuperados: {merged_count}/{total}. Guardado en {outfile}")
-    print("Nota: Si hay registros 'PENDING', significa que no estaban en el backup y requerirían descarga manual.")
+    print(f"\nCOMPLETADO. Datos en {OUTPUT_FILE}")
 
 if __name__ == "__main__":
-    process()
+    main()

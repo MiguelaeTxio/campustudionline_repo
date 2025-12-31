@@ -1,0 +1,418 @@
+[
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Educación Primaria",
+        "year": 1,
+        "name": "Psicología de la Educación y del Desarrollo",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/100801es_2025-26.pdf",
+        "url_source": "https://www.uco.es/educacion/es/primaria-planificacion-de-la-ensenanza"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Educación Primaria",
+        "year": 1,
+        "name": "Organización de centros educativos",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/272061es_2025-26.pdf",
+        "url_source": "https://www.uco.es/educacion/es/primaria-planificacion-de-la-ensenanza"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Educación Primaria",
+        "year": 1,
+        "name": "El conocimiento del medio natural",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/100809es_2025-26.pdf",
+        "url_source": "https://www.uco.es/educacion/es/primaria-planificacion-de-la-ensenanza"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Educación Primaria",
+        "year": 1,
+        "name": "Fundamentos teóricos e históricos de la educación primaria",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/272060es_2025-26.pdf",
+        "url_source": "https://www.uco.es/educacion/es/primaria-planificacion-de-la-ensenanza"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Educación Primaria",
+        "year": 1,
+        "name": "Principios del lenguaje y Lengua española",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/100820es_2025-26.pdf",
+        "url_source": "https://www.uco.es/educacion/es/primaria-planificacion-de-la-ensenanza"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Educación Primaria",
+        "year": 1,
+        "name": "Sociología de la Educación",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/100807es_2025-26.pdf",
+        "url_source": "https://www.uco.es/educacion/es/primaria-planificacion-de-la-ensenanza"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Educación Primaria",
+        "year": 1,
+        "name": "El conocimiento del medio social y cultural",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/100812es_2025-26.pdf",
+        "url_source": "https://www.uco.es/educacion/es/primaria-planificacion-de-la-ensenanza"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Educación Primaria",
+        "year": 1,
+        "name": "Matemáticas",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/100815es_2025-26.pdf",
+        "url_source": "https://www.uco.es/educacion/es/primaria-planificacion-de-la-ensenanza"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Educación Primaria",
+        "year": 1,
+        "name": "Educación Musical en Primaria",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/100822es_2025-26.pdf",
+        "url_source": "https://www.uco.es/educacion/es/primaria-planificacion-de-la-ensenanza"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Educación Primaria",
+        "year": 1,
+        "name": "Métodos de investigación educativa y aplicaciones de las TIC",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/100806es_2025-26.pdf",
+        "url_source": "https://www.uco.es/educacion/es/primaria-planificacion-de-la-ensenanza"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Educación Primaria",
+        "year": 2,
+        "name": "Planificación e Innovación en Educación Primaria",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/100803es_2025-26.pdf",
+        "url_source": "https://www.uco.es/educacion/es/primaria-planificacion-de-la-ensenanza"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Educación Primaria",
+        "year": 2,
+        "name": "Diversidad, Convivencia y Educación Inclusiva",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/272062es_2025-26.pdf",
+        "url_source": "https://www.uco.es/educacion/es/primaria-planificacion-de-la-ensenanza"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Educación Primaria",
+        "year": 2,
+        "name": "Psicología de la Personalidad",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/100802es_2025-26.pdf",
+        "url_source": "https://www.uco.es/educacion/es/primaria-planificacion-de-la-ensenanza"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Educación Primaria",
+        "year": 2,
+        "name": "Orientación educativa: relaciones escuela, familia y comunidad en Educación Primaria",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/100808es_2025-26.pdf",
+        "url_source": "https://www.uco.es/educacion/es/primaria-planificacion-de-la-ensenanza"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Educación Primaria",
+        "year": 2,
+        "name": "Didáctica de las operaciones numéricas y la medida",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/100816es_2025-26.pdf",
+        "url_source": "https://www.uco.es/educacion/es/primaria-planificacion-de-la-ensenanza"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Educación Primaria",
+        "year": 2,
+        "name": "Educación Plástica y Visual",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/100823es_2025-26.pdf",
+        "url_source": "https://www.uco.es/educacion/es/primaria-planificacion-de-la-ensenanza"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Educación Primaria",
+        "year": 2,
+        "name": "Formación Literaria y Literatura Infantil",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/100821es_2025-26.pdf",
+        "url_source": "https://www.uco.es/educacion/es/primaria-planificacion-de-la-ensenanza"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Educación Primaria",
+        "year": 2,
+        "name": "Educación Mediática y aplicaciones didácticas de las TIC",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/100824es_2025-26.pdf",
+        "url_source": "https://www.uco.es/educacion/es/primaria-planificacion-de-la-ensenanza"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Educación Primaria",
+        "year": 2,
+        "name": "Psicología de la Convivencia Escolar en Educación Primaria",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/272063es_2025-26.pdf",
+        "url_source": "https://www.uco.es/educacion/es/primaria-planificacion-de-la-ensenanza"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Educación Primaria",
+        "year": 3,
+        "name": "Didáctica de las Ciencias Sociales en Educación Primaria",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/100811es_2025-26.pdf",
+        "url_source": "https://www.uco.es/educacion/es/primaria-planificacion-de-la-ensenanza"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Educación Primaria",
+        "year": 3,
+        "name": "Didáctica de las Ciencias Experimentales en Educación Primaria",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/100810es_2025-26.pdf",
+        "url_source": "https://www.uco.es/educacion/es/primaria-planificacion-de-la-ensenanza"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Educación Primaria",
+        "year": 3,
+        "name": "Didáctica de la Geometría y la Estadística",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/100817es_2025-26.pdf",
+        "url_source": "https://www.uco.es/educacion/es/primaria-planificacion-de-la-ensenanza"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Educación Primaria",
+        "year": 3,
+        "name": "Didáctica de la Lengua y la Literatura",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/100819es_2025-26.pdf",
+        "url_source": "https://www.uco.es/educacion/es/primaria-planificacion-de-la-ensenanza"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Educación Primaria",
+        "year": 3,
+        "name": "Idioma extranjero para el profesorado de primaria (Inglés)",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/100818es_2025-26.pdf",
+        "url_source": "https://www.uco.es/educacion/es/primaria-planificacion-de-la-ensenanza"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Educación Primaria",
+        "year": 3,
+        "name": "Idioma extranjero para el profesorado de primaria (Francés)",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/100928es_2025-26.pdf",
+        "url_source": "https://www.uco.es/educacion/es/primaria-planificacion-de-la-ensenanza"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Educación Primaria",
+        "year": 3,
+        "name": "Didáctica de la Educación Física",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/100825es_2025-26.pdf",
+        "url_source": "https://www.uco.es/educacion/es/primaria-planificacion-de-la-ensenanza"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Educación Primaria",
+        "year": 4,
+        "name": "Didáctica del Medio Ambiente en Educación Primaria",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/100813es_2025-26.pdf",
+        "url_source": "https://www.uco.es/educacion/es/primaria-planificacion-de-la-ensenanza"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Educación Primaria",
+        "year": 4,
+        "name": "Fundamentos teórico-prácticos para la enseñanza-aprendizaje de las habilidades deportivas",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/100830es_2025-26.pdf",
+        "url_source": "https://www.uco.es/educacion/es/primaria-planificacion-de-la-ensenanza"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Educación Primaria",
+        "year": 4,
+        "name": "Fundamentos de las habilidades motrices y del acondicionamiento físico",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/100831es_2025-26.pdf",
+        "url_source": "https://www.uco.es/educacion/es/primaria-planificacion-de-la-ensenanza"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Educación Primaria",
+        "year": 4,
+        "name": "Actividades Físicas Creativas y Comunicativas",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/100832es_2025-26.pdf",
+        "url_source": "https://www.uco.es/educacion/es/primaria-planificacion-de-la-ensenanza"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Educación Primaria",
+        "year": 4,
+        "name": "Educación Física y Salud",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/100833es_2025-26.pdf",
+        "url_source": "https://www.uco.es/educacion/es/primaria-planificacion-de-la-ensenanza"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Educación Primaria",
+        "year": 4,
+        "name": "El lenguaje musical a través del movimiento y los instrumentos escolares",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/100834es_2025-26.pdf",
+        "url_source": "https://www.uco.es/educacion/es/primaria-planificacion-de-la-ensenanza"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Educación Primaria",
+        "year": 4,
+        "name": "Formación auditiva y expresión vocal",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/100835es_2025-26.pdf",
+        "url_source": "https://www.uco.es/educacion/es/primaria-planificacion-de-la-ensenanza"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Educación Primaria",
+        "year": 4,
+        "name": "Análisis y creación musical aplicados al repertorio escolar",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/100836es_2025-26.pdf",
+        "url_source": "https://www.uco.es/educacion/es/primaria-planificacion-de-la-ensenanza"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Educación Primaria",
+        "year": 4,
+        "name": "Expresión musical colectiva. Métodos de intervención educativa",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/100837es_2025-26.pdf",
+        "url_source": "https://www.uco.es/educacion/es/primaria-planificacion-de-la-ensenanza"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Educación Primaria",
+        "year": 4,
+        "name": "El desarrollo de la competencia multilingüe-multicultural (Inglés)",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/100838es_2025-26.pdf",
+        "url_source": "https://www.uco.es/educacion/es/primaria-planificacion-de-la-ensenanza"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Educación Primaria",
+        "year": 4,
+        "name": "Metodología y Didáctica de la Segunda Lengua (Inglés)",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/100839es_2025-26.pdf",
+        "url_source": "https://www.uco.es/educacion/es/primaria-planificacion-de-la-ensenanza"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Educación Primaria",
+        "year": 4,
+        "name": "Lengua Extranjera para el Aula (Inglés)",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/100840es_2025-26.pdf",
+        "url_source": "https://www.uco.es/educacion/es/primaria-planificacion-de-la-ensenanza"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Educación Primaria",
+        "year": 4,
+        "name": "Lengua Extranjera para el ejercicio de la profesión docente (Inglés)",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/100841es_2025-26.pdf",
+        "url_source": "https://www.uco.es/educacion/es/primaria-planificacion-de-la-ensenanza"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Educación Primaria",
+        "year": 4,
+        "name": "El desarrollo de la competencia multilingüe-multicultural (Francés)",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/100929es_2025-26.pdf",
+        "url_source": "https://www.uco.es/educacion/es/primaria-planificacion-de-la-ensenanza"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Educación Primaria",
+        "year": 4,
+        "name": "Metodología y Didáctica de la Segunda Lengua (Francés)",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/100930es_2025-26.pdf",
+        "url_source": "https://www.uco.es/educacion/es/primaria-planificacion-de-la-ensenanza"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Educación Primaria",
+        "year": 4,
+        "name": "Lengua Extranjera para el Aula (Francés)",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/100931es_2025-26.pdf",
+        "url_source": "https://www.uco.es/educacion/es/primaria-planificacion-de-la-ensenanza"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Educación Primaria",
+        "year": 4,
+        "name": "Lengua Extranjera para el ejercicio de la profesión docente (Francés)",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/100932es_2025-26.pdf",
+        "url_source": "https://www.uco.es/educacion/es/primaria-planificacion-de-la-ensenanza"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Educación Primaria",
+        "year": 4,
+        "name": "Aspectos evolutivos y educativos de las necesidades educativas específicas",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/100842es_2025-26.pdf",
+        "url_source": "https://www.uco.es/educacion/es/primaria-planificacion-de-la-ensenanza"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Educación Primaria",
+        "year": 4,
+        "name": "Trastornos de Conducta y de la Personalidad",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/100843es_2025-26.pdf",
+        "url_source": "https://www.uco.es/educacion/es/primaria-planificacion-de-la-ensenanza"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Educación Primaria",
+        "year": 4,
+        "name": "Intervención psicoeducativa de los trastornos del lenguaje",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/100844es_2025-26.pdf",
+        "url_source": "https://www.uco.es/educacion/es/primaria-planificacion-de-la-ensenanza"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Educación Primaria",
+        "year": 4,
+        "name": "Respuesta educativa al alumnado con necesidades específicas de apoyo educativo",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/100845es_2025-26.pdf",
+        "url_source": "https://www.uco.es/educacion/es/primaria-planificacion-de-la-ensenanza"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Educación Primaria",
+        "year": 4,
+        "name": "Medio Social y Cultural Español: Geografía, Instituciones y Pensamiento Contemporáneo",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/100846es_2025-26.pdf",
+        "url_source": "https://www.uco.es/educacion/es/primaria-planificacion-de-la-ensenanza"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Educación Primaria",
+        "year": 4,
+        "name": "Psicología de los grupos",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/100847es_2025-26.pdf",
+        "url_source": "https://www.uco.es/educacion/es/primaria-planificacion-de-la-ensenanza"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Educación Primaria",
+        "year": 4,
+        "name": "Educación permanente",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/100848es_2025-26.pdf",
+        "url_source": "https://www.uco.es/educacion/es/primaria-planificacion-de-la-ensenanza"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Educación Primaria",
+        "year": 4,
+        "name": "El mensaje cristiano",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/100849es_2025-26.pdf",
+        "url_source": "https://www.uco.es/educacion/es/primaria-planificacion-de-la-ensenanza"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Educación Primaria",
+        "year": 4,
+        "name": "Religión, Cultura y Valores",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/100784es_2025-26.pdf",
+        "url_source": "https://www.uco.es/educacion/es/primaria-planificacion-de-la-ensenanza"
+    }
+]

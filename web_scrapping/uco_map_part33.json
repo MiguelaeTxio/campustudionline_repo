@@ -1,0 +1,266 @@
+[
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Eléctrica",
+        "year": 1,
+        "name": "Fundamentos Físicos en la Ingeniería I",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/101281es_2025-26.pdf",
+        "url_source": "https://www.uco.es/eps/es/programas-de-asignaturas"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Eléctrica",
+        "year": 1,
+        "name": "Fundamentos de Informática",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/101282es_2025-26.pdf",
+        "url_source": "https://www.uco.es/eps/es/programas-de-asignaturas"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Eléctrica",
+        "year": 1,
+        "name": "Química",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/101284es_2025-26.pdf",
+        "url_source": "https://www.uco.es/eps/es/programas-de-asignaturas"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Eléctrica",
+        "year": 1,
+        "name": "Sistemas de Representación",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/101285es_2025-26.pdf",
+        "url_source": "https://www.uco.es/eps/es/programas-de-asignaturas"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Eléctrica",
+        "year": 1,
+        "name": "Matemáticas I",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/101287es_2025-26.pdf",
+        "url_source": "https://www.uco.es/eps/es/programas-de-asignaturas"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Eléctrica",
+        "year": 1,
+        "name": "Matemáticas II",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/101280es_2025-26.pdf",
+        "url_source": "https://www.uco.es/eps/es/programas-de-asignaturas"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Eléctrica",
+        "year": 1,
+        "name": "Economía de la Empresa",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/101283es_2025-26.pdf",
+        "url_source": "https://www.uco.es/eps/es/programas-de-asignaturas"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Eléctrica",
+        "year": 1,
+        "name": "Métodos Estadísticos en la Ingeniería",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/101286es_2025-26.pdf",
+        "url_source": "https://www.uco.es/eps/es/programas-de-asignaturas"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Eléctrica",
+        "year": 1,
+        "name": "Ciencia e Ingeniería de los Materiales",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/101292es_2025-26.pdf",
+        "url_source": "https://www.uco.es/eps/es/programas-de-asignaturas"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Eléctrica",
+        "year": 1,
+        "name": "Fundamentos Físicos de la Ingeniería II",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/101289es_2025-26.pdf",
+        "url_source": "https://www.uco.es/eps/es/programas-de-asignaturas"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Eléctrica",
+        "year": 2,
+        "name": "Matemáticas III",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/101288es_2025-26.pdf",
+        "url_source": "https://www.uco.es/eps/es/programas-de-asignaturas"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Eléctrica",
+        "year": 2,
+        "name": "Mecánica de Fluidos",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/101291es_2025-26.pdf",
+        "url_source": "https://www.uco.es/eps/es/programas-de-asignaturas"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Eléctrica",
+        "year": 2,
+        "name": "Electrotecnia",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/101293es_2025-26.pdf",
+        "url_source": "https://www.uco.es/eps/es/programas-de-asignaturas"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Eléctrica",
+        "year": 2,
+        "name": "Ingiería Térmica",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/101290es_2025-26.pdf",
+        "url_source": "https://www.uco.es/eps/es/programas-de-asignaturas"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Eléctrica",
+        "year": 2,
+        "name": "Mecánica de Materiales",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/101297es_2025-26.pdf",
+        "url_source": "https://www.uco.es/eps/es/programas-de-asignaturas"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Eléctrica",
+        "year": 2,
+        "name": "Automática",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/101295es_2025-26.pdf",
+        "url_source": "https://www.uco.es/eps/es/programas-de-asignaturas"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Eléctrica",
+        "year": 2,
+        "name": "Fundamentos de Electrónica",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/101294es_2025-26.pdf",
+        "url_source": "https://www.uco.es/eps/es/programas-de-asignaturas"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Eléctrica",
+        "year": 2,
+        "name": "Máquinas y Mecanismos",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/101296es_2025-26.pdf",
+        "url_source": "https://www.uco.es/eps/es/programas-de-asignaturas"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Eléctrica",
+        "year": 2,
+        "name": "Ingeniería de Fabricación",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/101298es_2025-26.pdf",
+        "url_source": "https://www.uco.es/eps/es/programas-de-asignaturas"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Eléctrica",
+        "year": 2,
+        "name": "Circuitos",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/101307es_2025-26.pdf",
+        "url_source": "https://www.uco.es/eps/es/programas-de-asignaturas"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Eléctrica",
+        "year": 3,
+        "name": "Regulación Automática",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/101302es_2025-26.pdf",
+        "url_source": "https://www.uco.es/eps/es/programas-de-asignaturas"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Eléctrica",
+        "year": 3,
+        "name": "Electrónica Industrial",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/101309es_2025-26.pdf",
+        "url_source": "https://www.uco.es/eps/es/programas-de-asignaturas"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Eléctrica",
+        "year": 3,
+        "name": "Automatización Industrial",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/101310es_2025-26.pdf",
+        "url_source": "https://www.uco.es/eps/es/programas-de-asignaturas"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Eléctrica",
+        "year": 3,
+        "name": "Máquinas Eléctricas",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/101311es_2025-26.pdf",
+        "url_source": "https://www.uco.es/eps/es/programas-de-asignaturas"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Eléctrica",
+        "year": 3,
+        "name": "Control de Máquinas y Accionamientos",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/101300es_2025-26.pdf",
+        "url_source": "https://www.uco.es/eps/es/programas-de-asignaturas"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Eléctrica",
+        "year": 3,
+        "name": "Cálculo de Máquinas Eléctricas",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/101301es_2025-26.pdf",
+        "url_source": "https://www.uco.es/eps/es/programas-de-asignaturas"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Eléctrica",
+        "year": 3,
+        "name": "Instalaciones Eléctricas I",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/101303es_2025-26.pdf",
+        "url_source": "https://www.uco.es/eps/es/programas-de-asignaturas"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Eléctrica",
+        "year": 3,
+        "name": "Centrales Eléctricas",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/101304es_2025-26.pdf",
+        "url_source": "https://www.uco.es/eps/es/programas-de-asignaturas"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Eléctrica",
+        "year": 3,
+        "name": "Seguridad e Higiene en el Trabajo en el Ámbito Industrial",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/101312es_2025-26.pdf",
+        "url_source": "https://www.uco.es/eps/es/programas-de-asignaturas"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Eléctrica",
+        "year": 4,
+        "name": "Proyectos",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/101299es_2025-26.pdf",
+        "url_source": "https://www.uco.es/eps/es/programas-de-asignaturas"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Eléctrica",
+        "year": 4,
+        "name": "Sistemas Eléctricos de Potencia",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/101305es_2025-26.pdf",
+        "url_source": "https://www.uco.es/eps/es/programas-de-asignaturas"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Eléctrica",
+        "year": 4,
+        "name": "Transporte de Energía Eléctrica",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/101306es_2025-26.pdf",
+        "url_source": "https://www.uco.es/eps/es/programas-de-asignaturas"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Ingeniería Eléctrica",
+        "year": 4,
+        "name": "Instalaciones Eléctricas II",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/101308es_2025-26.pdf",
+        "url_source": "https://www.uco.es/eps/es/programas-de-asignaturas"
+    }
+]

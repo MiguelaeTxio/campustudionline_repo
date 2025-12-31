@@ -1,0 +1,457 @@
+[
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Veterinaria",
+        "year": 1,
+        "name": "Biología Molecular, Animal y Vegetal",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/101450es_2023-24.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Veterinaria",
+        "year": 1,
+        "name": "Física-Química",
+        "pdf_url": "https://www.uco.es/organiza/centros/veterinaria/images/documentos/23-24/guias/_tmp_101451es_2023-24-4_REPUBLICACION.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Veterinaria",
+        "year": 1,
+        "name": "Análisis de Datos y Gestión Veterinaria",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/101461es_2023-24.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Veterinaria",
+        "year": 1,
+        "name": "Citología e Histología",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/101465es_2023-24.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Veterinaria",
+        "year": 1,
+        "name": "Manejo de los Animales de interés veterinario",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/101460es_2023-24.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Veterinaria",
+        "year": 1,
+        "name": "Embriología",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/101454es_2023-24.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Veterinaria",
+        "year": 1,
+        "name": "Bioquímica",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/101452es_2023-24.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Veterinaria",
+        "year": 1,
+        "name": "Genética",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/101453es_2023-24.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Veterinaria",
+        "year": 1,
+        "name": "Anatomía Sistemática",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/101455es_2023-24.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Veterinaria",
+        "year": 1,
+        "name": "Agricultura",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/101481es_2023-24.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Veterinaria",
+        "year": 1,
+        "name": "Etnología, Etología y Bienestar Animal",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/101459es_2023-24.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Veterinaria",
+        "year": 2,
+        "name": "Microbiología e Inmunología",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/101463es_2023-24.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Veterinaria",
+        "year": 2,
+        "name": "Fisiología Animal",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/101457es_2023-24.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Veterinaria",
+        "year": 2,
+        "name": "Neuroanatomía y Anatomía Topográfica",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/101456es_2023-24.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Veterinaria",
+        "year": 2,
+        "name": "Mejora Genética para la Cría y Salud Animal",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/101483es_2023-24.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Veterinaria",
+        "year": 2,
+        "name": "Parasitología",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/101464es_2023-24.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Veterinaria",
+        "year": 2,
+        "name": "Epidemiología",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/101475es_2023-24.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Veterinaria",
+        "year": 2,
+        "name": "Anatomía Patológica General",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/101466es_2023-24.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Veterinaria",
+        "year": 2,
+        "name": "Patología General",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/101458es_2023-24.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Veterinaria",
+        "year": 2,
+        "name": "Farmacología y Farmacia",
+        "pdf_url": "https://www.uco.es/organiza/centros/veterinaria/images/documentos/23-24/2022-2023_FARMACOG%C3%8DA_Y_FARMACIA_SR-J_a_09-12-22.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Veterinaria",
+        "year": 3,
+        "name": "Enfermedades Parasitarias",
+        "pdf_url": "https://www.uco.es/organiza/centros/veterinaria/images/documentos/23-24/guias/Republicaci%C3%B3n_Enfermedades_Parasitarias.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Veterinaria",
+        "year": 3,
+        "name": "Enfermedades Infecciosas",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/101473es_2023-24.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Veterinaria",
+        "year": 3,
+        "name": "Anatomía Patológica Sistemática",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/101470es_2023-24.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Veterinaria",
+        "year": 3,
+        "name": "Producción Animal e Higiene Veterinaria",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/101484es_2023-24.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Veterinaria",
+        "year": 3,
+        "name": "Tecnología y Bioquímica de los Alimentos",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/101486es_2023-24.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Veterinaria",
+        "year": 3,
+        "name": "Diagnóstico por la Imagen",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/101471es_2023-24.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Veterinaria",
+        "year": 3,
+        "name": "Propedéutica Clínica",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/101472es_2023-24.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Veterinaria",
+        "year": 4,
+        "name": "Patología Quirúrgica",
+        "pdf_url": "https://www.uco.es/organiza/centros/veterinaria/images/documentos/23-24/guias/Republicaci%C3%B3n_Patolog%C3%ADa_Quir%C3%BArgica.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Veterinaria",
+        "year": 4,
+        "name": "Medicina Interna",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/101477es_2023-24.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Veterinaria",
+        "year": 4,
+        "name": "Reproducción y Obstetricia",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/101480es_2023-24.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Veterinaria",
+        "year": 4,
+        "name": "Anestesiología y Cuidados Intensivos",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/101478es_2023-24.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Veterinaria",
+        "year": 4,
+        "name": "Higiene Alimentaria",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/101487es_2023-24.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Veterinaria",
+        "year": 4,
+        "name": "Farmacoterapia",
+        "pdf_url": "https://www.uco.es/organiza/centros/veterinaria/images/documentos/23-24/2022-2023_FARMACOTERAPIA_SR-J_a_09-12-22.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Veterinaria",
+        "year": 4,
+        "name": "Deontología, Medicina Legal y Legislación Veterinaria",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/101462es_2023-24.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Veterinaria",
+        "year": 4,
+        "name": "Inspección y Control Alimentario",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/101489es_2023-24.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Veterinaria",
+        "year": 5,
+        "name": "Medicina Preventiva y Política Sanitaria Veterinarias",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/101476es_2023-24.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Veterinaria",
+        "year": 5,
+        "name": "Nutrición y Alimentación Animal",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/101485es_2023-24.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Veterinaria",
+        "year": 5,
+        "name": "Toxicología",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/101469es_2023-24.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Veterinaria",
+        "year": 5,
+        "name": "Economía de la Producción Ganadera",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/101482es_2023-24.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Veterinaria",
+        "year": 5,
+        "name": "Gestión de la Seguridad Alimentaria",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/101488es_2023-24.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Veterinaria",
+        "year": 5,
+        "name": "Inglés aplicado a Veterinaria",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2024-25/101518es_2024-25.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Veterinaria",
+        "year": 5,
+        "name": "Apicultura",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2024-25/101492es_2024-25.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Veterinaria",
+        "year": 5,
+        "name": "El toro de Lidia",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2024-25/101493es_2024-25.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Veterinaria",
+        "year": 5,
+        "name": "Caring, Feeding and Training of dogs",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2024-25/101494en_2024-25.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Veterinaria",
+        "year": 5,
+        "name": "Aplicación de Metodologías Bioquímicas en Veterinaria",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2024-25/101498es_2024-25.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Veterinaria",
+        "year": 5,
+        "name": "Actitudes Psicológicas del Veterinario",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2024-25/101499es_2024-25.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Veterinaria",
+        "year": 5,
+        "name": "Cuidado y preparacion de los animales para su uso en el bienestar de las personas",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2024-25/101500es_2024-25.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Veterinaria",
+        "year": 5,
+        "name": "Historia de la Veterinaria",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2024-25/101501es_2024-25.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Veterinaria",
+        "year": 5,
+        "name": "El animal de laboratorio",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2024-25/101495es_2024-25.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Veterinaria",
+        "year": 5,
+        "name": "Anatomía Aplicada Veterinaria",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2024-25/101496es_2024-25.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Veterinaria",
+        "year": 5,
+        "name": "Organic animal production",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2024-25/101497en_2024-25.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Veterinaria",
+        "year": 5,
+        "name": "Biotecnología Aplicada a la Patología Molecular",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2024-25/101502es_2024-25.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Veterinaria",
+        "year": 5,
+        "name": "Clínica de Animales Exóticos",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2024-25/101503es_2024-25.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Veterinaria",
+        "year": 5,
+        "name": "Industrias Alimentarias",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2024-25/1015043es_2024-25.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Veterinaria",
+        "year": 5,
+        "name": "Medicina Deportiva Equina",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2024-25/101505es_2024-25.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Veterinaria",
+        "year": 5,
+        "name": "Microbiología de los Alimentos",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2024-25/101506es_2024-25.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Veterinaria",
+        "year": 5,
+        "name": "Nutritional support of orphan, senile and sick animals",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2024-25/101507en_2024-25.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Veterinaria",
+        "year": 5,
+        "name": "Equine Medicine",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2024-25/101509en_2024-25.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Veterinaria",
+        "year": 5,
+        "name": "Residuos de medicamentos en los alimentos de origen animal",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2024-25/101510es_2024-25.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Veterinaria",
+        "year": 5,
+        "name": "Oncología Veterinaria",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2024-25/101511es_2024-25.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Veterinaria",
+        "year": 5,
+        "name": "Oftalmología Veterinaria",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2024-25/101513es_2024-25.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Veterinaria",
+        "year": 5,
+        "name": "Use of NIRS technology for feed and food characterization and safety",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2024-25/101514en_2024-25.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Veterinaria",
+        "year": 5,
+        "name": "Equine Reproductive technologies",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2024-25/101515en_2024-25.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Veterinaria",
+        "year": 5,
+        "name": "Equine ultrasonography",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2024-25/101516en_2024-25.pdf"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Veterinaria",
+        "year": 5,
+        "name": "Ecopatología de la fauna silvestre",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2024-25/101517es_2024-25.pdf"
+    }
+]

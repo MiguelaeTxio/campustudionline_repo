@@ -1,0 +1,362 @@
+[
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Química",
+        "year": 1,
+        "name": "Biología",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100437es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/ciencias/es/planificacion-ensenanza-quimica"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Química",
+        "year": 1,
+        "name": "Física I",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100438es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/ciencias/es/planificacion-ensenanza-quimica"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Química",
+        "year": 1,
+        "name": "Matemáticas Generales",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100441es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/ciencias/es/planificacion-ensenanza-quimica"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Química",
+        "year": 1,
+        "name": "Estructura Atómica y Enlace Químico",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100443es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/ciencias/es/planificacion-ensenanza-quimica"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Química",
+        "year": 1,
+        "name": "Equilibrio y Cambio en Química",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100444es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/ciencias/es/planificacion-ensenanza-quimica"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Química",
+        "year": 1,
+        "name": "Cristalografía y Mineralogía Aplicada",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100440es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/ciencias/es/planificacion-ensenanza-quimica"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Química",
+        "year": 1,
+        "name": "Física II",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100439es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/ciencias/es/planificacion-ensenanza-quimica"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Química",
+        "year": 1,
+        "name": "Cálculo Numérico y Estadística",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100442es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/ciencias/es/planificacion-ensenanza-quimica"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Química",
+        "year": 1,
+        "name": "Equilibrio Químico y Reactividad en Disolución",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100445es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/ciencias/es/planificacion-ensenanza-quimica"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Química",
+        "year": 1,
+        "name": "Grupos Funcionales Orgánicos y Estereoquímica",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100446es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/ciencias/es/planificacion-ensenanza-quimica"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Química",
+        "year": 2,
+        "name": "Introducción a la Química Analítica",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100447es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/ciencias/es/planificacion-ensenanza-quimica"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Química",
+        "year": 2,
+        "name": "Química Cuántica",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100451es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/ciencias/es/planificacion-ensenanza-quimica"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Química",
+        "year": 2,
+        "name": "Química Inorgánica",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100455es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/ciencias/es/planificacion-ensenanza-quimica"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Química",
+        "year": 2,
+        "name": "Química Orgánica I",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100459es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/ciencias/es/planificacion-ensenanza-quimica"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Química",
+        "year": 2,
+        "name": "Química Agrícola y Agroalimentaria",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100469es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/ciencias/es/planificacion-ensenanza-quimica"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Química",
+        "year": 2,
+        "name": "Técnicas Analíticas de Separación",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100450es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/ciencias/es/planificacion-ensenanza-quimica"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Química",
+        "year": 2,
+        "name": "Termodinámica",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100452es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/ciencias/es/planificacion-ensenanza-quimica"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Química",
+        "year": 2,
+        "name": "Química Orgánica II",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100460es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/ciencias/es/planificacion-ensenanza-quimica"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Química",
+        "year": 2,
+        "name": "Bioquímica",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100463es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/ciencias/es/planificacion-ensenanza-quimica"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Química",
+        "year": 2,
+        "name": "Química de los Elementos de Transición",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100458es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/ciencias/es/planificacion-ensenanza-quimica"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Química",
+        "year": 3,
+        "name": "Análisis Instrumental I",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100448es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/ciencias/es/planificacion-ensenanza-quimica"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Química",
+        "year": 3,
+        "name": "Cinética y Electroquímica",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100453es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/ciencias/es/planificacion-ensenanza-quimica"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Química",
+        "year": 3,
+        "name": "Ampliación de Química Inorgánica / Extended Inorganic Chemistry",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100457es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/ciencias/es/planificacion-ensenanza-quimica"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Química",
+        "year": 3,
+        "name": "Síntesis Orgánica",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100461es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/ciencias/es/planificacion-ensenanza-quimica"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Química",
+        "year": 3,
+        "name": "Bioquímica y Biología Molecular / Biochemistry and Molecular Biology",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100464es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/ciencias/es/planificacion-ensenanza-quimica"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Química",
+        "year": 3,
+        "name": "Ingeniería Química I",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100465es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/ciencias/es/planificacion-ensenanza-quimica"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Química",
+        "year": 3,
+        "name": "Análisis Instrumental II",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100449es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/ciencias/es/planificacion-ensenanza-quimica"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Química",
+        "year": 3,
+        "name": "Ampliación de Química Física",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100454es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/ciencias/es/planificacion-ensenanza-quimica"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Química",
+        "year": 3,
+        "name": "Ampliación de Química Orgánica",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100457es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/ciencias/es/planificacion-ensenanza-quimica"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Química",
+        "year": 3,
+        "name": "Ingeniería Química II",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100466es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/ciencias/es/planificacion-ensenanza-quimica"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Química",
+        "year": 4,
+        "name": "Química, Historia y Sociedad",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100470es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/ciencias/es/planificacion-ensenanza-quimica"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Química",
+        "year": 4,
+        "name": "Economía y Gestión Empresa",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2023-24/100471es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/ciencias/es/planificacion-ensenanza-quimica"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Química",
+        "year": 4,
+        "name": "Ampliación de Química",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2023-24/100468es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/ciencias/es/planificacion-ensenanza-quimica"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Química",
+        "year": 4,
+        "name": "Química de los Materiales",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2023-24/100467es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/ciencias/es/planificacion-ensenanza-quimica"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Química",
+        "year": 4,
+        "name": "Proyectos en Química",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2023-24/100481es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/ciencias/es/planificacion-ensenanza-quimica"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Química",
+        "year": 3,
+        "name": "Determinación Estructural Orgánica y Farmacoquímica / Organic and Pharmaco-chemical Structure Determination",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2024-25/100472es_2024-25.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/ciencias/es/planificacion-ensenanza-quimica"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Química",
+        "year": 2,
+        "name": "Macromoléculas y Coloides /Macromolecules and Colloids",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2024-25/100474es_2024-25.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/ciencias/es/planificacion-ensenanza-quimica"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Química",
+        "year": 3,
+        "name": "Química Industrial",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2024-25/100476es_2024-25.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/ciencias/es/planificacion-ensenanza-quimica"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Química",
+        "year": 3,
+        "name": "Química Analítica Aplicada",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100473es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/ciencias/es/planificacion-ensenanza-quimica"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Química",
+        "year": 4,
+        "name": "Materiales Inorgánicos en la Industria Química",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2023-24/100475es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/ciencias/es/planificacion-ensenanza-quimica"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Química",
+        "year": 4,
+        "name": "Química Computacional Aplicada",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2023-24/100477es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/ciencias/es/planificacion-ensenanza-quimica"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Química",
+        "year": 4,
+        "name": "Sistemas de la Calidad de los Laboratorios Analíticos",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2023-24/100478es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/ciencias/es/planificacion-ensenanza-quimica"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Química",
+        "year": 4,
+        "name": "Innovación Tecnológica en Materiales Inorgánicos",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2023-24/100479es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/ciencias/es/planificacion-ensenanza-quimica"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Química",
+        "year": 4,
+        "name": "Química Orgánica Industrial",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100480es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/ciencias/es/planificacion-ensenanza-quimica"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Química",
+        "year": 4,
+        "name": "Procesado de Alimentos",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2023-24/100482es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/ciencias/es/planificacion-ensenanza-quimica"
+    }
+]

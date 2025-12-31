@@ -1,0 +1,378 @@
+[
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Física",
+        "year": 1,
+        "name": "Fundamentos de Física I",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100484es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/ciencias/es/planificacion-ensenanza-fisica"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Física",
+        "year": 1,
+        "name": "Análisis Matemático I",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100490es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/ciencias/es/planificacion-ensenanza-fisica"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Física",
+        "year": 1,
+        "name": "Álgebra Lineal y Geometría I",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100492es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/ciencias/es/planificacion-ensenanza-fisica"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Física",
+        "year": 1,
+        "name": "Química",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100489es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/ciencias/es/planificacion-ensenanza-fisica"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Física",
+        "year": 1,
+        "name": "Programación Científica",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100488es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/ciencias/es/planificacion-ensenanza-fisica"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Física",
+        "year": 1,
+        "name": "Fundamentos de Física II",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100485es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/ciencias/es/planificacion-ensenanza-fisica"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Física",
+        "year": 1,
+        "name": "Análisis Matemático II",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100491es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/ciencias/es/planificacion-ensenanza-fisica"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Física",
+        "year": 1,
+        "name": "Álgebra Lineal y Geometría II",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100493es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/ciencias/es/planificacion-ensenanza-fisica"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Física",
+        "year": 1,
+        "name": "Técnicas Experimentales en Física",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100486es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/ciencias/es/planificacion-ensenanza-fisica"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Física",
+        "year": 1,
+        "name": "Métodos Matemáticos I",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100487es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/ciencias/es/planificacion-ensenanza-fisica"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Física",
+        "year": 2,
+        "name": "Mecánica y Ondas I",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100497es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/ciencias/es/planificacion-ensenanza-fisica"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Física",
+        "year": 2,
+        "name": "Termodinámica I",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100499es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/ciencias/es/planificacion-ensenanza-fisica"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Física",
+        "year": 2,
+        "name": "Métodos Matemáticos II",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100494es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/ciencias/es/planificacion-ensenanza-fisica"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Física",
+        "year": 2,
+        "name": "Astrofísica y Cosmología",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100513es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/ciencias/es/planificacion-ensenanza-fisica"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Física",
+        "year": 2,
+        "name": "Mecánica y Ondas II",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100498es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/ciencias/es/planificacion-ensenanza-fisica"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Física",
+        "year": 2,
+        "name": "Termodinámica II",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100500es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/ciencias/es/planificacion-ensenanza-fisica"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Física",
+        "year": 2,
+        "name": "Métodos Matemáticos III",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100495es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/ciencias/es/planificacion-ensenanza-fisica"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Física",
+        "year": 2,
+        "name": "Métodos Numéricos y Simulación",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100496es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/ciencias/es/planificacion-ensenanza-fisica"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Física",
+        "year": 2,
+        "name": "Economía y Gestión de Empresas",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100519es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/ciencias/es/planificacion-ensenanza-fisica"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Física",
+        "year": 2,
+        "name": "Programación Científica Avanzada",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100520es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/ciencias/es/planificacion-ensenanza-fisica"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Física",
+        "year": 2,
+        "name": "Meteorología y Climatología",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100521es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/ciencias/es/planificacion-ensenanza-fisica"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Física",
+        "year": 2,
+        "name": "Electrónica Digital",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100522es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/ciencias/es/planificacion-ensenanza-fisica"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Física",
+        "year": 2,
+        "name": "Radiaciones Ionizantes",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100523es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/ciencias/es/planificacion-ensenanza-fisica"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Física",
+        "year": 2,
+        "name": "Historia de la Física",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100524es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/ciencias/es/planificacion-ensenanza-fisica"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Física",
+        "year": 3,
+        "name": "Electromagnetismo I",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100502es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/ciencias/es/planificacion-ensenanza-fisica"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Física",
+        "year": 3,
+        "name": "Óptica I",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100505es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/ciencias/es/planificacion-ensenanza-fisica"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Física",
+        "year": 3,
+        "name": "Física Cuántica I",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100507es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/ciencias/es/planificacion-ensenanza-fisica"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Física",
+        "year": 3,
+        "name": "Física Estadística",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100501es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/ciencias/es/planificacion-ensenanza-fisica"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Física",
+        "year": 3,
+        "name": "Mecánica de los Medios Continuos",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100516es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/ciencias/es/planificacion-ensenanza-fisica"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Física",
+        "year": 3,
+        "name": "Electromagnetismo II",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100503es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/ciencias/es/planificacion-ensenanza-fisica"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Física",
+        "year": 3,
+        "name": "Óptica II",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100506es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/ciencias/es/planificacion-ensenanza-fisica"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Física",
+        "year": 3,
+        "name": "Física Cuántica II",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100508es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/ciencias/es/planificacion-ensenanza-fisica"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Física",
+        "year": 3,
+        "name": "Circuitos Eléctricos",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100504es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/ciencias/es/planificacion-ensenanza-fisica"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Física",
+        "year": 3,
+        "name": "Proyectos",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100518es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/ciencias/es/planificacion-ensenanza-fisica"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Física",
+        "year": 4,
+        "name": "Física del Estado Sólido",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100511es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/ciencias/es/planificacion-ensenanza-fisica"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Física",
+        "year": 4,
+        "name": "Mecánica Cuántica",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100509es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/ciencias/es/planificacion-ensenanza-fisica"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Física",
+        "year": 4,
+        "name": "Electrodinámica Clásica",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100514es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/ciencias/es/planificacion-ensenanza-fisica"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Física",
+        "year": 4,
+        "name": "Física Atómica y Molecular",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100515es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/ciencias/es/planificacion-ensenanza-fisica"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Física",
+        "year": 4,
+        "name": "Electrónica Física",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100510es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/ciencias/es/planificacion-ensenanza-fisica"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Física",
+        "year": 4,
+        "name": "Física Nuclear y de Partículas",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100512es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/ciencias/es/planificacion-ensenanza-fisica"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Física",
+        "year": 4,
+        "name": "Propagación de Ondas Electromagnéticas",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100517es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/ciencias/es/planificacion-ensenanza-fisica"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Física",
+        "year": 4,
+        "name": "Ampliación de Óptica",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100525es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/ciencias/es/planificacion-ensenanza-fisica"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Física",
+        "year": 4,
+        "name": "Microcontroladores",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100526es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/ciencias/es/planificacion-ensenanza-fisica"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Física",
+        "year": 4,
+        "name": "Métodos Numéricos Avanzados",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100527es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/ciencias/es/planificacion-ensenanza-fisica"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Física",
+        "year": 4,
+        "name": "Instrumentación Electrónica",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100530es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/ciencias/es/planificacion-ensenanza-fisica"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Física",
+        "year": 4,
+        "name": "Fundamentos de Espectroscopia",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100529es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/ciencias/es/planificacion-ensenanza-fisica"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Física",
+        "year": 4,
+        "name": "Física del Plasma",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100528es_2023-24.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/ciencias/es/planificacion-ensenanza-fisica"
+    }
+]

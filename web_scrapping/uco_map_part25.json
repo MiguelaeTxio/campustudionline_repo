@@ -1,0 +1,778 @@
+[
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Traducción e Interpretación",
+        "year": 1,
+        "name": "Lengua Española I",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/101580es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-traduccion-e-interpretacion#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Traducción e Interpretación",
+        "year": 1,
+        "name": "Lengua B I (Inglés)",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/101582en_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-traduccion-e-interpretacion#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Traducción e Interpretación",
+        "year": 1,
+        "name": "Lengua B I (Francés)",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/101583es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-traduccion-e-interpretacion#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Traducción e Interpretación",
+        "year": 1,
+        "name": "Lengua C I (Inglés)",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/101586en_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-traduccion-e-interpretacion#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Traducción e Interpretación",
+        "year": 1,
+        "name": "Lengua C I (Francés)",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/101587es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-traduccion-e-interpretacion#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Traducción e Interpretación",
+        "year": 1,
+        "name": "Lengua C I (Alemán)",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/101588es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-traduccion-e-interpretacion#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Traducción e Interpretación",
+        "year": 1,
+        "name": "Lengua C I (Árabe)",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/101589es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-traduccion-e-interpretacion#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Traducción e Interpretación",
+        "year": 1,
+        "name": "Lengua C I (Italiano)",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/101590es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-traduccion-e-interpretacion#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Traducción e Interpretación",
+        "year": 1,
+        "name": "Lingüística",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/101591es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-traduccion-e-interpretacion#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Traducción e Interpretación",
+        "year": 1,
+        "name": "Herramientas Informáticas Profesionales",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/101604es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-traduccion-e-interpretacion#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Traducción e Interpretación",
+        "year": 1,
+        "name": "Lengua Española II",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/101581es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-traduccion-e-interpretacion#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Traducción e Interpretación",
+        "year": 1,
+        "name": "Lengua B II (Inglés)",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/101584en_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-traduccion-e-interpretacion#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Traducción e Interpretación",
+        "year": 1,
+        "name": "Lengua B II (Francés)",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/101585es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-traduccion-e-interpretacion#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Traducción e Interpretación",
+        "year": 1,
+        "name": "Lengua C II (Inglés)",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/101594en_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-traduccion-e-interpretacion#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Traducción e Interpretación",
+        "year": 1,
+        "name": "Lengua C II (Francés)",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/101595es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-traduccion-e-interpretacion#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Traducción e Interpretación",
+        "year": 1,
+        "name": "Lengua C II (Alemán)",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/101596es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-traduccion-e-interpretacion#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Traducción e Interpretación",
+        "year": 1,
+        "name": "Lengua C II (Árabe)",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/101597es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-traduccion-e-interpretacion#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Traducción e Interpretación",
+        "year": 1,
+        "name": "Lengua C II (Italiano)",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/101598es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-traduccion-e-interpretacion#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Traducción e Interpretación",
+        "year": 1,
+        "name": "Documentación",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/101658es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-traduccion-e-interpretacion#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Traducción e Interpretación",
+        "year": 1,
+        "name": "Fundamentos Teóricos de la Traducción y la Interpretación",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/101656es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-traduccion-e-interpretacion#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Traducción e Interpretación",
+        "year": 2,
+        "name": "Lengua B III (Inglés)",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/101592en_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-traduccion-e-interpretacion#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Traducción e Interpretación",
+        "year": 2,
+        "name": "Lengua B III (Francés)",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/101593es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-traduccion-e-interpretacion#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Traducción e Interpretación",
+        "year": 2,
+        "name": "Lengua C III (Inglés)",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/101599en_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-traduccion-e-interpretacion#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Traducción e Interpretación",
+        "year": 2,
+        "name": "Lengua C III (Francés)",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/101600es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-traduccion-e-interpretacion#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Traducción e Interpretación",
+        "year": 2,
+        "name": "Lengua C III (Alemán)",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/101601es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-traduccion-e-interpretacion#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Traducción e Interpretación",
+        "year": 2,
+        "name": "Lengua C III (Árabe)",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/101602es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-traduccion-e-interpretacion#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Traducción e Interpretación",
+        "year": 2,
+        "name": "Lengua C III (Italiano)",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/101603es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-traduccion-e-interpretacion#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Traducción e Interpretación",
+        "year": 2,
+        "name": "Culturas y Civilizaciones Panhispánicas",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/101605es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-traduccion-e-interpretacion#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Traducción e Interpretación",
+        "year": 2,
+        "name": "Herramientas Profesionales para la Traducción",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/101659es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-traduccion-e-interpretacion#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Traducción e Interpretación",
+        "year": 2,
+        "name": "Traducción General de la Lengua B (Inglés)",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/101620es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-traduccion-e-interpretacion#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Traducción e Interpretación",
+        "year": 2,
+        "name": "Traducción General de la Lengua B (Francés)",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/101621es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-traduccion-e-interpretacion#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Traducción e Interpretación",
+        "year": 2,
+        "name": "Lengua B IV (Inglés)",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/101606en_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-traduccion-e-interpretacion#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Traducción e Interpretación",
+        "year": 2,
+        "name": "Lengua B IV (Francés)",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/101607es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-traduccion-e-interpretacion#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Traducción e Interpretación",
+        "year": 2,
+        "name": "Lengua C IV (Inglés)",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/101610en_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-traduccion-e-interpretacion#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Traducción e Interpretación",
+        "year": 2,
+        "name": "Lengua C IV (Francés)",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/101611es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-traduccion-e-interpretacion#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Traducción e Interpretación",
+        "year": 2,
+        "name": "Lengua C IV (Alemán)",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/101612es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-traduccion-e-interpretacion#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Traducción e Interpretación",
+        "year": 2,
+        "name": "Lengua C IV (Árabe)",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/101613es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-traduccion-e-interpretacion#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Traducción e Interpretación",
+        "year": 2,
+        "name": "Lengua C IV (Italiano)",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/101614es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-traduccion-e-interpretacion#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Traducción e Interpretación",
+        "year": 2,
+        "name": "Terminología",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/101661es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-traduccion-e-interpretacion#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Traducción e Interpretación",
+        "year": 2,
+        "name": "Informática Aplicada a la Traducción",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/101660es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-traduccion-e-interpretacion#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Traducción e Interpretación",
+        "year": 2,
+        "name": "Traducción General de la Lengua C (Inglés)",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/101622es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-traduccion-e-interpretacion#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Traducción e Interpretación",
+        "year": 2,
+        "name": "Traducción General de la Lengua C (Francés)",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/101623es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-traduccion-e-interpretacion#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Traducción e Interpretación",
+        "year": 2,
+        "name": "Traducción General de la Lengua C (Alemán)",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/101624es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-traduccion-e-interpretacion#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Traducción e Interpretación",
+        "year": 2,
+        "name": "Traducción General de la Lengua C (Árabe)",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/101625es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-traduccion-e-interpretacion#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Traducción e Interpretación",
+        "year": 2,
+        "name": "Traducción General de la Lengua C (Italiano)",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/101626es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-traduccion-e-interpretacion#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Traducción e Interpretación",
+        "year": 3,
+        "name": "Cultura y Civilización de la Lengua B (Inglés)",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/101608es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-traduccion-e-interpretacion#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Traducción e Interpretación",
+        "year": 3,
+        "name": "Cultura y Civilización de la Lengua B (Francés)",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/101609es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-traduccion-e-interpretacion#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Traducción e Interpretación",
+        "year": 3,
+        "name": "Técnicas de la Interpretación de la Lengua B (Inglés)",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/101650es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-traduccion-e-interpretacion#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Traducción e Interpretación",
+        "year": 3,
+        "name": "Técnicas de la Interpretación de la Lengua B (Francés)",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/101651es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-traduccion-e-interpretacion#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Traducción e Interpretación",
+        "year": 3,
+        "name": "Traducción Científica y Técnica de la Lengua B (Inglés)",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/101633es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-traduccion-e-interpretacion#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Traducción e Interpretación",
+        "year": 3,
+        "name": "Traducción Científica y Técnica de la Lengua B (Francés)",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/101634es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-traduccion-e-interpretacion#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Traducción e Interpretación",
+        "year": 3,
+        "name": "Traducción Periodística de la Lengua C (Inglés)",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/101640es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-traduccion-e-interpretacion#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Traducción e Interpretación",
+        "year": 3,
+        "name": "Traducción Periodística de la Lengua C (Francés)",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/101641es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-traduccion-e-interpretacion#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Traducción e Interpretación",
+        "year": 3,
+        "name": "Traducción Periodística de la Lengua C (Alemán)",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/101642es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-traduccion-e-interpretacion#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Traducción e Interpretación",
+        "year": 3,
+        "name": "Traducción Periodística de la Lengua C (Árabe)",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/101643es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-traduccion-e-interpretacion#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Traducción e Interpretación",
+        "year": 3,
+        "name": "Traducción Periodística de la Lengua C (Italiano)",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/101644es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-traduccion-e-interpretacion#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Traducción e Interpretación",
+        "year": 3,
+        "name": "Traducción Intercultural",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/101627es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-traduccion-e-interpretacion#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Traducción e Interpretación",
+        "year": 3,
+        "name": "Cultura y Civilización de la Lengua C (Inglés)",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/101615es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-traduccion-e-interpretacion#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Traducción e Interpretación",
+        "year": 3,
+        "name": "Cultura y Civilización de la Lengua C (Francés)",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/101616es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-traduccion-e-interpretacion#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Traducción e Interpretación",
+        "year": 3,
+        "name": "Cultura y Civilización de la Lengua C (Alemán)",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/101617es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-traduccion-e-interpretacion#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Traducción e Interpretación",
+        "year": 3,
+        "name": "Cultura y Civilización de la Lengua C (Árabe)",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/101618es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-traduccion-e-interpretacion#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Traducción e Interpretación",
+        "year": 3,
+        "name": "Cultura y Civilización de la Lengua C (Italiano)",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/101619es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-traduccion-e-interpretacion#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Traducción e Interpretación",
+        "year": 3,
+        "name": "Técnicas de la Interpretación de la Lengua B II (Inglés)",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/101652es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-traduccion-e-interpretacion#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Traducción e Interpretación",
+        "year": 3,
+        "name": "Técnicas de la Interpretación de la Lengua B II (Francés)",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/101653es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-traduccion-e-interpretacion#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Traducción e Interpretación",
+        "year": 3,
+        "name": "Traducción Científica y Técnica de la Lengua C (Inglés)",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/101635es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-traduccion-e-interpretacion#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Traducción e Interpretación",
+        "year": 3,
+        "name": "Traducción Científica y Técnica de la Lengua C (Francés)",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/101636es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-traduccion-e-interpretacion#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Traducción e Interpretación",
+        "year": 3,
+        "name": "Traducción Científica y Técnica de la Lengua C (Alemán)",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/101637es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-traduccion-e-interpretacion#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Traducción e Interpretación",
+        "year": 3,
+        "name": "Traducción Científica y Técnica de la Lengua C (Árabe)",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/101638es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-traduccion-e-interpretacion#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Traducción e Interpretación",
+        "year": 3,
+        "name": "Traducción Científica y Técnica de la Lengua C (Italiano)",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/101639es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-traduccion-e-interpretacion#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Traducción e Interpretación",
+        "year": 3,
+        "name": "Traducción Jurídica y Económica de la Lengua C (Inglés)",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/101628es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-traduccion-e-interpretacion#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Traducción e Interpretación",
+        "year": 3,
+        "name": "Traducción Jurídica y Económica de la Lengua C (Francés)",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/101629es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-traduccion-e-interpretacion#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Traducción e Interpretación",
+        "year": 3,
+        "name": "Traducción Jurídica y Económica de la Lengua C (Alemán)",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/101630es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-traduccion-e-interpretacion#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Traducción e Interpretación",
+        "year": 3,
+        "name": "Traducción Jurídica y Económica de la Lengua C (Árabe)",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/101631es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-traduccion-e-interpretacion#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Traducción e Interpretación",
+        "year": 3,
+        "name": "Traducción Jurídica y Económica de la Lengua C (Italiano)",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/101632es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-traduccion-e-interpretacion#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Traducción e Interpretación",
+        "year": 3,
+        "name": "Traducción Literaria de la Lengua C (Inglés)",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/101645es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-traduccion-e-interpretacion#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Traducción e Interpretación",
+        "year": 3,
+        "name": "Traducción Literaria de la Lengua C (Francés)",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/101646es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-traduccion-e-interpretacion#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Traducción e Interpretación",
+        "year": 3,
+        "name": "Traducción Literaria de la Lengua C (Alemán)",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/101647es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-traduccion-e-interpretacion#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Traducción e Interpretación",
+        "year": 3,
+        "name": "Traducción Literaria de la Lengua C (Árabe)",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/101648es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-traduccion-e-interpretacion#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Traducción e Interpretación",
+        "year": 3,
+        "name": "Traducción Literaria de la Lengua C (Italiano)",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/101649es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-traduccion-e-interpretacion#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Traducción e Interpretación",
+        "year": 4,
+        "name": "Técnicas de la Interpretación Jurídica y Económica de la Lengua B (Inglés)",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/101654es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-traduccion-e-interpretacion#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Traducción e Interpretación",
+        "year": 4,
+        "name": "Técnicas de la Interpretación Jurídica y Económica de la Lengua B (Francés)",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/101655es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-traduccion-e-interpretacion#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Traducción e Interpretación",
+        "year": 4,
+        "name": "Traducción Literaria Lengua B (Inglés)",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/101676es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-traduccion-e-interpretacion#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Traducción e Interpretación",
+        "year": 4,
+        "name": "Traducción Literaria Lengua B (Francés)",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/101677es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-traduccion-e-interpretacion#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Traducción e Interpretación",
+        "year": 4,
+        "name": "Traducción Cinematográfica y Subtitulado Lengua B (Inglés)",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/101668es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-traduccion-e-interpretacion#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Traducción e Interpretación",
+        "year": 4,
+        "name": "Traducción Cinematográfica y Subtitulado Lengua B (Francés)",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/101669es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-traduccion-e-interpretacion#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Traducción e Interpretación",
+        "year": 4,
+        "name": "Memorias de Traducción",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/101657es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-traduccion-e-interpretacion#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Traducción e Interpretación",
+        "year": 4,
+        "name": "Traducción de Textos Agroalimentarios Lengua B (Inglés)",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/101666es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-traduccion-e-interpretacion#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Traducción e Interpretación",
+        "year": 4,
+        "name": "Traducción de Textos Agroalimentarios Lengua B (Francés)",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/101667es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-traduccion-e-interpretacion#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Traducción e Interpretación",
+        "year": 4,
+        "name": "Traducción de Textos Jurídicos y Económicos Lengua B (Inglés)",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/101672es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-traduccion-e-interpretacion#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Traducción e Interpretación",
+        "year": 4,
+        "name": "Traducción de Textos Jurídicos y Económicos Lengua B (Francés)",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/101673es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-traduccion-e-interpretacion#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Traducción e Interpretación",
+        "year": 4,
+        "name": "Traducción de Textos Biosanitarios Lengua B (Inglés)",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/101664es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-traduccion-e-interpretacion#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Traducción e Interpretación",
+        "year": 4,
+        "name": "Traducción de Textos Biosanitarios Lengua B (Francés)",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/101665es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-traduccion-e-interpretacion#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Traducción e Interpretación",
+        "year": 4,
+        "name": "Traducción Editorial",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/101678es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-traduccion-e-interpretacion#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Traducción e Interpretación",
+        "year": 4,
+        "name": "Traducción Multimedia Lengua B (Inglés)",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/101670es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-traduccion-e-interpretacion#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Traducción e Interpretación",
+        "year": 4,
+        "name": "Traducción Multimedia Lengua B (Francés)",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/101671es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-traduccion-e-interpretacion#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Traducción e Interpretación",
+        "year": 4,
+        "name": "Traducción de Textos Publicitarios, Turísticos y Comerciales Lengua B (Inglés)",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/101674es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-traduccion-e-interpretacion#planificacion"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Traducción e Interpretación",
+        "year": 4,
+        "name": "Traducción de Textos Publicitarios, Turísticos y Comerciales Lengua B (Francés)",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/101675es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-traduccion-e-interpretacion#planificacion"
+    }
+]

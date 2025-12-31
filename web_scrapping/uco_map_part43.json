@@ -1,0 +1,114 @@
+[
+  {
+    "university": "Universidad de Córdoba",
+    "degree": "Grado en Ingeniería Informática",
+    "year": 1,
+    "name": "Cálculo",
+    "pdf_url": "https://www.uco.edu.es/eguiado/guias/2025-26/101383es_2025-26.pdf",
+    "url_source": "https://www.uco.edu.es/eguiado/guias/2025-26/101383es_2025-26.pdf"
+  },
+  {
+    "university": "Universidad de Córdoba",
+    "degree": "Grado en Ingeniería Informática",
+    "year": 1,
+    "name": "Álgebra Lineal",
+    "pdf_url": "https://www.uco.edu.es/eguiado/guias/2025-26/101384es_2025-26.pdf",
+    "url_source": "https://www.uco.edu.es/eguiado/guias/2025-26/101384es_2025-26.pdf"
+  },
+  {
+    "university": "Universidad de Córdoba",
+    "degree": "Grado en Ingeniería Informática",
+    "year": 2,
+    "name": "Programación Orientada a Objetos",
+    "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/101402es_2025-26.pdf",
+    "url_source": "https://www.uco.es/eguiado/guias/2025-26/101402es_2025-26.pdf"
+  },
+  {
+    "university": "Universidad de Córdoba",
+    "degree": "Grado en Ingeniería Informática",
+    "year": 2,
+    "name": "Bases de Datos",
+    "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/101391es_2025-26.pdf",
+    "url_source": "https://www.uco.es/eguiado/guias/2025-26/101391es_2025-26.pdf"
+  },
+  {
+    "university": "Universidad de Córdoba",
+    "degree": "Grado en Ingeniería Informática",
+    "year": 2,
+    "name": "Estructuras de Datos",
+    "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/101392es_2025-26.pdf",
+    "url_source": "https://www.uco.es/eguiado/guiias/2025-26/101392es_2025-26.pdf"
+  },
+  {
+    "university": "Universidad de Córdoba",
+    "degree": "Grado en Ingeniería Informática",
+    "year": 2,
+    "name": "Ingeniería del Software",
+    "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/101393es_2025-26.pdf",
+    "url_source": "https://www.uco.es/eguiado/guias/2025-26/101393es_2025-26.pdf"
+  },
+  {
+    "university": "Universidad de Córdoba",
+    "degree": "Grado en Ingeniería Informática",
+    "year": 2,
+    "name": "Arquitectura de Redes",
+    "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/101398es_2025-26.pdf",
+    "url_source": "https://www.uco.es/eguiado/guias/2025-26/101398es_2025-26.pdf"
+  },
+  {
+    "university": "Universidad de Córdoba",
+    "degree": "Grado en Ingeniería Informática",
+    "year": 2,
+    "name": "Sistemas Inteligentes",
+    "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/101395es_2025-26.pdf",
+    "url_source": "https://www.uco.es/eguiado/guiias/2025-26/101395es_2025-26.pdf"
+  },
+  {
+    "university": "Universidad de Córdoba",
+    "degree": "Grado en Ingeniería Informática",
+    "year": 3,
+    "name": "Programación Web",
+    "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/101400es_2025-26.pdf",
+    "url_source": "https://www.uco.es/eguiado/guiias/2025-26/101400es_2025-26.pdf"
+  },
+  {
+    "university": "Universidad de Córdoba",
+    "degree": "Grado en Ingeniería Informática",
+    "year": 3,
+    "name": "Legislación y Estandarización",
+    "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/101404es_2025-26.pdf",
+    "url_source": "https://www.uco.es/eguiado/guiias/2025-26/101404es_2025-26.pdf"
+  },
+  {
+    "university": "Universidad de Córdoba",
+    "degree": "Grado en Ingeniería Informática",
+    "year": 3,
+    "name": "Ingeniería de Requisitos",
+    "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/101407es_2025-26.pdf",
+    "url_source": "https://www.uco.es/eguiado/guiias/2025-26/101407es_2025-26.pdf"
+  },
+  {
+    "university": "Universidad de Córdoba",
+    "degree": "Grado en Ingeniería Informática",
+    "year": 3,
+    "name": "Sistemas Interactivos",
+    "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/101426es_2025-26.pdf",
+    "url_source": "https://www.uco.es/eguiado/guiias/2025-26/101426es_2025-26.pdf"
+  },
+  {
+    "university": "Universidad de Córdoba",
+    "degree": "Grado en Ingeniería Informática",
+    "year": 4,
+    "name": "Sistemas en Tiempo Real",
+    "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/101415es_2025-26.pdf",
+    "url_source": "https://www.uco.es/eguiado/guiias/2025-26/101415es_2025-26.pdf"
+  },
+  {
+    "university": "Universidad de Córdoba",
+    "degree": "Grado en Ingeniería Informática",
+    "year": 4,
+    "name": "Modelado y Diseño Avanzado de Software",
+    "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/101410es_2025-26.pdf",
+    "url_source": "https://www.uco.es/eguiado/guiias/2025-26/101410es_2025-26.pdf"
+  }
+]

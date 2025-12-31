@@ -1,0 +1,82 @@
+[
+  {
+    "university": "Universidad de Córdoba",
+    "degree": "Grado en Biotecnología",
+    "year": 1,
+    "name": "Organografía",
+    "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/638005es_2025-26.pdf",
+    "url_source": "https://www.uco.es/eguiado/guias/2025-26/638005es_2025-26.pdf"
+  },
+  {
+    "university": "Universidad de Córdoba",
+    "degree": "Grado en Biotecnología",
+    "year": 3,
+    "name": "Operaciones de Laboratorio Biotecnológico",
+    "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/638026es_2025-26.pdf",
+    "url_source": "https://www.uco.es/eguiado/guias/2025-26/638026es_2025-26.pdf"
+  },
+  {
+    "university": "Universidad de Córdoba",
+    "degree": "Grado en Biotecnología",
+    "year": 3,
+    "name": "Cultivos Celulares",
+    "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/638029es_2025-26.pdf",
+    "url_source": "https://www.uco.es/eguiado/guias/2025-26/638029es_2025-26.pdf"
+  },
+  {
+    "university": "Universidad de Córdoba",
+    "degree": "Grado en Biotecnología",
+    "year": 3,
+    "name": "Bioinformática",
+    "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/638024es_2025-26.pdf",
+    "url_source": "https://www.uco.es/eguiado/guias/2025-26/638024es_2025-26.pdf"
+  },
+  {
+    "university": "Universidad de Córdoba",
+    "degree": "Grado en Biotecnología",
+    "year": 3,
+    "name": "Fundamentos Éticos y Jurídicos de la Biotecnología",
+    "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/638032es_2025-26.pdf",
+    "url_source": "https://www.uco.es/eguiado/guias/2025-26/638032es_2025-26.pdf"
+  },
+  {
+    "university": "Universidad de Córdoba",
+    "degree": "Grado en Biotecnología",
+    "year": 4,
+    "name": "Operaciones Básicas y Procesos de Separación",
+    "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/638034es_2025-26.pdf",
+    "url_source": "https://www.uco.es/eguiado/guias/2025-26/638034es_2025-26.pdf"
+  },
+  {
+    "university": "Universidad de Córdoba",
+    "degree": "Grado en Biotecnología",
+    "year": 4,
+    "name": "Aprovechamiento Biotecnológico de Productos y Subproductos Industriales",
+    "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/638044es_2025-26.pdf",
+    "url_source": "https://www.uco.es/eguiado/guias/2025-26/638044es_2025-26.pdf"
+  },
+  {
+    "university": "Universidad de Córdoba",
+    "degree": "Grado en Biotecnología",
+    "year": 4,
+    "name": "Biomateriales e Interfases",
+    "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/638046es_2025-26.pdf",
+    "url_source": "https://www.uco.es/eguiado/guias/2025-26/638046es_2025-26.pdf"
+  },
+  {
+    "university": "Universidad de Córdoba",
+    "degree": "Grado en Biotecnología",
+    "year": 4,
+    "name": "Biotecnología para el Diseño y Desarrollo de Fármacos y Vacunas",
+    "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/638053es_2025-26.pdf",
+    "url_source": "https://www.uco.es/eguiado/guias/2025-26/638053es_2025-26.pdf"
+  },
+  {
+    "university": "Universidad de Córdoba",
+    "degree": "Grado en Biotecnología",
+    "year": 4,
+    "name": "Ingeniería Tisular",
+    "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/638055es_2025-26.pdf",
+    "url_source": "https://www.uco.es/eguiado/guias/2025-26/638055es_2025-26.pdf"
+  }
+]

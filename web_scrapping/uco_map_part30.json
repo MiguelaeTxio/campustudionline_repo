@@ -1,0 +1,434 @@
+[
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Psicología",
+        "year": 1,
+        "name": "Introducción e Historia de la Psicología",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/598001es_2025-26.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/educacion/es/gpsicologia-planificacion-ps-planifica"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Psicología",
+        "year": 1,
+        "name": "Psicología de la Personalidad",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/598002es_2025-26.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/educacion/es/gpsicologia-planificacion-ps-planifica"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Psicología",
+        "year": 1,
+        "name": "Fundamentos Sociales del Comportamiento",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/598027es_2025-26.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/educacion/es/gpsicologia-planificacion-ps-planifica"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Psicología",
+        "year": 1,
+        "name": "Introducción a la Metodología de la Investigación en Psicología",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/598006es_2025-26.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/educacion/es/gpsicologia-planificacion-ps-planifica"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Psicología",
+        "year": 1,
+        "name": "Fundamentos de Psicobiología",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/598003es_2025-26.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/educacion/es/gpsicologia-planificacion-ps-planifica"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Psicología",
+        "year": 1,
+        "name": "Métodos y Diseños de Investigación en Psicología",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/598056es_2025-26.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/educacion/es/gpsicologia-planificacion-ps-planifica"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Psicología",
+        "year": 1,
+        "name": "Percepción y atención",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/598058es_2025-26.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/educacion/es/gpsicologia-planificacion-ps-planifica"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Psicología",
+        "year": 1,
+        "name": "Psicología del Aprendizaje",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/598010es_2025-26.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/educacion/es/gpsicologia-planificacion-ps-planifica"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Psicología",
+        "year": 1,
+        "name": "Estadística y Análisis de Datos Aplicados a la Psicología",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/598007es_2025-26.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/educacion/es/gpsicologia-planificacion-ps-planifica"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Psicología",
+        "year": 1,
+        "name": "Psicología del Desarrollo I",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/598025es_2025-26.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/educacion/es/gpsicologia-planificacion-ps-planifica"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Psicología",
+        "year": 1,
+        "name": "Percepción, Atención y Memoria",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/598014es_2025-26.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/educacion/es/gpsicologia-planificacion-ps-planifica"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Psicología",
+        "year": 1,
+        "name": "Psicología Social",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/598028es_2025-26.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/educacion/es/gpsicologia-planificacion-ps-planifica"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Psicología",
+        "year": 2,
+        "name": "Emoción y Motivación",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/598013es_2025-26.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/educacion/es/gpsicologia-planificacion-ps-planifica"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Psicología",
+        "year": 2,
+        "name": "Psicofisiología",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/598004es_2025-26.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/educacion/es/gpsicologia-planificacion-ps-planifica"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Psicología",
+        "year": 2,
+        "name": "Psicología de la Educación I",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/598022es_2025-26.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/educacion/es/gpsicologia-planificacion-ps-planifica"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Psicología",
+        "year": 2,
+        "name": "Psicopatología",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/598015es_2025-26.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/educacion/es/gpsicologia-planificacion-ps-planifica"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Psicología",
+        "year": 2,
+        "name": "Diseños y Técnicas de Investigación en Psicología",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/598008es_2025-26.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/educacion/es/gpsicologia-planificacion-ps-planifica"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Psicología",
+        "year": 2,
+        "name": "Psicología del Desarrollo II",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/598026es_2025-26.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/educacion/es/gpsicologia-planificacion-ps-planifica"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Psicología",
+        "year": 2,
+        "name": "Psicología de los Grupos",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/598030es_2025-26.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/educacion/es/gpsicologia-planificacion-ps-planifica"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Psicología",
+        "year": 2,
+        "name": "Técnicas de evaluación Psicológica",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/598016es_2025-26.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/educacion/es/gpsicologia-planificacion-ps-planifica"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Psicología",
+        "year": 2,
+        "name": "Lenguaje y Pensamiento",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/598011es_2025-26.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/educacion/es/gpsicologia-planificacion-ps-planifica"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Psicología",
+        "year": 2,
+        "name": "Psicometría",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/598009es_2025-26.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/educacion/es/gpsicologia-planificacion-ps-planifica"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Psicología",
+        "year": 3,
+        "name": "Psicología del Trabajo y de las Organizaciones",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/598029es_2025-26.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/educacion/es/gpsicologia-planificacion-ps-planifica"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Psicología",
+        "year": 3,
+        "name": "Técnicas de Intervención Psicológica",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/598018es_2025-26.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/educacion/es/gpsicologia-planificacion-ps-planifica"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Psicología",
+        "year": 3,
+        "name": "Evaluación y Diagnóstico Psicológico",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/598017es_2025-26.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/educacion/es/gpsicologia-planificacion-ps-planifica"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Psicología",
+        "year": 3,
+        "name": "Evaluación y Tratamientos Psicológicos en la Edad Adulta I",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/598020es_2025-26.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/educacion/es/gpsicologia-planificacion-ps-planifica"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Psicología",
+        "year": 3,
+        "name": "Neurociencia Cognitiva",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/598012es_2025-26.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/educacion/es/gpsicologia-planificacion-ps-planifica"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Psicología",
+        "year": 3,
+        "name": "Neuropsicología",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/598005es_2025-26.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/educacion/es/gpsicologia-planificacion-ps-planifica"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Psicología",
+        "year": 3,
+        "name": "Evaluación y Tratamientos Psicológicos en la Etapa Infantil y Adolescente",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/598019es_2025-26.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/educacion/es/gpsicologia-planificacion-ps-planifica"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Psicología",
+        "year": 3,
+        "name": "Evaluación y Tratamientos Psicológicos en la Edad Adulta II",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/598021es_2025-26.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/educacion/es/gpsicologia-planificacion-ps-planifica"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Psicología",
+        "year": 3,
+        "name": "Trastornos del Desarrollo y Atención Temprana",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/598024es_2025-26.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/educacion/es/gpsicologia-planificacion-ps-planifica"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Psicología",
+        "year": 3,
+        "name": "Psicología de la Educación II",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/598023es_2025-26.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/educacion/es/gpsicologia-planificacion-ps-planifica"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Psicología",
+        "year": 4,
+        "name": "Psicología de la Salud",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/598033es_2025-26.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/educacion/es/gpsicologia-planificacion-ps-planifica"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Psicología",
+        "year": 4,
+        "name": "Análisis Aplicado y Experimental del Comportamiento",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/598034es_2025-26.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/educacion/es/gpsicologia-planificacion-ps-planifica"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Psicología",
+        "year": 4,
+        "name": "Psicoterapias",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/598035es_2025-26.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/educacion/es/gpsicologia-planificacion-ps-planifica"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Psicología",
+        "year": 4,
+        "name": "Psicología de la Sexualidad",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/598036es_2025-26.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/educacion/es/gpsicologia-planificacion-ps-planifica"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Psicología",
+        "year": 4,
+        "name": "Psicooncología",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/598037es_2025-26.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/educacion/es/gpsicologia-planificacion-ps-planifica"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Psicología",
+        "year": 4,
+        "name": "Psicología de las Adicciones",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/598038es_2025-26.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/educacion/es/gpsicologia-planificacion-ps-planifica"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Psicología",
+        "year": 4,
+        "name": "Psicología Positiva",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/598039es_2025-26.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/educacion/es/gpsicologia-planificacion-ps-planifica"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Psicología",
+        "year": 4,
+        "name": "Orientación e Intervención Psicoeducativa",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/598040es_2025-26.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/educacion/es/gpsicologia-planificacion-ps-planifica"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Psicología",
+        "year": 4,
+        "name": "Intervención Familiar y Promoción del Desarrollo",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/598041es_2025-26.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/educacion/es/gpsicologia-planificacion-ps-planifica"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Psicología",
+        "year": 4,
+        "name": "Psicología de las Relaciones entre Iguales",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/598042es_2025-26.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/educacion/es/gpsicologia-planificacion-ps-planifica"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Psicología",
+        "year": 4,
+        "name": "Psicología del Envejecimiento",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/598043es_2025-26.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/educacion/es/gpsicologia-planificacion-ps-planifica"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Psicología",
+        "year": 4,
+        "name": "Atención a la Diversidad",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/598044es_2025-26.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/educacion/es/gpsicologia-planificacion-ps-planifica"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Psicología",
+        "year": 4,
+        "name": "Ciberpsicología: Retos y Riesgos",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/598045es_2025-26.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/educacion/es/gpsicologia-planificacion-ps-planifica"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Psicología",
+        "year": 4,
+        "name": "Dificultades de Aprendizaje",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/598046es_2025-26.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/educacion/es/gpsicologia-planificacion-ps-planifica"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Psicología",
+        "year": 4,
+        "name": "Asesoramiento en Procesos Metodológicos para la Innovación Educativa",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/598047es_2025-26.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/educacion/es/gpsicologia-planificacion-ps-planifica"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Psicología",
+        "year": 4,
+        "name": "Psicología Ambiental",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/598048es_2025-26.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/educacion/es/gpsicologia-planificacion-ps-planifica"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Psicología",
+        "year": 4,
+        "name": "Psicología de la Comunicación",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/598049es_2025-26.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/educacion/es/gpsicologia-planificacion-ps-planifica"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Psicología",
+        "year": 4,
+        "name": "Psicología de los Recursos Humanos",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/598050es_2025-26.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/educacion/es/gpsicologia-planificacion-ps-planifica"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Psicología",
+        "year": 4,
+        "name": "Psicología Política y Económica",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/598051es_2025-26.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/educacion/es/gpsicologia-planificacion-ps-planifica"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Psicología",
+        "year": 4,
+        "name": "Psicología Jurídica",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/598052es_2025-26.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/educacion/es/gpsicologia-planificacion-ps-planifica"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Psicología",
+        "year": 4,
+        "name": "Psicología Comunitaria y de la Intervención Social",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/598053es_2025-26.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/educacion/es/gpsicologia-planificacion-ps-planifica"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Psicología",
+        "year": 4,
+        "name": "Conflicto y Negociación",
+        "pdf_url": "https://www.uco.es/eguiado/guias/2025-26/598054es_2025-26.pdf",
+        "url_source": "https://www.uco.es/organiza/centros/educacion/es/gpsicologia-planificacion-ps-planifica"
+    }
+]

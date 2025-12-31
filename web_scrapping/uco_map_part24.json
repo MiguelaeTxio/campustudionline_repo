@@ -1,0 +1,386 @@
+[
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Historia del Arte",
+        "year": 1,
+        "name": "Introducción a la Historia: Prehistoria, Antigüedad y Edad Media",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100633es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-historia-del-arte#planificacion-2020"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Historia del Arte",
+        "year": 1,
+        "name": "Introducción a la Arqueología",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100635es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-historia-del-arte#planificacion-2020"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Historia del Arte",
+        "year": 1,
+        "name": "Geografía Universal",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100636es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-historia-del-arte#planificacion-2020"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Historia del Arte",
+        "year": 1,
+        "name": "Historiografía del Arte",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100639es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-historia-del-arte#planificacion-2020"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Historia del Arte",
+        "year": 1,
+        "name": "Terminología y Técnicas Artísticas",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100641es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-historia-del-arte#planificacion-2020"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Historia del Arte",
+        "year": 1,
+        "name": "Introducción a la Historia: Edades Moderna y Contemporánea",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100634es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-historia-del-arte#planificacion-2020"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Historia del Arte",
+        "year": 1,
+        "name": "Estética y Filosofía del Arte",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100637es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-historia-del-arte#planificacion-2020"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Historia del Arte",
+        "year": 1,
+        "name": "Lenguajes Artísticos: Introducción al Lenguaje de la Música y al Análisis de la Fotografía y el Cine",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100642es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-historia-del-arte#planificacion-2020"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Historia del Arte",
+        "year": 1,
+        "name": "Arte Antiguo",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100643es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-historia-del-arte#planificacion-2020"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Historia del Arte",
+        "year": 1,
+        "name": "Arte Clásico",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100644es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-historia-del-arte#planificacion-2020"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Historia del Arte",
+        "year": 2,
+        "name": "Literatura y Arte",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100638es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-historia-del-arte#planificacion-2020"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Historia del Arte",
+        "year": 2,
+        "name": "Procedimientos y recursos para la Historia del Arte",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/266001es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-historia-del-arte#planificacion-2020"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Historia del Arte",
+        "year": 2,
+        "name": "Arte Cristiano e Islámico en el Medievo",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100645es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-historia-del-arte#planificacion-2020"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Historia del Arte",
+        "year": 2,
+        "name": "Arte del Renacimiento en Europa",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/266002es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-historia-del-arte#planificacion-2020"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Historia del Arte",
+        "year": 2,
+        "name": "Arte, Poder y Sociedad en la España Moderna",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100649es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-historia-del-arte#planificacion-2020"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Historia del Arte",
+        "year": 2,
+        "name": "Arte Medieval Cristiano en España",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100646es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-historia-del-arte#planificacion-2020"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Historia del Arte",
+        "year": 2,
+        "name": "El Legado Artístico de Al-Ándalus",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100647es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-historia-del-arte#planificacion-2020"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Historia del Arte",
+        "year": 2,
+        "name": "Iconografía e Iconología",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100661es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-historia-del-arte#planificacion-2020"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Historia del Arte",
+        "year": 2,
+        "name": "Artes Decorativas y Aplicadas entre los Siglos XV y XVIII",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100651es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-historia-del-arte#planificacion-2020"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Historia del Arte",
+        "year": 2,
+        "name": "Antropología y Estudios Culturales",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2025-26/266011es_2025-26.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-historia-del-arte#planificacion-2020"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Historia del Arte",
+        "year": 3,
+        "name": "Historia, Formas y Movimientos del Cine",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100654es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-historia-del-arte#planificacion-2020"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Historia del Arte",
+        "year": 3,
+        "name": "La Génesis del Arte Contemporáneo",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100652es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-historia-del-arte#planificacion-2020"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Historia del Arte",
+        "year": 3,
+        "name": "Barroco y Clasicismo",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/266003es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-historia-del-arte#planificacion-2020"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Historia del Arte",
+        "year": 3,
+        "name": "Gestión y Tutela del Patrimonio",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100658es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-historia-del-arte#planificacion-2020"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Historia del Arte",
+        "year": 3,
+        "name": "Teoría de la Historia del Arte",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100659es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-historia-del-arte#planificacion-2020"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Historia del Arte",
+        "year": 3,
+        "name": "Fuentes para la Historia del Arte",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100660es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-historia-del-arte#planificacion-2020"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Historia del Arte",
+        "year": 3,
+        "name": "Museología y Museografía",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/266004es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-historia-del-arte#planificacion-2020"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Historia del Arte",
+        "year": 3,
+        "name": "Historia de la Música",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100665es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-historia-del-arte#planificacion-2020"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Historia del Arte",
+        "year": 3,
+        "name": "Las Vanguardias: Nacimiento y Crisis",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100653es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-historia-del-arte#planificacion-2020"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Historia del Arte",
+        "year": 3,
+        "name": "Arquitectura y Urbanismo: del Movimiento Moderno a la Globalización",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100655es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-historia-del-arte#planificacion-2020"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Historia del Arte",
+        "year": 4,
+        "name": "Instrumentos para la Protección del Patrimonio Cultural",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/266005es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-historia-del-arte#planificacion-2020"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Historia del Arte",
+        "year": 4,
+        "name": "Nuevas tendencias del Arte. De la II Guerra Mundial a la actualidad",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/266006es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-historia-del-arte#planificacion-2020"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Historia del Arte",
+        "year": 4,
+        "name": "Proyección del Arte Español en Hispanoamérica",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100650es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-historia-del-arte#planificacion-2020"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Historia del Arte",
+        "year": 4,
+        "name": "Gestión del Patrimonio Arqueológico",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100677es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-historia-del-arte#planificacion-2020"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Historia del Arte",
+        "year": 4,
+        "name": "Pop-Rock, Jazz, Flamenco y Músicas urbanas actuales",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2024-25/266014es_2024-25.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-historia-del-arte#planificacion-2020"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Historia del Arte",
+        "year": 4,
+        "name": "Historia de la Fotografía",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/266007es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-historia-del-arte#planificacion-2020"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Historia del Arte",
+        "year": 4,
+        "name": "Configuración del Espacio Arquitectónico y Lecturas Murarias",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100672es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-historia-del-arte#planificacion-2020"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Historia del Arte",
+        "year": 4,
+        "name": "Patrimonio, desarrollo territorial y turismo",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/266010es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-historia-del-arte#planificacion-2020"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Historia del Arte",
+        "year": 4,
+        "name": "Hermenéutica de la Obra de Arte",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100681es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-historia-del-arte#planificacion-2020"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Historia del Arte",
+        "year": 4,
+        "name": "Mezquita-Catedral de Córdoba",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2025-26/266013es_2025-26.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-historia-del-arte#planificacion-2020"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Historia del Arte",
+        "year": 4,
+        "name": "Espacio Urbano y Planeamiento en España",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100679es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-historia-del-arte#planificacion-2020"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Historia del Arte",
+        "year": 4,
+        "name": "Cine Español",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/266008es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-historia-del-arte#planificacion-2020"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Historia del Arte",
+        "year": 4,
+        "name": "Interpretación del Patrimonio",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2025-26/266012es_2025-26.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-historia-del-arte#planificacion-2020"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Historia del Arte",
+        "year": 4,
+        "name": "Arte y Cultura Visual",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100682es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-historia-del-arte#planificacion-2020"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Historia del Arte",
+        "year": 4,
+        "name": "Arte Contemporáneo Español",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/266009es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-historia-del-arte#planificacion-2020"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Historia del Arte",
+        "year": 4,
+        "name": "Crítica y Mercado del Arte",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100667es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-historia-del-arte#planificacion-2020"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Historia del Arte",
+        "year": 4,
+        "name": "Diseño Contemporáneo",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100668es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-historia-del-arte#planificacion-2020"
+    },
+    {
+        "university": "Universidad de Córdoba",
+        "degree": "Grado en Historia del Arte",
+        "year": 4,
+        "name": "Arqueología Medieval",
+        "pdf_url": "http://www.uco.es/eguiado/guias/2023-24/100678es_2023-24.pdf",
+        "url_source": "https://www.uco.es/filosofiayletras/es/grados/gr-historia-del-arte#planificacion-2020"
+    }
+]
