@@ -1059,3 +1059,11 @@
 *  **Session:** Optimización Open Graph y Rebranding Twitter a X
 *  **Description:** Diagnóstico y corrección de la generación de imágenes para compartir (Open Graph) en `contents/utils.py`. Verificación de URLs absolutas en metatags. Actualización de iconografía obsoleta de Twitter por "X" en toda la plataforma.
 
+
+# 2026-01-03
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V33.md
+## PLUTO
+*  **Session:** Hito 33 - Fase 2: Visibilidad de Suscripciones y Auditoría
+*  **Description:** Exposición de preferencias RGPD en Admin y auditoría de listas de distribución.
+

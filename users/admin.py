@@ -62,6 +62,10 @@ class UserProfileInline(admin.StackedInline):
         ),
         ("Seguimiento de Actividad", {"fields": ("last_checked_chat_activity",)}),
         (
+            "Preferencias de Comunicación",
+            {"fields": ("accepts_marketing",)},
+        ),
+        (
             "Sistema de Atribución y Referidos",
             {
                 "classes": ("collapse",),
@@ -94,6 +98,7 @@ class CustomUserAdmin(BaseUserAdmin):
         "get_last_checked_chat",
     )
     search_fields = ('username', 'first_name', 'last_name', 'email')
+    list_filter = BaseUserAdmin.list_filter + ("userprofile__accepts_marketing",)
 
     @admin.display(description="Teléfono (Perfil)")
     def get_phone_profile(self, instance):
@@ -123,12 +128,14 @@ class UserProfileAdmin(admin.ModelAdmin):
     list_display = (
         "user",
         "phone",
+        "accepts_marketing",
         "show_chat_rooms_in_portfolio",
         "last_checked_chat_activity",
     )
     list_display_links = ("user",)
     search_fields = ("user__username", "phone")
     list_filter = (
+        "accepts_marketing",
         "show_chat_rooms_in_portfolio",
         "profile_created_at",
         "profile_updated_at",
@@ -186,6 +193,10 @@ class UserProfileAdmin(admin.ModelAdmin):
                     "show_chat_rooms_in_portfolio",
                 ),
             },
+        ),
+        (
+            "Preferencias de Comunicación",
+            {"fields": ("accepts_marketing",)},
         ),
         (
             "Seguimiento y Timestamps",
