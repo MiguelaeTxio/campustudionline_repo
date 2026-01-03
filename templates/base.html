@@ -19,13 +19,13 @@
         <meta property="og:url" content="{{ request.build_absolute_uri }}">
         <meta property="og:title" content="{% block og_title %}CampuStudiOnline: Tu Plataforma de Estudio Colaborativo{% endblock og_title %}">
         <meta property="og:description" content="{% block og_description %}Únete a la comunidad de CampuStudiOnline para compartir, crear y colaborar en contenido educativo de alta calidad.{% endblock og_description %}">
-        <meta property="og:image" content="{% block og_image %}{{ request.scheme }}://{{ request.get_host }}{% static 'images/og_branded_default.png' %}{% endblock og_image %}">
-        <meta property="og:image:secure_url" content="{% block og_image_secure_ref %}{{ request.scheme }}://{{ request.get_host }}{% static 'images/og_branded_default.png' %}{% endblock og_image_secure_ref %}">
+        <meta property="og:image" content="{% block og_image %}{{ SITE_URL }}{% static 'images/og_branded_default.png' %}{% endblock og_image %}">
+        <meta property="og:image:secure_url" content="{% block og_image_secure_ref %}{{ SITE_URL }}{% static 'images/og_branded_default.png' %}{% endblock og_image_secure_ref %}">
         <meta property="og:image:alt" content="{% block og_image_alt %}Logotipo de CampuStudiOnline.{% endblock og_image_alt %}">
         <meta property="og:type" content="{% block og_type %}website{% endblock og_type %}">
     {% endblock meta_tags %}
     {% block json_ld_data %}
-        <script type="application/ld+json">{"@context": "https://schema.org", "name": "CampuStudiOnline", "url": "{{ SITE_URL }}", "logo": "{{ request.scheme }}://{{ request.get_host }}{% static 'images/og_branded_default.png' %}", "description": "Plataforma e-learning diseñada para tu crecimiento. Descubre cursos, colabora y alcanza tus metas de aprendizaje online.", "contactPoint": {"@type": "ContactPoint", "contactType": "Customer Support", "email": "soporte@campustudionline.com"}}</script>
+        <script type="application/ld+json">{"@context": "https://schema.org", "name": "CampuStudiOnline", "url": "{{ SITE_URL }}", "logo": "{{ SITE_URL }}{% static 'images/og_branded_default.png' %}", "description": "Plataforma e-learning diseñada para tu crecimiento. Descubre cursos, colabora y alcanza tus metas de aprendizaje online.", "contactPoint": {"@type": "ContactPoint", "contactType": "Customer Support", "email": "soporte@campustudionline.com"}}</script>
         <script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebSite", "name": "CampuStudiOnline", "url": "{{ SITE_URL }}"}</script>
         <script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Inicio", "item": "{{ request.build_absolute_uri }}"}]}</script>
     {% endblock json_ld_data %}
@@ -176,7 +176,7 @@
             <div id="global-share-container" class="mb-2">
                 <div class="share-buttons">
                     <span class="me-2 text-muted small">Compartir esta página:</span>
-                    <a id="share-twitter" href="#" class="btn btn-info btn-sm text-white" target="_blank" rel="noopener noreferrer" title="Compartir en Twitter"><i class="fab fa-twitter"></i></a>
+                    <a id="share-twitter" href="#" class="btn btn-dark btn-sm text-white" target="_blank" rel="noopener noreferrer" title="Compartir en Twitter"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-twitter-x" viewBox="0 0 16 16" style="vertical-align: -0.125em;"><path d="M12.6.75h2.454l-5.36 6.142L16 15.25h-4.937l-3.867-5.07-4.425 5.07H.316l5.733-6.57L0 .75h5.063l3.495 4.633L12.601.75Zm-.86 13.028h1.36L4.323 2.145H2.865l8.875 11.633Z"/></svg></a>
                     <a id="share-linkedin" href="#" class="btn btn-primary btn-sm" target="_blank" rel="noopener noreferrer" title="Compartir en LinkedIn"><i class="fab fa-linkedin-in"></i></a>
                     <button id="copy-link-button" class="btn btn-dark btn-sm" title="Copiar enlace"><i id="copy-link-icon" class="fas fa-link"></i></button>
                 </div>

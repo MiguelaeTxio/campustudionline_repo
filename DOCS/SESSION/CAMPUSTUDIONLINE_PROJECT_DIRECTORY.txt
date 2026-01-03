@@ -137,6 +137,7 @@
 ./academic_structure/management/commands/import_uco_data.py
 ./academic_structure/management/commands/import_ugr_data.py
 ./academic_structure/management/commands/detect_hidden_duplicates.py
+./diagnose_og_image.py
 ./delete_stuck_assessment.py
 ./audit_email_sources.py
 ./templates/base.html

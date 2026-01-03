@@ -11,3 +11,12 @@
 - **Depuración Académica:** Reparación del error de resolución de URL en los breadcrumbs académicos (`academic_year_list`).
 
 **Estado:** COMPLETADO
+
+---
+### Nuevas Tareas Agendadas (Pendientes de Implementación)
+#### Tarea Extra 1: Visibilidad de Estado de Suscripción en Admin
+- Exponer campo `accepts_marketing` en `users/admin.py`.
+- Habilitar filtros por estado de suscripción.
+
+#### Tarea Extra 2: Auditoría de Envíos
+- Depurar discrepancia entre usuarios registrados y emails enviados (Anymail/MailerSend logs).

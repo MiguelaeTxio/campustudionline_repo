@@ -1052,3 +1052,10 @@
 *  **Session:** Optimización UX Envío Circulares
 *  **Description:** Refactorización del formulario de envío de correos administrativos en `global_settings`. Eliminación de la inyección oculta de saludos/despedidas en el backend. Implementación de pre-poblado en el formulario para garantizar que el administrador tenga control total y visible sobre el contenido final del correo ("Lo que ves es lo que envías"), evitando duplicidades en los textos.
 
+
+# 2026-01-03
+# CAMPUSTUDIONLINE --# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V34.md
+## CYC
+*  **Session:** Optimización Open Graph y Rebranding Twitter a X
+*  **Description:** Diagnóstico y corrección de la generación de imágenes para compartir (Open Graph) en `contents/utils.py`. Verificación de URLs absolutas en metatags. Actualización de iconografía obsoleta de Twitter por "X" en toda la plataforma.
+
