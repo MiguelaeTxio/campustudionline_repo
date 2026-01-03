@@ -1,4 +1,3 @@
-# /users/models.py
 import random
 import string
 from django.db import models
@@ -211,6 +210,13 @@ class UserProfile(models.Model):
         verbose_name="Incentivo de Evaluación Reclamado",
         help_text=_("True si ya se ha contabilizado la conversión por primera evaluación.")
     )
+    
+    accepts_marketing = models.BooleanField(
+        default=True,
+        verbose_name="Acepta comunicaciones comerciales",
+        help_text=_("Indica si el usuario desea recibir correos administrativos no críticos.")
+    )
+
     profile_created_at = models.DateTimeField(
         auto_now_add=True, verbose_name="Fecha de creación del perfil"
     )

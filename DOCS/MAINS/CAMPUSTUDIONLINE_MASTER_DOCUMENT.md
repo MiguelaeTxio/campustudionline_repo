@@ -91,7 +91,7 @@ CampuStudiOnline es una plataforma web de e-learning diseñada para centralizar 
 ### Hito 32: Sistema de Visitas Guiadas e Integración de Onboarding (COMPLETADO)
 (Ver anexo `CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V32.md`)
 
-### Hito 33: Optimización de Comunicaciones Administrativas (EN PROGRESO)
+### Hito 33: Optimización de Comunicaciones Administrativas (COMPLETADO)
 (Ver anexo `CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V33.md`)
 
 ---

@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 text-center">
+            <div class="card shadow-sm">
+                <div class="card-body py-5">
+                    <h1 class="text-success mb-4"><i class="fas fa-check-circle"></i> Preferencias Actualizadas</h1>
+                    <p class="lead">
+                        Hola <strong>{{ user_name }}</strong>,
+                    </p>
+                    <p>
+                        Has sido dado de baja correctamente de nuestra lista de comunicaciones comerciales y administrativas no críticas.
+                    </p>
+                    <p class="text-muted small mt-4">
+                        Nota: Seguirás recibiendo notificaciones críticas de seguridad o relacionadas directamente con tus compras y cursos activos, tal como establece la normativa vigente.
+                    </p>
+                    <a href="{% url 'home' %}" class="btn btn-primary mt-3">Volver al Inicio</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

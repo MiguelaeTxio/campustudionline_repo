@@ -3,22 +3,105 @@
 
 {% block extrastyle %}{{ block.super }}
 <style>
-    /* Styles for the form */
-    .aligned .form-row { margin-bottom: 15px; padding: 5px; }
-    .aligned label { font-weight: bold; display: block; margin-bottom: 3px; width: auto; float: none; } /* Label adjustment */
-    .aligned .help { font-size: 0.9em; color: #777; margin-top: 2px; clear: both;}
-    .aligned .checkboxselectmultiple ul { list-style-type: none; padding-left: 0; margin:0; }
-    .aligned .checkboxselectmultiple li { margin-bottom: 1px; }
-    .aligned .checkboxselectmultiple label { margin-left: 5px; font-weight: normal; }
-    .aligned input[type="radio"], .aligned input[type="checkbox"] { vertical-align: middle; margin-right: 3px;}
-    .aligned .form-row > div { padding-left: 0; } /* Remove extra admin padding if not using floating label */
+    /* Layout del Dashboard */
+    .dashboard-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+        margin-top: 20px;
+    }
 
-    /* Class to hide conditional fields */
-    .conditional-hidden { display: none !important; } /* Use !important to ensure it's hidden initially */
-    .conditional-visible { display: block !important; }
+    .editor-column {
+        flex: 1;
+        min-width: 400px;
+        background: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+
+    .preview-column {
+        flex: 1;
+        min-width: 400px;
+        background: #f9f9f9;
+        padding: 20px;
+        border-radius: 8px;
+        border: 1px solid #e0e0e0;
+        position: sticky;
+        top: 20px;
+        height: fit-content;
+    }
+
+    /* Estilos del Formulario */
+    .form-row { margin-bottom: 20px; }
+    .form-row label { display: block; font-weight: bold; margin-bottom: 5px; color: #333; }
+    .form-row .help { font-size: 0.85em; color: #666; margin-top: 4px; display: block; }
+    .form-row input[type="text"], 
+    .form-row textarea, 
+    .form-row select { 
+        width: 100%; 
+        padding: 8px; 
+        border: 1px solid #ccc; 
+        border-radius: 4px; 
+        box-sizing: border-box; 
+    }
+    .form-row textarea { resize: vertical; min-height: 150px; font-family: monospace;}
+
+    .conditional-hidden { display: none; }
+    
+    /* Botones y Herramientas */
+    .toolbar { margin-bottom: 10px; }
+    .btn-tool {
+        background: #eee;
+        border: 1px solid #ccc;
+        padding: 5px 10px;
+        font-size: 0.8em;
+        cursor: pointer;
+        border-radius: 3px;
+        margin-right: 5px;
+    }
+    .btn-tool:hover { background: #ddd; }
+
+    /* Estilos de la Previsualización (Simulación de Email) */
+    .email-simulator {
+        background: #fff;
+        border: 1px solid #ddd;
+        max-width: 600px;
+        margin: 0 auto;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    }
+    .email-header {
+        background: #f8f9fa;
+        padding: 20px;
+        text-align: center;
+        border-bottom: 3px solid #007bff; 
+    }
+    .email-header h2 { margin: 0; color: #333; font-size: 20px; }
+    .email-body {
+        padding: 30px;
+        color: #333;
+        line-height: 1.6;
+        font-family: Arial, sans-serif;
+    }
+    .email-footer {
+        background: #f1f1f1;
+        padding: 15px;
+        text-align: center;
+        font-size: 12px;
+        color: #777;
+        border-top: 1px solid #ddd;
+    }
+    .preview-badge {
+        background: #28a745;
+        color: white;
+        padding: 5px 10px;
+        border-radius: 15px;
+        font-size: 0.8em;
+        display: inline-block;
+        margin-bottom: 10px;
+    }
 </style>
 {% endblock %}
-
 
 {% block breadcrumbs %}
 <div class="breadcrumbs">
@@ -28,10 +111,10 @@
 </div>
 {% endblock %}
 
-{% block content_title %}<h1>{{ title }}</h1>{% endblock %}
-
 {% block content %}
 <div id="content-main">
+    <h1>{{ title }}</h1>
+    
     {% if messages %}
     <ul class="messagelist">
         {% for message in messages %}
@@ -40,153 +123,254 @@
     </ul>
     {% endif %}
 
-    <form method="post" novalidate>{% csrf_token %}
-        <fieldset class="module aligned">
-            
-            <div class="form-row field-user_selection_type">
-                <div>
-                    {{ form.user_selection_type.errors }}
-                    <label for="{{ form.user_selection_type.id_for_label }}">{{ form.user_selection_type.label }}:</label>
+    <div class="dashboard-container">
+        <!-- COLUMNA IZQUIERDA: EDITOR -->
+        <div class="editor-column">
+            <h2>Configuración del Envío</h2>
+            <form method="post" novalidate id="emailForm">{% csrf_token %}
+                
+                <div class="form-row">
+                    <label for="{{ form.user_selection_type.id_for_label }}">{{ form.user_selection_type.label }}</label>
                     {{ form.user_selection_type }}
-                    {% if form.user_selection_type.help_text %}<div class="help">{{ form.user_selection_type.help_text|safe }}</div>{% endif %}
+                    {% if form.user_selection_type.help_text %}<span class="help">{{ form.user_selection_type.help_text|safe }}</span>{% endif %}
+                    {{ form.user_selection_type.errors }}
                 </div>
-            </div>
 
-            <div class="form-row field-selected_users conditional-hidden" id="row_selected_users">
-                <div>
-                    {{ form.selected_users.errors }}
-                    <label for="{{ form.selected_users.id_for_label }}">{{ form.selected_users.label }}:</label>
+                <div class="form-row conditional-hidden" id="row_selected_users">
+                    <label for="{{ form.selected_users.id_for_label }}">{{ form.selected_users.label }}</label>
                     {{ form.selected_users }}
-                    {% if form.selected_users.help_text %}<div class="help">{{ form.selected_users.help_text|safe }}</div>{% endif %}
+                    {% if form.selected_users.help_text %}<span class="help">{{ form.selected_users.help_text|safe }}</span>{% endif %}
+                    {{ form.selected_users.errors }}
+                </div>
+
+                <div class="form-row">
+                    <label for="{{ form.email_template.id_for_label }}">{{ form.email_template.label }}</label>
+                    {{ form.email_template }}
+                    {{ form.email_template.errors }}
+                </div>
+
+                <div class="form-row conditional-hidden" id="row_subject">
+                    <label for="{{ form.asunto.id_for_label }}">{{ form.asunto.label }}</label>
+                    {{ form.asunto }}
+                    <span class="help">Este será el título del correo.</span>
+                    {{ form.asunto.errors }}
+                </div>
+
+                <!-- Campos de Mantenimiento -->
+                <div id="maintenance_fields" class="conditional-hidden">
+                    <div class="form-row">
+                        <label>{{ form.fecha_hora_mantenimiento.label }}</label>
+                        {{ form.fecha_hora_mantenimiento }}
+                    </div>
+                    <div class="form-row">
+                        <label>{{ form.duracion_mantenimiento.label }}</label>
+                        {{ form.duracion_mantenimiento }}
+                    </div>
+                    <div class="form-row">
+                        <label>{{ form.mensaje_adicional_mantenimiento.label }}</label>
+                        {{ form.mensaje_adicional_mantenimiento }}
+                    </div>
+                </div>
+
+                <!-- Campo de Mensaje General -->
+                <div class="form-row conditional-hidden" id="row_general_message_body">
+                    <label for="{{ form.cuerpo_mensaje_general.id_for_label }}">{{ form.cuerpo_mensaje_general.label }}</label>
+                    
+                    <!-- HEADER FIJO DINÁMICO -->
+                    <div id="editor_locked_header" style="background: #e9ecef; padding: 10px; border: 1px solid #ced4da; border-bottom: none; border-radius: 4px 4px 0 0; color: #6c757d; font-family: monospace; font-size: 0.9em; white-space: pre-wrap;">
+                        <!-- Se llena vía JS -->
+                    </div>
+                    <div class="toolbar">
+                        <button type="button" class="btn-tool" onclick="insertVariable('{{ user.username }}')">+ Insertar Nombre Usuario</button>
+                        <button type="button" class="btn-tool" onclick="insertTemplate()">Resetear Plantilla</button>
+                    </div>
+                    {{ form.cuerpo_mensaje_general }}
+                    <span class="help">Escribe el contenido completo. Lo que ves aquí es lo que se enviará.</span>
+                    {{ form.cuerpo_mensaje_general.errors }}
+                    <!-- FOOTER FIJO DINÁMICO -->
+                    <div id="editor_locked_footer" style="background: #e9ecef; padding: 10px; border: 1px solid #ced4da; border-top: none; border-radius: 0 0 4px 4px; color: #6c757d; font-family: monospace; font-size: 0.9em; margin-top: -20px; margin-bottom: 20px; white-space: pre-wrap;">
+                        <!-- Se llena vía JS -->
+                    </div>
+                </div>
+
+                <div class="submit-row">
+                    <input type="submit" value="{% translate 'Send Emails' %}" class="default" style="width: 100%; padding: 15px;">
+                </div>
+            </form>
+        </div>
+
+        <!-- COLUMNA DERECHA: PREVISUALIZACIÓN -->
+        <div class="preview-column">
+            <div class="preview-badge">Vista Previa en Vivo</div>
+            <h3>Simulación del Destinatario</h3>
+            
+            <div class="email-simulator">
+                <!-- Header Simulado -->
+                <div class="email-header">
+                    <h2 id="preview_subject">Asunto del Correo</h2>
+                </div>
+
+                <!-- Cuerpo Simulado -->
+                <div class="email-body" id="preview_body">
+                    <p style="color:#999; font-style:italic;">Selecciona una plantilla y escribe para ver la previsualización...</p>
+                </div>
+
+                <!-- Footer Simulado -->
+                <div class="email-footer">
+                    <p>© {% now "Y" %} CampuStudiOnline. Todos los derechos reservados.</p>
+                    <p>Has recibido este correo porque eres usuario registrado de la plataforma.</p>
+                    <a href="#" style="color:#666;">Preferencias de notificación</a> | <a href="#" style="color:#666;">Política de Privacidad</a>
                 </div>
             </div>
             
-            <div class="form-row field-email_template">
-                <div>
-                    {{ form.email_template.errors }}
-                    <label for="{{ form.email_template.id_for_label }}">{{ form.email_template.label }}:</label>
-                    {{ form.email_template }}
-                    {% if form.email_template.help_text %}<div class="help">{{ form.email_template.help_text|safe }}</div>{% endif %}
-                </div>
+            <div style="margin-top: 20px; font-size: 0.9em; color: #666; background: #fff; padding: 10px; border: 1px solid #eee;">
+                <strong>Nota Técnica:</strong> La variable <code>{{ user.username }}</code> será reemplazada dinámicamente por el nombre real de cada destinatario (ej: "JuanPerez85") en el momento del envío.
             </div>
-
-            <div class="form-row field-asunto conditional-hidden" id="row_subject">
-                <div>
-                    {{ form.asunto.errors }}
-                    <label for="{{ form.asunto.id_for_label }}">{{ form.asunto.label }}:</label>
-                    {{ form.asunto }}
-                    {% if form.asunto.help_text %}<div class="help">{{ form.asunto.help_text|safe }}</div>{% endif %}
-                </div>
-            </div>
-
-            <div class="form-row field-fecha_hora_mantenimiento conditional-hidden" id="row_maintenance_datetime">
-                <div>
-                    {{ form.fecha_hora_mantenimiento.errors }}
-                    <label for="{{ form.fecha_hora_mantenimiento.id_for_label }}">{{ form.fecha_hora_mantenimiento.label }}:</label>
-                    {{ form.fecha_hora_mantenimiento }}
-                    {% if form.fecha_hora_mantenimiento.help_text %}<div class="help">{{ form.fecha_hora_mantenimiento.help_text|safe }}</div>{% endif %}
-                </div>
-            </div>
-            <div class="form-row field-duracion_mantenimiento conditional-hidden" id="row_maintenance_duration">
-                <div>
-                    {{ form.duracion_mantenimiento.errors }}
-                    <label for="{{ form.duracion_mantenimiento.id_for_label }}">{{ form.duracion_mantenimiento.label }}:</label>
-                    {{ form.duracion_mantenimiento }}
-                    {% if form.duracion_mantenimiento.help_text %}<div class="help">{{ form.duracion_mantenimiento.help_text|safe }}</div>{% endif %}
-                </div>
-            </div>
-            <div class="form-row field-mensaje_adicional_mantenimiento conditional-hidden" id="row_maintenance_additional_message">
-                <div>
-                    {{ form.mensaje_adicional_mantenimiento.errors }}
-                    <label for="{{ form.mensaje_adicional_mantenimiento.id_for_label }}">{{ form.mensaje_adicional_mantenimiento.label }}:</label>
-                    {{ form.mensaje_adicional_mantenimiento }}
-                    {% if form.mensaje_adicional_mantenimiento.help_text %}<div class="help">{{ form.mensaje_adicional_mantenimiento.help_text|safe }}</div>{% endif %}
-                </div>
-            </div>
-
-            <div class="form-row field-cuerpo_mensaje_general conditional-hidden" id="row_general_message_body">
-                <div>
-                    {{ form.cuerpo_mensaje_general.errors }}
-                    <label for="{{ form.cuerpo_mensaje_general.id_for_label }}">{{ form.cuerpo_mensaje_general.label }}:</label>
-                    {{ form.cuerpo_mensaje_general }}
-                    {% if form.cuerpo_mensaje_general.help_text %}<div class="help">{{ form.cuerpo_mensaje_general.help_text|safe }}</div>{% endif %}
-                </div>
-            </div>
-
-        </fieldset>
-        <div class="submit-row">
-            <input type="submit" value="{% translate 'Send Emails' %}" class="default">
         </div>
-    </form>
+    </div>
 </div>
 
 <script type="text/javascript">
-document.addEventListener('DOMContentLoaded', function() {
-    console.log("Admin Email Form Script Loaded");
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log("Dashboard Script V3 - Full Static Blocks");
 
-    const form = document.querySelector('#content-main form');
-    if (!form) {
-        console.error("Form not found for email script.");
-        return;
-    }
+        const getEl = (id) => document.getElementById(id);
+        const els = {
+            templateSelect: getEl('id_email_template'),
+            subjectInput: getEl('id_asunto'),
+            bodyInput: getEl('id_cuerpo_mensaje_general'),
+            maintDate: getEl('id_fecha_hora_mantenimiento'),
+            maintDur: getEl('id_duracion_mantenimiento'),
+            maintMsg: getEl('id_mensaje_adicional_mantenimiento'),
+            previewSubject: getEl('preview_subject'),
+            previewBody: getEl('preview_body'),
+            rowSelectedUsers: getEl('row_selected_users'),
+            rowSubject: getEl('row_subject'),
+            rowMaintenance: getEl('maintenance_fields'),
+            rowGeneralBody: getEl('row_general_message_body')
+        };
 
-    // Control elements
-    const userSelectionTypeRadios = form.querySelectorAll('input[name="user_selection_type"]');
-    const emailTemplateSelect = form.querySelector('select[name="email_template"]');
-
-    // Conditional form rows (the divs wrapping the fields)
-    const selectedUsersRow = document.getElementById('row_selected_users');
-    const subjectRow = document.getElementById('row_subject');
-    const maintenanceDateTimeRow = document.getElementById('row_maintenance_datetime');
-    const maintenanceDurationRow = document.getElementById('row_maintenance_duration');
-    const maintenanceAdditionalMessageRow = document.getElementById('row_maintenance_additional_message');
-    const generalMessageBodyRow = document.getElementById('row_general_message_body');
-
-    function setRowVisibility(rowElement, show) {
-        if (rowElement) {
-            if (show) {
-                rowElement.classList.remove('conditional-hidden');
-                rowElement.classList.add('conditional-visible');
-            } else {
-                rowElement.classList.remove('conditional-visible');
-                rowElement.classList.add('conditional-hidden');
+        // --- DEFINICIÓN DE TEXTOS FIJOS (SOURCE OF TRUTH) ---
+        const STATIC_TEXTS = {
+            'admin_general_announcement': {
+                intro: "Hola [Nombre Usuario],\n\nAgradecemos su confianza en CampuStudiOnline. Le contactamos para informarle de lo siguiente:",
+                outro: "Esperamos que esta información sea de su utilidad.\n\nAtentamente,\nEl Equipo de CampuStudiOnline"
+            },
+            'admin_service_outage': {
+                intro: "Hola [Nombre Usuario],\n\nLe informamos de una interrupción programada del servicio para realizar mejoras en la plataforma.",
+                outro: "Lamentamos las molestias ocasionadas y trabajamos para restablecer el servicio lo antes posible.\n\nAtentamente,\nEl Equipo de CampuStudiOnline"
+            },
+            'admin_manual_welcome': {
+                intro: "Hola [Nombre Usuario],",
+                outro: "Atentamente,\nEl Equipo de CampuStudiOnline"
             }
+        };
+
+        function updatePreview() {
+            if (!els.templateSelect) return;
+            const selected = els.templateSelect.value;
+            const staticData = STATIC_TEXTS[selected] || {intro: '', outro: ''};
+
+            // 1. Actualizar Bloques Locked del Editor
+            const lockedHeader = document.getElementById('editor_locked_header');
+            const lockedFooter = document.getElementById('editor_locked_footer');
+            
+            if (lockedHeader) lockedHeader.innerText = staticData.intro.replace('[Nombre Usuario]', '{{ user.username }}');
+            if (lockedFooter) lockedFooter.innerText = staticData.outro;
+
+            // 2. Actualizar Preview (HTML)
+            let subjectText = els.subjectInput ? els.subjectInput.value : "Sin Asunto";
+            if (selected === 'admin_manual_welcome') subjectText = "¡Bienvenido/a a CampuStudiOnline!";
+            if (els.previewSubject) els.previewSubject.innerText = subjectText;
+
+            let htmlContent = "";
+            const introHtml = staticData.intro.replace(/\n/g, '<br>').replace('[Nombre Usuario]', '<strong>Estudiante Ejemplo</strong>');
+            const outroHtml = staticData.outro.replace(/\n/g, '<br>');
+
+            if (selected === 'admin_general_announcement') {
+                let userContent = els.bodyInput ? els.bodyInput.value : "";
+                htmlContent = `
+                    <p>${introHtml}</p>
+                    <div style="color: #000; margin: 15px 0;">
+                        ${userContent.replace(/\n/g, '<br>')}
+                    </div>
+                    <p>${outroHtml}</p>
+                `;
+            } 
+            else if (selected === 'admin_service_outage') {
+                const dateVal = els.maintDate ? els.maintDate.value : '[Fecha]';
+                const durVal = els.maintDur ? els.maintDur.value : '[Duración]';
+                const msgVal = els.maintMsg ? els.maintMsg.value : '';
+                
+                htmlContent = `
+                    <p>${introHtml}</p>
+                    <ul style="background: #fff3cd; padding: 15px 15px 15px 30px; border-radius: 4px;">
+                        <li><strong>Fecha de Inicio:</strong> ${dateVal}</li>
+                        <li><strong>Duración Estimada:</strong> ${durVal}</li>
+                    </ul>
+                    <p>${msgVal.replace(/\n/g, '<br>')}</p>
+                    <p>${outroHtml}</p>
+                `;
+            }
+            else if (selected === 'admin_manual_welcome') {
+                htmlContent = `
+                    <p>${introHtml}</p>
+                    <p>Bienvenido a la plataforma. Su cuenta ha sido activada manualmente por un administrador y ya tiene acceso completo a los servicios.</p>
+                    <p>${outroHtml}</p>
+                `;
+            }
+
+            // Pie Legal RGPD
+            htmlContent += `
+                <div class="email-footer" style="font-size: 11px; color: #999; border-top: 1px solid #eee; padding-top: 10px; margin-top: 20px;">
+                    <p>© {% now "Y" %} <strong>CampuStudiOnline</strong>. Todos los derechos reservados.</p>
+                    <p style="margin: 5px 0;">
+                        Estás recibiendo este correo porque estás registrado en nuestra plataforma académica.
+                        <br><strong>Responsable:</strong> CampuStudiOnline | <strong>Finalidad:</strong> Comunicaciones administrativas y académicas.
+                    </p>
+                    <p>
+                        <a href="#" style="color:#666; text-decoration: underline;" title="En el correo real, este enlace llevará a la baja inmediata">Darse de baja</a> | 
+                        <a href="#" style="color:#666; text-decoration: underline;">Política de Privacidad</a> | 
+                        <a href="#" style="color:#666; text-decoration: underline;">Aviso Legal</a>
+                    </p>
+                </div>
+            `;
+
+            if (els.previewBody) els.previewBody.innerHTML = htmlContent;
         }
-    }
 
-    function toggleConditionalFields() {
-        const selectedUserTypeRadio = form.querySelector('input[name="user_selection_type"]:checked');
-        const selectedUserType = selectedUserTypeRadio ? selectedUserTypeRadio.value : null;
-        
-        const selectedTemplate = emailTemplateSelect ? emailTemplateSelect.value : null;
+        function toggleFields() {
+            if (!els.templateSelect) return;
+            const template = els.templateSelect.value;
+            
+            let userType = 'selected';
+            const userTypeRadio = document.querySelector('input[name="user_selection_type"]:checked');
+            if (userTypeRadio) userType = userTypeRadio.value;
 
-        console.log("User Type: " + selectedUserType + ", Template: " + selectedTemplate);
+            if (els.rowSelectedUsers) els.rowSelectedUsers.style.display = (userType === 'selected') ? 'block' : 'none';
+            
+            const needsSubject = ['admin_general_announcement', 'admin_service_outage'].includes(template);
+            if (els.rowSubject) els.rowSubject.style.display = needsSubject ? 'block' : 'none';
 
-        // Selected users field
-        setRowVisibility(selectedUsersRow, selectedUserType === 'selected');
+            const isMaint = (template === 'admin_service_outage');
+            if (els.rowMaintenance) els.rowMaintenance.style.display = isMaint ? 'block' : 'none';
 
-        // Subject field
-        const showSubject = selectedTemplate === 'admin_service_outage' || selectedTemplate === 'admin_general_announcement';
-        setRowVisibility(subjectRow, showSubject);
-        
-        // Maintenance fields
-        const showMaintenanceFields = selectedTemplate === 'admin_service_outage';
-        setRowVisibility(maintenanceDateTimeRow, showMaintenanceFields);
-        setRowVisibility(maintenanceDurationRow, showMaintenanceFields);
-        setRowVisibility(maintenanceAdditionalMessageRow, showMaintenanceFields);
+            const isGeneral = (template === 'admin_general_announcement');
+            if (els.rowGeneralBody) els.rowGeneralBody.style.display = isGeneral ? 'block' : 'none';
 
-        // General Announcement field
-        setRowVisibility(generalMessageBodyRow, selectedTemplate === 'admin_general_announcement');
-    }
+            updatePreview();
+        }
 
-    userSelectionTypeRadios.forEach(radio => radio.addEventListener('change', toggleConditionalFields));
-    if (emailTemplateSelect) {
-        emailTemplateSelect.addEventListener('change', toggleConditionalFields);
-    }
+        [els.subjectInput, els.bodyInput, els.maintDate, els.maintDur, els.maintMsg].forEach(el => {
+            if(el) el.addEventListener('input', updatePreview);
+        });
 
-    // Initial call
-    console.log("Initial field toggle.");
-    toggleConditionalFields();
-});
+        if (els.templateSelect) els.templateSelect.addEventListener('change', toggleFields);
+        document.querySelectorAll('input[name="user_selection_type"]').forEach(el => {
+            el.addEventListener('change', toggleFields);
+        });
+
+        setTimeout(toggleFields, 100);
+    });
 </script>
 {% endblock %}

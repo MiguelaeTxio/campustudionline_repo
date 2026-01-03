@@ -1,8 +1,10 @@
-{{ email_subject }}
+Hola {{ user.username }},
 
-  Hola {{ user.username }},
+Agradecemos su confianza en CampuStudiOnline. Le contactamos para informarle de lo siguiente:
 
-  {{ message_body }}
+{{ message_body }}
 
-  Saludos,
-  El equipo de CampuStudiOnline
+Esperamos que esta información sea de su utilidad.
+
+Atentamente,
+El Equipo de CampuStudiOnline

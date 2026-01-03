@@ -1044,3 +1044,11 @@
 *  **Session:** UCO Ingesta V19: Scraping Dirigido
 *  **Description:** Implementación de mecanismo de ingesta para la Universidad de Córdoba mediante scraping dirigido por lista manual de URLs. Desarrollo del script 'UCO_HARVESTER_V19' para procesamiento local, integrando lógica de extracción de planificaciones académicas con BeautifulSoup, selectores de año por acordeón y filtrado estricto de asignaturas. Generación de JSON maestro para posterior carga en servidor.
 
+
+# 2026-01-03
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V33.md
+## AAAA
+*  **Session:** Optimización UX Envío Circulares
+*  **Description:** Refactorización del formulario de envío de correos administrativos en `global_settings`. Eliminación de la inyección oculta de saludos/despedidas en el backend. Implementación de pre-poblado en el formulario para garantizar que el administrador tenga control total y visible sobre el contenido final del correo ("Lo que ves es lo que envías"), evitando duplicidades en los textos.
+

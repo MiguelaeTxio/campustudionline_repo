@@ -12,6 +12,12 @@ from django.contrib.auth import views as auth_views
 app_name = "users"
 
 urlpatterns = [
+    path(
+        "unsubscribe/<str:token>/",
+        user_views.unsubscribe_view,
+        name="unsubscribe",
+    ),
+
     # User-facing URLs (HTML pages)
     # =======================================
     path("register/", user_views.register, name="register"),

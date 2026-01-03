@@ -1,10 +1,42 @@
 {% extends "emails/base_email.html" %}
+{% load email_extras %}
 
 {% block title %}{{ email_subject }}{% endblock title %}
 
 {% block header_title %}{{ email_subject }}{% endblock header_title %}
 
 {% block content %}
-<p style="margin-bottom: 15px;">Hola {{ user.username }},</p>
-<p style="margin-bottom: 15px;">{{ message_body|linebreaksbr }}</p>
+<div style="font-family: Arial, sans-serif; color: #333333; line-height: 1.6;">
+    <p>Hola <strong>{{ user.username }}</strong>,</p>
+    
+    <p>Agradecemos su confianza en CampuStudiOnline. Le contactamos para informarle de lo siguiente:</p>
+    
+    <!-- CONTENIDO VARIABLE -->
+    <div style="margin: 20px 0;">
+        {{ message_body|linebreaksbr }}
+    </div>
+    <!-- FIN CONTENIDO VARIABLE -->
+
+    <p>Esperamos que esta información sea de su utilidad.</p>
+    
+    <br>
+    <p>Atentamente,<br>El Equipo de CampuStudiOnline</p>
+</div>
 {% endblock content %}
+
+{# Anulamos la firma por defecto del base porque ya hemos puesto la nuestra específica #}
+{% block signature %}{% endblock signature %}
+
+{% block legal_footer %}
+<div style="font-size: 11px; color: #999; margin-top: 15px; border-top: 1px dashed #ccc; padding-top: 10px;">
+    <p style="margin: 5px 0;">
+        Estás recibiendo este correo porque estás registrado en nuestra plataforma académica.
+        <br><strong>Responsable:</strong> CampuStudiOnline | <strong>Finalidad:</strong> Comunicaciones administrativas y académicas.
+    </p>
+    <p>
+        <a href="{% get_unsubscribe_url user %}" style="color:#666; text-decoration: underline;">Darse de baja</a> | 
+        <a href="{{ site_url }}/core/legal/privacidad/" style="color:#666; text-decoration: underline;">Política de Privacidad</a> | 
+        <a href="{{ site_url }}/core/legal/aviso-legal/" style="color:#666; text-decoration: underline;">Aviso Legal</a>
+    </p>
+</div>
+{% endblock legal_footer %}

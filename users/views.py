@@ -1,8 +1,12 @@
+from django.core.signing import TimestampSigner, BadSignature
+from django.shortcuts import get_object_or_404
 # /home/MiguelAeTxio/CampuStudiOnline/users/views.py
 import json
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, logout, views as auth_views
 from django.contrib.auth import get_user_model
+
+User = get_user_model()
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .forms import (
@@ -592,3 +596,24 @@ Este es un correo de notificación para fines de auditoría y seguimiento de pag
         messages.error(request, "No se pudieron generar nuevos códigos en este momento. Por favor, contacta con un administrador.")
         
     return redirect("users:commercial_dashboard")
+
+
+def unsubscribe_view(request, token):
+    signer = TimestampSigner()
+    try:
+        # Validar el token. No ponemos max_age para que el link sea perpetuo (UX estándar en bajas)
+        user_id = signer.unsign(token)
+        user = get_object_or_404(User, pk=user_id)
+        
+        # Actualizar preferencia
+        if hasattr(user, 'userprofile'):
+            user.userprofile.accepts_marketing = False
+            user.userprofile.save()
+            
+        return render(request, 'users/unsubscribe.html', {'user_name': user.username})
+        
+    except (BadSignature, User.DoesNotExist):
+        # Si el token es inválido, redirigimos a home o mostramos error genérico
+        # para no filtrar información de usuarios.
+        messages.error(request, "El enlace de baja no es válido o ha expirado.")
+        return redirect('home')

@@ -438,7 +438,7 @@ def content_detail(request, pk, subject_pk=None):
             # 4. Grado
             breadcrumbs.append({
                 "name": degree_obj.name,
-                "url": reverse("academic_directory:year_list", kwargs={'university_slug': uni_obj.slug, 'branch_slug': branch_obj.slug, 'degree_slug': degree_obj.slug})
+                "url": reverse("academic_directory:academic_year_list", kwargs={'university_slug': uni_obj.slug, 'branch_slug': branch_obj.slug, 'degree_slug': degree_obj.slug})
             })
 
             # 5. Año

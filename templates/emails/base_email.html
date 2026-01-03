@@ -25,10 +25,12 @@
                     <td>
                         <div style="background-color: rgba(255, 255, 255, 0.9); padding: 15px; border-radius: 5px;">
                             {% block content %}
-                            <p style="margin-bottom: 15px;">This is the default email content. You should override this block.</p>
+                            <p style="margin-bottom: 15px;">Contenido del correo.</p>
                             {% endblock content %}
                             
+                            {% block signature %}
                             <p style="margin-bottom: 15px;">Saludos cordiales,<br>El equipo de CampuStudiOnline</p>
+                            {% endblock signature %}
                         </div>
                     </td>
                 </tr>
@@ -38,6 +40,7 @@
         <!-- PIE DE PÁGINA -->
         <div style="text-align: center; font-size: 0.9em; color: #777; padding: 10px; border-top: 1px solid #eee;">
             <p style="margin: 0;">© {% now "Y" %} CampuStudiOnline. Todos los derechos reservados.</p>
+            {% block legal_footer %}{% endblock legal_footer %}
         </div>
     </div>
 </body>
