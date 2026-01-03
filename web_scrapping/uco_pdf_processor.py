@@ -1,153 +1,106 @@
 import json
-import requests
-import io
-import re
-import time
 import os
+import requests
 import pdfplumber
+import time
+from io import BytesIO
+from requests.adapters import HTTPAdapter
+from urllib3.util.retry import Retry
 
-# --- CONFIGURACIÓN ---
-INPUT_FILE = 'uco_master_map.json'
-OUTPUT_FILE = 'uco_final_data.json'
-SAVE_INTERVAL = 5
+# Configuración
+INPUT_FILE = 'uco_final_data.json'
+OUTPUT_FILE = 'uco_final_data_enriched.json'
+DELAY_SECONDS = 1.5  # Pausa entre peticiones para evitar bloqueos
+HEADERS = {
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+}
 
-def clean_text(text):
-    if not text: return ""
-    text = re.sub(r'\s+', ' ', text).strip()
-    return text
+def get_session():
+    """Configura una sesión con reintentos automáticos."""
+    session = requests.Session()
+    retry = Retry(connect=3, backoff_factor=1)
+    adapter = HTTPAdapter(max_retries=retry)
+    session.mount('http://', adapter)
+    session.mount('https://', adapter)
+    return session
 
-def extract_section(full_text, headers, next_headers_pool):
-    text_lower = full_text.lower()
-    start_idx = -1
-    
-    for h in headers:
-        idx = text_lower.find(h.lower())
-        if idx != -1:
-            start_idx = idx + len(h)
-            break
-            
-    if start_idx == -1:
-        return ""
-        
-    end_idx = len(full_text)
-    for next_h in next_headers_pool:
-        idx = text_lower.find(next_h.lower(), start_idx)
-        if idx != -1 and idx < end_idx:
-            end_idx = idx
-            
-    raw_section = full_text[start_idx:end_idx]
-    if len(raw_section) < 5:
-        return ""
-    return clean_text(raw_section)
-
-def process_pdf_url(url):
-    try:
-        headers = {'User-Agent': 'Mozilla/5.0 (Android 10; Mobile; rv:109.0)'}
-        response = requests.get(url, headers=headers, timeout=15)
-        response.raise_for_status()
-        
-        with pdfplumber.open(io.BytesIO(response.content)) as pdf:
-            full_text = ""
-            for page in pdf.pages:
-                extracted = page.extract_text()
-                if extracted:
-                    full_text += extracted + "\n"
-                
-        # Heurística de Secciones
-        objectives = extract_section(
-            full_text, 
-            ['OBJETIVOS', 'COMPETENCIAS', 'RESULTADOS DE APRENDIZAJE', 'BREVE DESCRIPCIÓN DE CONTENIDOS'], 
-            ['TEMARIO', 'CONTENIDOS', 'BIBLIOGRAFÍA', 'METODOLOGÍA', 'EVALUACIÓN', 'PROGRAMA']
-        )
-        
-        outline = extract_section(
-            full_text,
-            ['TEMARIO', 'CONTENIDOS', 'PROGRAMA', 'DESCRIPCIÓN DE CONTENIDOS', 'PROGRAMA DE LA ASIGNATURA'],
-            ['BIBLIOGRAFÍA', 'METODOLOGÍA', 'ACTIVIDADES', 'EVALUACIÓN', 'SYSTEM OF EVALUATION']
-        )
-        
-        bibliography = extract_section(
-            full_text,
-            ['BIBLIOGRAFÍA', 'REFERENCIAS', 'BIBLIOGRAPHY'],
-            ['EVALUACIÓN', 'METODOLOGÍA', 'COORDINACIÓN', 'ANEXO', 'CRITERIOS']
-        )
-        
-        return {
-            'full_text_length': len(full_text),
-            'learning_objectives': objectives,
-            'course_content_outline': outline,
-            'bibliography': bibliography,
-            'parse_success': True
-        }
-
-    except Exception as e:
-        return {'parse_success': False, 'error': str(e)}
+def extract_sections(text):
+    """(Placeholder) Lógica de extracción futura."""
+    return {
+        "objectives": "",
+        "content_outline": "",
+        "bibliography": ""
+    }
 
 def main():
-    print("=== UCO PDF PROCESSOR (Engine: pdfplumber) ===")
+    print("--- INICIANDO PROCESAMIENTO ROBUSTO DE PDFs UCO ---")
     
     if not os.path.exists(INPUT_FILE):
-        print(f"ERROR: No se encuentra {INPUT_FILE}")
+        print(f"[ERROR] No se encuentra {INPUT_FILE}")
         return
 
-    processed_ids = set()
-    processed_data = []
-    
-    if os.path.exists(OUTPUT_FILE):
-        try:
-            with open(OUTPUT_FILE, 'r', encoding='utf-8') as f:
-                processed_data = json.load(f)
-                for item in processed_data:
-                    uid = f"{item.get('url_source')}|{item.get('name')}"
-                    processed_ids.add(uid)
-            print(f"--> Reanudando: {len(processed_data)} registros previos.")
-        except:
-            pass
-
     with open(INPUT_FILE, 'r', encoding='utf-8') as f:
-        source_data = json.load(f)
-
-    total = len(source_data)
-    count = 0
-    newly_processed = 0
-    
-    print(f"--> Total a procesar: {total}")
-
-    for item in source_data:
-        count += 1
-        uid = f"{item.get('url_source')}|{item.get('name')}"
+        data = json.load(f)
         
-        if uid in processed_ids:
+    print(f"Total asignaturas: {len(data)}")
+    session = get_session()
+    
+    processed_count = 0
+    
+    for i, item in enumerate(data):
+        # Si ya fue procesado correctamente en una ejecución anterior, saltar
+        if item.get('parsing_status') == 'SUCCESS' and 'raw_text' in item:
+            continue
+
+        url = item.get('pdf_url')
+        name = item.get('name', 'Desconocida')
+        
+        print(f"[{i+1}/{len(data)}] {name}...", end=" ", flush=True)
+        
+        if not url or not url.endswith('.pdf'):
+            print("SKIP (URL inválida)")
+            item['parsing_status'] = 'SKIPPED'
             continue
             
-        pdf_url = item.get('pdf_url')
-        # Print compacto para móvil
-        print(f"[{count}/{total}] {item.get('name')[:30]}...", end=" ", flush=True)
-        
-        if pdf_url:
-            pdf_data = process_pdf_url(pdf_url)
-            item.update(pdf_data)
+        try:
+            # Pausa de cortesía
+            time.sleep(DELAY_SECONDS)
             
-            if pdf_data.get('parse_success'):
-                txt_len = pdf_data.get('full_text_length', 0)
-                print(f"OK ({txt_len})")
-            else:
-                print("FAIL")
-        else:
-            print("SKIP (No URL)")
-            item['parse_success'] = False
-
-        processed_data.append(item)
-        newly_processed += 1
-        
-        if newly_processed % SAVE_INTERVAL == 0:
+            response = session.get(url, headers=HEADERS, timeout=15)
+            response.raise_for_status()
+            
+            with pdfplumber.open(BytesIO(response.content)) as pdf:
+                full_text = ""
+                for page in pdf.pages:
+                    extract = page.extract_text()
+                    if extract:
+                        full_text += extract + "\n"
+                
+                item['raw_text'] = full_text
+                item['extracted_info'] = extract_sections(full_text)
+                item['parsing_status'] = 'SUCCESS'
+                # Limpiar error previo si existía
+                if 'parsing_error' in item:
+                    del item['parsing_error']
+                print("OK")
+                processed_count += 1
+                
+        except Exception as e:
+            print(f"ERROR")
+            item['parsing_status'] = 'ERROR'
+            item['parsing_error'] = str(e)
+            
+        # Guardado incremental seguro cada 5 items
+        if processed_count > 0 and processed_count % 5 == 0:
             with open(OUTPUT_FILE, 'w', encoding='utf-8') as f:
-                json.dump(processed_data, f, ensure_ascii=False, indent=4)
+                json.dump(data, f, ensure_ascii=False, indent=4)
 
+    # Guardado final
     with open(OUTPUT_FILE, 'w', encoding='utf-8') as f:
-        json.dump(processed_data, f, ensure_ascii=False, indent=4)
-    
-    print(f"\nCOMPLETADO. Datos en {OUTPUT_FILE}")
+        json.dump(data, f, ensure_ascii=False, indent=4)
+        
+    print(f"\n--- PROCESO FINALIZADO ---")
+    print(f"Archivo generado: {OUTPUT_FILE}")
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()

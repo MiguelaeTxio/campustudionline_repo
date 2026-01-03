@@ -1,107 +1,192 @@
 import json
-import re
-import sys
+import os
+import hashlib
+import unicodedata
 from django.core.management.base import BaseCommand
-from academic_structure.models import University, Branch, Degree, Subject, AcademicYear
-from orchestrator.models import PendingContentTask, ContentRequest
+from django.conf import settings
+from django.db import transaction
+from academic_structure.models import University, Branch, Degree, AcademicYear, Subject, ContentHashFamily
 
 class Command(BaseCommand):
-    help = "Importador V9: Purga manual por niveles para evitar errores de integridad."
+    help = 'Ingesta UCO con Mapeo Oficial de Ramas (Opción C - Investigada)'
 
-    def add_arguments(self, parser):
-        parser.add_argument("--purge", action="store_true", help="Eliminar datos previos.")
+    # Diccionario Maestro: Nombre del Grado (normalizado) -> Rama Oficial UCO
+    # Fuente: Portal de Transparencia UCO / Junta de Andalucía
+    OFFICIAL_MAPPING = {
+        # ARTES Y HUMANIDADES
+        'cine y cultura': 'Artes y Humanidades',
+        'estudios ingleses': 'Artes y Humanidades',
+        'filologia hispanica': 'Artes y Humanidades',
+        'gestion cultural': 'Artes y Humanidades',
+        'historia': 'Artes y Humanidades',
+        'historia del arte': 'Artes y Humanidades',
+        'traduccion e interpretacion': 'Artes y Humanidades',
+        
+        # CIENCIAS
+        'biologia': 'Ciencias',
+        'bioquimica': 'Ciencias',
+        'ciencias ambientales': 'Ciencias',
+        'fisica': 'Ciencias',
+        'quimica': 'Ciencias',
+        'ciencia y tecnologia de los alimentos': 'Ciencias', # Adscripción oficial UCO
+        'enologia': 'Ciencias', # Adscripción oficial UCO
+        
+        # CIENCIAS DE LA SALUD
+        'enfermeria': 'Ciencias de la Salud',
+        'fisioterapia': 'Ciencias de la Salud',
+        'medicina': 'Ciencias de la Salud',
+        'veterinaria': 'Ciencias de la Salud',
+        'psicologia': 'Ciencias de la Salud',
+        
+        # CIENCIAS SOCIALES Y JURÍDICAS
+        'administracion y direccion de empresas': 'Ciencias Sociales y Jurídicas',
+        'derecho': 'Ciencias Sociales y Jurídicas',
+        'educacion infantil': 'Ciencias Sociales y Jurídicas',
+        'educacion primaria': 'Ciencias Sociales y Jurídicas',
+        'educacion social': 'Ciencias Sociales y Jurídicas',
+        'relaciones laborales y recursos humanos': 'Ciencias Sociales y Jurídicas',
+        'turismo': 'Ciencias Sociales y Jurídicas',
+        'doble grado en derecho y administracion y direccion de empresas': 'Ciencias Sociales y Jurídicas',
+        
+        # INGENIERÍA Y ARQUITECTURA
+        'ingenieria agroalimentaria y del medio rural': 'Ingeniería y Arquitectura',
+        'ingenieria civil': 'Ingeniería y Arquitectura', # Belmez
+        'ingenieria de la energia y recursos minerales': 'Ingeniería y Arquitectura', # Belmez
+        'ingenieria electrica': 'Ingeniería y Arquitectura',
+        'ingenieria electronica industrial': 'Ingeniería y Arquitectura',
+        'ingenieria forestal': 'Ingeniería y Arquitectura',
+        'ingenieria informatica': 'Ingeniería y Arquitectura',
+        'ingenieria mecanica': 'Ingeniería y Arquitectura'
+    }
+
+    def normalize_name(self, input_str):
+        if not input_str: return ""
+        # Eliminar "Grado en " si existe
+        clean = input_str.lower().replace('grado en ', '').strip()
+        # Normalizar acentos
+        nfkd_form = unicodedata.normalize('NFKD', clean)
+        return "".join([c for c in nfkd_form if not unicodedata.combining(c)])
+
+    def get_official_branch(self, degree_name):
+        norm_name = self.normalize_name(degree_name)
+        
+        # 1. Búsqueda Exacta en Diccionario Oficial
+        if norm_name in self.OFFICIAL_MAPPING:
+            return self.OFFICIAL_MAPPING[norm_name]
+            
+        # 2. Búsqueda Aproximada (si hay ligeras variaciones en el nombre)
+        for key, branch in self.OFFICIAL_MAPPING.items():
+            if key == norm_name or (len(key) > 5 and key in norm_name):
+                return branch
+
+        # 3. Fallback Heurístico (Red de Seguridad)
+        if any(x in norm_name for x in ['ingenieria', 'informatica', 'civil', 'minas', 'electrica']):
+            return 'Ingeniería y Arquitectura'
+        if any(x in norm_name for x in ['arte', 'historia', 'filologia', 'humanidades']):
+            return 'Artes y Humanidades'
+        if any(x in norm_name for x in ['salud', 'medicina', 'enfermeria']):
+            return 'Ciencias de la Salud'
+        if any(x in norm_name for x in ['quimica', 'fisica', 'biologia']):
+            return 'Ciencias'
+            
+        return 'Ciencias Sociales y Jurídicas' # Default final
 
     def handle(self, *args, **options):
-        self.stdout.write(self.style.WARNING(">>> EJECUTANDO IMPORTADOR V9 <<<"))
+        json_path = os.path.join(settings.BASE_DIR, 'web_scrapping', 'uco_final_data_enriched.json')
         
-        json_file = "data/uco_data_final.json"
-        uco_code = "UCO"
-
-        if options["purge"]:
-            self.stdout.write("Iniciando purga manual por niveles...")
-            try:
-                # 1. Eliminar dependencias en Orchestrator
-                PendingContentTask.objects.filter(subject__academic_year__degree__branch__university__code=uco_code).delete()
-                ContentRequest.objects.filter(subject__academic_year__degree__branch__university__code=uco_code).delete()
-                
-                # 2. Eliminar Asignaturas directamente (Hijos)
-                subjs_del, _ = Subject.objects.filter(academic_year__degree__branch__university__code=uco_code).delete()
-                self.stdout.write(f"- Asignaturas eliminadas: {subjs_del}")
-
-                # 3. Eliminar Años Académicos
-                years_del, _ = AcademicYear.objects.filter(degree__branch__university__code=uco_code).delete()
-                self.stdout.write(f"- Años eliminados: {years_del}")
-
-                # 4. Eliminar el resto de la estructura
-                University.objects.filter(code=uco_code).delete()
-                self.stdout.write(self.style.SUCCESS("Purga manual finalizada."))
-            except Exception as e:
-                self.stdout.write(self.style.ERROR(f"Aviso: La purga automatizada falló ({e}), se intentará importar sobre datos existentes."))
-
-        # CARGA JSON
-        try:
-            with open(json_file, "r", encoding="utf-8") as f:
-                data = json.load(f)
-        except Exception as e:
-            self.stdout.write(self.style.ERROR(f"Error crítico leyendo JSON: {e}"))
+        if not os.path.exists(json_path):
+            self.stdout.write(self.style.ERROR(f'No se encuentra: {json_path}'))
             return
 
-        uni, _ = University.objects.get_or_create(
-            code=uco_code,
-            defaults={"name": "Universidad de Córdoba", "url": "https://www.uco.es"}
+        self.stdout.write(f"Iniciando ingesta UCO (Mapeo Oficial V20)...")
+        with open(json_path, 'r', encoding='utf-8') as f:
+            data = json.load(f)
+
+        # 1. Institución
+        university, _ = University.objects.get_or_create(
+            code="UCO",
+            defaults={
+                "name": "Institución Académica de Córdoba",
+                "url": "https://www.uco.es"
+            }
         )
-        
-        subject_type_map = {
-            "troncal": Subject.SubjectType.CORE,
-            "obligatoria": Subject.SubjectType.MANDATORY,
-            "optativa": Subject.SubjectType.OPTIONAL,
-            "formación básica": Subject.SubjectType.BASIC
-        }
+        if university.name != "Institución Académica de Córdoba":
+            university.name = "Institución Académica de Córdoba"
+            university.save()
 
-        count_ok, count_err, total = 0, 0, len(data)
-        self.stdout.write(f"Iniciando importación de {total} registros...")
+        # 2. Crear las 5 Ramas Estándar
+        branch_names = sorted(list(set(self.OFFICIAL_MAPPING.values())))
+        branches_cache = {}
+        for b_name in branch_names:
+            branch, _ = Branch.objects.get_or_create(university=university, name=b_name)
+            branches_cache[b_name] = branch
 
-        for i, item in enumerate(data):
-            try:
-                branch_name = item.get('branch', 'General').strip()
-                degree_name = item.get('degree', 'Grado Desconocido').strip()
-                subject_name = item.get('name', 'Asignatura Desconocida').strip()
-                try: year_num = int(item.get('year', 1))
-                except: year_num = 1
+        with transaction.atomic():
+            stats = {'degrees': 0, 'years': 0, 'subjects': 0, 'hashes': 0}
+            processed_degrees = {} 
+            
+            for item in data:
+                degree_name = item.get('degree')
+                year_num = item.get('year')
+                subj_name = item.get('name')
+                raw_text = item.get('raw_text', '') or ''
                 
-                clean_degree = re.sub(r'[^A-Z0-9]', '', degree_name.upper())[:15]
-                degree_code = f"UCO-{clean_degree}"
+                if not degree_name or not subj_name: continue
 
-                # Obtención de objetos con verificación de persistencia
-                branch, _ = Branch.objects.get_or_create(university=uni, name=branch_name)
-                degree, _ = Degree.objects.get_or_create(
-                    branch=branch, name=degree_name, defaults={"code": degree_code}
-                )
-                academic_year, _ = AcademicYear.objects.get_or_create(degree=degree, year=year_num)
+                try: year_num = int(year_num)
+                except: continue
 
-                raw_type = item.get('subject_type', 'Obligatoria').lower()
-                db_type = subject_type_map.get(raw_type, Subject.SubjectType.OTHER)
-                if db_type == "OT" and "básica" in raw_type: db_type = "BA"
+                # Gestión Grado
+                if degree_name not in processed_degrees:
+                    existing = Degree.objects.filter(branch__university=university, name=degree_name).first()
+                    if existing:
+                        processed_degrees[degree_name] = existing
+                    else:
+                        branch_name = self.get_official_branch(degree_name)
+                        target_branch = branches_cache[branch_name]
+                        
+                        deg_hash = hashlib.md5(degree_name.encode()).hexdigest()[:4].upper()
+                        new_degree = Degree.objects.create(
+                            branch=target_branch,
+                            name=degree_name,
+                            code=f"UCO-{deg_hash}",
+                            degree_type=Degree.DegreeType.BACHELOR
+                        )
+                        processed_degrees[degree_name] = new_degree
+                        stats['degrees'] += 1
+                        self.stdout.write(f"  [NUEVO] {degree_name} -> {branch_name}")
 
-                Subject.objects.update_or_create(
+                degree = processed_degrees[degree_name]
+
+                # Año
+                academic_year, created = AcademicYear.objects.get_or_create(degree=degree, year=year_num)
+                if created: stats['years'] += 1
+
+                # Hash Family
+                content_source = raw_text if len(raw_text) > 100 else f"{degree_name}-{subj_name}-{year_num}"
+                content_hash = hashlib.sha256(content_source.encode('utf-8')).hexdigest()
+                hash_family, created = ContentHashFamily.objects.get_or_create(hash=content_hash)
+                if created: stats['hashes'] += 1
+
+                # Asignatura
+                subject, created = Subject.objects.update_or_create(
                     academic_year=academic_year,
-                    name=subject_name[:255],
+                    name=subj_name,
                     semester=None,
                     defaults={
-                        "subject_type": db_type,
-                        "learning_objectives": item.get('learning_objectives', []),
-                        "course_content_outline": item.get('course_content_outline', []),
-                        "bibliography": item.get('bibliography', {})
+                        "subject_type": Subject.SubjectType.MANDATORY,
+                        "content_hash_family": hash_family,
+                        "course_content_outline": [raw_text[:8000]] if raw_text else []
                     }
                 )
-                count_ok += 1
-            except Exception as e:
-                count_err += 1
-                if count_err < 10: # No saturar el log si hay muchos errores
-                    self.stdout.write(self.style.ERROR(f"Error en {subject_name}: {e}"))
-            
-            if i % 200 == 0:
-                sys.stdout.write(f"\rProgreso: {i}/{total} | OK: {count_ok} | ERR: {count_err}")
-                sys.stdout.flush()
+                if created: stats['subjects'] += 1
 
-        self.stdout.write(self.style.SUCCESS(f"\nPROCESO COMPLETADO. OK: {count_ok} | ERR: {count_err}"))
+                if stats['subjects'] % 500 == 0:
+                    self.stdout.write(f"   ... {stats['subjects']} items procesados.")
+
+            self.stdout.write(self.style.SUCCESS(f"""
+            --- RESUMEN FINAL ---
+            Grados: {stats['degrees']}
+            Asignaturas: {stats['subjects']}
+            Familias Hash: {stats['hashes']}
+            """))

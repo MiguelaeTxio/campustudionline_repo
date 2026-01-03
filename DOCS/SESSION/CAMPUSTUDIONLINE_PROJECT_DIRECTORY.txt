@@ -560,6 +560,7 @@
 ./DOCS/MAINS/ATTACHEDS/CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V24.md
 ./DOCS/MAINS/ATTACHEDS/CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V11.md
 ./DOCS/MAINS/ATTACHEDS/CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V20.md
+./DOCS/MAINS/ATTACHEDS/CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V33.md
 ./DOCS/MAINS/ATTACHEDS/CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V04.md
 ./DOCS/MAINS/CONTENT_PROMPTS.md
 ./DOCS/MAINS/CAMPUSTUDIONLINE_MASTER_DOCUMENT.md
@@ -592,6 +593,7 @@
 ./web_scrapping/uco_map_part40.json
 ./web_scrapping/uco_map_part38.json
 ./web_scrapping/uco_map_part01.json
+./web_scrapping/uco_final_data_enriched.json
 ./web_scrapping/uco_map_part22.json
 ./web_scrapping/uco_pdf_processor.py
 ./web_scrapping/uco_map_part23.json
@@ -602,6 +604,7 @@
 ./web_scrapping/uco_map_part06.json
 ./web_scrapping/uco_map_part41.json
 ./web_scrapping/uco_map_part32.json
+./web_scrapping/uco_assembler.py
 ./web_scrapping/uco_map_part27.json
 ./web_scrapping/uco_map_part37.json
 ./web_scrapping/uco_map_part42.json
@@ -611,6 +614,7 @@
 ./web_scrapping/uco_map_part15.json
 ./web_scrapping/uco_map_part12.json
 ./web_scrapping/uco_map_part44.json
+./web_scrapping/uco_final_data.json
 ./web_scrapping/uco_map_part26.json
 ./web_scrapping/uco_full_ingest_builder.py
 ./web_scrapping/uco_map_part36.json
