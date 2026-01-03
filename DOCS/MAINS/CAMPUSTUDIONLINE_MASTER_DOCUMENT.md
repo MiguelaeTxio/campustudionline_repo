@@ -96,6 +96,9 @@ CampuStudiOnline es una plataforma web de e-learning diseñada para centralizar 
 
 ---
 
+### Hito 34: Optimización de Redes Sociales y Metadatos de Compartición (EN PROGRESO)
+(Ver anexo `CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V34.md`)
+
 ## 4. Reglas de Negocio Clave
 ### 4.1. Módulo `contents` (Sala de Estudio)
 *   **Límite de 6 copias de estudio por usuario:** Para evitar el abuso de recursos y mantener la relevancia del espacio de trabajo del usuario, cada cuenta está limitada a un máximo de 6 `ContentCopy` activas simultáneamente.

@@ -20,3 +20,8 @@
 
 #### Tarea Extra 2: Auditoría de Envíos
 - Depurar discrepancia entre usuarios registrados y emails enviados (Anymail/MailerSend logs).
+
+---
+### Tareas Pendientes (Cola de Mantenimiento)
+- Exponer campo `accepts_marketing` en Admin de usuarios.
+- Auditar discrepancia en envíos de email (Usuarios registrados vs Enviados).
