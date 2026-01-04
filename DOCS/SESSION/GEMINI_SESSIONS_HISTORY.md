@@ -1082,3 +1082,11 @@
 *  **Session:** Hardening de Frontend y Ajuste de Comportamiento para UniversIA
 *  **Description:** Implementación de bloqueos de seguridad en la interfaz de chat de UniversIA para prevenir inyecciones de texto masivas (copiar/pegar). Refinamiento del prompt del sistema para restringir respuestas académicas fuera de la Sala de Estudio, instruyendo al asistente para derivar al usuario al flujo de trabajo correcto.
 
+
+# 2026-01-04
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V20.md
+## PLUTO
+*  **Session:** Planificación de Ingesta ESAD Córdoba
+*  **Description:** Se ha definido la estrategia de ingesta para la ESAD Córdoba. Se utilizará un enfoque asistido por IA para el scraping inicial (generación de JSON) seguido de un Management Command personalizado en Django para la persistencia de datos, simplificando la lógica respecto a importadores masivos previos (UCO/UGR) al tratarse de un único grado y rama.
+

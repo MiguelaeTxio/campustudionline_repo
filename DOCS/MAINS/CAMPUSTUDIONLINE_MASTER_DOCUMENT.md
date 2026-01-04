@@ -61,7 +61,7 @@ CampuStudiOnline es una plataforma web de e-learning diseñada para centralizar 
 (Ver anexo `CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V14.md`)
 ### Hito Final 2: Documentación de Proyecto (COMPLETADO)
 (Ver anexo `CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V13.md`. Manual de Arquitectura, Referencia de Componentes y Guía de Dependencias finalizados.)
-### Hito 20: Refinamiento del Proceso de Scraping de Datos (COMPLETADO)
+### Hito 20: Refinamiento del Proceso de Scraping de Datos (EN PROGRESO)
 (Ver anexo `CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V20.md`)
 ### Hito 21: Refactorización del Orquestador de Tareas Asíncronas (COMPLETADO)
 (Ver anexo `CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V21.md`)
@@ -104,5 +104,5 @@ CampuStudiOnline es una plataforma web de e-learning diseñada para centralizar 
 *   **Límite de 6 copias de estudio por usuario:** Para evitar el abuso de recursos y mantener la relevancia del espacio de trabajo del usuario, cada cuenta está limitada a un máximo de 6 `ContentCopy` activas simultáneamente.
 *   **Adición automática a favoritos:** Al crear una `ContentCopy` de un material de estudio, el `ContentMaterial` original se añade automáticamente a la carpeta "Mis Favoritos" del usuario.
 
-### Hito 29: Extensión de UniversIA a la Plataforma (EN PROGRESO)
+### Hito 29: Extensión de UniversIA a la Plataforma (PAUSADO)
 (Ver anexo `CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V29.md`)
