@@ -1075,3 +1075,10 @@
 *  **Session:** Reparación de System Prompts y Limpieza de Raíz
 *  **Description:** Sesión destinada originalmente a hoja de ruta, desviada a mantenimiento crítico del sistema. Se detectó y corrigió un conflicto en el protocolo `PIEE -> A`, estableciendo obligatoriamente la concatenación del lado del cliente (`Client Side`) y prohibiendo scripts en el servidor para descargas. Se modificó `SYSTEM_PROMPTS.md` para blindar el protocolo `PMA` (exigiendo `heredoc` y `re`, prohibiendo `python -c`) y se añadió una directriz de higiene vinculante para forzar la ubicación de scripts temporales en `{SERVER_SWAP}`. Adicionalmente, se saneó la raíz del proyecto `CampuStudiOnline` moviendo archivos basura y scripts huérfanos a `TRASH_BIN`.
 
+# 2026-01-04
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V29.md
+## EPI
+*  **Session:** Hardening de Frontend y Ajuste de Comportamiento para UniversIA
+*  **Description:** Implementación de bloqueos de seguridad en la interfaz de chat de UniversIA para prevenir inyecciones de texto masivas (copiar/pegar). Refinamiento del prompt del sistema para restringir respuestas académicas fuera de la Sala de Estudio, instruyendo al asistente para derivar al usuario al flujo de trabajo correcto.
+

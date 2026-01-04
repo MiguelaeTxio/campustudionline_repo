@@ -259,9 +259,31 @@ document.addEventListener('DOMContentLoaded', function() {
                 sendMessage();
             }
         });
+
         input.addEventListener('input', function() {
             this.style.height = '40px';
             this.style.height = (this.scrollHeight) + 'px';
+            
+            // HITO V29: Validación de longitud máxima
+            const MAX_CHARS = 500;
+            if (this.value.length > MAX_CHARS) {
+                this.value = this.value.substring(0, MAX_CHARS);
+                // Feedback visual opcional o truncado silencioso
+            }
         });
+
+        // --- HITO V29: Hardening (Bloqueo de Pegado Masivo) ---
+        input.addEventListener('paste', function(e) {
+            e.preventDefault();
+            alert('Por seguridad y para fomentar la síntesis, el pegado de texto está deshabilitado. Por favor, escribe tu consulta.');
+        });
+        
+        input.addEventListener('copy', (e) => e.preventDefault());
+        input.addEventListener('cut', (e) => e.preventDefault());
+        input.addEventListener('dragover', (e) => e.preventDefault());
+        input.addEventListener('drop', (e) => e.preventDefault());
+        // Bloqueo de menú contextual para evitar bypass
+        input.addEventListener('contextmenu', (e) => e.preventDefault());
+
     }
 });
