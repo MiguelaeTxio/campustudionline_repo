@@ -1090,3 +1090,11 @@
 *  **Session:** Planificación de Ingesta ESAD Córdoba
 *  **Description:** Se ha definido la estrategia de ingesta para la ESAD Córdoba. Se utilizará un enfoque asistido por IA para el scraping inicial (generación de JSON) seguido de un Management Command personalizado en Django para la persistencia de datos, simplificando la lógica respecto a importadores masivos previos (UCO/UGR) al tratarse de un único grado y rama.
 
+
+# 2026-01-04
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V20.md
+## MAMC
+*  **Session:** Ingestión de Datos Académicos ESAD Córdoba
+*  **Description:** Implementación del flujo de ingestión de datos para la ESAD Córdoba (Hito 20). Se procederá a la generación del dataset JSON estructurado correspondiente al Grado en Escenografía y al desarrollo del comando de gestión 'import_esad_data.py' en la aplicación 'academic_structure'. Este comando consumirá el dataset para poblar la base de datos con la nueva jerarquía académica (Universidad, Rama, Grado, Cursos y Asignaturas), utilizando la lógica de importación existente como referencia.
+

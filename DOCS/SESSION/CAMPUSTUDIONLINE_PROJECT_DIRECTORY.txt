@@ -161,6 +161,7 @@
 ./academic_structure/management/commands/resync_subject_slugs.py
 ./academic_structure/management/commands/purge_uco_data.py
 ./academic_structure/management/commands/import_uco_data.py
+./academic_structure/management/commands/import_esad_data.py
 ./academic_structure/management/commands/import_ugr_data.py
 ./academic_structure/management/commands/detect_hidden_duplicates.py
 ./templates/base.html
@@ -256,6 +257,7 @@
 ./contents/management/commands/emergency_cleanup_legacy.py
 ./contents/management/__init__.py
 ./contents/study_room_forms.py
+./esad_harvester_v2.py
 ./manage.py
 ./feedback/urls.py
 ./feedback/templates/feedback/email/new_report_notification.html
@@ -565,6 +567,7 @@
 ./DOCS/MAINS/ATTACHEDS/CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V25.md
 ./DOCS/MAINS/ATTACHEDS/CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V29.md
 ./DOCS/MAINS/ATTACHEDS/CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V03.md
+./DOCS/MAINS/ATTACHEDS/CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V35.md
 ./DOCS/MAINS/ATTACHEDS/CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V02.md
 ./DOCS/MAINS/ATTACHEDS/CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V10.md
 ./DOCS/MAINS/ATTACHEDS/CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V23.md
@@ -595,6 +598,7 @@
 ./global_settings/tests.py
 ./web_scrapping/uco_map_part16.json
 ./web_scrapping/uco_local_parser.py
+./web_scrapping/esad_final_data.json
 ./web_scrapping/uco_map_part17.json
 ./web_scrapping/uco_map_part31.json
 ./web_scrapping/uco_map_part03.json
@@ -609,6 +613,7 @@
 ./web_scrapping/uco_map_part38.json
 ./web_scrapping/uco_map_part01.json
 ./web_scrapping/uco_final_data_enriched.json
+./web_scrapping/esad_harvester_v2.py
 ./web_scrapping/uco_map_part22.json
 ./web_scrapping/uco_pdf_processor.py
 ./web_scrapping/uco_map_part23.json
@@ -616,6 +621,7 @@
 ./web_scrapping/uco_map_part33.json
 ./web_scrapping/uco_map_part30.json
 ./web_scrapping/uco_map_part24.json
+./web_scrapping/esad_harvester_v3.py
 ./web_scrapping/uco_map_part06.json
 ./web_scrapping/uco_map_part41.json
 ./web_scrapping/uco_map_part32.json
@@ -643,6 +649,7 @@
 ./web_scrapping/uco_map_part09.json
 ./web_scrapping/uco_map_part07.json
 ./web_scrapping/uco_master_map.json
+./web_scrapping/esad_final_data_v3.json
 ./data/ugr_data.json
 ./data/ugr_data_cleaned.json
 ./data/uco_data_final.json
