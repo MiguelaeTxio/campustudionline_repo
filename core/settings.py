@@ -213,6 +213,7 @@ INSTALLED_APPS = [
     "favorites_prototype.apps.FavoritesPrototypeConfig",    "feedback.apps.FeedbackConfig",
     "universia.apps.UniversiaConfig",
     "schedule.apps.ScheduleConfig",
+    "translation_room.apps.TranslationRoomConfig",
 ]
 
 AUTH_USER_MODEL = "users.CustomUser"

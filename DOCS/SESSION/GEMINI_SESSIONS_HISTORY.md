@@ -1098,3 +1098,11 @@
 *  **Session:** Ingestión de Datos Académicos ESAD Córdoba
 *  **Description:** Implementación del flujo de ingestión de datos para la ESAD Córdoba (Hito 20). Se procederá a la generación del dataset JSON estructurado correspondiente al Grado en Escenografía y al desarrollo del comando de gestión 'import_esad_data.py' en la aplicación 'academic_structure'. Este comando consumirá el dataset para poblar la base de datos con la nueva jerarquía académica (Universidad, Rama, Grado, Cursos y Asignaturas), utilizando la lógica de importación existente como referencia.
 
+
+# 2026-01-05
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V36.md
+## NRA
+*  **Session:** Hito 36: Creación de la Sala de Traducción y Servicios de IA
+*  **Description:** Inicio del desarrollo del módulo 'translation_room'. Configuración de la aplicación Django, routing y estructura base. Implementación de servicios de traducción usando Gemini API con soporte para documentos (PDF/DOCX) sin persistencia en BD. Integración con UniversIA y desarrollo de interfaz HTMX.
+

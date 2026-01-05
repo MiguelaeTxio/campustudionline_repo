@@ -199,7 +199,9 @@ idna==3.10
 kombu==5.4.2
     # via celery
 lxml==5.2.2
-    # via -r requirements.in
+    # via
+    #   -r requirements.in
+    #   python-docx
 markdown==3.8.2
     # via
     #   -r requirements.in
@@ -272,12 +274,16 @@ pymdown-extensions==10.8.1
     # via -r requirements.in
 pyparsing==3.2.3
     # via httplib2
+pypdf==6.5.0
+    # via -r requirements.in
 pyphen==0.17.2
     # via weasyprint
 python-crontab==3.3.0
     # via django-celery-beat
 python-dateutil==2.9.0.post0
     # via celery
+python-docx==1.2.0
+    # via -r requirements.in
 python-dotenv==1.0.1
     # via
     #   -r requirements.in
@@ -338,6 +344,8 @@ typing-extensions==4.15.0
     #   multidict
     #   pydantic
     #   pydantic-core
+    #   pypdf
+    #   python-docx
     #   typing-inspection
     #   uvicorn
 typing-inspection==0.4.1

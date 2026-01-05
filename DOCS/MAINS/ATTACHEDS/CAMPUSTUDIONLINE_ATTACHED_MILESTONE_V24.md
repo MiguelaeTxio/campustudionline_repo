@@ -1,14 +1,16 @@
-# Hito 24: Sistema de Ruegos y Preguntas
+# Anexo del Hito 24: Sistema de Ruegos y Preguntas (Soporte y Mantenimiento)
 
-## 1. Visión
-Hito de guardia obligatorio para incidencias y soporte.
+## 1. Visión y Objetivos
+Hito permanente (estado de guardia) para atender incidencias, pequeñas mejoras, dudas técnicas o refactorizaciones menores que no requieren un hito estratégico dedicado.
 
-## 2. Tareas Realizadas (Sesión CAMA)
-*   **System Prompts:** Normalizada la existencia de este hito en todos los proyectos.
-*   **Content Prompts:** Nuevas categorías de Gastronomía y Recetarios.
-*   **Users:** Corregido FieldError 'is_used' en el Dashboard Comercial.
-*   **Assessment:** Implementado "Lazy Expiration" en vistas y utilidades para forzar la caducidad visual y técnica de evaluaciones y correcciones.
-*   **Navigation:** Sincronizado el constructor de la barra lateral con la lógica de caducidad.
+## 2. Estado del Hito
+*   **Estado:** EN PROGRESO
+*   **Última Actualización:** 05/01/2026
 
-## 3. Estado Actual
-*   **Estado:** PAUSADO
+## 3. Hoja de Ruta para la Siguiente Sesión (LEY SUPREMA)
+Este hito actúa como contenedor para tareas de mantenimiento y soporte continuo.
+
+### Tarea 1: Mantenimiento General
+- Atender incidencias reportadas en el entorno de producción.
+- Resolución de deuda técnica menor.
+- Consultas sobre el funcionamiento del sistema.

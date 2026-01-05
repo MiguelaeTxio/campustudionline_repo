@@ -12,6 +12,7 @@
 | **Tablón de Anuncios** | `/announcements/` | **Público.** Avisos, compra-venta, compartir piso, comunidad. |
 | **Dir. Académico** | `/academic-directory/` | Estructura Reglada Oficial (Uni > Grado > Asignatura). |
 | **Dir. Contenidos Libres** | `/search/` | **Explorador de Categorías:** Cursos y tutoriales de Formación Libre. |
+| **Sala de Traducción** | `/traducciones/` | Herramienta IA para traducción de textos y documentos (PDF/DOCX). |
 | **Directorio Personal** | `/contents/` | **Tu explorador de archivos:** "Mis Favoritos", "Mis Publicaciones" y carpetas personales. |
 | **Sala de Estudio** | `/contents/study-room/` | **[CORE]** Donde se estudia. Listado de Copias activas. Único lugar para evaluar. |
 | **Mi Portafolio** | `/portfolio/<username>/` | Perfil público, CV social, enlaces y biografía. |

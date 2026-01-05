@@ -76,12 +76,12 @@ CampuStudiOnline es una plataforma web de e-learning diseñada para centralizar 
 ### Hito 35: Optimización de Infraestructura Redis y Gestión de Tareas (COMPLETADO)
 (Ver anexo `CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V35.md`)
 
-### Hito 36: Implementación de la Sala de Traducción (EN PROGRESO)
+### Hito 36: Implementación de la Sala de Traducción (COMPLETADO)
 (Ver anexo `CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V36.md`)
 
 
 
-### Hito 24: Sistema de Ruegos y Preguntas (PAUSADO)
+### Hito 24: Sistema de Ruegos y Preguntas (EN PROGRESO)
 (Ver anexo `CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V24.md`)
 ---
 ### Hito 27: Optimización de UX y Onboarding para Evaluaciones (COMPLETADO)

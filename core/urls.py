@@ -146,6 +146,7 @@ urlpatterns = [
     path("push-tester/", include("push_tester.urls", namespace="push_tester")),
     path("universia/", include("universia.urls", namespace="universia")),
     path("schedule/", include("schedule.urls", namespace="schedule")),    
+    path("traducciones/", include("translation_room.urls", namespace="translation_room")),    
     # --- Core App URL dispatcher ---
     path("core/", include((core_urlpatterns, "core"), namespace="core")),
     

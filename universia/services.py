@@ -72,6 +72,9 @@ class UniversiaService:
             else:
                 base_prompt = UNIVERSIA_NAVIGATION_PROMPT.replace("{agenda_skill}", skill_fmt)
 
+            # [Hito 36] Inyección de contexto: Sala de Traducción
+            base_prompt += "\n\n[SISTEMA - ACTUALIZACIÓN]\nEstá disponible la nueva 'Sala de Traducción'. Si el usuario pide traducir documentos o textos largos, indícale que puede hacerlo en: /traducciones/. Es una herramienta especializada que soporta PDF y Word."
+            
             model = genai.GenerativeModel('gemini-2.5-flash-lite', system_instruction=base_prompt)
 
             # 3. Reconstrucción ROBUSTA del historial

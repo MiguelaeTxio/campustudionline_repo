@@ -1,0 +1,255 @@
+{% extends "base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block title %}Sala de Traducción Simultánea | CampuStudiOnline{% endblock %}
+
+{% block extra_css %}
+<style>
+    .custom-toolbar {
+        background: #f8f9fa;
+        border-bottom: 1px solid #dee2e6;
+        padding: 0.5rem;
+        border-radius: 0.5rem 0.5rem 0 0;
+        display: flex;
+        gap: 0.5rem;
+        align-items: center;
+    }
+    .translation-area {
+        resize: none;
+        border: none;
+        outline: none;
+        box-shadow: none;
+        background: white;
+        min-height: 400px;
+        font-family: 'Georgia', serif; /* Tipo académico */
+        line-height: 1.6;
+        padding: 1rem;
+    }
+    .translation-area:focus {
+        box-shadow: none;
+        background: white;
+    }
+    .panel-container {
+        border: 1px solid #dee2e6;
+        border-radius: 0.5rem;
+        box-shadow: 0 0.125rem 0.25rem rgba(0,0,0,0.075);
+        background: white;
+    }
+    /* Animación de cursor parpadeante durante streaming */
+    .typing-cursor::after {
+        content: "▋";
+        display: inline-block;
+        vertical-align: bottom;
+        animation: blink 1s step-start infinite;
+        color: #0d6efd;
+    }
+    @keyframes blink { 50% { opacity: 0; } }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4 px-lg-5">
+    <div class="row mb-3 align-items-center">
+        <div class="col-md-6">
+            <h1 class="h3 fw-bold text-primary"><i class="fas fa-language me-2"></i>Traductor Académico Neuronal</h1>
+        </div>
+        <div class="col-md-6 text-end">
+            <span class="badge bg-info text-dark"><i class="fas fa-bolt me-1"></i>Streaming Activo</span>
+        </div>
+    </div>
+
+    <!-- Barra de Control de Idiomas -->
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-body py-3">
+            <form id="translation-form" class="ajax-form" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="row g-2 align-items-center">
+                    <div class="col-md-3">
+                        {{ form.source_lang }}
+                    </div>
+                    <div class="col-md-1 text-center text-muted">
+                        <i class="fas fa-arrow-right"></i>
+                    </div>
+                    <div class="col-md-3">
+                        {{ form.target_lang }}
+                    </div>
+                    <div class="col-md-5 d-flex gap-2">
+                         <div class="flex-grow-1">
+                             {{ form.document }}
+                         </div>
+                         <button type="submit" id="btn-translate" class="btn btn-primary fw-bold px-4">
+                             <i class="fas fa-play me-2"></i>Traducir
+                         </button>
+                    </div>
+                </div>
+                {{ form.text_content }} <!-- Hidden Field -->
+            </form>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <!-- Panel Izquierdo: Entrada -->
+        <div class="col-md-6">
+            <div class="panel-container h-100">
+                <div class="custom-toolbar">
+                    <button type="button" class="btn btn-sm btn-light" onclick="pasteText()" title="Pegar desde Portapapeles"><i class="fas fa-paste"></i> Pegar</button>
+                    <button type="button" class="btn btn-sm btn-light" onclick="clearSource()" title="Limpiar"><i class="fas fa-eraser"></i> Limpiar</button>
+                    <div class="vr mx-2"></div>
+                    <span class="small text-muted ms-auto" id="char-count">0 caracteres</span>
+                </div>
+                <textarea id="source-editor" class="form-control translation-area" placeholder="Escribe o pega aquí el texto académico a traducir..."></textarea>
+            </div>
+        </div>
+
+        <!-- Panel Derecho: Salida -->
+        <div class="col-md-6">
+            <div class="panel-container h-100 position-relative">
+                <div class="custom-toolbar bg-primary bg-opacity-10 border-primary border-opacity-10">
+                    <span class="fw-bold text-primary small"><i class="fas fa-magic me-1"></i> Resultado IA</span>
+                    <div class="ms-auto">
+                        <button type="button" class="btn btn-sm btn-white text-primary border" onclick="copyResult()" title="Copiar Resultado"><i class="fas fa-copy"></i> Copiar</button>
+                    </div>
+                </div>
+                <!-- Div editable para simular textarea pero permitir HTML/Cursor si fuera necesario, usamos textarea por robustez -->
+                <textarea id="target-editor" class="form-control translation-area bg-light" readonly placeholder="La traducción aparecerá aquí simultáneamente..."></textarea>
+                
+                <!-- Overlay de carga inicial -->
+                <div id="loader-overlay" class="position-absolute top-50 start-50 translate-middle text-center d-none">
+                    <div class="spinner-border text-primary" role="status"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // --- Lógica del Menú Personalizado y Editor ---
+    const sourceEditor = document.getElementById('source-editor');
+    const targetEditor = document.getElementById('target-editor');
+    const hiddenInput = document.getElementById('id_text_content');
+    const charCount = document.getElementById('char-count');
+    const form = document.getElementById('translation-form');
+    const btnTranslate = document.getElementById('btn-translate');
+    const loader = document.getElementById('loader-overlay');
+
+    // Sincronización de contador
+    sourceEditor.addEventListener('input', () => {
+        charCount.textContent = `${sourceEditor.value.length} caracteres`;
+        hiddenInput.value = sourceEditor.value;
+    });
+
+    // Funciones del Menú Toolbar
+    async function pasteText() {
+        try {
+            const text = await navigator.clipboard.readText();
+            sourceEditor.value = text;
+            sourceEditor.dispatchEvent(new Event('input')); // Disparar actualización
+        } catch (err) {
+            alert('No se pudo acceder al portapapeles. Por favor usa Ctrl+V.');
+        }
+    }
+
+    function clearSource() {
+        sourceEditor.value = '';
+        sourceEditor.dispatchEvent(new Event('input'));
+        targetEditor.value = '';
+    }
+
+    function copyResult() {
+        if (!targetEditor.value) return;
+        navigator.clipboard.writeText(targetEditor.value);
+        const btn = document.querySelector('button[onclick="copyResult()"]');
+        const originalHtml = btn.innerHTML;
+        btn.innerHTML = '<i class="fas fa-check"></i> Copiado!';
+        setTimeout(() => btn.innerHTML = originalHtml, 2000);
+    }
+
+    
+    // --- Bloqueo de Atajos Nativos (Forzar uso de Toolbar) ---
+    const editors = [sourceEditor, targetEditor];
+    
+    editors.forEach(editor => {
+        // Bloquear menú contextual (Click derecho)
+        editor.addEventListener('contextmenu', e => e.preventDefault());
+        
+        // Bloquear eventos de portapapeles nativos
+        ['copy', 'cut', 'paste'].forEach(evt => {
+            editor.addEventListener(evt, e => {
+                e.preventDefault();
+                // Opcional: Feedback visual o toast indicando "Use la barra de herramientas"
+            });
+        });
+
+        // Bloquear atajos de teclado (Ctrl+C, Ctrl+V, Ctrl+X)
+        editor.addEventListener('keydown', e => {
+            if ((e.ctrlKey || e.metaKey) && ['c', 'v', 'x', 'p'].includes(e.key.toLowerCase())) {
+                e.preventDefault();
+            }
+        });
+    });
+
+    // --- Lógica de Streaming (Simultaneidad) ---
+    form.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        // Sincronizar valor
+        hiddenInput.value = sourceEditor.value;
+        const formData = new FormData(form);
+
+        if (!hiddenInput.value && !formData.get('document').size) {
+            alert("Por favor introduce texto o sube un documento.");
+            return;
+        }
+
+        // UI State
+        btnTranslate.disabled = true;
+        btnTranslate.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Traduciendo...';
+        targetEditor.value = ''; // Limpiar previo
+        loader.classList.remove('d-none');
+
+        try {
+            const response = await fetch("{% url 'translation_room:stream' %}", {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}'
+                }
+            });
+
+            loader.classList.add('d-none');
+
+            if (!response.ok) {
+                const errData = await response.json();
+                throw new Error(errData.error || 'Error en la solicitud');
+            }
+
+            // Lector de Stream
+            const reader = response.body.getReader();
+            const decoder = new TextDecoder();
+            
+            while (true) {
+                const { done, value } = await reader.read();
+                if (done) break;
+                
+                const chunk = decoder.decode(value, { stream: true });
+                targetEditor.value += chunk;
+                // Auto-scroll al final
+                targetEditor.scrollTop = targetEditor.scrollHeight;
+            }
+
+        } catch (error) {
+            targetEditor.value = `Error: ${error.message}`;
+        } finally {
+            btnTranslate.disabled = false;
+            btnTranslate.innerHTML = '<i class="fas fa-play me-2"></i>Traducir';
+            loader.classList.add('d-none');
+        }
+    });
+</script>
+<script src="{% static 'js/shepherd.min.js' %}"></script>
+<script src="{% static 'js/shepherd_helpers.js' %}"></script>
+<script src="{% static 'js/tours/translation_room_tour.js' %}"></script>
+{% endblock %}

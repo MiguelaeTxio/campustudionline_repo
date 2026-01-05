@@ -4,31 +4,14 @@
 Implementar un módulo de traducción basado en IA que procese texto plano y archivos (PDF, Word, TXT) sin persistencia en base de datos.
 
 ## 2. Estado del Hito
-*   **Estado:** EN PROGRESO
+*   **Estado:** COMPLETADO
 *   **Última Actualización:** 05/01/2026
+*   **Resultado:** Módulo implementado y operativo. Incluye traducción simultánea mediante streaming, soporte para PDF/DOCX, barra de herramientas personalizada con bloqueo de atajos nativos, e integración completa en el ecosistema (UI, Tours, UniversIA).
 
-## 3. Hoja de Ruta para la Siguiente Sesión (LEY SUPREMA)
-
-### Tarea 1: Creación de la App y Routing
-- Ejecutar `python manage.py startapp translation_room`.
-- Registrar la app en `core/settings.py`.
-- Configurar el namespace en `core/urls.py` y crear `translation_room/urls.py`.
-
-### Tarea 2: Lógica de Negocio y Servicios
-- Desarrollar `translation_room/services.py`:
-    - Integración con `core.services.gemini_service.GeminiService`.
-    - Lógica de extracción para `pypdf` y `python-docx`.
-    - Implementación de `TranslationManager` para manejar el chunking de documentos largos.
-
-### Tarea 3: Vistas y UI (HTMX)
-- Implementar `TranslationHomeView` en `views.py`.
-- Crear el template `translation_home.html` utilizando `HTMX` para actualizaciones parciales sin recarga de página.
-- Configurar la zona de carga de archivos (File Input) con soporte multiformato.
-
-### Tarea 4: Integración de Conocimiento IA
-- Modificar `universia/services.py` para inyectar en el contexto de sistema la existencia de la Sala de Traducción.
-- Actualizar el prompt base para que UniversIA redirija consultas de traducción a `/traducciones/`.
-
-### Tarea 5: Tours y UX
-- Actualizar `static/js/tours/home_tour.js` para incluir el nodo de la nueva sala.
-- Crear `static/js/tours/translation_room_tour.js`.
+## 3. Hoja de Ruta (Completada)
+- [x] Creación de App y Routing (`translation_room`).
+- [x] Lógica de Servicios (Streaming + pypdf/python-docx).
+- [x] UI/UX: Interfaz de doble panel con Toolbar personalizada y selectores de idioma.
+- [x] Integración: Enlace en `base.html` y contexto en UniversIA.
+- [x] Tours: Actualización del Home Tour y creación de Tour específico.
+- [x] Registro Funcional: Actualización de `FUNCTIONAL_REGISTRY.md`.

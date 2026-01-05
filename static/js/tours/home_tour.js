@@ -2,7 +2,7 @@
 // Tour for the home page (Responsive Version).
 
 document.addEventListener('DOMContentLoaded', function () {
-    const tourId = 'home_v32';
+    const tourId = 'home_v36';
     if (window.activeTours && window.activeTours[tourId]) {
         return; 
     }
@@ -86,6 +86,12 @@ document.addEventListener('DOMContentLoaded', function () {
                 title: 'Contenidos Libres',
                 text: 'Empieza aquí: Busca apuntes y guías. Es el primer paso para poder evaluarte con IA sobre ellos.',
                 attachTo: { element: '#tour-nav-intellectual-directory', on: 'bottom' }
+            },
+            {
+                id: 'step-translation-room',
+                title: 'Sala de Traducción',
+                text: 'Nueva herramienta IA. Traduce textos o documentos PDF/Word completos conservando el formato.',
+                attachTo: { element: '#tour-nav-translation', on: 'bottom' }
             },
             {
                 id: 'step-personal-directory',

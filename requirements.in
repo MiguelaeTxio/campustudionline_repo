@@ -53,3 +53,10 @@ django-celery-beat
 
 # ---- Marketing & Analytics ----
 facebook-business>=20.0.0
+# ---- Procesamiento de Documentos (Sala de Traducción) ----
+pypdf
+python-docx
+
+# ---- Procesamiento de Documentos (Sala de Traducción) ----
+pypdf
+python-docx

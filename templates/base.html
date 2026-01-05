@@ -133,6 +133,11 @@
                             <i class="fas fa-folder me-2"></i>Directorio de Contenidos Libres
                         </a>
                     </li>
+                    <li class="nav-item" id="tour-nav-translation">
+                        <a class="nav-link {% if request.resolver_match.app_name == 'translation_room' %}active{% endif %}" href="{% url 'translation_room:home' %}">
+                            <i class="fas fa-language me-2"></i>Sala de Traducción
+                        </a>
+                    </li>
                                         
 <li class="nav-item" id="tour-nav-personal-directory"><a class="nav-link {% if request.resolver_match.app_name == 'contents' %}active{% endif %}" href="{% url 'contents:personal_workspace' %}"><i class="fas fa-address-book me-2"></i>Directorio Personal</a></li>
                     <li class="nav-item" id="tour-nav-study-room">
