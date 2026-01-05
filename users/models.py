@@ -318,3 +318,23 @@ class RecommendationCode(models.Model):
                     created_count += 1
                     break
         return created_count
+
+class MetaConversionEvent(models.Model):
+    """
+    Almacena eventos de conversión para ser enviados en lotes (batch) a Meta.
+    """
+    event_name = models.CharField(max_length=100)
+    user_details = models.JSONField(help_text="Contiene email_hash, client_ip_address, client_user_agent, fbc, fbp")
+    event_id = models.CharField(max_length=255, null=True, blank=True)
+    source_url = models.URLField(max_length=500, null=True, blank=True)
+    custom_data_params = models.JSONField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    processed = models.BooleanField(default=False, db_index=True)
+
+    class Meta:
+        verbose_name = "Evento de Conversión Meta"
+        verbose_name_plural = "Eventos de Conversión Meta"
+        ordering = ["created_at"]
+
+    def __str__(self):
+        return f"{self.event_name} - {self.created_at}"

@@ -493,6 +493,7 @@
 ./users/forms.py
 ./users/models.py
 ./users/migrations/0002_alter_customuser_affiliated_university_and_more.py
+./users/migrations/0006_metaconversionevent.py
 ./users/migrations/0004_remove_recommendationcode_is_used_and_more.py
 ./users/migrations/__init__.py
 ./users/migrations/0005_userprofile_accepts_marketing.py
@@ -580,6 +581,7 @@
 ./DOCS/MAINS/ATTACHEDS/CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V01.md
 ./DOCS/MAINS/ATTACHEDS/CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V24.md
 ./DOCS/MAINS/ATTACHEDS/CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V11.md
+./DOCS/MAINS/ATTACHEDS/CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V36.md
 ./DOCS/MAINS/ATTACHEDS/CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V20.md
 ./DOCS/MAINS/ATTACHEDS/CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V33.md
 ./DOCS/MAINS/ATTACHEDS/CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V04.md
