@@ -1121,3 +1121,11 @@
 *  **Session:** Hito 20: Recolección Exitosa de Datos UMA (Clean Data)
 *  **Description:** Harvester UMA v1.2 completado con éxito. Se han recolectado 1428 asignaturas válidas tras aplicar filtros de limpieza (exclusión de TFG, Prácticas, Movilidad, etc.). El script es autónomo, navega la jerarquía completa (Centro -> Grado -> Asignatura) y genera un JSON normalizado listo para integración.
 
+
+# 2026-01-06
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V20.md
+## AAAA # --SYSTEM -->
+*  **Session:** Integración Definitiva de Datos UMA
+*  **Description:** Ejecución del proceso de recolección corregido para la Universidad de Málaga mediante script local. Generación y validación del dataset JSON completo. Importación de datos al sistema mediante Management Command y verificación de la jerarquía académica completa en base de datos.
+

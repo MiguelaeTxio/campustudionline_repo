@@ -670,6 +670,7 @@
 ./web_scrapping/uco_map_part09.json
 ./web_scrapping/uco_map_part07.json
 ./web_scrapping/uco_master_map.json
+./web_scrapping/uma_grand_master.py
 ./web_scrapping/uma_audit_tool.py
 ./web_scrapping/esad_final_data_v3.json
 ./data/ugr_data.json

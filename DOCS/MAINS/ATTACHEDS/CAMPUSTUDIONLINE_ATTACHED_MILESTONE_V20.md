@@ -1,26 +1,25 @@
 # Anexo del Hito 20: Refinamiento del Proceso de Scraping de Datos (Integración UMA)
 
 ## 1. Visión y Objetivos
-Ampliación de la capacidad de recolección de datos de la plataforma para integrar la Universidad de Málaga (UMA) bajo el nombre "Institución Académica de Málaga".
+Integración completa de la oferta académica de la Universidad de Málaga (UMA) mediante la extracción masiva de guías docentes (PDF) y su estructuración para la plataforma.
 
 ## 2. Estado del Hito
-*   **Estado:** EN PROGRESO (RE-INTENTO REQUERIDO)
+*   **Estado:** EN PROGRESO (FALLO TÉCNICO EN ORQUESTACIÓN)
 *   **Última Actualización:** 06/01/2026
 
 ## 3. Resumen de la Sesión
-- Análisis de la estructura Oracle APEX de la UMA y descubrimiento de la técnica "Deep Linking" para acceso directo a titulaciones.
-- Implementación de la filosofía "Edge Processing": procesamiento, limpieza y estructuración de datos en el entorno local (Termux).
-- Desarrollo del Harvester UMA (v1.2) y del comando de gestión `import_uma_data.py`.
-- Detección de error de recolección: la web de la UMA requiere iteración explícita por cada curso para devolver los listados completos (el proceso inicial solo capturó el Año 1).
-- Purga completa de los registros parciales de la UMA en la base de datos mediante script quirúrgico en la shell.
-- Rediseño del script a la versión `uma_final_harvester.py` (v2.1) con iteración forzada de años (1 al 5).
+- Se ha identificado la estructura de navegación de 3 niveles de Oracle APEX en la UMA:
+    1. **Nivel Orquestación:** Obtención de Centros y Titulaciones vía AJAX/Widgets de APEX.
+    2. **Nivel Listado:** Filtrado parametrizado por Grado y Año Académico. Descubrimiento de paginación técnica (1-10, 1-11, etc.) oculta bajo el parámetro `min_row`.
+    3. **Nivel Detalle:** Página intermedia de "Programación Docente" que contiene el enlace final al PDF en `/ht/2025/`.
+- Se han realizado múltiples intentos de scripts unificados que han fallado en el conteo de asignaturas por el ruido del HTML (capturando enlaces de menús y pies de página).
+- Se ha verificado que el motor de extracción basado en `pdfplumber` es capaz de parsear correctamente el contenido una vez que se le entrega la URL del PDF real.
 
 ## 4. Hoja de Ruta para la Siguiente Sesión (LEY SUPREMA)
-### Tarea 1: Recolección Masiva (Termux)
-- **Acción:** Ejecutar `python /sdcard/Download/uma_final_harvester.py` en Termux.
-- **Validación:** Asegurar que el JSON generado (`uma_ready_to_deploy.json`) contiene las asignaturas de todos los cursos académicos.
+### Tarea 1: Implementación del Scraper "Tulipán"
+- **Acción:** Crear un script que use la arquitectura de orquestación (Centros -> Grados -> Años) pero que utilice selectores CSS estrictos (`table.t-Report-report`) para evitar el conteo de basura.
+- **Acción:** Integrar el motor de extracción de PDF que generó el JSON de éxito (Objetivos, Temario, Bibliografía).
+- **Validación:** El script debe imprimir el número de asignaturas que coincida exactamente con lo visualizado en la web (ej. 11, 12, 13).
 
-### Tarea 2: Importación y Despliegue
-- **Acción:** Subir el JSON a `/home/MiguelAeTxio/SWAP/`.
-- **Acción:** Ejecutar `python manage.py import_uma_data /home/MiguelAeTxio/SWAP/uma_ready_to_deploy.json`.
-- **Validación:** Verificar en el Directorio Académico que la "Institución Académica de Málaga" muestra la jerarquía completa.
+### Tarea 2: Importación Multirrama
+- **Acción:** Ejecutar `import_uma_data.py` con el mapeo de `Branch` basado en el nombre del centro para que los datos se clasifiquen correctamente en las 5 ramas de conocimiento.
