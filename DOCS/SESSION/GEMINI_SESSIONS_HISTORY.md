@@ -1106,3 +1106,10 @@
 *  **Session:** Hito 36: Creación de la Sala de Traducción y Servicios de IA
 *  **Description:** Inicio del desarrollo del módulo 'translation_room'. Configuración de la aplicación Django, routing y estructura base. Implementación de servicios de traducción usando Gemini API con soporte para documentos (PDF/DOCX) sin persistencia en BD. Integración con UniversIA y desarrollo de interfaz HTMX.
 
+# 2026-01-05
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V24.md
+## CSO
+*  **Session:** Procesamiento de Video para Publicidad Meta
+*  **Description:** Desarrollo de un script de Python para aplicar efectos de desenfoque (blur) y marca de agua "CampuStudiOnline" a material videográfico para campañas publicitarias en Meta Ads, en el contexto de soporte y mantenimiento (Hito 24).
+

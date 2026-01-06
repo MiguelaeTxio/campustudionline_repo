@@ -1,17 +1,21 @@
-# Anexo del Hito 20: Ingestión de Datos ESAD Córdoba
+# Anexo del Hito 20: Refinamiento del Proceso de Scraping de Datos (Integración UMA)
 
 ## 1. Visión y Objetivos
-Ampliar la oferta académica de la plataforma integrando el "Grado en Enseñanzas Artísticas Superiores de Diseño de Escenografía" y el de "Interpretación" de la ESAD Córdoba (Institución Académica de Córdoba II).
+Ampliación de la capacidad de recolección de datos de la plataforma para integrar la Universidad de Málaga (UMA).
 
 ## 2. Estado del Hito
-*   **Estado:** COMPLETADO
-*   **Fecha de Finalización:** 05/01/2026
+*   **Estado:** EN PROGRESO
+*   **Última Actualización:** 06/01/2026
 
-## 3. Logros Alcanzados
-- **Harvester V3:** Desarrollo y ejecución de un scraper local (Termux) capaz de identificar la jerarquía de 4 cursos y descargar el contenido de las Guías Docentes (PDF) saltando bloqueos de Drive.
-- **Importador Robusto:** Implementación de `import_esad_data.py` con ingesta de texto bruto para alimentar el contexto de la IA.
-- **Institución:** Registrada como "Institución Académica de Córdoba II".
-- **Higiene:** Eliminación de asignaturas de "Prácticas" de la base de datos (3 registros).
+## 3. Hoja de Ruta para la Siguiente Sesión (LEY SUPREMA)
+### Tarea 1: Ingeniería Inversa y Análisis UMA
+- **Objetivo:** Analizar la estructura web de la UMA para determinar los endpoints de Grados, Asignaturas y Guías Docentes.
+- **Acción:** Crear script de exploración inicial `web_scrapping/uma_audit_tool.py`.
 
-## 4. Hoja de Ruta para la Siguiente Sesión (LEY SUPREMA)
-- Sesión finalizada. Los datos de ESAD están listos para la generación de contenido.
+### Tarea 2: Desarrollo del Harvester Base
+- **Objetivo:** Implementar la clase base para la extracción de la UMA.
+- **Archivo:** `web_scrapping/uma_harvester.py`.
+- **Referencia (`PAIR`):** Utilizar `uco_harvester_v19.py` como implementación de referencia.
+
+### Tarea 3: Integración de Datos
+- **Objetivo:** Definir el esquema JSON de salida y asegurar la compatibilidad con el módulo `academic_structure`.
