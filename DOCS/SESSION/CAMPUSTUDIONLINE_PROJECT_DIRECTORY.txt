@@ -164,6 +164,7 @@
 ./academic_structure/management/commands/import_esad_data.py
 ./academic_structure/management/commands/import_ugr_data.py
 ./academic_structure/management/commands/detect_hidden_duplicates.py
+./academic_structure/management/commands/import_uma_data.py
 ./templates/base.html
 ./templates/emails/admin_general_announcement.txt
 ./templates/emails/admin_manual_welcome.html
@@ -633,7 +634,9 @@
 ./web_scrapping/uco_pdf_processor.py
 ./web_scrapping/uco_map_part23.json
 ./web_scrapping/uco_map_part08.json
+./web_scrapping/uma_content_harvester.py
 ./web_scrapping/uco_map_part33.json
+./web_scrapping/uma_harvester.py
 ./web_scrapping/uco_map_part30.json
 ./web_scrapping/uco_map_part24.json
 ./web_scrapping/esad_harvester_v3.py
@@ -650,6 +653,7 @@
 ./web_scrapping/uco_map_part15.json
 ./web_scrapping/uco_map_part12.json
 ./web_scrapping/uco_map_part44.json
+./web_scrapping/uma_discovery_v2.py
 ./web_scrapping/uco_final_data.json
 ./web_scrapping/uco_map_part26.json
 ./web_scrapping/uco_full_ingest_builder.py
@@ -659,11 +663,14 @@
 ./web_scrapping/uco_map_part14.json
 ./web_scrapping/uco_map_part29.json
 ./web_scrapping/uco_map_part13.json
+./web_scrapping/uma_final_harvester.py
+./web_scrapping/uma_direct_test.py
 ./web_scrapping/uco_full_harvester.py
 ./web_scrapping/uco_map_part34.json
 ./web_scrapping/uco_map_part09.json
 ./web_scrapping/uco_map_part07.json
 ./web_scrapping/uco_master_map.json
+./web_scrapping/uma_audit_tool.py
 ./web_scrapping/esad_final_data_v3.json
 ./data/ugr_data.json
 ./data/ugr_data_cleaned.json

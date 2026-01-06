@@ -1113,3 +1113,11 @@
 *  **Session:** Procesamiento de Video para Publicidad Meta
 *  **Description:** Desarrollo de un script de Python para aplicar efectos de desenfoque (blur) y marca de agua "CampuStudiOnline" a material videográfico para campañas publicitarias en Meta Ads, en el contexto de soporte y mantenimiento (Hito 24).
 
+
+# 06/01/2026
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V20.md
+## CSO
+*  **Session:** Hito 20: Recolección Exitosa de Datos UMA (Clean Data)
+*  **Description:** Harvester UMA v1.2 completado con éxito. Se han recolectado 1428 asignaturas válidas tras aplicar filtros de limpieza (exclusión de TFG, Prácticas, Movilidad, etc.). El script es autónomo, navega la jerarquía completa (Centro -> Grado -> Asignatura) y genera un JSON normalizado listo para integración.
+
