@@ -161,6 +161,7 @@
 ./academic_structure/management/commands/resync_subject_slugs.py
 ./academic_structure/management/commands/purge_uco_data.py
 ./academic_structure/management/commands/import_uco_data.py
+./academic_structure/management/commands/purge_uma_data.py
 ./academic_structure/management/commands/import_esad_data.py
 ./academic_structure/management/commands/import_ugr_data.py
 ./academic_structure/management/commands/detect_hidden_duplicates.py
@@ -252,6 +253,7 @@
 ./contents/management/commands/update_content_format.py
 ./contents/management/commands/generate_default_share_card.py
 ./contents/management/commands/audit_tables.py
+./contents/management/commands/cleanup_uma_orphans.py
 ./contents/management/commands/drop_stuck_table.py
 ./contents/management/commands/__init__.py
 ./contents/management/commands/populate_share_images.py
@@ -613,6 +615,8 @@
 ./global_settings/migrations/0001_initial.py
 ./global_settings/tests.py
 ./web_scrapping/uco_map_part16.json
+./web_scrapping/uma_victoria.py
+./web_scrapping/uma_elcano.py
 ./web_scrapping/uco_local_parser.py
 ./web_scrapping/esad_final_data.json
 ./web_scrapping/uco_map_part17.json
@@ -622,6 +626,7 @@
 ./web_scrapping/uco_harvester_pc.py
 ./web_scrapping/uco_map_part20.json
 ./web_scrapping/uco_map_part04.json
+./web_scrapping/uma_sextante_resume.py
 ./web_scrapping/uco_map_part21.json
 ./web_scrapping/uco_map_part28.json
 ./web_scrapping/uco_audit_tool.py
@@ -635,9 +640,11 @@
 ./web_scrapping/uco_map_part23.json
 ./web_scrapping/uco_map_part08.json
 ./web_scrapping/uma_content_harvester.py
+./web_scrapping/clean_uma_local.py
 ./web_scrapping/uco_map_part33.json
 ./web_scrapping/uma_harvester.py
 ./web_scrapping/uco_map_part30.json
+./web_scrapping/repair_uma_json.py
 ./web_scrapping/uco_map_part24.json
 ./web_scrapping/esad_harvester_v3.py
 ./web_scrapping/uco_map_part06.json
@@ -651,9 +658,14 @@
 ./web_scrapping/uco_map_part05.json
 ./web_scrapping/uco_map_part02.json
 ./web_scrapping/uco_map_part15.json
+./web_scrapping/uma_columbus.py
+./web_scrapping/uma_debug_snapshot.py
 ./web_scrapping/uco_map_part12.json
+./web_scrapping/uma_vespucci.py
 ./web_scrapping/uco_map_part44.json
+./web_scrapping/uma_magellan.py
 ./web_scrapping/uma_discovery_v2.py
+./web_scrapping/uma_tulipan.py
 ./web_scrapping/uco_final_data.json
 ./web_scrapping/uco_map_part26.json
 ./web_scrapping/uco_full_ingest_builder.py
@@ -664,10 +676,14 @@
 ./web_scrapping/uco_map_part29.json
 ./web_scrapping/uco_map_part13.json
 ./web_scrapping/uma_final_harvester.py
+./web_scrapping/uma_pattern_search.py
 ./web_scrapping/uma_direct_test.py
 ./web_scrapping/uco_full_harvester.py
+./web_scrapping/uma_sextante.py
 ./web_scrapping/uco_map_part34.json
+./web_scrapping/uma_mathematical.py
 ./web_scrapping/uco_map_part09.json
+./web_scrapping/audit_101.py
 ./web_scrapping/uco_map_part07.json
 ./web_scrapping/uco_master_map.json
 ./web_scrapping/uma_grand_master.py

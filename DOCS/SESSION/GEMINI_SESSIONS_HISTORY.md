@@ -1129,3 +1129,11 @@
 *  **Session:** Integración Definitiva de Datos UMA
 *  **Description:** Ejecución del proceso de recolección corregido para la Universidad de Málaga mediante script local. Generación y validación del dataset JSON completo. Importación de datos al sistema mediante Management Command y verificación de la jerarquía académica completa en base de datos.
 
+
+# 07/01/2026
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V20.md
+## PLUTO # --SYSTEM -->
+*  **Session:** Refinamiento Scraper UMA "Tulipán" y Extracción PDF
+*  **Description:** Implementación del script de scraping unificado "Tulipán" para la UMA, integrando navegación jerárquica (Centros/Grados) con selectores CSS estrictos (`table.t-Report-report`) para filtrar ruido. Incorporación del motor de parsing de PDF para generar JSON compatible con `academic_structure`.
+
