@@ -6,12 +6,12 @@ import time
 import io
 import re
 import os
+import sys
 
 try:
     import pdfplumber
 except ImportError:
-    import sys
-    print("[FATAL] 'pdfplumber' no instalado.")
+    print("[FATAL] 'pdfplumber' no instalado."); sys.stdout.flush()
     sys.exit(1)
 
 BASE_URL = "https://sara.uma.es/pls/apex/"
@@ -50,13 +50,14 @@ def process_pdf_content(raw_text):
         elif name == 'bibliography': res['bibliography'] = {"references": clean_text_list(fragment)}
     return res
 
-def recolectar_uma(session, center_id, degree_id, year, center_name, degree_name):
+def recolectar_uma(session, center_id, degree_id, center_name, degree_name):
+    # CORRECCIÓN: Se añade la coma final para que coincida con el número de parámetros (7)
     url_listado = (
         f"{BASE_URL}f?p=101:1:::::"
         f"INICIO_LOV_TIPO_ESTUDIO,INICIO_LOV_CURSO_ACAD,"
         f"INICIO_LOV_CENTROS,INICIO_LOV_TITULACIONES,"
         f"INICIO_LOV_CICLOS,INICIO_LOV_CURSOS,INICIO_BUSCAR:"
-        f"3,2025,{center_id},{degree_id},1,{year}"
+        f"3,2025,{center_id},{degree_id},1,-1,"
     )
     
     try:
@@ -93,17 +94,19 @@ def recolectar_uma(session, center_id, degree_id, year, center_name, degree_name
                         
                         record = {
                             'center_name': center_name, 'degree_name': degree_name,
-                            'name': nombre_asig, 'year': year, 'url_source': url_detalle,
-                            'pdf_url': pdf_url, 'status': 'READY'
+                            'name': nombre_asig, 'url_source': url_detalle,
+                            'pdf_url': pdf_url, 'status': 'READY', 'academic_year': -1
                         }
                         if data: record.update(data)
                         
                         current_db = []
                         if os.path.exists(OUTPUT_FILE):
-                            with open(OUTPUT_FILE, 'r', encoding='utf-8') as f: current_db = json.load(f)
+                            with open(OUTPUT_FILE, 'r', encoding='utf-8') as f: 
+                                try: current_db = json.load(f)
+                                except: current_db = []
                         current_db.append(record)
                         with open(OUTPUT_FILE, 'w', encoding='utf-8') as f: json.dump(current_db, f, ensure_ascii=False, indent=4)
-                        print(".", end="", flush=True)
+                        sys.stdout.write("."); sys.stdout.flush()
                 except: pass
     except: pass
 
@@ -111,6 +114,9 @@ def obtener_centros(session):
     r = session.get(f"{BASE_URL}f?p=101:1", timeout=15)
     soup = BeautifulSoup(r.text, "html.parser")
     select = soup.find("select", {"name": "INICIO_LOV_CENTROS"})
+    if not select:
+        print("ERROR: No se encontró el selector de centros. La web de la UMA no responde como se esperaba."); sys.stdout.flush()
+        return {}
     return {o.get("value"): o.get_text(strip=True) for o in select.find_all("option") if o.get("value") and o.get("value").isdigit()}
 
 def obtener_titulaciones(session, center_id):
@@ -121,18 +127,23 @@ def obtener_titulaciones(session, center_id):
     return {o.get("value"): o.get_text(strip=True) for o in soup.find_all("option") if o.get("value") and o.get("value").isdigit()}
 
 def main():
-    session = requests.Session()
-    session.headers.update({'User-Agent': 'Mozilla/5.0'})
-    centros = obtener_centros(session)
-    for c_id, c_name in centros.items():
-        print(f"\n[ORQ] Centro: {c_name}")
-        grados = obtener_titulaciones(session, c_id)
-        for d_id, d_name in grados.items():
-            print(f"  [ORQ] Grado: {d_name}")
-            for curso in (1, 2, 3, 4):
-                print(f"    [ORQ] Curso {curso}: ", end="", flush=True)
-                recolectar_uma(session, c_id, d_id, curso, c_name, d_name)
-                print(" OK")
+    try:
+        session = requests.Session()
+        session.headers.update({'User-Agent': 'Mozilla/5.0'})
+        print("Iniciando Harvester Universal UMA (Modo -1)..."); sys.stdout.flush()
+        centros = obtener_centros(session)
+        if not centros:
+            return
+
+        for c_id, c_name in centros.items():
+            print(f"\n[ORQ] Centro: {c_name}"); sys.stdout.flush()
+            grados = obtener_titulaciones(session, c_id)
+            for d_id, d_name in grados.items():
+                sys.stdout.write(f"  [ORQ] Grado: {d_name} (Recolección Total) "); sys.stdout.flush()
+                recolectar_uma(session, c_id, d_id, c_name, d_name)
+                print(" OK"); sys.stdout.flush()
+    except Exception as e:
+        print(f"\n[FATAL] Error en ejecución: {e}"); sys.stdout.flush()
 
 if __name__ == "__main__":
     main()

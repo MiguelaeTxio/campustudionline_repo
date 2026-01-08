@@ -690,8 +690,10 @@
 ./web_scrapping/uma_audit_tool.py
 ./web_scrapping/esad_final_data_v3.json
 ./data/ugr_data.json
+./data/uma_pattern_data.json
 ./data/ugr_data_cleaned.json
 ./data/uco_data_final.json
+./data/esad_final_data_v3.json
 ./public_seo_previews/material_29_curso-ia-generativa-de-0-a-100-en-8.html
 ./public_seo_previews/material_23_unreal-engineblueprints-de-0-a-experto.html
 ./public_seo_previews/material_7.html

@@ -61,7 +61,7 @@ CampuStudiOnline es una plataforma web de e-learning diseñada para centralizar 
 (Ver anexo `CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V14.md`)
 ### Hito Final 2: Documentación de Proyecto (COMPLETADO)
 (Ver anexo `CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V13.md`. Manual de Arquitectura, Referencia de Componentes y Guía de Dependencias finalizados.)
-### Hito 20: Refinamiento del Proceso de Scraping de Datos (EN PROGRESO)
+### Hito 20: Refinamiento del Proceso de Scraping de Datos (EN PROGRESO - Bloqueo de Sesión APEX)
 (Ver anexo `CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V20.md`)
 ### Hito 21: Refactorización del Orquestador de Tareas Asíncronas (COMPLETADO)
 (Ver anexo `CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V21.md`)

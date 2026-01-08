@@ -1137,3 +1137,19 @@
 *  **Session:** Refinamiento Scraper UMA "Tulipán" y Extracción PDF
 *  **Description:** Implementación del script de scraping unificado "Tulipán" para la UMA, integrando navegación jerárquica (Centros/Grados) con selectores CSS estrictos (`table.t-Report-report`) para filtrar ruido. Incorporación del motor de parsing de PDF para generar JSON compatible con `academic_structure`.
 
+
+# 08/01/2026
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V20.md
+## MAMC # --SYSTEM -->
+*  **Session:** Refinamiento de Datos UMA y Clasificación RUCT
+*  **Description:** Purga estructural de registros UMA para eliminar duplicados y años fantasma. Reimportación de datos con lógica de clasificación RUCT estricta, validación de IDs de curso reales, normalización de nombres y filtrado de ruido (TFG, Prácticas). Verificación de integridad estructural en nuevos grados.
+
+
+# 08/01/2026
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V20.md
+## MAMC # --SYSTEM -->
+*  **Session:** Refactorización y Limpieza de Datos UMA bajo Estándar RUCT
+*  **Description:** Ejecución de purga estructural de datos de la UMA para eliminar inconsistencias. Implementación de lógica de importación con clasificación RUCT, limpieza de nombres y validación de IDs de curso. Verificación de integridad en grados de nueva creación.
+
