@@ -1,89 +1,99 @@
 import json
-import re
-import sys
-import os
-from collections import defaultdict
+import unicodedata
 
-INPUT_FILE = '/sdcard/Download/uma_sextante_fixed.json'
-OUTPUT_FILE = '/sdcard/Download/uma_clean_final.json'
+INPUT_FILE = '/sdcard/Download/uma_pattern_data.json'
+OUTPUT_FILE = '/sdcard/Download/uma_pattern_data_cleaned.json'
 
-# Lista negra de términos no académicos
-BLACKLIST = [
-    'trabajo fin', 'tfg', 'tfm', 'prácticas', 'practicum', 'prácticum',
-    'visitas', 'laboratorio', 'trabajo de campo', 'rotatorio',
-    'reconocimiento', 'movilidad', 'créditos', 'módulo', 'seminario'
-]
-
-def clean_degree_name(name):
-    # Elimina "Plan 2010", "Plan 2023" y "Graduado/a en"
-    clean = re.sub(r'\.?\s*Plan\s*\d{4}', '', name, flags=re.IGNORECASE)
-    clean = clean.replace("Graduado/a en ", "").strip()
-    return clean
+def normalize(text):
+    """Normaliza texto para búsquedas robustas (minúsculas)."""
+    return text.lower() if text else ""
 
 def main():
-    print("--- INICIANDO LIMPIEZA UMA ---")
-    
-    if not os.path.exists(INPUT_FILE):
-        print(f"Error: No existe {INPUT_FILE}")
+    try:
+        with open(INPUT_FILE, 'r', encoding='utf-8') as f:
+            data = json.load(f)
+    except FileNotFoundError:
+        print(f"❌ No se encuentra el archivo {INPUT_FILE}")
         return
 
-    with open(INPUT_FILE, 'r', encoding='utf-8') as f:
-        raw_data = json.load(f)
-    
-    print(f"Registros Brutos: {len(raw_data)}")
-    
-    # DICCIONARIO PARA AGRUPAR Y DEDUPLICAR
-    # Clave: (Nombre Grado Limpio, Nombre Asignatura)
-    # Valor: Lista de registros encontrados
-    grouped_subjects = defaultdict(list)
-    
-    stats = {'ruido': 0, 'sin_temario': 0}
+    cleaned_data = []
+    stats = {
+        'practicum': 0,
+        'taller': 0,
+        'proyecto_fin': 0,
+        'practicas_externas': 0,
+        'practicas_en': 0,
+        'trabajo_fin': 0,
+        'kept': 0,
+        'total_deleted': 0
+    }
 
-    for item in raw_data:
-        # 1. Filtro de Ruido (Blacklist)
-        name = item.get('name', '').strip()
-        if any(bad in name.lower() for bad in BLACKLIST):
-            stats['ruido'] += 1
+    print(f"📉 Procesando {len(data)} registros...")
+
+    for item in data:
+        name_orig = item.get('name', '')
+        name = normalize(name_orig)
+        
+        # --- REGLAS DE ELIMINACIÓN ---
+        
+        # 1. Practicum (Todas)
+        if 'practicum' in name:
+            stats['practicum'] += 1
+            stats['total_deleted'] += 1
             continue
             
-        # 2. Filtro de Contenido (Debe tener temario)
-        outline = item.get('course_content_outline', [])
-        if not outline:
-            stats['sin_temario'] += 1
+        # 2. Taller (Todas)
+        if 'taller' in name:
+            stats['taller'] += 1
+            stats['total_deleted'] += 1
             continue
 
-        # 3. Limpieza de Grado
-        raw_degree = item.get('degree', '')
-        clean_degree = clean_degree_name(raw_degree)
-        item['degree'] = clean_degree # Actualizamos el registro
-        
-        # Agrupar
-        key = (clean_degree, name)
-        grouped_subjects[key].append(item)
+        # 3. Proyecto (Sólo 'Proyecto Fin')
+        if 'proyecto fin' in name:
+            stats['proyecto_fin'] += 1
+            stats['total_deleted'] += 1
+            continue
 
-    final_list = []
-    
-    # 4. RESOLUCIÓN DE DUPLICADOS (La Regla del Mínimo)
-    for key, candidates in grouped_subjects.items():
-        if len(candidates) == 1:
-            final_list.append(candidates[0])
-        else:
-            # Si hay duplicados (mismo nombre exacto en mismo grado),
-            # nos quedamos con el del AÑO MÁS BAJO.
-            # Esto elimina los "fantasmas" de 4º, 5º, 6º que son copias de 1º.
-            best_candidate = min(candidates, key=lambda x: x.get('academic_year', 99))
-            final_list.append(best_candidate)
+        # 4. Práctica (Sólo 'Prácticas Externas' y 'Prácticas en')
+        # Normalizamos también acentos para asegurar match
+        if 'prácticas externas' in name or 'practicas externas' in name:
+            stats['practicas_externas'] += 1
+            stats['total_deleted'] += 1
+            continue
+            
+        if 'prácticas en' in name or 'practicas en' in name:
+            stats['practicas_en'] += 1
+            stats['total_deleted'] += 1
+            continue
 
-    # Guardar
+        # 5. Trabajo (Sólo 'Trabajo Fin')
+        if 'trabajo fin' in name:
+            stats['trabajo_fin'] += 1
+            stats['total_deleted'] += 1
+            continue
+
+        # --- CONSERVACIÓN ---
+        cleaned_data.append(item)
+        stats['kept'] += 1
+
+    # Guardar resultado
     with open(OUTPUT_FILE, 'w', encoding='utf-8') as f:
-        json.dump(final_list, f, indent=4, ensure_ascii=False)
-        
-    print("\n--- RESULTADOS ---")
-    print(f"Registros Válidos: {len(final_list)}")
-    print(f"Eliminados por Ruido: {stats['ruido']}")
-    print(f"Eliminados sin Temario: {stats['sin_temario']}")
-    print(f"Duplicados Fantasma Eliminados: {len(raw_data) - len(final_list) - stats['ruido'] - stats['sin_temario']}")
-    print(f"Archivo generado: {OUTPUT_FILE}")
+        json.dump(cleaned_data, f, ensure_ascii=False, indent=4)
+
+    print("\n" + "="*40)
+    print("RESUMEN DE LIMPIEZA")
+    print("="*40)
+    print(f"❌ Practicum eliminados: {stats['practicum']}")
+    print(f"❌ Taller eliminados: {stats['taller']}")
+    print(f"❌ 'Proyecto Fin' eliminados: {stats['proyecto_fin']}")
+    print(f"❌ 'Prácticas Externas' eliminados: {stats['practicas_externas']}")
+    print(f"❌ 'Prácticas En' eliminados: {stats['practicas_en']}")
+    print(f"❌ 'Trabajo Fin' eliminados: {stats['trabajo_fin']}")
+    print("-" * 40)
+    print(f"🗑️ TOTAL ELIMINADOS: {stats['total_deleted']}")
+    print(f"✅ TOTAL CONSERVADOS: {len(cleaned_data)}")
+    print("="*40)
+    print(f"💾 Archivo limpio guardado en: {OUTPUT_FILE}")
 
 if __name__ == "__main__":
     main()

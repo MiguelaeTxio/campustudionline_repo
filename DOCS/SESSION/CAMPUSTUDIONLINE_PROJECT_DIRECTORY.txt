@@ -621,6 +621,7 @@
 ./web_scrapping/esad_final_data.json
 ./web_scrapping/uco_map_part17.json
 ./web_scrapping/uco_map_part31.json
+./web_scrapping/uma_pattern_total_harvester.py
 ./web_scrapping/uco_map_part03.json
 ./web_scrapping/uco_map_part35.json
 ./web_scrapping/uco_harvester_pc.py
@@ -631,6 +632,7 @@
 ./web_scrapping/uco_map_part28.json
 ./web_scrapping/uco_audit_tool.py
 ./web_scrapping/uco_map_part40.json
+./web_scrapping/uma_pattern_search_v3.py
 ./web_scrapping/uco_map_part38.json
 ./web_scrapping/uco_map_part01.json
 ./web_scrapping/uco_final_data_enriched.json
@@ -648,6 +650,8 @@
 ./web_scrapping/uco_map_part24.json
 ./web_scrapping/esad_harvester_v3.py
 ./web_scrapping/uco_map_part06.json
+./web_scrapping/uma_pattern_search_v2.py
+./web_scrapping/uma_pattern_search_v4.py
 ./web_scrapping/uco_map_part41.json
 ./web_scrapping/uco_map_part32.json
 ./web_scrapping/uco_assembler.py
@@ -677,6 +681,7 @@
 ./web_scrapping/uco_map_part13.json
 ./web_scrapping/uma_final_harvester.py
 ./web_scrapping/uma_pattern_search.py
+./web_scrapping/uma_pattern_final_harvester.py
 ./web_scrapping/uma_direct_test.py
 ./web_scrapping/uco_full_harvester.py
 ./web_scrapping/uma_sextante.py
@@ -691,6 +696,7 @@
 ./web_scrapping/esad_final_data_v3.json
 ./data/ugr_data.json
 ./data/uma_pattern_data.json
+./data/uma_data_final.json
 ./data/ugr_data_cleaned.json
 ./data/uco_data_final.json
 ./data/esad_final_data_v3.json
@@ -723,6 +729,7 @@
 ./public_seo_previews/material_27_30-dias-de-python.html
 ./public_seo_previews/material_5.html
 ./public_seo_previews/material_14_curso-de-selenium-qa.html
+./commands_models.txt
 ./schedule/urls.py
 ./schedule/templates/schedule/event_confirm_delete.html
 ./schedule/templates/schedule/calendar_main.html

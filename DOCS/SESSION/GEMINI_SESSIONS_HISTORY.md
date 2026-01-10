@@ -1153,3 +1153,18 @@
 *  **Session:** Refactorización y Limpieza de Datos UMA bajo Estándar RUCT
 *  **Description:** Ejecución de purga estructural de datos de la UMA para eliminar inconsistencias. Implementación de lógica de importación con clasificación RUCT, limpieza de nombres y validación de IDs de curso. Verificación de integridad en grados de nueva creación.
 
+
+# 08/01/2026
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V20.md
+## EDC
+*  **Session:** Depuración de Sesión APEX y Refinamiento del Scraping UMA
+*  **Description:** Sesión dedicada a resolver el bloqueo técnico en la extracción universal de datos de la Universidad de Málaga (UMA). Se analizará la hipótesis de la salvaguarda de estado de sesión en Oracle APEX que impide el uso del parámetro '-1'. El objetivo es diseñar un mecanismo de navegación que emule el estado de sesión correcto o, en su defecto, implementar una captura iterativa por cursos que garantice la integridad total del JSON de origen, incluyendo el primer curso y asignaturas transversales.
+
+# 2026-01-09
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V20.md
+## NRA
+*   **Session:** UMA Scraping: Debugging APEX Session State
+*   **Description:** Investigación del bloqueo en recolección de datos UMA (parámetro -1). Diagnóstico de salvaguardas de sesión Oracle APEX. Implementación de script de prueba para navegación persistente y estrategia de fallback iterativa por cursos para garantizar la integridad de la extracción de datos.
+

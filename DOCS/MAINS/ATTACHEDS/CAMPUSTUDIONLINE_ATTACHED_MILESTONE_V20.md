@@ -1,23 +1,28 @@
-# Anexo del Hito 20: Refinamiento del Proceso de Scraping de Datos (UMA)
+# Anexo del Hito 20: Refinamiento y Expansión del Proceso de Scraping de Datos
 
 ## 1. Visión y Objetivos
-Sustitución de la estructura de datos fallida de la UMA por una importación limpia y clasificada bajo criterios RUCT, utilizando la extracción universal (parámetro -1).
+Consolidación de la recolección de datos académicos. Tras la finalización exitosa de la UMA, el foco se desplaza a la integración de la Universidad de Jaén (UJA).
 
 ## 2. Estado del Hito
-*   **Estado:** EN PROGRESO (Bloqueo Técnico)
-*   **Última Actualización:** 08/01/2026
-*   **Resumen Técnico:** 
-    *   Se ejecutó la purga nuclear de la UMA (BBDD limpia).
-    *   Se identificó que el JSON de origen carecía de los datos de 1º curso.
-    *   **CRÍTICO:** El script de recolección universal `uma_grand_master.py` ha fallado sistemáticamente al intentar forzar el parámetro `-1`.
-    *   **CAUSA RAÍZ HIPOTÉTICA:** Salvaguarda de **Estado de Sesión de Oracle APEX**. El servidor probablemente rechaza el parámetro `-1` en peticiones GET directas si no se ha originado desde la navegación interna (falta de coincidencia de estado o checksum).
-    *   **FALLO DE IA:** Se asume responsabilidad por generar código que ignora la persistencia de estado de la plataforma origen, rompiendo una herramienta que era funcional bajo navegación iterativa.
+*   **Estado:** EN PROGRESO
+*   **Última Actualización:** 10/01/2026
+*   **Logros Recientes:**
+    *   **UMA Completada:**
+        *   Scraper `v4` con tolerancia a huecos y reanudación inteligente.
+        *   Limpieza de datos (eliminación de TFG, Practicum, etc.).
+        *   Importador reescrito para estructura plana.
+        *   Importación exitosa de 4321 registros y estandarización de nombre ("Institución Académica de Málaga").
 
 ## 3. Hoja de Ruta para la Próxima Sesión (LEY SUPREMA)
-### Tarea 1: Debugging de Sesión APEX
-- **Acción:** Testear si el parámetro `-1` funciona realizando un POST previo que emule la selección en el desplegable de "Curso".
-- **Alternativa:** Si la salvaguarda persiste, volver a la navegación por cursos (1,2,3,4) pero capturando el "Curso 0" o "Otros" para asegurar que no se pierda ninguna asignatura.
+### Tarea 1: Reconocimiento y Scraping UJA
+- **Objetivo:** Desarrollar `uja_harvester.py`.
+- **Fuente:** [Catálogo UJA 2025-26](https://uvirtual.ujaen.es/pub/es/informacionacademica/catalogofichasdocentesasignaturas/p/2025-26/4/135A)
+- **Estrategia Técnica:**
+    - Analizar el DOM de la plataforma `uvirtual.ujaen.es`.
+    - Determinar patrones de URL para Grados y Asignaturas.
+    - Implementar extracción de Guías Docentes.
+    - **Salida Esperada:** `uja_raw_data.json` en local.
 
-### Tarea 2: Importación y Sincronización
-- **Acción:** Ejecutar `import_uma_data` una vez obtenido el JSON íntegro.
-- **Acción:** Ejecutar `update_content_flags` (V2) para restaurar visibilidad.
+### Tarea 2: Normalización e Importación
+- **Acción:** Adaptar `clean_uma_local.py` para la UJA (`clean_uja_local.py`).
+- **Acción:** Crear `import_uja_data.py` basándose en el modelo de importación plana consolidado con la UMA.
