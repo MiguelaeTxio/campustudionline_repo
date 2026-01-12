@@ -1168,3 +1168,11 @@
 *   **Session:** UMA Scraping: Debugging APEX Session State
 *   **Description:** Investigación del bloqueo en recolección de datos UMA (parámetro -1). Diagnóstico de salvaguardas de sesión Oracle APEX. Implementación de script de prueba para navegación persistente y estrategia de fallback iterativa por cursos para garantizar la integridad de la extracción de datos.
 
+
+# 2026-01-10
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V20.md
+## CSO # --SYSTEM -->
+*  **Session:** Inicio de Integración UJA - Reconocimiento y Harvester
+*  **Description:** Análisis de la estructura web de la Universidad de Jaén. Creación del script inicial uja_harvester.py para la extracción de catálogo de grados y asignaturas. Adaptación de estrategias de scraping local para entorno Android/Termux.
+
