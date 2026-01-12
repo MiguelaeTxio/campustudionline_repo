@@ -695,6 +695,7 @@
 ./web_scrapping/uma_discovery_v2.py
 ./web_scrapping/uma_tulipan.py
 ./web_scrapping/uco_final_data.json
+./web_scrapping/ual_api_harvester.py
 ./web_scrapping/uco_map_part26.json
 ./web_scrapping/uco_full_ingest_builder.py
 ./web_scrapping/uco_map_part36.json
@@ -704,9 +705,12 @@
 ./web_scrapping/uja_nursing_detail.html
 ./web_scrapping/uco_map_part14.json
 ./web_scrapping/uco_map_part29.json
+./web_scrapping/ual_js_fetcher.py
 ./web_scrapping/uco_map_part13.json
 ./web_scrapping/ugr_languages_harvester.py
 ./web_scrapping/uja_keyword_auditor.py
+./web_scrapping/ual_harvester.py
+./web_scrapping/ual_probe.py
 ./web_scrapping/uja_harvester_v2.py
 ./web_scrapping/uma_final_harvester.py
 ./web_scrapping/ugr_audit_v4.py
@@ -719,9 +723,11 @@
 ./web_scrapping/uco_map_part34.json
 ./web_scrapping/uja_refiner_v3.py
 ./web_scrapping/uma_mathematical.py
+./web_scrapping/ual_harvester_v1.py
 ./web_scrapping/uco_map_part09.json
 ./web_scrapping/audit_101.py
 ./web_scrapping/uco_map_part07.json
+./web_scrapping/ual_harvester_v2.py
 ./web_scrapping/uja_failure_debug.html
 ./web_scrapping/uco_master_map.json
 ./web_scrapping/ugr_audit_integrity.py

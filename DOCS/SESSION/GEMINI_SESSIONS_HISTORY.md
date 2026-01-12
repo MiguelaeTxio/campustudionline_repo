@@ -1176,3 +1176,19 @@
 *  **Session:** Inicio de Integración UJA - Reconocimiento y Harvester
 *  **Description:** Análisis de la estructura web de la Universidad de Jaén. Creación del script inicial uja_harvester.py para la extracción de catálogo de grados y asignaturas. Adaptación de estrategias de scraping local para entorno Android/Termux.
 
+
+# 2026-01-12
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V20.md
+## CAMA # --SYSTEM -->
+*  **Session:** Adquisición y Normalización de Datos UAL
+*  **Description:** Inicio de la Fase 1: Andalucía Oriental (UAL). Desarrollo de la estrategia de extracción para la Universidad de Almería, incluyendo scripts de reconocimiento (ual_harvester.py) y normalización (clean_ual_local.py) para asegurar la integridad de los datos antes de su importación a la estructura académica.
+
+
+# 2026-01-12
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V20.md
+## CAMA # --SYSTEM -->
+*  **Session:** Iniciando la Conquista del Este: Scraping de la UAL
+*  **Description:** Inicio de la recolección de datos para la Universidad de Almería. Desarrollo del harvester inicial (ual_harvester.py) y scripts de normalización e importación para integrar la oferta académica de la UAL en la plataforma.
+
