@@ -166,6 +166,7 @@
 ./academic_structure/management/commands/import_uco_data.py
 ./academic_structure/management/commands/purge_uma_data.py
 ./academic_structure/management/commands/import_esad_data.py
+./academic_structure/management/commands/import_ual_data.py
 ./academic_structure/management/commands/import_ugr_data.py
 ./academic_structure/management/commands/detect_hidden_duplicates.py
 ./academic_structure/management/commands/import_ugr_languages.py
@@ -601,6 +602,7 @@
 ./DOCS/MAINS/ATTACHEDS/CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V18.md
 ./DOCS/MAINS/ATTACHEDS/CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V32.md
 ./DOCS/MAINS/ATTACHEDS/CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V31.md
+./DOCS/MAINS/ATTACHEDS/CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V37.md
 ./DOCS/MAINS/ATTACHEDS/CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V28.md
 ./DOCS/MAINS/ATTACHEDS/CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V26.md
 ./DOCS/MAINS/ATTACHEDS/CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V01.md
@@ -630,6 +632,7 @@
 ./web_scrapping/uma_elcano.py
 ./web_scrapping/uco_local_parser.py
 ./web_scrapping/esad_final_data.json
+./web_scrapping/ual_pdf_processor_v2.py
 ./web_scrapping/uco_map_part17.json
 ./web_scrapping/uco_map_part31.json
 ./web_scrapping/uma_pattern_total_harvester.py
@@ -660,6 +663,7 @@
 ./web_scrapping/clean_uma_local.py
 ./web_scrapping/uco_map_part33.json
 ./web_scrapping/uma_harvester.py
+./web_scrapping/ual_full_harvester.py
 ./web_scrapping/uco_map_part30.json
 ./web_scrapping/ugr_languages_harvester_v2.py
 ./web_scrapping/repair_uma_json.py
@@ -701,6 +705,7 @@
 ./web_scrapping/uco_map_part36.json
 ./web_scrapping/ugr_audit_raw.py
 ./web_scrapping/uco_map_part25.json
+./web_scrapping/ual_pdf_processor.py
 ./web_scrapping/uco_harvester_v19.py
 ./web_scrapping/uja_nursing_detail.html
 ./web_scrapping/uco_map_part14.json

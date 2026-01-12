@@ -1192,3 +1192,11 @@
 *  **Session:** Iniciando la Conquista del Este: Scraping de la UAL
 *  **Description:** Inicio de la recolección de datos para la Universidad de Almería. Desarrollo del harvester inicial (ual_harvester.py) y scripts de normalización e importación para integrar la oferta académica de la UAL en la plataforma.
 
+
+# 2026-01-12
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V20.md
+## AAAA # --SYSTEM -->
+*  **Session:** Recuperación de Scraping UAL: Estrategia SPA y API Reverse Engineering
+*  **Description:** Análisis y re-implementación de la estrategia de adquisición de datos para la Universidad de Almería (UAL). Se abordará la limitación técnica previa (sitio Angular/SPA) mediante ingeniería inversa de las peticiones API (XHR) para evitar el renderizado de JS pesado, o alternativamente mediante simulación de navegador local, asegurando la compatibilidad con el entorno de ejecución local.
+
