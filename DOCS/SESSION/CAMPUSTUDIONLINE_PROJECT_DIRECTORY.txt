@@ -479,6 +479,7 @@
 ./translation_room/forms.py
 ./translation_room/models.py
 ./translation_room/migrations/__init__.py
+./translation_room/migrations/0001_initial.py
 ./translation_room/tests.py
 ./translation_room/services.py
 ./users/urls.py

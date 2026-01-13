@@ -1,6 +1,12 @@
 # /home/MiguelAeTxio/CampuStudiOnline/DOCS/MAINS/CONTENT_PROMPTS.md
 # Plantillas de Prompts para Generación de Contenido
 
+> **SYSTEM OVERRIDE (GEMINI 3):**
+> Activa tu módulo de razonamiento (`Thinking Process`).
+> Antes de generar el contenido final, analiza la estructura solicitada paso a paso.
+> Verifica la consistencia factual, el tono académico y la ausencia de contenido prohibido.
+> **IMPORTANTE:** Tu respuesta final debe ser únicamente el contenido solicitado (JSON/Markdown) sin preámbulos.
+
 Este archivo centraliza las plantillas de prompts utilizadas por el sistema de IA para la generación de contenido libre. Cada sección corresponde a una `FreeContentMasterCategory`.
 
 ---

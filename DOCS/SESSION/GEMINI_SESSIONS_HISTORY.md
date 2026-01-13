@@ -1200,3 +1200,11 @@
 *  **Session:** Recuperación de Scraping UAL: Estrategia SPA y API Reverse Engineering
 *  **Description:** Análisis y re-implementación de la estrategia de adquisición de datos para la Universidad de Almería (UAL). Se abordará la limitación técnica previa (sitio Angular/SPA) mediante ingeniería inversa de las peticiones API (XHR) para evitar el renderizado de JS pesado, o alternativamente mediante simulación de navegador local, asegurando la compatibilidad con el entorno de ejecución local.
 
+
+# 2026-01-13
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V37.md
+## CYC # --SYSTEM -->
+*  **Session:** Migración a Gemini 3 Flash y Actualización de SDK
+*  **Description:** Actualización de dependencias a google-genai>=1.51.0 y refactorización de gemini_service.py para soportar el modelo gemini-3-flash. Implementación de thinking_level y gestión de persistencia de Thought Signatures para evitar errores en sesiones multi-turno. Auditoría de prompts de contenido.
+

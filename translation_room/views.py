@@ -42,7 +42,7 @@ class TranslationStreamView(View):
 
             # Generador Streaming
             def event_stream():
-                for chunk in TranslationService.stream_translation(text, target, source_display):
+                for chunk in TranslationService.stream_translation(text, target, request.user, source_display):
                     # Formato SSE (Server-Sent Events) simple o chunked text
                     yield chunk
 

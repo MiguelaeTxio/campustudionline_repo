@@ -2,18 +2,23 @@
 import logging
 import pypdf
 import docx
-import google.generativeai as genai
+from google import genai
+from google.genai import types
 from django.conf import settings
 from orchestrator.models import AutomationSettings, ApiKey
+from .models import TranslationLog
 
 logger = logging.getLogger(__name__)
+
+# Constante de Modelo vinculante
+GEMINI_MODEL_NAME = "gemini-3-flash-preview"
 
 class DocumentExtractionError(Exception):
     pass
 
 class TranslationService:
     """
-    Servicio refactorizado para Streaming y Multi-idioma.
+    Servicio refactorizado para Streaming y Multi-idioma (SDK v1).
     """
 
     @staticmethod
@@ -60,30 +65,51 @@ class TranslationService:
             raise DocumentExtractionError("Error leyendo el archivo.")
 
     @classmethod
-    def stream_translation(cls, text: str, target_lang: str, source_lang: str = "Auto") -> any:
+    def stream_translation(cls, text: str, target_lang: str, user, source_lang: str = "Auto") -> any:
         """
-        Generador que emite chunks de texto traducido en tiempo real.
+        Generador que emite chunks de texto traducido en tiempo real (SDK v1).
+        Registra la actividad en TranslationLog.
         """
-        api_key = cls._get_api_key_string()
-        genai.configure(api_key=api_key)
-        
-        model = genai.GenerativeModel('gemini-2.5-flash-lite')
-        
-        # Prompt optimizado para traducción directa
-        prompt = (
-            f"Actúa como un traductor experto y simultáneo. "
-            f"Origen: {source_lang}. Destino: {target_lang}. "
-            f"Instrucción: Traduce el siguiente texto manteniendo el formato, tono y terminología. "
-            f"NO expliques nada, solo traduce.\n\n"
-            f"Texto:\n{text}"
+        # Crear log inicial
+        log_entry = TranslationLog.objects.create(
+            user=user if user.is_authenticated else None,
+            source_lang=source_lang,
+            target_lang=target_lang,
+            char_count=len(text)
         )
-
+        
         try:
-            # Activamos stream=True para recibir paquetes parciales
-            response = model.generate_content(prompt, stream=True)
-            for chunk in response:
+            api_key = cls._get_api_key_string()
+            client = genai.Client(api_key=api_key)
+            
+            prompt = (
+                f"Actúa como un traductor experto y simultáneo. "
+                f"Origen: {source_lang}. Destino: {target_lang}. "
+                f"Instrucción: Traduce el siguiente texto manteniendo el formato, tono y terminología académica. "
+                f"NO expliques nada, solo traduce.\n\n"
+                f"Texto:\n{text}"
+            )
+            
+            config = types.GenerateContentConfig(
+                temperature=0.3, 
+                thinking_config=types.ThinkingConfig(include_thoughts=False)
+            )
+
+            response_stream = client.models.generate_content(
+                model=GEMINI_MODEL_NAME,
+                contents=prompt,
+                config=config,
+                stream=True
+            )
+            
+            for chunk in response_stream:
                 if chunk.text:
                     yield chunk.text
+                    
         except Exception as e:
+            # Captura de error en el log
             logger.error(f"Streaming error: {e}")
+            log_entry.is_successful = False
+            log_entry.error_message = str(e)
+            log_entry.save()
             yield f"\n[Error de conexión con IA: {str(e)}]"
