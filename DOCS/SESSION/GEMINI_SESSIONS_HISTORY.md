@@ -1208,3 +1208,13 @@
 *  **Session:** Migración a Gemini 3 Flash y Actualización de SDK
 *  **Description:** Actualización de dependencias a google-genai>=1.51.0 y refactorización de gemini_service.py para soportar el modelo gemini-3-flash. Implementación de thinking_level y gestión de persistencia de Thought Signatures para evitar errores en sesiones multi-turno. Auditoría de prompts de contenido.
 
+
+# 2026-01-13
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V20.md
+## EPI # --SYSTEM -->
+*  **Session:** Auditoría de Asignaturas Genéricas y Revisión de Estado Git
+*  **Description:** Auditoría de la base de datos para identificar y cuantificar asignaturas genéricas (Prácticas, TFG, etc.) importadas erróneamente antes de su eliminación. Revisión del estado del repositorio para alinear fases de scraping.
+
+*  **Action:** Purga de asignaturas genéricas (TFG, Prácticas, Eventos).
+*  **Audit:** Auditoría de asignaturas tipo 'Proyecto'.

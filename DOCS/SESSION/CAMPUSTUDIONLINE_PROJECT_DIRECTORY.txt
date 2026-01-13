@@ -160,6 +160,7 @@
 ./academic_structure/management/commands/cleanup_content_duplicates.py
 ./academic_structure/management/commands/resync_content_flags.py
 ./academic_structure/management/commands/process_content_duplicates.py
+./academic_structure/management/commands/purge_project_subjects.py
 ./academic_structure/management/commands/update_content_flags.py
 ./academic_structure/management/commands/resync_subject_slugs.py
 ./academic_structure/management/commands/purge_uco_data.py
@@ -168,6 +169,7 @@
 ./academic_structure/management/commands/import_esad_data.py
 ./academic_structure/management/commands/import_ual_data.py
 ./academic_structure/management/commands/import_ugr_data.py
+./academic_structure/management/commands/audit_generic_subjects.py
 ./academic_structure/management/commands/detect_hidden_duplicates.py
 ./academic_structure/management/commands/import_ugr_languages.py
 ./academic_structure/management/commands/import_uma_data.py
@@ -175,6 +177,7 @@
 ./academic_structure/management/commands/flush_ugr_language_contents.py
 ./academic_structure/management/commands/purge_ugr_selective.py
 ./academic_structure/management/commands/audit_ugr_impact.py
+./academic_structure/management/commands/purge_generic_subjects.py
 ./academic_structure/management/commands/hide_ugr_protected.py
 ./templates/base.html
 ./templates/emails/admin_general_announcement.txt
