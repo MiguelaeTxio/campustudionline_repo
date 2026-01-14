@@ -1241,3 +1241,11 @@
 *  **Session:** Implementación de Clasificación Lógica de Asignaturas para Evaluaciones Especializadas
 *  **Description:** Inicio de la fase de especialización del motor de evaluaciones. Se desarrollará un clasificador de asignaturas (Lenguas, Ciencias Exactas, Humanidades) para adaptar los prompts de generación de exámenes. Auditoría de modelos actuales y preparación de servicios de IA.
 
+
+# 14/01/2026
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+## NRA # --SYSTEM -->
+*  **Session:** Corrección Crítica de Prompts de Evaluación y Blindaje Frontend Multimedia
+*  **Description:** Sesión dedicada a la rectificación urgente del sistema de autoevaluaciones (Assessment). Se refactorizará core/services/prompt_generators.py para imponer el castellano en la interfaz, parametrizar el idioma de la asignatura y corregir la inyección de etiquetas de control ([---TRANSCRIPT---], [---TAGS---]) para evitar conflictos con Markdown. En el frontend (take_assessment.html), se implementará ocultación CSS forzosa para los textos de Listening y se inyectarán atributos de idioma para el TTS. Finalmente, se validará el flujo de subida de audio al backend.
+

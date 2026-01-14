@@ -31,10 +31,50 @@
                 {% csrf_token %}
 
                 <ol>
-                    {% for question in assessment.questions.all %}
+                    {% for question in questions_list %}
                         <li class="mb-4">
                             <div class="pregunta-container">
-                                <p class="lead">{{ question.question_text }}</p>
+                                {# --- 1. BLOQUE DE AUDIO (Listening) --- #}
+                                {% if question.transcript %}
+                                <div class="card mb-3 border-primary shadow-sm">
+                                    <div class="card-body d-flex align-items-center bg-light-blue">
+                                        <div class="me-3">
+                                            <button type="button" class="btn btn-primary btn-lg rounded-circle shadow-sm" 
+                                                    onclick="playTTS('{{ question.transcript|escapejs }}', 'es-ES')" aria-label="Escuchar audio">
+                                                <i class="fas fa-headphones-alt"></i>
+                                            </button>
+                                        </div>
+                                        <div>
+                                            <h6 class="fw-bold text-primary mb-1">Comprensión Auditiva (Listening)</h6>
+                                            <small class="text-muted">Escucha el fragmento antes de responder.</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endif %}
+
+                                {# --- 2. TEXTO DE LA PREGUNTA --- #}
+                                <p class="lead">{{ question.display_text|linebreaksbr }}</p>
+                                
+                                {# --- 3. BLOQUE DE GRABACIÓN (Speaking) --- #}
+                                {% if question.requires_recording %}
+                                <div class="recorder-ui border rounded p-3 mb-3 bg-white shadow-sm" id="recorder_ui_{{ question.pk }}">
+                                    <div class="d-flex justify-content-between align-items-center mb-3">
+                                        <span class="badge bg-danger rounded-pill px-3 py-2"><i class="fas fa-microphone me-2"></i>Grabación de Voz</span>
+                                        <div class="timer-box font-monospace fs-5 text-danger fw-bold" id="timer_{{ question.pk }}">02:00</div>
+                                    </div>
+                                    <div class="d-grid gap-2 d-md-block">
+                                        <button type="button" class="btn btn-outline-danger btn-lg px-4" id="btn_rec_{{ question.pk }}" onclick="startRecording('{{ question.pk }}')">
+                                            <i class="fas fa-circle me-2"></i> Grabar
+                                        </button>
+                                        <button type="button" class="btn btn-secondary btn-lg px-4" id="btn_stop_{{ question.pk }}" onclick="stopRecording('{{ question.pk }}')" disabled>
+                                            <i class="fas fa-stop me-2"></i> Parar
+                                        </button>
+                                    </div>
+                                    <div id="status_{{ question.pk }}" class="mt-2 text-muted small fst-italic">Listo.</div>
+                                    <input type="file" name="audio_q_{{ question.pk }}" id="audio_input_{{ question.pk }}" style="display:none;" accept="audio/*">
+                                </div>
+                                {% endif %}
+
                                 <div class="form-group">
                                     <textarea name="answer_q_{{ question.pk }}" id="answer_q_{{ question.pk }}" class="form-control" rows="5" placeholder="Escribe tu respuesta aquí..."></textarea>
                                 </div>
@@ -62,122 +102,81 @@
 
 {% block extra_js %}
     <script>
-        // Definimos la URL de la demo para que el tour de la Sala de Estudio pueda usarla.
+        // Definimos la URL de la demo
         window.assessmentTourDemoURL = "{% url 'assessment:take_assessment_demo' %}";
     </script>
     <script src="{% static 'assessment/take_assessment_tour.js' %}"></script>
-    <!-- MATHJAX CONFIGURATION -->
+    
+    <!-- MATHJAX -->
     <script>
     window.MathJax = {
-      tex: {
-        inlineMath: [['\\(', '\\)']],
-        displayMath: [['$$', '$$']],
-        processEscapes: true
-      },
-      options: {
-        skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
-      }
+      tex: { inlineMath: [['\(', '\)']], displayMath: [['$$', '$$']] },
+      options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre'] }
     };
     </script>
-    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 
-            <!-- LISTENING & AUDIO RECORDER V3 (UX FIXED) -->
+    <!-- TTS & RECORDER UTILS -->
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const questionNodes = document.querySelectorAll('.pregunta-container p.lead');
-            
-            questionNodes.forEach(p => {
-                let html = p.innerHTML;
-                let hasChanges = false;
-                
-                // --- 1. LISTENING (EXTRACCIÓN) ---
-                // Extraemos el transcript para que NO se vea mezclado con la pregunta
-                const transcriptRegex = /\[---TRANSCRIPT---\]([\s\S]*?)\[---END-TRANSCRIPT---\]/;
-                const match = html.match(transcriptRegex);
-                
-                if (match) {
-                    const fullTag = match[0];
-                    const transcriptText = match[1];
-                    
-                    // Limpieza para el TTS
-                    let safeText = transcriptText.replace(/<[^>]*>?/gm, ' ')
-                                                 .replace(/\r?\n|\r/g, ' ')
-                                                 .replace(/\s+/g, ' ')
-                                                 .trim();
-                    safeText = safeText.replace(/"/g, '&quot;').replace(/'/g, "\\'");
-                    
-                    // Widget Reproductor (Diseño Card)
-                    const playerHtml = `
-                        <div class="card mb-3 border-primary shadow-sm">
-                            <div class="card-body d-flex align-items-center bg-light-blue">
-                                <div class="me-3">
-                                    <button type="button" class="btn btn-primary btn-lg rounded-circle shadow-sm" 
-                                            onclick="playTTS('${safeText}')" aria-label="Escuchar audio">
-                                        <i class="fas fa-headphones-alt"></i>
-                                    </button>
-                                </div>
-                                <div>
-                                    <h6 class="fw-bold text-primary mb-1">Listening Comprehension</h6>
-                                    <small class="text-muted">Escucha el fragmento antes de responder.</small>
-                                </div>
-                            </div>
-                        </div>
-                    `;
-                    
-                    // Inyectamos el reproductor ANTES del párrafo de la pregunta
-                    const playerDiv = document.createElement('div');
-                    playerDiv.innerHTML = playerHtml;
-                    p.parentNode.insertBefore(playerDiv, p);
-                    
-                    // Eliminamos el transcript sucio del texto de la pregunta
-                    html = html.replace(fullTag, '').trim();
-                    hasChanges = true;
-                }
+        // TTS
+        function playTTS(text, lang='es-ES') {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = lang; 
+                utterance.rate = 0.9;
+                window.speechSynthesis.speak(utterance);
+            } else {
+                alert("Tu navegador no soporta TTS.");
+            }
+        }
+        
+        // RECORDER STUB (Marcador de posición si no existe el script real)
+        // [TODO: Mover a un archivo estático dedicado assessment_recorder.js]
+        let mediaRecorder;
+        let audioChunks = [];
 
-                // --- 2. SPEAKING (DETECCIÓN ROBUSTA) ---
-                // Regex tolerante a espacios o formatos Markdown residuales
-                const recordingRegex = /\[---RECORDING-REQUIRED---\]/i;
-                if (html.match(recordingRegex)) {
-                    html = html.replace(recordingRegex, ''); // Limpiar tag
-                    hasChanges = true;
-                    
-                    // Inyectar grabador
-                    const container = p.closest('.pregunta-container');
-                    const textarea = container ? container.querySelector('textarea') : null;
-                    
-                    if (textarea) {
-                        const qId = textarea.id.replace('answer_q_', '');
-                        const recorderHtml = `
-                            <div class="recorder-ui border rounded p-3 mb-3 bg-white shadow-sm" id="recorder_ui_${qId}">
-                                <div class="d-flex justify-content-between align-items-center mb-3">
-                                    <span class="badge bg-danger rounded-pill px-3 py-2"><i class="fas fa-microphone me-2"></i>Speaking Task</span>
-                                    <div class="timer-box font-monospace fs-5 text-danger fw-bold" id="timer_${qId}">02:00</div>
-                                </div>
-                                
-                                <div class="d-grid gap-2 d-md-block">
-                                    <button type="button" class="btn btn-outline-danger btn-lg px-4" id="btn_rec_${qId}" onclick="startRecording('${qId}')">
-                                        <i class="fas fa-circle me-2"></i> Grabar Respuesta
-                                    </button>
-                                    <button type="button" class="btn btn-secondary btn-lg px-4" id="btn_stop_${qId}" onclick="stopRecording('${qId}')" disabled>
-                                        <i class="fas fa-stop me-2"></i> Finalizar
-                                    </button>
-                                </div>
-                                
-                                <div id="status_${qId}" class="mt-2 text-muted small fst-italic">Listo para grabar.</div>
-                                <input type="file" name="audio_q_${qId}" id="audio_input_${qId}" style="display:none;" accept="audio/*">
-                            </div>
-                        `;
-                        textarea.insertAdjacentHTML('beforebegin', recorderHtml);
-                        textarea.placeholder = "Notas opcionales sobre tu grabación...";
-                        textarea.rows = 2; // Reducir tamaño pues es secundario
-                    }
-                }
+        async function startRecording(qId) {
+            const status = document.getElementById(`status_${qId}`);
+            const btnRec = document.getElementById(`btn_rec_${qId}`);
+            const btnStop = document.getElementById(`btn_stop_${qId}`);
+            
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                mediaRecorder = new MediaRecorder(stream);
+                audioChunks = [];
+
+                mediaRecorder.ondataavailable = event => audioChunks.push(event.data);
                 
-                if (hasChanges) p.innerHTML = html;
-            });
-        });
-    
-    <script>
-        // Definimos la URL de la demo...
+                mediaRecorder.onstop = () => {
+                    const audioBlob = new Blob(audioChunks, { type: 'audio/mpeg' });
+                    const audioUrl = URL.createObjectURL(audioBlob);
+                    // Vincular al input file (simulado)
+                    const file = new File([audioBlob], `recording_${qId}.mp3`, { type: 'audio/mpeg' });
+                    const container = new DataTransfer();
+                    container.items.add(file);
+                    document.getElementById(`audio_input_${qId}`).files = container.files;
+                    status.innerText = "Grabación guardada. Lista para enviar.";
+                };
+
+                mediaRecorder.start();
+                status.innerText = "Grabando...";
+                status.classList.add('text-danger', 'fw-bold');
+                btnRec.disabled = true;
+                btnStop.disabled = false;
+                
+            } catch (err) {
+                console.error(err);
+                alert("No se pudo acceder al micrófono.");
+            }
+        }
+
+        function stopRecording(qId) {
+            if (mediaRecorder) mediaRecorder.stop();
+            document.getElementById(`status_${qId}`).innerText = "Procesando...";
+            document.getElementById(`status_${qId}`).classList.remove('text-danger', 'fw-bold');
+            document.getElementById(`btn_rec_${qId}`).disabled = false;
+            document.getElementById(`btn_stop_${qId}`).disabled = true;
+        }
+    </script>
 {% endblock extra_js %}

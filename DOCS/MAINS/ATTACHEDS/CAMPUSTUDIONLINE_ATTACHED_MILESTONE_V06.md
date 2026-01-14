@@ -1,33 +1,17 @@
-# Hito 6: Sistema de Autoevaluaciones con IA (RECTIFICACIÓN MULTIMEDIA)
+# Hito 6: Sistema de Autoevaluaciones con IA (RECONSTRUCCIÓN NUCLEAR - EN PROGRESO)
 
-**Estado Actual:** ⚠️ CRÍTICO - RECONSTRUCCIÓN NECESARIA
-**Modelo Vinculante:** `gemini-2.5-flash-lite` (Restaurado por estabilidad).
+**Estado:** 🚧 EN DESARROLLO (Arquitectura Pedagógica Validada)
+**Modelo Vinculante:** `gemini-2.5-flash-lite`
 
-## ESTADO TÉCNICO AL CIERRE (14/01/2026)
-1.  **Modelo:** Regresión ejecutada de 3.0 a 2.5 Lite tras errores 503. Directriz actualizada en `TOTAL_COMMANDER.md`.
-2.  **Infraestructura:** Rotación de claves API estandarizada en `orchestrator/tasks.py`.
-3.  **Frontend:** Inyectada lógica para MathJax (LaTeX), TTS (Listening) y Grabador V2 (Speaking) en `take_assessment.html`.
-4.  **Backend:** `views.py` preparado para recibir archivos de audio.
+## DIRECTRIZ SUPREMA PARA LA PRÓXIMA SESIÓN
+El modelo entrante **DEBE** comenzar realizando una investigación profunda (PVD) sobre los siguientes estándares para igualar el contexto del modelo saliente. No debe generar código hasta haber verbalizado la comprensión de:
+1.  **CertACLES (UGR):** Modelo de 4 destrezas para Idiomas (Reading, Listening, Writing, Speaking).
+2.  **EUR-ACE® (Ingeniería):** Estándar de calidad para STEM centrado en resolución de problemas complejos y juicio técnico.
+3.  **MECES Nivel 2 / Taxonomía SOLO (Humanidades):** Foco en aprendizaje relacional y crítico (Comentario de Fuentes).
 
-## ERRORES DETECTADOS (DEUDA TÉCNICA OBLIGATORIA)
-*   **Violación de Idioma:** Los enunciados generados por la IA están en Inglés (Cambridge Style) en lugar de Castellano.
-*   **Fallo de Inyección:** Las etiquetas `[---TAGS---]` no están siendo capturadas por el JS debido a interferencias de renderizado Markdown.
-*   **Fuga de Datos:** El texto del Listening es visible para el alumno.
-*   **Desalineación Pedagógica:** Se pide "Use of English" en asignaturas que no son de lengua inglesa.
-
-# HOJA DE RUTA PARA LA SIGUIENTE SESIÓN (ORDEN DE EJECUCIÓN)
-**El modelo entrante DEBE ejecutar estas tareas sin desviarse:**
-
-1.  **Refactor de `prompt_generators.py`:**
-    *   Traducir TODAS las etiquetas de interfaz al Castellano (ej: "PARTE 1: USO DE LA LENGUA").
-    *   Parametrizar el idioma de la asignatura para que no asuma Inglés por defecto.
-    *   Instruir a la IA para que entregue los tags `[---TRANSCRIPT---]` y `[---RECORDING-REQUIRED---]` en texto plano, prohibiendo negritas o bloques de código que rompan la Regex.
-
-2.  **Blindaje Frontend en `take_assessment.html`:**
-    *   Implementar una clase CSS `.transcript-hidden { display: none; }` para asegurar que el texto del listening nunca sea visible antes de ser procesado por el JS.
-    *   Actualizar la Regex de JS para que sea tolerante a etiquetas HTML (usar `strip tags` antes del match si es necesario).
-    *   Inyectar el código de idioma (`it-IT`, `en-GB`) como un atributo `data-lang` en la pregunta para que el TTS no use acentos erróneos.
-
-3.  **Validación de Grabación:**
-    *   Realizar una prueba de flujo completo: Grabar -> Enviar -> Verificar que el archivo llega a `media/assessment/audio/`.
+## HOJA DE RUTA TÉCNICA (ORDEN ESTRICTO)
+1.  **Orchestrator Fix (Blindaje DB):** En `tasks.py`, dentro de `generate_assessment_from_content_task`, sanear el diccionario `q_data` antes de llamar a `Question.objects.create()`. Forzar `q_data['question_type'] = 'open_ended'` para evitar el Error 1406 (Data too long) de MySQL.
+2.  **Refactor de Prompts (Super-Arquetipos):** Implementar en `prompt_generators.py` los 3 Super-Arquetipos con lógica de sub-disciplina (Arte, Historia, Derecho, Ingeniería, etc.) asegurando una densidad de 12-15 ítems por examen.
+3.  **Validación de Flujo Server-Side:** Verificar que la vista `take_assessment` en `views.py` procesa correctamente los nuevos fragmentos (transcripts y tags de grabación) usando la lógica server-side ya implementada.
+4.  **Prueba de Carga:** Generar una evaluación completa para una asignatura de Ingeniería y otra de Idiomas para validar la estabilidad del parser `dirtyjson`.
 

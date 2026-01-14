@@ -1,4 +1,5 @@
 # /home/MiguelAeTxio/PROJECTS/CampuStudiOnline/assessment/views.py
+import re
 import logging
 import uuid
 import hashlib
@@ -20,10 +21,8 @@ from .utils import get_assessment_context, check_user_assessment_limits
 
 logger = logging.getLogger(__name__)
 
-
 def log_timestamp(message):
     logger.info(f"[{timezone.now().strftime('%Y-%m-%d %H:%M:%S.%f')}] {message}")
-
 
 @login_required
 @require_POST
@@ -120,6 +119,38 @@ def generate_ai_assessment(request, copy_pk):
     return redirect(redirect_url)
 
 
+def _process_question_display(question):
+    """
+    Procesa el texto de la pregunta para separar metadatos (transcripts, flags)
+    del texto visualizable.
+    """
+    text = question.question_text
+    transcript = None
+    requires_recording = False
+    
+    # 1. Extraer Transcript
+    transcript_match = re.search(r'\[---TRANSCRIPT---\]([\s\S]*?)\[---END-TRANSCRIPT---\]', text)
+    if transcript_match:
+        transcript = transcript_match.group(1).strip()
+        # Eliminar el bloque completo del texto visible
+        text = text.replace(transcript_match.group(0), '').strip()
+        # Limpieza básica de HTML residual en el transcript extraído
+        transcript = re.sub(r'<[^>]*>', ' ', transcript)
+        transcript = re.sub(r'\s+', ' ', transcript).strip()
+        
+    # 2. Detectar Flag de Grabación
+    recording_match = re.search(r'\[---RECORDING-REQUIRED---\]', text, re.IGNORECASE)
+    if recording_match:
+        requires_recording = True
+        text = text.replace(recording_match.group(0), '').strip()
+        
+    # Asignar atributos volátiles (no se guardan en BD)
+    question.display_text = text
+    question.transcript = transcript
+    question.requires_recording = requires_recording
+    return question
+
+
 @login_required
 def take_assessment(request, pk):
     try:
@@ -152,13 +183,17 @@ def take_assessment(request, pk):
         assessment.was_viewed = True
         assessment.save(update_fields=["was_viewed"])
 
+    # [HITO 6] Procesamiento Server-Side de preguntas (Blindaje)
+    questions_qs = assessment.questions.all().order_by('id')
+    questions_list = [_process_question_display(q) for q in questions_qs]
+
     context = {
+        "questions_list": questions_list,
         "assessment": assessment,
         "user_copy": user_copy,
         "page_title": "Completar Autoevaluación",
     }
     return render(request, "assessment/take_assessment.html", context)
-
 
 @login_required
 @require_POST
@@ -219,7 +254,6 @@ def submit_assessment(request, pk):
 
     return redirect(redirect_url)
 
-
 @login_required
 def view_results(request, pk):
     try:
@@ -260,7 +294,6 @@ def view_results(request, pk):
     }
     return render(request, "assessment/view_results.html", context)
 
-
 @login_required
 @require_GET
 def get_assessment_status(request, assessment_pk):
@@ -284,7 +317,6 @@ def get_assessment_status(request, assessment_pk):
     except Exception as e:
         return JsonResponse({"status": "ERROR", "message": str(e)}, status=500)
 
-
 @login_required
 @require_GET
 def get_assessment_panel_content(request, copy_pk):
@@ -303,7 +335,6 @@ def get_assessment_panel_content(request, copy_pk):
     )
     return JsonResponse({"html": html})
 
-
 @login_required
 @require_POST
 def retry_assessment_generation(request, assessment_pk):
@@ -320,7 +351,6 @@ def retry_assessment_generation(request, assessment_pk):
     generate_assessment_from_content_task.delay(assessment.id)
     messages.info(request, "Reintentando generación...")
     return redirect(reverse("study_room:edit_copy", kwargs={"pk": user_copy.pk}))
-
 
 @login_required
 @require_POST
@@ -349,7 +379,6 @@ def cancel_assessment_generation(request, assessment_pk):
 
     return redirect(reverse("study_room:edit_copy", kwargs={"pk": user_copy.pk}))
 
-
 @login_required
 @require_POST
 def mark_as_viewed_ajax(request, pk):
@@ -363,8 +392,6 @@ def mark_as_viewed_ajax(request, pk):
     except Assessment.DoesNotExist:
         return JsonResponse({"status": "error", "message": "No encontrado"}, status=404)
 
-
-@login_required
 def take_assessment_demo(request):
     # Mock data for demo...
     return render(request, "assessment/take_assessment.html", {})

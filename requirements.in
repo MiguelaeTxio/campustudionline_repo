@@ -60,3 +60,4 @@ python-docx
 # ---- Procesamiento de Documentos (Sala de Traducción) ----
 pypdf
 python-docx
+dirtyjson

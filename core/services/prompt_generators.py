@@ -1,4 +1,3 @@
-# /home/MiguelAeTxio/CampuStudiOnline/core/services/prompt_generators.py
 # [V3 - Arquitectura Simplificada] Este módulo centraliza la creación de prompts para la API de IA.
 from typing import List, Dict
 
@@ -171,35 +170,38 @@ def generate_assessment_prompt(
             "3. Problema 3: Demostración o análisis de casos límite.\n"
             "4. Problema 4: Problema integrado de alta dificultad.\n\n"
             "REGLAS TÉCNICAS:\n"
-            "- Usa LaTeX OBLIGATORIAMENTE para toda fórmula matemática: `\\(...\\)` (en línea) y `$$...$$` (bloque).\n"
+            "- Usa LaTeX OBLIGATORIAMENTE para toda fórmula matemática: `\\\\(...\\\\)` (en línea) y `$$...$$` (bloque).\n"
             "- La 'model_answer' debe mostrar el desarrollo paso a paso, no solo el resultado final."
         )
 
-    # --- ARQUETIPO: IDIOMAS (Cambridge B2 First Style) ---
+    # --- ARQUETIPO: IDIOMAS (Certificación Oficial) ---
     elif subject_type == "LANGUAGES":
         instructions = (
-            "Actúa como examinador oficial Cambridge English. Genera un examen completo 'B2 First' adaptado al texto.\n"
-            "ESTRUCTURA OBLIGATORIA (4 PARTES):\n\n"
-            "**PART 1: USE OF ENGLISH (Grammar & Vocabulary)**\n"
-            "- Genera 5 preguntas tipo 'Key Word Transformation' o 'Gap Fill' basadas en el texto.\n"
-            "- Formato Pregunta: 'Complete the second sentence so that it has a similar meaning to the first sentence, using the word given: [WORD]'.\n\n"
-            "**PART 2: LISTENING COMPREHENSION**\n"
-            "- Escribe un guion de audio (Transcript) de 150-200 palabras relacionado con el tema.\n"
-            "- Enciérralo en: `[---TRANSCRIPT---]...texto...[---END-TRANSCRIPT---]`\n"
-            "- Genera 3 preguntas de comprensión sobre ese audio.\n\n"
-            "**PART 3: WRITING**\n"
-            "- Propón 1 tema de ensayo (Essay) argumentativo derivado del texto (140-190 palabras).\n\n"
-            "**PART 4: SPEAKING**\n"
-            "- Propón 1 tema de discusión oral complejo.\n"
-            "- OBLIGATORIO: Añade al final: `[---RECORDING-REQUIRED---]` y el texto 'Tienes 2 minutos para responder'."
+            "Actúa como un Examinador Oficial de Acreditación Universitaria (Modelo CertAcles / CLM UGR). "
+            "Tu objetivo es generar un examen de dominio de lengua extranjera (Nivel B2/C1) basado rigurosamente en el texto proporcionado.\n"
+            "ESTRUCTURA OBLIGATORIA (4 DESTREZAS - SIN GRAMÁTICA AISLADA):\n\n"
+            "**DESTREZA 1: COMPRENSIÓN LECTORA (Reading)**\n"
+            "- Usa el texto proporcionado como base.\n"
+            "- Genera 4 preguntas de COMPRENSIÓN PROFUNDA (no literal).\n"
+            "- Formato: Preguntas de respuesta abierta breve o análisis de intención del autor.\n"
+            "- NO generes ejercicios de rellenar huecos (Use of English).\n\n"
+            "**DESTREZA 2: COMPRENSIÓN AUDITIVA (Listening)**\n"
+            "- Escribe un guion de audio (Transcript) de 200 palabras que complemente el tema (ej: una entrevista a un experto o una conferencia).\n"
+            "- REGLA DE FORMATO: El guion DEBE estar encerrado en: [---TRANSCRIPT---]...texto...[---END-TRANSCRIPT---]\n"
+            "- Genera 2 preguntas sobre este audio. IMPORTANTE: El enunciado de la pregunta DEBE decir explícitamente: 'Escucha el audio y responde: [Tu Pregunta]'. No dejes el enunciado vacío.\n\n"
+            "**DESTREZA 3: EXPRESIÓN ESCRITA (Writing)**\n"
+            "- Tarea 1 (Interacción): Propón la redacción de un correo electrónico formal o carta al director relacionada con el tema (aprox 150 palabras).\n"
+            "- Tarea 2 (Producción): Propón la redacción de un Ensayo de Opinión (Essay) discutiendo los pros y contras del tema (aprox 250 palabras).\n\n"
+            "**DESTREZA 4: EXPRESIÓN ORAL (Speaking)**\n"
+            "- Propón un tema para un Monólogo Sostenido (3-4 minutos).\n"
+            "- OBLIGATORIO: Añade al final la etiqueta: [---RECORDING-REQUIRED---]."
         )
 
-    # --- ARQUETIPO: HUMANIDADES (Modelo UNED/Historia) ---
     else:
         instructions = (
             "Actúa como Profesor Titular de Humanidades. Genera un examen modelo Universidad/UNED.\n"
             "ESTRUCTURA OBLIGATORIA (3 PARTES):\n\n"
-            "**PARTE 1: DEFINICIÓN DE CONCEPTOS (Test Breve)**\n"
+            "**PARTE 1: DEFINICIÓN DE CONCEPTOS**\n"
             "- Genera 4 preguntas cortas para definir conceptos clave o términos técnicos del texto.\n\n"
             "**PARTE 2: COMENTARIO DE TEXTO/OBRA**\n"
             "- Selecciona un fragmento significativo del texto proporcionado (o descríbelo si es una obra de arte).\n"

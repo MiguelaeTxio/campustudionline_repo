@@ -3,6 +3,7 @@ import logging
 import traceback
 import os
 import json
+import dirtyjson
 import time
 import re
 from datetime import datetime, timedelta
@@ -439,30 +440,44 @@ def _log_assessment_event(assessment_id, message, level="INFO"):
         logger.error(f"Error escribiendo log de Assessment {assessment_id}: {e}")
 
 def _parse_assessment_text(text: str) -> list:
+    """
+    Parsea la respuesta de la IA utilizando dirtyjson para máxima tolerancia a fallos de sintaxis.
+    V4.0 - Integración de librería robusta.
+    """
+    # 1. Limpieza preliminar básica
+    text = clean_json_response(text)
+    
+    # 2. Intento con dirtyjson (Maneja comillas simples, falta de comillas, trailing commas)
     try:
-        # [V3] Intento prioritario: Parsear JSON (Nuevo Estándar)
-        json_str = clean_json_response(text)
-        data = json.loads(json_str)
+        data = dirtyjson.loads(text)
         if isinstance(data, dict) and "questions" in data:
             return data["questions"]
-        if isinstance(data, list): # Por si devuelve la lista directa
+        if isinstance(data, list):
             return data
-    except Exception:
-        pass # Fallback silencioso al método antiguo
-        
-    # [V2] Fallback: Parsear Texto con Separadores (Legacy)
+    except Exception as e:
+        logger.warning(f"dirtyjson failed: {e}")
+
+    # 3. Fallback: Extracción por Regex de bloques (Último recurso si dirtyjson falla por texto mezclado)
     questions = []
-    pattern = re.compile(
-        r"\[---PREGUNTA---\](.*?)" r"\[---RESPUESTA---\](.*?)" r"\[---FIN-PREGUNTA---\]",
-        re.DOTALL,
-    )
-    matches = pattern.findall(text)
-    for match in matches:
-        question_text = match[0].strip()
-        model_answer = match[1].strip()
-        if question_text and model_answer:
-            questions.append({"question_text": question_text, "model_answer": model_answer})
-    return questions
+    try:
+        # Regex relajada para capturar objetos tipo { "question_text": ... }
+        # Útil si la IA mezcla texto introductorio con el JSON
+        object_pattern = re.compile(r'\{\s*(?:\"|\')?question_text(?:\"|\')?:\s*(?:\"|\')(.*?)(?:\"|\'),\s*(?:\"|\')?question_type(?:\"|\')?:\s*(?:\"|\').*?(?:\"|\'),\s*(?:\"|\')?model_answer(?:\"|\')?:\s*(?:\"|\')(.*?)(?:\"|\')\s*\}', re.DOTALL)
+        
+        matches = object_pattern.findall(text)
+        for qt, ma in matches:
+            questions.append({
+                "question_text": qt.replace('\\"', '"').replace('\\n', '\n'),
+                "model_answer": ma.replace('\\"', '"').replace('\\n', '\n'),
+                "question_type": "open_ended"
+            })
+            
+        if questions:
+            return questions
+    except Exception:
+        pass
+
+    return []
 
 def _parse_correction_text(text: str) -> dict:
     score = None
