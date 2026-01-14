@@ -67,10 +67,12 @@ def generate_ai_assessment(request, copy_pk):
         return redirect(redirect_url)
 
     try:
+        target_segment = request.POST.get('target_segment', 'GLOBAL')
         assessment = Assessment.objects.create(
             user=request.user,
             content_copy=user_copy,
             status="PENDING",
+            target_segment=target_segment,
         )
         # --- Meta Ads CAPI: RequestAssessment ---
         try:
@@ -181,11 +183,14 @@ def submit_assessment(request, pk):
 
     for question in questions:
         user_answer_text = request.POST.get(f"answer_q_{question.pk}", "").strip()
+        audio_file = request.FILES.get(f"audio_q_{question.pk}")
+        
         answers_to_create.append(
             UserAnswer(
                 question=question,
                 user=request.user,
                 answer_text=user_answer_text,
+                audio_file=audio_file,
             )
         )
 

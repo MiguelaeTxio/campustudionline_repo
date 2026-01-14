@@ -35,10 +35,12 @@ from contents.models import (
 )
 from core.services.gemini_service import generate_text_content, clean_json_response, AIServiceCriticalError
 from core.services.gemini_schemas import ASSESSMENT_CORRECTION_SCHEMA
+from assessment.utils import classify_subject_strategy, segment_content_for_assessment
 from core.services.prompt_generators import (
     generate_course_metadata_prompt,
     generate_master_schema_prompt,
     generate_atomic_content_prompt,
+    generate_assessment_prompt,
 )
 from messaging.push_utils import send_notification_to_user
 from core.utils import send_unified_notification
@@ -437,6 +439,18 @@ def _log_assessment_event(assessment_id, message, level="INFO"):
         logger.error(f"Error escribiendo log de Assessment {assessment_id}: {e}")
 
 def _parse_assessment_text(text: str) -> list:
+    try:
+        # [V3] Intento prioritario: Parsear JSON (Nuevo Estándar)
+        json_str = clean_json_response(text)
+        data = json.loads(json_str)
+        if isinstance(data, dict) and "questions" in data:
+            return data["questions"]
+        if isinstance(data, list): # Por si devuelve la lista directa
+            return data
+    except Exception:
+        pass # Fallback silencioso al método antiguo
+        
+    # [V2] Fallback: Parsear Texto con Separadores (Legacy)
     questions = []
     pattern = re.compile(
         r"\[---PREGUNTA---\](.*?)" r"\[---RESPUESTA---\](.*?)" r"\[---FIN-PREGUNTA---\]",
@@ -1031,20 +1045,101 @@ def generate_assessment_from_content_task(self, assessment_id):
         
         if not full_content or not full_content.strip():
             raise ValueError("El contenido para la evaluación está vacío.")
+
+        # [HITO 6] CLASIFICACIÓN Y SEGMENTACIÓN INTELIGENTE
+        # 1. Determinar segmento (Q1, Q2, Q3 o GLOBAL)
+        target_segment = assessment.target_segment
+        segmented_content = segment_content_for_assessment(full_content, segment_type=target_segment)
         
-        prompt_format_instructions = ("**FORMATO DE SALIDA OBLIGATORIO:**\n" "Cada par pregunta-respuesta DEBE seguir esta estructura exacta, usando los separadores como se indica:\n" "[---PREGUNTA---]\n" "Aquí el texto completo de la pregunta.\n" "[---RESPUESTA---]\n" "Aquí el texto completo de la respuesta modelo.\n" "[---FIN-PREGUNTA---]\n\n")
-        prompt = (f"Tu tarea es crear un examen basado en el siguiente texto, cubriendo sus conceptos clave.\n\n" f"{prompt_format_instructions}\n\n" f"Material de estudio:\n---\n{full_content}\n---")
+        # 2. Determinar arquetipo de asignatura (Ciencias vs Letras)
+        subject_obj = original_content.subject.first()
+        subject_name = subject_obj.name if subject_obj else original_content.title
+        branch_name = subject_obj.academic_year.degree.branch.name if (subject_obj and subject_obj.academic_year) else ""
         
-        api_key = ApiKey.objects.filter(is_enabled=True, is_quarantined=False).first()
-        if not api_key:
-            raise ValueError("No se encontró una clave de API activa.")
+        subject_type = classify_subject_strategy(subject_name, branch_name)
         
-        log_assessment_task_event(assessment_id, f"Enviando prompt a API (Clave: {api_key.name})...")
+        # [HITO 6] Extracción de Objetivos de Aprendizaje
+        learning_objectives_str = ""
+        if subject_obj and subject_obj.learning_objectives:
+            learning_objectives_str = json.dumps(subject_obj.learning_objectives, ensure_ascii=False)
+            
+        log_assessment_task_event(assessment_id, f"Estrategia: {subject_type}. Objetivos inyectados: {bool(learning_objectives_str)}")
+
+        # 3. Generar Prompt Especializado (Con Objetivos)
+        prompt = generate_assessment_prompt(
+            content_text=segmented_content,
+            subject_type=subject_type,
+            segment_info=f"Examen de tipo {target_segment} para {subject_name} ({subject_type})",
+            learning_objectives=learning_objectives_str
+        )
         
-        success, response_text, _ = generate_text_content(prompt, api_key=api_key)
-        if not success:
-            raise AIServiceCriticalError(f"API Error: {response_text}")
         
+        # --- [HITO 37] ROTACIÓN ESTÁNDAR (Sincronizada con Orquestador) ---
+        response_text = None
+        while True:
+            # 1. Sincronización
+            automation_settings = AutomationSettings.load()
+            api_key = automation_settings.active_api_key
+            
+            # 2. Validación de Clave Activa
+            if not api_key or not api_key.is_enabled or api_key.is_quarantined:
+                 api_key = ApiKey.objects.filter(is_enabled=True, is_quarantined=False).order_by('id').first()
+                 if api_key:
+                     automation_settings.active_api_key = api_key
+                     automation_settings.save(update_fields=['active_api_key'])
+                 else:
+                     log_assessment_task_event(assessment_id, "SIN CLAVES DISPONIBLES. Esperando 5m...", level="ERROR")
+                     time.sleep(300)
+                     continue
+
+            log_assessment_task_event(assessment_id, f"Llamando a API... (Clave: {api_key.name})")
+            
+            try:
+                success, text, _ = generate_text_content(prompt, api_key=api_key)
+            except Exception as e:
+                success = False
+                text = str(e)
+            
+            if success:
+                response_text = text
+                # Limpiar strikes si hubo éxito
+                if api_key.consecutive_failures > 0:
+                    api_key.consecutive_failures = 0
+                    api_key.save(update_fields=['consecutive_failures'])
+                break # ÉXITO -> Salir del bucle
+            
+            else:
+                # 3. Gestión de Errores Estándar
+                error_str = str(text)
+                is_quota = "429" in error_str or "Resource" in error_str or "Quota" in error_str
+                
+                if is_quota:
+                    api_key.refresh_from_db()
+                    api_key.consecutive_failures += 1
+                    api_key.save(update_fields=["consecutive_failures"])
+                    
+                    if api_key.consecutive_failures >= 4:
+                        api_key.is_quarantined = True
+                        api_key.save(update_fields=["is_quarantined"])
+                        _request_quarantine_via_mailbox(api_key)
+                        
+                        next_k = ApiKey.objects.filter(is_enabled=True, is_quarantined=False).exclude(id=api_key.id).first()
+                        if next_k:
+                            automation_settings.active_api_key = next_k
+                            automation_settings.save(update_fields=['active_api_key'])
+                            log_assessment_task_event(assessment_id, f"ROTACIÓN: Clave agotada. Nueva clave: {next_k.name}.")
+                        else:
+                            log_assessment_task_event(assessment_id, "ROTACIÓN FALLIDA: No quedan claves. Esperando 60s...", level="ERROR")
+                            time.sleep(60)
+                    else:
+                        log_assessment_task_event(assessment_id, f"STRIKE {api_key.consecutive_failures}/4 ({api_key.name}). Esperando 60s...", level="ERROR")
+                        time.sleep(60)
+                    continue 
+                else:
+                    log_assessment_task_event(assessment_id, f"ERROR API NO-CUOTA: {error_str}. Reintentando en 30s...", level="ERROR")
+                    time.sleep(30)
+                    continue
+
         questions_data = _parse_assessment_text(response_text)
         
         if not questions_data:

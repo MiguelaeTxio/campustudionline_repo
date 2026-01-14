@@ -16,7 +16,7 @@ logger = logging.getLogger(__name__)
 
 # --- Configuration Constants ---
 # ID Oficial Preview para API
-GEMINI_MODEL_NAME = "gemini-3-flash-preview"
+GEMINI_MODEL_NAME = "gemini-2.5-flash-lite"
 PROACTIVE_DELAY_SECONDS = 2
 
 # --- Custom Exceptions ---
@@ -40,7 +40,6 @@ def _execute_gemini_call(prompt: str, api_key: ApiKey, generation_config: dict, 
     config = types.GenerateContentConfig(
         max_output_tokens=generation_config.get("max_output_tokens", 8192),
         safety_settings=safety_settings,
-        thinking_config=types.ThinkingConfig(include_thoughts=True)
     )
 
     return client.models.generate_content(

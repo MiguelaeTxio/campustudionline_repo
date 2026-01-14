@@ -1,4 +1,3 @@
-# /home/MiguelAeTxio/PROJECTS/CampuStudiOnline/assessment/models.py
 from django.db import models
 from django.conf import settings
 from django.utils import timezone
@@ -41,6 +40,12 @@ class Assessment(models.Model):
         CANCELLED = "CANCELLED", "Cancelada por Administrador"
         USER_CANCELLED = "USER_CANCELLED", "Cancelado por el Usuario"
 
+    class SegmentChoices(models.TextChoices):
+        GLOBAL = 'GLOBAL', 'Evaluación Global (Todo el temario)'
+        Q1 = 'Q1', 'Primer Trimestre (Inicio - 33%)'
+        Q2 = 'Q2', 'Segundo Trimestre (Medio - 33%-66%)'
+        Q3 = 'Q3', 'Tercer Trimestre (Final - 66%-100%)'
+
     content_copy = models.ForeignKey(
         "contents.ContentCopy",
         on_delete=models.CASCADE,
@@ -69,6 +74,15 @@ class Assessment(models.Model):
         default=AssessmentStatus.PENDING,
         verbose_name="Estado",
     )
+    
+    target_segment = models.CharField(
+        max_length=10,
+        choices=SegmentChoices.choices,
+        default=SegmentChoices.GLOBAL,
+        verbose_name="Segmento del Temario",
+        help_text="⚠️ AVISO: La división por trimestres es una estimación basada en la longitud del texto y podría no coincidir exactamente con los cortes de la guía docente oficial."
+    )
+
     created_at = models.DateTimeField(
         auto_now_add=True, verbose_name="Fecha de Creación"
     )
@@ -239,6 +253,13 @@ class UserAnswer(models.Model):
         related_name="user_answers",
         verbose_name="Usuario",
     )
+    audio_file = models.FileField(
+        upload_to='assessment/audio/%Y/%m/',
+        blank=True,
+        null=True,
+        verbose_name="Audio (Speaking)",
+        help_text="Grabación de voz del usuario para ejercicios de Speaking."
+    )
     answer_text = models.TextField(verbose_name="Texto de la Respuesta del Usuario")
     answered_at = models.DateTimeField(
         auto_now_add=True, verbose_name="Respondido En"
@@ -247,7 +268,13 @@ class UserAnswer(models.Model):
         null=True,
         blank=True,
         verbose_name="Puntuación",
-        help_text=_("The assigned score, e.g., from 0.0 to 10.0."),
+        help_text=_("The assigned score, e.g., from 0.0 to 10.0.")
+    )
+    score_grammar = models.FloatField(
+        null=True,
+        blank=True,
+        verbose_name="Puntuación Gramatical/Estilo",
+        help_text="Calificación específica sobre la calidad del lenguaje (para Writing/Speaking), separada del contenido."
     )
     feedback = models.TextField(
         blank=True,

@@ -75,17 +75,39 @@
                 </button>
 
             {% else %}
-                <form id="generate-assessment-form" action="{{ assessment_context.buttons.solicitar.url }}" method="POST" class="d-inline">
+                <form id="generate-assessment-form" action="{{ assessment_context.buttons.solicitar.url }}" method="POST">
                     {% csrf_token %}
-                    <button type="submit" class="btn btn-primary" 
-                            {% if assessment_context.buttons.solicitar.is_disabled %}disabled{% endif %}
-                            {% if assessment_context.status == "EN_ESPERA" %}
-                                data-bs-toggle="tooltip"
-                                data-bs-placement="top"
-                                title="Has alcanzado uno de tus límites de uso. Podrás solicitar una nueva evaluación cuando el temporizador finalice."
-                            {% endif %}>
-                        <i class="fas fa-magic me-1"></i> {{ assessment_context.buttons.solicitar.text }}
-                    </button>
+                    
+                    {% if not assessment_context.buttons.solicitar.is_disabled %}
+                    <div class="mb-2">
+                        <label for="segment-select" class="form-label small text-muted mb-1">Alcance de la evaluación:</label>
+                        <select class="form-select form-select-sm" name="target_segment" id="segment-select">
+                            <option value="GLOBAL" selected>🌍 Global (Todo el temario)</option>
+                            <option value="Q1">1️⃣ Primer Trimestre (Inicio)</option>
+                            <option value="Q2">2️⃣ Segundo Trimestre (Medio)</option>
+                            <option value="Q3">3️⃣ Tercer Trimestre (Final)</option>
+                        </select>
+                    </div>
+                    {% endif %}
+
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary" 
+                                {% if assessment_context.buttons.solicitar.is_disabled %}disabled{% endif %}
+                                {% if assessment_context.status == "EN_ESPERA" %}
+                                    data-bs-toggle="tooltip"
+                                    data-bs-placement="top"
+                                    title="Has alcanzado uno de tus límites de uso. Podrás solicitar una nueva evaluación cuando el temporizador finalice."
+                                {% endif %}>
+                            <i class="fas fa-magic me-1"></i> {{ assessment_context.buttons.solicitar.text }}
+                        </button>
+                    </div>
+                    {% if not assessment_context.buttons.solicitar.is_disabled %}
+                    <div class="mt-1 text-center">
+                        <small class="text-muted" style="font-size: 0.7rem;">
+                            <i class="fas fa-exclamation-triangle text-warning"></i> División por trimestres aproximada.
+                        </small>
+                    </div>
+                    {% endif %}
                 </form>
             {% endif %}
         </div>

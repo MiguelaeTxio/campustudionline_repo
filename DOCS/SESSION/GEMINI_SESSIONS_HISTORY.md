@@ -1218,3 +1218,26 @@
 
 *  **Action:** Purga de asignaturas genéricas (TFG, Prácticas, Eventos).
 *  **Audit:** Auditoría de asignaturas tipo 'Proyecto'.
+# 2026-01-13
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V20.md
+## PLUTO # --SYSTEM -->
+*  **Session:** Organización Infraestructura Scraping y Fase 2
+*  **Description:** Reestructuración del directorio /web_scrapping/ segregando scripts por zonas (East/West). Análisis y desarrollo de estrategias de extracción para Universidades de Sevilla, Huelva y Cádiz.
+
+
+# 14/01/2026
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+## MAMC
+*  **Session:** Especialización de Autoevaluaciones por Meta-Categorías (Idiomas, Ciencias, Humanidades)
+*  **Description:** Inicio de la fase de especialización del motor de autoevaluaciones. Se planifica la implementación de un clasificador de asignaturas para distinguir entre Idiomas, Ciencias Exactas y Humanidades, permitiendo la generación de exámenes con prompts adaptados (problemas matemáticos, redacción de idiomas, análisis humanístico). Se auditarán los modelos y servicios de Gemini para integrar el tipo de asignatura.
+
+
+# 2026-01-14
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+## EDC # --SYSTEM -->
+*  **Session:** Implementación de Clasificación Lógica de Asignaturas para Evaluaciones Especializadas
+*  **Description:** Inicio de la fase de especialización del motor de evaluaciones. Se desarrollará un clasificador de asignaturas (Lenguas, Ciencias Exactas, Humanidades) para adaptar los prompts de generación de exámenes. Auditoría de modelos actuales y preparación de servicios de IA.
+

@@ -147,3 +147,94 @@ def generate_atomic_content_prompt(
         f'Procede ahora a generar el contenido y las fuentes para la sección **"{section_title}"**, cumpliendo rigurosamente todos los requisitos.'
     )
     return prompt
+
+
+def generate_assessment_prompt(
+    content_text: str,
+    subject_type: str = "HUMANITIES",
+    segment_info: str = "Evaluación Global",
+    learning_objectives: str = ""
+) -> str:
+    """
+    [HITO 6] Generador de Exámenes Universitarios Reales (V3 - Academic Rigor).
+    Estructuras basadas en modelos oficiales (Cambridge B2, Ingeniería, UNED).
+    """
+    
+    # --- ARQUETIPO: CIENCIAS EXACTAS (Cálculo/Ingeniería) ---
+    if subject_type == "EXACT_SCIENCES":
+        instructions = (
+            "Actúa como un Catedrático de Ingeniería. Genera un EXAMEN FINAL riguroso.\n"
+            "ESTRUCTURA OBLIGATORIA (4 PROBLEMAS DE DESARROLLO):\n"
+            "Genera 4 Problemas Complejos. Cada problema debe tener apartados (a, b, c).\n"
+            "1. Problema 1: Conceptos base / Cálculo directo (con variables numéricas).\n"
+            "2. Problema 2: Aplicación práctica o resolución de problemas.\n"
+            "3. Problema 3: Demostración o análisis de casos límite.\n"
+            "4. Problema 4: Problema integrado de alta dificultad.\n\n"
+            "REGLAS TÉCNICAS:\n"
+            "- Usa LaTeX OBLIGATORIAMENTE para toda fórmula matemática: `\\(...\\)` (en línea) y `$$...$$` (bloque).\n"
+            "- La 'model_answer' debe mostrar el desarrollo paso a paso, no solo el resultado final."
+        )
+
+    # --- ARQUETIPO: IDIOMAS (Cambridge B2 First Style) ---
+    elif subject_type == "LANGUAGES":
+        instructions = (
+            "Actúa como examinador oficial Cambridge English. Genera un examen completo 'B2 First' adaptado al texto.\n"
+            "ESTRUCTURA OBLIGATORIA (4 PARTES):\n\n"
+            "**PART 1: USE OF ENGLISH (Grammar & Vocabulary)**\n"
+            "- Genera 5 preguntas tipo 'Key Word Transformation' o 'Gap Fill' basadas en el texto.\n"
+            "- Formato Pregunta: 'Complete the second sentence so that it has a similar meaning to the first sentence, using the word given: [WORD]'.\n\n"
+            "**PART 2: LISTENING COMPREHENSION**\n"
+            "- Escribe un guion de audio (Transcript) de 150-200 palabras relacionado con el tema.\n"
+            "- Enciérralo en: `[---TRANSCRIPT---]...texto...[---END-TRANSCRIPT---]`\n"
+            "- Genera 3 preguntas de comprensión sobre ese audio.\n\n"
+            "**PART 3: WRITING**\n"
+            "- Propón 1 tema de ensayo (Essay) argumentativo derivado del texto (140-190 palabras).\n\n"
+            "**PART 4: SPEAKING**\n"
+            "- Propón 1 tema de discusión oral complejo.\n"
+            "- OBLIGATORIO: Añade al final: `[---RECORDING-REQUIRED---]` y el texto 'Tienes 2 minutos para responder'."
+        )
+
+    # --- ARQUETIPO: HUMANIDADES (Modelo UNED/Historia) ---
+    else:
+        instructions = (
+            "Actúa como Profesor Titular de Humanidades. Genera un examen modelo Universidad/UNED.\n"
+            "ESTRUCTURA OBLIGATORIA (3 PARTES):\n\n"
+            "**PARTE 1: DEFINICIÓN DE CONCEPTOS (Test Breve)**\n"
+            "- Genera 4 preguntas cortas para definir conceptos clave o términos técnicos del texto.\n\n"
+            "**PARTE 2: COMENTARIO DE TEXTO/OBRA**\n"
+            "- Selecciona un fragmento significativo del texto proporcionado (o descríbelo si es una obra de arte).\n"
+            "- Pide un análisis formal, estilístico e histórico-contextual.\n\n"
+            "**PARTE 3: TEMA DE DESARROLLO**\n"
+            "- Plantea 1 pregunta amplia de desarrollo ('Elabore un ensayo sobre...') que requiera relacionar autores, causas y consecuencias."
+        )
+
+    
+    objectives_section = ""
+    if learning_objectives:
+        objectives_section = (
+            "**GUÍA DOCENTE (OBJETIVOS DE APRENDIZAJE):**\n"
+            "El examen debe certificar que el alumno ha adquirido las siguientes competencias. "
+            "Prioriza preguntas que validen estos objetivos sobre detalles triviales del texto:\n"
+            f"{learning_objectives}\n\n"
+        )
+
+    base_prompt = (
+        f"{objectives_section}{instructions}\n\n"
+        f"CONTEXTO: {segment_info}\n"
+        "MATERIAL DE ESTUDIO (Fuente):\n"
+        "--------------------------------------------------\n"
+        f"{content_text[:45000]}\n"
+        "--------------------------------------------------\n\n"
+        "**FORMATO JSON (Strict Schema):**\n"
+        "{\n"
+        '  "questions": [\n'
+        "    {\n"
+        '      "question_text": "Enunciado del problema / Transcript + Pregunta / Tema Speaking...",\n'
+        '      "question_type": "open_ended",\n'
+        '      "model_answer": "Solución detallada..."\n'
+        "    }\n"
+        "  ]\n"
+        "}\n"
+        "Nota: Genera TODOS los items solicitados en la estructura (aprox 10-12 items en total). No omitas ninguna parte."
+    )
+    return base_prompt

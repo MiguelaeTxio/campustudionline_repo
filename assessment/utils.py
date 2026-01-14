@@ -12,6 +12,72 @@ from .models import Assessment, AssessmentSettings
 
 # --- [INICIO] REFACTORIZACIÓN DE ANOTACIONES CONTEXTUALES ---
 
+
+import unicodedata
+
+# --- [HITO 6] LÓGICA DE EXÁMENES REALES ---
+
+def classify_subject_strategy(subject_name, branch_name=""):
+    """
+    Clasifica la asignatura para determinar el arquetipo de examen.
+    """
+    def normalize(text):
+        if not text: return ""
+        return ''.join(c for c in unicodedata.normalize('NFD', text)
+                       if unicodedata.category(c) != 'Mn').upper()
+
+    s_norm = normalize(subject_name)
+    b_norm = normalize(branch_name)
+
+    # 1. CIENCIAS EXACTAS (Problemas)
+    science_keywords = [
+        'MATEMATICA', 'FISICA', 'QUIMICA', 'CALCULO', 'ALGEBRA', 'ESTADISTICA', 
+        'PROGRAMACION', 'ALGORITMO', 'INGENIERIA', 'MECANICA', 'TERMODINAMICA',
+        'ELECTRONICA', 'ESTRUCTURA', 'RESISTENCIA'
+    ]
+    if any(k in s_norm for k in science_keywords):
+        return 'EXACT_SCIENCES'
+    
+    # 2. IDIOMAS (Reading, Writing, Use of English, Speaking)
+    lang_keywords = [
+        'IDIOMA', 'LENGUA', 'INGLES', 'FRANCES', 'ALEMAN', 'ITALIANO', 
+        'TRADUCCION', 'FILOLOGIA', 'LINGUISTICA'
+    ]
+    if any(k in s_norm for k in lang_keywords):
+        return 'LANGUAGES'
+
+    # 3. HUMANIDADES / GENÉRICO (Ensayo y Análisis)
+    return 'HUMANITIES'
+
+def segment_content_for_assessment(full_text, segment_type='GLOBAL'):
+    """
+    Divide el contenido markdown en trimestres lógicos.
+    segment_type: 'Q1', 'Q2', 'Q3', 'GLOBAL'
+    """
+    if not full_text or segment_type == 'GLOBAL':
+        return full_text
+
+    total_len = len(full_text)
+    part_len = total_len // 3
+    
+    # Buscamos el salto de línea más cercano para no cortar palabras
+    def find_safe_split(index):
+        safe = full_text.find('\n', index)
+        return safe if safe != -1 else index
+
+    split_1 = find_safe_split(part_len)
+    split_2 = find_safe_split(part_len * 2)
+
+    if segment_type == 'Q1':
+        return full_text[:split_1]
+    elif segment_type == 'Q2':
+        return full_text[split_1:split_2]
+    elif segment_type == 'Q3':
+        return full_text[split_2:]
+    
+    return full_text
+
+
 def _get_base_assessment_subqueries(user_filter):
     """
     Función de ayuda interna para construir las subconsultas base reutilizables.

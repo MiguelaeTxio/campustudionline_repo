@@ -1,0 +1,436 @@
+{
+    "university": "Universidad de Sevilla (US)",
+    "source": "https://www.us.es/estudiar/que-estudiar/oferta-de-grados",
+    "timestamp": "2026-01-13 15:10:03",
+    "count": 107,
+    "items": [
+        {
+            "name": "Grado en Arqueología por la Universidad de Granada, Universidad de Jaén y Universidad de Sevilla",
+            "url": "https://www.us.es/estudiar/que-estudiar/oferta-de-grados/grado-en-arqueologia-por-la-universidad-de-granada"
+        },
+        {
+            "name": "Grado en Bellas Artes",
+            "url": "https://www.us.es/estudiar/que-estudiar/oferta-de-grados/grado-en-bellas-artes"
+        },
+        {
+            "name": "Grado en Conservación y Restauración de Bienes Culturales",
+            "url": "https://www.us.es/estudiar/que-estudiar/oferta-de-grados/grado-en-conservacion-y-restauracion-de-bienes-culturales"
+        },
+        {
+            "name": "Doble Grado en Educación Primaria y Estudios Franceses",
+            "url": "https://www.us.es/estudiar/que-estudiar/oferta-de-grados/doble-grado-en-educacion-primaria-y-estudios-franceses"
+        },
+        {
+            "name": "Grado en Estudios Árabes e Islámicos",
+            "url": "https://www.us.es/estudiar/que-estudiar/oferta-de-grados/grado-en-estudios-arabes-e-islamicos"
+        },
+        {
+            "name": "Grado en Estudios de Asia Oriental por la Universidad de Sevilla y la Universidad de Málaga",
+            "url": "https://www.us.es/estudiar/que-estudiar/oferta-de-grados/grado-en-estudios-de-asia-oriental-por-la-universidad-de"
+        },
+        {
+            "name": "Grado en Estudios Franceses",
+            "url": "https://www.us.es/estudiar/que-estudiar/oferta-de-grados/grado-en-estudios-franceses"
+        },
+        {
+            "name": "Grado en Estudios Ingleses",
+            "url": "https://www.us.es/estudiar/que-estudiar/oferta-de-grados/grado-en-estudios-ingleses"
+        },
+        {
+            "name": "Grado en Filología Clásica",
+            "url": "https://www.us.es/estudiar/que-estudiar/oferta-de-grados/grado-en-filologia-clasica"
+        },
+        {
+            "name": "Doble Grado en Filología Clásica y Filología Hispánica",
+            "url": "https://www.us.es/estudiar/que-estudiar/oferta-de-grados/doble-grado-en-filologia-clasica-y-filologia-hispanica"
+        },
+        {
+            "name": "Grado en Filología Hispánica",
+            "url": "https://www.us.es/estudiar/que-estudiar/oferta-de-grados/grado-en-filologia-hispanica"
+        },
+        {
+            "name": "Grado en Filosofía (2022)",
+            "url": "https://www.us.es/estudiar/que-estudiar/oferta-de-grados/grado-en-filosofia-2022"
+        },
+        {
+            "name": "Grado en Historia",
+            "url": "https://www.us.es/estudiar/que-estudiar/oferta-de-grados/grado-en-historia"
+        },
+        {
+            "name": "Grado en Historia del Arte",
+            "url": "https://www.us.es/estudiar/que-estudiar/oferta-de-grados/grado-en-historia-del-arte"
+        },
+        {
+            "name": "Doble Grado en Historia e Historia del Arte",
+            "url": "https://www.us.es/estudiar/que-estudiar/oferta-de-grados/doble-grado-en-historia-e-historia-del-arte"
+        },
+        {
+            "name": "Grado en Lengua y Literatura Alemanas",
+            "url": "https://www.us.es/estudiar/que-estudiar/oferta-de-grados/grado-en-lengua-y-literatura-alemanas"
+        },
+        {
+            "name": "Doble Grado en Lengua y Literatura Alemanas y en Educación Primaria",
+            "url": "https://www.us.es/estudiar/que-estudiar/oferta-de-grados/doble-grado-en-lengua-y-literatura-alemanas-y-en-educacion"
+        },
+        {
+            "name": "Grado en Lenguas Modernas, Literaturas y Culturas",
+            "url": "https://www.us.es/estudiar/que-estudiar/oferta-de-grados/grado-en-lenguas-modernas-literaturas-y-culturas"
+        },
+        {
+            "name": "Doble Grado en Lenguas Modernas, Literaturas y Culturas y en Educación Primaria",
+            "url": "https://www.us.es/estudiar/que-estudiar/oferta-de-grados/doble-grado-en-lenguas-modernas-literaturas-y-culturas-y-en"
+        },
+        {
+            "name": "Grado en Biomedicina Básica y Experimental",
+            "url": "https://www.us.es/estudiar/que-estudiar/oferta-de-grados/grado-en-biomedicina-basica-y-experimental"
+        },
+        {
+            "name": "Grado en Enfermería",
+            "url": "https://www.us.es/estudiar/que-estudiar/oferta-de-grados/grado-en-enfermeria"
+        },
+        {
+            "name": "Grado en Farmacia",
+            "url": "https://www.us.es/estudiar/que-estudiar/oferta-de-grados/grado-en-farmacia"
+        },
+        {
+            "name": "Grado en Farmacia (2019)",
+            "url": "https://www.us.es/estudiar/que-estudiar/oferta-de-grados/grado-en-farmacia-2019"
+        },
+        {
+            "name": "Doble Grado en Farmacia y en Óptica y Optometría",
+            "url": "https://www.us.es/estudiar/que-estudiar/oferta-de-grados/doble-grado-en-farmacia-y-en-optica-y-optometria"
+        },
+        {
+            "name": "Doble Grado en Farmacia y en Óptica y Optometría (2019)",
+            "url": "https://www.us.es/estudiar/que-estudiar/oferta-de-grados/doble-grado-en-farmacia-y-en-optica-y-optometria-2019"
+        },
+        {
+            "name": "Grado en Fisioterapia",
+            "url": "https://www.us.es/estudiar/que-estudiar/oferta-de-grados/grado-en-fisioterapia"
+        },
+        {
+            "name": "Doble Grado en Fisioterapia y Ciencias de la Actividad Física y del Deporte",
+            "url": "https://www.us.es/estudiar/que-estudiar/oferta-de-grados/doble-grado-en-fisioterapia-y-ciencias-de-la-actividad"
+        },
+        {
+            "name": "Doble Grado en Fisioterapia y Ciencias de la Actividad Física y del Deporte (2023)",
+            "url": "https://www.us.es/estudiar/que-estudiar/oferta-de-grados/doble-grado-en-fisioterapia-y-ciencias-de-la-actividad-0"
+        },
+        {
+            "name": "Grado en Medicina",
+            "url": "https://www.us.es/estudiar/que-estudiar/oferta-de-grados/grado-en-medicina"
+        },
+        {
+            "name": "Grado en Odontología",
+            "url": "https://www.us.es/estudiar/que-estudiar/oferta-de-grados/grado-en-odontologia"
+        },
+        {
+            "name": "Grado en Óptica y Optometría",
+            "url": "https://www.us.es/estudiar/que-estudiar/oferta-de-grados/grado-en-optica-y-optometria"
+        },
+        {
+            "name": "Grado en Podología",
+            "url": "https://www.us.es/estudiar/que-estudiar/oferta-de-grados/grado-en-podologia"
+        },
+        {
+            "name": "Grado en Psicología",
+            "url": "https://www.us.es/estudiar/que-estudiar/oferta-de-grados/grado-en-psicologia"
+        },
+        {
+            "name": "Grado en Administración y Dirección de Empresas",
+            "url": "https://www.us.es/estudiar/que-estudiar/oferta-de-grados/grado-en-administracion-y-direccion-de-empresas"
+        },
+        {
+            "name": "Doble Grado en Administración y Dirección de Empresas y en Derecho",
+            "url": "https://www.us.es/estudiar/que-estudiar/oferta-de-grados/doble-grado-en-administracion-y-direccion-de-empresas-y-en"
+        },
+        {
+            "name": "Doble Grado en Administración y Dirección de Empresas y en Economía",
+            "url": "https://www.us.es/estudiar/que-estudiar/oferta-de-grados/doble-grado-en-administracion-y-direccion-de-empresas-y-en-1"
+        },
+        {
+            "name": "Doble Grado en Administración y Dirección de Empresas y en Finanzas y Contabilidad",
+            "url": "https://www.us.es/estudiar/que-estudiar/oferta-de-grados/doble-grado-en-administracion-y-direccion-de-empresas-y-en-0"
+        },
+        {
+            "name": "Grado en Antropología Social y Cultural",
+            "url": "https://www.us.es/estudiar/que-estudiar/oferta-de-grados/grado-en-antropologia-social-y-cultural"
+        },
+        {
+            "name": "Grado en Antropología Social y Cultural (2021)",
+            "url": "https://www.us.es/estudiar/que-estudiar/oferta-de-grados/grado-en-antropologia-social-y-cultural-2021"
+        },
+        {
+            "name": "Grado en Ciencias de la Actividad Física y del Deporte",
+            "url": "https://www.us.es/estudiar/que-estudiar/oferta-de-grados/grado-en-ciencias-de-la-actividad-fisica-y-del-deporte"
+        },
+        {
+            "name": "Grado en Ciencias de la Actividad Física y del Deporte (2023)",
+            "url": "https://www.us.es/estudiar/que-estudiar/oferta-de-grados/grado-en-ciencias-de-la-actividad-fisica-y-del-deporte-2023"
+        },
+        {
+            "name": "Grado en Comunicación Audiovisual",
+            "url": "https://www.us.es/estudiar/que-estudiar/oferta-de-grados/grado-en-comunicacion-audiovisual"
+        },
+        {
+            "name": "Grado en Criminología",
+            "url": "https://www.us.es/estudiar/que-estudiar/oferta-de-grados/grado-en-criminologia"
+        },
+        {
+            "name": "Grado en Derecho",
+            "url": "https://www.us.es/estudiar/que-estudiar/oferta-de-grados/grado-en-derecho"
+        },
+        {
+            "name": "Doble Grado en Derecho y en Economía",
+            "url": "https://www.us.es/estudiar/que-estudiar/oferta-de-grados/doble-grado-en-derecho-y-en-economia"
+        },
+        {
+            "name": "Doble Grado en Derecho y en Filosofía (2025)",
+            "url": "https://www.us.es/estudiar/que-estudiar/oferta-de-grados/doble-grado-en-derecho-y-en-filosofia-2025"
+        },
+        {
+            "name": "Doble Grado en Derecho y en Finanzas y Contabilidad",
+            "url": "https://www.us.es/estudiar/que-estudiar/oferta-de-grados/doble-grado-en-derecho-y-en-finanzas-y-contabilidad"
+        },
+        {
+            "name": "Doble Grado en Derecho y Gestión y Administración Pública",
+            "url": "https://www.us.es/estudiar/que-estudiar/oferta-de-grados/doble-grado-en-derecho-y-gestion-y-administracion-publica"
+        },
+        {
+            "name": "Grado en Derecho y Laurea Magistrales en Giurisprudenza (USE y Universidad de Florencia)",
+            "url": "https://www.us.es/estudiar/que-estudiar/oferta-de-grados/grado-en-derecho-y-laurea-magistrales-en-giurisprudenza-use"
+        },
+        {
+            "name": "Grado en Economía",
+            "url": "https://www.us.es/estudiar/que-estudiar/oferta-de-grados/grado-en-economia"
+        },
+        {
+            "name": "Grado en Educación Infantil",
+            "url": "https://www.us.es/estudiar/que-estudiar/oferta-de-grados/grado-en-educacion-infantil"
+        },
+        {
+            "name": "Doble Grado en Educación Infantil y Educación Primaria",
+            "url": "https://www.us.es/estudiar/que-estudiar/oferta-de-grados/doble-grado-en-educacion-infantil-y-educacion-primaria"
+        },
+        {
+            "name": "Grado en Educación Primaria",
+            "url": "https://www.us.es/estudiar/que-estudiar/oferta-de-grados/grado-en-educacion-primaria"
+        },
+        {
+            "name": "Grado en Finanzas y Contabilidad",
+            "url": "https://www.us.es/estudiar/que-estudiar/oferta-de-grados/grado-en-finanzas-y-contabilidad"
+        },
+        {
+            "name": "Doble Grado en Finanzas y Contabilidad y en Relaciones Laborales y Recursos Humanos",
+            "url": "https://www.us.es/estudiar/que-estudiar/oferta-de-grados/doble-grado-en-finanzas-y-contabilidad-y-en-relaciones"
+        },
+        {
+            "name": "Doble Grado en Finanzas y Contabilidad y Turismo",
+            "url": "https://www.us.es/estudiar/que-estudiar/oferta-de-grados/doble-grado-en-finanzas-y-contabilidad-y-turismo"
+        },
+        {
+            "name": "Grado en Geografía y Gestión del Territorio",
+            "url": "https://www.us.es/estudiar/que-estudiar/oferta-de-grados/grado-en-geografia-y-gestion-del-territorio"
+        },
+        {
+            "name": "Doble Grado en Geografía y Gestión del Territorio e Historia",
+            "url": "https://www.us.es/estudiar/que-estudiar/oferta-de-grados/doble-grado-en-geografia-y-gestion-del-territorio-e-historia"
+        },
+        {
+            "name": "Doble Grado en Geografía y Gestión del Territorio e Historia (2024)",
+            "url": "https://www.us.es/estudiar/que-estudiar/oferta-de-grados/doble-grado-en-geografia-y-gestion-del-territorio-e-0"
+        },
+        {
+            "name": "Grado en Gestión y Administración Pública",
+            "url": "https://www.us.es/estudiar/que-estudiar/oferta-de-grados/grado-en-gestion-y-administracion-publica"
+        },
+        {
+            "name": "Grado en Marketing e Investigación de Mercados",
+            "url": "https://www.us.es/estudiar/que-estudiar/oferta-de-grados/grado-en-marketing-e-investigacion-de-mercados"
+        },
+        {
+            "name": "Grado en Pedagogía",
+            "url": "https://www.us.es/estudiar/que-estudiar/oferta-de-grados/grado-en-pedagogia"
+        },
+        {
+            "name": "Grado en Periodismo",
+            "url": "https://www.us.es/estudiar/que-estudiar/oferta-de-grados/grado-en-periodismo"
+        },
+        {
+            "name": "Doble Grado en Periodismo y Comunicación Audiovisual (2016)",
+            "url": "https://www.us.es/estudiar/que-estudiar/oferta-de-grados/doble-grado-en-periodismo-y-comunicacion-audiovisual-2016"
+        },
+        {
+            "name": "Grado en Publicidad y Relaciones Públicas",
+            "url": "https://www.us.es/estudiar/que-estudiar/oferta-de-grados/grado-en-publicidad-y-relaciones-publicas"
+        },
+        {
+            "name": "Grado en Relaciones Laborales y Recursos Humanos",
+            "url": "https://www.us.es/estudiar/que-estudiar/oferta-de-grados/grado-en-relaciones-laborales-y-recursos-humanos"
+        },
+        {
+            "name": "Grado en Turismo",
+            "url": "https://www.us.es/estudiar/que-estudiar/oferta-de-grados/grado-en-turismo"
+        },
+        {
+            "name": "Grado en Turismo (2024)",
+            "url": "https://www.us.es/estudiar/que-estudiar/oferta-de-grados/grado-en-turismo-2024"
+        },
+        {
+            "name": "Grado en Biología",
+            "url": "https://www.us.es/estudiar/que-estudiar/oferta-de-grados/grado-en-biologia"
+        },
+        {
+            "name": "Grado en Bioquímica por la Universidad de Sevilla y la Universidad de Málaga",
+            "url": "https://www.us.es/estudiar/que-estudiar/oferta-de-grados/grado-en-bioquimica-por-la-universidad-de-sevilla-y-la"
+        },
+        {
+            "name": "Grado en Estadística",
+            "url": "https://www.us.es/estudiar/que-estudiar/oferta-de-grados/grado-en-estadistica"
+        },
+        {
+            "name": "Doble Grado en Estadística y Finanzas y Contabilidad",
+            "url": "https://www.us.es/estudiar/que-estudiar/oferta-de-grados/doble-grado-en-estadistica-y-finanzas-y-contabilidad"
+        },
+        {
+            "name": "Grado en Física",
+            "url": "https://www.us.es/estudiar/que-estudiar/oferta-de-grados/grado-en-fisica"
+        },
+        {
+            "name": "Doble Grado en Física y en Ingeniería de Materiales",
+            "url": "https://www.us.es/estudiar/que-estudiar/oferta-de-grados/doble-grado-en-fisica-y-en-ingenieria-de-materiales"
+        },
+        {
+            "name": "Doble Grado en Física y Matemáticas",
+            "url": "https://www.us.es/estudiar/que-estudiar/oferta-de-grados/doble-grado-en-fisica-y-matematicas"
+        },
+        {
+            "name": "Doble Grado en Ingeniería Agrícola (US) y Grado en Ciencias Ambientales (UPO)",
+            "url": "https://www.us.es/estudiar/que-estudiar/oferta-de-grados/doble-grado-en-ingenieria-agricola-us-y-grado-en-ciencias"
+        },
+        {
+            "name": "Doble Grado en Ingeniería Informática-Tecnologías Informáticas y en Matemáticas",
+            "url": "https://www.us.es/estudiar/que-estudiar/oferta-de-grados/doble-grado-en-ingenieria-informatica-tecnologias"
+        },
+        {
+            "name": "Grado en Matemáticas",
+            "url": "https://www.us.es/estudiar/que-estudiar/oferta-de-grados/grado-en-matematicas"
+        },
+        {
+            "name": "Doble Grado en Matemáticas y Estadística",
+            "url": "https://www.us.es/estudiar/que-estudiar/oferta-de-grados/doble-grado-en-matematicas-y-estadistica"
+        },
+        {
+            "name": "Grado en Química",
+            "url": "https://www.us.es/estudiar/que-estudiar/oferta-de-grados/grado-en-quimica"
+        },
+        {
+            "name": "Doble Grado en Química y en Ingeniería de Materiales",
+            "url": "https://www.us.es/estudiar/que-estudiar/oferta-de-grados/doble-grado-en-quimica-y-en-ingenieria-de-materiales"
+        },
+        {
+            "name": "Grado en Edificación",
+            "url": "https://www.us.es/estudiar/que-estudiar/oferta-de-grados/grado-en-edificacion"
+        },
+        {
+            "name": "Grado en Fundamentos de Arquitectura",
+            "url": "https://www.us.es/estudiar/que-estudiar/oferta-de-grados/grado-en-fundamentos-de-arquitectura"
+        },
+        {
+            "name": "Grado en Ingeniería Aeroespacial",
+            "url": "https://www.us.es/estudiar/que-estudiar/oferta-de-grados/grado-en-ingenieria-aeroespacial"
+        },
+        {
+            "name": "Grado en Ingeniería Agrícola",
+            "url": "https://www.us.es/estudiar/que-estudiar/oferta-de-grados/grado-en-ingenieria-agricola"
+        },
+        {
+            "name": "Grado en Ingeniería Civil",
+            "url": "https://www.us.es/estudiar/que-estudiar/oferta-de-grados/grado-en-ingenieria-civil"
+        },
+        {
+            "name": "Grado en Ingeniería de la Energía por la Universidad de Sevilla y la Universidad de Málaga",
+            "url": "https://www.us.es/estudiar/que-estudiar/oferta-de-grados/grado-en-ingenieria-de-la-energia-por-la-universidad-de"
+        },
+        {
+            "name": "Grado en Ingeniería de la Salud por la Universidad de Málaga y la Universidad de Sevilla",
+            "url": "https://www.us.es/estudiar/que-estudiar/oferta-de-grados/grado-en-ingenieria-de-la-salud-por-la-universidad-de-malaga"
+        },
+        {
+            "name": "Grado en Ingeniería de las Tecnologías de Telecomunicación",
+            "url": "https://www.us.es/estudiar/que-estudiar/oferta-de-grados/grado-en-ingenieria-de-las-tecnologias-de-telecomunicacion"
+        },
+        {
+            "name": "Grado en Ingeniería de Materiales",
+            "url": "https://www.us.es/estudiar/que-estudiar/oferta-de-grados/grado-en-ingenieria-de-materiales"
+        },
+        {
+            "name": "Grado en Ingeniería de Organización Industrial por la Universidad de Málaga y la Universidad de Sevilla",
+            "url": "https://www.us.es/estudiar/que-estudiar/oferta-de-grados/grado-en-ingenieria-de-organizacion-industrial-por-la"
+        },
+        {
+            "name": "Grado en Ingeniería de Tecnologías Industriales",
+            "url": "https://www.us.es/estudiar/que-estudiar/oferta-de-grados/grado-en-ingenieria-de-tecnologias-industriales"
+        },
+        {
+            "name": "Grado en Ingeniería de Tecnologías Industriales (2024)",
+            "url": "https://www.us.es/estudiar/que-estudiar/oferta-de-grados/grado-en-ingenieria-de-tecnologias-industriales-2024"
+        },
+        {
+            "name": "Grado en Ingeniería Eléctrica",
+            "url": "https://www.us.es/estudiar/que-estudiar/oferta-de-grados/grado-en-ingenieria-electrica"
+        },
+        {
+            "name": "Doble Grado en Ingeniería Eléctrica e Ingeniería Electrónica Industrial",
+            "url": "https://www.us.es/estudiar/que-estudiar/oferta-de-grados/doble-grado-en-ingenieria-electrica-e-ingenieria-electronica"
+        },
+        {
+            "name": "Doble Grado en Ingeniería Eléctrica e Ingeniería Mecánica",
+            "url": "https://www.us.es/estudiar/que-estudiar/oferta-de-grados/doble-grado-en-ingenieria-electrica-e-ingenieria-mecanica"
+        },
+        {
+            "name": "Grado en Ingeniería Electrónica Industrial",
+            "url": "https://www.us.es/estudiar/que-estudiar/oferta-de-grados/grado-en-ingenieria-electronica-industrial"
+        },
+        {
+            "name": "Grado en Ingeniería Electrónica, Robótica y Mecatrónica por la Universidad de Málaga y la Universidad de Sevilla",
+            "url": "https://www.us.es/estudiar/que-estudiar/oferta-de-grados/grado-en-ingenieria-electronica-robotica-y-mecatronica-por"
+        },
+        {
+            "name": "Grado en Ingeniería en Diseño Industrial y Desarrollo del Producto",
+            "url": "https://www.us.es/estudiar/que-estudiar/oferta-de-grados/grado-en-ingenieria-en-diseno-industrial-y-desarrollo-del"
+        },
+        {
+            "name": "Doble Grado en Ingeniería en Diseño Industrial y Desarrollo del Producto e Ingeniería Mecánica",
+            "url": "https://www.us.es/estudiar/que-estudiar/oferta-de-grados/doble-grado-en-ingenieria-en-diseno-industrial-y-desarrollo"
+        },
+        {
+            "name": "Grado en Ingeniería Informática-Ingeniería de Computadores",
+            "url": "https://www.us.es/estudiar/que-estudiar/oferta-de-grados/grado-en-ingenieria-informatica-ingenieria-de-computadores"
+        },
+        {
+            "name": "Grado en Ingeniería Informática-Ingeniería del Software",
+            "url": "https://www.us.es/estudiar/que-estudiar/oferta-de-grados/grado-en-ingenieria-informatica-ingenieria-del-software"
+        },
+        {
+            "name": "Grado en Ingeniería Informática-Inteligencia Artificial",
+            "url": "https://www.us.es/estudiar/que-estudiar/oferta-de-grados/grado-en-ingenieria-informatica-inteligencia-artificial"
+        },
+        {
+            "name": "Grado en Ingeniería Informática-Tecnologías Informáticas",
+            "url": "https://www.us.es/estudiar/que-estudiar/oferta-de-grados/grado-en-ingenieria-informatica-tecnologias-informaticas"
+        },
+        {
+            "name": "Grado en Ingeniería Mecánica",
+            "url": "https://www.us.es/estudiar/que-estudiar/oferta-de-grados/grado-en-ingenieria-mecanica"
+        },
+        {
+            "name": "Grado en Ingeniería Química",
+            "url": "https://www.us.es/estudiar/que-estudiar/oferta-de-grados/grado-en-ingenieria-quimica"
+        },
+        {
+            "name": "Grado en Ingeniería Química Industrial",
+            "url": "https://www.us.es/estudiar/que-estudiar/oferta-de-grados/grado-en-ingenieria-quimica-industrial"
+        }
+    ]
+}
