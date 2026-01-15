@@ -1249,3 +1249,11 @@
 *  **Session:** Corrección Crítica de Prompts de Evaluación y Blindaje Frontend Multimedia
 *  **Description:** Sesión dedicada a la rectificación urgente del sistema de autoevaluaciones (Assessment). Se refactorizará core/services/prompt_generators.py para imponer el castellano en la interfaz, parametrizar el idioma de la asignatura y corregir la inyección de etiquetas de control ([---TRANSCRIPT---], [---TAGS---]) para evitar conflictos con Markdown. En el frontend (take_assessment.html), se implementará ocultación CSS forzosa para los textos de Listening y se inyectarán atributos de idioma para el TTS. Finalmente, se validará el flujo de subida de audio al backend.
 
+
+# 2026-01-15
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+## AAAA # --SYSTEM -->
+*  **Session:** Reconstrucción de Autoevaluaciones: Super-Arquetipos y Blindaje DB
+*  **Description:** Implementación de lógica de saneamiento en `orchestrator` para prevenir desbordamiento de columnas (Error 1406). Integración de estándares pedagógicos (CertACLES, EUR-ACE, MECES) en `prompt_generators.py` para generación de exámenes contextualizados por disciplina. Validación de flujo server-side en `assessment`.
+

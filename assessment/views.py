@@ -122,7 +122,7 @@ def generate_ai_assessment(request, copy_pk):
 def _process_question_display(question):
     """
     Procesa el texto de la pregunta para separar metadatos (transcripts, flags)
-    del texto visualizable.
+    del texto visualizable y determina el modo de visualización (Test vs Abierta).
     """
     text = question.question_text
     transcript = None
@@ -132,9 +132,7 @@ def _process_question_display(question):
     transcript_match = re.search(r'\[---TRANSCRIPT---\]([\s\S]*?)\[---END-TRANSCRIPT---\]', text)
     if transcript_match:
         transcript = transcript_match.group(1).strip()
-        # Eliminar el bloque completo del texto visible
         text = text.replace(transcript_match.group(0), '').strip()
-        # Limpieza básica de HTML residual en el transcript extraído
         transcript = re.sub(r'<[^>]*>', ' ', transcript)
         transcript = re.sub(r'\s+', ' ', transcript).strip()
         
@@ -143,11 +141,19 @@ def _process_question_display(question):
     if recording_match:
         requires_recording = True
         text = text.replace(recording_match.group(0), '').strip()
+    
+    # 3. [HITO 6] Determinación de Modo de Vista (Logic in View)
+    is_multiple_choice_view = False
+    if question.question_type == 'multiple_choice':
+        # Validación de integridad para visualización
+        if question.options and isinstance(question.options, list) and len(question.options) >= 2:
+            is_multiple_choice_view = True
         
-    # Asignar atributos volátiles (no se guardan en BD)
+    # Asignar atributos volátiles
     question.display_text = text
     question.transcript = transcript
     question.requires_recording = requires_recording
+    question.is_multiple_choice_view = is_multiple_choice_view
     return question
 
 

@@ -155,88 +155,76 @@ def generate_assessment_prompt(
     learning_objectives: str = ""
 ) -> str:
     """
-    [HITO 6] Generador de Exámenes Universitarios Reales (V3 - Academic Rigor).
-    Estructuras basadas en modelos oficiales (Cambridge B2, Ingeniería, UNED).
+    [HITO 6] Generador de Exámenes Universitarios Reales (V4 - UGR Strict Emulator).
+    Soporte nativo para Tests (Reading/Listening) y Problemas (Ingeniería).
     """
     
-    # --- ARQUETIPO: CIENCIAS EXACTAS (Cálculo/Ingeniería) ---
+    # --- ARQUETIPO: CIENCIAS EXACTAS (ETSIIT UGR) ---
     if subject_type == "EXACT_SCIENCES":
-        instructions = (
-            "Actúa como un Catedrático de Ingeniería. Genera un EXAMEN FINAL riguroso.\n"
-            "ESTRUCTURA OBLIGATORIA (4 PROBLEMAS DE DESARROLLO):\n"
-            "Genera 4 Problemas Complejos. Cada problema debe tener apartados (a, b, c).\n"
-            "1. Problema 1: Conceptos base / Cálculo directo (con variables numéricas).\n"
-            "2. Problema 2: Aplicación práctica o resolución de problemas.\n"
-            "3. Problema 3: Demostración o análisis de casos límite.\n"
-            "4. Problema 4: Problema integrado de alta dificultad.\n\n"
-            "REGLAS TÉCNICAS:\n"
-            "- Usa LaTeX OBLIGATORIAMENTE para toda fórmula matemática: `\\\\(...\\\\)` (en línea) y `$$...$$` (bloque).\n"
-            "- La 'model_answer' debe mostrar el desarrollo paso a paso, no solo el resultado final."
-        )
+        instructions = """Actúa como un Catedrático de Ingeniería. Genera un EXAMEN FINAL riguroso.
+ESTRUCTURA OBLIGATORIA (4 PROBLEMAS):
+Genera 4 Problemas de Desarrollo Complejos. NO uses preguntas tipo test.
+1. Problema 1: Conceptos base / Cálculo directo.
+2. Problema 2: Aplicación práctica.
+3. Problema 3: Demostración o caso límite.
+4. Problema 4: Problema integrado.
 
-    # --- ARQUETIPO: IDIOMAS (Certificación Oficial) ---
+REGLAS TÉCNICAS:
+- Usa LaTeX OBLIGATORIAMENTE para fórmulas: \\(...\\) y $$...$$.
+- Establece 'question_type': 'open_ended'."""
+
+    # --- ARQUETIPO: IDIOMAS (CLM UGR - CertAcles) ---
     elif subject_type == "LANGUAGES":
-        instructions = (
-            "Actúa como un Examinador Oficial de Acreditación Universitaria (Modelo CertAcles / CLM UGR). "
-            "Tu objetivo es generar un examen de dominio de lengua extranjera (Nivel B2/C1) basado rigurosamente en el texto proporcionado.\n"
-            "ESTRUCTURA OBLIGATORIA (4 DESTREZAS - SIN GRAMÁTICA AISLADA):\n\n"
-            "**DESTREZA 1: COMPRENSIÓN LECTORA (Reading)**\n"
-            "- Usa el texto proporcionado como base.\n"
-            "- Genera 4 preguntas de COMPRENSIÓN PROFUNDA (no literal).\n"
-            "- Formato: Preguntas de respuesta abierta breve o análisis de intención del autor.\n"
-            "- NO generes ejercicios de rellenar huecos (Use of English).\n\n"
-            "**DESTREZA 2: COMPRENSIÓN AUDITIVA (Listening)**\n"
-            "- Escribe un guion de audio (Transcript) de 200 palabras que complemente el tema (ej: una entrevista a un experto o una conferencia).\n"
-            "- REGLA DE FORMATO: El guion DEBE estar encerrado en: [---TRANSCRIPT---]...texto...[---END-TRANSCRIPT---]\n"
-            "- Genera 2 preguntas sobre este audio. IMPORTANTE: El enunciado de la pregunta DEBE decir explícitamente: 'Escucha el audio y responde: [Tu Pregunta]'. No dejes el enunciado vacío.\n\n"
-            "**DESTREZA 3: EXPRESIÓN ESCRITA (Writing)**\n"
-            "- Tarea 1 (Interacción): Propón la redacción de un correo electrónico formal o carta al director relacionada con el tema (aprox 150 palabras).\n"
-            "- Tarea 2 (Producción): Propón la redacción de un Ensayo de Opinión (Essay) discutiendo los pros y contras del tema (aprox 250 palabras).\n\n"
-            "**DESTREZA 4: EXPRESIÓN ORAL (Speaking)**\n"
-            "- Propón un tema para un Monólogo Sostenido (3-4 minutos).\n"
-            "- OBLIGATORIO: Añade al final la etiqueta: [---RECORDING-REQUIRED---]."
-        )
+        instructions = """Actúa como un Examinador Oficial CertAcles. Generarás un examen de 4 secciones. 
+ESTA PROHIBIDO omitir cualquier sección. Debes completar el checklist:
 
+1. [ ] SECCIÓN READING: Genera 4 preguntas 'multiple_choice' con 4 opciones cada una.
+2. [ ] SECCIÓN LISTENING: Genera un Transcript (200 palabras) entre [---TRANSCRIPT---] y [---END-TRANSCRIPT---]. Luego genera 2 preguntas 'multiple_choice' (3 opciones) sobre ese audio.
+3. [ ] SECCIÓN WRITING: Genera 1 tarea de redacción (Essay o Email) tipo 'open_ended'.
+4. [ ] SECCIÓN SPEAKING: Genera 1 tema de monólogo tipo 'open_ended' + etiqueta [---RECORDING-REQUIRED---].
+
+**REGLA DE ORO:** La respuesta debe contener exactamente 8 preguntas en total (4 Reading + 2 Listening + 1 Writing + 1 Speaking).
+**EJEMPLO OBLIGATORIO DE FORMATO JSON:**
+{
+  "question_text": "...",
+  "question_type": "multiple_choice",
+  "options": ["a) ...", "b) ...", "c) ...", "d) ..."],
+  "model_answer": "a) ..."
+}"""
+
+    # --- ARQUETIPO: HUMANIDADES (UNED/UGR) ---
     else:
-        instructions = (
-            "Actúa como Profesor Titular de Humanidades. Genera un examen modelo Universidad/UNED.\n"
-            "ESTRUCTURA OBLIGATORIA (3 PARTES):\n\n"
-            "**PARTE 1: DEFINICIÓN DE CONCEPTOS**\n"
-            "- Genera 4 preguntas cortas para definir conceptos clave o términos técnicos del texto.\n\n"
-            "**PARTE 2: COMENTARIO DE TEXTO/OBRA**\n"
-            "- Selecciona un fragmento significativo del texto proporcionado (o descríbelo si es una obra de arte).\n"
-            "- Pide un análisis formal, estilístico e histórico-contextual.\n\n"
-            "**PARTE 3: TEMA DE DESARROLLO**\n"
-            "- Plantea 1 pregunta amplia de desarrollo ('Elabore un ensayo sobre...') que requiera relacionar autores, causas y consecuencias."
-        )
+        instructions = """Actúa como Profesor Titular de Humanidades. Genera un examen mixto:
+1. **Definición de Conceptos (Test):** 2 preguntas teóricas clave.
+   - TIPO: 'multiple_choice'.
+   - Opciones: 4 opciones.
+2. **Comentario de Texto:** 1 fragmento para analizar.
+   - TIPO: 'open_ended'.
+3. **Desarrollo:** 1 pregunta amplia de ensayo.
+   - TIPO: 'open_ended'."""
 
-    
     objectives_section = ""
     if learning_objectives:
-        objectives_section = (
-            "**GUÍA DOCENTE (OBJETIVOS DE APRENDIZAJE):**\n"
-            "El examen debe certificar que el alumno ha adquirido las siguientes competencias. "
-            "Prioriza preguntas que validen estos objetivos sobre detalles triviales del texto:\n"
-            f"{learning_objectives}\n\n"
-        )
+        objectives_section = f"**OBJETIVOS DE APRENDIZAJE:**\n{learning_objectives}\n\n"
 
-    base_prompt = (
-        f"{objectives_section}{instructions}\n\n"
-        f"CONTEXTO: {segment_info}\n"
-        "MATERIAL DE ESTUDIO (Fuente):\n"
-        "--------------------------------------------------\n"
-        f"{content_text[:45000]}\n"
-        "--------------------------------------------------\n\n"
-        "**FORMATO JSON (Strict Schema):**\n"
-        "{\n"
-        '  "questions": [\n'
-        "    {\n"
-        '      "question_text": "Enunciado del problema / Transcript + Pregunta / Tema Speaking...",\n'
-        '      "question_type": "open_ended",\n'
-        '      "model_answer": "Solución detallada..."\n'
-        "    }\n"
-        "  ]\n"
-        "}\n"
-        "Nota: Genera TODOS los items solicitados en la estructura (aprox 10-12 items en total). No omitas ninguna parte."
-    )
+    base_prompt = f"""{objectives_section}{instructions}
+
+CONTEXTO: {segment_info}
+FUENTE:
+--------------------------------------------------
+{content_text[:45000]}
+--------------------------------------------------
+
+**FORMATO JSON ESTRICTO:**
+{{
+  "questions": [
+    {{
+      "question_text": "Enunciado...",
+      "question_type": "multiple_choice" O "open_ended",
+      "options": ["a) Opción 1", "b) Opción 2", "c) Opción 3"] (SOLO SI ES multiple_choice),
+      "model_answer": "Respuesta correcta (letra o desarrollo)..."
+    }}
+  ]
+}}
+IMPORTANTE: Si 'question_type' es 'multiple_choice', el campo 'options' es OBLIGATORIO."""
     return base_prompt

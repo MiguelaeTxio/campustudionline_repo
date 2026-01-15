@@ -389,6 +389,7 @@
 ./assessment/migrations/0009_alter_assessment_content.py
 ./assessment/migrations/0016_assessment_target_segment_useranswer_audio_file_and_more.py
 ./assessment/migrations/0014_assessment_event_log.py
+./assessment/migrations/0017_question_options.py
 ./assessment/migrations/0001_initial.py
 ./assessment/admin_urls.py
 ./assessment/tests.py

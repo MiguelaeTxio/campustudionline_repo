@@ -18,7 +18,7 @@ from schedule.models import AcademicEvent
 logger = logging.getLogger(__name__)
 
 # Constante de Modelo vinculante
-GEMINI_MODEL_NAME = "gemini-3-flash-preview"
+GEMINI_MODEL_NAME = "gemini-2.5-flash-lite"
 
 class UniversiaService:
     @staticmethod
@@ -84,7 +84,7 @@ class UniversiaService:
             gen_config = types.GenerateContentConfig(
                 system_instruction=base_prompt,
                 thinking_config=types.ThinkingConfig(include_thoughts=True),
-                temperature=1.0 # Default recomendado para Gemini 3
+                temperature=0.7 # Ajustado para Gemini 2.5 Lite
             )
 
             # 3. Reconstrucción ROBUSTA del historial (Adaptado a SDK v1)

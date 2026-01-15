@@ -1,17 +1,24 @@
-# Hito 6: Sistema de Autoevaluaciones con IA (RECONSTRUCCIÓN NUCLEAR - EN PROGRESO)
+# Hito 6: Sistema de Autoevaluaciones con IA (EMULADOR UGR - RECONSTRUCCIÓN V4)
 
-**Estado:** 🚧 EN DESARROLLO (Arquitectura Pedagógica Validada)
-**Modelo Vinculante:** `gemini-2.5-flash-lite`
+**Estado:** 🚧 EN DESARROLLO (Nueva Arquitectura de Precisión)
+**Modelo Vinculante:** `gemini-3-flash-preview`
 
-## DIRECTRIZ SUPREMA PARA LA PRÓXIMA SESIÓN
-El modelo entrante **DEBE** comenzar realizando una investigación profunda (PVD) sobre los siguientes estándares para igualar el contexto del modelo saliente. No debe generar código hasta haber verbalizado la comprensión de:
-1.  **CertACLES (UGR):** Modelo de 4 destrezas para Idiomas (Reading, Listening, Writing, Speaking).
-2.  **EUR-ACE® (Ingeniería):** Estándar de calidad para STEM centrado en resolución de problemas complejos y juicio técnico.
-3.  **MECES Nivel 2 / Taxonomía SOLO (Humanidades):** Foco en aprendizaje relacional y crítico (Comentario de Fuentes).
+## HOJA DE RUTA PARA LA SIGUIENTE SESIÓN (LEY SUPREMA)
 
-## HOJA DE RUTA TÉCNICA (ORDEN ESTRICTO)
-1.  **Orchestrator Fix (Blindaje DB):** En `tasks.py`, dentro de `generate_assessment_from_content_task`, sanear el diccionario `q_data` antes de llamar a `Question.objects.create()`. Forzar `q_data['question_type'] = 'open_ended'` para evitar el Error 1406 (Data too long) de MySQL.
-2.  **Refactor de Prompts (Super-Arquetipos):** Implementar en `prompt_generators.py` los 3 Super-Arquetipos con lógica de sub-disciplina (Arte, Historia, Derecho, Ingeniería, etc.) asegurando una densidad de 12-15 ítems por examen.
-3.  **Validación de Flujo Server-Side:** Verificar que la vista `take_assessment` en `views.py` procesa correctamente los nuevos fragmentos (transcripts y tags de grabación) usando la lógica server-side ya implementada.
-4.  **Prueba de Carga:** Generar una evaluación completa para una asignatura de Ingeniería y otra de Idiomas para validar la estabilidad del parser `dirtyjson`.
+### FASE 1: Re-arquitectura del Modelo y Selección (UI)
+1.  **Modificación del Modelo `Assessment`:**
+    *   Sustituir el campo `target_segment` (choices Q1, Q2, Q3) por un `JSONField` llamado `selection_range` que almacenará los índices o slugs de los temas del `master_schema` seleccionados por el usuario.
+    *   Añadir campos de texto `reading_stimulus` y `listening_transcript` para persistir los materiales generados en el paso 1 del pipeline.
+2.  **Vista de Configuración de Examen:**
+    *   Implementar una vista que parsee el `master_schema` del contenido original y lo presente en una lista de selección o slider doble.
+3.  **Frontend de Selección:**
+    *   Diseñar el formulario de selección de temas previo a la creación del objeto `Assessment`.
 
+### FASE 2: El Motor UGR (Pipeline de 3 Pasos en `tasks.py`)
+1.  **Paso 1 (Generación de Estímulo):** Petición a Gemini 3 para crear un texto de Reading (500 palabras) y un guion de Listening (200 palabras) inéditos, basados estrictamente en los temas seleccionados.
+2.  **Paso 2 (Generación de Ítems de Test):** Petición para generar 6 preguntas `multiple_choice` (4 Reading + 2 Listening) basadas en el estímulo del Paso 1.
+3.  **Paso 3 (Generación de Producción):** Petición para las tareas de Writing y Speaking.
+
+### FASE 3: UX y Presentación
+1.  **Sidebar de Referencia:** Modificar la Sidebar para que cargue exclusivamente el contenido de `assessment.reading_stimulus`.
+2.  **Hardening MathJax:** Asegurar que MathJax ignore la Sidebar para evitar conflictos con los símbolos `#` del Markdown.

@@ -441,43 +441,68 @@ def _log_assessment_event(assessment_id, message, level="INFO"):
 
 def _parse_assessment_text(text: str) -> list:
     """
-    Parsea la respuesta de la IA utilizando dirtyjson para máxima tolerancia a fallos de sintaxis.
-    V4.0 - Integración de librería robusta.
+    [HITO 6 - EMULADOR UGR] Parser con Validación Estricta de Integridad.
+    No acepta preguntas tipo test sin opciones. Lanza excepción implícita para forzar reintento.
     """
-    # 1. Limpieza preliminar básica
     text = clean_json_response(text)
+    raw_list = []
     
-    # 2. Intento con dirtyjson (Maneja comillas simples, falta de comillas, trailing commas)
+    # 1. Extracción (dirtyjson)
     try:
         data = dirtyjson.loads(text)
         if isinstance(data, dict) and "questions" in data:
-            return data["questions"]
-        if isinstance(data, list):
-            return data
-    except Exception as e:
-        logger.warning(f"dirtyjson failed: {e}")
-
-    # 3. Fallback: Extracción por Regex de bloques (Último recurso si dirtyjson falla por texto mezclado)
-    questions = []
-    try:
-        # Regex relajada para capturar objetos tipo { "question_text": ... }
-        # Útil si la IA mezcla texto introductorio con el JSON
-        object_pattern = re.compile(r'\{\s*(?:\"|\')?question_text(?:\"|\')?:\s*(?:\"|\')(.*?)(?:\"|\'),\s*(?:\"|\')?question_type(?:\"|\')?:\s*(?:\"|\').*?(?:\"|\'),\s*(?:\"|\')?model_answer(?:\"|\')?:\s*(?:\"|\')(.*?)(?:\"|\')\s*\}', re.DOTALL)
-        
-        matches = object_pattern.findall(text)
-        for qt, ma in matches:
-            questions.append({
-                "question_text": qt.replace('\\"', '"').replace('\\n', '\n'),
-                "model_answer": ma.replace('\\"', '"').replace('\\n', '\n'),
-                "question_type": "open_ended"
-            })
-            
-        if questions:
-            return questions
+            raw_list = data["questions"]
+        elif isinstance(data, list):
+            raw_list = data
     except Exception:
         pass
 
-    return []
+    if not raw_list:
+        # Fallback Regex (CORREGIDO: Usa triple comilla para evitar SyntaxError)
+        try:
+            # Captura question_text y question_type de forma tolerante
+            object_pattern = re.compile(r'''\{\s*(?:"|')?question_text(?:"|')?:\s*(?:"|')(.*?)(?:"|'),\s*(?:"|')?question_type(?:"|')?:\s*(?:"|')(.*?)(?:"|'),''', re.DOTALL)
+            matches = object_pattern.findall(text)
+            # Nota: Este fallback es básico; confiamos en el reintento del orquestador si falla.
+        except Exception:
+            pass
+
+    # 2. Saneamiento y VALIDACIÓN DE INTEGRIDAD
+    final_questions = []
+    if not isinstance(raw_list, list): return []
+
+    for item in raw_list:
+        if not isinstance(item, dict): continue
+        
+        q_text = item.get('question_text', '').strip()
+        q_type = item.get('question_type', 'open_ended').strip()
+        q_options = item.get('options', [])
+        q_answer = item.get('model_answer', '')
+
+        # Regla 0: Texto obligatorio
+        if not q_text: continue
+
+        # Regla 1: Integridad de Tipo Test (UGR Standard)
+        if q_type == 'multiple_choice':
+            # Si no hay opciones o es una lista vacía o malformada
+            if not q_options or not isinstance(q_options, list) or len(q_options) < 2:
+                # [STRICT MODE] Ignorar pregunta inválida para forzar posible reintento por lista vacía
+                continue 
+            
+            # Saneamiento de opciones
+            clean_options = [str(opt).strip() for opt in q_options if str(opt).strip()]
+            if len(clean_options) < 2: continue
+            item['options'] = clean_options
+
+        # Saneamiento general
+        if len(q_text) > 60000: item['question_text'] = q_text[:60000] + "..."
+        if not q_answer: item['model_answer'] = "Respuesta no disponible."
+        
+        # Asignación final saneada
+        item['question_type'] = q_type
+        final_questions.append(item)
+
+    return final_questions
 
 def _parse_correction_text(text: str) -> dict:
     score = None

@@ -226,6 +226,13 @@ class Question(models.Model):
             "The ideal answer that will be used as a reference for correction."
         ),
     )
+    options = models.JSONField(
+        default=list,
+        blank=True,
+        verbose_name="Opciones de Respuesta",
+        help_text=_("Lista de opciones para preguntas tipo test (JSON). Ej: ['A) ...', 'B) ...']")
+    )
+
 
     class Meta:
         verbose_name = "Pregunta"
