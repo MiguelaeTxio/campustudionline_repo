@@ -1,0 +1,150 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ page_title }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow border-0">
+                <div class="card-header bg-white py-3 border-bottom">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h4 class="mb-0 text-primary">
+                            <i class="fas fa-tasks me-2"></i>Configurar Autoevaluación
+                        </h4>
+                        <a href="{% url 'study_room:edit_copy' pk=user_copy.pk %}" class="btn btn-outline-secondary btn-sm">
+                            <i class="fas fa-times me-1"></i>Cancelar
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="card-body p-4">
+                    <div class="alert alert-info mb-4">
+                        <i class="fas fa-info-circle me-2"></i>
+                        Selecciona los temas o unidades que deseas incluir en tu examen. La IA generará preguntas personalizadas basadas únicamente en tu selección.
+                    </div>
+
+                    <form action="{% url 'assessment:generate_ai_assessment' copy_pk=user_copy.pk %}" method="POST" id="configForm">
+                        {% csrf_token %}
+                        <input type="hidden" name="selection_payload" id="selectionPayload">
+
+                        <div class="d-flex justify-content-between mb-2">
+                            <label class="fw-bold text-uppercase small text-muted">Temario Disponible</label>
+                            <div>
+                                <button type="button" class="btn btn-link btn-sm p-0 me-3 text-decoration-none" onclick="toggleAll(true)">
+                                    Marcar Todo
+                                </button>
+                                <button type="button" class="btn btn-link btn-sm p-0 text-decoration-none text-danger" onclick="toggleAll(false)">
+                                    Desmarcar Todo
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Tree Container -->
+                        <div id="topicsTree" class="border rounded bg-light p-3 mb-4" style="max-height: 500px; overflow-y: auto;">
+                            <!-- JS Rendering Target -->
+                            <div class="text-center text-muted py-5">
+                                <div class="spinner-border spinner-border-sm mb-2" role="status"></div>
+                                <div>Cargando estructura...</div>
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg" id="generateBtn">
+                                <i class="fas fa-robot me-2"></i>Generar Examen Personalizado
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Inline JS for Tree Logic -->
+<script>
+    const rawStructure = {{ content_structure|safe }};
+    
+    document.addEventListener('DOMContentLoaded', function() {
+        const treeContainer = document.getElementById('topicsTree');
+        treeContainer.innerHTML = ''; // Clear loading
+
+        if (!rawStructure || rawStructure.length === 0) {
+            treeContainer.innerHTML = `
+                <div class="text-center text-muted py-4">
+                    <i class="fas fa-exclamation-triangle fa-2x mb-2 text-warning"></i>
+                    <p class="mb-0">No se ha detectado una estructura de capítulos.</p>
+                    <small>Se evaluará todo el contenido disponible.</small>
+                    <input type="hidden" name="force_full" value="true">
+                </div>`;
+            return;
+        }
+
+        const list = document.createElement('ul');
+        list.className = 'list-unstyled mb-0';
+        
+        function createNode(node) {
+            const li = document.createElement('li');
+            li.className = 'mb-1';
+            
+            // Indentation visual
+            const indent = (node.level - 1) * 20;
+            
+            const wrapper = document.createElement('div');
+            wrapper.className = 'form-check d-flex align-items-center';
+            wrapper.style.paddingLeft = `${indent}px`;
+
+            const checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            checkbox.className = 'form-check-input me-2 node-check';
+            checkbox.id = node.id;
+            checkbox.value = node.id;
+            checkbox.checked = true; // Default selected
+            checkbox.dataset.level = node.level;
+
+            const label = document.createElement('label');
+            label.className = 'form-check-label user-select-none';
+            label.htmlFor = node.id;
+            
+            // Style H1/H2 differently
+            if (node.level === 1) label.classList.add('fw-bold', 'text-dark');
+            else label.classList.add('text-secondary');
+
+            label.innerText = node.text;
+
+            wrapper.appendChild(checkbox);
+            wrapper.appendChild(label);
+            li.appendChild(wrapper);
+
+            list.appendChild(li);
+
+            if (node.children && node.children.length > 0) {
+                node.children.forEach(child => createNode(child));
+            }
+        }
+
+        // Render recursive
+        rawStructure.forEach(node => createNode(node));
+        treeContainer.appendChild(list);
+
+        // Form Submit Handler
+        document.getElementById('configForm').addEventListener('submit', function(e) {
+            const selectedIds = Array.from(document.querySelectorAll('.node-check:checked')).map(cb => cb.value);
+            
+            if (selectedIds.length === 0 && rawStructure.length > 0) {
+                e.preventDefault();
+                alert('Por favor, selecciona al menos un tema para continuar.');
+                return;
+            }
+
+            document.getElementById('selectionPayload').value = JSON.stringify(selectedIds);
+        });
+    });
+
+    // Toggle Helper
+    window.toggleAll = function(state) {
+        document.querySelectorAll('.node-check').forEach(cb => cb.checked = state);
+    }
+</script>
+{% endblock %}

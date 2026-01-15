@@ -40,11 +40,6 @@ class Assessment(models.Model):
         CANCELLED = "CANCELLED", "Cancelada por Administrador"
         USER_CANCELLED = "USER_CANCELLED", "Cancelado por el Usuario"
 
-    class SegmentChoices(models.TextChoices):
-        GLOBAL = 'GLOBAL', 'Evaluación Global (Todo el temario)'
-        Q1 = 'Q1', 'Primer Trimestre (Inicio - 33%)'
-        Q2 = 'Q2', 'Segundo Trimestre (Medio - 33%-66%)'
-        Q3 = 'Q3', 'Tercer Trimestre (Final - 66%-100%)'
 
     content_copy = models.ForeignKey(
         "contents.ContentCopy",
@@ -75,12 +70,24 @@ class Assessment(models.Model):
         verbose_name="Estado",
     )
     
-    target_segment = models.CharField(
-        max_length=10,
-        choices=SegmentChoices.choices,
-        default=SegmentChoices.GLOBAL,
-        verbose_name="Segmento del Temario",
-        help_text="⚠️ AVISO: La división por trimestres es una estimación basada en la longitud del texto y podría no coincidir exactamente con los cortes de la guía docente oficial."
+    selection_range = models.JSONField(
+        default=dict,
+        blank=True,
+        null=True,
+        verbose_name="Rango de Selección (JSON)",
+        help_text="Almacena los índices o slugs de los temas del master_schema seleccionados."
+    )
+    reading_stimulus = models.TextField(
+        blank=True,
+        null=True,
+        verbose_name="Estímulo de Lectura (Reading)",
+        help_text="Texto generado por IA que sirve de base para la evaluación."
+    )
+    listening_transcript = models.TextField(
+        blank=True,
+        null=True,
+        verbose_name="Transcripción de Audio (Listening)",
+        help_text="Guion generado por IA para la parte de comprensión auditiva."
     )
 
     created_at = models.DateTimeField(

@@ -371,3 +371,149 @@ def get_assessment_context(user, content_copy):
         context["buttons"]["solicitar"]["text"] = _("Generar de Nuevo")
 
     return context
+
+
+# --- [HITO 6] UTILIDADES DE ESTRUCTURA Y SELECCIÓN ---
+import re
+import json
+
+def extract_content_structure(markdown_text):
+    """
+    Parsea el contenido Markdown para extraer una estructura jerárquica de temas
+    basada en los encabezados.
+    """
+    if not markdown_text:
+        return []
+
+    lines = markdown_text.split('\n')
+    structure = []
+    stack = [] 
+
+    header_pattern = re.compile(r'^(#{1,4})\s+(.+)$')
+
+    for i, line in enumerate(lines):
+        match = header_pattern.match(line.strip())
+        if match:
+            hashes, title = match.groups()
+            level = len(hashes)
+            
+            safe_slug = re.sub(r'[^a-zA-Z0-9]', '_', title.lower().strip())
+            node_id = f"{safe_slug}_{i}"
+            
+            new_node = {
+                'id': node_id,
+                'text': title.strip(),
+                'level': level,
+                'children': [],
+                'state': {'selected': True} 
+            }
+
+            while stack and stack[-1]['level'] >= level:
+                stack.pop()
+            
+            if stack:
+                parent = stack[-1]
+                parent['children'].append(new_node)
+            else:
+                structure.append(new_node)
+            
+            stack.append(new_node)
+
+    return structure
+
+def clean_selection_payload(selection_json):
+    """
+    Sanea el payload de selección recibido del frontend.
+    """
+    if not selection_json:
+        return None
+        
+    try:
+        if isinstance(selection_json, str):
+            data = json.loads(selection_json)
+        else:
+            data = selection_json
+            
+        if isinstance(data, list):
+            return [x for x in data if isinstance(x, str) and x.strip()]
+        return None
+    except Exception:
+        return None
+
+
+def filter_content_by_selection(markdown_text, selection_ids):
+    """
+    Filtra el contenido Markdown devolviendo solo las secciones seleccionadas.
+    Se basa en que los IDs tienen el formato '{slug}_{line_index}'.
+    """
+    if not markdown_text or not selection_ids:
+        return markdown_text # Si no hay selección, devolvemos todo (o nada, según regla de negocio)
+
+    # 1. Extraer índices de línea de los IDs seleccionados
+    selected_indices = set()
+    for sid in selection_ids:
+        try:
+            # Formato esperado: "slug_texto_123" -> extraemos 123
+            parts = sid.rsplit('_', 1)
+            if len(parts) == 2 and parts[1].isdigit():
+                selected_indices.add(int(parts[1]))
+        except ValueError:
+            continue
+            
+    if not selected_indices:
+        return markdown_text
+
+    lines = markdown_text.split('\n')
+    filtered_lines = []
+    
+    # Mapa de estructura para saber dónde acaba cada sección
+    # Reutilizamos la lógica de regex para detectar headers
+    header_pattern = re.compile(r'^(#{1,4})\s+(.+)$')
+    
+    # Identificamos todas las secciones con su nivel y línea
+    sections = []
+    for i, line in enumerate(lines):
+        match = header_pattern.match(line.strip())
+        if match:
+            level = len(match.group(1))
+            sections.append({'line': i, 'level': level})
+            
+    # Algoritmo de extracción
+    # Para cada línea seleccionada (que corresponde a un header):
+    # 1. Determinar el rango hasta el siguiente header de nivel <= actual
+    
+    ranges_to_keep = []
+    sorted_sections = sorted(sections, key=lambda x: x['line'])
+    
+    for i, section in enumerate(sorted_sections):
+        if section['line'] in selected_indices:
+            start_line = section['line']
+            end_line = len(lines) # Por defecto hasta el final
+            
+            # Buscar el cierre: siguiente sección con nivel <= al actual
+            for j in range(i + 1, len(sorted_sections)):
+                next_section = sorted_sections[j]
+                if next_section['level'] <= section['level']:
+                    end_line = next_section['line']
+                    break
+            
+            ranges_to_keep.append((start_line, end_line))
+            
+    # Fusionar rangos solapados y extraer líneas
+    ranges_to_keep.sort()
+    merged_ranges = []
+    if ranges_to_keep:
+        curr_start, curr_end = ranges_to_keep[0]
+        for next_start, next_end in ranges_to_keep[1:]:
+            if next_start < curr_end: # Solapamiento o contigüidad
+                curr_end = max(curr_end, next_end)
+            else:
+                merged_ranges.append((curr_start, curr_end))
+                curr_start, curr_end = next_start, next_end
+        merged_ranges.append((curr_start, curr_end))
+        
+    for start, end in merged_ranges:
+        filtered_lines.extend(lines[start:end])
+        filtered_lines.append("") # Espaciador
+        
+    return "\n".join(filtered_lines)

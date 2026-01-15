@@ -23,14 +23,21 @@
                 </p>
                 
                 {# --- SIDEBAR DE REFERENCIA (Offcanvas) --- #}
-                <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasReference" aria-labelledby="offcanvasReferenceLabel" style="width: 85%;">
+                <div class="offcanvas offcanvas-start no-mathjax" tabindex="-1" id="offcanvasReference" aria-labelledby="offcanvasReferenceLabel" style="width: 85%;">
                     <div class="offcanvas-header bg-primary text-white">
                         <h5 class="offcanvas-title" id="offcanvasReferenceLabel"><i class="fas fa-book-open me-2"></i> Texto de Referencia</h5>
                         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
                     </div>
                     <div class="offcanvas-body">
                         <div class="p-2" style="font-size: 1.1rem; line-height: 1.6;">
-                            {{ user_copy.original_content.get_full_markdown_content|linebreaksbr }}
+                            {% if assessment.reading_stimulus %}
+                                <div class="alert alert-info small mb-3">
+                                    <i class="fas fa-info-circle me-1"></i> Este es el texto base generado específicamente para este examen.
+                                </div>
+                                {{ assessment.reading_stimulus|linebreaksbr }}
+                            {% else %}
+                                {{ user_copy.original_content.get_full_markdown_content|linebreaksbr }}
+                            {% endif %}
                         </div>
                     </div>
                 </div>
@@ -152,7 +159,7 @@
           displayMath: [['$$', '$$'], ['\[', '\]']],
           processEscapes: true
       },
-      options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre'] }
+      options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre'], ignoreHtmlClass: 'no-mathjax' }
     };
     </script>
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>

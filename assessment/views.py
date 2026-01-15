@@ -3,6 +3,7 @@ import re
 import logging
 import uuid
 import hashlib
+import json
 from users.tasks import send_meta_conversion_event
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
@@ -17,12 +18,62 @@ from django.template.loader import render_to_string
 from .models import Assessment, Question, UserAnswer
 from contents.models import ContentCopy
 from orchestrator.tasks import generate_assessment_from_content_task, correct_assessment_task
-from .utils import get_assessment_context, check_user_assessment_limits
+from .utils import get_assessment_context, check_user_assessment_limits, extract_content_structure, clean_selection_payload
 
 logger = logging.getLogger(__name__)
 
 def log_timestamp(message):
     logger.info(f"[{timezone.now().strftime('%Y-%m-%d %H:%M:%S.%f')}] {message}")
+
+
+@login_required
+@require_GET
+def configure_assessment(request, copy_pk):
+    """
+    [HITO 6] Vista de configuración previa a la generación.
+    """
+    try:
+        user_copy = ContentCopy.objects.select_related('original_content').get(pk=copy_pk, user=request.user)
+    except ContentCopy.DoesNotExist:
+        messages.error(request, "Copia de estudio no encontrada.")
+        return redirect("study_room:copy_directory_root")
+
+    blocking_statuses = [
+        Assessment.AssessmentStatus.PENDING,
+        Assessment.AssessmentStatus.PROCESSING,
+        Assessment.AssessmentStatus.COMPLETED,
+        Assessment.AssessmentStatus.CORRECTING,
+        Assessment.AssessmentStatus.RESULTS_AVAILABLE,
+    ]
+    
+    active_assessment = Assessment.objects.filter(
+        user=request.user, 
+        content_copy=user_copy, 
+        status__in=blocking_statuses
+    ).first()
+
+    if active_assessment:
+        messages.info(request, "Ya tienes una evaluación activa para este material.")
+        if active_assessment.status == Assessment.AssessmentStatus.COMPLETED:
+             return redirect("assessment:take_assessment", pk=active_assessment.pk)
+        elif active_assessment.status in [Assessment.AssessmentStatus.CORRECTING, Assessment.AssessmentStatus.RESULTS_AVAILABLE]:
+             return redirect("assessment:view_results", pk=active_assessment.pk)
+        else:
+             return redirect("study_room:edit_copy", pk=user_copy.pk)
+
+    markdown_content = user_copy.original_content.get_full_markdown_content()
+    structure = extract_content_structure(markdown_content)
+
+    if not structure:
+        messages.warning(request, "Este contenido no tiene una estructura detectable. Se evaluará todo.")
+
+    context = {
+        "user_copy": user_copy,
+        "content_structure": json.dumps(structure),
+        "page_title": "Configurar Autoevaluación"
+    }
+    return render(request, "assessment/configure_assessment.html", context)
+
 
 @login_required
 @require_POST
@@ -66,12 +117,18 @@ def generate_ai_assessment(request, copy_pk):
         return redirect(redirect_url)
 
     try:
-        target_segment = request.POST.get('target_segment', 'GLOBAL')
+        selection_raw = request.POST.get('selection_payload')
+        selection_range = clean_selection_payload(selection_raw)
+        
+        if selection_raw and not selection_range:
+             messages.error(request, "Error en la selección de temas.")
+             return redirect("assessment:configure_assessment", copy_pk=copy_pk)
+
         assessment = Assessment.objects.create(
             user=request.user,
             content_copy=user_copy,
             status="PENDING",
-            target_segment=target_segment,
+            selection_range=selection_range or [],
         )
         # --- Meta Ads CAPI: RequestAssessment ---
         try:

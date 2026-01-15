@@ -359,6 +359,7 @@
 ./assessment/templates/assessment/partials/_navbar_iv_display.html
 ./assessment/templates/assessment/partials/_assessment_indicator_badge.html
 ./assessment/templates/assessment/partials/_assessment_legend.html
+./assessment/templates/assessment/configure_assessment.html
 ./assessment/templates/assessment/view_results.html
 ./assessment/templates/admin/assessment/dashboard.html
 ./assessment/templates/admin/assessment/view_log.html
@@ -386,6 +387,7 @@
 ./assessment/migrations/__init__.py
 ./assessment/migrations/0005_alter_assessment_content_copy.py
 ./assessment/migrations/0008_assessmentsettings_assessment_expiration_seconds_and_more.py
+./assessment/migrations/0018_remove_assessment_target_segment_and_more.py
 ./assessment/migrations/0009_alter_assessment_content.py
 ./assessment/migrations/0016_assessment_target_segment_useranswer_audio_file_and_more.py
 ./assessment/migrations/0014_assessment_event_log.py

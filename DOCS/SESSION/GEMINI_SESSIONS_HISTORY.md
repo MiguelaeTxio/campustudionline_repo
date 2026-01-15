@@ -1257,3 +1257,23 @@
 *  **Session:** Reconstrucción de Autoevaluaciones: Super-Arquetipos y Blindaje DB
 *  **Description:** Implementación de lógica de saneamiento en `orchestrator` para prevenir desbordamiento de columnas (Error 1406). Integración de estándares pedagógicos (CertACLES, EUR-ACE, MECES) en `prompt_generators.py` para generación de exámenes contextualizados por disciplina. Validación de flujo server-side en `assessment`.
 
+
+# 2026-01-15
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+## CYC
+*  **Session:** Re-arquitectura de Assessment para el Motor UGR y Pipeline de IA
+*  **Description:** Inicio de la Fase 1 del Hito 6. La sesión se centra en la re-arquitectura del modelo 'Assessment' en la aplicación homónima para CampuStudiOnline. Se sustituirá la segmentación fija por un JSONField 'selection_range' que permita la selección dinámica de temas basada en el 'master_schema' de 'contents'. Asimismo, se integrarán campos para persistir los estímulos generados por la IA (reading_stimulus, listening_transcript), sentando las bases para el pipeline de generación de tres pasos diseñado para emular evaluaciones de nivel universitario.
+
+
+# 2026-01-15
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+## EPI # --SYSTEM -->
+*  **Session:** Fase 1 Autoevaluaciones UGR: Modelo y Selección de Temas
+*  **Description:** Inicio de la reconstrucción del sistema de autoevaluaciones (V4) bajo el estándar UGR.
+Objetivos de la sesión:
+1. Modificación del modelo `Assessment`: eliminación de `target_segment` y adición de `selection_range` (JSONField) para selección granular de temas.
+2. Adición de campos de persistencia de estímulos: `reading_stimulus` y `listening_transcript`.
+3. Preparación de la lógica para el parseo del `master_schema` en la vista de configuración.
+

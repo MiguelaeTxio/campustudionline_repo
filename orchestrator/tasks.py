@@ -36,12 +36,14 @@ from contents.models import (
 )
 from core.services.gemini_service import generate_text_content, clean_json_response, AIServiceCriticalError
 from core.services.gemini_schemas import ASSESSMENT_CORRECTION_SCHEMA
-from assessment.utils import classify_subject_strategy, segment_content_for_assessment
+from assessment.utils import classify_subject_strategy, segment_content_for_assessment, filter_content_by_selection
 from core.services.prompt_generators import (
     generate_course_metadata_prompt,
     generate_master_schema_prompt,
     generate_atomic_content_prompt,
     generate_assessment_prompt,
+    generate_stimulus_creation_prompt,
+    generate_ugr_questions_prompt,
 )
 from messaging.push_utils import send_notification_to_user
 from core.utils import send_unified_notification
@@ -1086,32 +1088,47 @@ def generate_assessment_from_content_task(self, assessment_id):
         if not full_content or not full_content.strip():
             raise ValueError("El contenido para la evaluación está vacío.")
 
-        # [HITO 6] CLASIFICACIÓN Y SEGMENTACIÓN INTELIGENTE
-        # 1. Determinar segmento (Q1, Q2, Q3 o GLOBAL)
-        target_segment = assessment.target_segment
-        segmented_content = segment_content_for_assessment(full_content, segment_type=target_segment)
-        
-        # 2. Determinar arquetipo de asignatura (Ciencias vs Letras)
+        # [HITO 6 - FASE 2] FILTRADO POR SELECCIÓN
+        selection = assessment.selection_range
+        if selection and isinstance(selection, list):
+            log_assessment_task_event(assessment_id, f"Filtrando contenido por {len(selection)} temas.")
+            filtered_content = filter_content_by_selection(full_content, selection) or full_content
+        else:
+            filtered_content = full_content
+
         subject_obj = original_content.subject.first()
         subject_name = subject_obj.name if subject_obj else original_content.title
         branch_name = subject_obj.academic_year.degree.branch.name if (subject_obj and subject_obj.academic_year) else ""
-        
         subject_type = classify_subject_strategy(subject_name, branch_name)
-        
-        # [HITO 6] Extracción de Objetivos de Aprendizaje
-        learning_objectives_str = ""
-        if subject_obj and subject_obj.learning_objectives:
-            learning_objectives_str = json.dumps(subject_obj.learning_objectives, ensure_ascii=False)
-            
-        log_assessment_task_event(assessment_id, f"Estrategia: {subject_type}. Objetivos inyectados: {bool(learning_objectives_str)}")
 
-        # 3. Generar Prompt Especializado (Con Objetivos)
-        prompt = generate_assessment_prompt(
-            content_text=segmented_content,
-            subject_type=subject_type,
-            segment_info=f"Examen de tipo {target_segment} para {subject_name} ({subject_type})",
-            learning_objectives=learning_objectives_str
-        )
+        # --- PASO 1: ESTÍMULOS ---
+        log_assessment_task_event(assessment_id, "PASO 1: Generando Reading/Listening...")
+        step1_prompt = generate_stimulus_creation_prompt(filtered_content, subject_name, subject_type)
+        
+        # Llamada API Paso 1 (Síncrona rápida, confiando en retry de tarea si falla)
+        automation_settings = AutomationSettings.load()
+        api_key_s1 = automation_settings.active_api_key or ApiKey.objects.filter(is_enabled=True, is_quarantined=False).first()
+        if not api_key_s1: raise Exception("Sin claves API para Paso 1")
+        
+        suc_s1, txt_s1, _ = generate_text_content(step1_prompt, api_key=api_key_s1)
+        if not suc_s1: raise Exception(f"API Error Paso 1: {txt_s1}")
+        
+        try:
+             dat_s1 = json.loads(clean_json_response(txt_s1))
+             r_text = dat_s1.get('reading_stimulus', '')
+             l_text = dat_s1.get('listening_transcript', '')
+        except:
+             r_text = "Error generando texto."
+             l_text = "Error generando audio."
+
+        with transaction.atomic():
+            aa = Assessment.objects.select_for_update().get(pk=assessment_id)
+            aa.reading_stimulus = r_text
+            aa.listening_transcript = l_text
+            aa.save(update_fields=['reading_stimulus', 'listening_transcript'])
+
+        log_assessment_task_event(assessment_id, "PASO 2: Generando preguntas...")
+        prompt = generate_ugr_questions_prompt(r_text, l_text, subject_type)
         
         
         # --- [HITO 37] ROTACIÓN ESTÁNDAR (Sincronizada con Orquestador) ---
