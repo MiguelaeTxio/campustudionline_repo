@@ -178,6 +178,7 @@
 ./academic_structure/management/commands/purge_ugr_selective.py
 ./academic_structure/management/commands/audit_ugr_impact.py
 ./academic_structure/management/commands/purge_generic_subjects.py
+./academic_structure/management/commands/import_us_data.py
 ./academic_structure/management/commands/hide_ugr_protected.py
 ./templates/base.html
 ./templates/emails/admin_general_announcement.txt
@@ -695,6 +696,7 @@
 ./web_scrapping/UTILS/audit_101.py
 ./web_scrapping/PHASE_2_WEST/uco_local_parser.py
 ./web_scrapping/PHASE_2_WEST/uco_harvester_pc.py
+./web_scrapping/PHASE_2_WEST/us_gap_analysis.py
 ./web_scrapping/PHASE_2_WEST/us_row_inspector.py
 ./web_scrapping/PHASE_2_WEST/uco_audit_tool.py
 ./web_scrapping/PHASE_2_WEST/sevius_access_test.py
@@ -703,6 +705,7 @@
 ./web_scrapping/PHASE_2_WEST/us_harvester_intermediate.py
 ./web_scrapping/PHASE_2_WEST/us_link_extractor.py
 ./web_scrapping/PHASE_2_WEST/uco_pdf_processor.py
+./web_scrapping/PHASE_2_WEST/us_final_refiner.py
 ./web_scrapping/PHASE_2_WEST/esad_harvester_v3.py
 ./web_scrapping/PHASE_2_WEST/us_detail_probe.py
 ./web_scrapping/PHASE_2_WEST/uco_assembler.py
@@ -715,6 +718,7 @@
 ./web_scrapping/PHASE_2_WEST/us_keyword_auditor.py
 ./web_scrapping/PHASE_2_WEST/uco_full_harvester.py
 ./web_scrapping/PHASE_2_WEST/us_debug_subject.py
+./web_scrapping/PHASE_2_WEST/us_local_audit.py
 ./data/PHASE_1_EAST/ugr_data.json
 ./data/PHASE_1_EAST/uma_pattern_data.json
 ./data/PHASE_1_EAST/uma_data_final.json
@@ -731,6 +735,7 @@
 ./data/PHASE_2_WEST/uco_map_part04.json
 ./data/PHASE_2_WEST/uco_map_part21.json
 ./data/PHASE_2_WEST/uco_map_part28.json
+./data/PHASE_2_WEST/us_dataset_FINAL.json
 ./data/PHASE_2_WEST/uco_map_part40.json
 ./data/PHASE_2_WEST/uco_map_part38.json
 ./data/PHASE_2_WEST/uco_map_part01.json

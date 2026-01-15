@@ -1,25 +1,19 @@
-# Hito 20: Refinamiento del Proceso de Scraping de Datos (EN PROGRESO)
+# /home/MiguelAeTxio/PROJECTS/CampuStudiOnline/DOCS/MAINS/ATTACHEDS/CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V20.md
+# Hito 20: Refinamiento del Proceso de Scraping de Datos (PAUSADO)
 
-## Estado de la Sesión: SANEAMIENTO INTEGRAL (FASE 1 Y CÓRDOBA)
-Se ha completado la depuración de la base de datos, eliminando 203 registros "ruido" (TFGs, Prácticas, Eventos) que afectaban tanto a la **Fase 1 (Andalucía Oriental)** completada, como a la parte ya ejecutada de la **Fase 2 (Córdoba/ESAD)**.
+## Estado de la Sesión: SEVILLA COMPLETADA
+Se ha culminado con éxito la integración de la Institución Académica de Sevilla. El proceso se realizó íntegramente en el borde (dispositivo local), filtrando TFGs y prácticas antes de la ingesta.
 
 ## Logros Técnicos:
-1.  **Calidad del Dato:** Eliminación de asignaturas no lectivas mediante patrones de nombres (`purge_generic_subjects`), dejando los datasets de Almería, Granada, Málaga, Jaén y Córdoba limpios de carga administrativa.
-2.  **Validación de Estructura:** Confirmación de integridad tras el borrado selectivo.
+1.  **Higiene Estructural:** Reorganización del directorio `/web_scrapping/` y `/data/` segregando por fases geográficas (EAST/WEST) y utilidades.
+2.  **Cosecha Masiva:** Extracción de 5015 asignaturas enriquecidas mediante el procesamiento dinámico de SEVIUS4 (envíos POST para descarga de PDFs).
+3.  **Integridad RUCT:** Implementación de un mapeador inteligente en el comando de importación para asignar los grados de Sevilla a sus 5 ramas oficiales de conocimiento.
+4.  **Calidad del Dato:** 96.8% de cobertura en objetivos y temarios.
 
 ## Hoja de Ruta para la Siguiente Sesión (LEY SUPREMA)
-**Objetivo:** Organización de Infraestructura y Ejecución de Fase 2 (Andalucía Occidental).
+**Objetivo:** Expansión de la Fase 2 a la Universidad de Cádiz (UCA).
 
-1.  **Gestión y Organización de Scripts (Prioridad 1):**
-    *   Creación de estructura de directorios en `/web_scrapping/` para segregar fases:
-        *   `/PHASE_1_EAST/` (Almería, Granada, Málaga, Jaén).
-        *   `/PHASE_2_WEST/` (Córdoba, Sevilla, Huelva, Cádiz).
-    *   Migración y limpieza de scripts existentes a sus carpetas correspondientes.
-2.  **Expansión a Sevilla (US):**
-    *   Análisis de arquitectura web.
-    *   Desarrollo de estrategia de scraping y *harvester*.
-3.  **Expansión a Huelva (UHU):**
-    *   Análisis de arquitectura web.
-    *   Desarrollo de estrategia de scraping y *harvester*.
-4.  **Expansión a Cádiz (UCA):**
-    *   Evaluación preliminar y desarrollo de *harvester*.
+1.  **Análisis de Arquitectura (UCA):** Identificación del portal de transparencia y catálogo de grados/asignaturas.
+2.  **Desarrollo de Sonda:** Creación de `uca_link_extractor.py` para obtener el listado maestro de títulos.
+3.  **Estrategia de Enriquecimiento:** Evaluar si la UCA dispone de PDFs directos o requiere navegación dinámica (tipo SEVIUS).
+4.  **Procesamiento en el Borde:** Ejecución local de la cosecha y refinamiento.
