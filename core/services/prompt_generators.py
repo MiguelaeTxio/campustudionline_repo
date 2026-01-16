@@ -247,8 +247,6 @@ def generate_stimulus_creation_prompt(content_source: str, subject_name: str, su
         "}"
     )
     return prompt
-
-
 def generate_ugr_questions_prompt(reading_text: str, listening_text: str, subject_type: str = "HUMANITIES") -> str:
     """
     [HITO 6 - V10] Tribunal de Examen UGR: Genera las 4 secciones obligatorias.
@@ -260,6 +258,7 @@ def generate_ugr_questions_prompt(reading_text: str, listening_text: str, subjec
         f"1. LECTURA: {reading_text[:3000]}\n"
         f"2. AUDIO: {listening_text[:3000]}\n\n"
         "ESTRUCTURA OBLIGATORIA DEL EXAMEN (Total 8 tareas):\n"
+        "**NOTA DE FORMATO:** Debes separar CADA sección con un encabezado Markdown H3 en el idioma del examen (ej: '### READING', '### LETTURA', '### LESEVERSTEHEN').\n"
         "1. SECCIÓN READING: 4 preguntas 'multiple_choice' sobre el texto de LECTURA.\n"
         "2. SECCIÓN LISTENING: 2 preguntas 'multiple_choice' sobre el texto de AUDIO.\n"
         "3. SECCIÓN WRITING: 1 tarea de redacción académica (open_ended) relacionada con los temas.\n"

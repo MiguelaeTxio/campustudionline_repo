@@ -224,21 +224,27 @@
         if (!isDragging) return;
         e.preventDefault();
 
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
         const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-        const rect = listEl.getBoundingClientRect();
-        const relativeY = clientY - rect.top;
+
+        // Buscamos el elemento exacto bajo el dedo/ratón
+        const elementUnderCursor = document.elementFromPoint(clientX, clientY);
+        const item = elementUnderCursor ? elementUnderCursor.closest('.topic-item') : null;
         
-        let tempIndex = Math.floor(relativeY / itemHeight);
+        if (!item) return;
         
-        // RESTRICCIÓN CLAVE: No bajar de minSelectableIndex
+        let tempIndex = parseInt(item.dataset.index);
+        
+        // Bloqueo de seguridad: No tocar zonas excluidas (Título/TOC)
         if (tempIndex < minSelectableIndex) tempIndex = minSelectableIndex;
-        if (tempIndex >= topics.length) tempIndex = topics.length - 1;
 
         if (isDragging === 'start') {
-            if (tempIndex > endIndex) tempIndex = endIndex; 
+            // La barra superior no puede bajar más allá de la inferior
+            if (tempIndex >= endIndex) tempIndex = endIndex;
             startIndex = tempIndex;
         } else {
-            if (tempIndex < startIndex) tempIndex = startIndex;
+            // La barra inferior no puede subir más allá de la superior
+            if (tempIndex <= startIndex) tempIndex = startIndex;
             endIndex = tempIndex;
         }
 

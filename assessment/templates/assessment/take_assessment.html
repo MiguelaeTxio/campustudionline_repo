@@ -80,7 +80,7 @@
                                 {% endif %}
 
                                 {# --- 2. TEXTO DE LA PREGUNTA --- #}
-                                <p class="lead">{{ question.display_text|linebreaksbr }}</p>
+                                <p class="lead text-break">{{ question.display_text|linebreaksbr }}</p>
                                 
                                 {# --- 3. BLOQUE DE GRABACIÓN (Speaking) --- #}
                                 {% if question.requires_recording %}
@@ -114,7 +114,7 @@
                                     </div>
                                 {% else %}
                                     <div class="form-group">
-                                        <textarea name="answer_q_{{ question.pk }}" id="answer_q_{{ question.pk }}" class="form-control" rows="5" placeholder="Escribe tu respuesta aquí..." {% if not question.requires_recording %}required{% endif %}></textarea>
+                                        <textarea name="answer_q_{{ question.pk }}" id="answer_q_{{ question.pk }}" class="form-control" rows="12" placeholder="Escribe tu respuesta aquí..." {% if not question.requires_recording %}required{% endif %}></textarea>
                                     </div>
                                 {% endif %}
                             </div>

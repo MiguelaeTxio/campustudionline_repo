@@ -1135,7 +1135,14 @@ def generate_assessment_from_content_task(self, assessment_id):
 
                 elif step == 2:
                     log_assessment_task_event(assessment_id, f"PASO 2 (Preguntas) - Key: {api_key.name}")
-                    prompt = generate_ugr_questions_prompt(r_text, l_text, subject_type)
+                    if subject_type == "LANGUAGES":
+                        prompt = generate_ugr_questions_prompt(r_text, l_text, subject_type)
+                    elif subject_type == "EXACT_SCIENCES":
+                        # ARQUETIPO CIENCIAS: Pasamos r_text pero forzamos arquetipo EXACT_SCIENCES
+                        prompt = generate_assessment_prompt(r_text, subject_type="EXACT_SCIENCES")
+                    else:
+                        # ARQUETIPO HUMANIDADES: Default
+                        prompt = generate_assessment_prompt(r_text, subject_type="HUMANITIES")
                     
                     success, text, _ = generate_text_content(prompt, api_key=api_key)
                     if not success: raise ResourceExhausted(text)
@@ -1169,7 +1176,12 @@ def generate_assessment_from_content_task(self, assessment_id):
                 continue
 
         # Finalización exitosa
-        Assessment.objects.filter(pk=assessment_id).update(status=Assessment.AssessmentStatus.COMPLETED, last_error=None)
+        # [FIX] Save explícito para activar lógica de caducidad
+        with transaction.atomic():
+            comp_assessment = Assessment.objects.select_for_update().get(pk=assessment_id)
+            comp_assessment.status = Assessment.AssessmentStatus.COMPLETED
+            comp_assessment.last_error = None
+            comp_assessment.save()
         log_assessment_task_event(assessment_id, "Proceso completado con ÉXITO.", level="SUCCESS")
 
     except Exception as e:

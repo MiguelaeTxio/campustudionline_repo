@@ -139,7 +139,6 @@ class Assessment(models.Model):
         help_text=_("Registro detallado de los cambios de estado y errores de esta evaluación.")
     )
     
-    
     def add_log_event(self, message, level="INFO"):
         """
         Añade un evento al log de forma atómica.
@@ -167,11 +166,9 @@ class Assessment(models.Model):
         1. Asegurar que el 'content' original siempre se deriva de la 'content_copy'.
         2. Establecer las fechas de caducidad basándose en el estado.
         """
-        # 1. Enlace forzado a ContentMaterial a través de ContentCopy
         if self.content_copy and not self.content_id:
             self.content = self.content_copy.original_content
 
-        # 2. Lógica de fechas de caducidad
         app_settings = AssessmentSettings.get_settings()
         if self.status == self.AssessmentStatus.COMPLETED:
             self.expiration_date = timezone.now() + timedelta(
@@ -196,7 +193,6 @@ class Assessment(models.Model):
         ordering = ["-created_at"]
 
     def __str__(self):
-        # Usamos content_copy para la representación para reforzar la nueva lógica
         return (
             f"Assessment for copy of '{self.content_copy.original_content.title}' "
             f"by {self.user.username} ({self.get_status_display()})"
@@ -207,8 +203,6 @@ class Question(models.Model):
     """
     Stores an individual question within an assessment.
     """
-
-
 
     class QuestionType(models.TextChoices):
         OPEN_ENDED = "open_ended", "Respuesta Abierta"
@@ -240,6 +234,37 @@ class Question(models.Model):
         help_text=_("Lista de opciones para preguntas tipo test (JSON). Ej: ['A) ...', 'B) ...']")
     )
 
+    # --- PROPIEDADES INYECTADAS PARA UX/UI (Fixed Indentation) ---
+    @property
+    def requires_recording(self):
+        """Detecta si la pregunta espera una grabación de voz."""
+        return "[---RECORDING-REQUIRED---]" in self.question_text
+
+    @property
+    def requires_audio(self):
+        """Detecta si la pregunta requiere reproducción de audio (Listening)."""
+        return "[---AUDIO-REQUIRED---]" in self.question_text
+
+    @property
+    def transcript(self):
+        """Devuelve el transcript de la evaluación si esta pregunta lo requiere."""
+        if self.requires_audio:
+            return self.assessment.listening_transcript
+        return None
+
+    @property
+    def display_text(self):
+        """Limpia el texto de la pregunta eliminando marcadores técnicos."""
+        text = self.question_text
+        text = text.replace("[---RECORDING-REQUIRED---]", "")
+        text = text.replace("[---AUDIO-REQUIRED---]", "")
+        return text.strip()
+
+    @property
+    def is_multiple_choice_view(self):
+        """Helper para el template."""
+        return self.question_type == self.QuestionType.MULTIPLE_CHOICE
+    # -------------------------------------------------------------
 
     class Meta:
         verbose_name = "Pregunta"

@@ -197,87 +197,51 @@ def generate_ai_assessment(request, copy_pk):
     return redirect(redirect_url)
 
 
-def _process_question_display(question):
-    """
-    Procesa el texto de la pregunta para separar metadatos (transcripts, flags)
-    del texto visualizable y determina el modo de visualización (Test vs Abierta).
-    """
-    text = question.question_text
-    transcript = None
-    requires_recording = False
-    
-    # 1. Extraer Transcript
-    transcript_match = re.search(r'\[---TRANSCRIPT---\]([\s\S]*?)\[---END-TRANSCRIPT---\]', text)
-    if transcript_match:
-        transcript = transcript_match.group(1).strip()
-        text = text.replace(transcript_match.group(0), '').strip()
-        transcript = re.sub(r'<[^>]*>', ' ', transcript)
-        transcript = re.sub(r'\s+', ' ', transcript).strip()
-        
-    # 2. Detectar Flag de Grabación
-    recording_match = re.search(r'\[---RECORDING-REQUIRED---\]', text, re.IGNORECASE)
-    if recording_match:
-        requires_recording = True
-        text = text.replace(recording_match.group(0), '').strip()
-    
-    # 3. [HITO 6] Determinación de Modo de Vista (Logic in View)
-    is_multiple_choice_view = False
-    if question.question_type == 'multiple_choice':
-        # Validación de integridad para visualización
-        if question.options and isinstance(question.options, list) and len(question.options) >= 2:
-            is_multiple_choice_view = True
-        
-    # Asignar atributos volátiles
-    question.display_text = text
-    question.transcript = transcript
-    question.requires_recording = requires_recording
-    question.is_multiple_choice_view = is_multiple_choice_view
-    return question
+
 
 
 @login_required
 def take_assessment(request, pk):
     try:
-        assessment = Assessment.objects.select_related("content_copy__original_content").prefetch_related("questions").get(
+        assessment = Assessment.objects.select_related('content_copy__original_content').prefetch_related('questions').get(
             pk=pk,
             user=request.user,
         )
     except Assessment.DoesNotExist:
-        messages.error(request, "Evaluación no encontrada.")
-        return redirect("study_room:copy_directory_root")
+        messages.error(request, 'Evaluación no encontrada.')
+        return redirect('study_room:copy_directory_root')
 
     user_copy = assessment.content_copy
 
-    if assessment.status != "COMPLETED":
+    if assessment.status != 'COMPLETED':
         messages.warning(
             request,
-            f"Esta evaluación no está lista. Estado actual: {assessment.get_status_display()}.",
+            f'Esta evaluación no está lista. Estado actual: {assessment.get_status_display()}.',
         )
-        return redirect(reverse("study_room:edit_copy", kwargs={"pk": user_copy.pk}))
+        return redirect(reverse('study_room:edit_copy', kwargs={'pk': user_copy.pk}))
 
     if UserAnswer.objects.filter(
         question__assessment=assessment, user=request.user
     ).exists():
         messages.info(
-            request, "Ya has completado esta evaluación. Redirigiendo a resultados."
+            request, 'Ya has completado esta evaluación. Redirigiendo a resultados.'
         )
-        return redirect("assessment:view_results", pk=assessment.pk)
+        return redirect('assessment:view_results', pk=assessment.pk)
 
     if not assessment.was_viewed:
         assessment.was_viewed = True
-        assessment.save(update_fields=["was_viewed"])
+        assessment.save(update_fields=['was_viewed'])
 
-    # [HITO 6] Procesamiento Server-Side de preguntas (Blindaje)
-    questions_qs = assessment.questions.all().order_by('id')
-    questions_list = [_process_question_display(q) for q in questions_qs]
+    # [HITO 6] Las preguntas ya tienen propiedades inteligentes en el modelo
+    questions_list = assessment.questions.all().order_by('id')
 
     context = {
-        "questions_list": questions_list,
-        "assessment": assessment,
-        "user_copy": user_copy,
-        "page_title": "Completar Autoevaluación",
+        'questions_list': questions_list,
+        'assessment': assessment,
+        'user_copy': user_copy,
+        'page_title': 'Completar Autoevaluación',
     }
-    return render(request, "assessment/take_assessment.html", context)
+    return render(request, 'assessment/take_assessment.html', context)
 
 @login_required
 @require_POST

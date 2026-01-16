@@ -395,6 +395,12 @@ def extract_content_structure(markdown_text):
         match = header_pattern.match(line.strip())
         if match:
             hashes, title = match.groups()
+            # [FILTRO CRÍTICO] Excluir secciones de fuentes/bibliografía de la evaluación
+            forbidden = ['FUENTES', 'BIBLIOGRAFIA', 'REFERENCIAS', 'SOURCES']
+            clean_title = ''.join(c for c in title if c.isalnum() or c.isspace()).upper()
+            if any(word in clean_title for word in forbidden):
+                continue
+            hashes, title = match.groups()
             level = len(hashes)
             
             safe_slug = re.sub(r'[^a-zA-Z0-9]', '_', title.lower().strip())
@@ -475,6 +481,12 @@ def filter_content_by_selection(markdown_text, selection_ids):
     for i, line in enumerate(lines):
         match = header_pattern.match(line.strip())
         if match:
+            hashes, title = match.groups()
+            # [FILTRO CRÍTICO] Excluir secciones de fuentes/bibliografía de la evaluación
+            forbidden = ['FUENTES', 'BIBLIOGRAFIA', 'REFERENCIAS', 'SOURCES']
+            clean_title = ''.join(c for c in title if c.isalnum() or c.isspace()).upper()
+            if any(word in clean_title for word in forbidden):
+                continue
             level = len(match.group(1))
             sections.append({'line': i, 'level': level})
             

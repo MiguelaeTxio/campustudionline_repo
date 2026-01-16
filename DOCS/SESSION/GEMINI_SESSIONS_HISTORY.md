@@ -1292,3 +1292,11 @@ Objetivos de la sesión:
 ## AAAA # --SYSTEM -->
 *  **Session:** Reparación de Emergencia en Generadores de Prompts y Desbloqueo WSGI
 *  **Description:** Sesión crítica para resolver un ImportError en tasks.py causado por funciones faltantes en prompt_generators.py. Se procederá a la restauración mandatoria de las funciones generate_stimulus_creation_prompt y generate_ugr_questions_prompt para desbloquear el servidor WSGI. Posteriormente se validará el pipeline de generación de evaluaciones y la persistencia de estímulos de lectura.
+
+# 2026-01-16
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+## CYC # --SYSTEM -->
+*  **Session:** Validación Empírica de Arquetipos de Evaluación AI y Blindaje LaTeX
+*  **Description:** Verificación funcional de la clasificación semántica de asignaturas (Ciencias, Idiomas, Humanidades) y la eficacia del escudo LaTeX en la generación de JSON. Ejecución de pruebas unitarias para confirmar la integridad estructural de los exámenes generados y la correcta renderización de fórmulas matemáticas. Auditoría de tiempos de respuesta del clasificador.
+
