@@ -50,20 +50,27 @@ def _execute_gemini_call(prompt: str, api_key: ApiKey, generation_config: dict, 
 
 def clean_json_response(raw_text: str) -> str:
     """
-    [PUBLIC] Extrae un bloque de código JSON de una cadena de texto.
+    [PUBLIC] Extrae un bloque de código JSON y blinda secuencias LaTeX (escapes inválidos).
     """
-    # Usa el modulo 're' importado globalmente
+    # 1. Extracción del bloque JSON
     match = re.search(r"```(?:json)?\s*(\{.*?\})\s*```", raw_text, re.DOTALL | re.IGNORECASE)
     if match:
-        return match.group(1)
+        text = match.group(1)
+    else:
+        start = raw_text.find('{')
+        end = raw_text.rfind('}')
+        if start != -1 and end != -1 and end > start:
+            text = raw_text[start : end + 1]
+        else:
+            text = raw_text.strip()
+            
+    # 2. BLINDAJE LATEX/BACKSLASH (Anti-JSONDecodeError)
+    # Buscamos barras invertidas que NO sean escapes JSON válidos y las duplicamos.
+    # Secuencias válidas: \" \\ \/ \b \f \n \r \t \u
+    # El regex busca una \ seguida de algo que NO está en la lista permitida.
+    text = re.sub(r'\\(?![bfnrtu"/\\ ])', r'\\\\', text)
     
-    start = raw_text.find('{')
-    end = raw_text.rfind('}')
-    
-    if start != -1 and end != -1 and end > start:
-        return raw_text[start : end + 1]
-        
-    return raw_text.strip()
+    return text
 
 # --- Public Functions ---
 

@@ -44,6 +44,7 @@ from core.services.prompt_generators import (
     generate_assessment_prompt,
     generate_stimulus_creation_prompt,
     generate_ugr_questions_prompt,
+    generate_classification_prompt,
 )
 from messaging.push_utils import send_notification_to_user
 from core.utils import send_unified_notification
@@ -1051,225 +1052,130 @@ def generate_full_course_task(self, task_id):
         db.close_old_connections()
 
 
-@shared_task(bind=True, acks_late=True, max_retries=3, default_retry_delay=60)
+
+@shared_task(bind=True, acks_late=True, max_retries=5, default_retry_delay=60)
 def generate_assessment_from_content_task(self, assessment_id):
-    # Log inicial (usando el nuevo helper para probarlo inmediatamente)
+    """
+    [HITO 6 - V8] Pipeline Blindado con Rotación Atómica y Unificada.
+    """
+    from django.shortcuts import get_object_or_404
     log_assessment_task_event(assessment_id, f"TAREA GENERACIÓN: Inicio ejecución v{self.request.retries + 1}.")
     
-    automation_settings = AutomationSettings.load()
-    if not automation_settings.is_running:
-        log_assessment_task_event(assessment_id, "Orquestador detenido. Reintentando...", level="WARNING")
-        raise self.retry(countdown=300)
-    
-    assessment = None
     try:
-        # 1. Validación de Estado y Bloqueo Inicial
-        with transaction.atomic():
-            assessment = Assessment.objects.select_for_update().get(pk=assessment_id)
-            if assessment.status == Assessment.AssessmentStatus.PAUSED:
-                raise self.retry(countdown=60)
-            if assessment.status not in [Assessment.AssessmentStatus.PENDING, Assessment.AssessmentStatus.GENERATION_FAILED_RETRYABLE, Assessment.AssessmentStatus.PROCESSING]:
-                return f"Tarea omitida. Estado: {assessment.get_status_display()}."
-            
-            # Cambiar a PROCESSING
-            assessment.status = Assessment.AssessmentStatus.PROCESSING
-            # Limpiar preguntas previas si es reintento
-            assessment.questions.all().delete()
-            assessment.save(update_fields=["status"])
-        
-        log_assessment_task_event(assessment_id, "Estado establecido a PROCESSING. Preparando prompt.")
-
-        # 2. Preparación de Datos (Lectura sin bloqueo)
-        # Re-leemos para asegurar frescura fuera del lock
         assessment = Assessment.objects.get(pk=assessment_id)
         original_content = assessment.content_copy.original_content
         full_content = original_content.get_full_markdown_content()
         
-        if not full_content or not full_content.strip():
-            raise ValueError("El contenido para la evaluación está vacío.")
-
-        # [HITO 6 - FASE 2] FILTRADO POR SELECCIÓN
-        selection = assessment.selection_range
-        if selection and isinstance(selection, list):
-            log_assessment_task_event(assessment_id, f"Filtrando contenido por {len(selection)} temas.")
-            filtered_content = filter_content_by_selection(full_content, selection) or full_content
-        else:
-            filtered_content = full_content
-
         subject_obj = original_content.subject.first()
         subject_name = subject_obj.name if subject_obj else original_content.title
-        branch_name = subject_obj.academic_year.degree.branch.name if (subject_obj and subject_obj.academic_year) else ""
-        subject_type = classify_subject_strategy(subject_name, branch_name)
+        branch_name = subject_obj.academic_year.degree.branch.name if (subject_obj and subject_obj.academic_year) else "General"
+        
+        # [HITO 6] CLASIFICACIÓN VÍA API (MANDATORIO)
+        # Paso 0: Clasificación del Arquetipo
+        # No confiamos en la clasificación estática. Preguntamos a la IA.
+        
+        step = 0
+        subject_type = "HUMANITIES" # Default safe
+        r_text, l_text = "", ""
 
-        # --- PASO 1: ESTÍMULOS ---
-        log_assessment_task_event(assessment_id, "PASO 1: Generando Reading/Listening...")
-        step1_prompt = generate_stimulus_creation_prompt(filtered_content, subject_name, subject_type)
-        
-        # Llamada API Paso 1 (Síncrona rápida, confiando en retry de tarea si falla)
-        automation_settings = AutomationSettings.load()
-        api_key_s1 = automation_settings.active_api_key or ApiKey.objects.filter(is_enabled=True, is_quarantined=False).first()
-        if not api_key_s1: raise Exception("Sin claves API para Paso 1")
-        
-        suc_s1, txt_s1, _ = generate_text_content(step1_prompt, api_key=api_key_s1)
-        if not suc_s1: raise Exception(f"API Error Paso 1: {txt_s1}")
-        
-        try:
-             dat_s1 = json.loads(clean_json_response(txt_s1))
-             r_text = dat_s1.get('reading_stimulus', '')
-             l_text = dat_s1.get('listening_transcript', '')
-        except:
-             r_text = "Error generando texto."
-             l_text = "Error generando audio."
-
-        with transaction.atomic():
-            aa = Assessment.objects.select_for_update().get(pk=assessment_id)
-            aa.reading_stimulus = r_text
-            aa.listening_transcript = l_text
-            aa.save(update_fields=['reading_stimulus', 'listening_transcript'])
-
-        log_assessment_task_event(assessment_id, "PASO 2: Generando preguntas...")
-        prompt = generate_ugr_questions_prompt(r_text, l_text, subject_type)
-        
-        
-        # --- [HITO 37] ROTACIÓN ESTÁNDAR (Sincronizada con Orquestador) ---
-        response_text = None
-        while True:
-            # 1. Sincronización
+        while step <= 2:
             automation_settings = AutomationSettings.load()
             api_key = automation_settings.active_api_key
             
-            # 2. Validación de Clave Activa
             if not api_key or not api_key.is_enabled or api_key.is_quarantined:
                  api_key = ApiKey.objects.filter(is_enabled=True, is_quarantined=False).order_by('id').first()
                  if api_key:
                      automation_settings.active_api_key = api_key
                      automation_settings.save(update_fields=['active_api_key'])
                  else:
-                     log_assessment_task_event(assessment_id, "SIN CLAVES DISPONIBLES. Esperando 5m...", level="ERROR")
-                     time.sleep(300)
-                     continue
+                     log_assessment_task_event(assessment_id, "POOL AGOTADO. Esperando 5m...", level="ERROR")
+                     raise self.retry(countdown=300)
 
-            log_assessment_task_event(assessment_id, f"Llamando a API... (Clave: {api_key.name})")
-            
             try:
-                success, text, _ = generate_text_content(prompt, api_key=api_key)
-            except Exception as e:
-                success = False
-                text = str(e)
-            
-            if success:
-                response_text = text
-                # Limpiar strikes si hubo éxito
-                if api_key.consecutive_failures > 0:
-                    api_key.consecutive_failures = 0
-                    api_key.save(update_fields=['consecutive_failures'])
-                break # ÉXITO -> Salir del bucle
-            
-            else:
-                # 3. Gestión de Errores Estándar
-                error_str = str(text)
-                is_quota = "429" in error_str or "Resource" in error_str or "Quota" in error_str
-                
-                if is_quota:
-                    api_key.refresh_from_db()
-                    api_key.consecutive_failures += 1
-                    api_key.save(update_fields=["consecutive_failures"])
+                if step == 0:
+                    log_assessment_task_event(assessment_id, f"PASO 0 (Clasificación) - Key: {api_key.name}")
+                    class_prompt = generate_classification_prompt(subject_name, branch_name)
+                    success_class, class_resp, _ = generate_text_content(class_prompt, api_key=api_key)
                     
-                    if api_key.consecutive_failures >= 4:
-                        api_key.is_quarantined = True
-                        api_key.save(update_fields=["is_quarantined"])
-                        _request_quarantine_via_mailbox(api_key)
-                        
-                        next_k = ApiKey.objects.filter(is_enabled=True, is_quarantined=False).exclude(id=api_key.id).first()
-                        if next_k:
-                            automation_settings.active_api_key = next_k
-                            automation_settings.save(update_fields=['active_api_key'])
-                            log_assessment_task_event(assessment_id, f"ROTACIÓN: Clave agotada. Nueva clave: {next_k.name}.")
-                        else:
-                            log_assessment_task_event(assessment_id, "ROTACIÓN FALLIDA: No quedan claves. Esperando 60s...", level="ERROR")
-                            time.sleep(60)
+                    if success_class:
+                        raw_type = clean_json_response(class_resp).strip().upper()
+                        if "EXACT" in raw_type: subject_type = "EXACT_SCIENCES"
+                        elif "LANG" in raw_type: subject_type = "LANGUAGES"
+                        else: subject_type = "HUMANITIES"
+                        log_assessment_task_event(assessment_id, f"Clasificación API: {subject_type}")
+                        step = 1
                     else:
-                        log_assessment_task_event(assessment_id, f"STRIKE {api_key.consecutive_failures}/4 ({api_key.name}). Esperando 60s...", level="ERROR")
-                        time.sleep(60)
-                    continue 
-                else:
-                    log_assessment_task_event(assessment_id, f"ERROR API NO-CUOTA: {error_str}. Reintentando en 30s...", level="ERROR")
-                    time.sleep(30)
-                    continue
+                        # Si falla por cuota, el bloque except lo capturará
+                        # Si falla por otra cosa, reintentamos con fallback manual?
+                        # No, reintentamos API porque es mandatorio.
+                        raise ResourceExhausted(class_resp)
 
-        questions_data = _parse_assessment_text(response_text)
-        
-        if not questions_data:
-            raise ValueError("La IA no devolvió preguntas válidas.")
-            
-        log_assessment_task_event(assessment_id, f"IA devolvió {len(questions_data)} preguntas. Iniciando persistencia.")
+                elif step == 1:
+                    log_assessment_task_event(assessment_id, f"PASO 1 (Estímulos) - Arquetipo: {subject_type}")
+                    selection = assessment.selection_range
+                    filtered = filter_content_by_selection(full_content, selection) if selection else full_content
+                    prompt = generate_stimulus_creation_prompt(filtered, subject_name, subject_type)
+                    
+                    success, text, _ = generate_text_content(prompt, api_key=api_key)
+                    if not success: raise ResourceExhausted(text)
+                    
+                    dat = dirtyjson.loads(clean_json_response(text))
+                    r_text = dat.get('reading_stimulus', '')
+                    l_text = dat.get('listening_transcript', '')
+                    
+                    if not r_text: raise ValueError("Respuesta de IA sin contenido.")
+                    
+                    with transaction.atomic():
+                        aa = Assessment.objects.select_for_update().get(pk=assessment_id)
+                        aa.reading_stimulus = r_text
+                        aa.listening_transcript = l_text
+                        aa.status = Assessment.AssessmentStatus.PROCESSING
+                        aa.save(update_fields=['reading_stimulus', 'listening_transcript', 'status'])
+                    step = 2
 
-        # 3. Persistencia Iterativa (Patrón PAIR: Crear -> Loggear -> Repetir)
-        # Actualizamos el total esperado primero
-        with transaction.atomic():
-            a = Assessment.objects.select_for_update().get(pk=assessment_id)
-            a.total_questions_expected = len(questions_data)
-            a.questions_processed = 0
-            a.save(update_fields=['total_questions_expected', 'questions_processed'])
+                elif step == 2:
+                    log_assessment_task_event(assessment_id, f"PASO 2 (Preguntas) - Key: {api_key.name}")
+                    prompt = generate_ugr_questions_prompt(r_text, l_text, subject_type)
+                    
+                    success, text, _ = generate_text_content(prompt, api_key=api_key)
+                    if not success: raise ResourceExhausted(text)
+                    
+                    questions_data = _parse_assessment_text(text)
+                    if not questions_data: raise ValueError("IA no devolvió preguntas válidas.")
+                    
+                    with transaction.atomic():
+                        a = Assessment.objects.select_for_update().get(pk=assessment_id)
+                        a.questions.all().delete()
+                        a.total_questions_expected = len(questions_data)
+                        a.save(update_fields=['total_questions_expected'])
+                        for idx, q_data in enumerate(questions_data, 1):
+                            Question.objects.create(assessment=a, **q_data)
+                            a.questions_processed = idx
+                            a.save(update_fields=['questions_processed'])
+                    step = 3
 
-        for index, q_data in enumerate(questions_data, 1):
-            # Paso A: Crear Pregunta (Atómico)
-            with transaction.atomic():
-                # Obtenemos lock para consistencia padre-hijo
-                parent = Assessment.objects.select_for_update().get(pk=assessment_id)
-                Question.objects.create(assessment=parent, **q_data)
-                parent.questions_processed = index
-                parent.save(update_fields=['questions_processed'])
-            
-            # Paso B: Loggear (Independiente y seguro, usando el helper)
-            log_assessment_task_event(assessment_id, f"Pregunta {index}/{len(questions_data)} persistida.")
-        
-        # 4. Finalización
-        with transaction.atomic():
-            final_assessment = Assessment.objects.select_for_update().get(pk=assessment_id)
-            final_assessment.status = Assessment.AssessmentStatus.COMPLETED
-            final_assessment.last_error = None
-            final_assessment.save(update_fields=['status', 'last_error', 'expiration_date', 'results_expiration_date'])
-        
+            except (ResourceExhausted, AIServiceCriticalError) as e:
+                api_key.refresh_from_db()
+                api_key.consecutive_failures += 1
+                api_key.save(update_fields=["consecutive_failures"])
+                log_assessment_task_event(assessment_id, f"FALLO CUOTA ({api_key.consecutive_failures}/4): {api_key.name}", level="WARNING")
+                
+                if api_key.consecutive_failures >= 4:
+                    api_key.is_quarantined = True
+                    api_key.save(update_fields=["is_quarantined"])
+                    _request_quarantine_via_mailbox(api_key)
+                
+                time.sleep(5)
+                continue
+
+        # Finalización exitosa
+        Assessment.objects.filter(pk=assessment_id).update(status=Assessment.AssessmentStatus.COMPLETED, last_error=None)
         log_assessment_task_event(assessment_id, "Proceso completado con ÉXITO.", level="SUCCESS")
 
-        # 5. Notificación (Best Effort)
-        try:
-            action_url = settings.BASE_URL + reverse("assessment:take_assessment", kwargs={"pk": assessment_id})
-            context = {"assessment_pk": assessment_id, "content_title": original_content.title, "action_url": action_url}
-            send_unified_notification(user=assessment.user, subject_template="assessment/email/assessment_ready_subject.txt", body_template_prefix="assessment/email/assessment_ready_body", context=context)
-        except Exception as e:
-            logger.error(f"Fallo en notificación post-generación: {e}")
-
-    except ResourceExhausted as e:
-        log_assessment_task_event(assessment_id, f"Error de Cuota: {e}", level="ERROR")
-        if assessment:
-            with transaction.atomic():
-                a = Assessment.objects.select_for_update().get(pk=assessment_id)
-                a.status = Assessment.AssessmentStatus.GENERATION_FAILED_RETRYABLE
-                a.last_error = str(e)
-                a.save(update_fields=["status", "last_error"])
-        # Reintentar si corresponde...
-        if "429" in str(e) and self.request.retries < self.max_retries:
-             # [FIX V24.8] Hard Wait (61s) para garantizar enfriamiento API
-             time.sleep(61)
-             raise self.retry(exc=e, countdown=60)
-
     except Exception as e:
-        error_msg = f"Error Fatal: {str(e)}\n{traceback.format_exc()}"
-        log_assessment_task_event(assessment_id, error_msg, level="ERROR")
-        logger.critical(f"Assessment Task Failed: {e}", exc_info=True)
-        if assessment:
-            try:
-                with transaction.atomic():
-                    a = Assessment.objects.select_for_update().get(pk=assessment_id)
-                    a.status = Assessment.AssessmentStatus.GENERATION_FAILED_RETRYABLE
-                    a.last_error = str(e)
-                    a.save(update_fields=["status", "last_error"])
-                self.retry(exc=e)
-            except Exception:
-                # Si falla el retry o update, fallback final
-                Assessment.objects.filter(pk=assessment_id).update(status=Assessment.AssessmentStatus.FAILED_FATAL)
+        log_assessment_task_event(assessment_id, f"ERROR FATAL: {str(e)}", level="ERROR")
+        Assessment.objects.filter(pk=assessment_id).update(status=Assessment.AssessmentStatus.GENERATION_FAILED_RETRYABLE, last_error=str(e))
+        raise self.retry(exc=e)
 
 @shared_task(bind=True, acks_late=True, max_retries=3, default_retry_delay=60)
 def correct_assessment_task(self, assessment_id):
@@ -1379,7 +1285,7 @@ def correct_assessment_task(self, assessment_id):
             try:
                 self.retry(exc=e)
             except MaxRetriesExceededError:
-                assessment.status = Assessment.AssessmentStatus.FAILED_FATAL
+                assessment.status = Assessment.AssessmentStatus.GENERATION_FAILED_FATAL
                 assessment.last_error = traceback.format_exc()
                 assessment.save(update_fields=["status", "last_error"])
 
@@ -1418,7 +1324,7 @@ def purge_and_penalize_corrections():
     log_timestamp(f"PURGE_PENALIZE_TASK: Buscando correcciones caducadas antes de {now}.")
     expired_assessments = Assessment.objects.filter(status="RESULTS_AVAILABLE", results_expiration_date__lt=now).distinct()
     if not expired_assessments.exists():
-        return "No hay correcciones para procesar."
+        return "No hay evaluaciones para procesar."
     
     assessments_to_penalize = expired_assessments.filter(was_viewed=False)
     

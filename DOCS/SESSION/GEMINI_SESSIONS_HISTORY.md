@@ -1277,3 +1277,18 @@ Objetivos de la sesión:
 2. Adición de campos de persistencia de estímulos: `reading_stimulus` y `listening_transcript`.
 3. Preparación de la lógica para el parseo del `master_schema` en la vista de configuración.
 
+
+# 2026-01-15
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+## PLUTO # --SYSTEM -->
+*  **Session:** Reparación de Emergencia en Generadores de Prompts y Validación del Pipeline
+*  **Description:** Restauración de funciones críticas desaparecidas en `core/services/prompt_generators.py` para resolver el `ImportError` que bloquea WSGI. Validación del flujo de generación de evaluaciones, asegurando la persistencia de `reading_stimulus` y optimizando la carga en frontend. Verificación de rotación atómica de claves API.
+
+
+# 2026-01-16
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+## AAAA # --SYSTEM -->
+*  **Session:** Reparación de Emergencia en Generadores de Prompts y Desbloqueo WSGI
+*  **Description:** Sesión crítica para resolver un ImportError en tasks.py causado por funciones faltantes en prompt_generators.py. Se procederá a la restauración mandatoria de las funciones generate_stimulus_creation_prompt y generate_ugr_questions_prompt para desbloquear el servidor WSGI. Posteriormente se validará el pipeline de generación de evaluaciones y la persistencia de estímulos de lectura.

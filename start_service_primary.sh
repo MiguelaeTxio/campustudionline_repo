@@ -1,26 +1,27 @@
 #!/bin/bash
-# Servicio Primario: Celery Beat + Worker High Priority
+# /home/MiguelAeTxio/PROJECTS/CampuStudiOnline/start_service_primary.sh
+
 PROJECT_DIR="/home/MiguelAeTxio/PROJECTS/CampuStudiOnline"
-VENV_PYTHON="/home/MiguelAeTxio/.virtualenvs/campus_pa_env_py3.10/bin/python"
+PYTHON_EXE="/home/MiguelAeTxio/.virtualenvs/campus_pa_env_py3.10/bin/python"
+CELERY_EXE="/home/MiguelAeTxio/.virtualenvs/campus_pa_env_py3.10/bin/celery"
 
-cd "$PROJECT_DIR" || { echo "CRITICAL: Directorio no encontrado"; exit 1; }
+cd "$PROJECT_DIR" || { echo "ERROR: Directorio no encontrado"; exit 1; }
 
-echo "--- Iniciando Servicio Primario (Beat + High Priority) ---"
+# Limpieza preventiva de archivos de bloqueo de Celery Beat
+rm -f celerybeat.pid
+rm -f beat.pid
 
-# 1. Lanzar Worker High Priority en Background (&)
-# Se encarga de: Chat, Emails urgentes, Notificaciones Push
-"$VENV_PYTHON" -m dotenv run "$VENV_PYTHON" -m celery -A core worker \
+echo "[$(date)] Iniciando Servicio Primario (Worker HP + Beat)..."
+
+# 1. Lanzar Worker High Priority en background
+"$PYTHON_EXE" -m dotenv run "$CELERY_EXE" -A core worker \
     -Q high_priority \
-    --hostname=worker_pri@%h \
     --loglevel=info \
-    --concurrency=1 &
+    --concurrency=1 2>&1 &
 
-PID_WORKER=$!
-echo ">> Worker High Priority iniciado (PID: $PID_WORKER)"
+sleep 3
 
-# 2. Lanzar Beat en Foreground
-# Se encarga de: Cron jobs, Recordatorios de Agenda
-echo ">> Iniciando Celery Beat..."
-"$VENV_PYTHON" -m dotenv run "$VENV_PYTHON" -m celery -A core beat \
+# 2. Lanzar Celery Beat reemplazando el proceso del shell (exec)
+exec "$PYTHON_EXE" -m dotenv run "$CELERY_EXE" -A core beat \
     --loglevel=info \
-    --scheduler django_celery_beat.schedulers:DatabaseScheduler
+    --scheduler django_celery_beat.schedulers:DatabaseScheduler 2>&1

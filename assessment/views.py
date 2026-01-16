@@ -60,17 +60,38 @@ def configure_assessment(request, copy_pk):
              return redirect("assessment:view_results", pk=active_assessment.pk)
         else:
              return redirect("study_room:edit_copy", pk=user_copy.pk)
-
+    
+    # [HITO 6] Extracción y Aplanado de Estructura para Selector de Rango
     markdown_content = user_copy.original_content.get_full_markdown_content()
-    structure = extract_content_structure(markdown_content)
-
-    if not structure:
-        messages.warning(request, "Este contenido no tiene una estructura detectable. Se evaluará todo.")
+    raw_structure = extract_content_structure(markdown_content)
+    
+    flat_structure = []
+    def flatten_structure(nodes):
+        for node in nodes:
+            # Solo incluimos niveles 1 y 2 para simplificar la selección
+            if node.get('level', 1) <= 3:
+                flat_structure.append({
+                    'id': node['id'],
+                    'text': node['text'],
+                    'level': node['level']
+                })
+            # Recursión si hay hijos, aunque filtremos
+            if 'children' in node:
+                flatten_structure(node['children'])
+    
+    if raw_structure:
+        flatten_structure(raw_structure)
+    
+    # Si no hay estructura, fallback
+    if not flat_structure:
+        # Dummy structure si falla el parser para que no rompa la UI
+        flat_structure = [{'id': 'full_content', 'text': 'Contenido Completo (Sin estructura detectada)', 'level': 1}]
 
     context = {
         "user_copy": user_copy,
-        "content_structure": json.dumps(structure),
-        "page_title": "Configurar Autoevaluación"
+        "flat_structure": json.dumps(flat_structure), # Pasamos la lista plana
+
+                "page_title": "Configurar Autoevaluación"
     }
     return render(request, "assessment/configure_assessment.html", context)
 
@@ -393,7 +414,7 @@ def get_assessment_panel_content(request, copy_pk):
 
     html = render_to_string(
         "assessment/partials/assessment_status_block.html",
-        {"assessment_context": assessment_context},
+        {"assessment_context": assessment_context, "user_copy": user_copy},
         request=request,
     )
     return JsonResponse({"html": html})

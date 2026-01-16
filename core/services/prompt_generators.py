@@ -1,6 +1,4 @@
-# [V3 - Arquitectura Simplificada] Este módulo centraliza la creación de prompts para la API de IA.
 from typing import List, Dict
-
 
 def generate_course_metadata_prompt(
     topic_description: str, academic_context: str = ""
@@ -45,8 +43,6 @@ def generate_master_schema_prompt(
 ) -> str:
     """
     [V3 - Síntesis Anti-Plagio] Phase 2: Generates a prompt to request the exhaustive course index.
-    This prompt instructs the AI to perform a creative re-writing and synthesis of the official syllabus,
-    guided by learning objectives and explicitly filtering out practical content.
     """
     context_section = ""
     if academic_context:
@@ -97,9 +93,7 @@ def generate_atomic_content_prompt(
     academic_context: str = "",
 ) -> str:
     """
-    [V4 - Blindaje de Contexto] Phase 3: Genera un prompt para desarrollar el contenido de una
-    única subsección, inyectando un preámbulo de contexto académico para mitigar falsos
-    positivos de los filtros de seguridad.
+    [V4 - Blindaje de Contexto] Phase 3: Genera un prompt para desarrollar el contenido de una única subsección.
     """
     context_preamble = ""
     if academic_context:
@@ -148,6 +142,25 @@ def generate_atomic_content_prompt(
     return prompt
 
 
+def generate_classification_prompt(subject_name: str, branch_name: str) -> str:
+    """
+    [HITO 6 - V12] Clasificador Semántico de Asignaturas.
+    Discrimina la naturaleza de la asignatura basándose en su nombre y rama.
+    """
+    return (
+        f"Analiza la asignatura '{subject_name}' perteneciente a la rama académica '{branch_name}'.\n"
+        "Tu tarea es clasificarla en uno de los siguientes 3 Arquetipos de Evaluación:\n\n"
+        "1. EXACT_SCIENCES: Elige esto SOLO si la asignatura implica resolución de problemas matemáticos, cálculo, física o ingeniería pura.\n"
+        "   - Ejemplo: 'Cálculo I', 'Física Cuántica', 'Estructuras de Hormigón', 'Resistencia de Materiales'.\n"
+        "   - EXCEPCIÓN: Si es una asignatura teórica en una carrera técnica (ej: 'Historia de la Arquitectura', 'Legislación'), NO uses esto.\n\n"
+        "2. LANGUAGES: Elige esto SOLO si el objetivo principal es aprender un segundo idioma (Gramática, Vocabulario).\n"
+        "   - Ejemplo: 'Inglés III', 'Francés para Turismo', 'Alemán B2'.\n\n"
+        "3. HUMANITIES: Para todo lo demás. Incluye Historia, Derecho, Biología, Arte, Teoría, Legislación, Medicina, etc.\n"
+        "   - Ejemplo: 'Legislación Urbanística' (aunque sea de Arquitectura), 'Historia del Arte', 'Derecho Romano'.\n\n"
+        "Responde ÚNICA y EXCLUSIVAMENTE con una de las 3 palabras clave: EXACT_SCIENCES, LANGUAGES o HUMANITIES."
+    )
+
+
 def generate_assessment_prompt(
     content_text: str,
     subject_type: str = "HUMANITIES",
@@ -156,52 +169,19 @@ def generate_assessment_prompt(
 ) -> str:
     """
     [HITO 6] Generador de Exámenes Universitarios Reales (V4 - UGR Strict Emulator).
-    Soporte nativo para Tests (Reading/Listening) y Problemas (Ingeniería).
     """
     
     # --- ARQUETIPO: CIENCIAS EXACTAS (ETSIIT UGR) ---
     if subject_type == "EXACT_SCIENCES":
-        instructions = """Actúa como un Catedrático de Ingeniería. Genera un EXAMEN FINAL riguroso.
-ESTRUCTURA OBLIGATORIA (4 PROBLEMAS):
-Genera 4 Problemas de Desarrollo Complejos. NO uses preguntas tipo test.
-1. Problema 1: Conceptos base / Cálculo directo.
-2. Problema 2: Aplicación práctica.
-3. Problema 3: Demostración o caso límite.
-4. Problema 4: Problema integrado.
-
-REGLAS TÉCNICAS:
-- Usa LaTeX OBLIGATORIAMENTE para fórmulas: \\(...\\) y $$...$$.
-- Establece 'question_type': 'open_ended'."""
+        instructions = "Actúa como un Catedrático de Ingeniería. Genera un EXAMEN FINAL riguroso.\nESTRUCTURA OBLIGATORIA (4 PROBLEMAS):\nGenera 4 Problemas de Desarrollo Complejos. NO uses preguntas tipo test.\n1. Problema 1: Conceptos base / Cálculo directo.\n2. Problema 2: Aplicación práctica.\n3. Problema 3: Demostración o caso límite.\n4. Problema 4: Problema integrado.\n\nREGLAS TÉCNICAS:\n- Usa LaTeX OBLIGATORIAMENTE para fórmulas: \\(...\\) y $$...$$.\n- Establece 'question_type': 'open_ended'."
 
     # --- ARQUETIPO: IDIOMAS (CLM UGR - CertAcles) ---
     elif subject_type == "LANGUAGES":
-        instructions = """Actúa como un Examinador Oficial CertAcles. Generarás un examen de 4 secciones. 
-ESTA PROHIBIDO omitir cualquier sección. Debes completar el checklist:
-
-1. [ ] SECCIÓN READING: Genera 4 preguntas 'multiple_choice' con 4 opciones cada una.
-2. [ ] SECCIÓN LISTENING: Genera un Transcript (200 palabras) entre [---TRANSCRIPT---] y [---END-TRANSCRIPT---]. Luego genera 2 preguntas 'multiple_choice' (3 opciones) sobre ese audio.
-3. [ ] SECCIÓN WRITING: Genera 1 tarea de redacción (Essay o Email) tipo 'open_ended'.
-4. [ ] SECCIÓN SPEAKING: Genera 1 tema de monólogo tipo 'open_ended' + etiqueta [---RECORDING-REQUIRED---].
-
-**REGLA DE ORO:** La respuesta debe contener exactamente 8 preguntas en total (4 Reading + 2 Listening + 1 Writing + 1 Speaking).
-**EJEMPLO OBLIGATORIO DE FORMATO JSON:**
-{
-  "question_text": "...",
-  "question_type": "multiple_choice",
-  "options": ["a) ...", "b) ...", "c) ...", "d) ..."],
-  "model_answer": "a) ..."
-}"""
+        instructions = "Actúa como un Examinador Oficial CertAcles. Generarás un examen de 4 secciones. \nESTA PROHIBIDO omitir cualquier sección. Debes completar el checklist:\n\n1. [ ] SECCIÓN READING: Genera 4 preguntas 'multiple_choice' con 4 opciones cada una.\n2. [ ] SECCIÓN LISTENING: Genera un Transcript (200 palabras) entre [---TRANSCRIPT---] y [---END-TRANSCRIPT---]. Luego genera 2 preguntas 'multiple_choice' (3 opciones) sobre ese audio.\n3. [ ] SECCIÓN WRITING: Genera 1 tarea de redacción (Essay o Email) tipo 'open_ended'.\n4. [ ] SECCIÓN SPEAKING: Genera 1 tema de monólogo tipo 'open_ended' + etiqueta [---RECORDING-REQUIRED---].\n\n**REGLA DE ORO:** La respuesta debe contener exactamente 8 preguntas en total (4 Reading + 2 Listening + 1 Writing + 1 Speaking).\n**EJEMPLO OBLIGATORIO DE FORMATO JSON:**\n{\n  \"question_text\": \"...\",\n  \"question_type\": \"multiple_choice\",\n  \"options\": [\"a) ...\", \"b) ...\", \"c) ...\", \"d) ...\"],\n  \"model_answer\": \"a) ...\"\n}"
 
     # --- ARQUETIPO: HUMANIDADES (UNED/UGR) ---
     else:
-        instructions = """Actúa como Profesor Titular de Humanidades. Genera un examen mixto:
-1. **Definición de Conceptos (Test):** 2 preguntas teóricas clave.
-   - TIPO: 'multiple_choice'.
-   - Opciones: 4 opciones.
-2. **Comentario de Texto:** 1 fragmento para analizar.
-   - TIPO: 'open_ended'.
-3. **Desarrollo:** 1 pregunta amplia de ensayo.
-   - TIPO: 'open_ended'."""
+        instructions = "Actúa como Profesor Titular de Humanidades. Genera un examen mixto:\n1. **Definición de Conceptos (Test):** 2 preguntas teóricas clave.\n  - TIPO: 'multiple_choice'.\n   - Opciones: 4 opciones.\n2. **Comentario de Texto:** 1 fragmento para analizar.\n   - TIPO: 'open_ended'.\n3. **Desarrollo:** 1 pregunta amplia de ensayo.\n   - TIPO: 'open_ended'."
 
     objectives_section = ""
     if learning_objectives:
@@ -228,3 +208,73 @@ FUENTE:
 }}
 IMPORTANTE: Si 'question_type' es 'multiple_choice', el campo 'options' es OBLIGATORIO."""
     return base_prompt
+
+
+def generate_stimulus_creation_prompt(content_source: str, subject_name: str, subject_type: str = "HUMANITIES") -> str:
+    """
+    [HITO 6 - V11] Generador de Estímulos con Nivel Dinámico Adaptativo.
+    """
+    target_language = "el idioma de la asignatura"
+    idiomas_map = {"italiano": "Italiano", "ingles": "Inglés", "english": "Inglés", "frances": "Francés", "aleman": "Alemán"}
+    for k, v in idiomas_map.items():
+        if k in subject_name.lower():
+            target_language = v
+            break
+
+    if subject_type == "LANGUAGES":
+        instructions = (
+            f"1. Analiza el nombre de la asignatura: '{subject_name}' e identifica el nivel (A1, B2, Inicial, Avanzado, etc.).\n"
+            "2. Identifica los puntos gramaticales en la FUENTE.\n"
+            "3. Selecciona un tema de actualidad o cultura.\n"
+            f"4. Redacta un texto (Reading) y un guion (Listening) en {target_language}.\n"
+            "5. REGLA CRÍTICA: La complejidad del vocabulario y la sintaxis DEBE CORRESPONDERSE EXACTAMENTE con el nivel pedagógico detectado."
+        )
+    else:
+        instructions = "Genera un texto de análisis académico profundo sobre el tema, adaptando la complejidad al nivel de la asignatura."
+
+    prompt = (
+        "Actúa como un Examinador Pedagogo Senior.\n\n"
+        f"ASIGNATURA: {subject_name}\n"
+        f"FUENTE TÉCNICA:\n{content_source[:15000]}\n\n"
+        f"MISION:\n{instructions}\n\n"
+        "REGLAS DE ORO:\n"
+        "- El nivel de dificultad debe ser coherente con el contexto.\n"
+        f"- Idioma de salida para los textos: {target_language}.\n\n"
+        "FORMATO DE SALIDA JSON ESTRICTO:\n"
+        "{\n"
+        '  "reading_stimulus": "Texto auténtico...",\n'
+        '  "listening_transcript": "Guion de audio auténtico..."\n'
+        "}"
+    )
+    return prompt
+
+
+def generate_ugr_questions_prompt(reading_text: str, listening_text: str, subject_type: str = "HUMANITIES") -> str:
+    """
+    [HITO 6 - V10] Tribunal de Examen UGR: Genera las 4 secciones obligatorias.
+    """
+    prompt = (
+        "Actúa como un Tribunal de Examen Universitario. Tu misión es generar un examen "
+        "estructurado en 4 SECCIONES basándote en los textos proporcionados.\n\n"
+        f"TEXTOS DE REFERENCIA:\n"
+        f"1. LECTURA: {reading_text[:3000]}\n"
+        f"2. AUDIO: {listening_text[:3000]}\n\n"
+        "ESTRUCTURA OBLIGATORIA DEL EXAMEN (Total 8 tareas):\n"
+        "1. SECCIÓN READING: 4 preguntas 'multiple_choice' sobre el texto de LECTURA.\n"
+        "2. SECCIÓN LISTENING: 2 preguntas 'multiple_choice' sobre el texto de AUDIO.\n"
+        "3. SECCIÓN WRITING: 1 tarea de redacción académica (open_ended) relacionada con los temas.\n"
+        "4. SECCIÓN SPEAKING: 1 tema de exposición oral (open_ended). IMPORTANTE: Debes incluir "
+        "el marcador [---RECORDING-REQUIRED---] al final del enunciado del Speaking.\n\n"
+        "FORMATO JSON ESTRICTO:\n"
+        "{\n"
+        '  "questions": [\n'
+        "    {\n"
+        '      "question_text": "Enunciado...",\n'
+        '      "question_type": "multiple_choice" | "open_ended",\n'
+        '      "options": ["a)...", "b)...", "c)...", "d)..."],\n'
+        '      "model_answer": "..."\n'
+        "    }\n"
+        "  ]\n"
+        "}"
+    )
+    return prompt
