@@ -112,6 +112,7 @@
 ./search/models.py
 ./search/migrations/__init__.py
 ./search/tests.py
+./temp_clean_tasks.py
 ./chat/urls.py
 ./chat/templates/chat/index.html
 ./chat/templates/chat/room_detail.html
@@ -197,6 +198,7 @@
 ./templates/admin/base_site.html
 ./templates/includes/pagination_controls.html
 ./AI_INCIDENTS.txt
+./temp_patch_implementation.py
 ./google_credentials.json
 ./contents/services/__init__.py
 ./contents/services/navigation_builder.py
@@ -397,6 +399,7 @@
 ./assessment/tests.py
 ./assessment/templatetags/assessment_tags.py
 ./assessment/templatetags/__init__.py
+./ks_segregated.py
 ./static/js/shepherd_helpers.js
 ./static/js/assessment_status_handler.js
 ./static/js/tours/announcements_list_tour.js
@@ -432,6 +435,8 @@
 ./static/vendor/bootstrap/css/bootstrap.min.css
 ./static/vendor/hyperscript/hyperscript.min.js
 ./static/vendor/htmx/htmx.min.js
+./ks.py
+./patch_tasks_segregated.py
 ./portfolio/urls.py
 ./portfolio/templates/portfolio/create_short_message.html
 ./portfolio/templates/portfolio/public_portfolio_detail.html
@@ -446,6 +451,11 @@
 ./portfolio/migrations/0001_initial.py
 ./portfolio/tests.py
 ./core/context_processors.py
+./core/services/assessment_strategies/classifier.py
+./core/services/assessment_strategies/__init__.py
+./core/services/assessment_strategies/languages_strategy.py
+./core/services/assessment_strategies/sciences_strategy.py
+./core/services/assessment_strategies/humanities_strategy.py
 ./core/services/gemini_schemas.py
 ./core/services/gemini_service.py
 ./core/services/prompt_generators.py

@@ -1300,3 +1300,11 @@ Objetivos de la sesión:
 *  **Session:** Validación Empírica de Arquetipos de Evaluación AI y Blindaje LaTeX
 *  **Description:** Verificación funcional de la clasificación semántica de asignaturas (Ciencias, Idiomas, Humanidades) y la eficacia del escudo LaTeX en la generación de JSON. Ejecución de pruebas unitarias para confirmar la integridad estructural de los exámenes generados y la correcta renderización de fórmulas matemáticas. Auditoría de tiempos de respuesta del clasificador.
 
+
+# 2026-01-16
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+## EPI # --SYSTEM -->
+*  **Session:** Implementación de Tribunales de Humanidades y Refactorización de Enrutador
+*  **Description:** Refactorización de la lógica en `assessment/tasks.py` para establecer la bifurcación directa en Humanidades y Ciencias Exactas, utilizando el contenido filtrado como fuente única. Implementación de los cinco arquetipos de tribunales especializados en `prompt_generators.py` (Jurídicas, Artes, Pensamiento, Historia, Filología) asegurando la estructura de tres bloques (Test, Práctico, Ensayo). Validación de prompts de idiomas.
+

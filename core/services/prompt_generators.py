@@ -144,44 +144,110 @@ def generate_atomic_content_prompt(
 
 def generate_classification_prompt(subject_name: str, branch_name: str) -> str:
     """
-    [HITO 6 - V12] Clasificador Semántico de Asignaturas.
-    Discrimina la naturaleza de la asignatura basándose en su nombre y rama.
+    [HITO 6 - V13] Clasificador Semántico de Asignaturas (Granularidad Alta).
+    Discrimina la naturaleza de la asignatura en 8 Arquetipos de Evaluación.
     """
     return (
         f"Analiza la asignatura '{subject_name}' perteneciente a la rama académica '{branch_name}'.\n"
-        "Tu tarea es clasificarla en uno de los siguientes 3 Arquetipos de Evaluación:\n\n"
-        "1. EXACT_SCIENCES: Elige esto SOLO si la asignatura implica resolución de problemas matemáticos, cálculo, física o ingeniería pura.\n"
-        "   - Ejemplo: 'Cálculo I', 'Física Cuántica', 'Estructuras de Hormigón', 'Resistencia de Materiales'.\n"
-        "   - EXCEPCIÓN: Si es una asignatura teórica en una carrera técnica (ej: 'Historia de la Arquitectura', 'Legislación'), NO uses esto.\n\n"
-        "2. LANGUAGES: Elige esto SOLO si el objetivo principal es aprender un segundo idioma (Gramática, Vocabulario).\n"
-        "   - Ejemplo: 'Inglés III', 'Francés para Turismo', 'Alemán B2'.\n\n"
-        "3. HUMANITIES: Para todo lo demás. Incluye Historia, Derecho, Biología, Arte, Teoría, Legislación, Medicina, etc.\n"
-        "   - Ejemplo: 'Legislación Urbanística' (aunque sea de Arquitectura), 'Historia del Arte', 'Derecho Romano'.\n\n"
-        "Responde ÚNICA y EXCLUSIVAMENTE con una de las 3 palabras clave: EXACT_SCIENCES, LANGUAGES o HUMANITIES."
+        "Tu tarea es clasificarla en uno de los siguientes ARQUETIPOS DE TRIBUNAL:\n\n"
+        "1. EXACT_SCIENCES: Matemáticas, Física, Ingeniería, Cálculo, Estructuras.\n"
+        "2. LANGUAGES: Aprendizaje de idiomas (Inglés, Francés, Alemán...).\n"
+        "3. LEGAL: Derecho, Legislación, Normativa, Constitucional, Procesal.\n"
+        "4. ARTS: Historia del Arte, Estética, Música, Patrimonio, Composición.\n"
+        "5. SOCIETY: Filosofía, Sociología, Política, Antropología, Pensamiento.\n"
+        "6. HISTORY: Historia (Universal/España), Geografía, Arqueología.\n"
+        "7. PHILOLOGY: Lingüística, Literatura, Gramática (teórica), Semántica.\n"
+        "8. HUMANITIES_GENERIC: Para lo que no encaje en lo anterior (ej: Pedagogía, Biblioteconomía).\n\n"
+        "Responde ÚNICA y EXCLUSIVAMENTE con una de las palabras clave: "
+        "EXACT_SCIENCES, LANGUAGES, LEGAL, ARTS, SOCIETY, HISTORY, PHILOLOGY, HUMANITIES_GENERIC."
     )
 
 
 def generate_assessment_prompt(
     content_text: str,
-    subject_type: str = "HUMANITIES",
+    subject_type: str = "HUMANITIES_GENERIC",
     segment_info: str = "Evaluación Global",
     learning_objectives: str = ""
 ) -> str:
     """
-    [HITO 6] Generador de Exámenes Universitarios Reales (V4 - UGR Strict Emulator).
+    [HITO 6 - V5] Generador de Exámenes Universitarios con Tribunales Especializados.
     """
     
-    # --- ARQUETIPO: CIENCIAS EXACTAS (ETSIIT UGR) ---
+    # --- CONFIGURACIÓN DE TRIBUNALES (HUMANIDADES Y CIENCIAS SOCIALES) ---
+    # Estructura Estándar: 2 Test + 1 Práctico + 1 Ensayo
+    humanities_structure = (
+        "ESTRUCTURA OBLIGATORIA (4 PREGUNTAS):\n"
+        "1. [TEST] Conceptos Fundamentales: 2 preguntas 'multiple_choice' (4 opciones) sobre terminología clave.\n"
+        "2. [PRÁCTICO] Análisis Aplicado: 1 pregunta 'open_ended' que plantee un caso práctico, análisis de fragmento o aplicación de norma.\n"
+        "3. [ENSAYO] Síntesis Crítica: 1 pregunta 'open_ended' de desarrollo extenso y relación de conceptos.\n"
+    )
+
+    tribunals = {
+        "LEGAL": {
+            "role": "Catedrático de Derecho y Magistrado",
+            "focus": "Céntrate en la interpretación normativa, jurisprudencia y aplicación de leyes. Evalúa el rigor jurídico.",
+            "structure": humanities_structure
+        },
+        "ARTS": {
+            "role": "Historiador del Arte y Crítico",
+            "focus": "Céntrate en el análisis formal, iconografía, estilo y contexto histórico-artístico.",
+            "structure": humanities_structure
+        },
+        "SOCIETY": {
+            "role": "Catedrático de Sociología y Filosofía",
+            "focus": "Céntrate en corrientes de pensamiento, dialéctica, estructuras sociales e implicaciones éticas.",
+            "structure": humanities_structure
+        },
+        "HISTORY": {
+            "role": "Doctor en Historia",
+            "focus": "Céntrate en la causalidad, cronología, análisis de fuentes y contextos geopolíticos.",
+            "structure": humanities_structure
+        },
+        "PHILOLOGY": {
+            "role": "Lingüista y Filólogo",
+            "focus": "Céntrate en el análisis textual, pragmática, evolución de la lengua y crítica literaria.",
+            "structure": humanities_structure
+        },
+        "HUMANITIES_GENERIC": {
+            "role": "Profesor Titular Universitario",
+            "focus": "Evalúa la comprensión profunda, capacidad de síntesis y rigor académico.",
+            "structure": humanities_structure
+        }
+    }
+
+    # --- LÓGICA DE SELECCIÓN DE INSTRUCCIONES ---
+    
     if subject_type == "EXACT_SCIENCES":
-        instructions = "Actúa como un Catedrático de Ingeniería. Genera un EXAMEN FINAL riguroso.\nESTRUCTURA OBLIGATORIA (4 PROBLEMAS):\nGenera 4 Problemas de Desarrollo Complejos. NO uses preguntas tipo test.\n1. Problema 1: Conceptos base / Cálculo directo.\n2. Problema 2: Aplicación práctica.\n3. Problema 3: Demostración o caso límite.\n4. Problema 4: Problema integrado.\n\nREGLAS TÉCNICAS:\n- Usa LaTeX OBLIGATORIAMENTE para fórmulas: \\(...\\) y $$...$$.\n- Establece 'question_type': 'open_ended'."
+        instructions = (
+            "Actúa como un Catedrático de Ingeniería. Genera un EXAMEN FINAL riguroso.\n"
+            "ESTRUCTURA OBLIGATORIA (4 PROBLEMAS):\n"
+            "Genera 4 Problemas de Desarrollo Complejos. NO uses preguntas tipo test.\n"
+            "1. Problema 1: Conceptos base / Cálculo directo.\n"
+            "2. Problema 2: Aplicación práctica.\n"
+            "3. Problema 3: Demostración o caso límite.\n"
+            "4. Problema 4: Problema integrado.\n\n"
+            "REGLAS TÉCNICAS:\n"
+            "- Usa LaTeX OBLIGATORIAMENTE para fórmulas: \\(...\\) y $$...$$.\n"
+            "- Establece 'question_type': 'open_ended'."
+        )
 
-    # --- ARQUETIPO: IDIOMAS (CLM UGR - CertAcles) ---
     elif subject_type == "LANGUAGES":
-        instructions = "Actúa como un Examinador Oficial CertAcles. Generarás un examen de 4 secciones. \nESTA PROHIBIDO omitir cualquier sección. Debes completar el checklist:\n\n1. [ ] SECCIÓN READING: Genera 4 preguntas 'multiple_choice' con 4 opciones cada una.\n2. [ ] SECCIÓN LISTENING: Genera un Transcript (200 palabras) entre [---TRANSCRIPT---] y [---END-TRANSCRIPT---]. Luego genera 2 preguntas 'multiple_choice' (3 opciones) sobre ese audio.\n3. [ ] SECCIÓN WRITING: Genera 1 tarea de redacción (Essay o Email) tipo 'open_ended'.\n4. [ ] SECCIÓN SPEAKING: Genera 1 tema de monólogo tipo 'open_ended' + etiqueta [---RECORDING-REQUIRED---].\n\n**REGLA DE ORO:** La respuesta debe contener exactamente 8 preguntas en total (4 Reading + 2 Listening + 1 Writing + 1 Speaking).\n**EJEMPLO OBLIGATORIO DE FORMATO JSON:**\n{\n  \"question_text\": \"...\",\n  \"question_type\": \"multiple_choice\",\n  \"options\": [\"a) ...\", \"b) ...\", \"c) ...\", \"d) ...\"],\n  \"model_answer\": \"a) ...\"\n}"
+        # Fallback para idiomas si entrara por este flujo (aunque suele ir por ugr_questions)
+        instructions = (
+            "Actúa como un Examinador Oficial. Genera un examen de comprobación:\n"
+            "1. Reading Comprehension (2 preguntas multiple_choice).\n"
+            "2. Use of English / Grammar (1 pregunta multiple_choice).\n"
+            "3. Writing Task (1 pregunta open_ended)."
+        )
 
-    # --- ARQUETIPO: HUMANIDADES (UNED/UGR) ---
     else:
-        instructions = "Actúa como Profesor Titular de Humanidades. Genera un examen mixto:\n1. **Definición de Conceptos (Test):** 2 preguntas teóricas clave.\n  - TIPO: 'multiple_choice'.\n   - Opciones: 4 opciones.\n2. **Comentario de Texto:** 1 fragmento para analizar.\n   - TIPO: 'open_ended'.\n3. **Desarrollo:** 1 pregunta amplia de ensayo.\n   - TIPO: 'open_ended'."
+        # Selección del Tribunal de Humanidades
+        tribunal = tribunals.get(subject_type, tribunals["HUMANITIES_GENERIC"])
+        instructions = (
+            f"Actúa como {tribunal['role']}.\n"
+            f"{tribunal['focus']}\n\n"
+            f"{tribunal['structure']}"
+        )
 
     objectives_section = ""
     if learning_objectives:
@@ -190,7 +256,7 @@ def generate_assessment_prompt(
     base_prompt = f"""{objectives_section}{instructions}
 
 CONTEXTO: {segment_info}
-FUENTE:
+FUENTE ÚNICA DE LA VERDAD (SOLO ESTE TEXTO):
 --------------------------------------------------
 {content_text[:45000]}
 --------------------------------------------------
@@ -249,7 +315,7 @@ def generate_stimulus_creation_prompt(content_source: str, subject_name: str, su
     return prompt
 def generate_ugr_questions_prompt(reading_text: str, listening_text: str, subject_type: str = "HUMANITIES") -> str:
     """
-    [HITO 6 - V10] Tribunal de Examen UGR: Genera las 4 secciones obligatorias.
+    [HITO 6 - V11] Tribunal de Examen UGR: Genera las 4 secciones obligatorias.
     """
     prompt = (
         "Actúa como un Tribunal de Examen Universitario. Tu misión es generar un examen "
