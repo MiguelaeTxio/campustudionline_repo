@@ -1,27 +1,25 @@
-# Hito 6: Sistema de Autoevaluaciones con IA (Acreditación Técnica v5)
+# Hito 6: Sistema de Autoevaluaciones con IA (Depuración de Interfaz v6)
 
-**Estado:** 🚧 EN DESARROLLO (Ajuste de Reglas de Negocio / Clasificador)
-**Modelo Vinculante:** `gemini-2.5-flash-lite`
+**Estado:** 🚧 EN DESARROLLO (Fase de Pulido UI/UX)
+**Modelo:** `gemini-2.5-flash-lite`
 
 ## RESUMEN DE LA SESIÓN
-- **Segregación de Estrategias:** Se ha implementado una arquitectura de servicios separados en `core/services/assessment_strategies/` para Humanidades, Idiomas y Ciencias.
-- **Refactorización de `tasks.py`:** El orquestador ahora consume estos servicios de forma aislada.
-- **Incidencia Detectada:** Error de clasificación en asignaturas de Filología Hispánica ("El Español Actual"). El sistema las etiqueta erróneamente como "Idiomas" (Foreign Language), activando la interfaz de Reading/Listening indebidamente.
+- **Blindaje del Clasificador:** Implementado rol de "Rector" para distinguir entre Filología e Idiomas con éxito empírico.
+- **Red de Seguridad:** Implementada lógica de rectificación de arquetipo (rejected_archetypes) y botón "Formato Incorrecto".
+- **Integración Feedback:** Redirección automática a la app de feedback tras agotar intentos de clasificación.
 
 ## HOJA DE RUTA PARA LA SIGUIENTE SESIÓN (LEY SUPREMA)
 
-### PASO 1: BLINDAJE DEL CLASIFICADOR (REGLA DE NEGOCIO "ANDALUCÍA")
-1.  **Modificar `classifier.py`:**
-    *   **Contexto Geográfico:** Definir explícitamente que las universidades son andaluzas y no existen usuarios extranjeros.
-    *   **Regla "Español":** Cualquier asignatura que contenga "Español", "Lengua", "Literatura" o "Filología" debe clasificarse OBLIGATORIAMENTE como `PHILOLOGY` (Humanidades), nunca como `LANGUAGES`.
-    *   **Regla "Idiomas":** Restringir la categoría `LANGUAGES` exclusivamente a lenguas extranjeras (Inglés, Francés, Alemán, Italiano, Portugués, etc.).
+### PASO 1: DEPURACIÓN DE UI POR ARQUETIPO
+1.  **Limpieza Global:** Eliminar los badges de "Arquetipo: X" de todas las plantillas (`humanities`, `languages`, `sciences`).
+2.  **Reparación LANGUAGES:**
+    *   Auditar por qué no se muestran los botones de `Play Audio` y `Record`. Verificar que el `prompt_data` contiene los campos `listening_script`.
+    *   Sincronizar `take_assessment_languages.html` con las propiedades del modelo `Question`.
+3.  **Mejora SCIENCES:**
+    *   Implementar el widget de subida de archivos (imagen) en cada pregunta para permitir el envío de resoluciones manuscritas.
 
-### PASO 2: VERIFICACIÓN DE UI
-1.  **Prueba de Campo:** Repetir la generación para "El Español Actual".
-2.  **Criterio de Éxito:**
-    *   Arquetipo detectado: `PHILOLOGY`.
-    *   Interfaz: **Sin botón** "Leer Texto de Referencia".
-    *   Contenido: Preguntas conceptuales sobre normativa y uso, no sobre un texto inventado.
+### PASO 2: VERIFICACIÓN DE FLUJO
+1.  Testar el ciclo completo: Rectificación -> Nueva Generación -> Visualización correcta de Widgets específicos.
 
-### PASO 3: ESTABILIZACIÓN FINAL
-1.  Revisión de logs para confirmar que no quedan trazas de lógica antigua.
+### PASO 3: ESTABILIZACIÓN
+1.  Eliminar trazas de logs experimentales y archivos temporales residuales.

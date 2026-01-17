@@ -18,7 +18,7 @@ from django.template.loader import render_to_string
 from .models import Assessment, Question, UserAnswer
 from contents.models import ContentCopy
 from orchestrator.tasks import generate_assessment_from_content_task, correct_assessment_task
-from .utils import get_assessment_context, check_user_assessment_limits, extract_content_structure, clean_selection_payload
+from .utils import get_next_best_archetype, get_assessment_context, check_user_assessment_limits, extract_content_structure, clean_selection_payload
 
 logger = logging.getLogger(__name__)
 
@@ -241,7 +241,15 @@ def take_assessment(request, pk):
         'user_copy': user_copy,
         'page_title': 'Completar Autoevaluación',
     }
-    return render(request, 'assessment/take_assessment.html', context)
+        # [SEGREGACIÓN TOTAL] Despacho de plantillas por arquetipo
+    templates = {
+        Assessment.Archetype.SCIENCES: 'assessment/take_assessment_sciences.html',
+        Assessment.Archetype.LANGUAGES: 'assessment/take_assessment_languages.html',
+        Assessment.Archetype.HUMANITIES: 'assessment/take_assessment_humanities.html',
+    }
+    target_template = templates.get(assessment.archetype, 'assessment/take_assessment_humanities.html')
+
+    return render(request, target_template, context)
 
 @login_required
 @require_POST
@@ -273,7 +281,7 @@ def submit_assessment(request, pk):
                 question=question,
                 user=request.user,
                 answer_text=user_answer_text,
-                audio_file=audio_file,
+                attachment=audio_file,
             )
         )
 
@@ -443,3 +451,32 @@ def mark_as_viewed_ajax(request, pk):
 def take_assessment_demo(request):
     # Mock data for demo...
     return render(request, "assessment/take_assessment.html", {})
+
+
+@login_required
+@require_POST
+def report_wrong_archetype(request, pk):
+    try:
+        assessment = Assessment.objects.select_related('content_copy').get(pk=pk, user=request.user)
+    except Assessment.DoesNotExist:
+        messages.error(request, "Evaluación no encontrada.")
+        return redirect("study_room:copy_directory_root")
+
+    current_archetype = assessment.archetype
+    if current_archetype not in assessment.rejected_archetypes:
+        assessment.rejected_archetypes.append(current_archetype)
+    
+    next_archetype = get_next_best_archetype(current_archetype, assessment.rejected_archetypes)
+    
+    if next_archetype:
+        assessment.archetype = next_archetype
+        assessment.status = Assessment.AssessmentStatus.PENDING
+        assessment.questions.all().delete()
+        assessment.save(update_fields=['archetype', 'status', 'rejected_archetypes'])
+        generate_assessment_from_content_task.delay(assessment.id)
+        messages.info(request, f"Entendido. Probando con formato: {next_archetype}. Regenerando examen...")
+        return redirect(reverse("study_room:edit_copy", kwargs={"pk": assessment.content_copy.pk}))
+    else:
+        # Redirección al formulario final
+        assessment.save(update_fields=['rejected_archetypes']) # Guardar el último rechazo
+        return redirect("feedback:manual_format_request", assessment_pk=assessment.pk)

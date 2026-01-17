@@ -36,7 +36,7 @@ def classify_subject_strategy(subject_name, branch_name=""):
         'ELECTRONICA', 'ESTRUCTURA', 'RESISTENCIA'
     ]
     if any(k in s_norm for k in science_keywords):
-        return 'EXACT_SCIENCES'
+        return 'SCIENCES'
     
     # 2. IDIOMAS (Reading, Writing, Use of English, Speaking)
     lang_keywords = [
@@ -529,3 +529,26 @@ def filter_content_by_selection(markdown_text, selection_ids):
         filtered_lines.append("") # Espaciador
         
     return "\n".join(filtered_lines)
+
+
+def get_next_best_archetype(current_archetype, rejected_list):
+    """
+    Determina el siguiente mejor arquetipo basándose en el descarte.
+    """
+    ALL_ARCHETYPES = ['LANGUAGES', 'SCIENCES', 'HUMANITIES']
+    
+    # Conjunto de candidatos disponibles
+    candidates = set(ALL_ARCHETYPES) - set(rejected_list) - {current_archetype}
+    
+    if not candidates:
+        return None # No quedan opciones
+        
+    # Lógica de preferencia simple ante descarte
+    if current_archetype == 'LANGUAGES' and 'HUMANITIES' in candidates:
+        return 'HUMANITIES'
+    if current_archetype == 'HUMANITIES' and 'LANGUAGES' in candidates:
+        return 'LANGUAGES'
+    if 'SCIENCES' in candidates:
+        return 'SCIENCES'
+        
+    return list(candidates)[0]

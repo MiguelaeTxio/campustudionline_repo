@@ -6,4 +6,5 @@ app_name = 'feedback'
 urlpatterns = [
     path('report/content/<uuid:content_pk>/', views.report_content_error, name='report_content_error'),
     path('general/', views.submit_general_feedback, name='submit_general_feedback'),
+    path('manual-format/<int:assessment_pk>/', views.manual_format_request, name='manual_format_request'),
 ]

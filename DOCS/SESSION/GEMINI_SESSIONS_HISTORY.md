@@ -1308,3 +1308,19 @@ Objetivos de la sesión:
 *  **Session:** Implementación de Tribunales de Humanidades y Refactorización de Enrutador
 *  **Description:** Refactorización de la lógica en `assessment/tasks.py` para establecer la bifurcación directa en Humanidades y Ciencias Exactas, utilizando el contenido filtrado como fuente única. Implementación de los cinco arquetipos de tribunales especializados en `prompt_generators.py` (Jurídicas, Artes, Pensamiento, Historia, Filología) asegurando la estructura de tres bloques (Test, Práctico, Ensayo). Validación de prompts de idiomas.
 
+
+# 2026-01-17
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+## AAAA # --SYSTEM -->
+*  **Session:** Fix: Classifier Rules - Philology vs Languages (Andalucía Context)
+*  **Description:** Implementación de reglas de negocio estrictas en 'classifier.py' para contexto geográfico andaluz. Reclasificación forzosa de asignaturas de 'Español/Lengua/Literatura' como HUMANITIES/PHILOLOGY para evitar la activación errónea de interfaces de idiomas extranjeros en asignaturas de filología hispánica.
+
+
+# 2026-01-17
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+## CYC # --SYSTEM -->
+*  **Session:** Ajuste de Reglas de Clasificación en Autoevaluaciones (Hito 6)
+*  **Description:** Refinamiento del clasificador de asignaturas (`classifier.py`) para distinguir correctamente entre Filología Hispánica (Humanidades) e Idiomas Extranjeros, implementando reglas de exclusión geográfica y lingüística específicas. Verificación de la UI resultante.
+

@@ -25,7 +25,8 @@ urlpatterns = [
     
     # --- Acciones de Control ---
     path("<int:assessment_pk>/retry/", views.retry_assessment_generation, name="retry_assessment_generation"),
-    path("<int:assessment_pk>/cancel/", views.cancel_assessment_generation, name="cancel_assessment_generation"),
+        path("<int:assessment_pk>/cancel/", views.cancel_assessment_generation, name="cancel_assessment_generation"),
+    path("<int:pk>/report-archetype/", views.report_wrong_archetype, name="report_wrong_archetype"),
     
     # --- Demo (Dev only) ---
     path("demo/take/", views.take_assessment_demo, name="take_assessment_demo"),

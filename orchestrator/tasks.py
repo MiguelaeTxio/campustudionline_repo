@@ -1105,14 +1105,18 @@ def generate_assessment_from_content_task(self, assessment_id):
                     
                     if success:
                         raw_type = clean_json_response(resp).strip().upper()
-                        valid_types = ["EXACT_SCIENCES", "LANGUAGES", "LEGAL", "ARTS", "SOCIETY", "HISTORY", "PHILOLOGY", "HUMANITIES_GENERIC"]
-                        found = "HUMANITIES_GENERIC"
+                        valid_types = ["SCIENCES", "LANGUAGES", "HUMANITIES"]
+                        found = "HUMANITIES"
                         for vt in valid_types:
                             if vt in raw_type:
                                 found = vt
                                 break
                         subject_type = found
                         log_assessment_task_event(assessment_id, f"Arquetipo Detectado: {subject_type}")
+                        with transaction.atomic():
+                            a_arch = Assessment.objects.select_for_update().get(pk=assessment_id)
+                            a_arch.archetype = subject_type
+                            a_arch.save(update_fields=["archetype"])
                         step = 1
                     else:
                         raise ResourceExhausted(resp)
@@ -1142,7 +1146,7 @@ def generate_assessment_from_content_task(self, assessment_id):
                         
                         if not db_reading: raise ValueError("Fallo en generación de Reading.")
 
-                    elif subject_type == "EXACT_SCIENCES":
+                    elif subject_type == "SCIENCES":
                         # ESTRATEGIA CIENCIAS: Contenido Real
                         log_assessment_task_event(assessment_id, "Ejecutando Estrategia: CIENCIAS (Resolución Problemas)")
                         r_text_memory = filtered_content
@@ -1158,10 +1162,12 @@ def generate_assessment_from_content_task(self, assessment_id):
                     # Guardar en BBDD (Solo Idiomas tendrá datos visibles)
                     with transaction.atomic():
                         aa = Assessment.objects.select_for_update().get(pk=assessment_id)
-                        aa.reading_stimulus = db_reading
-                        aa.listening_transcript = db_listening
+                        aa.prompt_data = {
+                            "reading_text": db_reading,
+                            "listening_script": db_listening
+                        }
                         aa.status = Assessment.AssessmentStatus.PROCESSING
-                        aa.save(update_fields=['reading_stimulus', 'listening_transcript', 'status'])
+                        aa.save(update_fields=['prompt_data', 'status'])
                     step = 2
 
                 # --- PASO 2: GENERACIÓN DE EXAMEN (Llamadas a archivos distintos) ---
@@ -1171,7 +1177,7 @@ def generate_assessment_from_content_task(self, assessment_id):
                     prompt = ""
                     if subject_type == "LANGUAGES":
                         prompt = generate_languages_exam_prompt(r_text_memory, l_text_memory)
-                    elif subject_type == "EXACT_SCIENCES":
+                    elif subject_type == "SCIENCES":
                         prompt = generate_sciences_prompt(r_text_memory)
                     else:
                         # Humanidades (Cualquiera de los tribunales)
@@ -1182,14 +1188,21 @@ def generate_assessment_from_content_task(self, assessment_id):
                     
                     questions_data = _parse_assessment_text(text)
                     if not questions_data: raise ValueError("IA no devolvió preguntas válidas.")
-                    
                     with transaction.atomic():
                         a = Assessment.objects.select_for_update().get(pk=assessment_id)
                         a.questions.all().delete()
                         a.total_questions_expected = len(questions_data)
                         a.save(update_fields=['total_questions_expected'])
                         for idx, q_data in enumerate(questions_data, 1):
-                            Question.objects.create(assessment=a, **q_data)
+                            q_type = q_data.get('question_type', 'open_ended')
+                            q_text = q_data.get('question_text', '')
+                            w_type = Question.WidgetType.TEXT_AREA
+                            if q_type == 'multiple_choice':
+                                w_type = Question.WidgetType.RADIO_SELECT
+                            elif "[---RECORDING-REQUIRED---]" in q_text:
+                                w_type = Question.WidgetType.AUDIO_RECORDER
+                            q_data['question_text'] = q_text.replace("[---RECORDING-REQUIRED---]", "").replace("[---AUDIO-REQUIRED---]", "").strip()
+                            Question.objects.create(assessment=a, widget_type=w_type, **q_data)
                             a.questions_processed = idx
                             a.save(update_fields=['questions_processed'])
                     step = 3
@@ -1198,14 +1211,18 @@ def generate_assessment_from_content_task(self, assessment_id):
                 api_key.refresh_from_db()
                 api_key.consecutive_failures += 1
                 api_key.save(update_fields=["consecutive_failures"])
-                log_assessment_task_event(assessment_id, f"FALLO CUOTA ({api_key.consecutive_failures}/4): {api_key.name}", level="WARNING")
+                # [FIX CUOTA] Logging detallado del error crudo para diagnóstico
+                error_msg = str(e)
+                log_assessment_task_event(assessment_id, f"ERROR DETECTADO: {error_msg[:100]}...", level="WARNING")
+                log_assessment_task_event(assessment_id, f"STRIKE ({api_key.consecutive_failures}/4) para {api_key.name}. ESPERANDO 60s...", level="WARNING")
                 
                 if api_key.consecutive_failures >= 4:
                     api_key.is_quarantined = True
                     api_key.save(update_fields=["is_quarantined"])
                     _request_quarantine_via_mailbox(api_key)
+                    log_assessment_task_event(assessment_id, f"CLAVE {api_key.name} EN CUARENTENA.", level="ERROR")
                 
-                time.sleep(5)
+                time.sleep(60) # Cooldown real de 1 minuto
                 continue
 
         # Finalización exitosa

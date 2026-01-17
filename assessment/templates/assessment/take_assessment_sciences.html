@@ -1,0 +1,55 @@
+{# /home/MiguelAeTxio/PROJECTS/CampuStudiOnline/assessment/templates/assessment/take_assessment_sciences.html #}
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ page_title }}{% endblock title %}
+
+{% block content %}
+<div class="container mt-5 mb-5">
+    <div class="card shadow-sm border-0">
+        <div class="card-header bg-info text-white py-3 d-flex justify-content-between align-items-center">
+            <h1 class="h4 mb-0"><i class="fas fa-square-root-alt me-2"></i> {{ page_title }}</h1>
+            <form action="{% url 'assessment:report_wrong_archetype' pk=assessment.pk %}" method="POST" class="d-inline ms-auto me-2">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-warning btn-sm text-dark fw-bold" 
+                        onclick="return confirm('¿El formato del examen no es correcto?\n\nIntentaremos regenerarlo con otro formato diferente.')"
+                        title="Reportar formato incorrecto">
+                    <i class="fas fa-bug me-1"></i> Formato Incorrecto
+                </button>
+            </form>
+
+            <span class="badge bg-white text-info">Arquetipo: Ciencias</span>
+        </div>
+        <div class="card-body p-4">
+            <div class="mb-4">
+                <p class="lead"><strong>Resolución de Problemas:</strong> {{ assessment.content.title }}</p>
+                <div class="alert alert-warning border-0 shadow-sm">
+                    <i class="fas fa-info-circle me-2"></i> Muestra el procedimiento detallado. Puedes usar sintaxis LaTeX para las fórmulas.
+                </div>
+            </div>
+
+            <form id="assessment-form" method="POST" action="{% url 'assessment:submit_assessment' pk=assessment.pk %}">
+                {% csrf_token %}
+                <ol class="list-unstyled">
+                    {% for question in questions_list %}
+                        <li class="mb-5 p-4 border-start border-4 border-info bg-white shadow-sm">
+                            <h5 class="fw-bold mb-3">{{ forloop.counter }}. {{ question.question_text|linebreaksbr }}</h5>
+                            <div class="form-group">
+                                <textarea name="answer_q_{{ question.pk }}" class="form-control font-monospace" rows="10" placeholder="Escribe tu resolución..." required></textarea>
+                            </div>
+                        </li>
+                    {% endfor %}
+                </ol>
+
+                <button type="submit" class="btn btn-info btn-lg w-100 text-white fw-bold shadow-lg py-3 mt-4">
+                    <i class="fas fa-calculator me-2"></i> Enviar Evaluación Técnica
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+{% block extra_js %}
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+{% endblock extra_js %}

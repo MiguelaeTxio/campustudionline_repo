@@ -3,423 +3,126 @@ from django.conf import settings
 from django.utils import timezone
 from datetime import timedelta
 from django.utils.translation import gettext_lazy as _
-from django.core.exceptions import ValidationError
-
 
 class Assessment(models.Model):
-    """
-    Represents a single AI-generated assessment session for a piece of content.
-    """
+    class Archetype(models.TextChoices):
+        SCIENCES = "SCIENCES", "Ciencias Exactas"
+        LANGUAGES = "LANGUAGES", "Idiomas"
+        HUMANITIES = "HUMANITIES", "Humanidades"
 
     class AssessmentStatus(models.TextChoices):
-        # Flujo de Generación
         PENDING = "PENDING", "Pendiente de Generación"
         PROCESSING = "PROCESSING", "Generando Cuestionario"
         COMPLETED = "COMPLETED", "Listo para Realizar"
-        
-        # Flujo de Corrección
-        AWAITING_CORRECTION = "AWAITING_CORRECTION", "Pendiente de Corrección" # Estado intermedio
+        AWAITING_CORRECTION = "AWAITING_CORRECTION", "Pendiente de Corrección"
         CORRECTING = "CORRECTING", "Corrigiendo"
         RESULTS_AVAILABLE = "RESULTS_AVAILABLE", "Resultados Disponibles"
-
-        # Estados de Expiración
         EXPIRED_UNTAKEN = "EXPIRED_UNTAKEN", "Expirado (No Realizado)"
         CORRECTION_EXPIRED = "CORRECTION_EXPIRED", "Corrección Expirada"
-        
-        # Estados de Fallo (Alineados con PAIR y vista)
         GENERATION_FAILED_RETRYABLE = "GENERATION_FAILED_RETRYABLE", "Fallo de Generación (Reintentable)"
         CORRECTION_FAILED_RETRYABLE = "CORRECTION_FAILED_RETRYABLE", "Fallo de Corrección (Reintentable)"
         GENERATION_FAILED_QUOTA = "GENERATION_FAILED_QUOTA", "Fallo de Generación (Cuota API)"
         GENERATION_FAILED_FATAL = "GENERATION_FAILED_FATAL", "Fallo Permanente de Generación"
         CORRECTION_FAILED_FATAL = "CORRECTION_FAILED_FATAL", "Fallo Permanente de Corrección"
-
-        # Estados de Control
         PAUSED = "PAUSED", "Pausada por el Administrador"
-        
-        # Estado Final de Usuario
         CANCELLED = "CANCELLED", "Cancelada por Administrador"
         USER_CANCELLED = "USER_CANCELLED", "Cancelado por el Usuario"
 
+    content_copy = models.ForeignKey("contents.ContentCopy", on_delete=models.CASCADE, related_name="assessments")
+    content = models.ForeignKey("contents.ContentMaterial", on_delete=models.CASCADE, related_name="assessments", editable=False)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="assessments")
+    status = models.CharField(max_length=50, choices=AssessmentStatus.choices, default=AssessmentStatus.PENDING)
+    archetype = models.CharField(max_length=20, choices=Archetype.choices, default=Archetype.HUMANITIES, db_index=True)
+    prompt_data = models.JSONField(default=dict, blank=True)
+    selection_range = models.JSONField(default=dict, blank=True, null=True)
+    reading_stimulus = models.TextField(blank=True, null=True)
+    listening_transcript = models.TextField(blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    expiration_date = models.DateTimeField(null=True, blank=True)
+    results_expiration_date = models.DateTimeField(null=True, blank=True)
+    total_questions_expected = models.PositiveIntegerField(default=0)
+    questions_processed = models.PositiveIntegerField(default=0)
+    was_viewed = models.BooleanField(default=False)
+    last_error = models.TextField(blank=True, null=True)
+    event_log = models.JSONField(default=list, blank=True)
+    rejected_archetypes = models.JSONField(default=list, blank=True, help_text="Lista de arquetipos rechazados explícitamente por el usuario")
 
-    content_copy = models.ForeignKey(
-        "contents.ContentCopy",
-        on_delete=models.CASCADE,
-        related_name="assessments",
-        verbose_name="Copia de Estudio",
-        null=False,
-        help_text="La copia de estudio específica a la que está vinculada esta evaluación."
-    )
-    content = models.ForeignKey(
-        "contents.ContentMaterial",
-        on_delete=models.CASCADE,
-        related_name="assessments",
-        verbose_name="Contenido Original",
-        editable=False,
-        help_text="Se rellena automáticamente desde la Copia de Estudio."
-    )
-    user = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE,
-        related_name="assessments",
-        verbose_name="Usuario",
-    )
-    status = models.CharField(
-        max_length=50,
-        choices=AssessmentStatus.choices,
-        default=AssessmentStatus.PENDING,
-        verbose_name="Estado",
-    )
-    
-    selection_range = models.JSONField(
-        default=dict,
-        blank=True,
-        null=True,
-        verbose_name="Rango de Selección (JSON)",
-        help_text="Almacena los índices o slugs de los temas del master_schema seleccionados."
-    )
-    reading_stimulus = models.TextField(
-        blank=True,
-        null=True,
-        verbose_name="Estímulo de Lectura (Reading)",
-        help_text="Texto generado por IA que sirve de base para la evaluación."
-    )
-    listening_transcript = models.TextField(
-        blank=True,
-        null=True,
-        verbose_name="Transcripción de Audio (Listening)",
-        help_text="Guion generado por IA para la parte de comprensión auditiva."
-    )
-
-    created_at = models.DateTimeField(
-        auto_now_add=True, verbose_name="Fecha de Creación"
-    )
-
-    total_questions_expected = models.PositiveIntegerField(
-        default=0,
-        verbose_name="Total de preguntas esperadas",
-        help_text=_(
-            "The total number of sections detected that will be converted into questions."
-        ),
-    )
-    questions_processed = models.PositiveIntegerField(
-        default=0,
-        verbose_name="Preguntas procesadas",
-        help_text=_("The number of questions that the worker has already generated."),
-    )
-
-    was_viewed = models.BooleanField(
-        default=False,
-        verbose_name="Corrección Vista",
-        help_text=_(
-            "Indicates if the user has viewed the results of this correction to avoid penalization."
-        ),
-    )
-
-    expiration_date = models.DateTimeField(
-        null=True,
-        blank=True,
-        verbose_name=_("Fecha de Caducidad para Realizar"),
-        help_text=_("La evaluación debe realizarse antes de esta fecha."),
-    )
-    results_expiration_date = models.DateTimeField(
-        null=True,
-        blank=True,
-        verbose_name=_("Fecha de Caducidad de Resultados"),
-        help_text=_("Los resultados de la evaluación estarán disponibles hasta esta fecha."),
-    )
-
-    last_error = models.TextField(
-        blank=True, null=True, verbose_name=_("Último Error Registrado")
-    )
-
-    event_log = models.JSONField(
-        default=list,
-        blank=True,
-        verbose_name=_("Historial de Eventos"),
-        help_text=_("Registro detallado de los cambios de estado y errores de esta evaluación.")
-    )
-    
     def add_log_event(self, message, level="INFO"):
-        """
-        Añade un evento al log de forma atómica.
-        """
-        from django.utils import timezone
-        
-        if self.event_log is None or not isinstance(self.event_log, list):
-            self.event_log = []
-
-        entry = {
-            "timestamp": timezone.now().isoformat(),
-            "level": level,
-            "message": str(message)
-        }
-        
+        entry = {"timestamp": timezone.now().isoformat(), "level": level, "message": str(message)}
+        if not isinstance(self.event_log, list): self.event_log = []
         self.event_log.insert(0, entry)
         self.event_log = self.event_log[:50]
-        
         self.save(update_fields=["event_log"])
 
-
     def save(self, *args, **kwargs):
-        """
-        Sobrescribe el método save para:
-        1. Asegurar que el 'content' original siempre se deriva de la 'content_copy'.
-        2. Establecer las fechas de caducidad basándose en el estado.
-        """
         if self.content_copy and not self.content_id:
             self.content = self.content_copy.original_content
-
+        from .models import AssessmentSettings
         app_settings = AssessmentSettings.get_settings()
         if self.status == self.AssessmentStatus.COMPLETED:
-            self.expiration_date = timezone.now() + timedelta(
-                seconds=app_settings.assessment_expiration_seconds
-            )
-            self.results_expiration_date = None
+            self.expiration_date = timezone.now() + timedelta(seconds=app_settings.assessment_expiration_seconds)
         elif self.status == self.AssessmentStatus.RESULTS_AVAILABLE:
-            self.results_expiration_date = timezone.now() + timedelta(
-                days=app_settings.results_expiration_days
-            )
-            self.expiration_date = None
-        else:
-            self.expiration_date = None
-            self.results_expiration_date = None
-
+            self.results_expiration_date = timezone.now() + timedelta(days=app_settings.results_expiration_days)
         super().save(*args, **kwargs)
-
 
     class Meta:
         verbose_name = "Evaluación"
-        verbose_name_plural = "Evaluaciones"
+        verbose_name_plural = "1. Listado de Evaluaciones"
         ordering = ["-created_at"]
 
-    def __str__(self):
-        return (
-            f"Assessment for copy of '{self.content_copy.original_content.title}' "
-            f"by {self.user.username} ({self.get_status_display()})"
-        )
-
-
 class Question(models.Model):
-    """
-    Stores an individual question within an assessment.
-    """
-
     class QuestionType(models.TextChoices):
         OPEN_ENDED = "open_ended", "Respuesta Abierta"
         MULTIPLE_CHOICE = "multiple_choice", "Opción Múltiple"
-
-    assessment = models.ForeignKey(
-        Assessment,
-        on_delete=models.CASCADE,
-        related_name="questions",
-        verbose_name="Evaluación",
-    )
-    question_text = models.TextField(verbose_name="Texto de la Pregunta")
-    question_type = models.CharField(
-        max_length=20,
-        choices=QuestionType.choices,
-        default=QuestionType.OPEN_ENDED,
-        verbose_name="Tipo de Pregunta",
-    )
-    model_answer = models.TextField(
-        verbose_name="Respuesta Modelo (Generada por IA)",
-        help_text=_(
-            "The ideal answer that will be used as a reference for correction."
-        ),
-    )
-    options = models.JSONField(
-        default=list,
-        blank=True,
-        verbose_name="Opciones de Respuesta",
-        help_text=_("Lista de opciones para preguntas tipo test (JSON). Ej: ['A) ...', 'B) ...']")
-    )
-
-    # --- PROPIEDADES INYECTADAS PARA UX/UI (Fixed Indentation) ---
+    class WidgetType(models.TextChoices):
+        TEXT_AREA = "TEXT_AREA", "Área de Texto"
+        AUDIO_RECORDER = "AUDIO_RECORDER", "Grabadora de Voz"
+        RADIO_SELECT = "RADIO_SELECT", "Opción Múltiple"
+        MATH_INPUT = "MATH_INPUT", "Editor Matemático"
+    assessment = models.ForeignKey(Assessment, on_delete=models.CASCADE, related_name="questions")
+    question_text = models.TextField()
+    question_type = models.CharField(max_length=20, choices=QuestionType.choices, default=QuestionType.OPEN_ENDED)
+    widget_type = models.CharField(max_length=20, choices=WidgetType.choices, default=WidgetType.TEXT_AREA)
+    model_answer = models.TextField()
+    options = models.JSONField(default=list, blank=True)
     @property
-    def requires_recording(self):
-        """Detecta si la pregunta espera una grabación de voz."""
-        return "[---RECORDING-REQUIRED---]" in self.question_text
-
+    def requires_recording(self): return "[---RECORDING-REQUIRED---]" in self.question_text
     @property
-    def requires_audio(self):
-        """Detecta si la pregunta requiere reproducción de audio (Listening)."""
-        return "[---AUDIO-REQUIRED---]" in self.question_text
-
+    def requires_audio(self): return "[---AUDIO-REQUIRED---]" in self.question_text
     @property
-    def transcript(self):
-        """Devuelve el transcript de la evaluación si esta pregunta lo requiere."""
-        if self.requires_audio:
-            return self.assessment.listening_transcript
-        return None
-
+    def transcript(self): return self.assessment.listening_transcript if self.requires_audio else None
     @property
-    def display_text(self):
-        """Limpia el texto de la pregunta eliminando marcadores técnicos."""
-        text = self.question_text
-        text = text.replace("[---RECORDING-REQUIRED---]", "")
-        text = text.replace("[---AUDIO-REQUIRED---]", "")
-        return text.strip()
-
-    @property
-    def is_multiple_choice_view(self):
-        """Helper para el template."""
-        return self.question_type == self.QuestionType.MULTIPLE_CHOICE
-    # -------------------------------------------------------------
-
+    def display_text(self): return self.question_text.replace("[---RECORDING-REQUIRED---]", "").replace("[---AUDIO-REQUIRED---]", "").strip()
     class Meta:
         verbose_name = "Pregunta"
-        verbose_name_plural = "Preguntas"
-        ordering = ["assessment", "id"]
-
-    def __str__(self):
-        return self.question_text[:80]
-
+        verbose_name_plural = "2. Banco de Preguntas"
+        ordering = ["id"]
 
 class UserAnswer(models.Model):
-    """
-    Stores a user's answer to an open-ended question.
-    """
-
-    question = models.ForeignKey(
-        Question,
-        on_delete=models.CASCADE,
-        related_name="user_answers",
-        verbose_name="Pregunta",
-    )
-    user = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE,
-        related_name="user_answers",
-        verbose_name="Usuario",
-    )
-    audio_file = models.FileField(
-        upload_to='assessment/audio/%Y/%m/',
-        blank=True,
-        null=True,
-        verbose_name="Audio (Speaking)",
-        help_text="Grabación de voz del usuario para ejercicios de Speaking."
-    )
-    answer_text = models.TextField(verbose_name="Texto de la Respuesta del Usuario")
-    answered_at = models.DateTimeField(
-        auto_now_add=True, verbose_name="Respondido En"
-    )
-    score = models.FloatField(
-        null=True,
-        blank=True,
-        verbose_name="Puntuación",
-        help_text=_("The assigned score, e.g., from 0.0 to 10.0.")
-    )
-    score_grammar = models.FloatField(
-        null=True,
-        blank=True,
-        verbose_name="Puntuación Gramatical/Estilo",
-        help_text="Calificación específica sobre la calidad del lenguaje (para Writing/Speaking), separada del contenido."
-    )
-    feedback = models.TextField(
-        blank=True,
-        verbose_name="Comentarios",
-        help_text=_("Comments or corrections generated by the AI."),
-    )
-    correction_expiration_date = models.DateTimeField(
-        null=True, blank=True, verbose_name="Fecha de Expiración de la Corrección"
-    )
-
+    question = models.ForeignKey(Question, on_delete=models.CASCADE, related_name="user_answers")
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    answer_text = models.TextField()
+    attachment = models.FileField(upload_to='assessment/attachments/%Y/%m/', blank=True, null=True)
+    score = models.FloatField(null=True, blank=True)
+    feedback = models.TextField(blank=True)
+    answered_at = models.DateTimeField(auto_now_add=True)
+    correction_expiration_date = models.DateTimeField(null=True, blank=True)
     class Meta:
-        verbose_name = "Respuesta del Usuario"
-        verbose_name_plural = "Respuestas del Usuario"
-        ordering = ["-answered_at"]
-
-    def __str__(self):
-        return f"Answer from {self.user.username} for question {self.question.id}"
-
+        verbose_name = "Respuesta de Alumno"
+        verbose_name_plural = "3. Respuestas Recibidas"
 
 class AssessmentSettings(models.Model):
-    """
-    Singleton model to hold sitewide settings for the assessment application.
-    """
-    is_running = models.BooleanField(
-        default=False,
-        verbose_name=_("Motor de Evaluaciones Activado"),
-        help_text=_(
-            "Si está activado, el sistema buscará y procesará tareas de evaluación pendientes."
-        ),
-    )
-    daily_limit = models.PositiveIntegerField(
-        default=1,
-        verbose_name=_("Límite Diario de Evaluaciones por Usuario"),
-        help_text=_(
-            "Número máximo de evaluaciones que un usuario puede generar en 24 horas."
-        ),
-    )
-    weekly_limit = models.PositiveIntegerField(
-        default=3,
-        verbose_name=_("Límite Semanal de Evaluaciones por Usuario"),
-        help_text=_(
-            "Número máximo de evaluaciones que un usuario puede generar en 7 días."
-        ),
-    )
-    assessment_expiration_seconds = models.PositiveIntegerField(
-        default=86400,  # 24 hours
-        verbose_name=_("Tiempo para Realizar una Evaluación (segundos)"),
-        help_text=_(
-            "Tiempo máximo que un usuario tiene para completar una evaluación desde que está disponible."
-        ),
-    )
-    results_expiration_days = models.PositiveIntegerField(
-        default=7,
-        verbose_name=_("Tiempo de Visibilidad de Resultados (días)"),
-        help_text=_(
-            "Número de días que los resultados de una evaluación permanecen visibles."
-        ),
-    )
-    last_run_timestamp = models.DateTimeField(
-        null=True, blank=True, verbose_name=_("Última Ejecución del Orquestador")
-    )
-    last_run_status = models.TextField(
-        blank=True, verbose_name=_("Estado del Último Ciclo del Orquestador")
-    )
-    event_log = models.JSONField(
-        default=list, blank=True, verbose_name=_("Historial de Eventos del Motor")
-    )
-    
-    class Meta:
-        verbose_name = _("Configuración de Evaluaciones")
-        verbose_name_plural = _("Configuraciones de Evaluaciones")
-
-    def __str__(self):
-        return str(_("Configuración de Evaluaciones"))
-
-    
-    def add_log_event(self, message, level="INFO"):
-        """
-        Añade un evento al log de forma atómica y segura contra condiciones de carrera.
-        """
-        from django.utils import timezone
-        
-        if self.event_log is None or not isinstance(self.event_log, list):
-            self.event_log = []
-            
-        entry = {
-            "timestamp": timezone.now().isoformat(),
-            "level": level,
-            "message": str(message)
-        }
-        
-        self.event_log.insert(0, entry)
-        self.event_log = self.event_log[:50]
-        
-        self.save(update_fields=["event_log"])
-
-
-    def save(self, *args, **kwargs):
-        """
-        Forces the singleton pattern by ensuring that this object is always
-        saved to the database with a primary key (pk) of 1.
-        """
-        self.pk = 1
-        super().save(*args, **kwargs)
-
+    is_running = models.BooleanField(default=False)
+    daily_limit = models.PositiveIntegerField(default=1)
+    weekly_limit = models.PositiveIntegerField(default=3)
+    assessment_expiration_seconds = models.PositiveIntegerField(default=86400)
+    results_expiration_days = models.PositiveIntegerField(default=7)
+    last_run_timestamp = models.DateTimeField(null=True, blank=True)
+    last_run_status = models.TextField(blank=True)
+    event_log = models.JSONField(default=list, blank=True)
+    def save(self, *args, **kwargs): self.pk = 1; super().save(*args, **kwargs)
     @classmethod
-    def get_settings(cls):
-        obj, created = cls.objects.get_or_create(pk=1)
-        return obj
+    def get_settings(cls): obj, _ = cls.objects.get_or_create(pk=1); return obj
+    class Meta:
+        verbose_name = "Ajuste de Motor"
+        verbose_name_plural = "0. Configuración del Motor"
