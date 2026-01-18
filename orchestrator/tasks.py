@@ -40,7 +40,7 @@ from assessment.utils import classify_subject_strategy, segment_content_for_asse
 # [HITO 6] ESTRATEGIAS SEGREGADAS
 from core.services.assessment_strategies.classifier import generate_classifier_prompt
 from core.services.assessment_strategies.humanities_strategy import generate_humanities_prompt
-from core.services.assessment_strategies.languages_strategy import generate_languages_stimuli_prompt, generate_languages_exam_prompt
+from core.services.assessment_strategies.languages_strategy import generate_languages_stimuli_prompt, generate_languages_reading_writing_prompt, generate_languages_listening_speaking_prompt
 from core.services.assessment_strategies.sciences_strategy import generate_sciences_prompt
 
 from core.services.prompt_generators import (
@@ -1176,17 +1176,37 @@ def generate_assessment_from_content_task(self, assessment_id):
                     
                     prompt = ""
                     if subject_type == "LANGUAGES":
-                        prompt = generate_languages_exam_prompt(r_text_memory, l_text_memory)
+                        # ESTRATEGIA IDIOMAS (SPLIT-CALL): 2 Llamadas para garantizar calidad
+                        
+                        # Llamada 1: Reading & Writing
+                        log_assessment_task_event(assessment_id, "LANGUAGES: Generando Parte 1 (Reading/Writing)...")
+                        p1 = generate_languages_reading_writing_prompt(r_text_memory)
+                        s1, t1, _ = generate_text_content(p1, api_key=api_key)
+                        if not s1: raise ResourceExhausted(t1)
+                        q1 = _parse_assessment_text(t1)
+                        
+                        # Llamada 2: Listening & Speaking
+                        log_assessment_task_event(assessment_id, "LANGUAGES: Generando Parte 2 (Listening/Speaking)...")
+                        p2 = generate_languages_listening_speaking_prompt(l_text_memory)
+                        s2, t2, _ = generate_text_content(p2, api_key=api_key)
+                        if not s2: raise ResourceExhausted(t2)
+                        q2 = _parse_assessment_text(t2)
+                        
+                        # Fusionar resultados (Simulando que vino de una sola llamada para el flujo posterior)
+                        questions_data = q1 + q2
+                        # Flag para saltar la llamada estándar de abajo
+                        prompt = None 
+
                     elif subject_type == "SCIENCES":
                         prompt = generate_sciences_prompt(r_text_memory)
                     else:
                         # Humanidades (Cualquiera de los tribunales)
                         prompt = generate_humanities_prompt(r_text_memory, tribunal_type=subject_type)
                     
-                    success, text, _ = generate_text_content(prompt, api_key=api_key)
-                    if not success: raise ResourceExhausted(text)
-                    
-                    questions_data = _parse_assessment_text(text)
+                    if prompt:
+                        success, text, _ = generate_text_content(prompt, api_key=api_key)
+                        if not success: raise ResourceExhausted(text)
+                        questions_data = _parse_assessment_text(text)
                     if not questions_data: raise ValueError("IA no devolvió preguntas válidas.")
                     with transaction.atomic():
                         a = Assessment.objects.select_for_update().get(pk=assessment_id)
@@ -1408,8 +1428,26 @@ def purge_and_penalize_corrections():
     if penalized_count > 0:
         log_timestamp(f"PURGE_PENALIZE_TASK: Penalizadas {penalized_count} evaluaciones no vistas.")
         log_timestamp(f"PURGE_PENALIZE_TASK: Penalizadas {penalized_count} evaluaciones no vistas.")
-    answers_to_purge = UserAnswer.objects.filter(question__assessment__in=expired_assessments, score__isnull=False)
-    purged_count = answers_to_purge.update(score=None, feedback="La corrección y el feedback de esta respuesta han caducado.")
+    # [FIX V37] Limpieza física de adjuntos efímeros
+    answers_to_purge = UserAnswer.objects.filter(question__assessment__in=expired_assessments)
+    
+    files_deleted = 0
+    for ans in answers_to_purge:
+        if ans.attachment:
+            try:
+                ans.attachment.delete(save=False) # Borrado físico sin guardar modelo
+                files_deleted += 1
+            except Exception as e:
+                logger.error(f"Error borrando archivo adjunto {ans.id}: {e}")
+
+    # Limpieza lógica (DB)
+    purged_count = answers_to_purge.update(
+        score=None, 
+        feedback="La corrección y el feedback de esta respuesta han caducado.",
+        attachment=""
+    )
+    
     if purged_count > 0:
-        log_timestamp(f"PURGE_PENALIZE_TASK: Purgado el contenido de {purged_count} respuestas.")
+        log_timestamp(f"PURGE_PENALIZE_TASK: Purgado el contenido de {purged_count} respuestas y {files_deleted} archivos físicos.")
+    
     return f"Tarea completada. Penalizadas: {penalized_count}. Purgadas: {purged_count}."

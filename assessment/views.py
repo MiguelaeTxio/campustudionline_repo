@@ -274,14 +274,14 @@ def submit_assessment(request, pk):
 
     for question in questions:
         user_answer_text = request.POST.get(f"answer_q_{question.pk}", "").strip()
-        audio_file = request.FILES.get(f"audio_q_{question.pk}")
+        attachment_file = request.FILES.get(f"attachment_q_{question.pk}")
         
         answers_to_create.append(
             UserAnswer(
                 question=question,
                 user=request.user,
                 answer_text=user_answer_text,
-                attachment=audio_file,
+                attachment=attachment_file,
             )
         )
 

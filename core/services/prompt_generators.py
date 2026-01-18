@@ -288,12 +288,15 @@ def generate_stimulus_creation_prompt(content_source: str, subject_name: str, su
             break
 
     if subject_type == "LANGUAGES":
+        # Versión Corregida y Limpia
         instructions = (
             f"1. Analiza el nombre de la asignatura: '{subject_name}' e identifica el nivel (A1, B2, Inicial, Avanzado, etc.).\n"
-            "2. Identifica los puntos gramaticales en la FUENTE.\n"
-            "3. Selecciona un tema de actualidad o cultura.\n"
-            f"4. Redacta un texto (Reading) y un guion (Listening) en {target_language}.\n"
-            "5. REGLA CRÍTICA: La complejidad del vocabulario y la sintaxis DEBE CORRESPONDERSE EXACTAMENTE con el nivel pedagógico detectado."
+            "2. Identifica los puntos gramaticales en la FUENTE (ej: Subjuntivo, Pasado Simple).\n"
+            "3. **SELECCIÓN TEMÁTICA ALEATORIA (CRÍTICO):** Elige un tema de actualidad, historia, ciencia o cultura general (ej: El cambio climático, La Revolución Industrial, Inteligencia Artificial, Viajes espaciales) que NO tenga relación directa con la gramática.\n"
+            "4. **PROHIBICIÓN METALINGÜÍSTICA:** El texto y el guion NO deben explicar la gramática. Deben ser historias o artículos sobre el tema elegido.\n"
+            f"5. **APLICACIÓN PRÁCTICA:** Usa intensivamente las estructuras gramaticales de la FUENTE (Punto 2) para narrar el tema elegido (Punto 3).\n"
+            f"6. Redacta un texto (Reading) y un guion (Listening) en {target_language} usando el tema elegido.\n"
+            "7. REGLA DE NIVEL: La complejidad del vocabulario DEBE CORRESPONDERSE EXACTAMENTE con el nivel pedagógico detectado en el Punto 1."
         )
     else:
         instructions = "Genera un texto de análisis académico profundo sobre el tema, adaptando la complejidad al nivel de la asignatura."
@@ -313,6 +316,7 @@ def generate_stimulus_creation_prompt(content_source: str, subject_name: str, su
         "}"
     )
     return prompt
+
 def generate_ugr_questions_prompt(reading_text: str, listening_text: str, subject_type: str = "HUMANITIES") -> str:
     """
     [HITO 6 - V11] Tribunal de Examen UGR: Genera las 4 secciones obligatorias.
