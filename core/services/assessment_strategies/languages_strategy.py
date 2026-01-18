@@ -21,6 +21,7 @@ OBJETIVO: Generar material base para un examen de la asignatura: '{subject_name}
 
 *** FORMATO DE SALIDA (JSON) ***
 {{
+  "detected_language": "Nombre del idioma detectado (ej: French, German, English, Italian)...",
   "reading_stimulus": "Texto del artículo o historia (300 palabras) en el IDIOMA EXTRANJERO...",
   "listening_transcript": "Guion de diálogo (Speaker A / Speaker B) en el IDIOMA EXTRANJERO..."
 }}
@@ -31,38 +32,59 @@ CONTEXTO GRAMATICAL (SOLO REFERENCIA):
 -------------------------------------------------------------------------
 """
 
-def generate_languages_exam_prompt(reading_text: str, listening_text: str) -> str:
+def generate_languages_reading_writing_prompt(reading_text: str) -> str:
     """
-    Generador de Preguntas para IDIOMAS.
-    Modelo UGR: Speaking = Entrevista Personal.
+    Generador PARTE 1: Reading & Writing.
     """
     return f"""
 Actúa como Tribunal de Examen Oficial de Idiomas.
 
-MATERIAL DE EXAMEN (En el idioma extranjero):
-TEXTO READING:
+MATERIAL DE EXAMEN (READING):
 {reading_text[:4000]}
 
-TRANSCRIPT LISTENING:
-{listening_text[:4000]}
+Genera la PARTE 1 del examen (Comprensión Lectora y Expresión Escrita) en el MISMO IDIOMA que el texto.
 
-Genera un examen en 4 SECCIONES en el MISMO IDIOMA que los textos:
-
-1. **SECCIÓN READING:** 4 preguntas 'multiple_choice' para comprobar la comprensión del Texto.
-2. **SECCIÓN LISTENING:** 2 preguntas 'multiple_choice' sobre detalles específicos del DIÁLOGO (Transcript).
-3. **SECCIÓN WRITING:** 1 tarea de redacción (open_ended) pidiendo una opinión sobre el tema del texto.
-4. **SECCIÓN SPEAKING (ENTREVISTA PERSONAL):**
-   - No pidas resumir el texto.
-   - Genera una lista de **3 PREGUNTAS ABIERTAS** dirigidas al alumno.
-   - Las preguntas deben ser sobre su vida, opiniones o situaciones hipotéticas (Trivial/Conversacional).
-   - Deben obligar al alumno a usar la gramática implícita del nivel (ej: Si es nivel pasado, preguntar "¿Qué hiciste ayer?").
-   - **IMPORTANTE:** Incluye el marcador [---RECORDING-REQUIRED---] al final.
+SECCIONES OBLIGATORIAS:
+1. **SECCIÓN READING:** 4 preguntas 'multiple_choice' para comprobar la comprensión detallada del texto.
+2. **SECCIÓN WRITING:** 1 tarea de redacción (open_ended) pidiendo una opinión razonada o ensayo corto relacionado con el tema del texto (aprox 150 palabras).
 
 FORMATO JSON ESTRICTO:
 {{
   "questions": [
     {{
-      "question_text": "Enunciado en el idioma extranjero...", 
+      "question_text": "Enunciado...", 
+      "question_type": "multiple_choice" o "open_ended",
+      "options": ["a)...", "b)...", "c)...", "d)..."],
+      "model_answer": "Respuesta modelo..."
+    }}
+  ]
+}}
+"""
+
+def generate_languages_listening_speaking_prompt(listening_transcript: str) -> str:
+    """
+    Generador PARTE 2: Listening & Speaking.
+    """
+    return f"""
+Actúa como Tribunal de Examen Oficial de Idiomas.
+
+MATERIAL DE EXAMEN (LISTENING TRANSCRIPT):
+{listening_transcript[:4000]}
+
+Genera la PARTE 2 del examen (Comprensión Auditiva y Expresión Oral) en el MISMO IDIOMA que el transcript.
+
+SECCIONES OBLIGATORIAS:
+1. **SECCIÓN LISTENING:** 2 preguntas 'multiple_choice' sobre detalles específicos del DIÁLOGO (Transcript).
+2. **SECCIÓN SPEAKING (ENTREVISTA PERSONAL):**
+   - Genera 1 tarea de 'open_ended' que consista en una lista de **3 PREGUNTAS DE ENTREVISTA** dirigidas al alumno.
+   - Las preguntas deben ser sobre su vida, opiniones o situaciones hipotéticas, usando la gramática del nivel.
+   - **IMPORTANTE:** Incluye el marcador [---RECORDING-REQUIRED---] al final del enunciado.
+
+FORMATO JSON ESTRICTO:
+{{
+  "questions": [
+    {{
+      "question_text": "Enunciado...", 
       "question_type": "multiple_choice" o "open_ended",
       "options": ["a)...", "b)...", "c)...", "d)..."],
       "model_answer": "Respuesta modelo..."

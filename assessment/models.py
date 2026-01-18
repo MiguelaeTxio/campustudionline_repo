@@ -37,6 +37,7 @@ class Assessment(models.Model):
     selection_range = models.JSONField(default=dict, blank=True, null=True)
     reading_stimulus = models.TextField(blank=True, null=True)
     listening_transcript = models.TextField(blank=True, null=True)
+    generated_audio = models.FileField(upload_to='assessment/generated_audio/%Y/%m/', blank=True, null=True, help_text="Audio nativo generado por Gemini 2.5")
     created_at = models.DateTimeField(auto_now_add=True)
     expiration_date = models.DateTimeField(null=True, blank=True)
     results_expiration_date = models.DateTimeField(null=True, blank=True)

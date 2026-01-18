@@ -18,6 +18,7 @@ from django.utils import timezone
 from django.urls import reverse
 from django.utils.text import slugify
 from django.core.mail import send_mail
+from django.core.files.base import ContentFile
 from django.template.loader import render_to_string
 from django.conf import settings
 from django.db import IntegrityError
@@ -40,7 +41,7 @@ from assessment.utils import classify_subject_strategy, segment_content_for_asse
 # [HITO 6] ESTRATEGIAS SEGREGADAS
 from core.services.assessment_strategies.classifier import generate_classifier_prompt
 from core.services.assessment_strategies.humanities_strategy import generate_humanities_prompt
-from core.services.assessment_strategies.languages_strategy import generate_languages_stimuli_prompt, generate_languages_reading_writing_prompt, generate_languages_listening_speaking_prompt
+from core.services.assessment_strategies.languages_strategy import generate_languages_stimuli_prompt, generate_audio_content, generate_multimodal_correction, generate_languages_reading_writing_prompt, generate_languages_listening_speaking_prompt
 from core.services.assessment_strategies.sciences_strategy import generate_sciences_prompt
 
 from core.services.prompt_generators import (
@@ -237,7 +238,8 @@ def _advance_seed_filters_if_needed(automation_settings):
 def _request_quarantine_via_mailbox(api_key: ApiKey):
     try:
         with open(QUARANTINE_MAILBOX_FILE, "a") as f:
-            f.write(f"{api_key.id}\n")
+            f.write(f"{api_key.id}
+")
         logger.warning(f"BUZÓN: Solicitud de cuarentena enviada para la clave '{api_key.name}' (ID: {api_key.id}).")
     except Exception as e:
         logger.critical(f"FALLO CRÍTICO DE ARQUITECTURA: No se pudo escribir en el buzón de cuarentena '{QUARANTINE_MAILBOX_FILE}': {e}", exc_info=True)
@@ -339,34 +341,43 @@ def _assemble_final_markdown_from_chunks(course_title: str, metadata: dict, mast
         slug = slugify(title)
         indent = "    " * (level - 2)
         toc_entries.append(f"{indent}*   [{title}](#{slug})")
-    introduction = [f"# {course_title}", f"{metadata.get('descripcion_corta', 'Descripción no disponible.')}", '<a id="tabla-de-contenidos"></a>', "## Tabla de Contenidos", "\n".join(toc_entries)]
+    introduction = [f"# {course_title}", f"{metadata.get('descripcion_corta', 'Descripción no disponible.')}", '<a id="tabla-de-contenidos"></a>', "## Tabla de Contenidos", "
+".join(toc_entries)]
     content_body = []
     original_parsed_schema = _parse_master_schema(master_schema)
     chunk_map = {slugify(original_parsed_schema[chunk.order - 1][1]): chunk for chunk in chunks}
     for level, title in original_parsed_schema:
         slug = slugify(title)
         chunk = chunk_map.get(slug)
-        content = chunk.content if chunk else f"### Error\n\nEl contenido para la sección '{title}' no pudo ser localizado."
+        content = chunk.content if chunk else f"### Error
+
+El contenido para la sección '{title}' no pudo ser localizado."
         heading_hashes = "#" * level
         content_body.append(f'<a id="{slug}"></a>')
         content_body.append(f"{heading_hashes} {title}")
         content_body.append(content)
         if level == 2:
-            content_body.append("\n[⬆️ Volver al índice](#tabla-de-contenidos)")
+            content_body.append("
+[⬆️ Volver al índice](#tabla-de-contenidos)")
     all_sources_text = [chunk.ai_sources for chunk in chunks if chunk.ai_sources]
     if all_sources_text:
         unique_references = set()
         for source_block in all_sources_text:
-            for line in source_block.split('\n'):
+            for line in source_block.split('
+'):
                 cleaned_line = line.strip()
                 if cleaned_line:
                     unique_references.add(cleaned_line)
         sorted_references = sorted(list(unique_references))
-        formatted_bibliography = "\n".join(f"- {ref}" for ref in sorted_references)
-        bibliography_section = [f'<a id="{fuentes_slug}"></a>', f"## {fuentes_title}", formatted_bibliography, "\n[⬆️ Volver al índice](#tabla-de-contenidos)"]
+        formatted_bibliography = "
+".join(f"- {ref}" for ref in sorted_references)
+        bibliography_section = [f'<a id="{fuentes_slug}"></a>', f"## {fuentes_title}", formatted_bibliography, "
+[⬆️ Volver al índice](#tabla-de-contenidos)"]
         content_body.extend(bibliography_section)
     final_parts = yaml_header + introduction + content_body
-    return "\n\n".join(final_parts)
+    return "
+
+".join(final_parts)
 
 def _get_or_create_free_categories_from_classification(classification_data: dict, course_title: str) -> tuple:
     master_name = classification_data.get("categoria_general")
@@ -394,10 +405,20 @@ def _send_completion_notifications(new_content: ContentMaterial):
         push_title = "¡Contenido Disponible!"
         push_body = f"El material de estudio para '{new_content.title}' que solicitaste ya está disponible."
         email_subject = f"[CampuStudiOnline] El contenido para '{new_content.title}' está listo"
-        email_body_text = (f"¡Hola!\n\nNos complace informarte que el material de estudio para la asignatura '{new_content.title}' que solicitaste ha sido generado y ya está disponible en la plataforma.\n\n"
-                           f"Puedes acceder a él directamente a través del siguiente enlace:\n{full_url}\n\n"
-                           f"Gracias por tu paciencia y por ayudarnos a mejorar CampuStudiOnline.\n\n"
-                           f"Atentamente,\nEl equipo de CampuStudiOnline")
+        email_body_text = (f"¡Hola!
+
+Nos complace informarte que el material de estudio para la asignatura '{new_content.title}' que solicitaste ha sido generado y ya está disponible en la plataforma.
+
+"
+                           f"Puedes acceder a él directamente a través del siguiente enlace:
+{full_url}
+
+"
+                           f"Gracias por tu paciencia y por ayudarnos a mejorar CampuStudiOnline.
+
+"
+                           f"Atentamente,
+El equipo de CampuStudiOnline")
         context = {
             'content_title': new_content.title,
             'content_url': full_url
@@ -806,7 +827,9 @@ def generate_full_course_task(self, task_id):
                 if task.subject:
                     topic_description = task.subject.name
                     degree = task.subject.academic_year.degree
-                    academic_context = (f"- Universidad: {degree.branch.university.name}\n- Rama: {degree.branch.name}\n- Titulación: {degree.name}")
+                    academic_context = (f"- Universidad: {degree.branch.university.name}
+- Rama: {degree.branch.name}
+- Titulación: {degree.name}")
                     learning_objectives = json.dumps(task.subject.learning_objectives, ensure_ascii=False) if task.subject.learning_objectives else ""
                     syllabus = json.dumps(task.subject.course_content_outline, ensure_ascii=False) if task.subject.course_content_outline else ""
                 else:
@@ -815,7 +838,9 @@ def generate_full_course_task(self, task_id):
                     learning_objectives = ""
                     syllabus = ""
                     
-                metadata_prompt = generate_course_metadata_prompt(topic_description, academic_context) + "\n\nJSON Only."
+                metadata_prompt = generate_course_metadata_prompt(topic_description, academic_context) + "
+
+JSON Only."
                 
                 # --- CAPTURA DE EXCEPCIONES LOCAL ---
                 try:
@@ -1139,12 +1164,15 @@ def generate_assessment_from_content_task(self, assessment_id):
                         dat = dirtyjson.loads(clean_json_response(text))
                         db_reading = dat.get('reading_stimulus', '')
                         db_listening = dat.get('listening_transcript', '')
+                        # Captura del idioma detectado por IA (Hito 6)
+                        detected_lang = dat.get('detected_language', 'default').lower()
                         
                         # En idiomas, la "fuente" para las preguntas ES el estímulo generado
                         r_text_memory = db_reading
                         l_text_memory = db_listening
                         
                         if not db_reading: raise ValueError("Fallo en generación de Reading.")
+                        if not db_listening: raise ValueError("Fallo en generación de Listening Transcript.")
 
                     elif subject_type == "SCIENCES":
                         # ESTRATEGIA CIENCIAS: Contenido Real
@@ -1159,15 +1187,31 @@ def generate_assessment_from_content_task(self, assessment_id):
                         if not r_text_memory or len(r_text_memory) < 50: r_text_memory = full_content
                         # db_reading queda VACÍO -> UI limpia
 
-                    # Guardar en BBDD (Solo Idiomas tendrá datos visibles)
+                    # [HITO 6] GENERACIÓN DE AUDIO NATIVO (LISTENING REAL)
+                    audio_file = None
+                    if subject_type == "LANGUAGES" and db_listening:
+                        log_assessment_task_event(assessment_id, "Iniciando generación de audio nativo con Gemini 2.5...")
+                        # El prompt para la generación de audio es el propio guion
+                        success_audio, audio_bytes, _ = generate_audio_content(db_listening, api_key=api_key)
+                        if success_audio and audio_bytes:
+                            audio_file = ContentFile(audio_bytes, name=f"listening_{assessment_id}.mp3")
+                            log_assessment_task_event(assessment_id, "Audio nativo generado con éxito.")
+                        else:
+                            log_assessment_task_event(assessment_id, "Error: La IA no devolvió bytes de audio.", level="ERROR")
+
+                    # Guardar en BBDD
                     with transaction.atomic():
                         aa = Assessment.objects.select_for_update().get(pk=assessment_id)
                         aa.prompt_data = {
                             "reading_text": db_reading,
-                            "listening_script": db_listening
+                            "listening_script": db_listening,
+                            "detected_language": detected_lang
                         }
+                        if audio_file:
+                            aa.generated_audio = audio_file
+                            
                         aa.status = Assessment.AssessmentStatus.PROCESSING
-                        aa.save(update_fields=['prompt_data', 'status'])
+                        aa.save(update_fields=['prompt_data', 'status', 'generated_audio'])
                     step = 2
 
                 # --- PASO 2: GENERACIÓN DE EXAMEN (Llamadas a archivos distintos) ---
@@ -1192,9 +1236,88 @@ def generate_assessment_from_content_task(self, assessment_id):
                         if not s2: raise ResourceExhausted(t2)
                         q2 = _parse_assessment_text(t2)
                         
-                        # Fusionar resultados (Simulando que vino de una sola llamada para el flujo posterior)
+                        # --- VALIDACIÓN DE INTEGRIDAD SPLIT-CALL ---
+                        if not q1:
+                            log_assessment_task_event(assessment_id, f"ERROR: Parte 1 vacía. Raw: {t1[:200]}...", level="ERROR")
+                            raise ValueError("La Parte 1 (Reading) falló en el parsing.")
+                            
+                        if not q2:
+                            log_assessment_task_event(assessment_id, f"ERROR: Parte 2 vacía. Raw: {t2[:200]}...", level="ERROR")
+                            raise ValueError("La Parte 2 (Listening) falló en el parsing (Lista vacía).")
+
                         questions_data = q1 + q2
-                        # Flag para saltar la llamada estándar de abajo
+                        
+                        # [HITO 6] ESTANDAR UGR: TÍTULOS ACADÉMICOS Y ETIQUETAS
+                        if subject_type == "LANGUAGES":
+                            # Recuperar idioma desde prompt_data
+                            saved_lang = assessment.prompt_data.get('detected_language', 'default').lower()
+                            
+                            # Mapa de Títulos (ESTÁNDAR UGR/ACLES/MCERL)
+                            # Formato: [Reading, Writing, Listening, Speaking]
+                            titles = ["**READING COMPREHENSION**", "**WRITTEN PRODUCTION**", "**LISTENING COMPREHENSION**", "**SPOKEN PRODUCTION**"]
+                            
+                            if "fren" in saved_lang or "fran" in saved_lang:
+                                titles = ["**COMPRÉHENSION DES ÉCRITS**", "**PRODUCTION ÉCRITE**", "**COMPRÉHENSION DE L'ORAL**", "**PRODUCTION ORALE**"]
+                            elif "germ" in saved_lang or "alem" in saved_lang or "deut" in saved_lang:
+                                titles = ["**LESEVERSTEHEN**", "**SCHRIFTLICHER AUSDRUCK**", "**HÖRVERSTEHEN**", "**MÜNDLICHER AUSDRUCK**"]
+                            elif "ital" in saved_lang:
+                                # Terminología oficial CELI/CILS
+                                titles = ["**COMPRENSIONE DELLA LETTURA**", "**PRODUZIONE SCRITTA**", "**COMPRENSIONE DELL'ASCOLTO**", "**PRODUZIONE ORALE**"]
+                            elif "eng" in saved_lang or "ingl" in saved_lang:
+                                titles = ["**READING COMPREHENSION**", "**WRITING**", "**LISTENING COMPREHENSION**", "**SPEAKING**"]
+                            
+                            log_assessment_task_event(assessment_id, f"IDIOMA DETECTADO: {saved_lang} -> UGR Standard: {titles[0]}...")
+
+                            # Inyección en Objetos JSON
+                            
+                            # Títulos Parte 1 (Reading + Writing)
+                            if len(q1) >= 1:
+                                q1[0]['question_text'] = f"{titles[0]}
+
+{q1[0].get('question_text', '')}"
+                                if len(q1) > 1:
+                                    q1[-1]['question_text'] = f"{titles[1]}
+
+{q1[-1].get('question_text', '')}"
+                            
+                            # Parte 2 (Listening + Speaking)
+                            if len(q2) >= 1:
+                                # Título Listening (1ª pregunta del bloque 2)
+                                q2[0]['question_text'] = f"{titles[2]}
+
+{q2[0].get('question_text', '')}"
+                                
+                                # ETIQUETAS LISTENING (Todas menos la última)
+                                # CRÍTICO: Inyectar 
+
+[---AUDIO-REQUIRED---] para que salga el botón de Play
+                                for q in q2[:-1]:
+                                    qt = q.get('question_text', '').strip()
+                                    if "[---AUDIO-REQUIRED---]" not in qt:
+                                        q['question_text'] = f"{qt}
+
+[---AUDIO-REQUIRED---]"
+                                
+                                # Speaking (Última pregunta del bloque 2)
+                                spk = q2[-1]
+                                spk_text = spk.get('question_text', '').strip()
+                                # Título Speaking
+                                spk_text = f"{titles[3]}
+
+{spk_text}"
+                                
+                                # Etiqueta Speaking
+                                if "[---RECORDING-REQUIRED---]" not in spk_text:
+                                    spk_text = f"{spk_text}
+
+[---RECORDING-REQUIRED---]"
+                                
+                                spk['question_text'] = spk_text
+                            # Reconstruir lista final modificada
+                            questions_data = q1 + q2
+
+                        log_assessment_task_event(assessment_id, f"FUSIÓN EXITOSA: {len(q1)} preguntas P1 + {len(q2)} preguntas P2.")
+                        
                         prompt = None 
 
                     elif subject_type == "SCIENCES":
@@ -1221,8 +1344,19 @@ def generate_assessment_from_content_task(self, assessment_id):
                                 w_type = Question.WidgetType.RADIO_SELECT
                             elif "[---RECORDING-REQUIRED---]" in q_text:
                                 w_type = Question.WidgetType.AUDIO_RECORDER
+                            
+                            # [HITO 6 FIX] FORZADO DE WIDGET PARA SPEAKING EN IDIOMAS
+                            if subject_type == "LANGUAGES" and idx == len(questions_data):
+                                w_type = Question.WidgetType.AUDIO_RECORDER
+                                
                             q_data['question_text'] = q_text.replace("[---RECORDING-REQUIRED---]", "").replace("[---AUDIO-REQUIRED---]", "").strip()
-                            Question.objects.create(assessment=a, widget_type=w_type, **q_data)
+                            
+                            # [HARDENING] Saneamiento de campos para evitar error 'unexpected keyword argument'
+                            # Solo pasamos los campos que existen en el modelo Question
+                            valid_fields = ['question_text', 'question_type', 'options', 'model_answer']
+                            sanitized_data = {k: v for k, v in q_data.items() if k in valid_fields}
+                            
+                            Question.objects.create(assessment=a, widget_type=w_type, **sanitized_data)
                             a.questions_processed = idx
                             a.save(update_fields=['questions_processed'])
                     step = 3
@@ -1286,7 +1420,9 @@ def correct_assessment_task(self, assessment_id):
             assessment_to_update.save(update_fields=["status", "total_questions_expected"])
         app_settings = AssessmentSettings.get_settings()
         expiration_date = timezone.now() + timedelta(days=app_settings.results_expiration_days)
-        prompt_format_instructions = ("**FORMATO DE SALIDA OBLIGATORIO:**\n" "PUNTUACION: [Un número entero de 0 a 100]\n" "FEEDBACK: [Tu feedback constructivo detallado]")
+        prompt_format_instructions = ("**FORMATO DE SALIDA OBLIGATORIO:**
+" "PUNTUACION: [Un número entero de 0 a 100]
+" "FEEDBACK: [Tu feedback constructivo detallado]")
         api_key = ApiKey.objects.filter(is_enabled=True, is_quarantined=False).first()
         if not api_key:
             raise ValueError("No se encontró una clave de API activa.")
@@ -1306,12 +1442,23 @@ def correct_assessment_task(self, assessment_id):
                 Assessment.objects.filter(pk=assessment_id).update(questions_processed=F("questions_processed") + 1)
                 continue
 
-            prompt = (f"Evalúa la siguiente respuesta de un usuario, comparándola con la pregunta y la respuesta modelo.\n\n" f'Pregunta: "{answer.question.question_text}"\n' f'Respuesta Modelo: "{answer.question.model_answer}"\n' f'Respuesta del Usuario: "{answer.answer_text}"\n\n' f"{prompt_format_instructions}")
+            prompt = (f"Evalúa la siguiente respuesta de un usuario, comparándola con la pregunta y la respuesta modelo.
+
+" f'Pregunta: "{answer.question.question_text}"
+' f'Respuesta Modelo: "{answer.question.model_answer}"
+' f'Respuesta del Usuario: "{answer.answer_text}"
+
+' f"{prompt_format_instructions}")
             
             # Log antes de la llamada
             _log_assessment_event(assessment_id, f"Corrigiendo respuesta {i}/{answers_to_correct.count()}...")
             
-            success, response_text, _ = generate_text_content(prompt, api_key=api_key)
+            # [HITO 6] CORRECCIÓN MULTIMODAL: Si hay audio, la IA debe escucharlo
+            if answer.attachment:
+                log_assessment_task_event(assessment_id, f"Respuesta {i}: Detectado audio del alumno. Enviando para análisis fonético...")
+                success, response_text, _ = generate_multimodal_correction(prompt, answer.attachment.path, api_key=api_key)
+            else:
+                success, response_text, _ = generate_text_content(prompt, api_key=api_key)
             if not success:
                 raise AIServiceCriticalError(f"API falló para UserAnswer ID {answer.id}: {response_text}")
             

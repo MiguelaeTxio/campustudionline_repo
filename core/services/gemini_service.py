@@ -26,25 +26,31 @@ class AIServiceCriticalError(Exception):
 
 # --- Helper Functions (Stateless Design) ---
 
-def _execute_gemini_call(prompt: str, api_key: ApiKey, generation_config: dict, safety_settings: list) -> types.GenerateContentResponse:
+def _execute_gemini_call(contents, api_key: ApiKey, generation_config: dict, safety_settings: list) -> types.GenerateContentResponse:
     """
     Configura el cliente unificado (v1) y realiza la llamada.
+    Habilitado para multimodalidad (Texto, Audio, Imagen).
     """
     client = genai.Client(api_key=api_key.key)
     
-    logger.info(f"Realizando llamada a la API (SDK v1) con la clave '{api_key.name}' usando '{GEMINI_MODEL_NAME}'.")
+    logger.info(f"Llamada Multimodal con clave '{api_key.name}' usando '{GEMINI_MODEL_NAME}'.")
     time.sleep(PROACTIVE_DELAY_SECONDS)
     
-    # Configuración de generación tipada (SDK v1)
-    # [GEMINI 3 SPECIFIC]: Temperatura default (1.0) requerida para razonamiento óptimo.
-    config = types.GenerateContentConfig(
-        max_output_tokens=generation_config.get("max_output_tokens", 8192),
-        safety_settings=safety_settings,
-    )
+    # Combinar configuración base con la dinámica (ej: response_mime_type)
+    config_params = {
+        "max_output_tokens": generation_config.get("max_output_tokens", 8192),
+        "safety_settings": safety_settings,
+    }
+    if "response_mime_type" in generation_config:
+        config_params["response_mime_type"] = generation_config["response_mime_type"]
+    if "speech_config" in generation_config:
+        config_params["speech_config"] = generation_config["speech_config"]
+
+    config = types.GenerateContentConfig(**config_params)
 
     return client.models.generate_content(
         model=GEMINI_MODEL_NAME,
-        contents=prompt,
+        contents=contents,
         config=config
     )
 
@@ -137,3 +143,61 @@ def generate_text_content(prompt: str, api_key: ApiKey, task_id: str = None) -> 
             
         logger.critical(f"Error inesperado en generate_text_content (SDK v1): {e}", exc_info=True)
         raise AIServiceCriticalError(f"Error inesperado en la capa de servicio de IA: {e}") from e
+
+def generate_audio_content(prompt: str, api_key: ApiKey) -> Tuple[bool, bytes, str]:
+    """
+    [HITO 6] Genera un archivo de audio (MPEG) nativamente usando Gemini 2.5.
+    """
+    close_old_connections()
+    generation_config = {
+        "response_mime_type": "audio/mpeg",
+    }
+    
+    # Reutilizamos los safety_settings definidos en generate_text_content (simplificado para el parche)
+    safety_settings = [types.SafetySetting(category=c, threshold="BLOCK_NONE") 
+                       for c in ["HARM_CATEGORY_HARASSMENT", "HARM_CATEGORY_HATE_SPEECH", 
+                                 "HARM_CATEGORY_SEXUALLY_EXPLICIT", "HARM_CATEGORY_DANGEROUS_CONTENT"]]
+
+    try:
+        response = _execute_gemini_call(prompt, api_key, generation_config, safety_settings)
+        
+        # En generación de audio, el contenido viene en las partes de la respuesta
+        if response.data:
+            return True, response.data, api_key.name
+        
+        # Fallback para algunas versiones del SDK que lo devuelven en partes
+        for candidate in response.candidates:
+            for part in candidate.content.parts:
+                if part.inline_data:
+                    return True, part.inline_data.data, api_key.name
+                    
+        return False, b"", api_key.name
+    except Exception as e:
+        logger.error(f"Fallo en generación de audio nativo: {e}")
+        return False, b"", api_key.name
+
+def generate_multimodal_correction(prompt: str, audio_path: str, api_key: ApiKey) -> Tuple[bool, str, str]:
+    """
+    [HITO 6] Envía texto y un archivo de audio para evaluación.
+    """
+    close_old_connections()
+    try:
+        with open(audio_path, "rb") as f:
+            audio_data = f.read()
+        
+        # Construcción de mensaje multimodal (SDK v1)
+        contents = [
+            types.Part.from_bytes(data=audio_data, mime_type="audio/webm"), # O el formato que use el navegador
+            types.Part.from_text(text=prompt)
+        ]
+        
+        generation_config = {"max_output_tokens": 2048}
+        safety_settings = [types.SafetySetting(category=c, threshold="BLOCK_NONE") 
+                           for c in ["HARM_CATEGORY_HARASSMENT", "HARM_CATEGORY_HATE_SPEECH", 
+                                     "HARM_CATEGORY_SEXUALLY_EXPLICIT", "HARM_CATEGORY_DANGEROUS_CONTENT"]]
+
+        response = _execute_gemini_call(contents, api_key, generation_config, safety_settings)
+        return True, response.text.strip(), api_key.name
+    except Exception as e:
+        logger.error(f"Error en corrección multimodal: {e}")
+        return False, str(e), api_key.name

@@ -390,6 +390,7 @@
 ./assessment/migrations/0019_alter_assessmentsettings_options_and_more.py
 ./assessment/migrations/0012_alter_assessment_status.py
 ./assessment/migrations/0022_alter_assessment_options_and_more.py
+./assessment/migrations/0023_assessment_generated_audio.py
 ./assessment/migrations/0007_assessment_expiration_date_and_more.py
 ./assessment/migrations/0013_assessmentsettings_event_log_and_more.py
 ./assessment/migrations/__init__.py

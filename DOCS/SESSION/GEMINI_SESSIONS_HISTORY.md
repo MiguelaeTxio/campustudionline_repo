@@ -1324,3 +1324,11 @@ Objetivos de la sesión:
 *  **Session:** Ajuste de Reglas de Clasificación en Autoevaluaciones (Hito 6)
 *  **Description:** Refinamiento del clasificador de asignaturas (`classifier.py`) para distinguir correctamente entre Filología Hispánica (Humanidades) e Idiomas Extranjeros, implementando reglas de exclusión geográfica y lingüística específicas. Verificación de la UI resultante.
 
+
+# 2026-01-18
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+## EDC # --SYSTEM -->
+*  **Session:** Hito 6: Reparación Crítica de Generadores y Verificación de Estrategia de Idiomas
+*  **Description:** Reparación de urgencia del SyntaxError en 'prompt_generators.py'. Verificación del flujo 'Split-Call' en evaluaciones de idiomas y validación de la limpieza de archivos adjuntos efímeros.
+
