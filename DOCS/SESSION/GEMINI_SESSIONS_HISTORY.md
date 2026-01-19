@@ -1356,3 +1356,11 @@ Objetivos de la sesión:
 *  **Session:** Implementación del Arquetipo de Evaluación LOGIC_AND_TECH
 *  **Description:** Implementación de la estrategia LOGIC_AND_TECH en el sistema de evaluación (sciences_strategy.py). Enfoque en la generación de problemas técnicos que requieran resolución mediante fórmulas LaTeX y bloques de código o pseudocódigo, validando estrictamente la prohibición de preguntas puramente teóricas. Adaptación de prompts para asignaturas de Ingeniería, Criptografía y Programación.
 
+
+# 2026-01-19
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+## AAAA # --SYSTEM -->
+*  **Session:** Implementación Estrategia SOCIO_LEGAL
+*  **Description:** Implementación del arquetipo de evaluación SOCIO_LEGAL en humanities_strategy.py. Desarrollo de la estructura de examen tipo 'Tribunal Legal' (Conceptos, Casos Prácticos, Ensayos) e integración de validación normativa en los prompts.
+

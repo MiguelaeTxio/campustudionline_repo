@@ -1,5 +1,6 @@
 from typing import List, Dict
 from core.services.assessment_strategies.sciences_strategy import generate_sciences_prompt
+from core.services.assessment_strategies.legal_strategy import generate_legal_prompt
 
 def generate_course_metadata_prompt(
     topic_description: str, academic_context: str = ""
@@ -172,103 +173,48 @@ def generate_assessment_prompt(
     subject_name: str = "Asignatura General"
 ) -> str:
     """
-    [HITO 6 - V6] Generador de Exámenes Universitarios con Tribunales Especializados.
-    Integra estrategias segregadas (Sciences/Logic) y Tribunales de Humanidades.
+    [HITO 6 - V8] Generador de Exámenes Universitarios.
+    Fachada que delega en estrategias especializadas segregadas.
     """
     
-    # --- ESTRATEGIA SEGREGADA: CIENCIAS Y TECNOLOGÍA ---
+    # 1. ESTRATEGIA CIENCIAS EXACTAS
     if subject_type == "EXACT_SCIENCES":
         return generate_sciences_prompt(content_text, subject_name=subject_name)
-
-    # --- CONFIGURACIÓN DE TRIBUNALES (HUMANIDADES Y CIENCIAS SOCIALES) ---
-    # Estructura Estándar: 2 Test + 1 Práctico + 1 Ensayo
-    humanities_structure = (
-        "ESTRUCTURA OBLIGATORIA (4 PREGUNTAS):\n"
-        "1. [TEST] Conceptos Fundamentales: 2 preguntas 'multiple_choice' (4 opciones) sobre terminología clave.\n"
-        "2. [PRÁCTICO] Análisis Aplicado: 1 pregunta 'open_ended' que plantee un caso práctico, análisis de fragmento o aplicación de norma.\n"
-        "3. [ENSAYO] Síntesis Crítica: 1 pregunta 'open_ended' de desarrollo extenso y relación de conceptos.\n"
-    )
-
-    tribunals = {
-        "LEGAL": {
-            "role": "Catedrático de Derecho y Magistrado",
-            "focus": "Céntrate en la interpretación normativa, jurisprudencia y aplicación de leyes. Evalúa el rigor jurídico.",
-            "structure": humanities_structure
-        },
-        "ARTS": {
-            "role": "Historiador del Arte y Crítico",
-            "focus": "Céntrate en el análisis formal, iconografía, estilo y contexto histórico-artístico.",
-            "structure": humanities_structure
-        },
-        "SOCIETY": {
-            "role": "Catedrático de Sociología y Filosofía",
-            "focus": "Céntrate en corrientes de pensamiento, dialéctica, estructuras sociales e implicaciones éticas.",
-            "structure": humanities_structure
-        },
-        "HISTORY": {
-            "role": "Doctor en Historia",
-            "focus": "Céntrate en la causalidad, cronología, análisis de fuentes y contextos geopolíticos.",
-            "structure": humanities_structure
-        },
-        "PHILOLOGY": {
-            "role": "Lingüista y Filólogo",
-            "focus": "Céntrate en el análisis textual, pragmática, evolución de la lengua y crítica literaria.",
-            "structure": humanities_structure
-        },
-        "HUMANITIES_GENERIC": {
-            "role": "Profesor Titular Universitario",
-            "focus": "Evalúa la comprensión profunda, capacidad de síntesis y rigor académico.",
-            "structure": humanities_structure
-        }
-    }
-
-    # --- LÓGICA DE SELECCIÓN DE INSTRUCCIONES ---
     
+    # 2. ESTRATEGIA JURÍDICA (UGR LAW MODEL)
+    if subject_type == "LEGAL":
+        return generate_legal_prompt(content_text, subject_name=subject_name)
+
+    # 3. ESTRATEGIA IDIOMAS
     if subject_type == "LANGUAGES":
-        # Fallback para idiomas si entrara por este flujo (aunque suele ir por ugr_questions)
         instructions = (
             "Actúa como un Examinador Oficial. Genera un examen de comprobación:\n"
             "1. Reading Comprehension (2 preguntas multiple_choice).\n"
             "2. Use of English / Grammar (1 pregunta multiple_choice).\n"
             "3. Writing Task (1 pregunta open_ended)."
         )
+        objectives_section = f"**OBJETIVOS:**\n{learning_objectives}\n" if learning_objectives else ""
+        return f"""{objectives_section}{instructions}\n\nCONTEXTO: {segment_info}\nFUENTE:\n{content_text[:45000]}\n\nFORMATO JSON ESTRICTO:\n{{\n  "questions": [\n    {{\n      "question_text": "Enunciado...",\n      "question_type": "multiple_choice" | "open_ended",\n      "options": ["a)..."] (si aplica),\n      "model_answer": "Respuesta..."\n    }}\n  ]\n}}"""
 
-    else:
-        # Selección del Tribunal de Humanidades
-        tribunal = tribunals.get(subject_type, tribunals["HUMANITIES_GENERIC"])
-        instructions = (
-            f"Actúa como {tribunal['role']}.\n"
-            f"{tribunal['focus']}\n\n"
-            f"{tribunal['structure']}"
-        )
-
-    objectives_section = ""
-    if learning_objectives:
-        objectives_section = f"**OBJETIVOS DE APRENDIZAJE:**\n{learning_objectives}\n\n"
-
-    base_prompt = f"""{objectives_section}{instructions}
-
-CONTEXTO: {segment_info}
-FUENTE ÚNICA DE LA VERDAD (SOLO ESTE TEXTO):
---------------------------------------------------
-{content_text[:45000]}
---------------------------------------------------
-
-**FORMATO JSON ESTRICTO:**
-{{
-  "questions": [
-    {{
-      "question_text": "Enunciado...",
-      "question_type": "multiple_choice" O "open_ended",
-      "options": ["a) Opción 1", "b) Opción 2", "c) Opción 3"] (SOLO SI ES multiple_choice),
-      "model_answer": "Respuesta correcta (letra o desarrollo)..."
-    }}
-  ]
-}}
-IMPORTANTE: Si 'question_type' es 'multiple_choice', el campo 'options' es OBLIGATORIO."""
-    return base_prompt
-
-
+    # 4. ESTRATEGIA HUMANIDADES GENÉRICA (ARTS, SOCIETY, HISTORY, PHILOLOGY)
+    # TODO: Segregar estas también en el futuro si divergen mucho del modelo estándar.
+    # Por ahora, usamos el modelo genérico embebido.
+    
+    humanities_structure = (
+        "ESTRUCTURA OBLIGATORIA (4 PREGUNTAS):\n"
+        "1. [TEST] Conceptos Fundamentales: 2 preguntas 'multiple_choice'.\n"
+        "2. [ANÁLISIS] Pregunta de desarrollo o análisis de texto: 1 pregunta 'open_ended'.\n"
+        "3. [SÍNTESIS] Ensayo crítico o relación de conceptos: 1 pregunta 'open_ended'.\n"
+    )
+    
+    role = "Profesor Universitario"
+    focus = "Evalúa comprensión conceptual."
+    
+    if subject_type == "ARTS": role = "Historiador del Arte"; focus = "Análisis formal e iconográfico."
+    if subject_type == "SOCIETY": role = "Sociólogo"; focus = "Pensamiento crítico y estructuras."
+    if subject_type == "HISTORY": role = "Historiador"; focus = "Causalidad y contexto."
+    
+    return f"""Actúa como {role}. {focus}\n{humanities_structure}\n\nFUENTE:\n{content_text[:45000]}\n\nFORMATO JSON ESTRICTO:\n{{\n  "questions": [\n    {{\n      "question_text": "Enunciado...",\n      "question_type": "multiple_choice" | "open_ended",\n      "options": ["a)..."] (si aplica),\n      "model_answer": "Respuesta..."\n    }}\n  ]\n}}"""
 def generate_stimulus_creation_prompt(content_source: str, subject_name: str, subject_type: str = "HUMANITIES") -> str:
     """
     [HITO 6 - V11] Generador de Estímulos con Nivel Dinámico Adaptativo.

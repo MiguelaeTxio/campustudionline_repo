@@ -459,6 +459,7 @@
 ./portfolio/migrations/0001_initial.py
 ./portfolio/tests.py
 ./core/context_processors.py
+./core/services/assessment_strategies/legal_strategy.py
 ./core/services/assessment_strategies/classifier.py
 ./core/services/assessment_strategies/__init__.py
 ./core/services/assessment_strategies/languages_strategy.py
