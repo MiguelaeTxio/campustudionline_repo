@@ -1348,3 +1348,11 @@ Objetivos de la sesión:
 *  **Session:** Reparación Imports Orchestrator y Lógica Examen Idiomas (Listening/Speaking)
 *  **Description:** Resolución del ImportError crítico en orchestrator/tasks.py verificando la segregación de lógica de prompts en las estrategias de evaluación (Languages, Sciences, Humanities). Implementación de la lógica específica para exámenes de idiomas: módulo Listening (reproducción de audio y respuesta multimodal) y módulo Speaking (grabación temporizada automática). Investigación e implementación de estándares de acreditación (referencia UGR) para la estructura de preguntas.
 
+
+# 2026-01-19
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+## CAMA # --SYSTEM -->
+*  **Session:** Implementación del Arquetipo de Evaluación LOGIC_AND_TECH
+*  **Description:** Implementación de la estrategia LOGIC_AND_TECH en el sistema de evaluación (sciences_strategy.py). Enfoque en la generación de problemas técnicos que requieran resolución mediante fórmulas LaTeX y bloques de código o pseudocódigo, validando estrictamente la prohibición de preguntas puramente teóricas. Adaptación de prompts para asignaturas de Ingeniería, Criptografía y Programación.
+

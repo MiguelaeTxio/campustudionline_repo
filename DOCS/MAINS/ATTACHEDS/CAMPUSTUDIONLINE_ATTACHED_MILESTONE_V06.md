@@ -10,26 +10,27 @@
 
 1. [X] **Refactor de Orchestrator.** (Completado: Persistencia de arquetipo en `prompt_data`, gestión de strikes de cuota y sincronización de etiquetas UGR).
 2. [X] **Estrategia CEFR_LANGUAGES.** (Completado: Prompt multimodal con tags, Frontend corregido con TTS nativo por idioma y grabadora automática).
-3. [ ] **Estrategia LOGIC_AND_TECH.** (Pendiente: Implementar lógica de problemas complejos, LaTeX y bloques de código).
-4. [ ] **Estrategia SOCIO_LEGAL.** (Pendiente).
+3. [X] **Estrategia LOGIC_AND_TECH.** (Completado: Implementación de formato UGR Mixto -Teoría y Práctica-, integración en orquestador y generadores centrales).
+4. [ ] **Estrategia SOCIO_LEGAL.** (Pendiente: Implementar lógica de casos prácticos y normativa jurídica).
 5. [ ] **Estrategia HEALTH_SCIENCES.** (Pendiente).
 6. [ ] **Estrategia HUMANITIES_ARTS.** (Pendiente).
 
 ---
 
 ## LOG DE AVANCES DE ESTA SESIÓN
-*   **Reparación Crítica:** Resolución de `ImportError` en `tasks.py` mediante la creación/unificación de funciones de estrategia segregadas.
-*   **Persistencia del Arquetipo:** Se ha blindado el motor para que el "Rector" (IA) solo clasifique una vez; el resultado se guarda en DB, evitando cambios de formato en reintentos.
-*   **UX Idiomas:** Se ha eliminado el ruido en el audio (Speaker A/B) y se ha configurado el `SpeechSynthesis` del navegador para usar acentos nativos (fr-FR, en-US) según la asignatura.
-*   **Taxonomía UGR:** El clasificador ha sido re-entrenado para reconocer las 5 áreas de conocimiento de la Universidad de Granada, ignorando la rama genérica y analizando el contenido semántico de cada asignatura.
+*   **Implementación LOGIC_AND_TECH:** Se ha creado la estrategia `sciences_strategy.py` siguiendo el modelo "UGR Mixto", diferenciando entre asignaturas de Ingeniería (Código + Teoría Aplicada) y Ciencias Puras (Definiciones Formales + Problemas).
+*   **Integración del Orquestador:** Se ha actualizado `orchestrator/tasks.py` para inyectar el nombre de la asignatura (`subject_name`) en la llamada a la estrategia, permitiendo la discriminación de contexto.
+*   **Refactor de Prompt Generators:** Se ha eliminado la lógica hardcodeada en `core/services/prompt_generators.py`, delegando correctamente en la nueva función importada.
+*   **Corrección de Rutas:** Se han aplicado parches utilizando rutas absolutas para garantizar la integridad del sistema de archivos.
 
 ---
 
 ## HOJA DE RUTA PARA LA SIGUIENTE SESIÓN
-**Objetivo Primario:** Implementación del Arquetipo 1: `LOGIC_AND_TECH`.
+**Objetivo Primario:** Implementación del Arquetipo 3: `SOCIO_LEGAL`.
 
-1.  **Estrategia Técnica:** Actualizar `sciences_strategy.py` para que la IA genere problemas de ingeniería que requieran:
-    *   Resolución mediante fórmulas en formato **LaTeX**.
-    *   Desarrollo de algoritmos en bloques de **Pseudocódigo** o código real.
-2.  **Validación de Salida:** Asegurar que el prompt prohíba preguntas teóricas de "desarrollo de texto" en este arquetipo, forzando el enfoque práctico/técnico.
-3.  **Refactor de Prompt:** Adaptar la lógica para asignaturas detectadas como Criptografía, Algorítmica y Programación.
+1.  **Estrategia Jurídica:** Crear/Actualizar `humanities_strategy.py` (o módulo segregado si se decide separar) para soportar el "Tribunal Legal".
+2.  **Estructura de Examen:**
+    *   Test de Conceptos (Terminología jurídica).
+    *   Caso Práctico (Hechos probados -> Fundamentos de Derecho -> Fallo).
+    *   Ensayo/Dictamen.
+3.  **Validación:** Asegurar que el prompt exija referencias a normativa vigente (Constitución, Código Civil, etc.) cuando aplique.

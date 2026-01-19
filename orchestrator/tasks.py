@@ -1202,7 +1202,7 @@ def generate_assessment_from_content_task(self, assessment_id):
                     if subject_type == "CEFR_LANGUAGES":
                         prompt = generate_languages_exam_prompt(r_text_memory, l_text_memory)
                     elif subject_type == "LOGIC_AND_TECH":
-                        prompt = generate_sciences_prompt(r_text_memory)
+                        prompt = generate_sciences_prompt(r_text_memory, subject_name=subject_name)
                     else:
                         # Humanidades (Cualquiera de los tribunales)
                         prompt = generate_humanities_prompt(r_text_memory, tribunal_type=subject_type)

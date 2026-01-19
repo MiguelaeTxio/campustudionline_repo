@@ -1,4 +1,5 @@
 from typing import List, Dict
+from core.services.assessment_strategies.sciences_strategy import generate_sciences_prompt
 
 def generate_course_metadata_prompt(
     topic_description: str, academic_context: str = ""
@@ -167,12 +168,18 @@ def generate_assessment_prompt(
     content_text: str,
     subject_type: str = "HUMANITIES_GENERIC",
     segment_info: str = "Evaluación Global",
-    learning_objectives: str = ""
+    learning_objectives: str = "",
+    subject_name: str = "Asignatura General"
 ) -> str:
     """
-    [HITO 6 - V5] Generador de Exámenes Universitarios con Tribunales Especializados.
+    [HITO 6 - V6] Generador de Exámenes Universitarios con Tribunales Especializados.
+    Integra estrategias segregadas (Sciences/Logic) y Tribunales de Humanidades.
     """
     
+    # --- ESTRATEGIA SEGREGADA: CIENCIAS Y TECNOLOGÍA ---
+    if subject_type == "EXACT_SCIENCES":
+        return generate_sciences_prompt(content_text, subject_name=subject_name)
+
     # --- CONFIGURACIÓN DE TRIBUNALES (HUMANIDADES Y CIENCIAS SOCIALES) ---
     # Estructura Estándar: 2 Test + 1 Práctico + 1 Ensayo
     humanities_structure = (
@@ -217,21 +224,7 @@ def generate_assessment_prompt(
 
     # --- LÓGICA DE SELECCIÓN DE INSTRUCCIONES ---
     
-    if subject_type == "EXACT_SCIENCES":
-        instructions = (
-            "Actúa como un Catedrático de Ingeniería. Genera un EXAMEN FINAL riguroso.\n"
-            "ESTRUCTURA OBLIGATORIA (4 PROBLEMAS):\n"
-            "Genera 4 Problemas de Desarrollo Complejos. NO uses preguntas tipo test.\n"
-            "1. Problema 1: Conceptos base / Cálculo directo.\n"
-            "2. Problema 2: Aplicación práctica.\n"
-            "3. Problema 3: Demostración o caso límite.\n"
-            "4. Problema 4: Problema integrado.\n\n"
-            "REGLAS TÉCNICAS:\n"
-            "- Usa LaTeX OBLIGATORIAMENTE para fórmulas: \\(...\\) y $$...$$.\n"
-            "- Establece 'question_type': 'open_ended'."
-        )
-
-    elif subject_type == "LANGUAGES":
+    if subject_type == "LANGUAGES":
         # Fallback para idiomas si entrara por este flujo (aunque suele ir por ugr_questions)
         instructions = (
             "Actúa como un Examinador Oficial. Genera un examen de comprobación:\n"
