@@ -1,93 +1,99 @@
 def generate_languages_stimuli_prompt(content_text: str, subject_name: str) -> str:
     """
-    Generador de Estímulos para IDIOMAS (Estrategia Segregada).
-    Prompt endurecido + Modelo UGR (Listening = Diálogo).
+    Generador de Estímulos para IDIOMAS.
+    Crea el texto base (Reading) y el guion de diálogo (Listening).
     """
     return f"""
-Actúa como un Examinador Pedagogo Senior experto en la enseñanza de lenguas extranjeras.
+Actúa como un Examinador Oficial de Certificación de Idiomas (modelo CertAcles/UGR).
 
 OBJETIVO: Generar material base para un examen de la asignatura: '{subject_name}'.
 
-*** INSTRUCCIONES DE SEGURIDAD (CRÍTICAS) ***
-1. **DETECCIÓN DE IDIOMA:** Identifica el idioma que se enseña en '{subject_name}' (ej: Francés, Inglés, Alemán).
-2. **RESTRICCIÓN DE IDIOMA:** TODO el contenido generado (reading y listening) DEBE escribirse EXCLUSIVAMENTE en el idioma detectado.
-   - ADVERTENCIA: El temario abajo está en ESPAÑOL, pero tú **TIENES PROHIBIDO** generar la respuesta en Español.
+*** PASO 1: DETECCIÓN DE IDIOMA ***
+Identifica el idioma objetivo de la asignatura (ej: Francés, Inglés, Alemán).
+Todo el contenido generado debe ser en ese idioma estricto.
 
-*** INSTRUCCIONES DE CREACIÓN DE MATERIAL ***
-1. **TEMA DEL READING (CULTURA):** Elige un tema de CULTURA GENERAL o ACTUALIDAD (ej: Viajes, Tecnología, Historia) alejado de la gramática.
-2. **FORMATO DEL LISTENING (DIÁLOGO):** El guion de audio ('listening_transcript') debe ser una **CONVERSACIÓN** o **ENTREVISTA** entre dos personas sobre un tema cotidiano o relacionado con el Reading, pero con un registro oral natural.
-3. **APLICACIÓN GRAMATICAL:** Inyecta las estructuras gramaticales del temario (ej: Pasados, Futuros) en ambos textos de forma natural.
-4. **NIVEL:** Adapta estrictamente el vocabulario al nivel (A1-C2) de la asignatura.
+*** PASO 2: GENERACIÓN DE MATERIAL ***
+1. **READING (Texto Cultural):** Genera un texto de 350-450 palabras sobre un tema de actualidad o cultura del país del idioma.
+   - Nivel: Acorde a la asignatura (A1-C2).
+   
+2. **LISTENING TRANSCRIPT (Solo Texto Hablado):**
+   - Genera un guion para un audio de 3 a 5 minutos.
+   - Formato: Diálogo natural o Monólogo.
+   - **IMPORTANTE:** Escribe SOLO el texto que debe ser leído por el locutor/TTS. 
+   - **PROHIBIDO:** No incluyas nombres de personajes ("Juan:", "Maria:"), ni acotaciones ("(Risas)", "(Entra música)"), ni instrucciones en inglés. SOLO EL TEXTO HABLADO SEGUIDO.
 
-*** FORMATO DE SALIDA (JSON) ***
+*** FORMATO DE SALIDA (JSON PURO) ***
 {{
-  "detected_language": "Nombre del idioma detectado (ej: French, German, English, Italian)...",
-  "reading_stimulus": "Texto del artículo o historia (300 palabras) en el IDIOMA EXTRANJERO...",
-  "listening_transcript": "Guion de diálogo (Speaker A / Speaker B) en el IDIOMA EXTRANJERO..."
+  "detected_language": "Idioma detectado...",
+  "reading_stimulus": "Texto completo del reading...",
+  "listening_transcript": "Texto plano y limpio para ser locutado..."
 }}
 
 -------------------------------------------------------------------------
-CONTEXTO GRAMATICAL (SOLO REFERENCIA):
+CONTEXTO (SOLO PARA NIVEL Y VOCABULARIO):
 {content_text[:15000]}
 -------------------------------------------------------------------------
 """
 
-def generate_languages_reading_writing_prompt(reading_text: str) -> str:
+def generate_languages_exam_prompt(reading_text: str, listening_transcript: str) -> str:
     """
-    Generador PARTE 1: Reading & Writing.
+    Generador del Examen Completo de Idiomas.
+    Estrictamente en el idioma objetivo.
     """
     return f"""
-Actúa como Tribunal de Examen Oficial de Idiomas.
+Actúa como un Tribunal de Examen de Idiomas (Modelo UGR/CertAcles).
 
 MATERIAL DE EXAMEN (READING):
 {reading_text[:4000]}
 
-Genera la PARTE 1 del examen (Comprensión Lectora y Expresión Escrita) en el MISMO IDIOMA que el texto.
-
-SECCIONES OBLIGATORIAS:
-1. **SECCIÓN READING:** 4 preguntas 'multiple_choice' para comprobar la comprensión detallada del texto.
-2. **SECCIÓN WRITING:** 1 tarea de redacción (open_ended) pidiendo una opinión razonada o ensayo corto relacionado con el tema del texto (aprox 150 palabras).
-
-FORMATO JSON ESTRICTO:
-{{
-  "questions": [
-    {{
-      "question_text": "Enunciado...", 
-      "question_type": "multiple_choice" o "open_ended",
-      "options": ["a)...", "b)...", "c)...", "d)..."],
-      "model_answer": "Respuesta modelo..."
-    }}
-  ]
-}}
-"""
-
-def generate_languages_listening_speaking_prompt(listening_transcript: str) -> str:
-    """
-    Generador PARTE 2: Listening & Speaking.
-    """
-    return f"""
-Actúa como Tribunal de Examen Oficial de Idiomas.
-
-MATERIAL DE EXAMEN (LISTENING TRANSCRIPT):
+MATERIAL DE EXAMEN (LISTENING - TRANSCRIPCIÓN OCULTA):
 {listening_transcript[:4000]}
 
-Genera la PARTE 2 del examen (Comprensión Auditiva y Expresión Oral) en el MISMO IDIOMA que el transcript.
+*** INSTRUCCIONES CRÍTICAS DE FORMATO ***
+1. **IDIOMA:** Todo el examen (enunciados, opciones, títulos) debe estar en el IDIOMA DEL TEXTO (ej: si es Francés, usa "Compréhension Écrite", no "Reading").
+2. **NO USAR INGLÉS NI ESPAÑOL:** Bajo ninguna circunstancia.
 
-SECCIONES OBLIGATORIAS:
-1. **SECCIÓN LISTENING:** 2 preguntas 'multiple_choice' sobre detalles específicos del DIÁLOGO (Transcript).
-2. **SECCIÓN SPEAKING (ENTREVISTA PERSONAL):**
-   - Genera 1 tarea de 'open_ended' que consista en una lista de **3 PREGUNTAS DE ENTREVISTA** dirigidas al alumno.
-   - Las preguntas deben ser sobre su vida, opiniones o situaciones hipotéticas, usando la gramática del nivel.
-   - **IMPORTANTE:** Incluye el marcador [---RECORDING-REQUIRED---] al final del enunciado.
+*** ESTRUCTURA DEL EXAMEN (4 Destrezas) ***
 
-FORMATO JSON ESTRICTO:
+SECCIÓN 1: COMPRENSIÓN LECTORA (Reading)
+- Título: [Nombre de la destreza en el idioma, ej: Leseverstehen]
+- Contenido: 2 preguntas tipo test sobre el texto.
+
+SECCIÓN 2: COMPRENSIÓN AUDITIVA (Listening)
+- Título: [Nombre de la destreza en el idioma, ej: Hörverstehen]
+- Contenido: 2 preguntas sobre el audio.
+- **FORMATO VISUAL:** Cada pregunta debe llevar un botón de play. Para ello, inicia el enunciado con la etiqueta **[---AUDIO-REQUIRED---]**.
+- Ejemplo: "[---AUDIO-REQUIRED---] Quelle est la profession de...?"
+
+SECCIÓN 3: EXPRESIÓN ESCRITA (Writing)
+- Título: [Nombre de la destreza en el idioma]
+- Contenido: 1 redacción corta (100-150 palabras).
+
+SECCIÓN 4: EXPRESIÓN ORAL (Speaking)
+- Título: [Nombre de la destreza en el idioma]
+- Contenido: 1 pregunta de entrevista o monólogo.
+- **FORMATO VISUAL:** Inicia el enunciado con la etiqueta **[---RECORDING-REQUIRED---]**.
+- La duración de la grabación será gestionada por la plataforma (Automático + 15s), no lo menciones en el texto.
+
+*** FORMATO DE SALIDA (JSON) ***
 {{
   "questions": [
     {{
-      "question_text": "Enunciado...", 
-      "question_type": "multiple_choice" o "open_ended",
-      "options": ["a)...", "b)...", "c)...", "d)..."],
-      "model_answer": "Respuesta modelo..."
+      "question_text": "Título Sección 1 (en idioma)\\n\\nEnunciado pregunta...",
+      "question_type": "multiple_choice",
+      "options": ["Opción A", "Opción B", ...],
+      "model_answer": "Respuesta correcta..."
+    }},
+    {{
+      "question_text": "Título Sección 2 (en idioma)\\n\\n[---AUDIO-REQUIRED---] Enunciado...",
+      "question_type": "multiple_choice",
+      "options": ["Opción A", ...],
+      "model_answer": "..."
+    }},
+    {{
+      "question_text": "Título Sección 4 (en idioma)\\n\\n[---RECORDING-REQUIRED---] Enunciado de la entrevista...",
+      "question_type": "open_ended",
+      "model_answer": "Criterios de evaluación..."
     }}
   ]
 }}

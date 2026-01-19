@@ -1,30 +1,35 @@
-# Hito 6: Sistema de Autoevaluaciones con IA (Fase Multimodal)
+# ANEXO HITO 6: SISTEMA DE AUTOEVALUACIONES CON IA (UGR EMULATOR)
 
-**Estado:** 🛑 BLOQUEADO (Error de Sintaxis en Backend)
-**Modelo:** `gemini-2.5-flash-lite`
+**DIRECTRIZ OBLIGATORIA:** Al iniciar sesión con este hito, es **MANDATORIO** cargar el archivo:
+`DOCS/MAINS/CAMPUSTUDIONLINE_ASSESSMENT_MASTER_PLAN.md`
 
-## RESUMEN DE LA SESIÓN
-- **Infraestructura Multimodal:** Se ha actualizado `gemini_service.py` para soportar entrada/salida de audio nativo.
-- **Base de Datos:** Aplicada migración `0023` añadiendo el campo `generated_audio` al modelo `Assessment`.
-- **Lógica UGR:** Se ha diseñado la inyección de títulos académicos oficiales y la activación de widgets (Play/Micro) mediante etiquetas separadas.
-- **Incidencia:** Una operación de reemplazo global corrompió `orchestrator/tasks.py`, insertando saltos de línea físicos dentro de literales de cadena, lo que impide el arranque del servidor WSGI.
+---
 
-## HOJA DE RUTA PARA LA SIGUIENTE SESIÓN (LEY SUPREMA)
+## ESTADO DE LA HOJA DE RUTA TÉCNICA (Ref. Plan Maestro)
+*Esta sección es el testigo de progreso que debe actualizarse cada sesión.*
 
-### PASO 1: RECUPERACIÓN DEL SERVIDOR (PRIORIDAD ALTA)
-1. **Restaurar `tasks.py`:** Ejecutar `cp orchestrator/tasks.py.bak orchestrator/tasks.py` para devolver el servidor a un estado funcional.
-2. **Verificación:** Reiniciar WSGI y confirmar carga del sitio.
+1. [X] **Refactor de Orchestrator.** (Completado: Persistencia de arquetipo en `prompt_data`, gestión de strikes de cuota y sincronización de etiquetas UGR).
+2. [X] **Estrategia CEFR_LANGUAGES.** (Completado: Prompt multimodal con tags, Frontend corregido con TTS nativo por idioma y grabadora automática).
+3. [ ] **Estrategia LOGIC_AND_TECH.** (Pendiente: Implementar lógica de problemas complejos, LaTeX y bloques de código).
+4. [ ] **Estrategia SOCIO_LEGAL.** (Pendiente).
+5. [ ] **Estrategia HEALTH_SCIENCES.** (Pendiente).
+6. [ ] **Estrategia HUMANITIES_ARTS.** (Pendiente).
 
-### PASO 2: RE-APLICACIÓN DE MEJORAS HITO 6
-Aplicar de forma quirúrgica (PMA) sobre el archivo restaurado las siguientes funciones ya validadas:
-1. **Generación de Audio Nativo:** Integrar `generate_audio_content` en el flujo de creación para persistir el Listening real en `.mp3`.
-2. **Terminología UGR:** Aplicar el mapa de títulos académicos dinámicos según el idioma detectado por la IA.
-3. **Hardening de Widgets:** Asegurar dobles saltos de línea `\n\n` antes de `[---AUDIO-REQUIRED---]` y `[---RECORDING-REQUIRED---]`.
-4. **Corrección Multimodal:** Activar `generate_multimodal_correction` para que la IA escuche las grabaciones del alumno en la sección de Speaking.
-5. **Blindaje de Modelos:** Saneamiento de los campos del JSON de la IA para evitar errores por campos alucinados (como `follow_up_questions`).
+---
 
-### PASO 3: VALIDACIÓN FINAL
-1. Generar evaluación de idiomas (ej. Italiano) y verificar:
-   - Títulos académicos correctos.
-   - Botón de Play funcional (con audio nativo).
-   - Grabadora activa y evaluada por la IA tras la entrega.
+## LOG DE AVANCES DE ESTA SESIÓN
+*   **Reparación Crítica:** Resolución de `ImportError` en `tasks.py` mediante la creación/unificación de funciones de estrategia segregadas.
+*   **Persistencia del Arquetipo:** Se ha blindado el motor para que el "Rector" (IA) solo clasifique una vez; el resultado se guarda en DB, evitando cambios de formato en reintentos.
+*   **UX Idiomas:** Se ha eliminado el ruido en el audio (Speaker A/B) y se ha configurado el `SpeechSynthesis` del navegador para usar acentos nativos (fr-FR, en-US) según la asignatura.
+*   **Taxonomía UGR:** El clasificador ha sido re-entrenado para reconocer las 5 áreas de conocimiento de la Universidad de Granada, ignorando la rama genérica y analizando el contenido semántico de cada asignatura.
+
+---
+
+## HOJA DE RUTA PARA LA SIGUIENTE SESIÓN
+**Objetivo Primario:** Implementación del Arquetipo 1: `LOGIC_AND_TECH`.
+
+1.  **Estrategia Técnica:** Actualizar `sciences_strategy.py` para que la IA genere problemas de ingeniería que requieran:
+    *   Resolución mediante fórmulas en formato **LaTeX**.
+    *   Desarrollo de algoritmos en bloques de **Pseudocódigo** o código real.
+2.  **Validación de Salida:** Asegurar que el prompt prohíba preguntas teóricas de "desarrollo de texto" en este arquetipo, forzando el enfoque práctico/técnico.
+3.  **Refactor de Prompt:** Adaptar la lógica para asignaturas detectadas como Criptografía, Algorítmica y Programación.

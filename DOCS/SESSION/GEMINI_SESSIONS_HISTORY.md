@@ -1332,3 +1332,19 @@ Objetivos de la sesión:
 *  **Session:** Hito 6: Reparación Crítica de Generadores y Verificación de Estrategia de Idiomas
 *  **Description:** Reparación de urgencia del SyntaxError en 'prompt_generators.py'. Verificación del flujo 'Split-Call' en evaluaciones de idiomas y validación de la limpieza de archivos adjuntos efímeros.
 
+
+# 2026-01-18
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+## NRA # --SYSTEM -->
+*  **Session:** Recuperación de Orchestrator e Implementación de Evaluación Multimodal
+*  **Description:** Restauración crítica del archivo `orchestrator/tasks.py` desde backup para solucionar error de sintaxis en WSGI. Re-implementación quirúrgica de la generación de audio nativo, inyección de terminología UGR y corrección multimodal, asegurando la integridad sintáctica del código.
+
+
+# 2026-01-18
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+## CSO # --SYSTEM -->
+*  **Session:** Reparación Imports Orchestrator y Lógica Examen Idiomas (Listening/Speaking)
+*  **Description:** Resolución del ImportError crítico en orchestrator/tasks.py verificando la segregación de lógica de prompts en las estrategias de evaluación (Languages, Sciences, Humanities). Implementación de la lógica específica para exámenes de idiomas: módulo Listening (reproducción de audio y respuesta multimodal) y módulo Speaking (grabación temporizada automática). Investigación e implementación de estándares de acreditación (referencia UGR) para la estructura de preguntas.
+
