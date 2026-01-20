@@ -1114,7 +1114,7 @@ def generate_assessment_from_content_task(self, assessment_id):
                 # --- PASO 0: CLASIFICACIÓN (Router) ---
                 if step == 0:
                     log_assessment_task_event(assessment_id, f"PASO 0 (Clasificación) - Key: {api_key.name}")
-                    prompt = generate_classifier_prompt(subject_name, branch_name)
+                    prompt = generate_classifier_prompt(subject_name, branch_name, rejected_archetypes=assessment.rejected_archetypes)
                     success, resp, _ = generate_text_content(prompt, api_key=api_key)
                     
                     if success:
@@ -1175,6 +1175,9 @@ def generate_assessment_from_content_task(self, assessment_id):
                         l_text_memory = db_listening
                         
                         if not db_reading: raise ValueError("Fallo en generación de Reading.")
+                        
+                        # [HITO 6] Persistencia CEFR
+                        detected_level = dat.get("cefr_level", "B1")
 
                     elif subject_type == "LOGIC_AND_TECH":
                         # ESTRATEGIA CIENCIAS: Contenido Real
@@ -1194,6 +1197,11 @@ def generate_assessment_from_content_task(self, assessment_id):
                         aa = Assessment.objects.select_for_update().get(pk=assessment_id)
                         aa.reading_stimulus = db_reading
                         aa.listening_transcript = db_listening
+                        
+                        # Persistir Nivel CEFR
+                        if subject_type == "CEFR_LANGUAGES" and 'detected_level' in locals():
+                             if aa.prompt_data is None: aa.prompt_data = {}
+                             aa.prompt_data['cefr_level'] = detected_level
                         aa.status = Assessment.AssessmentStatus.PROCESSING
                         aa.save(update_fields=['reading_stimulus', 'listening_transcript', 'status'])
                     step = 2
@@ -1204,7 +1212,8 @@ def generate_assessment_from_content_task(self, assessment_id):
                     
                     prompt = ""
                     if subject_type == "CEFR_LANGUAGES":
-                        prompt = generate_languages_exam_prompt(r_text_memory, l_text_memory)
+                        lvl = assessment.prompt_data.get('cefr_level', 'B1')
+                        prompt = generate_languages_exam_prompt(r_text_memory, l_text_memory, cefr_level=lvl)
                     elif subject_type == "LOGIC_AND_TECH":
                         prompt = generate_sciences_prompt(r_text_memory, subject_name=subject_name)
                     else:

@@ -55,9 +55,9 @@ FUENTE DE CONOCIMIENTO:
 {exam_structure}
 
 REGLAS DE ORO PARA LA RESPUESTA MODELO:
-1. EXPRESIÓN: La redacción debe ser culta, fluida y académicamente rigurosa.
-2. ESTRUCTURA: Los ensayos y comentarios deben tener Introducción, Desarrollo y Conclusión.
-3. CONTEXTO: Valora las referencias a la época, autores o corrientes de pensamiento.
+1. EXPRESIÓN: La redacción debe ser culta, fluida y académicamente rigurosa (Estilo UGR).
+2. ESTRUCTURA: Obligatorio usar estructura de ensayo académico: Introducción (Hipótesis), Desarrollo (Argumentación) y Conclusión (Síntesis).
+3. RIGOR: Es MANDATORIO citar autores, obras, fechas clave o corrientes historiográficas/filosóficas específicas en la respuesta modelo.
 
 FORMATO JSON DE SALIDA (ESTRICTO):
 {{

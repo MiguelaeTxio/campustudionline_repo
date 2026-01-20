@@ -6,26 +6,26 @@
 ---
 
 ## ESTADO DE LA HOJA DE RUTA TÉCNICA (Ref. Plan Maestro)
-1. [X] **Refactor de Orchestrator.** (Reparado: Eliminado fallback a Humanidades, saneamiento de imports y gestión de errores determinista).
-2. [X] **Estrategia CEFR_LANGUAGES.** (Refinado: Implementada lógica adaptativa de instrucciones según nivel A1-C2. Estímulo siempre en idioma objetivo).
+1. [X] **Refactor de Orchestrator.** (Reparado).
+2. [X] **Estrategia CEFR_LANGUAGES.** (Refinado: Implementada persistencia dinámica de nivel CEFR).
 3. [X] **Estrategia LOGIC_AND_TECH.** (Completado).
 4. [X] **Estrategia SOCIO_LEGAL.** (Completado).
-5. [X] **Estrategia HEALTH_SCIENCES.** (Completado: Modelo ECOE/Estaciones Clínicas UGR).
-6. [ ] **Estrategia HUMANITIES_ARTS.** (Pendiente: Refinar dialéctica y comentarios).
+5. [X] **Estrategia HEALTH_SCIENCES.** (Completado).
+6. [X] **Estrategia HUMANITIES_ARTS.** (Completado: Implementado rigor UGR y estructura de ensayo obligatoria).
 
 ---
 
 ## LOG DE AVANCES DE ESTA SESIÓN
-*   **Restauración Crítica:** Reconstrucción total de `models.py`, `views.py`, `utils.py` y `prompt_generators.py` tras incidente de corrupción.
-*   **Sincronización BBDD:** Aplicadas migraciones 0025 y 0026 (campos `daily_limit`, `weekly_limit` y ajustes de arquetipo).
-*   **Blindaje de Clasificación:** El Rector ya no deriva errores a "Humanidades". Si la clasificación falla, la tarea lanza un error trazable.
-*   **Salud (UGR ECOE):** Implementado arquetipo 4 con enfoque en juicio clínico y seguridad.
+*   **Persistencia CEFR:** Implementada captura y almacenamiento del nivel `cefr_level` en `tasks.py` para condicionar el idioma del examen.
+*   **Lógica de Rechazo:** Implementada "Pruebas Cruzadas" en `classifier.py` y `tasks.py` para excluir arquetipos rechazados por el usuario.
+*   **Reparación Crítica:** Reconstrucción total de `classifier.py` tras corrupción por regex.
+*   **Refinamiento Humanidades:** Ajustado `humanities_strategy.py` para exigir citas bibliográficas y estructura formal.
 
 ---
 
 ## HOJA DE RUTA PARA LA SIGUIENTE SESIÓN
-**Objetivo Primario:** Persistencia de Nivel CEFR y Finalización de Arquetipos.
+**Objetivo Primario:** Validación de Estabilidad y Cierre de Hito.
 
-1.  **Persistencia CEFR:** Modificar `orchestrator/tasks.py` para capturar el campo `cefr_level` del JSON de estímulos y pasarlo a la generación final del examen (evitar el hardcode de B1).
-2.  **Estrategia Humanidades:** Refinar `humanities_strategy.py` para asegurar el rigor en el Arquetipo 5.
-3.  **Pruebas Cruzadas:** Validar la rotación de formatos mediante el botón "Formato Incorrecto" con la nueva lógica adaptativa.
+1.  **Monitorización Post-Incidente:** Verificar logs de Django para confirmar ausencia de `SyntaxError` o fallos de importación.
+2.  **Cierre de Hito 6:** Actualizar Documento Maestro y archivar hito.
+3.  **Transición:** Preparar Hito 7 (o siguiente en Plan Maestro).
