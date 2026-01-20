@@ -49,7 +49,7 @@ from core.services.prompt_generators import (
     generate_assessment_prompt,
     generate_stimulus_creation_prompt,
     generate_ugr_questions_prompt,
-    generate_classification_prompt,
+
 )
 from messaging.push_utils import send_notification_to_user
 from core.utils import send_unified_notification
@@ -1120,11 +1120,15 @@ def generate_assessment_from_content_task(self, assessment_id):
                     if success:
                         raw_type = clean_json_response(resp).strip().upper()
                         valid_types = ["LOGIC_AND_TECH", "CEFR_LANGUAGES", "SOCIO_LEGAL", "HEALTH_SCIENCES", "HUMANITIES_ARTS"]
-                        found = "HUMANITIES_ARTS"
+                        found = None
                         for vt in valid_types:
                             if vt in raw_type:
                                 found = vt
                                 break
+                        
+                        if not found:
+                            raise ValueError(f"El Rector no pudo clasificar la asignatura. Respuesta: {raw_type}")
+                        
                         subject_type = found
                         
                         # [V2] PERSISTENCIA INMEDIATA

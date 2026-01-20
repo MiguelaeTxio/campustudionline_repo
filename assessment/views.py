@@ -1,11 +1,10 @@
-# /home/MiguelAeTxio/PROJECTS/CampuStudiOnline/assessment/views.py
 import re
 import logging
 import uuid
 import hashlib
 import json
 from users.tasks import send_meta_conversion_event
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse
 from django.contrib import messages
@@ -61,37 +60,31 @@ def configure_assessment(request, copy_pk):
         else:
              return redirect("study_room:edit_copy", pk=user_copy.pk)
     
-    # [HITO 6] Extracción y Aplanado de Estructura para Selector de Rango
     markdown_content = user_copy.original_content.get_full_markdown_content()
     raw_structure = extract_content_structure(markdown_content)
     
     flat_structure = []
     def flatten_structure(nodes):
         for node in nodes:
-            # Solo incluimos niveles 1 y 2 para simplificar la selección
             if node.get('level', 1) <= 3:
                 flat_structure.append({
                     'id': node['id'],
                     'text': node['text'],
                     'level': node['level']
                 })
-            # Recursión si hay hijos, aunque filtremos
             if 'children' in node:
                 flatten_structure(node['children'])
     
     if raw_structure:
         flatten_structure(raw_structure)
     
-    # Si no hay estructura, fallback
     if not flat_structure:
-        # Dummy structure si falla el parser para que no rompa la UI
         flat_structure = [{'id': 'full_content', 'text': 'Contenido Completo (Sin estructura detectada)', 'level': 1}]
 
     context = {
         "user_copy": user_copy,
-        "flat_structure": json.dumps(flat_structure), # Pasamos la lista plana
-
-                "page_title": "Configurar Autoevaluación"
+        "flat_structure": json.dumps(flat_structure),
+        "page_title": "Configurar Autoevaluación"
     }
     return render(request, "assessment/configure_assessment.html", context)
 
@@ -101,7 +94,6 @@ def configure_assessment(request, copy_pk):
 @transaction.atomic
 def generate_ai_assessment(request, copy_pk):
     try:
-        # Bloqueo de fila para evitar duplicidad por race-condition
         user_copy = ContentCopy.objects.select_for_update().get(pk=copy_pk, user=request.user)
     except ContentCopy.DoesNotExist:
         messages.error(request, "No se encontró la copia de estudio solicitada.")
@@ -151,7 +143,6 @@ def generate_ai_assessment(request, copy_pk):
             status="PENDING",
             selection_range=selection_range or [],
         )
-        # --- Meta Ads CAPI: RequestAssessment ---
         try:
             event_id = str(uuid.uuid4())
             email_hash = None
@@ -167,7 +158,7 @@ def generate_ai_assessment(request, copy_pk):
             }
             
             send_meta_conversion_event.delay(
-                event_name='RequestAssessment', # Evento personalizado
+                event_name='RequestAssessment',
                 user_details=user_details,
                 event_id=event_id,
                 source_url=request.build_absolute_uri(),
@@ -182,7 +173,6 @@ def generate_ai_assessment(request, copy_pk):
             )
         except Exception as e:
             logger.error(f"Error sending Meta RequestAssessment event: {e}")
-        # ----------------------------------------
         
         generate_assessment_from_content_task.delay(assessment.id)
         messages.success(
@@ -195,9 +185,6 @@ def generate_ai_assessment(request, copy_pk):
         messages.error(request, "Hubo un error técnico al procesar tu solicitud.")
 
     return redirect(redirect_url)
-
-
-
 
 
 @login_required
@@ -232,7 +219,6 @@ def take_assessment(request, pk):
         assessment.was_viewed = True
         assessment.save(update_fields=['was_viewed'])
 
-    # [HITO 6] Las preguntas ya tienen propiedades inteligentes en el modelo
     questions_list = assessment.questions.all().order_by('id')
 
     context = {
@@ -241,10 +227,13 @@ def take_assessment(request, pk):
         'user_copy': user_copy,
         'page_title': 'Completar Autoevaluación',
     }
-        # [SEGREGACIÓN TOTAL] Despacho de plantillas por arquetipo
+
+    # [FIXED] Mapeo correcto de Enum Members
     templates = {
-        Assessment.Archetype.SCIENCES: 'assessment/take_assessment_sciences.html',
+        Assessment.Archetype.LOGIC_TECH: 'assessment/take_assessment_sciences.html',
         Assessment.Archetype.LANGUAGES: 'assessment/take_assessment_languages.html',
+        Assessment.Archetype.HEALTH: 'assessment/take_assessment_health.html',
+        Assessment.Archetype.SOCIO_LEGAL: 'assessment/take_assessment_legal.html',
         Assessment.Archetype.HUMANITIES: 'assessment/take_assessment_humanities.html',
     }
     target_template = templates.get(assessment.archetype, 'assessment/take_assessment_humanities.html')
@@ -379,7 +368,6 @@ def get_assessment_panel_content(request, copy_pk):
     try:
         user_copy = ContentCopy.objects.get(pk=copy_pk, user=request.user)
     except ContentCopy.DoesNotExist:
-        # Aquí devolvemos un HTML vacío o error porque es una llamada AJAX para un panel
         return JsonResponse({"html": "<div class='alert alert-danger'>Copia no encontrada</div>"})
 
     assessment_context = get_assessment_context(request.user, user_copy)
@@ -449,7 +437,6 @@ def mark_as_viewed_ajax(request, pk):
         return JsonResponse({"status": "error", "message": "No encontrado"}, status=404)
 
 def take_assessment_demo(request):
-    # Mock data for demo...
     return render(request, "assessment/take_assessment.html", {})
 
 
@@ -477,6 +464,5 @@ def report_wrong_archetype(request, pk):
         messages.info(request, f"Entendido. Probando con formato: {next_archetype}. Regenerando examen...")
         return redirect(reverse("study_room:edit_copy", kwargs={"pk": assessment.content_copy.pk}))
     else:
-        # Redirección al formulario final
-        assessment.save(update_fields=['rejected_archetypes']) # Guardar el último rechazo
+        assessment.save(update_fields=['rejected_archetypes'])
         return redirect("feedback:manual_format_request", assessment_pk=assessment.pk)

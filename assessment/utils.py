@@ -1,4 +1,3 @@
-# /home/MiguelAeTxio/PROJECTS/CampuStudiOnline/assessment/utils.py
 from datetime import timedelta
 from math import ceil
 from django.utils import timezone
@@ -10,10 +9,9 @@ from django.db.models.lookups import GreaterThan, Exact
 from django.db.models.functions import Coalesce
 from .models import Assessment, AssessmentSettings
 
-# --- [INICIO] REFACTORIZACIÓN DE ANOTACIONES CONTEXTUALES ---
-
-
 import unicodedata
+import re
+import json
 
 # --- [HITO 6] LÓGICA DE EXÁMENES REALES ---
 
@@ -82,12 +80,8 @@ def _get_base_assessment_subqueries(user_filter):
     """
     Función de ayuda interna para construir las subconsultas base reutilizables.
     """
-    # [CORRECCIÓN ROBUSTA] Filtramos las evaluaciones COMPLETED que:
-    # 1. Han expirado (expiration_date <= now)
-    # 2. O tienen la fecha corrupta/vacía (expiration_date IS NULL)
     now = timezone.now()
     
-    # Estados que consideramos "muertos" o irrelevantes para el indicador de estado activo
     IGNORED_STATUSES = [
         Assessment.AssessmentStatus.CANCELLED,
         Assessment.AssessmentStatus.USER_CANCELLED,
@@ -121,8 +115,6 @@ def _get_base_assessment_subqueries(user_filter):
         output_field=CharField()
     )
 
-    # [CORRECCIÓN] Devolvemos siempre el PK de la evaluación más reciente,
-    # independientemente de si hay estados múltiples, para evitar enlaces rotos.
     pk_annotation = Subquery(latest_pk_subquery, output_field=IntegerField())
 
     return {'assessment_state': state_annotation, 'latest_assessment_pk': pk_annotation}
@@ -135,14 +127,13 @@ def annotate_content_copy_queryset_with_assessment_states(queryset, user):
     annotations = _get_base_assessment_subqueries(user_filter)
     return queryset.annotate(**annotations)
 
-# --- [FIN] REFACTORIZACIÓN DE ANOTACIONES CONTEXTUALES ---
 
 def check_user_assessment_limits(user):
     """
     Calcula los límites de evaluación para un usuario de forma GLOBAL.
     """
     now = timezone.now()
-    settings = AssessmentSettings.get_settings()
+    app_settings = AssessmentSettings.get_settings() # FIXED: Renamed to avoid shadowing
 
     FAILURE_STATUSES = [
         Assessment.AssessmentStatus.GENERATION_FAILED_RETRYABLE,
@@ -156,8 +147,8 @@ def check_user_assessment_limits(user):
         status__in=FAILURE_STATUSES
     )
 
-    DAILY_LIMIT_COUNT = settings.daily_limit
-    WEEKLY_LIMIT_COUNT = settings.weekly_limit
+    DAILY_LIMIT_COUNT = app_settings.daily_limit
+    WEEKLY_LIMIT_COUNT = app_settings.weekly_limit
     DAILY_LIMIT_TIMEDELTA = timedelta(days=1)
     WEEKLY_LIMIT_TIMEDELTA = timedelta(days=7)
     PENALTY_WINDOW_TIMEDELTA = timedelta(days=14)
@@ -203,11 +194,7 @@ def get_assessment_context(user, content_copy):
     Calcula el contexto completo para el bloque de estado de la autoevaluación.
     """
     now = timezone.now()
-    # [HITO 24] CADUCIDAD PEREZOSA (LAZY EXPIRATION)
-    # Antes de calcular el contexto, saneamos el estado de las evaluaciones caducadas
-    # que no hayan sido procesadas por la tarea asíncrona (Celery).
     
-    # 1. Detectar evaluaciones no realizadas caducadas
     expired_untaken = Assessment.objects.filter(
         user=user, 
         content_copy=content_copy,
@@ -217,7 +204,6 @@ def get_assessment_context(user, content_copy):
     if expired_untaken.exists():
         expired_untaken.update(status="EXPIRED_UNTAKEN")
     
-    # 2. Detectar resultados caducados no vistos (Penalización)
     expired_results = Assessment.objects.filter(
         user=user,
         content_copy=content_copy,
@@ -226,14 +212,12 @@ def get_assessment_context(user, content_copy):
         was_viewed=False
     )
     if expired_results.exists():
-        # Purgar respuestas asociadas (importamos UserAnswer localmente para evitar ciclos)
         from .models import UserAnswer
         UserAnswer.objects.filter(question__assessment__in=expired_results).update(
             score=None, feedback="Contenido purgado por caducidad."
         )
         expired_results.update(status="CORRECTION_EXPIRED")
 
-    # Recuperamos el queryset fresco con los estados actualizados
     all_user_assessments_for_content = Assessment.objects.filter(
         user=user, content_copy=content_copy
     ).select_related("content_copy__original_content")
@@ -257,7 +241,7 @@ def get_assessment_context(user, content_copy):
         "take_assessment_timer": None,
         "visibility_hours": None,
         "available_corrections": [],
-        "latest_result_url": "#", # URL para el botón de resultados nuevos
+        "latest_result_url": "#", 
         "buttons": {
             "solicitar": { "is_disabled": True, "url": "#", "text": _("No Disponible") },
             "realizar": { "is_disabled": True, "url": "#", "text": _("No Disponible") },
@@ -283,7 +267,6 @@ def get_assessment_context(user, content_copy):
         latest_assessment = all_user_assessments_for_content.order_by("-created_at").first()
         context["raw_assessment"] = latest_assessment
 
-        # 1. Si existe una evaluación, su estado manda (Procesando, Corrigiendo, Resultados...)
         if latest_assessment:
             s = latest_assessment.status
             if s in ["PENDING", "PROCESSING"]:
@@ -299,10 +282,8 @@ def get_assessment_context(user, content_copy):
                 context["status"] = "FALLIDA"
                 context["status_text"] = _("Error: {}").format(latest_assessment.get_status_display())
         
-        # 2. Solo si no hay nada activo/pendiente mostramos el bloqueo por límites
         if context["status"] == "PUEDE_SOLICITAR" and not can_create_new:
             context["status"] = "EN_ESPERA"
-            # Cálculo del timer
             daily_slot, weekly_slot = None, None
             if limit_data["daily"]["is_reached"] and limit_data.get("assessments_in_last_day"):
                 oldest_in_day = limit_data["assessments_in_last_day"].order_by("created_at").first()
@@ -373,10 +354,6 @@ def get_assessment_context(user, content_copy):
     return context
 
 
-# --- [HITO 6] UTILIDADES DE ESTRUCTURA Y SELECCIÓN ---
-import re
-import json
-
 def extract_content_structure(markdown_text):
     """
     Parsea el contenido Markdown para extraer una estructura jerárquica de temas
@@ -395,7 +372,6 @@ def extract_content_structure(markdown_text):
         match = header_pattern.match(line.strip())
         if match:
             hashes, title = match.groups()
-            # [FILTRO CRÍTICO] Excluir secciones de fuentes/bibliografía de la evaluación
             forbidden = ['FUENTES', 'BIBLIOGRAFIA', 'REFERENCIAS', 'SOURCES']
             clean_title = ''.join(c for c in title if c.isalnum() or c.isspace()).upper()
             if any(word in clean_title for word in forbidden):
@@ -450,16 +426,13 @@ def clean_selection_payload(selection_json):
 def filter_content_by_selection(markdown_text, selection_ids):
     """
     Filtra el contenido Markdown devolviendo solo las secciones seleccionadas.
-    Se basa en que los IDs tienen el formato '{slug}_{line_index}'.
     """
     if not markdown_text or not selection_ids:
-        return markdown_text # Si no hay selección, devolvemos todo (o nada, según regla de negocio)
+        return markdown_text
 
-    # 1. Extraer índices de línea de los IDs seleccionados
     selected_indices = set()
     for sid in selection_ids:
         try:
-            # Formato esperado: "slug_texto_123" -> extraemos 123
             parts = sid.rsplit('_', 1)
             if len(parts) == 2 and parts[1].isdigit():
                 selected_indices.add(int(parts[1]))
@@ -472,17 +445,13 @@ def filter_content_by_selection(markdown_text, selection_ids):
     lines = markdown_text.split('\n')
     filtered_lines = []
     
-    # Mapa de estructura para saber dónde acaba cada sección
-    # Reutilizamos la lógica de regex para detectar headers
     header_pattern = re.compile(r'^(#{1,4})\s+(.+)$')
     
-    # Identificamos todas las secciones con su nivel y línea
     sections = []
     for i, line in enumerate(lines):
         match = header_pattern.match(line.strip())
         if match:
             hashes, title = match.groups()
-            # [FILTRO CRÍTICO] Excluir secciones de fuentes/bibliografía de la evaluación
             forbidden = ['FUENTES', 'BIBLIOGRAFIA', 'REFERENCIAS', 'SOURCES']
             clean_title = ''.join(c for c in title if c.isalnum() or c.isspace()).upper()
             if any(word in clean_title for word in forbidden):
@@ -490,19 +459,14 @@ def filter_content_by_selection(markdown_text, selection_ids):
             level = len(match.group(1))
             sections.append({'line': i, 'level': level})
             
-    # Algoritmo de extracción
-    # Para cada línea seleccionada (que corresponde a un header):
-    # 1. Determinar el rango hasta el siguiente header de nivel <= actual
-    
     ranges_to_keep = []
     sorted_sections = sorted(sections, key=lambda x: x['line'])
     
     for i, section in enumerate(sorted_sections):
         if section['line'] in selected_indices:
             start_line = section['line']
-            end_line = len(lines) # Por defecto hasta el final
+            end_line = len(lines)
             
-            # Buscar el cierre: siguiente sección con nivel <= al actual
             for j in range(i + 1, len(sorted_sections)):
                 next_section = sorted_sections[j]
                 if next_section['level'] <= section['level']:
@@ -511,13 +475,12 @@ def filter_content_by_selection(markdown_text, selection_ids):
             
             ranges_to_keep.append((start_line, end_line))
             
-    # Fusionar rangos solapados y extraer líneas
     ranges_to_keep.sort()
     merged_ranges = []
     if ranges_to_keep:
         curr_start, curr_end = ranges_to_keep[0]
         for next_start, next_end in ranges_to_keep[1:]:
-            if next_start < curr_end: # Solapamiento o contigüidad
+            if next_start < curr_end:
                 curr_end = max(curr_end, next_end)
             else:
                 merged_ranges.append((curr_start, curr_end))
@@ -526,7 +489,7 @@ def filter_content_by_selection(markdown_text, selection_ids):
         
     for start, end in merged_ranges:
         filtered_lines.extend(lines[start:end])
-        filtered_lines.append("") # Espaciador
+        filtered_lines.append("")
         
     return "\n".join(filtered_lines)
 
@@ -537,13 +500,11 @@ def get_next_best_archetype(current_archetype, rejected_list):
     """
     ALL_ARCHETYPES = ['LANGUAGES', 'SCIENCES', 'HUMANITIES']
     
-    # Conjunto de candidatos disponibles
     candidates = set(ALL_ARCHETYPES) - set(rejected_list) - {current_archetype}
     
     if not candidates:
-        return None # No quedan opciones
+        return None
         
-    # Lógica de preferencia simple ante descarte
     if current_archetype == 'LANGUAGES' and 'HUMANITIES' in candidates:
         return 'HUMANITIES'
     if current_archetype == 'HUMANITIES' and 'LANGUAGES' in candidates:

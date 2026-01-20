@@ -357,6 +357,8 @@
 ./assessment/templates/assessment/email/results_ready_subject.txt
 ./assessment/templates/assessment/email/assessment_ready_body.txt
 ./assessment/templates/assessment/email/results_ready_body.html
+./assessment/templates/assessment/take_assessment_health.html
+./assessment/templates/assessment/take_assessment_legal.html
 ./assessment/templates/assessment/partials/assessment_status_block.html
 ./assessment/templates/assessment/partials/_navbar_iv_display.html
 ./assessment/templates/assessment/partials/_assessment_indicator_badge.html
@@ -384,12 +386,14 @@
 ./assessment/migrations/0002_initial.py
 ./assessment/migrations/0021_alter_assessment_options_and_more.py
 ./assessment/migrations/0010_assessment_last_error_alter_assessment_status.py
+./assessment/migrations/0024_alter_assessment_archetype.py
 ./assessment/migrations/0003_assessment_content_copy.py
 ./assessment/migrations/0006_assessmentsettings.py
 ./assessment/migrations/0004_populate_content_copy.py
 ./assessment/migrations/0019_alter_assessmentsettings_options_and_more.py
 ./assessment/migrations/0012_alter_assessment_status.py
 ./assessment/migrations/0022_alter_assessment_options_and_more.py
+./assessment/migrations/0026_alter_assessment_options_and_more.py
 ./assessment/migrations/0023_assessment_generated_audio.py
 ./assessment/migrations/0007_assessment_expiration_date_and_more.py
 ./assessment/migrations/0013_assessmentsettings_event_log_and_more.py
@@ -397,6 +401,7 @@
 ./assessment/migrations/0005_alter_assessment_content_copy.py
 ./assessment/migrations/0008_assessmentsettings_assessment_expiration_seconds_and_more.py
 ./assessment/migrations/0018_remove_assessment_target_segment_and_more.py
+./assessment/migrations/0025_alter_assessment_options_and_more.py
 ./assessment/migrations/0009_alter_assessment_content.py
 ./assessment/migrations/0016_assessment_target_segment_useranswer_audio_file_and_more.py
 ./assessment/migrations/0014_assessment_event_log.py
@@ -460,6 +465,7 @@
 ./portfolio/tests.py
 ./core/context_processors.py
 ./core/services/assessment_strategies/legal_strategy.py
+./core/services/assessment_strategies/health_strategy.py
 ./core/services/assessment_strategies/classifier.py
 ./core/services/assessment_strategies/__init__.py
 ./core/services/assessment_strategies/languages_strategy.py

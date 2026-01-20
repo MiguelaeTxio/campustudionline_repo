@@ -6,9 +6,11 @@ from django.utils.translation import gettext_lazy as _
 
 class Assessment(models.Model):
     class Archetype(models.TextChoices):
-        SCIENCES = "SCIENCES", "Ciencias Exactas"
-        LANGUAGES = "LANGUAGES", "Idiomas"
-        HUMANITIES = "HUMANITIES", "Humanidades"
+        LOGIC_TECH = "LOGIC_AND_TECH", "LOGIC & TECH (Ingeniería y Ciencias)"
+        LANGUAGES = "CEFR_LANGUAGES", "CEFR LANGUAGES (Idiomas)"
+        SOCIO_LEGAL = "SOCIO_LEGAL", "SOCIO LEGAL (Derecho y Sociales)"
+        HEALTH = "HEALTH_SCIENCES", "HEALTH SCIENCES (Salud)"
+        HUMANITIES = "HUMANITIES_ARTS", "HUMANITIES & ARTS (Arte y Letras)"
 
     class AssessmentStatus(models.TextChoices):
         PENDING = "PENDING", "Pendiente de Generación"
@@ -58,12 +60,23 @@ class Assessment(models.Model):
     def save(self, *args, **kwargs):
         if self.content_copy and not self.content_id:
             self.content = self.content_copy.original_content
+        
+        # Evitamos import circular dentro del método si es posible, o usamos string reference
+        # Pero para obtener settings globales, lo hacemos aquí
         from .models import AssessmentSettings
-        app_settings = AssessmentSettings.get_settings()
-        if self.status == self.AssessmentStatus.COMPLETED:
-            self.expiration_date = timezone.now() + timedelta(seconds=app_settings.assessment_expiration_seconds)
-        elif self.status == self.AssessmentStatus.RESULTS_AVAILABLE:
-            self.results_expiration_date = timezone.now() + timedelta(days=app_settings.results_expiration_days)
+        try:
+            app_settings = AssessmentSettings.get_settings()
+            expiration_secs = app_settings.assessment_expiration_seconds
+            results_days = app_settings.results_expiration_days
+        except:
+            expiration_secs = 86400
+            results_days = 7
+
+        if self.status == self.AssessmentStatus.COMPLETED and not self.expiration_date:
+            self.expiration_date = timezone.now() + timedelta(seconds=expiration_secs)
+        elif self.status == self.AssessmentStatus.RESULTS_AVAILABLE and not self.results_expiration_date:
+            self.results_expiration_date = timezone.now() + timedelta(days=results_days)
+            
         super().save(*args, **kwargs)
 
     class Meta:
@@ -121,9 +134,16 @@ class AssessmentSettings(models.Model):
     last_run_timestamp = models.DateTimeField(null=True, blank=True)
     last_run_status = models.TextField(blank=True)
     event_log = models.JSONField(default=list, blank=True)
-    def save(self, *args, **kwargs): self.pk = 1; super().save(*args, **kwargs)
+    
+    def save(self, *args, **kwargs): 
+        self.pk = 1
+        super().save(*args, **kwargs)
+        
     @classmethod
-    def get_settings(cls): obj, _ = cls.objects.get_or_create(pk=1); return obj
+    def get_settings(cls): 
+        obj, _ = cls.objects.get_or_create(pk=1)
+        return obj
+        
     class Meta:
         verbose_name = "Ajuste de Motor"
         verbose_name_plural = "0. Configuración del Motor"
