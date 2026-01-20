@@ -16,11 +16,14 @@ MARKDOWN_EXTENSIONS = [
     "markdown.extensions.tables", "markdown.extensions.attr_list",
     "markdown.extensions.toc", "markdown.extensions.sane_lists",
     "markdown.extensions.nl2br", "pymdownx.betterem", "pymdownx.tilde",
-    "pymdownx.magiclink", "pymdownx.superfences", "pymdownx.tasklist",
+    "pymdownx.magiclink", "pymdownx.superfences", "pymdownx.tasklist", "pymdownx.arithmatex",
 ]
 MARKDOWN_EXTENSION_CONFIGS = {
     "markdown.extensions.codehilite": {
         "css_class": "highlight", "guess_lang": False, "noclasses": False,
+    },
+    "pymdownx.arithmatex": {
+        "generic": True,
     },
 }
 ALLOWED_TAGS = [

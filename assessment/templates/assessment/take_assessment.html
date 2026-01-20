@@ -45,9 +45,9 @@
                                 <div class="alert alert-info small mb-3">
                                     <i class="fas fa-info-circle me-1"></i> Este es el texto base generado específicamente para este examen.
                                 </div>
-                                {{ assessment.reading_stimulus|linebreaksbr }}
+                                {{ assessment.reading_stimulus|render_markdown }}
                             {% else %}
-                                {{ user_copy.original_content.get_full_markdown_content|linebreaksbr }}
+                                {{ user_copy.original_content.get_full_markdown_content|render_markdown }}
                             {% endif %}
                         </div>
                     </div>
@@ -77,10 +77,20 @@
                                 <div class="card mb-3 border-primary shadow-sm">
                                     <div class="card-body d-flex align-items-center bg-light-blue">
                                         <div class="me-3">
-                                            <button type="button" class="btn btn-primary btn-lg rounded-circle shadow-sm" 
-                                                    onclick="playTTS('{{ question.transcript|escapejs }}', 'es-ES')" aria-label="Escuchar audio">
-                                                <i class="fas fa-headphones-alt"></i>
-                                            </button>
+                                            <div class="tts-player-wrapper" id="tts-player-{{ question.pk }}">
+                                                <div class="btn-group shadow-sm">
+                                                    <button type="button" class="btn btn-primary" onclick="ttsController.play('{{ question.transcript|escapejs }}', '{{ question.pk }}')">
+                                                        <i class="fas fa-play"></i>
+                                                    </button>
+                                                    <button type="button" class="btn btn-warning" onclick="ttsController.pause()">
+                                                        <i class="fas fa-pause"></i>
+                                                    </button>
+                                                    <button type="button" class="btn btn-danger" onclick="ttsController.stop()">
+                                                        <i class="fas fa-stop"></i>
+                                                    </button>
+                                                </div>
+                                                <span class="badge bg-light text-dark ms-2 border" id="tts-status-{{ question.pk }}">Listo</span>
+                                            </div>
                                         </div>
                                         <div>
                                             <h6 class="fw-bold text-primary mb-1">Comprensión Auditiva (Listening)</h6>
@@ -119,7 +129,7 @@
                                         {% for option in question.options %}
                                         <label class="list-group-item list-group-item-action d-flex align-items-center cursor-pointer p-3">
                                             <input class="form-check-input me-3 fs-5" type="radio" name="answer_q_{{ question.pk }}" value="{{ option }}" required>
-                                            <span class="fs-5">{{ option }}</span>
+                                            <span class="fs-5">{{ option|render_markdown }}</span>
                                         </label>
                                         {% endfor %}
                                     </div>
@@ -184,18 +194,61 @@
 
     <!-- TTS & RECORDER UTILS -->
     <script>
-        // TTS
-        function playTTS(text, lang='es-ES') {
-            if ('speechSynthesis' in window) {
+        // TTS Controller Avanzado
+        const ttsController = {
+            currentUtterance: null,
+            currentId: null,
+            
+            play: function(text, id) {
+                if (!('speechSynthesis' in window)) return alert("Navegador no compatible");
+                
+                // Si está pausado y es el mismo ID, reanudar
+                if (window.speechSynthesis.paused && this.currentId === id) {
+                    window.speechSynthesis.resume();
+                    this.updateStatus(id, 'Reproduciendo...');
+                    return;
+                }
+
+                // Si es un nuevo audio, cancelar anterior
                 window.speechSynthesis.cancel();
+                
+                this.currentId = id;
                 const utterance = new SpeechSynthesisUtterance(text);
-                utterance.lang = lang; 
+                utterance.lang = 'es-ES';
                 utterance.rate = 0.9;
+                
+                utterance.onend = () => {
+                    this.updateStatus(id, 'Finalizado');
+                    this.currentId = null;
+                };
+                
+                utterance.onstart = () => this.updateStatus(id, 'Reproduciendo...');
+                
+                this.currentUtterance = utterance;
                 window.speechSynthesis.speak(utterance);
-            } else {
-                alert("Tu navegador no soporta TTS.");
+            },
+            
+            pause: function() {
+                if (window.speechSynthesis.speaking) {
+                    window.speechSynthesis.pause();
+                    if (this.currentId) this.updateStatus(this.currentId, 'Pausado');
+                }
+            },
+            
+            stop: function() {
+                window.speechSynthesis.cancel();
+                if (this.currentId) this.updateStatus(this.currentId, 'Detenido');
+                this.currentId = null;
+            },
+            
+            updateStatus: function(id, text) {
+                // Resetear otros estados visuales si fuera necesario
+                document.querySelectorAll('[id^="tts-status-"]').forEach(el => el.innerText = 'Listo');
+                
+                const statusEl = document.getElementById('tts-status-' + id);
+                if (statusEl) statusEl.innerText = text;
             }
-        }
+        };
         
         // RECORDER STUB (Marcador de posición si no existe el script real)
         // [TODO: Mover a un archivo estático dedicado assessment_recorder.js]

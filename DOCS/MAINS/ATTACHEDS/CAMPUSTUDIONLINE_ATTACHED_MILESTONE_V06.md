@@ -7,25 +7,27 @@
 
 ## ESTADO DE LA HOJA DE RUTA TÉCNICA (Ref. Plan Maestro)
 1. [X] **Refactor de Orchestrator.** (Reparado).
-2. [X] **Estrategia CEFR_LANGUAGES.** (Refinado: Implementada persistencia dinámica de nivel CEFR).
+2. [X] **Estrategia CEFR_LANGUAGES.** (Refinado: Implementada persistencia dinámica de nivel CEFR e inmersión total B1+).
 3. [X] **Estrategia LOGIC_AND_TECH.** (Completado).
 4. [X] **Estrategia SOCIO_LEGAL.** (Completado).
 5. [X] **Estrategia HEALTH_SCIENCES.** (Completado).
 6. [X] **Estrategia HUMANITIES_ARTS.** (Completado: Implementado rigor UGR y estructura de ensayo obligatoria).
+7. [X] **Optimización UX y Estabilidad.** (Completado: Markdown, LaTeX, Audio Controls y Deduplicación).
 
 ---
 
 ## LOG DE AVANCES DE ESTA SESIÓN
-*   **Persistencia CEFR:** Implementada captura y almacenamiento del nivel `cefr_level` en `tasks.py` para condicionar el idioma del examen.
-*   **Lógica de Rechazo:** Implementada "Pruebas Cruzadas" en `classifier.py` y `tasks.py` para excluir arquetipos rechazados por el usuario.
-*   **Reparación Crítica:** Reconstrucción total de `classifier.py` tras corrupción por regex.
-*   **Refinamiento Humanidades:** Ajustado `humanities_strategy.py` para exigir citas bibliográficas y estructura formal.
+*   **Renderizado Markdown & LaTeX:** Implementado filtro `render_markdown` con soporte `arithmatex` y MathJax en frontend.
+*   **Control de Audio:** Sustituido TTS simple por `ttsController` con estados Play/Pause/Stop.
+*   **Deduplicación de Preguntas:** Implementado filtro de unicidad en `orchestrator/tasks.py` para evitar repeticiones.
+*   **Inmersión Lingüística:** Corregido prompt de idiomas para forzar inmersión total en niveles B1+ y eliminadas etiquetas hardcodeadas en la interfaz.
+*   **Blindaje de Sistema:** Actualizado `TOTAL_COMMANDER.md` con reglas de bloqueo para rutas absolutas y disciplina operativa.
 
 ---
 
 ## HOJA DE RUTA PARA LA SIGUIENTE SESIÓN
-**Objetivo Primario:** Validación de Estabilidad y Cierre de Hito.
+**Objetivo Primario:** Auditoría de Estándares Académicos UGR.
 
-1.  **Monitorización Post-Incidente:** Verificar logs de Django para confirmar ausencia de `SyntaxError` o fallos de importación.
-2.  **Cierre de Hito 6:** Actualizar Documento Maestro y archivar hito.
-3.  **Transición:** Preparar Hito 7 (o siguiente en Plan Maestro).
+1.  **Investigación de Estándares:** Comprobar la realidad de los exámenes de idiomas en la UGR más allá de las 4 destrezas estándar.
+2.  **Expansión de Arquetipos:** Evaluar si los 5 arquetipos actuales cubren todo el tejido académico o si se requieren nuevas estructuras de evaluación.
+3.  **Validación de Inmersión:** Testear la generación de exámenes en idiomas no latinos (Chino, Árabe) tras los cambios de inmersión.

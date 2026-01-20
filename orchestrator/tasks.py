@@ -510,7 +510,20 @@ def _parse_assessment_text(text: str) -> list:
         item['question_type'] = q_type
         final_questions.append(item)
 
-    return final_questions
+    # DEDUPLICACIÓN (Fix: Evitar preguntas repetidas en el mismo examen)
+    seen_texts = set()
+    unique_questions = []
+    for q in final_questions:
+        # Normalizamos para comparar (lowercase, sin espacios extra)
+        normalized_text = " ".join(q['question_text'].lower().split())
+        if normalized_text not in seen_texts:
+            seen_texts.add(normalized_text)
+            unique_questions.append(q)
+        else:
+            # Opcional: Loguear duplicado descartado si se tuviera contexto
+            pass
+
+    return unique_questions
 
 def _parse_correction_text(text: str) -> dict:
     score = None

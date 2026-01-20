@@ -1380,3 +1380,11 @@ Objetivos de la sesión:
 *  **Session:** Implementación de Persistencia CEFR y Finalización de Estrategia de Humanidades
 *  **Description:** Implementación de la captura dinámica del nivel CEFR en el orquestador para evitar hardcoding. Refinamiento final de la estrategia de Humanidades (Arquetipo 5) y validación de pruebas cruzadas según Plan Maestro.
 
+
+# 2026-01-20
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+## CYC # --SYSTEM -->
+*  **Session:** Optimización UX Evaluación: Markdown, LaTeX y Controles Audio
+*  **Description:** Mejora integral de la experiencia de usuario en el módulo de evaluaciones (assessment). Corrección del renderizado de Markdown en preguntas y barra lateral. Implementación de soporte para fórmulas matemáticas (LaTeX/MathJax). Mejora de controles de audio (reproducir, pausar, detener) en ejercicios de idiomas. Depuración de lógica de generación para evitar preguntas duplicadas en secciones.
+

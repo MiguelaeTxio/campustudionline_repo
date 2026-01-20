@@ -1,6 +1,9 @@
 # /home/MiguelAeTxio/CampuStudiOnline/contents/templatetags/content_extras.py
+import markdown
+import bleach
 from django import template
-from ..models import FavoriteFolder
+from django.utils.safestring import mark_safe
+from ..models import FavoriteFolder, MARKDOWN_EXTENSIONS, MARKDOWN_EXTENSION_CONFIGS, ALLOWED_TAGS, ALLOWED_ATTRIBUTES
 
 register = template.Library()
 
@@ -24,3 +27,30 @@ def get_root_folders(context):
         return FavoriteFolder.objects.none()
     
     return FavoriteFolder.objects.filter(user=user, parent__isnull=True).order_by('name')
+
+
+@register.filter(name="render_markdown")
+def render_markdown(text):
+    """
+    Convierte texto Markdown a HTML seguro.
+    """
+    if not text:
+        return ""
+    
+    try:
+        html = markdown.markdown(
+            text,
+            extensions=MARKDOWN_EXTENSIONS,
+            extension_configs=MARKDOWN_EXTENSION_CONFIGS
+        )
+        
+        cleaned_html = bleach.clean(
+            html,
+            tags=ALLOWED_TAGS,
+            attributes=ALLOWED_ATTRIBUTES,
+            strip=True
+        )
+        
+        return mark_safe(cleaned_html)
+    except Exception:
+        return text

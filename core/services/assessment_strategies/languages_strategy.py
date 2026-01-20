@@ -37,12 +37,17 @@ def generate_languages_exam_prompt(reading_text: str, listening_transcript: str,
     Usa el nivel detectado para decidir el idioma de las instrucciones.
     """
     # Lógica de decisión de idioma de instrucciones (instrucción para el LLM)
-    instruction_language_rule = (
+    
+    # REGLA CRÍTICA: Prohibir Inglés si no es la materia del examen.
+    anti_english_clause = "PROHIBIDO EL USO DEL INGLÉS para enunciados, títulos o contenido a menos que el idioma del examen sea estrictamente Inglés. Si el examen es de Chino, Alemán, etc., usa Español o el idioma objetivo según el nivel."
+    
+    instruction_language_rule = ("{0}\n{1}".format(anti_english_clause, 
+
         "Como el nivel detectado es A1 o A2 (Básico/Iniciación), usa el ESPAÑOL para los títulos de sección "
         "y los enunciados de las preguntas. Las opciones y respuestas modelo deben ir en el idioma del examen."
         if cefr_level in ["A1", "A2"] else
         "Como el nivel detectado es B1 o superior (Intermedio/Avanzado), utiliza EXCLUSIVAMENTE el "
-        "idioma del examen para todo (títulos, enunciados, opciones y respuestas). Inmersión total."
+        "idioma del examen para todo (títulos, enunciados, opciones y respuestas). Inmersión total.")
     )
 
     return f"""
@@ -55,6 +60,9 @@ MATERIAL DE REFERENCIA (EN IDIOMA OBJETIVO):
 
 *** REGLA DE IDIOMA PARA EL EXAMEN ***
 {instruction_language_rule}
+
+*** REGLA DE FORMATO (CRÍTICA) ***
+- JAMÁS incluyas el texto "Opciones:" o la lista de opciones dentro de "question_text". Las opciones van SOLO en el array "options".
 
 *** ESTRUCTURA DEL EXAMEN (4 Destrezas) ***
 1. COMPRENSIÓN LECTORA: 2 preguntas multiple_choice.
