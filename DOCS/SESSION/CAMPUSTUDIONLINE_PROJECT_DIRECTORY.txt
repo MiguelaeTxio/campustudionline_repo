@@ -438,6 +438,7 @@
 ./static/js/annotation_handler.js
 ./static/js/content-protection.js
 ./static/js/password_toggle.js
+./static/assessment/js/assessment_media_utils.js
 ./static/css/annotations.css
 ./static/css/explorer.css
 ./static/css/preloader.css
