@@ -1388,3 +1388,11 @@ Objetivos de la sesión:
 *  **Session:** Optimización UX Evaluación: Markdown, LaTeX y Controles Audio
 *  **Description:** Mejora integral de la experiencia de usuario en el módulo de evaluaciones (assessment). Corrección del renderizado de Markdown en preguntas y barra lateral. Implementación de soporte para fórmulas matemáticas (LaTeX/MathJax). Mejora de controles de audio (reproducir, pausar, detener) en ejercicios de idiomas. Depuración de lógica de generación para evitar preguntas duplicadas en secciones.
 
+
+# 23/01/2026
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+## NRA
+*  **Session:** Re-arquitectura de Esqueletos de Autoevaluación y Sincronización de Rotación de ApiKeys
+*  **Description:** Inicio de la fase de re-arquitectura técnica del sistema de evaluaciones (Hito 6). La sesión se centra en la segregación de la lógica de creación de esqueletos, extrayéndola de tasks.py hacia las estrategias individuales (Fase A: Flujo Atómico). Simultáneamente, se realizará una auditoría mediante PAIR para sincronizar el sistema de rotación y cuarentena de ApiKeys con el motor de generación de contenidos, garantizando robustez ante errores 429. Finalmente, se preparará la validación del renderizado LaTeX para el arquetipo LOGIC_AND_TECH.
+

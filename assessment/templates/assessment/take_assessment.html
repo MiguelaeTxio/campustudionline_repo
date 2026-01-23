@@ -93,7 +93,7 @@
                                             </div>
                                         </div>
                                         <div>
-                                            <h6 class="fw-bold text-primary mb-1">Comprensión Auditiva (Listening)</h6>
+                                            <h6 class="fw-bold text-primary mb-1">{{ question.section_label|default:"Audio de Referencia" }}</h6>
                                             <small class="text-muted">Escucha el fragmento antes de responder.</small>
                                         </div>
                                     </div>
@@ -101,6 +101,11 @@
                                 {% endif %}
 
                                 {# --- 2. TEXTO DE LA PREGUNTA --- #}
+                                {% if question.section_label %}
+                                <div class="section-header mb-2">
+                                    <span class="badge bg-primary text-uppercase" style="letter-spacing: 1px;">{{ question.section_label }}</span>
+                                </div>
+                                {% endif %}
                                 <p class="lead text-break">{{ question.display_text|render_markdown }}</p>
                                 
                                 {# --- 3. BLOQUE DE GRABACIÓN (Speaking) --- #}

@@ -82,3 +82,43 @@ MATERIAL DE REFERENCIA (EN IDIOMA OBJETIVO):
   ]
 }}
 """
+
+
+MINOR_LANGUAGES_KEYWORDS = ['CHINO', 'CHINESE', 'ZHONGWEN', 'JAPON', 'JAPANESE', 'NIHONGO', 'HEBREO', 'LATIN', 'ARABE', 'RUSO', 'GRIEGO']
+
+def is_minor_language(subject_name: str) -> bool:
+    """Determina si es una lengua Minor (UGR) basándose en el nombre de la asignatura."""
+    sn = subject_name.upper()
+    return any(keyword in sn for keyword in MINOR_LANGUAGES_KEYWORDS)
+
+def get_strategy_skeleton(content_text, subject_name, **kwargs):
+    """Fase A: Idiomas (Bifurcación Mayor/Minor)"""
+    if is_minor_language(subject_name):
+        # Estructura UGR Lengua Moderna (Minor) - 4 Preguntas
+        return {
+            'requires_api_stimulus': True,
+            'prompt_func': 'generate_languages_stimuli_prompt',
+            'is_minor': True,
+            'skeleton': [
+                {'label': 'I. Gramática y Vocabulario', 'type': 'multiple_choice', 'widget': 'RADIO_SELECT'},
+                {'label': 'II. Comprensión Lectora', 'type': 'multiple_choice', 'widget': 'RADIO_SELECT'},
+                {'label': 'III. Escritura (Caligrafía)', 'type': 'open_ended', 'widget': 'FILE_UPLOAD'},
+                {'label': 'IV. Comprensión Auditiva', 'type': 'multiple_choice', 'widget': 'RADIO_SELECT'}
+            ]
+        }
+    else:
+        # Estructura CertAcles (Mayor) - 6 Preguntas
+        return {
+            'requires_api_stimulus': True,
+            'prompt_func': 'generate_languages_stimuli_prompt',
+            'is_minor': False,
+            'skeleton': [
+                {'label': 'Reading Comprehension', 'type': 'multiple_choice', 'widget': 'RADIO_SELECT'},
+                {'label': 'Reading Comprehension', 'type': 'multiple_choice', 'widget': 'RADIO_SELECT'},
+                {'label': 'Listening Comprehension', 'type': 'multiple_choice', 'widget': 'RADIO_SELECT'},
+                {'label': 'Listening Comprehension', 'type': 'multiple_choice', 'widget': 'RADIO_SELECT'},
+                {'label': 'Writing Task', 'type': 'open_ended', 'widget': 'TEXT_AREA'},
+                {'label': 'Speaking Task', 'type': 'open_ended', 'widget': 'AUDIO_RECORDER'}
+            ]
+        }
+

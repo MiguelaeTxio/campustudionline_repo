@@ -1,6 +1,8 @@
+# /home/MiguelAeTxio/PROJECTS/CampuStudiOnline/core/services/assessment_strategies/classifier.py
+
 def generate_classifier_prompt(subject_name: str, branch_name: str, rejected_archetypes: list = None) -> str:
     """
-    [HITO 6] Clasificador Rector UGR (Texto Validado).
+    [HITO 6] Clasificador Rector UGR (Texto Validado - Versión 4804ad0a).
     """
     exclusion_clause = ""
     if rejected_archetypes and len(rejected_archetypes) > 0:

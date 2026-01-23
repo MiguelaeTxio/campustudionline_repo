@@ -5,6 +5,18 @@ from datetime import timedelta
 from django.utils.translation import gettext_lazy as _
 
 class Assessment(models.Model):
+    @property
+    def is_minor_language(self):
+        """Check if language is Minor via strategy. / Comprueba si es lengua Minor via estrategia."""
+        if self.archetype == self.Archetype.LANGUAGES:
+            try:
+                from core.services.assessment_strategies.languages_strategy import is_minor_language
+                return is_minor_language(self.content.title)
+            except ImportError:
+                return False
+        return False
+
+
     class Archetype(models.TextChoices):
         LOGIC_TECH = "LOGIC_AND_TECH", "LOGIC & TECH (Ingeniería y Ciencias)"
         LANGUAGES = "CEFR_LANGUAGES", "CEFR LANGUAGES (Idiomas)"
@@ -93,16 +105,33 @@ class Question(models.Model):
         AUDIO_RECORDER = "AUDIO_RECORDER", "Grabadora de Voz"
         RADIO_SELECT = "RADIO_SELECT", "Opción Múltiple"
         MATH_INPUT = "MATH_INPUT", "Editor Matemático"
+        FILE_UPLOAD = "FILE_UPLOAD", "Subida de Archivo/Foto"
     assessment = models.ForeignKey(Assessment, on_delete=models.CASCADE, related_name="questions")
+    section_label = models.CharField(max_length=100, blank=True, null=True, verbose_name="Cabecera de Sección")
     question_text = models.TextField()
     question_type = models.CharField(max_length=20, choices=QuestionType.choices, default=QuestionType.OPEN_ENDED)
     widget_type = models.CharField(max_length=20, choices=WidgetType.choices, default=WidgetType.TEXT_AREA)
     model_answer = models.TextField()
     options = models.JSONField(default=list, blank=True)
     @property
-    def requires_recording(self): return "[---RECORDING-REQUIRED---]" in self.question_text
+    def requires_recording(self):
+        """Determines if audio recording is needed. / Determina si se requiere grabación de audio."""
+        return self.widget_type == self.WidgetType.AUDIO_RECORDER or "[---RECORDING-REQUIRED---]" in self.question_text
+
     @property
-    def requires_audio(self): return "[---AUDIO-REQUIRED---]" in self.question_text
+    def requires_audio(self):
+        """Determines if audio playback is needed. / Determina si se requiere reproducción de audio."""
+        return "[---AUDIO-REQUIRED---]" in self.question_text
+
+    @property
+    def requires_upload(self):
+        """Determines if file upload is needed. / Determina si se requiere subida de archivo."""
+        return self.widget_type == self.WidgetType.FILE_UPLOAD or "[---UPLOAD-REQUIRED---]" in self.question_text
+
+    @property
+    def requires_math(self):
+        """Determines if math editor is needed. / Determina si se requiere editor matemático."""
+        return self.widget_type == self.WidgetType.MATH_INPUT
     @property
     def transcript(self): return self.assessment.listening_transcript if self.requires_audio else None
     @property

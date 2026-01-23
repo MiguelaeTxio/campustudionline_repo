@@ -35,7 +35,6 @@ from contents.models import (
 )
 from core.services.gemini_service import generate_text_content, clean_json_response, AIServiceCriticalError
 from core.services.gemini_schemas import ASSESSMENT_CORRECTION_SCHEMA
-from assessment.utils import classify_subject_strategy, segment_content_for_assessment, filter_content_by_selection
 # [HITO 6] ESTRATEGIAS SEGREGADAS
 from core.services.assessment_strategies.classifier import generate_classifier_prompt
 from core.services.assessment_strategies.humanities_strategy import generate_humanities_prompt
@@ -421,6 +420,51 @@ def _send_completion_notifications(new_content: ContentMaterial):
 
 # ==============================================================================
 # SECCIÓN 3: FUNCIONES AUXILIARES DE AUTOEVALUACIONES (ASSESSMENT)
+
+
+def _create_assessment_skeleton(assessment):
+    """
+    FASE A (Determinista): Crea los registros de Question en la BD.
+    Delega la definición estructural a la estrategia correspondiente.
+    """
+    from core.services.assessment_strategies import sciences_strategy, humanities_strategy, health_strategy, languages_strategy
+    from assessment.models import Question
+    
+    strategy_map = {
+        "LOGIC_AND_TECH": sciences_strategy,
+        "CEFR_LANGUAGES": languages_strategy,
+        "SOCIO_LEGAL": humanities_strategy,
+        "HEALTH_SCIENCES": health_strategy,
+        "HUMANITIES_ARTS": humanities_strategy
+    }
+    
+    subject_name = assessment.content_copy.original_content.title
+    strategy_mod = strategy_map.get(assessment.archetype, humanities_strategy)
+    
+    # Obtener el esqueleto desde la estrategia
+    # (Pasamos el contenido aunque para la Fase A no siempre sea necesario)
+    skeleton_data = strategy_mod.get_strategy_skeleton("", subject_name)
+    questions_to_create = skeleton_data.get('skeleton', [])
+    
+    if not questions_to_create:
+        # Fallback de seguridad por si una estrategia no devuelve esqueleto
+        questions_to_create = [{'label': 'Evaluación General', 'type': 'open_ended', 'widget': 'TEXT_AREA'}]
+
+    with transaction.atomic():
+        assessment.questions.all().delete()
+        for q_data in questions_to_create:
+            Question.objects.create(
+                assessment=assessment,
+                section_label=q_data['label'],
+                question_type=q_data['type'],
+                widget_type=q_data['widget'],
+                question_text="[GENERANDO CONTENIDO...]",
+                model_answer="[GENERANDO RESPUESTA...]"
+            )
+        assessment.total_questions_expected = len(questions_to_create)
+        assessment.save(update_fields=['total_questions_expected'])
+
+
 # ==============================================================================
 
 def log_timestamp(message):
@@ -1172,38 +1216,37 @@ def generate_assessment_from_content_task(self, assessment_id):
                     db_reading = ""
                     db_listening = ""
                     
-                    if subject_type == "CEFR_LANGUAGES":
-                        # ESTRATEGIA IDIOMAS: Generar estímulos artificiales
-                        log_assessment_task_event(assessment_id, "Ejecutando Estrategia: IDIOMAS (Generación Creativa)")
-                        prompt = generate_languages_stimuli_prompt(filtered_content, subject_name)
+                    # [HITO 6 - FASE A] Mapeo de Estrategia a Función de Esqueleto
+                    from core.services.assessment_strategies import sciences_strategy, humanities_strategy, health_strategy, languages_strategy
+                    strategy_map = {
+                        "LOGIC_AND_TECH": sciences_strategy,
+                        "CEFR_LANGUAGES": languages_strategy,
+                        "SOCIO_LEGAL": humanities_strategy,
+                        "HEALTH_SCIENCES": health_strategy,
+                        "HUMANITIES_ARTS": humanities_strategy
+                    }
+                    
+                    strategy_mod = strategy_map.get(subject_type, humanities_strategy)
+                    log_assessment_task_event(assessment_id, f"Fase A: Preparando esqueleto con {subject_type}")
+                    
+                    skeleton = strategy_mod.get_strategy_skeleton(filtered_content, subject_name)
+                    
+                    if skeleton.get('requires_api_stimulus'):
+                        log_assessment_task_event(assessment_id, "Fase A: Generando estímulos vía API (IDIOMAS)")
+                        prompt = getattr(strategy_mod, skeleton['prompt_func'])(filtered_content, subject_name)
                         success, text, _ = generate_text_content(prompt, api_key=api_key)
                         if not success: raise ResourceExhausted(text)
                         
                         dat = dirtyjson.loads(clean_json_response(text))
                         db_reading = dat.get('reading_stimulus', '')
                         db_listening = dat.get('listening_transcript', '')
-                        
-                        # En idiomas, la "fuente" para las preguntas ES el estímulo generado
                         r_text_memory = db_reading
                         l_text_memory = db_listening
-                        
-                        if not db_reading: raise ValueError("Fallo en generación de Reading.")
-                        
-                        # [HITO 6] Persistencia CEFR
                         detected_level = dat.get("cefr_level", "B1")
-
-                    elif subject_type == "LOGIC_AND_TECH":
-                        # ESTRATEGIA CIENCIAS: Contenido Real
-                        log_assessment_task_event(assessment_id, "Ejecutando Estrategia: CIENCIAS (Resolución Problemas)")
-                        r_text_memory = filtered_content
-                        # db_reading queda VACÍO -> UI limpia
-
                     else:
-                        # ESTRATEGIA HUMANIDADES (Tribunales): Contenido Real
-                        log_assessment_task_event(assessment_id, f"Ejecutando Estrategia: TRIBUNAL {subject_type} (Conocimiento)")
-                        r_text_memory = filtered_content
-                        if not r_text_memory or len(r_text_memory) < 50: r_text_memory = full_content
-                        # db_reading queda VACÍO -> UI limpia
+                        db_reading = skeleton.get('reading_stimulus', '')
+                        db_listening = skeleton.get('listening_transcript', '')
+                        r_text_memory = skeleton.get('source_for_exam', filtered_content)
 
                     # Guardar en BBDD (Solo Idiomas tendrá datos visibles)
                     with transaction.atomic():
@@ -1233,42 +1276,82 @@ def generate_assessment_from_content_task(self, assessment_id):
                         # Humanidades (Cualquiera de los tribunales)
                         prompt = generate_humanities_prompt(r_text_memory, tribunal_type=subject_type)
                     
+                    # [HITO 6] FASE A: Crear Esqueleto
+                    _create_assessment_skeleton(assessment)
+                    
+                    # [HITO 6] FASE B: Rellenar con IA
                     success, text, _ = generate_text_content(prompt, api_key=api_key)
                     if not success: raise ResourceExhausted(text)
                     
                     questions_data = _parse_assessment_text(text)
-                    if not questions_data: raise ValueError("IA no devolvió preguntas válidas.")
+                    if not questions_data: raise ValueError("La IA no devolvió contenido pedagógico válido.")
                     
+                    # Sincronización de contenido con el esqueleto persistido
                     with transaction.atomic():
                         a = Assessment.objects.select_for_update().get(pk=assessment_id)
-                        a.questions.all().delete()
-                        a.total_questions_expected = len(questions_data)
-                        a.save(update_fields=['total_questions_expected'])
-                        for idx, q_data in enumerate(questions_data, 1):
-                            Question.objects.create(assessment=a, **q_data)
-                            a.questions_processed = idx
-                            a.save(update_fields=['questions_processed'])
+                        questions = list(a.questions.all().order_by('id'))
+                        
+                        # Mapeo 1:1 entre lo generado y lo estructurado
+                        for idx, q_data in enumerate(questions_data):
+                            if idx < len(questions):
+                                q_obj = questions[idx]
+                                q_obj.question_text = q_data.get('question_text', q_obj.question_text)
+                                q_obj.model_answer = q_data.get('model_answer', q_obj.model_answer)
+                                if q_obj.question_type == 'multiple_choice':
+                                    q_obj.options = q_data.get('options', [])
+                                q_obj.save()
+                                a.questions_processed = idx + 1
+                                a.save(update_fields=['questions_processed'])
                     step = 3
 
             except ResourceExhausted as e:
-                # [V2] ERROR DE CUOTA REAL -> CASTIGO
+                # [HITO 6 - PAIR SINCRO] Rotación proactiva sincronizada con el motor de contenidos
                 api_key.refresh_from_db()
                 api_key.consecutive_failures += 1
                 api_key.save(update_fields=["consecutive_failures"])
-                log_assessment_task_event(assessment_id, f"FALLO CUOTA REAL ({api_key.consecutive_failures}/4): {api_key.name}. Wait 30s.", level="WARNING")
+                log_assessment_task_event(assessment_id, f"STRIKE CUOTA ({api_key.consecutive_failures}/4): {api_key.name}", level="WARNING")
                 
                 if api_key.consecutive_failures >= 4:
                     api_key.is_quarantined = True
                     api_key.save(update_fields=["is_quarantined"])
                     _request_quarantine_via_mailbox(api_key)
+                    
+                    # Rotación inmediata de la clave activa global
+                    next_k = ApiKey.objects.filter(is_enabled=True, is_quarantined=False).exclude(id=api_key.id).first()
+                    if next_k:
+                        automation_settings.active_api_key = next_k
+                        automation_settings.save(update_fields=['active_api_key'])
+                        log_assessment_task_event(assessment_id, f"ROTACIÓN PROACTIVA: Nueva clave activa '{next_k.name}'", level="INFO")
                 
-                time.sleep(30) # [V2] Espera ampliada
+                time.sleep(30)
                 continue
 
             except (AIServiceCriticalError, ValueError) as e:
-                # [V2] ERROR DE LÓGICA/JSON -> SIN CASTIGO A LA KEY
-                log_assessment_task_event(assessment_id, f"ERROR LÓGICO/JSON (No Quota): {str(e)}. Reintentando en 30s...", level="WARNING")
-                time.sleep(30) # [V2] Espera ampliada
+                err_str = str(e)
+                # [PAE] Intercepción de Cuota Relanzada por gemini_service
+                if "QUOTA_EXCEEDED" in err_str:
+                    log_assessment_task_event(assessment_id, f"CUOTA DETECTADA EN SERVICIO: {api_key.name}. Derivando a rotación.", level="WARNING")
+                    api_key.refresh_from_db()
+                    api_key.consecutive_failures += 1
+                    api_key.save(update_fields=["consecutive_failures"])
+                    
+                    if api_key.consecutive_failures >= 4:
+                        api_key.is_quarantined = True
+                        api_key.save(update_fields=["is_quarantined"])
+                        _request_quarantine_via_mailbox(api_key)
+                        
+                        next_k = ApiKey.objects.filter(is_enabled=True, is_quarantined=False).exclude(id=api_key.id).first()
+                        if next_k:
+                            automation_settings.active_api_key = next_k
+                            automation_settings.save(update_fields=['active_api_key'])
+                            log_assessment_task_event(assessment_id, f"ROTACIÓN EXITOSA: {next_k.name}", level="INFO")
+                    
+                    time.sleep(30)
+                    continue
+
+                # Error lógico real (No cuota)
+                log_assessment_task_event(assessment_id, f"ERROR LÓGICO/JSON: {err_str}. Reintentando...", level="WARNING")
+                time.sleep(30)
                 continue
 
         # Finalización exitosa

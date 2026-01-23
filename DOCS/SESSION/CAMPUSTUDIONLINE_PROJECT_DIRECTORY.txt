@@ -381,6 +381,7 @@
 ./assessment/utils.py
 ./assessment/apps.py
 ./assessment/models.py
+./assessment/migrations/0027_question_section_label_alter_question_widget_type.py
 ./assessment/migrations/0015_alter_assessment_status.py
 ./assessment/migrations/0011_auto_20251113_1540.py
 ./assessment/migrations/0002_initial.py
