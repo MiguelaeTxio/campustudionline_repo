@@ -110,6 +110,6 @@ def annotate_content_copy_queryset_with_assessment_states(queryset, user):
     ).order_by('-created_at')
     
     return queryset.annotate(
-        assessment_status=Subquery(latest.values('status')[:1]),
-        assessment_pk=Subquery(latest.values('id')[:1])
+        assessment_state=Subquery(latest.values('status')[:1]),
+        latest_assessment_pk=Subquery(latest.values('id')[:1])
     )

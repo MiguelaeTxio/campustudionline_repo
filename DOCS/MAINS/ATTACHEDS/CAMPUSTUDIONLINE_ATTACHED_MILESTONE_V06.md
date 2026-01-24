@@ -1,24 +1,23 @@
 # ANEXO HITO 6: SISTEMA DE EVALUACIONES (ESTABILIZACIÓN ARQUITECTÓNICA)
 
-DIRECTRIZ OBLIGATORIA: Al iniciar sesión con este hito, es **MANDATORIO** cargar los archivos:
-1. `DOCS/MAINS/CAMPUSTUDIONLINE_ASSESSMENT_MASTER_PLAN.md` (Lógica de Motor)
-2. `DOCS/MAINS/CAMPUSTUDIONLINE_ASSESSMENT_ARCHETYPES_SPEC.md` (Esqueleto y Granularidad)
-
 ## ESTADO DE LA HOJA DE RUTA
 1. [X] **Restauración de Sistema.** (Sintaxis corregida y servidor WSGI operativo).
 2. [X] **Implementación de Atomic Flow (Fase A).** (Esqueletos deterministas delegados a estrategias).
 3. [X] **Sincronización PAIR de Rotación.** (Blindaje ante errores 429 y rotación proactiva).
 4. [X] **Purga de Código Muerto.** (Eliminada lógica obsoleta de clasificación por keywords).
-5. [X] **Sincronización de la Triada de la Verdad.** (Creación del Santo Grial de Arquetipos v2.0).
-6. [X] **Reparación de Regresiones de UI.** (Corrección de límites y estados en utils.py).
+5. [X] **Implementación de INPUT_DUALITY.** (Modelos híbridos Texto/Archivo operativos).
+6. [X] **Inyección de STIMULUS_STICKY.** (Botón flotante de referencia funcional en todos los arquetipos).
+7. [X] **Refactorización de Fase B (Audio).** (Orquestador Celery reparado y forzado de MP3 activo).
+8. [X] **Validación de Esqueleto Minor.** (Chino B1 validado con 5 destrezas UGR).
 
-## HOJA DE RUTA PARA LA SIGUIENTE SESIÓN
-1. **Implementación de INPUT_DUALITY:** Refactorizar `take_assessment_*.html` para que toda pregunta `open_ended` muestre simultáneamente `textarea` y `input[type=file]`.
-2. **Inyección de STIMULUS_STICKY:** Implementar mediante JS y CSS el botón flotante persistente para consulta de `Reading` y `Listening` mediante modal.
-3. **Refactorización de Fase B (Audio):** Ajustar el motor de tareas para forzar la generación de audios en formato **MP3**.
-4. **Validación de Esqueleto Minor:** Ejecutar prueba real de Chino B1 para verificar la inyección de la tarea de caligrafía (Foto prioritaria).
+## HOJA DE RUTA PARA LA SIGUIENTE SESIÓN (LEY SUPREMA)
+1. **Iconografía de Control (UI Refactor):** Sustituir todos los botones de texto en el reproductor (Play, Pause, Stop) y grabador (Grabar, Parar) por iconografía pura de control (⏯️, ⏸️, ⏹️, ⏺️) usando FontAwesome, eliminando etiquetas de texto para un acabado profesional.
+2. **Rediseño del Componente de Carga:** Transformar el input de archivo de "Duality" en un área iconográfica limpia, eliminando el texto descriptivo por una interfaz visual directa.
+3. **Limpieza de Bloque Duality:** Eliminar el campo de "Notas Adicionales" en las preguntas de caligrafía/upload para simplificar la toma de datos.
+4. **Unificación de Estilos de Botones:** Sincronizar el diseño de los botones flotantes con la estética de la sidebar de navegación.
 
 ## LOG DE CAMBIOS (NRA)
-- Consolidado el Santo Grial de Arquetipos (v2.0) con granularidad por curso y nivel.
-- Corregida la segregación de `SOCIO_LEGAL` eliminando lógica residual en Humanidades.
-- Restaurado el motor de estados de UI en `assessment/utils.py`.
+- Corregido SyntaxError crítico en tasks.py (paréntesis huérfano).
+- Unificado contrato de anotación de indicadores (assessment_status -> assessment_state).
+- Reparada sintaxis de templates de idiomas (etiquetas Django desbalanceadas).
+- Restaurada la 5ª destreza (Expresión Oral) en el arquetipo Minor.

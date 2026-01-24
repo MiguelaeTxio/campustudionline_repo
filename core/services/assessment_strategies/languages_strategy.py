@@ -103,7 +103,8 @@ def get_strategy_skeleton(content_text, subject_name, **kwargs):
                 {'label': 'I. Gramática y Vocabulario', 'type': 'multiple_choice', 'widget': 'RADIO_SELECT'},
                 {'label': 'II. Comprensión Lectora', 'type': 'multiple_choice', 'widget': 'RADIO_SELECT'},
                 {'label': 'III. Escritura (Caligrafía)', 'type': 'open_ended', 'widget': 'FILE_UPLOAD'},
-                {'label': 'IV. Comprensión Auditiva', 'type': 'multiple_choice', 'widget': 'RADIO_SELECT'}
+                {'label': 'IV. Comprensión Auditiva', 'type': 'multiple_choice', 'widget': 'RADIO_SELECT'},
+                {'label': 'V. Expresión Oral', 'type': 'open_ended', 'widget': 'AUDIO_RECORDER'}
             ]
         }
     else:

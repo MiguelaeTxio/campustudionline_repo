@@ -71,4 +71,32 @@
         </div>
     </div>
 </div>
+
+    {# --- SIDEBAR DE REFERENCIA (Offcanvas) --- #}
+    <div class="offcanvas offcanvas-start no-mathjax" tabindex="-1" id="offcanvasReference" aria-labelledby="offcanvasReferenceLabel" style="width: 85%;">
+        <div class="offcanvas-header bg-primary text-white">
+            <h5 class="offcanvas-title" id="offcanvasReferenceLabel"><i class="fas fa-book-open me-2"></i> Texto de Referencia</h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body">
+            <div class="p-2" style="font-size: 1.1rem; line-height: 1.6;">
+                {% if assessment.reading_stimulus %}
+                    <div class="alert alert-info small mb-3">
+                        <i class="fas fa-info-circle me-1"></i> Este es el texto base generado específicamente para este examen.
+                    </div>
+                    {{ assessment.reading_stimulus|render_markdown }}
+                {% else %}
+                    {{ user_copy.original_content.get_full_markdown_content|render_markdown }}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    {# Botón Flotante Persistente #}
+    <div class="position-fixed top-50 start-0 translate-middle-y ms-2" style="z-index: 1060;">
+        <button class="btn btn-primary rounded-circle shadow-lg p-3" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasReference" title="Ver Texto de Referencia">
+            <i class="fas fa-book-open fa-lg"></i>
+        </button>
+    </div>
+
 {% endblock content %}

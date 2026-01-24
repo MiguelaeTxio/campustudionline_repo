@@ -409,6 +409,7 @@
 ./assessment/migrations/0020_alter_assessment_archetype_and_more.py
 ./assessment/migrations/0017_question_options.py
 ./assessment/migrations/0001_initial.py
+./assessment/tasks.py
 ./assessment/admin_urls.py
 ./assessment/tests.py
 ./assessment/templatetags/assessment_tags.py

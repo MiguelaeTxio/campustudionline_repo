@@ -6,11 +6,6 @@
         <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
             <h1 class="h4 mb-0">{{ page_title }}</h1>
             <div>
-                {% if not assessment.is_minor_language %}
-                <button class="btn btn-light btn-sm fw-bold" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasReading">
-                    <i class="fas fa-book-open me-1"></i> Texto de Referencia
-                </button>
-                {% endif %}
             </div>
         </div>
         <div class="card-body">
@@ -22,19 +17,7 @@
                 </div>
             </div>
             {% endif %}
-            {% if not assessment.is_minor_language %}
-            <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasReading" style="width: 85%;">
-                <div class="offcanvas-header bg-primary text-white">
-                    <h5 class="offcanvas-title">Texto de Lectura</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
-                </div>
-                <div class="offcanvas-body">
-                    <div class="p-3">
-                        {% if assessment.reading_stimulus %}{{ assessment.reading_stimulus|linebreaksbr }}{% else %}{{ user_copy.original_content.get_full_markdown_content|linebreaksbr }}{% endif %}
-                    </div>
-                </div>
-            </div>
-            {% endif %}
+            
             <form id="assessment-form" method="POST" enctype="multipart/form-data" action="{% url 'assessment:submit_assessment' pk=assessment.pk %}">
                 {% csrf_token %}
                 <ol class="list-unstyled">
@@ -55,15 +38,33 @@
                             {% elif question.question_type == "multiple_choice" %}
                                 <div class="list-group">{% for option in question.options %}<label class="list-group-item"><input class="form-check-input me-3" type="radio" name="answer_q_{{ question.pk }}" value="{{ option }}" required>{{ option }}</label>{% endfor %}</div>
                             {% else %}
+                                
                                 {% if question.requires_upload %}
-                                    <div class="upload-ui border p-4 bg-light text-center">
-                                        <i class="fas fa-camera fa-2x text-primary mb-2"></i><h6>Caligrafía / Foto</h6>
+                                    <div class="upload-ui border p-4 bg-light rounded text-center mb-3">
+                                        <div class="mb-3">
+                                            <i class="fas fa-file-upload fa-3x text-primary mb-2"></i>
+                                            <h6 class="fw-bold">Se requiere entrega de archivo</h6>
+                                            <small class="text-muted">(Foto de caligrafía, documento escaneado, PDF)</small>
+                                        </div>
                                         <input type="file" name="attachment_q_{{ question.pk }}" class="form-control" accept="image/*,.pdf" required>
-                                        <textarea name="answer_q_{{ question.pk }}" class="form-control mt-3" rows="2" placeholder="Notas..."></textarea>
+                                        <div class="mt-3 text-start">
+                                            <label class="form-label small fw-bold text-muted">Notas adicionales (Opcional):</label>
+                                            <textarea name="answer_q_{{ question.pk }}" class="form-control" rows="3" placeholder="Si necesitas añadir alguna aclaración..."></textarea>
+                                        </div>
                                     </div>
                                 {% else %}
-                                    <div class="form-floating"><textarea name="answer_q_{{ question.pk }}" class="form-control" style="height: 150px" required></textarea><label>Respuesta...</label></div>
+                                    <div class="form-group">
+                                        <div class="form-floating mb-3">
+                                            <textarea name="answer_q_{{ question.pk }}" class="form-control" style="height: 200px" placeholder="Escribe tu respuesta aquí..." required></textarea>
+                                            <label>Escribe tu respuesta...</label>
+                                        </div>
+                                        <div class="p-3 bg-light border rounded">
+                                            <label class="form-label fw-bold small"><i class="fas fa-paperclip me-1"></i> Adjuntar material complementario (Opcional)</label>
+                                            <input type="file" name="attachment_q_{{ question.pk }}" class="form-control form-control-sm" accept="image/*,.pdf">
+                                        </div>
+                                    </div>
                                 {% endif %}
+
                             {% endif %}
                         </li>
                     {% endfor %}
@@ -73,4 +74,32 @@
         </div>
     </div>
 </div>
+
+    {# --- SIDEBAR DE REFERENCIA (Offcanvas) --- #}
+    <div class="offcanvas offcanvas-start no-mathjax" tabindex="-1" id="offcanvasReference" aria-labelledby="offcanvasReferenceLabel" style="width: 85%;">
+        <div class="offcanvas-header bg-primary text-white">
+            <h5 class="offcanvas-title" id="offcanvasReferenceLabel"><i class="fas fa-book-open me-2"></i> Texto de Referencia</h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body">
+            <div class="p-2" style="font-size: 1.1rem; line-height: 1.6;">
+                {% if assessment.reading_stimulus %}
+                    <div class="alert alert-info small mb-3">
+                        <i class="fas fa-info-circle me-1"></i> Este es el texto base generado específicamente para este examen.
+                    </div>
+                    {{ assessment.reading_stimulus|render_markdown }}
+                {% else %}
+                    {{ user_copy.original_content.get_full_markdown_content|render_markdown }}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    {# Botón Flotante Persistente #}
+    <div class="position-fixed top-50 start-0 translate-middle-y ms-2" style="z-index: 1060;">
+        <button class="btn btn-primary rounded-circle shadow-lg p-3" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasReference" title="Ver Texto de Referencia">
+            <i class="fas fa-book-open fa-lg"></i>
+        </button>
+    </div>
+
 {% endblock content %}

@@ -1420,3 +1420,11 @@ Objetivos de la sesión:
 *  **Session:** Validación Empírica de Clasificación y Estrategias de Evaluación UGR
 *  **Description:** Ejecución de pruebas para verificar la correcta asignación de arquetipos (específicamente CEFR_LANGUAGES para Chino) por el Rector. Validación de la generación de esqueletos (Fase A) y renderizado UX para asignaturas Minor. Auditoría de soporte LaTeX en arquetipos de ciencias.
 
+
+# 2026-01-24
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+## EPI # --SYSTEM -->
+*  **Session:** EPI - Evolución UX de Evaluación: Dualidad de Entrada y Estímulo Persistente
+*  **Description:** Implementación de INPUT_DUALITY para permitir envío simultáneo de texto y archivo en preguntas abiertas. Despliegue del mecanismo STIMULUS_STICKY para acceso persistente a materiales de referencia (Reading/Listening) mediante modal. Refinamiento de la Fase B para forzar audio MP3 y validación del esqueleto del arquetipo Chino B1.
+
