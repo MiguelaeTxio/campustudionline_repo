@@ -166,3 +166,10 @@ El sistema opera bajo un flujo de dos fases para garantizar el control total de 
 ### 5.3. Estándares de UX
 *   **Widget FILE_UPLOAD:** Se activa automáticamente mediante la propiedad `requires_upload` en preguntas que exijan caligrafía (Chino/Japonés) o entregas de documentos físicos (Derecho/Salud).
 *   **Localización de Cabeceras:** El campo `section_label` debe mostrarse como título destacado sobre el enunciado de la pregunta.
+
+---
+
+## 6. ESPECIFICACIÓN DE DISEÑO CURRICULAR (EMULADOR UGR)
+### DOCUMENTO SUPREMO DE ARQUETIPOS
+Todo desarrollo, mantenimiento o refactorización del sistema de autoevaluaciones debe adherirse estrictamente a la granularidad, enfoques pedagógicos y reglas de interfaz definidas en el siguiente documento de referencia obligatoria:
+- `/home/MiguelAeTxio/PROJECTS/CampuStudiOnline/DOCS/MAINS/CAMPUSTUDIONLINE_ASSESSMENT_ARCHETYPES_SPEC.md`

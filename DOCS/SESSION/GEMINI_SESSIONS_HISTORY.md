@@ -1396,3 +1396,27 @@ Objetivos de la sesión:
 *  **Session:** Re-arquitectura de Esqueletos de Autoevaluación y Sincronización de Rotación de ApiKeys
 *  **Description:** Inicio de la fase de re-arquitectura técnica del sistema de evaluaciones (Hito 6). La sesión se centra en la segregación de la lógica de creación de esqueletos, extrayéndola de tasks.py hacia las estrategias individuales (Fase A: Flujo Atómico). Simultáneamente, se realizará una auditoría mediante PAIR para sincronizar el sistema de rotación y cuarentena de ApiKeys con el motor de generación de contenidos, garantizando robustez ante errores 429. Finalmente, se preparará la validación del renderizado LaTeX para el arquetipo LOGIC_AND_TECH.
 
+
+# 2026-01-23
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+## CAMA # --SYSTEM -->
+*  **Session:** Validación Empírica Sistema Evaluaciones y Estabilización Arquitectónica
+*  **Description:** Sesión centrada en la validación "Atomic Flow" del sistema de evaluaciones. Se verificará la correcta clasificación de asignaturas (Minor de Chino) bajo el arquetipo CEFR_LANGUAGES, asegurando la generación del esqueleto de 4 bloques (Reading, Listening, Writing, Speaking). Se auditará el renderizado LaTeX en arquetipos científicos y la funcionalidad de los widgets de subida de archivos. Objetivo final: consolidar la arquitectura de evaluaciones antes del despliegue masivo.
+
+
+# 2026-01-23
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+## AAAA # --SYSTEM -->
+*  **Session:** Validación Empírica del Arquetipo Minor (Chino) y Auditoría LaTeX
+*  **Description:** Verificación del flujo de clasificación del Rector para asignar CEFR_LANGUAGES a asignaturas de idiomas (Chino). Validación de UX para widgets de lectura y subida de archivos en la fase de evaluación. Auditoría de renderizado LaTeX en arquetipo LOGIC_AND_TECH.
+
+
+# 2026-01-23
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+## CYC # --SYSTEM -->
+*  **Session:** Validación Empírica de Clasificación y Estrategias de Evaluación UGR
+*  **Description:** Ejecución de pruebas para verificar la correcta asignación de arquetipos (específicamente CEFR_LANGUAGES para Chino) por el Rector. Validación de la generación de esqueletos (Fase A) y renderizado UX para asignaturas Minor. Auditoría de soporte LaTeX en arquetipos de ciencias.
+

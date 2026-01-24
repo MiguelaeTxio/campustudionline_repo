@@ -121,6 +121,10 @@ class Question(models.Model):
     @property
     def requires_audio(self):
         """Determines if audio playback is needed. / Determina si se requiere reproducción de audio."""
+        # [HITO 6] BLINDAJE ESTRUCTURAL: La estructura manda, no la IA.
+        auditiva_labels = ["LISTENING", "AUDITIVA", "COMPRENSIÓN AUDITIVA", "AUDIO"]
+        if self.section_label and any(l in self.section_label.upper() for l in auditiva_labels):
+            return True
         return "[---AUDIO-REQUIRED---]" in self.question_text
 
     @property

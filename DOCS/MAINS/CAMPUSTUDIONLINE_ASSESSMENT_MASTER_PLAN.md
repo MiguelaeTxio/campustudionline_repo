@@ -19,3 +19,8 @@
 -   **TTS:** Acento nativo dinámico por asignatura.
 -   **Frontend:** Soporte universal para Markdown, LaTeX (MathJax) y Audio v3.
 -   **Persistencia:** Clasificación inamovible en `prompt_data` tras primera ejecución.
+
+
+## 4. ESPECIFICACIÓN TÉCNICA DE ARQUETIPOS
+La definición detallada de esqueletos, niveles y widgets se rige por:
+- `DOCS/MAINS/CAMPUSTUDIONLINE_ASSESSMENT_ARCHETYPES_SPEC.md`

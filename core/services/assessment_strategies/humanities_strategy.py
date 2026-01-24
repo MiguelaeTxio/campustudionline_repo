@@ -7,20 +7,13 @@ Estructura: 1. Conceptos (Test), 2. Comentario (Abierta), 3. Ensayo (Desarrollo)
 Responde en JSON estricto."""
 
 def get_strategy_skeleton(content_text, subject_name, **kwargs):
-    """Fase A: Humanidades / Socio-Legal (Esqueleto UGR)"""
-    is_legal = any(x in subject_name.upper() for x in ['DERECHO', 'LEY', 'LEGAL', 'JURIDICO', 'CRIMIN'])
-    if is_legal:
-        skel = [
-            {'label': 'Fundamentación Jurídica', 'type': 'multiple_choice', 'widget': 'RADIO_SELECT'},
-            {'label': 'Fundamentación Jurídica', 'type': 'multiple_choice', 'widget': 'RADIO_SELECT'},
-            {'label': 'Referencia Normativa', 'type': 'open_ended', 'widget': 'TEXT_AREA'},
-            {'label': 'Dictamen de Caso Práctico', 'type': 'open_ended', 'widget': 'FILE_UPLOAD'}
-        ]
-    else:
-        skel = [
+    """Fase A: Humanidades y Artes (Esqueleto UGR)"""
+    return {
+        'skeleton': [
             {'label': 'Terminología y Conceptos', 'type': 'multiple_choice', 'widget': 'RADIO_SELECT'},
             {'label': 'Terminología y Conceptos', 'type': 'multiple_choice', 'widget': 'RADIO_SELECT'},
             {'label': 'Comentario de Fuente', 'type': 'open_ended', 'widget': 'TEXT_AREA'},
             {'label': 'Ensayo Dialéctico', 'type': 'open_ended', 'widget': 'TEXT_AREA'}
-        ]
-    return {'skeleton': skel, 'source_for_exam': content_text, 'metadata': {}}
+        ],
+        'source_for_exam': content_text, 'metadata': {}
+    }

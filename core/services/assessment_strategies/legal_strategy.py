@@ -60,3 +60,20 @@ FORMATO JSON DE SALIDA (ESTRICTO):
 }}
 """
     return prompt
+
+def get_strategy_skeleton(content_text, subject_name):
+    """
+    Fase A: Esqueleto para SOCIO_LEGAL (Derecho y Sociales).
+    Estructura:
+    1. Terminología (2x Test).
+    2. Referencia Normativa (1x Abierta).
+    3. Dictamen de Caso (1x Desarrollo con Subida de Archivo).
+    """
+    return {
+        'skeleton': [
+            {'label': 'I. Terminología Jurídica', 'type': 'multiple_choice', 'widget': 'RADIO_SELECT'},
+            {'label': 'I. Terminología Jurídica', 'type': 'multiple_choice', 'widget': 'RADIO_SELECT'},
+            {'label': 'II. Referencia Normativa', 'type': 'open_ended', 'widget': 'TEXT_AREA'},
+            {'label': 'III. Dictamen de Caso (Supuesto de Hecho)', 'type': 'open_ended', 'widget': 'FILE_UPLOAD'}
+        ]
+    }

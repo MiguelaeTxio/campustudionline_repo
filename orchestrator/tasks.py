@@ -27,6 +27,7 @@ from .models import AutomationSettings, ApiKey, PendingContentTask, GeneratedCon
 from academic_structure.models import Subject
 from users.models import CustomUser
 from assessment.models import Assessment, Question, UserAnswer, AssessmentSettings
+from assessment.utils import filter_content_by_selection
 from contents.services.navigation_builder import refresh_user_navigation
 from contents.models import (
     ContentMaterial,
@@ -37,6 +38,7 @@ from core.services.gemini_service import generate_text_content, clean_json_respo
 from core.services.gemini_schemas import ASSESSMENT_CORRECTION_SCHEMA
 # [HITO 6] ESTRATEGIAS SEGREGADAS
 from core.services.assessment_strategies.classifier import generate_classifier_prompt
+from core.services.assessment_strategies.legal_strategy import generate_legal_prompt
 from core.services.assessment_strategies.humanities_strategy import generate_humanities_prompt
 from core.services.assessment_strategies.languages_strategy import generate_languages_stimuli_prompt, generate_languages_exam_prompt
 from core.services.assessment_strategies.sciences_strategy import generate_sciences_prompt
@@ -427,13 +429,13 @@ def _create_assessment_skeleton(assessment):
     FASE A (Determinista): Crea los registros de Question en la BD.
     Delega la definición estructural a la estrategia correspondiente.
     """
-    from core.services.assessment_strategies import sciences_strategy, humanities_strategy, health_strategy, languages_strategy
+    from core.services.assessment_strategies import sciences_strategy, humanities_strategy, health_strategy, languages_strategy, legal_strategy
     from assessment.models import Question
     
     strategy_map = {
         "LOGIC_AND_TECH": sciences_strategy,
         "CEFR_LANGUAGES": languages_strategy,
-        "SOCIO_LEGAL": humanities_strategy,
+        "SOCIO_LEGAL": legal_strategy,
         "HEALTH_SCIENCES": health_strategy,
         "HUMANITIES_ARTS": humanities_strategy
     }
@@ -1217,11 +1219,11 @@ def generate_assessment_from_content_task(self, assessment_id):
                     db_listening = ""
                     
                     # [HITO 6 - FASE A] Mapeo de Estrategia a Función de Esqueleto
-                    from core.services.assessment_strategies import sciences_strategy, humanities_strategy, health_strategy, languages_strategy
+                    from core.services.assessment_strategies import sciences_strategy, humanities_strategy, health_strategy, languages_strategy, legal_strategy
                     strategy_map = {
                         "LOGIC_AND_TECH": sciences_strategy,
                         "CEFR_LANGUAGES": languages_strategy,
-                        "SOCIO_LEGAL": humanities_strategy,
+                        "SOCIO_LEGAL": legal_strategy,
                         "HEALTH_SCIENCES": health_strategy,
                         "HUMANITIES_ARTS": humanities_strategy
                     }
@@ -1272,6 +1274,8 @@ def generate_assessment_from_content_task(self, assessment_id):
                         prompt = generate_languages_exam_prompt(r_text_memory, l_text_memory, cefr_level=lvl)
                     elif subject_type == "LOGIC_AND_TECH":
                         prompt = generate_sciences_prompt(r_text_memory, subject_name=subject_name)
+                    elif subject_type == "SOCIO_LEGAL":
+                        prompt = generate_legal_prompt(r_text_memory, subject_name=subject_name)
                     else:
                         # Humanidades (Cualquiera de los tribunales)
                         prompt = generate_humanities_prompt(r_text_memory, tribunal_type=subject_type)

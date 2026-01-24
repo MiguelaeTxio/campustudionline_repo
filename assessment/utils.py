@@ -15,19 +15,50 @@ import json
 def get_assessment_context(user, content_copy):
     """Calcula el contexto para el bloque de estado (UI)."""
     now = timezone.now()
-    all_user_assessments = Assessment.objects.filter(user=user, content_copy=content_copy)
+    latest = Assessment.objects.filter(user=user, content_copy=content_copy).order_by('-created_at').first()
     limit_data = check_user_assessment_limits(user)
     
+    status_ui = "PUEDE_SOLICITAR"
+    status_text = ""
+    
+    if latest:
+        if latest.status in ["PENDING", "PROCESSING"]:
+            status_ui = "GENERANDOSE"
+            status_text = _("Generando examen con IA")
+        elif latest.status == "COMPLETED":
+            status_ui = "REALIZAR_PENDIENTE"
+        elif latest.status in ["AWAITING_CORRECTION", "CORRECTING"]:
+            status_ui = "CORRIGIENDOSE"
+            status_text = _("Corrigiendo respuestas")
+        elif latest.status == "RESULTS_AVAILABLE":
+            status_ui = "RESULTADOS_LISTOS"
+        elif "FAILED" in latest.status:
+            status_ui = "FALLIDA"
+            status_text = latest.get_status_display()
+    
+    if status_ui == "PUEDE_SOLICITAR" and not limit_data["can_create_new"]:
+        status_ui = "EN_ESPERA"
+
     context = {
-        "status": "PUEDE_SOLICITAR",
+        "status": status_ui,
+        "status_text": status_text,
         "limits": limit_data,
         "copy_pk": content_copy.pk,
+        "raw_assessment": latest,
+        "latest_result_url": reverse("assessment:view_results", kwargs={"pk": latest.pk}) if latest and latest.status == "RESULTS_AVAILABLE" else "#",
         "buttons": {
-            "solicitar": {"is_disabled": not limit_data["can_create_new"], "url": reverse("assessment:generate_ai_assessment", kwargs={"copy_pk": content_copy.pk}), "text": _("Solicitar Evaluación")},
-            "realizar": {"is_disabled": True, "url": "#", "text": _("No Disponible")}
+            "solicitar": {
+                "is_disabled": not limit_data["can_create_new"],
+                "url": reverse("assessment:generate_ai_assessment", kwargs={"copy_pk": content_copy.pk}),
+                "text": _("Solicitar Evaluación")
+            },
+            "realizar": {
+                "is_disabled": status_ui != "REALIZAR_PENDIENTE",
+                "url": reverse("assessment:take_assessment", kwargs={"pk": latest.pk}) if latest else "#",
+                "text": _("Realizar Evaluación")
+            }
         }
     }
-    # [Lógica simplificada para brevedad en el log, manteniendo integridad funcional]
     return context
 
 def check_user_assessment_limits(user):
@@ -40,7 +71,7 @@ def check_user_assessment_limits(user):
     weekly_count = valid_assessments.filter(created_at__gte=now - timedelta(days=7)).count()
     
     can_create = daily_count < app_settings.daily_limit and weekly_count < app_settings.weekly_limit
-    return {"can_create_new": can_create, "daily": {"count": daily_count, "limit": app_settings.daily_limit}}
+    return {"can_create_new": can_create, "daily": {"count": daily_count, "limit": app_settings.daily_limit}, "weekly": {"count": weekly_count, "limit": app_settings.weekly_limit}}
 
 def extract_content_structure(markdown_text):
     """Extrae jerarquía de títulos para selección de temas."""
@@ -70,3 +101,15 @@ def get_next_best_archetype(current, rejected):
     for c in choices:
         if c != current and c not in rejected: return c
     return None
+
+def annotate_content_copy_queryset_with_assessment_states(queryset, user):
+    from .models import Assessment
+    latest = Assessment.objects.filter(
+        content_copy=OuterRef('pk'),
+        user=user
+    ).order_by('-created_at')
+    
+    return queryset.annotate(
+        assessment_status=Subquery(latest.values('status')[:1]),
+        assessment_pk=Subquery(latest.values('id')[:1])
+    )

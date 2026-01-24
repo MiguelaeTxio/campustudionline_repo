@@ -14,6 +14,14 @@
             </div>
         </div>
         <div class="card-body">
+            {% if assessment.is_minor_language and assessment.reading_stimulus %}
+            <div class="alert alert-light border shadow-sm mb-4">
+                <h5 class="text-primary fw-bold mb-3"><i class="fas fa-book-reader me-2"></i>Texto de Lectura</h5>
+                <div class="reading-content p-3 bg-white rounded" style="font-size: 1.1em; line-height: 1.8;">
+                    {{ assessment.reading_stimulus|linebreaksbr }}
+                </div>
+            </div>
+            {% endif %}
             {% if not assessment.is_minor_language %}
             <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasReading" style="width: 85%;">
                 <div class="offcanvas-header bg-primary text-white">
