@@ -1,20 +1,26 @@
 # ANEXO HITO 6: SISTEMA DE EVALUACIONES (ESTABILIZACIÓN ARQUITECTÓNICA)
 
+DIRECTRIZ OBLIGATORIA: Al iniciar sesión con este hito, es **MANDATORIO** cargar los archivos:
+1. `DOCS/MAINS/CAMPUSTUDIONLINE_ASSESSMENT_MASTER_PLAN.md` (Lógica de Motor)
+2. `DOCS/MAINS/CAMPUSTUDIONLINE_ASSESSMENT_ARCHETYPES_SPEC.md` (Esqueleto y Granularidad)
+
 ## ESTADO DE LA HOJA DE RUTA
 1. [X] **Restauración de Sistema.** (Sintaxis corregida y servidor WSGI operativo).
 2. [X] **Implementación de Atomic Flow (Fase A).** (Esqueletos deterministas delegados a estrategias).
 3. [X] **Sincronización PAIR de Rotación.** (Blindaje ante errores 429 y rotación proactiva).
-4. [X] **Purga de Código Muerto.** (Eliminada lógica obsoleta de clasificación por keywords).
-5. [X] **Implementación de INPUT_DUALITY.** (Modelos híbridos Texto/Archivo operativos).
-6. [X] **Inyección de STIMULUS_STICKY.** (Botón flotante de referencia funcional en todos los arquetipos).
-7. [X] **Refactorización de Fase B (Audio).** (Orquestador Celery reparado y forzado de MP3 activo).
-8. [X] **Validación de Esqueleto Minor.** (Chino B1 validado con 5 destrezas UGR).
+4. [X] **Implementación de INPUT_DUALITY.** (Modelos híbridos Texto/Archivo operativos).
+5. [X] **Inyección de STIMULUS_STICKY.** (Botón flotante de referencia funcional en todos los arquetipos).
+6. [X] **Refactorización de Fase B (Audio).** (Orquestador Celery reparado y forzado de MP3 activo).
+7. [X] **Validación de Esqueleto Minor.** (Chino B1 validado con 5 destrezas UGR).
 
 ## HOJA DE RUTA PARA LA SIGUIENTE SESIÓN (LEY SUPREMA)
-1. **Iconografía de Control (UI Refactor):** Sustituir todos los botones de texto en el reproductor (Play, Pause, Stop) y grabador (Grabar, Parar) por iconografía pura de control (⏯️, ⏸️, ⏹️, ⏺️) usando FontAwesome, eliminando etiquetas de texto para un acabado profesional.
-2. **Rediseño del Componente de Carga:** Transformar el input de archivo de "Duality" en un área iconográfica limpia, eliminando el texto descriptivo por una interfaz visual directa.
-3. **Limpieza de Bloque Duality:** Eliminar el campo de "Notas Adicionales" en las preguntas de caligrafía/upload para simplificar la toma de datos.
-4. **Unificación de Estilos de Botones:** Sincronizar el diseño de los botones flotantes con la estética de la sidebar de navegación.
+1. **Iconografía de Control (UI Refactor):** En `take_assessment_languages.html`, sustituir los botones `<button>` de texto por iconos FontAwesome:
+   - Reproductor: `fa-play-circle` (Play), `fa-pause-circle` (Pause), `fa-stop-circle` (Stop).
+   - Grabador: `fa-microphone` (Grabar), `fa-stop` (Parar).
+   - Eliminar todo texto interior de los botones para un acabado minimalista.
+2. **Rediseño del Componente de Carga (Input File):** Sustituir el `input type="file"` estándar por un contenedor visual con el icono `fa-cloud-upload-alt`. El área debe ser estética y centrar la atención en la acción de "Subir Foto/Archivo".
+3. **Purga de Duality:** Eliminar definitivamente el `textarea` de "Notas Adicionales" en el bloque `if question.requires_upload` de la plantilla de idiomas.
+4. **Sincronización de Botón Flotante:** Ajustar el CSS del botón `#offcanvasReference` para que su tamaño, sombra y radio de borde coincidan exactamente con los botones de la sidebar de navegación.
 
 ## LOG DE CAMBIOS (NRA)
 - Corregido SyntaxError crítico en tasks.py (paréntesis huérfano).
