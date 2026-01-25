@@ -1436,3 +1436,19 @@ Objetivos de la sesión:
 *  **Session:** Refinamiento UI/UX: Iconografía de Audio y Carga
 *  **Description:** Sustitución de etiquetas de texto por iconografía FontAwesome en reproductor/grabador, rediseño visual del input de archivo, eliminación de campos redundantes en bloques duales y homogeneización de botones flotantes.
 
+
+# 2026-01-25
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+## MAMC # --SYSTEM -->
+*  **Session:** Estabilización del Subsistema Multimedia de Evaluaciones y Reparación de UI de Audio
+*  **Description:** Sesión centrada en la estabilización de la Fase 2 del Hito 6. Se abordará la reparación definitiva de la inestabilidad en el reproductor TTS y la grabadora de audio, solucionando las paradas aleatorias y colisiones de eventos en dispositivos móviles. Se corregirá la inyección de CSS para la visualización de las ondas de sonido (feedback visual) y se refactorizará assessment_media_utils.js para eliminar deuda técnica. Objetivo: UX robusta en evaluación de idiomas.
+
+
+# 2026-01-25
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+## EDC # --SYSTEM -->
+*  **Session:** Evaluación Multimodal: Auditoría de Corrección, Optimización de Feedback IA y Mantenimiento de Audio
+*  **Description:** Sesión centrada en la validación del motor de corrección de la Fase B, asegurando el procesamiento correcto de archivos MP3 y archivos adjuntos (imágenes/PDF) tras la implementación de la dualidad de input. Se ajustarán los prompts del sistema para ofrecer feedback pedagógico específico según el widget utilizado (especialmente para corrección de caligrafía y escritura manual). Además, se verificarán las rutinas de limpieza de archivos temporales de audio para prevenir la saturación del servidor.
+

@@ -1,28 +1,32 @@
-# ANEXO HITO 6: SISTEMA DE EVALUACIONES (ESTABILIZACIÓN ARQUITECTÓNICA)
+# /home/MiguelAeTxio/PROJECTS/CampuStudiOnline/DOCS/MAINS/ATTACHEDS/CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+
+# ANEXO HITO 6: SISTEMA DE EVALUACIONES (RE-ARQUITECTURA NUCLEAR UGR)
 
 ## DIRECTRIZ DE CARGA OBLIGATORIA (MANDATORIO)
-Al iniciar sesión con este hito, es **IMPERATIVO** cargar los siguientes documentos para garantizar el contexto técnico:
-1. `DOCS/MAINS/CAMPUSTUDIONLINE_ASSESSMENT_MASTER_PLAN.md`
-2. `DOCS/MAINS/CAMPUSTUDIONLINE_ASSESSMENT_ARCHETYPES_SPEC.md`
+Al iniciar sesión con este hito, es **IMPERATIVO** cargar los siguientes documentos que constituyen la Ley Técnica del sistema:
+1. `DOCS/MAINS/CAMPUSTUDIONLINE_ASSESSMENT_SYSTEM_MASTER_PLAN.md` (Santo Grial).
+2. `DOCS/MAINS/CAMPUSTUDIONLINE_ASSESSMENT_INTERACTION_MATRIX.md` (Matriz S-Q-R).
 
 ## ESTADO DE LA HOJA DE RUTA
-1. [X] **Restauración de Sistema.** (Sintaxis corregida y servidor WSGI operativo).
-2. [X] **Implementación de Atomic Flow (Fase A).** (Esqueletos deterministas delegados a estrategias).
-3. [X] **Sincronización PAIR de Rotación.** (Blindaje ante errores 429 y rotación proactiva).
-4. [X] **Implementación de INPUT_DUALITY.** (Modelos híbridos Texto/Archivo operativos).
-5. [X] **Refactorización de Fase B (Audio).** (Orquestador Celery reparado y forzado de MP3 activo).
-6. [X] **Refactorización UI Fase 1 (Estructura).** (Iconografía implementada, botones unificados a 45px, Duality restaurado).
-7. [ ] **Estabilización Multimedia (Fase 2).** (Persistencia de fallo en playback y feedback visual).
+1. [X] **Consolidación del Santo Grial.** Definición de la Matriz de Interacción Universal (Source-Interaction-Response).
+2. [X] **Migración de Modelos.** Implementación de campos `source_type`, `interaction_type` y `response_mode` en el modelo `Question` (Migración 0028).
+3. [X] **Sincronización Administrativa.** Actualización de `admin.py` para visualizar y filtrar por la nueva matriz.
+4. [X] **Refactorización de Estrategias.** Actualización de las 5 estrategias académicas para emitir esqueletos compatibles con el Emulador UGR.
+5. [X] **Reparación del Orquestador.** Actualización de `orchestrator/tasks.py` para persistir la triada S-Q-R durante la generación.
 
 ## HOJA DE RUTA PARA LA SIGUIENTE SESIÓN (LEY SUPREMA)
-1.  **Diagnóstico y Reparación de Audio (TTS/Recorder):** Solucionar definitivamente la inestabilidad del reproductor (paradas aleatorias, reinicios) y asegurar que el botón de grabación permita regrabar fiablemente.
-2.  **Reparación de Feedback Visual (Ondas):** Las animaciones CSS inyectadas no se visualizan correctamente. Auditar el DOM y estilos computados para hacerlas visibles.
-3.  **Validación Funcional en Móvil:** Asegurar que los eventos `ontouch` y `onclick` no colisionen en dispositivos táctiles causando la falta de respuesta.
-4.  **Consolidación de Código JS:** Revisar `assessment_media_utils.js` para limpiar redundancias tras los múltiples parches de la sesión anterior.
+1.  **Refactorización de la "Plantilla Tonta":**
+    *   Modificar `take_assessment_languages.html` para eliminar los `{% if %}` basados en nombres de variables antiguos.
+    *   Implementar un sistema de `render_mode` basado exclusivamente en los campos `source_type`, `interaction_type` y `response_mode`.
+2.  **Implementación de Widgets Multimedia (Estándar Cassette):**
+    *   Asegurar el renderizado de botones redondos de 45px en todos los estímulos de audio (`SRC_AUD`).
+    *   Añadir botones físicos de **STOP** al reproductor y botones de **STOP/SAVE** a la grabadora.
+3.  **Lógica de Escritura Dual (REQ_DUAL):**
+    *   Garantizar que en preguntas de producción escrita siempre coexistan el `textarea` y la zona `upload-dashed`.
+4.  **Implementación del Cloze Engine (Fase B):**
+    *   Actualizar el parser en `tasks.py` para detectar patrones `[opcion1/opcion2]` en el texto generado por la IA y transformarlos en inputs o dropdowns según indique el `interaction_type`.
 
-## LOG DE CAMBIOS (NRA)
-- **Refactorización UI/UX Completa (Idiomas):** Sustitución de controles de texto por iconografía FontAwesome.
-- **Unificación Visual:** Botones forzados a 45px circular. Código de colores semántico (Azul=Play, Rojo=Rec, Negro=Stop).
-- **Restauración de Duality:** Re-implementación del textarea de respuesta junto al widget de carga de archivos.
-- **Creación de Utils JS:** Generación desde cero de `assessment_media_utils.js` (estaba vacío).
-- **Inyección CSS Inline:** Intento de solución para ondas sonoras mediante estilos en línea (pendiente de corrección).
+## LOG DE CAMBIOS (EDC)
+- **Migración Nuclear:** Se eliminaron los campos `widget_type` y `question_type` en favor de la matriz de interacción UGR.
+- **Idiomas (Acreditación):** Implementado el esqueleto de 9 preguntas que cubre Reading, Use of English, Listening, Writing y Speaking.
+- **Backend Sync:** Sincronizados `tasks.py` y todas las estrategias para evitar errores de integridad tras el cambio de modelo.

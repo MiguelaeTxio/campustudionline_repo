@@ -458,8 +458,9 @@ def _create_assessment_skeleton(assessment):
             Question.objects.create(
                 assessment=assessment,
                 section_label=q_data['label'],
-                question_type=q_data['type'],
-                widget_type=q_data['widget'],
+                source_type=q_data.get('source', 'SRC_DIR'),
+                interaction_type=q_data.get('interaction', 'QT_PROD'),
+                response_mode=q_data.get('response', 'REQ_DUAL'),
                 question_text="[GENERANDO CONTENIDO...]",
                 model_answer="[GENERANDO RESPUESTA...]"
             )

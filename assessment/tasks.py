@@ -68,15 +68,29 @@ def process_assessment_fase_b(assessment_id):
             question_obj.options = data.get("options", [])
             question_obj.save()
 
-        # 5. Generación de Audio Nativo (MP3 Enforcement)
+        # 5. Generación de Audio Nativo (MP3 Obligatorio con Reintentos)
         if assessment.listening_transcript:
             audio_prompt = f"Lee este texto con acento nativo perfecto para un examen de idiomas: {assessment.listening_transcript}"
-            audio_success, audio_data, _ = gemini_service.generate_audio_content(audio_prompt, api_key)
+            
+            audio_success = False
+            audio_data = None
+            max_retries = 3
+            
+            for intento in range(1, max_retries + 1):
+                logger.info(f"Intento {intento} de generación de audio para Assessment {assessment_id}")
+                audio_success, audio_data, _ = gemini_service.generate_audio_content(audio_prompt, api_key)
+                if audio_success:
+                    break
+                time.sleep(2)  # Delay proactivo entre reintentos
             
             if audio_success:
                 filename = f"assessment_audio_{assessment.pk}.mp3"
                 assessment.generated_audio.save(filename, ContentFile(audio_data), save=False)
-                assessment.add_log_event("Audio MP3 generado correctamente")
+                assessment.add_log_event(f"Audio MP3 generado correctamente (Intento {intento})")
+            else:
+                # Si falla el audio, la evaluación NO está completa.
+                assessment.add_log_event("Error crítico: Fallo en la generación de audio tras reintentos", "ERROR")
+                raise Exception("Recurso de audio obligatorio no generado. Abortando finalización.")
 
         assessment.status = Assessment.AssessmentStatus.COMPLETED
         assessment.save()

@@ -12,7 +12,7 @@ class AssessmentSettingsAdmin(admin.ModelAdmin):
 class QuestionInline(admin.TabularInline):
     model = Question
     extra = 0
-    readonly_fields = ("question_text", "widget_type", "model_answer")
+    readonly_fields = ("question_text", "source_type", "interaction_type", "response_mode", "model_answer")
     can_delete = False
     show_change_link = True
     classes = ("collapse",)
@@ -51,8 +51,8 @@ class AssessmentAdmin(admin.ModelAdmin):
 
 @admin.register(Question)
 class QuestionAdmin(admin.ModelAdmin):
-    list_display = ("id", "assessment", "widget_type", "short_question_text")
-    list_filter = ("widget_type", "assessment__user")
+    list_display = ("id", "assessment", "source_type", "interaction_type", "response_mode", "short_question_text")
+    list_filter = ("source_type", "interaction_type", "response_mode", "assessment__user")
     search_fields = ("question_text", "assessment__user__username")
     autocomplete_fields = ("assessment",)
     inlines = [UserAnswerInline]

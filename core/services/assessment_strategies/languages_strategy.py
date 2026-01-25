@@ -1,125 +1,23 @@
+# Emulador UGR: Estrategia de Idiomas (Modelo ACLES)
 def generate_languages_stimuli_prompt(content_text: str, subject_name: str) -> str:
-    """
-    Generador de Estímulos para IDIOMAS.
-    El texto base SIEMPRE es en el idioma objetivo.
-    """
-    return f"""
-Actúa como un Examinador Oficial de Certificación de Idiomas (modelo CertAcles/UGR).
-Tu misión es crear material de comprensión para la asignatura: '{subject_name}'.
-
-*** PASO 1: ANÁLISIS DE NIVEL Y LENGUA ***
-1. Identifica el idioma objetivo (ej: Chino, Alemán).
-2. Identifica el nivel según el nombre de la asignatura (ej: 'Iniciación' = A1/A2, 'Intermedio' = B1/B2).
-
-*** PASO 2: GENERACIÓN DE ESTÍMULOS (SIEMPRE EN IDIOMA OBJETIVO) ***
-1. **READING:** Genera un texto de 350-450 palabras sobre cultura o actualidad del país de origen.
-   - **OBLIGATORIO:** El texto debe estar ÍNTEGRAMENTE en el idioma objetivo.
-2. **LISTENING TRANSCRIPT:** Guion de audio de 3-5 minutos (diálogo o monólogo).
-   - **OBLIGATORIO:** Solo el texto hablado, ÍNTEGRAMENTE en el idioma objetivo.
-
-*** FORMATO DE SALIDA (JSON ESTRICTO) ***
-{{
-  "detected_language": "Idioma detectado",
-  "cefr_level": "A1, A2, B1, B2, C1 o C2",
-  "reading_stimulus": "Texto en idioma objetivo",
-  "listening_transcript": "Transcripción en idioma objetivo"
-}}
-
--------------------------------------------------------------------------
-CONTEXTO TÉCNICO:
-{content_text[:15000]}
--------------------------------------------------------------------------
-"""
+    return f"Actúa como Examinador UGR para '{subject_name}'. Genera Reading (350 palabras) y Listening Transcript. JSON: detected_language, cefr_level, reading_stimulus, listening_transcript."
 
 def generate_languages_exam_prompt(reading_text: str, listening_transcript: str, cefr_level: str = "B1") -> str:
-    """
-    Generador de Examen Adaptativo. 
-    Usa el nivel detectado para decidir el idioma de las instrucciones.
-    """
-    # Lógica de decisión de idioma de instrucciones (instrucción para el LLM)
-    
-    # REGLA CRÍTICA: Prohibir Inglés si no es la materia del examen.
-    anti_english_clause = "PROHIBIDO EL USO DEL INGLÉS para enunciados, títulos o contenido a menos que el idioma del examen sea estrictamente Inglés. Si el examen es de Chino, Alemán, etc., usa Español o el idioma objetivo según el nivel."
-    
-    instruction_language_rule = ("{0}\n{1}".format(anti_english_clause, 
-
-        "Como el nivel detectado es A1 o A2 (Básico/Iniciación), usa el ESPAÑOL para los títulos de sección "
-        "y los enunciados de las preguntas. Las opciones y respuestas modelo deben ir en el idioma del examen."
-        if cefr_level in ["A1", "A2"] else
-        "Como el nivel detectado es B1 o superior (Intermedio/Avanzado), utiliza EXCLUSIVAMENTE el "
-        "idioma del examen para todo (títulos, enunciados, opciones y respuestas). Inmersión total.")
-    )
-
-    return f"""
-Actúa como un Tribunal de Examen de la UGR. 
-Nivel de la evaluación: {cefr_level}.
-
-MATERIAL DE REFERENCIA (EN IDIOMA OBJETIVO):
-- READING: {reading_text[:4000]}
-- LISTENING: {listening_transcript[:4000]}
-
-*** REGLA DE IDIOMA PARA EL EXAMEN ***
-{instruction_language_rule}
-
-*** REGLA DE FORMATO (CRÍTICA) ***
-- JAMÁS incluyas el texto "Opciones:" o la lista de opciones dentro de "question_text". Las opciones van SOLO en el array "options".
-
-*** ESTRUCTURA DEL EXAMEN (4 Destrezas) ***
-1. COMPRENSIÓN LECTORA: 2 preguntas multiple_choice.
-2. COMPRENSIÓN AUDITIVA: 2 preguntas multiple_choice con etiqueta [---AUDIO-REQUIRED---].
-3. EXPRESIÓN ESCRITA: 1 redacción (100-150 palabras).
-4. EXPRESIÓN ORAL: 1 monólogo/entrevista con etiqueta [---RECORDING-REQUIRED---].
-
-*** FORMATO DE SALIDA (JSON ESTRICTO) ***
-{{
-  "questions": [
-    {{
-      "question_text": "Título\\n\\nEnunciado (en el idioma decidido por la regla)...",
-      "question_type": "multiple_choice" | "open_ended",
-      "options": ["Opción A", "Opción B", ...],
-      "model_answer": "Respuesta correcta (SIEMPRE en el idioma objetivo)"
-    }}
-  ]
-}}
-"""
-
-
-MINOR_LANGUAGES_KEYWORDS = ['CHINO', 'CHINESE', 'ZHONGWEN', 'JAPON', 'JAPANESE', 'NIHONGO', 'HEBREO', 'LATIN', 'ARABE', 'RUSO', 'GRIEGO']
-
-def is_minor_language(subject_name: str) -> bool:
-    """Determina si es una lengua Minor (UGR) basándose en el nombre de la asignatura."""
-    sn = subject_name.upper()
-    return any(keyword in sn for keyword in MINOR_LANGUAGES_KEYWORDS)
+    return f"Tribunal UGR Nivel {cefr_level}. Crea examen de 9 preguntas siguiendo el Master Plan (Cloze, Test, Prod). JSON: questions [question_text, source_type, interaction_type, response_mode, options, model_answer]."
 
 def get_strategy_skeleton(content_text, subject_name, **kwargs):
-    """Fase A: Idiomas (Bifurcación Mayor/Minor)"""
-    if is_minor_language(subject_name):
-        # Estructura UGR Lengua Moderna (Minor) - 4 Preguntas
-        return {
-            'requires_api_stimulus': True,
-            'prompt_func': 'generate_languages_stimuli_prompt',
-            'is_minor': True,
-            'skeleton': [
-                {'label': 'I. Gramática y Vocabulario', 'type': 'multiple_choice', 'widget': 'RADIO_SELECT'},
-                {'label': 'II. Comprensión Lectora', 'type': 'multiple_choice', 'widget': 'RADIO_SELECT'},
-                {'label': 'III. Escritura (Caligrafía)', 'type': 'open_ended', 'widget': 'FILE_UPLOAD'},
-                {'label': 'IV. Comprensión Auditiva', 'type': 'multiple_choice', 'widget': 'RADIO_SELECT'},
-                {'label': 'V. Expresión Oral', 'type': 'open_ended', 'widget': 'AUDIO_RECORDER'}
-            ]
-        }
-    else:
-        # Estructura CertAcles (Mayor) - 6 Preguntas
-        return {
-            'requires_api_stimulus': True,
-            'prompt_func': 'generate_languages_stimuli_prompt',
-            'is_minor': False,
-            'skeleton': [
-                {'label': 'Reading Comprehension', 'type': 'multiple_choice', 'widget': 'RADIO_SELECT'},
-                {'label': 'Reading Comprehension', 'type': 'multiple_choice', 'widget': 'RADIO_SELECT'},
-                {'label': 'Listening Comprehension', 'type': 'multiple_choice', 'widget': 'RADIO_SELECT'},
-                {'label': 'Listening Comprehension', 'type': 'multiple_choice', 'widget': 'RADIO_SELECT'},
-                {'label': 'Writing Task', 'type': 'open_ended', 'widget': 'TEXT_AREA'},
-                {'label': 'Speaking Task', 'type': 'open_ended', 'widget': 'AUDIO_RECORDER'}
-            ]
-        }
-
+    return {
+        'requires_api_stimulus': True,
+        'prompt_func': 'generate_languages_stimuli_prompt',
+        'skeleton': [
+            {'label': 'Reading: Multiple Choice', 'source': 'SRC_TXT', 'interaction': 'QT_SEL', 'response': 'REQ_RADIO'},
+            {'label': 'Reading: Gapped Text', 'source': 'SRC_TXT', 'interaction': 'QT_CLZ_OPN', 'response': 'REQ_DROP'},
+            {'label': 'Use of English: Multiple Choice Cloze', 'source': 'SRC_DIR', 'interaction': 'QT_CLZ_OPT', 'response': 'REQ_DROP'},
+            {'label': 'Use of English: Open Cloze', 'source': 'SRC_DIR', 'interaction': 'QT_CLZ_OPN', 'response': 'REQ_INPUT'},
+            {'label': 'Use of English: Keyword Transformation', 'source': 'SRC_DIR', 'interaction': 'QT_TRF', 'response': 'REQ_INPUT'},
+            {'label': 'Listening: Multiple Choice', 'source': 'SRC_AUD', 'interaction': 'QT_SEL', 'response': 'REQ_RADIO'},
+            {'label': 'Listening: Sentence Completion', 'source': 'SRC_AUD', 'interaction': 'QT_CLZ_OPN', 'response': 'REQ_INPUT'},
+            {'label': 'Writing Expression', 'source': 'SRC_TXT', 'interaction': 'QT_PROD', 'response': 'REQ_DUAL'},
+            {'label': 'Speaking Interaction', 'source': 'SRC_AUD', 'interaction': 'QT_PROD', 'response': 'REQ_REC'}
+        ]
+    }

@@ -96,54 +96,68 @@ class Assessment(models.Model):
         verbose_name_plural = "1. Listado de Evaluaciones"
         ordering = ["-created_at"]
 
+
 class Question(models.Model):
-    class QuestionType(models.TextChoices):
-        OPEN_ENDED = "open_ended", "Respuesta Abierta"
-        MULTIPLE_CHOICE = "multiple_choice", "Opción Múltiple"
-    class WidgetType(models.TextChoices):
-        TEXT_AREA = "TEXT_AREA", "Área de Texto"
-        AUDIO_RECORDER = "AUDIO_RECORDER", "Grabadora de Voz"
-        RADIO_SELECT = "RADIO_SELECT", "Opción Múltiple"
-        MATH_INPUT = "MATH_INPUT", "Editor Matemático"
-        FILE_UPLOAD = "FILE_UPLOAD", "Subida de Archivo/Foto"
+    class SourceType(models.TextChoices):
+        DIRECT = "SRC_DIR", "Directo (Sin estímulo)"
+        TEXT = "SRC_TXT", "Texto / Reading"
+        AUDIO = "SRC_AUD", "Audio MP3 / Listening"
+        IMAGE = "SRC_IMG", "Imagen / Fotografía"
+        HYBRID = "SRC_HYB", "Híbrido (Texto + Audio)"
+
+    class InteractionType(models.TextChoices):
+        SELECTION = "QT_SEL", "Selección Simple (Test)"
+        MATCHING = "QT_MATCH", "Emparejamiento"
+        CLOZE_OPTIONS = "QT_CLZ_OPT", "Cloze con Opciones"
+        CLOZE_OPEN = "QT_CLZ_OPN", "Cloze Abierto"
+        TRANSFORMATION = "QT_TRF", "Transformación (Re-writing)"
+        PRODUCTION = "QT_PROD", "Producción Libre"
+
+    class ResponseMode(models.TextChoices):
+        RADIO = "REQ_RADIO", "Radio Buttons"
+        DROPDOWN = "REQ_DROP", "Desplegables inline"
+        INPUT = "REQ_INPUT", "Caja de texto inline"
+        DUAL = "REQ_DUAL", "Escritura Dual (Texto + Archivo)"
+        RECORDER = "REQ_REC", "Grabadora Multimedia"
+
     assessment = models.ForeignKey(Assessment, on_delete=models.CASCADE, related_name="questions")
     section_label = models.CharField(max_length=100, blank=True, null=True, verbose_name="Cabecera de Sección")
+    
+    # Ejes del Santo Grial
+    source_type = models.CharField(max_length=10, choices=SourceType.choices, default=SourceType.DIRECT)
+    interaction_type = models.CharField(max_length=10, choices=InteractionType.choices, default=InteractionType.PRODUCTION)
+    response_mode = models.CharField(max_length=10, choices=ResponseMode.choices, default=ResponseMode.DUAL)
+    
     question_text = models.TextField()
-    question_type = models.CharField(max_length=20, choices=QuestionType.choices, default=QuestionType.OPEN_ENDED)
-    widget_type = models.CharField(max_length=20, choices=WidgetType.choices, default=WidgetType.TEXT_AREA)
     model_answer = models.TextField()
-    options = models.JSONField(default=list, blank=True)
-    @property
-    def requires_recording(self):
-        """Determines if audio recording is needed. / Determina si se requiere grabación de audio."""
-        return self.widget_type == self.WidgetType.AUDIO_RECORDER or "[---RECORDING-REQUIRED---]" in self.question_text
-
+    options = models.JSONField(default=list, blank=True, help_text="Opciones para Test o Cloze")
+    
     @property
     def requires_audio(self):
-        """Determines if audio playback is needed. / Determina si se requiere reproducción de audio."""
-        # [HITO 6] BLINDAJE ESTRUCTURAL: La estructura manda, no la IA.
-        auditiva_labels = ["LISTENING", "AUDITIVA", "COMPRENSIÓN AUDITIVA", "AUDIO"]
-        if self.section_label and any(l in self.section_label.upper() for l in auditiva_labels):
-            return True
-        return "[---AUDIO-REQUIRED---]" in self.question_text
+        return self.source_type in [self.SourceType.AUDIO, self.SourceType.HYBRID]
+
+    @property
+    def requires_recording(self):
+        return self.response_mode == self.ResponseMode.RECORDER
 
     @property
     def requires_upload(self):
-        """Determines if file upload is needed. / Determina si se requiere subida de archivo."""
-        return self.widget_type == self.WidgetType.FILE_UPLOAD or "[---UPLOAD-REQUIRED---]" in self.question_text
+        return self.response_mode == self.ResponseMode.DUAL
 
     @property
-    def requires_math(self):
-        """Determines if math editor is needed. / Determina si se requiere editor matemático."""
-        return self.widget_type == self.WidgetType.MATH_INPUT
+    def is_cloze(self):
+        return self.interaction_type in [self.InteractionType.CLOZE_OPTIONS, self.InteractionType.CLOZE_OPEN]
+
     @property
-    def transcript(self): return self.assessment.listening_transcript if self.requires_audio else None
-    @property
-    def display_text(self): return self.question_text.replace("[---RECORDING-REQUIRED---]", "").replace("[---AUDIO-REQUIRED---]", "").strip()
+    def display_text(self):
+        # Limpieza de posibles tags de control antiguos
+        return self.question_text.replace("[---RECORDING-REQUIRED---]", "").replace("[---AUDIO-REQUIRED---]", "").strip()
+
     class Meta:
-        verbose_name = "Pregunta"
+        verbose_name = "Pregunta (Emulador UGR)"
         verbose_name_plural = "2. Banco de Preguntas"
         ordering = ["id"]
+
 
 class UserAnswer(models.Model):
     question = models.ForeignKey(Question, on_delete=models.CASCADE, related_name="user_answers")

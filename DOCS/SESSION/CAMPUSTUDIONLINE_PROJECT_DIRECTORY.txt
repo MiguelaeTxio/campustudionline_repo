@@ -403,6 +403,7 @@
 ./assessment/migrations/0008_assessmentsettings_assessment_expiration_seconds_and_more.py
 ./assessment/migrations/0018_remove_assessment_target_segment_and_more.py
 ./assessment/migrations/0025_alter_assessment_options_and_more.py
+./assessment/migrations/0028_alter_question_options_remove_question_question_type_and_more.py
 ./assessment/migrations/0009_alter_assessment_content.py
 ./assessment/migrations/0016_assessment_target_segment_useranswer_audio_file_and_more.py
 ./assessment/migrations/0014_assessment_event_log.py
@@ -652,6 +653,8 @@
 ./DOCS/MAINS/ATTACHEDS/CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V04.md
 ./DOCS/MAINS/CONTENT_PROMPTS.md
 ./DOCS/MAINS/CAMPUSTUDIONLINE_MASTER_DOCUMENT.md
+./DOCS/MAINS/CAMPUSTUDIONLINE_ASSESSMENT_INTERACTION_MATRIX.md
+./DOCS/MAINS/CAMPUSTUDIONLINE_ASSESSMENT_SYSTEM_MASTER_PLAN.md
 ./global_settings/templates/admin/global_settings/send_custom_email.html
 ./global_settings/admin.py
 ./global_settings/admin_views.py
