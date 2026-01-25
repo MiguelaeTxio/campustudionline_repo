@@ -1428,3 +1428,11 @@ Objetivos de la sesión:
 *  **Session:** EPI - Evolución UX de Evaluación: Dualidad de Entrada y Estímulo Persistente
 *  **Description:** Implementación de INPUT_DUALITY para permitir envío simultáneo de texto y archivo en preguntas abiertas. Despliegue del mecanismo STIMULUS_STICKY para acceso persistente a materiales de referencia (Reading/Listening) mediante modal. Refinamiento de la Fase B para forzar audio MP3 y validación del esqueleto del arquetipo Chino B1.
 
+
+# 2026-01-24
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+## PLUTO # --SYSTEM -->
+*  **Session:** Refinamiento UI/UX: Iconografía de Audio y Carga
+*  **Description:** Sustitución de etiquetas de texto por iconografía FontAwesome en reproductor/grabador, rediseño visual del input de archivo, eliminación de campos redundantes en bloques duales y homogeneización de botones flotantes.
+

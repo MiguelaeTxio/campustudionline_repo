@@ -87,3 +87,35 @@ h1, h4 {
     color: #121212 !important;
 }
 
+
+/* --- Audio Wave Animation --- */
+.audio-wave {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    height: 20px;
+    margin-left: 10px;
+}
+.audio-wave span {
+    display: block;
+    width: 3px;
+    height: 5px;
+    background-color: #bb86fc;
+    border-radius: 2px;
+    animation: wave 1s infinite ease-in-out;
+}
+.audio-wave span:nth-child(1) { animation-delay: 0.0s; }
+.audio-wave span:nth-child(2) { animation-delay: 0.1s; }
+.audio-wave span:nth-child(3) { animation-delay: 0.2s; }
+.audio-wave span:nth-child(4) { animation-delay: 0.3s; }
+.audio-wave span:nth-child(5) { animation-delay: 0.4s; }
+
+.audio-wave.paused span {
+    animation-play-state: paused;
+    height: 5px;
+}
+
+@keyframes wave {
+    0%, 100% { height: 5px; opacity: 0.5; }
+    50% { height: 20px; opacity: 1; }
+}
