@@ -1452,3 +1452,11 @@ Objetivos de la sesión:
 *  **Session:** Evaluación Multimodal: Auditoría de Corrección, Optimización de Feedback IA y Mantenimiento de Audio
 *  **Description:** Sesión centrada en la validación del motor de corrección de la Fase B, asegurando el procesamiento correcto de archivos MP3 y archivos adjuntos (imágenes/PDF) tras la implementación de la dualidad de input. Se ajustarán los prompts del sistema para ofrecer feedback pedagógico específico según el widget utilizado (especialmente para corrección de caligrafía y escritura manual). Además, se verificarán las rutinas de limpieza de archivos temporales de audio para prevenir la saturación del servidor.
 
+
+# 2026-01-25
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+## NRA # --SYSTEM -->
+*  **Session:** Refactorización de Plantilla de Idiomas y Widgets Multimedia (UGR Standard)
+*  **Description:** Implementación de la nueva lógica de renderizado en `take_assessment_languages.html` basada en la matriz S-Q-R (Source-Interaction-Response). Integración de widgets multimedia (Cassette) y lógica de escritura dual. Desarrollo del parser para Cloze Engine. Carga de documentos maestros del sistema de evaluación.
+

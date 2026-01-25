@@ -22,11 +22,13 @@
             <h1 class="h4 mb-0 fw-bold">{{ page_title }}</h1>
         </div>
         <div class="card-body p-4">
+            
+            {# --- A. SOURCE: Estímulo General de Lectura (Si existe) --- #}
             {% if assessment.reading_stimulus %}
             <div class="alert alert-light border shadow-sm mb-5 p-4 rounded-4">
-                <h5 class="text-primary fw-bold mb-3"><i class="fas fa-book-reader me-2"></i>TEXTO DE REFERENCIA</h5>
+                <h5 class="text-primary fw-bold mb-3"><i class="fas fa-book-reader me-2"></i>READING / TEXTO DE REFERENCIA</h5>
                 <div class="p-3 bg-white rounded-3 shadow-sm" style="font-size:1.1rem; line-height:1.8;">
-                    {{ assessment.reading_stimulus|linebreaksbr }}
+                    {{ assessment.reading_stimulus|render_markdown }}
                 </div>
             </div>
             {% endif %}
@@ -36,62 +38,107 @@
                 <ol class="list-unstyled">
                     {% for question in questions_list %}
                         <li class="mb-5 p-4 bg-white border rounded-4 shadow-sm">
-                            {% if question.section_label %}
-                                <small class="text-primary fw-bold text-uppercase d-block mb-1">{{ question.section_label }}</small>
-                            {% endif %}
-                            <h5 class="fw-bold mb-4">{{ forloop.counter }}. {{ question.display_text|render_markdown }}</h5>
                             
-                            {% if "AUDITIVA" in question.question_text|upper or "LISTENING" in question.question_text|upper or "AUDITIVA" in question.section_label|upper or question.requires_audio %}
-                                {% if assessment.generated_audio %}
-                                <div class="mb-4 d-flex align-items-center">
+                            {# 1. CABECERA SECCIÓN #}
+                            {% if question.section_label %}
+                                <small class="text-primary fw-bold text-uppercase d-block mb-2"><i class="fas fa-tag me-1"></i> {{ question.section_label }}</small>
+                            {% endif %}
+                            
+                            {# 2. PREGUNTA / INSTRUCCIÓN (Renderizada) #}
+                            <h5 class="fw-bold mb-4">
+                                {{ forloop.counter }}. 
+                                {# Si es CLOZE, pasamos por el render engine. Si no, markdown normal #}
+                                {% if question.interaction_type == "QT_CLZ_OPT" or question.interaction_type == "QT_CLZ_OPN" %}
+                                    {% render_cloze_engine question.question_text question.response_mode question.pk %}
+                                {% else %}
+                                    {{ question.display_text|render_markdown }}
+                                {% endif %}
+                            </h5>
+                            
+                            {# 3. SOURCE: Estímulo de Audio Específico (Si aplica) #}
+                            {% if question.requires_audio and assessment.generated_audio %}
+                                <div class="mb-4 d-flex align-items-center p-3 bg-light rounded-3">
+                                     <span class="me-3 fw-bold text-muted"><i class="fas fa-headphones"></i> Listen:</span>
                                      <button type="button" class="btn btn-outline-primary btn-media-45 shadow-sm" id="btn_tts_{{ question.pk }}" onclick="AssessmentMedia.player.toggle('{{ assessment.generated_audio.url }}', '{{ question.pk }}')"><i class="fas fa-play"></i></button> 
                                      <div class="audio-wave d-none ms-3" id="wave_tts_{{ question.pk }}"><span></span><span></span><span></span><span></span><span></span></div>
                                 </div>
-                                {% endif %}
                             {% endif %}
 
-                            {% if question.requires_recording %}
-                                <div class="recorder-ui p-4 bg-light rounded-4 text-center mb-4">
+                            {# 4. RESPONSE: Widget de Respuesta según Matriz S-Q-R #}
+                            
+                            {# CASO A: Grabadora (Speaking) #}
+                            {% if question.response_mode == "REQ_REC" %}
+                                <div class="recorder-ui p-4 bg-light rounded-4 text-center mb-4 border">
                                     <div class="d-flex justify-content-between align-items-center mb-3">
-                                        <div class="badge bg-dark rounded-pill px-4" id="timer_{{ question.pk }}">02:00</div>
+                                        <div class="badge bg-dark rounded-pill px-4 py-2" id="timer_{{ question.pk }}">00:00</div>
                                         <div class="audio-wave d-none" id="wave_rec_{{ question.pk }}"><span></span><span></span><span></span><span></span><span></span></div>
                                     </div>
                                     <div class="d-flex justify-content-center gap-3">
-                                        <button type="button" class="btn btn-outline-danger btn-media-45 shadow-sm" id="btn_rec_{{ question.pk }}" onclick="AssessmentMedia.recorder.start('{{ question.pk }}')"><i class="fas fa-microphone"></i></button>
+                                        <button type="button" class="btn btn-danger btn-media-45 shadow-sm" id="btn_rec_{{ question.pk }}" onclick="AssessmentMedia.recorder.start('{{ question.pk }}')"><i class="fas fa-microphone"></i></button>
                                         <button type="button" class="btn btn-secondary btn-media-45 shadow-sm" id="btn_stop_{{ question.pk }}" onclick="AssessmentMedia.recorder.stop('{{ question.pk }}')" disabled><i class="fas fa-stop"></i></button>
                                     </div>
-                                    <div id="status_{{ question.pk }}" class="mt-2 small fw-bold"></div>
+                                    <div id="status_{{ question.pk }}" class="mt-2 small fw-bold text-muted">Pulsa micro para grabar</div>
                                     <input type="file" name="attachment_q_{{ question.pk }}" id="audio_input_{{ question.pk }}" class="d-none">
                                 </div>                      
-                            {% elif question.widget_type == "RADIO_SELECT" or question.question_type == "multiple_choice" %}
-                                <div class="list-group rounded-4 shadow-sm overflow-hidden border-0">{% for option in question.options %}<label class="list-group-item list-group-item-action py-3"><input class="form-check-input me-3" type="radio" name="answer_q_{{ question.pk }}" value="{{ option }}" required>{{ option }}</label>{% endfor %}</div>
-                            {% else %}
+                            
+                            {# CASO B: Radio Buttons (Test clásico) #}
+                            {% elif question.response_mode == "REQ_RADIO" %}
+                                <div class="list-group rounded-4 shadow-sm overflow-hidden border-0">
+                                    {% for option in question.options %}
+                                        <label class="list-group-item list-group-item-action py-3 cursor-pointer">
+                                            <input class="form-check-input me-3" type="radio" name="answer_q_{{ question.pk }}" value="{{ option }}" required>
+                                            {{ option }}
+                                        </label>
+                                    {% endfor %}
+                                </div>
+
+                            {# CASO C: Escritura Dual (Writing / Ensayos) #}
+                            {% elif question.response_mode == "REQ_DUAL" %}
                                 <div class="form-floating mb-4">
                                     <textarea name="answer_q_{{ question.pk }}" class="form-control rounded-4 shadow-sm" style="height: 180px" placeholder="." required></textarea>
-                                    <label>Escribe tu respuesta redactada...</label>
+                                    <label>Escribe tu respuesta aquí...</label>
                                 </div>
                                 <div class="upload-dashed p-4 text-center">
-                                    <i class="fas fa-cloud-upload-alt text-primary fa-3x mb-2"></i>
-                                    <p class="small text-muted mb-0"><strong>Adjuntar archivo (Opcional)</strong></p>
-                                    <p class="x-small text-muted mb-3">Haz clic para seleccionar o arrastra el archivo aquí</p>
+                                    <i class="fas fa-cloud-upload-alt text-primary fa-2x mb-2"></i>
+                                    <p class="small text-muted mb-0"><strong>Subir archivo adjunto (Manuscrito/PDF)</strong></p>
+                                    <p class="x-small text-muted mb-0">Clic o arrastrar</p>
                                     <input type="file" name="attachment_q_{{ question.pk }}" onchange="AssessmentMedia.ui.updateUpload(this, '{{ question.pk }}')">
                                     <div id="file_preview_{{ question.pk }}" class="mt-2 d-none text-success small fw-bold"><i class="fas fa-check-circle"></i> <span id="file_name_{{ question.pk }}"></span></div>
                                 </div>
+
+                            {# CASO D: Cloze (Inputs/Selects INLINE) #}
+                            {# Ya gestionados arriba por render_cloze_engine, aquí no ponemos widget extra #}
                             {% endif %}
+
                         </li>
                     {% endfor %}
                 </ol>
-                <button type="submit" class="btn btn-success btn-lg w-100 py-3 mt-4 rounded-4 shadow-lg fw-bold">FINALIZAR Y ENVIAR EXAMEN</button>
+                <div class="d-grid gap-2">
+                    <button type="submit" class="btn btn-success btn-lg py-3 rounded-4 shadow-lg fw-bold text-uppercase">
+                        <i class="fas fa-paper-plane me-2"></i> Finalizar y Entregar Examen
+                    </button>
+                </div>
             </form>
         </div>
     </div>
 </div>
 
+{# --- OFFCANVAS DE REFERENCIA (Accesible siempre) --- #}
 <div class="offcanvas offcanvas-start shadow-lg border-0" tabindex="-1" id="offcanvasRef" style="width: 85%;">
-    <div class="offcanvas-header bg-primary text-white py-3"><h5 class="fw-bold">Referencia Académica</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button></div>
-    <div class="offcanvas-body p-4">{% if assessment.reading_stimulus %}{{ assessment.reading_stimulus|render_markdown }}{% else %}{{ user_copy.original_content.get_full_markdown_content|render_markdown }}{% endif %}</div>
+    <div class="offcanvas-header bg-primary text-white py-3"><h5 class="fw-bold"><i class="fas fa-book-open me-2"></i> Material de Referencia</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button></div>
+    <div class="offcanvas-body p-4 fs-5" style="line-height: 1.8;">
+        {% if assessment.reading_stimulus %}
+            {{ assessment.reading_stimulus|render_markdown }}
+        {% else %}
+            {{ user_copy.original_content.get_full_markdown_content|render_markdown }}
+        {% endif %}
+    </div>
 </div>
-<div class="position-fixed top-50 start-0 translate-middle-y ms-2" style="z-index: 1060;"><button class="btn btn-primary rounded-circle shadow-lg p-3 border-0" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRef"><i class="fas fa-book-open fa-lg"></i></button></div>
+<div class="position-fixed top-50 start-0 translate-middle-y ms-2" style="z-index: 1060;">
+    <button class="btn btn-primary rounded-circle shadow-lg p-3 border-0" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRef" title="Ver Texto Referencia">
+        <i class="fas fa-book-open fa-lg"></i>
+    </button>
+</div>
 {% endblock %}
 
 {% block extra_js %}

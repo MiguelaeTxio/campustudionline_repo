@@ -1,32 +1,33 @@
-# /home/MiguelAeTxio/PROJECTS/CampuStudiOnline/DOCS/MAINS/ATTACHEDS/CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
-
 # ANEXO HITO 6: SISTEMA DE EVALUACIONES (RE-ARQUITECTURA NUCLEAR UGR)
 
 ## DIRECTRIZ DE CARGA OBLIGATORIA (MANDATORIO)
 Al iniciar sesión con este hito, es **IMPERATIVO** cargar los siguientes documentos que constituyen la Ley Técnica del sistema:
 1. `DOCS/MAINS/CAMPUSTUDIONLINE_ASSESSMENT_SYSTEM_MASTER_PLAN.md` (Santo Grial).
-2. `DOCS/MAINS/CAMPUSTUDIONLINE_ASSESSMENT_INTERACTION_MATRIX.md` (Matriz S-Q-R).
+2. `DOCS/MAINS/CAMPUSTUDIONLINE_ASSESSMENT_INTERACTION_MATRIX.md` (Matriz S-Q-R v2.0).
 
 ## ESTADO DE LA HOJA DE RUTA
-1. [X] **Consolidación del Santo Grial.** Definición de la Matriz de Interacción Universal (Source-Interaction-Response).
-2. [X] **Migración de Modelos.** Implementación de campos `source_type`, `interaction_type` y `response_mode` en el modelo `Question` (Migración 0028).
-3. [X] **Sincronización Administrativa.** Actualización de `admin.py` para visualizar y filtrar por la nueva matriz.
-4. [X] **Refactorización de Estrategias.** Actualización de las 5 estrategias académicas para emitir esqueletos compatibles con el Emulador UGR.
-5. [X] **Reparación del Orquestador.** Actualización de `orchestrator/tasks.py` para persistir la triada S-Q-R durante la generación.
+1. [X] **Consolidación de la Ley Técnica.** Actualización de la Matriz de Interacción a la Versión 2.0 (Alineación UGR/ACLES).
+2. [X] **Implementación del Cloze Engine (Fase B).** Lógica de auto-reparación (Self-Healing) operativa en `tasks.py`.
+3. [X] **Motor de Renderizado Cloze.** Template tag `render_cloze_engine` funcional para inputs/selects.
+4. [X] **Refactorización de la "Plantilla Tonta".** `take_assessment_languages.html` alineada con la Matriz S-Q-R.
+5. [X] **Widgets Multimedia (Estándar Cassette).** Grabadora y reproductor con controles de 45px implementados.
+6. [X] **Sincronización de Recepción.** Procesamiento de arrays de respuestas (Cloze) en `views.py`.
 
 ## HOJA DE RUTA PARA LA SIGUIENTE SESIÓN (LEY SUPREMA)
-1.  **Refactorización de la "Plantilla Tonta":**
-    *   Modificar `take_assessment_languages.html` para eliminar los `{% if %}` basados en nombres de variables antiguos.
-    *   Implementar un sistema de `render_mode` basado exclusivamente en los campos `source_type`, `interaction_type` y `response_mode`.
-2.  **Implementación de Widgets Multimedia (Estándar Cassette):**
-    *   Asegurar el renderizado de botones redondos de 45px en todos los estímulos de audio (`SRC_AUD`).
-    *   Añadir botones físicos de **STOP** al reproductor y botones de **STOP/SAVE** a la grabadora.
-3.  **Lógica de Escritura Dual (REQ_DUAL):**
-    *   Garantizar que en preguntas de producción escrita siempre coexistan el `textarea` y la zona `upload-dashed`.
-4.  **Implementación del Cloze Engine (Fase B):**
-    *   Actualizar el parser en `tasks.py` para detectar patrones `[opcion1/opcion2]` en el texto generado por la IA y transformarlos en inputs o dropdowns según indique el `interaction_type`.
+1.  **DIRECTRIZ DE CARGA OBLIGATORIA (MANDATORIO):**
+    *   Cargar `DOCS/MAINS/CAMPUSTUDIONLINE_ASSESSMENT_SYSTEM_MASTER_PLAN.md`.
+    *   Cargar `DOCS/MAINS/CAMPUSTUDIONLINE_ASSESSMENT_INTERACTION_MATRIX.md`.
+2.  **Ampliación del Modelo de Datos:**
+    *   Actualizar `InteractionType` y `ResponseMode` en `models.py` para incluir `QT_MATCH`, `QT_ORDER`, `REQ_MATCH` y `REQ_ORDER`.
+3.  **Implementación de Lógica de Emparejamiento (QT_MATCH):**
+    *   Desarrollar parser en `tasks.py` y widget HTML para tablas de relación.
+4.  **Implementación de Lógica de Ordenación (QT_ORDER):**
+    *   Desarrollar captura de índices numéricos y validación de secuencias.
+5.  **Cierre de Ciclo UI:**
+    *   Añadir botones físicos de **STOP** al reproductor de audio (Estándar Cassette).
+6.  **RECORDATORIO CRÍTICO DE CONTINUIDAD:**
+    *   **OBLIGATORIO:** Incluir esta misma Directriz de Carga Obligatoria en la hoja de ruta de la siguiente sesión para no perder el acceso a los documentos maestros.
 
 ## LOG DE CAMBIOS (EDC)
-- **Migración Nuclear:** Se eliminaron los campos `widget_type` y `question_type` en favor de la matriz de interacción UGR.
-- **Idiomas (Acreditación):** Implementado el esqueleto de 9 preguntas que cubre Reading, Use of English, Listening, Writing y Speaking.
-- **Backend Sync:** Sincronizados `tasks.py` y todas las estrategias para evitar errores de integridad tras el cambio de modelo.
+- **Self-Healing:** Implementada reparación automática de preguntas Cloze mal formadas por la IA.
+- **Alineación UGR:** Consolidada la Matriz v2.0 con tipos de emparejamiento y ordenación.

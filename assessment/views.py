@@ -262,7 +262,16 @@ def submit_assessment(request, pk):
     answers_to_create = []
 
     for question in questions:
-        user_answer_text = request.POST.get(f"answer_q_{question.pk}", "").strip()
+        # [HITO 6] Soporte para Cloze Engine: Recopilamos array de respuestas si existe
+        cloze_answers = request.POST.getlist(f"answer_q_{question.pk}_cloze[]")
+        
+        if cloze_answers:
+            # Concatenamos las respuestas de los huecos con un separador para la IA
+            user_answer_text = " | ".join([a.strip() for a in cloze_answers if a])
+        else:
+            # Fallback a respuesta simple (Radio o Textarea)
+            user_answer_text = request.POST.get(f"answer_q_{question.pk}", "").strip()
+
         attachment_file = request.FILES.get(f"attachment_q_{question.pk}")
         
         answers_to_create.append(

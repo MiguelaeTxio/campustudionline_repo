@@ -1,141 +1,171 @@
 /**
- * assessment_media_utils.js
- * v5.0 - UNIFIED PREMIUM INTERFACE (MP3 ONLY)
- * Motor nativo HTML5. Soporte para UI de 45px y ondas dinámicas.
+ * AssessmentMediaUtils v2.0 (HITO 6)
+ * Gestión de widgets multimedia estilo "Cassette" y previsualización de archivos.
  */
 
 const AssessmentMedia = {
-    config: { maxDuration: 120, detectedLang: 'es-ES' },
-
-    init: function(title) {
-        this.detectLanguage(title);
-        if ('speechSynthesis' in window) window.speechSynthesis.cancel();
-        console.log("AssessmentMedia v5.0 Ready.");
-    },
-
-    detectLanguage: function(title) {
-        if (!title) return;
-        const lower = title.toLowerCase();
-        const map = {
-            'francés': 'fr-FR', 'français': 'fr-FR', 'inglés': 'en-US', 'english': 'en-US',
-            'alemán': 'de-DE', 'german': 'de-DE', 'italiano': 'it-IT', 'portugués': 'pt-PT',
-            'chino': 'zh-CN', 'japonés': 'ja-JP', 'ruso': 'ru-RU'
-        };
-        for (let key in map) { if (lower.includes(key)) { this.config.detectedLang = map[key]; return; } }
-    },
-
     player: {
-        audioObj: null, currentId: null,
-        toggle: function(url, id) {
-            if (!url) return;
-            if (this.currentId === id && this.audioObj) {
-                if (this.audioObj.paused) { this.audioObj.play(); this.updateUI(id, 'playing'); }
-                else { this.audioObj.pause(); this.updateUI(id, 'paused'); }
+        currentAudio: null,
+        currentBtnId: null,
+        
+        toggle: function(url, questionId) {
+            const btn = document.getElementById(`btn_tts_${questionId}`);
+            const wave = document.getElementById(`wave_tts_${questionId}`);
+            
+            // Si ya hay un audio sonando y es el mismo
+            if (this.currentAudio && this.currentBtnId === questionId) {
+                if (this.currentAudio.paused) {
+                    this.currentAudio.play();
+                    this._setPlayingState(btn, wave, true);
+                } else {
+                    this.currentAudio.pause();
+                    this._setPlayingState(btn, wave, false);
+                }
                 return;
             }
-            this.stopAll();
-            this.currentId = id;
-            this.audioObj = new Audio(url);
-            this.audioObj.onplay = () => { 
-                this.updateUI(id, 'playing'); 
-                AssessmentMedia.ui.toggleWave(id, 'tts', 'show'); 
-            };
-            this.audioObj.onpause = () => { 
-                this.updateUI(id, 'paused'); 
-                AssessmentMedia.ui.toggleWave(id, 'tts', 'pause'); 
-            };
-            this.audioObj.onended = () => { 
-                this.updateUI(id, 'idle'); 
-                AssessmentMedia.ui.toggleWave(id, 'tts', 'hide'); 
-                this.currentId = null; 
-            };
-            this.audioObj.play();
+
+            // Si hay otro audio sonando, pararlo
+            if (this.currentAudio) {
+                this.currentAudio.pause();
+                this.currentAudio.currentTime = 0;
+                // Reset UI del anterior
+                if (this.currentBtnId) {
+                    const prevBtn = document.getElementById(`btn_tts_${this.currentBtnId}`);
+                    const prevWave = document.getElementById(`wave_tts_${this.currentBtnId}`);
+                    this._setPlayingState(prevBtn, prevWave, false, true);
+                }
+            }
+
+            // Nuevo audio
+            this.currentAudio = new Audio(url);
+            this.currentBtnId = questionId;
+
+            this.currentAudio.addEventListener('ended', () => {
+                this._setPlayingState(btn, wave, false, true);
+                this.currentAudio = null;
+                this.currentBtnId = null;
+            });
+
+            this.currentAudio.play().catch(e => console.error("Error playing audio:", e));
+            this._setPlayingState(btn, wave, true);
         },
-        stopAll: function() {
-            if (this.audioObj) { this.audioObj.pause(); this.audioObj = null; }
-            if (this.currentId) { this.updateUI(this.currentId, 'idle'); AssessmentMedia.ui.toggleWave(this.currentId, 'tts', 'hide'); }
-        },
-        updateUI: function(id, state) {
-            const btn = document.getElementById(`btn_tts_${id}`);
+
+        _setPlayingState: function(btn, wave, isPlaying, isReset=false) {
             if (!btn) return;
-            const icon = btn.querySelector('i');
-            const baseClass = "btn rounded-circle shadow-sm d-flex align-items-center justify-content-center btn-media-45";
-            if (state === 'playing') {
-                icon.className = 'fas fa-pause';
-                btn.className = `${baseClass} btn-primary`;
-            } else if (state === 'paused') {
-                icon.className = 'fas fa-play';
-                btn.className = `${baseClass} btn-primary`;
+            if (isReset) {
+                btn.innerHTML = '<i class="fas fa-play"></i>';
+                btn.classList.remove('btn-primary');
+                btn.classList.add('btn-outline-primary');
+                if (wave) wave.classList.add('d-none');
+            } else if (isPlaying) {
+                btn.innerHTML = '<i class="fas fa-pause"></i>';
+                btn.classList.remove('btn-outline-primary');
+                btn.classList.add('btn-primary');
+                if (wave) wave.classList.remove('d-none');
             } else {
-                icon.className = 'fas fa-play';
-                btn.className = `${baseClass} btn-outline-primary`;
+                // Paused state
+                btn.innerHTML = '<i class="fas fa-play"></i>';
+                if (wave) wave.classList.add('d-none');
             }
         }
     },
 
+    recorder: {
+        mediaRecorder: null,
+        chunks: [],
+        currentQuestionId: null,
+        timerInterval: null,
+
+        start: async function(questionId) {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                this.mediaRecorder = new MediaRecorder(stream);
+                this.chunks = [];
+                this.currentQuestionId = questionId;
+
+                const btnRec = document.getElementById(`btn_rec_${questionId}`);
+                const btnStop = document.getElementById(`btn_stop_${questionId}`);
+                const wave = document.getElementById(`wave_rec_${questionId}`);
+                const status = document.getElementById(`status_${questionId}`);
+
+                this.mediaRecorder.ondataavailable = (e) => {
+                    if (e.data.size > 0) this.chunks.push(e.data);
+                };
+
+                this.mediaRecorder.onstop = () => {
+                    const blob = new Blob(this.chunks, { type: 'audio/mp3' }); // Nota: WebM en realidad, pero renombramos
+                    const fileInput = document.getElementById(`audio_input_${questionId}`);
+                    
+                    // Crear archivo para el input
+                    const file = new File([blob], `recording_q${questionId}.mp3`, { type: 'audio/mpeg' });
+                    const container = new DataTransfer();
+                    container.items.add(file);
+                    fileInput.files = container.files;
+
+                    // Stop stream tracks
+                    stream.getTracks().forEach(track => track.stop());
+                    
+                    // UI Update
+                    status.innerHTML = '<span class="text-success"><i class="fas fa-check"></i> Grabación guardada</span>';
+                    btnRec.disabled = false;
+                    btnStop.disabled = true;
+                    if (wave) wave.classList.add('d-none');
+                    this._stopTimer(questionId);
+                };
+
+                this.mediaRecorder.start();
+
+                // UI Update
+                btnRec.disabled = true;
+                btnStop.disabled = false;
+                if (wave) wave.classList.remove('d-none');
+                status.innerHTML = '<span class="text-danger blink-text">● GRABANDO...</span>';
+                this._startTimer(questionId);
+
+            } catch (err) {
+                console.error("Error accessing microphone:", err);
+                alert("No se pudo acceder al micrófono. Por favor, verifica los permisos.");
+            }
+        },
+
+        stop: function(questionId) {
+            if (this.mediaRecorder && this.mediaRecorder.state !== 'inactive') {
+                this.mediaRecorder.stop();
+            }
+        },
+
+        _startTimer: function(questionId) {
+            let seconds = 0;
+            const timerBadge = document.getElementById(`timer_${questionId}`);
+            this.timerInterval = setInterval(() => {
+                seconds++;
+                const mins = Math.floor(seconds / 60).toString().padStart(2, '0');
+                const secs = (seconds % 60).toString().padStart(2, '0');
+                timerBadge.innerText = `${mins}:${secs}`;
+                // Límite duro de 5 minutos
+                if (seconds >= 300) this.stop(questionId);
+            }, 1000);
+        },
+
+        _stopTimer: function(questionId) {
+            clearInterval(this.timerInterval);
+        }
+    },
+
     ui: {
-        updateUpload: function(input, qId) {
-            const preview = document.getElementById(`file_preview_${qId}`);
-            const fileName = document.getElementById(`file_name_${qId}`);
+        updateUpload: function(input, questionId) {
+            const preview = document.getElementById(`file_preview_${questionId}`);
+            const fileName = document.getElementById(`file_name_${questionId}`);
             if (input.files && input.files[0]) {
                 fileName.innerText = input.files[0].name;
                 preview.classList.remove('d-none');
             } else {
                 preview.classList.add('d-none');
             }
-        },
-        toggleWave: function(id, type, state) {
-            const wave = document.getElementById(`wave_${type}_${id}`);
-            if (!wave) return;
-            if (state === 'show') {
-                wave.classList.remove('d-none');
-                wave.classList.remove('paused');
-            } else if (state === 'hide') {
-                wave.classList.add('d-none');
-            } else if (state === 'pause') {
-                wave.classList.add('paused');
-            }
         }
     },
 
-    recorder: {
-        mediaRecorder: null, audioChunks: [], interval: null,
-        start: async function(qId) {
-            const timerEl = document.getElementById(`timer_${qId}`);
-            const btnRec = document.getElementById(`btn_rec_${qId}`);
-            const btnStop = document.getElementById(`btn_stop_${qId}`);
-            const statusEl = document.getElementById(`status_${qId}`);
-            try {
-                AssessmentMedia.player.stopAll();
-                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-                this.mediaRecorder = new MediaRecorder(stream);
-                this.audioChunks = [];
-                this.mediaRecorder.ondataavailable = e => this.audioChunks.push(e.data);
-                this.mediaRecorder.onstop = () => {
-                    const audioBlob = new Blob(this.audioChunks, { type: 'audio/mpeg' });
-                    const file = new File([audioBlob], `oral_${qId}.mp3`, { type: 'audio/mpeg' });
-                    const container = new DataTransfer(); container.items.add(file);
-                    document.getElementById(`audio_input_${qId}`).files = container.files;
-                    statusEl.innerHTML = "<span class='text-success small fw-bold'><i class='fas fa-check-circle'></i> AUDIO LISTO</span>";
-                    btnRec.className = 'btn btn-outline-danger btn-media-45 shadow-sm';
-                    btnRec.disabled = false; btnStop.disabled = true;
-                    AssessmentMedia.ui.toggleWave(qId, 'rec', 'hide');
-                    clearInterval(this.interval);
-                    stream.getTracks().forEach(t => t.stop());
-                };
-                this.mediaRecorder.start();
-                statusEl.innerHTML = '<span class="text-danger small fw-bold blink-text">● GRABANDO</span>';
-                AssessmentMedia.ui.toggleWave(qId, 'rec', 'show');
-                btnRec.className = 'btn btn-danger text-white btn-media-45 shadow-sm';
-                btnRec.disabled = true; btnStop.disabled = false;
-                let timeLeft = 120;
-                this.interval = setInterval(() => {
-                    timeLeft--;
-                    timerEl.innerText = `${Math.floor(timeLeft/60).toString().padStart(2,'0')}:${(timeLeft%60).toString().padStart(2,'0')}`;
-                    if (timeLeft <= 0) this.stop(qId);
-                }, 1000);
-            } catch (err) { alert("Error de micrófono."); }
-        },
-        stop: function(qId) { if (this.mediaRecorder) this.mediaRecorder.stop(); }
+    init: function(contextName) {
+        console.log(`AssessmentMedia initialized for: ${contextName}`);
     }
 };

@@ -66,6 +66,32 @@ def process_assessment_fase_b(assessment_id):
             question_obj.question_text = data["question_text"]
             question_obj.model_answer = data["model_answer"]
             question_obj.options = data.get("options", [])
+            
+            # [HITO 6] Auto-Reparación de Cloze Engine (Self-Healing)
+            # Si es tipo Cloze y no detectamos corchetes, inyectamos el token formateado.
+            if question_obj.interaction_type in ['QT_CLZ_OPT', 'QT_CLZ_OPN']:
+                if '[' not in question_obj.question_text or ']' not in question_obj.question_text:
+                    # 1. Construcción del Token [opcion1/opcion2] o [respuesta]
+                    token = ""
+                    if question_obj.options: # Cloze con opciones
+                        opts = [str(o) for o in question_obj.options]
+                        # Aseguramos que la correcta esté incluida para evitar bloqueos
+                        if question_obj.model_answer not in opts:
+                            opts.append(question_obj.model_answer)
+                        token = f"[{'/'.join(opts)}]"
+                    else: # Cloze abierto
+                        token = f"[{question_obj.model_answer}]"
+                    
+                    # 2. Cirugía (Inyección)
+                    # Intento A: Sustitución de la respuesta exacta en el texto
+                    if question_obj.model_answer in question_obj.question_text:
+                         question_obj.question_text = question_obj.question_text.replace(question_obj.model_answer, token)
+                         assessment.add_log_event(f"Auto-Reparación Cloze (Sustitución) en Q{question_obj.pk}", "WARNING")
+                    # Intento B: Fallback (Añadir al final)
+                    else:
+                         question_obj.question_text = f"{question_obj.question_text} {token}"
+                         assessment.add_log_event(f"Auto-Reparación Cloze (Append) en Q{question_obj.pk}", "WARNING")
+            
             question_obj.save()
 
         # 5. Generación de Audio Nativo (MP3 Obligatorio con Reintentos)

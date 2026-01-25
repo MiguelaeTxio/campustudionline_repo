@@ -1,67 +1,61 @@
-# MATRIZ DE INTERACCIÓN DE EVALUACIONES (UI/UX REGISTRY)
-# Este documento define la relación Source -> Question -> Response para "Templates Tontas".
+# MATRIZ DE INTERACCIÓN DE EVALUACIONES (ESTÁNDAR UGR / ACLES)
+# Versión: 2.0 (Alineación Total con CLM-UGR)
 
 ## 1. PRINCIPIO DE DISEÑO
-El Backend determina el `render_mode`. El Frontend solo obedece y pinta el widget correspondiente. No hay lógica de negocio en el HTML.
+El sistema es una "Template Tonta". El Backend define el `render_mode`. Si el documento no lo contempla, el sistema no existe.
 
-## 2. CATÁLOGO DE VARIABLES
+## 2. CATÁLOGO AMPLIADO DE VARIABLES (EMULADOR UGR)
 
 ### A. SOURCE (El Estímulo)
-| ID | Descripción | Ejemplo |
+| ID | Descripción | Ejemplo UGR |
 | :--- | :--- | :--- |
-| **SRC_TXT** | Texto plano o Markdown | Reading Comprehension |
-| **SRC_AUD** | Archivo de Audio (MP3) | Listening Comprehension |
-| **SRC_IMG** | Imagen estática | Descripción de foto (Speaking) |
-| **SRC_HYB** | Texto + Audio | Listening con soporte textual |
-| **SRC_DIR** | Directo (Sin estímulo) | Preguntas de gramática aislada |
+| **SRC_TXT** | Texto / Reading | Artículo de prensa, fragmento literario |
+| **SRC_AUD** | Audio MP3 / Listening | Monólogo, diálogo, noticia radiofónica |
+| **SRC_IMG** | Imagen / Gráfico | Fotografía para descripción (Speaking) |
+| **SRC_HYB** | Híbrido | Vídeo con subtítulos o texto con apoyo audio |
+| **SRC_DIR** | Directo | Gramática aislada (Use of English) |
 
-### B. QUESTION TYPE (La Tarea)
-| ID | Descripción | Lógica de Validación |
+### B. QUESTION TYPE (La Tarea Cognitiva)
+| ID | Descripción | Lógica UGR |
 | :--- | :--- | :--- |
-| **QT_SEL** | Selección Simple | Match exacto de ID opción |
-| **QT_CLZ_OPT** | Cloze con Opciones | Match exacto en cada hueco |
-| **QT_CLZ_OPN** | Cloze Abierto | Match semántico/exacto de string |
-| **QT_TRF** | Transformación | Match de estructura clave (Keyword Transformation) |
-| **QT_PROD** | Producción Libre | Evaluación por IA (Rubric) |
+| **QT_SEL** | Selección Múltiple | Elegir A, B, C o D |
+| **QT_MATCH** | Emparejamiento | Unir Títulos (1-5) con Párrafos (A-E) |
+| **QT_ORDER** | Ordenación | Secuenciar eventos (1º, 2º, 3º...) |
+| **QT_CLZ_OPT** | Multiple Choice Cloze | Huecos con opciones desplegables |
+| **QT_CLZ_OPN** | Open Cloze | Rellenar hueco con palabra exacta |
+| **QT_TRF** | Transformación | Keyword Transformation (Re-writing) |
+| **QT_PROD** | Producción Libre | Writing (Ensayo) o Speaking (Grabación) |
 
-### C. REQUEST MODE (El Widget de Usuario)
-| ID | Descripción | Componentes UI |
+### C. REQUEST MODE (El Widget de Interfaz)
+| ID | Descripción | Implementación UI |
 | :--- | :--- | :--- |
-| **REQ_RADIO** | Radio Buttons | Lista vertical de opciones |
-| **REQ_DROP** | Dropdowns Inline | Selectores insertados en el texto |
-| **REQ_INPUT** | Inputs Inline | Cajas de texto cortas insertadas en texto |
+| **REQ_RADIO** | Radio Buttons | Lista vertical única |
+| **REQ_DROP** | Dropdowns Inline | Selectores dentro del flujo del texto |
+| **REQ_INPUT** | Inputs Inline | Cajas de texto cortas dentro del texto |
+| **REQ_MATCH** | Matriz de Emparejamiento | Tabla de premisas con selectores de respuesta |
+| **REQ_ORDER** | Lista de Ordenación | Inputs numéricos junto a cada ítem de la lista |
 | **REQ_DUAL** | Escritura Dual | Textarea + File Upload (Dashed) |
-| **REQ_REC** | Grabadora | Botones: Record/Stop/Play/Reset |
+| **REQ_REC** | Grabadora Cassette | Botones 45px: Play, Stop, Rec, Save |
 
-## 3. MATRIZ DE RENDERIZADO (COMBINACIONES VÁLIDAS)
+## 3. COMBINACIONES VÁLIDAS (MAPEO DE EXAMEN REAL)
 
-### GRUPO 1: COMPRENSIÓN LECTORA (READING)
-1. **R_TXT_SEL** (Source: TXT -> Task: SEL -> Req: RADIO)
-   - *Uso:* Reading estándar.
-2. **R_TXT_CLZ** (Source: TXT -> Task: CLZ_OPN -> Req: DROP/INPUT)
-   - *Uso:* Gapped Text (frases eliminadas).
+### BLOQUE 1: READING (Comprensión Lectora)
+- **R_TXT_SEL:** Reading estándar (Multiple Choice).
+- **R_TXT_MATCH:** Heading to Paragraph (Emparejar títulos).
+- **R_TXT_CLZ:** Gapped Text (Huecos en texto).
 
-### GRUPO 2: USO DE LA LENGUA (USE OF ENGLISH)
-3. **R_DIR_CLZ_OPT** (Source: DIR -> Task: CLZ_OPT -> Req: DROP)
-   - *Uso:* Multiple Choice Cloze.
-4. **R_DIR_CLZ_OPN** (Source: DIR -> Task: CLZ_OPN -> Req: INPUT)
-   - *Uso:* Open Cloze.
-5. **R_DIR_TRF** (Source: DIR -> Task: TRF -> Req: INPUT)
-   - *Uso:* Key Word Transformation.
+### BLOQUE 2: LISTENING (Comprensión Auditiva)
+- **R_AUD_SEL:** Listening estándar.
+- **R_AUD_ORDER:** Event Sequencing (Ordenar lo escuchado).
+- **R_AUD_CLZ:** Sentence Completion (Rellenar escuchando).
 
-### GRUPO 3: COMPRENSIÓN AUDITIVA (LISTENING)
-6. **R_AUD_SEL** (Source: AUD -> Task: SEL -> Req: RADIO)
-   - *Uso:* Listening estándar.
-7. **R_AUD_CLZ** (Source: AUD -> Task: CLZ_OPN -> Req: INPUT)
-   - *Uso:* Sentence Completion (rellenar huecos escuchando).
+### BLOQUE 3: USE OF ENGLISH (Gramática/Vocabulario)
+- **R_DIR_CLZ_OPT:** Multiple Choice Cloze.
+- **R_DIR_CLZ_OPN:** Open Cloze.
+- **R_DIR_TRF:** Key Word Transformations.
 
-### GRUPO 4: EXPRESIÓN ESCRITA (WRITING)
-8. **R_TXT_PROD** (Source: TXT -> Task: PROD -> Req: DUAL)
-   - *Uso:* Essay, Email, Report (Respuesta al prompt).
-
-### GRUPO 5: EXPRESIÓN ORAL (SPEAKING)
-9. **R_AUD_REC** (Source: AUD -> Task: PROD -> Req: REC)
-   - *Uso:* Respuesta a pregunta oral.
-10. **R_IMG_REC** (Source: IMG -> Task: PROD -> Req: REC)
-    - *Uso:* Descripción de imagen.
+### BLOQUE 4: WRITING / SPEAKING (Producción)
+- **R_TXT_PROD:** Writing con prompt textual (REQ_DUAL).
+- **R_IMG_REC:** Speaking basado en imagen (REQ_REC).
+- **R_AUD_REC:** Speaking basado en pregunta oral (REQ_REC).
 
