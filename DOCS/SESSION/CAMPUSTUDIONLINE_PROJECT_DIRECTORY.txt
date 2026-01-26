@@ -395,6 +395,7 @@
 ./assessment/migrations/0012_alter_assessment_status.py
 ./assessment/migrations/0022_alter_assessment_options_and_more.py
 ./assessment/migrations/0026_alter_assessment_options_and_more.py
+./assessment/migrations/0030_alter_question_interaction_type_and_more.py
 ./assessment/migrations/0023_assessment_generated_audio.py
 ./assessment/migrations/0007_assessment_expiration_date_and_more.py
 ./assessment/migrations/0013_assessmentsettings_event_log_and_more.py
@@ -407,6 +408,7 @@
 ./assessment/migrations/0009_alter_assessment_content.py
 ./assessment/migrations/0016_assessment_target_segment_useranswer_audio_file_and_more.py
 ./assessment/migrations/0014_assessment_event_log.py
+./assessment/migrations/0029_alter_question_interaction_type_and_more.py
 ./assessment/migrations/0020_alter_assessment_archetype_and_more.py
 ./assessment/migrations/0017_question_options.py
 ./assessment/migrations/0001_initial.py
@@ -617,6 +619,7 @@
 ./DOCS/MAINS/PROJECT_DIRECTORY.txt
 ./DOCS/MAINS/CAMPUSTUDIONLINE_FUNCTIONAL_REGISTRY.md
 ./DOCS/MAINS/SESSION_VARIABLES.md
+./DOCS/MAINS/CAMPUSTUDIONLINE_ASSESSMENT_ARCHETYPES_SPEC.md
 ./DOCS/MAINS/CAMPUSTUDIONLINE_REFACTOR_NAVIGATION_MASTER_PLAN.md
 ./DOCS/MAINS/ATTACHEDS/CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V27.md
 ./DOCS/MAINS/ATTACHEDS/CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V22.md

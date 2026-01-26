@@ -1,70 +1,26 @@
-# PLAN MAESTRO DEL SISTEMA DE EVALUACIONES (EL SANTO GRIAL)
-# Versión: 1.0 (UGR/ACLES Emulator Standard)
+# ESPECIFICACIÓN TÉCNICA DEL SISTEMA DE EVALUACIONES (ESTÁNDAR UGR)
+# Versión: 3.0 (Consolidación Total - Realidad UGR/CLM/ETSIIT)
 
-## 1. FILOSOFÍA DE DISEÑO
-El sistema opera bajo una "Plantilla Tonta" (Stateless UI). La inteligencia reside en el Backend, que calcula una Matriz de Interacción para cada pregunta. 
+## 1. ARQUITECTURA NUCLEAR: BLOQUES COMPETENCIALES
+El sistema debe operar bajo una arquitectura de Bloques de Alta Densidad, prohibiendo el modelo atómico 1:1.
 
-### 1.1. La Triada de Renderizado
-Para cada pregunta, el sistema debe definir:
-- **SOURCE (S):** El estímulo proporcionado al alumno.
-- **QUESTION TYPE (Q):** La tarea cognitiva requerida.
-- **REQUEST MODE (R):** El widget de entrada del usuario.
+*   **Relación 1:N (Estímulo-Batería):** Un único `reading_stimulus` o `listening_stimulus` debe servir como base para una batería de múltiples `Question Objects` (mínimo 5-8 ítems).
+*   **Aislamiento de Bloques:** Las preguntas deben agruparse por competencia (Reading, Listening, etc.) a nivel de base de datos y de renderizado.
 
-## 2. MATRIZ DE INTERACCIÓN (S-Q-R)
+## 2. DUALIDAD DE MODALIDADES DE EXAMEN
+El sistema debe ser capaz de generar dos tipos de evaluación distintos:
 
-### A. SOURCE (Estímulo)
-- **SRC_DIR:** Directo (Sin estímulo adicional).
-- **SRC_TXT:** Texto / Reading.
-- **SRC_AUD:** Audio MP3 / Listening.
-- **SRC_IMG:** Imagen / Fotografía.
-- **SRC_HYB:** Híbrido (Texto + Audio).
+*   **Modalidad "Acreditación (Simulacro)":** Emula un examen oficial del CLM (CertAcles). Activa esqueletos de alta carga (30-40 ítems), reglas de inmersión total y puntuación por bloques.
+*   **Modalidad "Prueba de Nivel (Ejercicio)":** Evalúa el progreso de un curso. Activa esqueletos de menor carga (10-15 ítems) enfocados en el syllabus.
 
-### B. QUESTION TYPE (Tarea)
-- **QT_SEL:** Selección Simple (Test).
-- **QT_MATCH:** Emparejamiento (A con B).
-- **QT_CLZ_OPT:** Cloze con Opciones (Multiple Choice Cloze).
-- **QT_CLZ_OPN:** Cloze Abierto (Open Cloze).
-- **QT_TRF:** Transformación (Re-writing con keyword).
-- **QT_PROD:** Producción Libre (Ensayo/Grabación).
+## 3. REGLAS TRANSVERSALES DE CUMPLIMIENTO OBLIGATORIO
 
-### C. REQUEST MODE (Interfaz)
-- **REQ_RADIO:** Radio Buttons (Vertical).
-- **REQ_DROP:** Desplegables inline (para Cloze).
-- **REQ_INPUT:** Caja de texto inline (para Cloze abierto).
-- **REQ_DUAL:** Escritura Dual (Textarea + Upload simultáneo).
-- **REQ_REC:** Grabadora Multimedia (Botones 45px).
+*   **Regla de Inmersión Lingüística (CLM):** Para exámenes de idiomas, todo el contenido visible por el usuario (instrucciones, enunciados, opciones, etiquetas de sección) DEBE estar en el idioma objeto.
+*   **Regla de Rigor (ETSIIT):** Para arquetipos de ciencias e ingeniería, el sistema DEBE soportar y renderizar correctamente formulación LaTeX/MathJax.
+*   **Estándar Cassette UGR:** El reproductor de audio debe tener botones físicos PLAY/STOP. La grabadora debe incluir REC/STOP/PLAY/SAVE. El STOP reinicia el audio a 0.
 
-## 3. ESPECIFICACIÓN DE ARQUETIPOS (ESTÁNDAR UGR)
+## 4. FLUJO DE PROGRAMACIÓN Y LÓGICA DE CONTROL
 
-### I. CEFR_LANGUAGES (Acreditación ACLES)
-Estructura de 5 destrezas. Obligatorio soporte para alfabetos no latinos.
-1. **Reading:** [SRC_TXT -> QT_SEL -> REQ_RADIO] y [SRC_TXT -> QT_CLZ_OPN -> REQ_DROP].
-2. **Use of English:** 
-   - [SRC_DIR -> QT_CLZ_OPT -> REQ_DROP] (Grammar Cloze).
-   - [SRC_DIR -> QT_TRF -> REQ_INPUT] (Transformations).
-3. **Listening:** [SRC_AUD -> QT_SEL -> REQ_RADIO] y [SRC_AUD -> QT_CLZ_OPN -> REQ_INPUT].
-4. **Writing:** [SRC_TXT -> QT_PROD -> REQ_DUAL] (Soporte manuscrito vía JPG).
-5. **Speaking:** [SRC_IMG/SRC_AUD -> QT_PROD -> REQ_REC].
-
-### II. LOGIC_AND_TECH (Ingeniería ETSIIT)
-1. **Theoretical:** [SRC_DIR -> QT_SEL -> REQ_RADIO].
-2. **Problem Solving:** [SRC_DIR -> QT_PROD -> REQ_INPUT] con MathJax activado.
-
-### III. SOCIO_LEGAL (Derecho UGR)
-1. **Teoría Normativa:** [SRC_TXT -> QT_SEL -> REQ_RADIO].
-2. **Dictamen Jurídico:** [SRC_TXT (Supuesto de Hecho) -> QT_PROD -> REQ_DUAL].
-
-### IV. HEALTH_SCIENCES (Medicina ECOE)
-1. **Diagnóstico:** [SRC_IMG (Placa/Síntoma) -> QT_SEL -> REQ_RADIO].
-2. **Actuación Clínica:** [SRC_DIR -> QT_PROD -> REQ_DUAL].
-
-### V. HUMANITIES_ARTS (Filosofía y Letras)
-1. **Comentario de Fuente:** [SRC_TXT (Fragmento) -> QT_PROD -> REQ_DUAL].
-
-## 4. ESTÁNDARES DE INTERFAZ (UI BINDINGS)
-- **Botonera Cassette:** Botones redondos de 45px.
-  - Reproductor: Play, Stop (obligatorio).
-  - Grabadora: Record, Stop, Play, Save (confirmación visual).
-- **Dual Writing:** El widget REQ_DUAL nunca es excluyente. Siempre muestra el Textarea y el área Dashed de subida juntos.
-- **Cloze Engine:** Lógica de parseo de corchetes `[opcion1/opcion2]` para generar dropdowns dinámicos.
-
+*   **Strategy Factory Pattern:** La tarea `generate_assessment_from_content_task` no debe llamar a estrategias hardcodeadas. Debe usar un despachador ("Factory") que, basado en el `assessment.archetype`, importe y ejecute la estrategia correcta (`languages_strategy`, `legal_strategy`, etc.).
+*   **Clasificación Previa:** Antes de llamar a la estrategia, se debe determinar si una lengua es "Maior" o "Minor" y guardar este estado para que la Factory pueda despachar al sub-esqueleto correcto.
+*   **Self-Healing (Auto-Reparación):** El motor de tareas DEBE incluir una capa de saneamiento que fuerce el formato Cloze (`[...]`) si la IA falla en generarlo, y que limpie prefijos ("a)", "1.") de las opciones de respuesta.

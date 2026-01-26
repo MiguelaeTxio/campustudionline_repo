@@ -1,33 +1,36 @@
-# ANEXO HITO 6: SISTEMA DE EVALUACIONES (RE-ARQUITECTURA NUCLEAR UGR)
+### PARTE INMUTABLE (MANDATORIA EN TODOS LOS PCS)
 
-## DIRECTRIZ DE CARGA OBLIGATORIA (MANDATORIO)
-Al iniciar sesión con este hito, es **IMPERATIVO** cargar los siguientes documentos que constituyen la Ley Técnica del sistema:
-1. `DOCS/MAINS/CAMPUSTUDIONLINE_ASSESSMENT_SYSTEM_MASTER_PLAN.md` (Santo Grial).
-2. `DOCS/MAINS/CAMPUSTUDIONLINE_ASSESSMENT_INTERACTION_MATRIX.md` (Matriz S-Q-R v2.0).
+**DIRECTRIZ DE CARGA OBLIGATORIA (LEY DE CONTINUIDAD):**
+Al iniciar cualquier sesión de trabajo sobre el sistema de evaluaciones, es **IMPERATIVO** cargar los siguientes documentos que constituyen la Ley Técnica del Emulador UGR:
+1.  `/home/MiguelAeTxio/PROJECTS/CampuStudiOnline/DOCS/MAINS/CAMPUSTUDIONLINE_ASSESSMENT_SYSTEM_MASTER_PLAN.md`
+2.  `/home/MiguelAeTxio/PROJECTS/CampuStudiOnline/DOCS/MAINS/CAMPUSTUDIONLINE_ASSESSMENT_ARCHETYPES_SPEC.md`
 
-## ESTADO DE LA HOJA DE RUTA
-1. [X] **Consolidación de la Ley Técnica.** Actualización de la Matriz de Interacción a la Versión 2.0 (Alineación UGR/ACLES).
-2. [X] **Implementación del Cloze Engine (Fase B).** Lógica de auto-reparación (Self-Healing) operativa en `tasks.py`.
-3. [X] **Motor de Renderizado Cloze.** Template tag `render_cloze_engine` funcional para inputs/selects.
-4. [X] **Refactorización de la "Plantilla Tonta".** `take_assessment_languages.html` alineada con la Matriz S-Q-R.
-5. [X] **Widgets Multimedia (Estándar Cassette).** Grabadora y reproductor con controles de 45px implementados.
-6. [X] **Sincronización de Recepción.** Procesamiento de arrays de respuestas (Cloze) en `views.py`.
+**Nota para el cierre (`PCS`):** Esta sección debe ser copiada textualmente en la "Hoja de Ruta para la Siguiente Sesión" para garantizar la persistencia de la Ley.
 
-## HOJA DE RUTA PARA LA SIGUIENTE SESIÓN (LEY SUPREMA)
-1.  **DIRECTRIZ DE CARGA OBLIGATORIA (MANDATORIO):**
-    *   Cargar `DOCS/MAINS/CAMPUSTUDIONLINE_ASSESSMENT_SYSTEM_MASTER_PLAN.md`.
-    *   Cargar `DOCS/MAINS/CAMPUSTUDIONLINE_ASSESSMENT_INTERACTION_MATRIX.md`.
-2.  **Ampliación del Modelo de Datos:**
-    *   Actualizar `InteractionType` y `ResponseMode` en `models.py` para incluir `QT_MATCH`, `QT_ORDER`, `REQ_MATCH` y `REQ_ORDER`.
-3.  **Implementación de Lógica de Emparejamiento (QT_MATCH):**
-    *   Desarrollar parser en `tasks.py` y widget HTML para tablas de relación.
-4.  **Implementación de Lógica de Ordenación (QT_ORDER):**
-    *   Desarrollar captura de índices numéricos y validación de secuencias.
-5.  **Cierre de Ciclo UI:**
-    *   Añadir botones físicos de **STOP** al reproductor de audio (Estándar Cassette).
-6.  **RECORDATORIO CRÍTICO DE CONTINUIDAD:**
-    *   **OBLIGATORIO:** Incluir esta misma Directriz de Carga Obligatoria en la hoja de ruta de la siguiente sesión para no perder el acceso a los documentos maestros.
+---
 
-## LOG DE CAMBIOS (EDC)
-- **Self-Healing:** Implementada reparación automática de preguntas Cloze mal formadas por la IA.
-- **Alineación UGR:** Consolidada la Matriz v2.0 con tipos de emparejamiento y ordenación.
+### HOJA DE RUTA PARA LA SIGUIENTE SESIÓN (IMPLEMENTACIÓN DEL ESTÁNDAR UGR)
+
+1.  **Tarea 1 (Arquitectura): Implementar el "Strategy Factory Pattern"**
+    *   **Objetivo:** Eliminar la llamada hardcodeada a `languages_strategy.py` y hacer que el sistema sea verdaderamente polimórfico.
+    *   **Acción:**
+        *   Crear el archivo `core/services/assessment_strategies/factory.py`.
+        *   Dentro de la factory, crear un diccionario que mapee cada `archetype` (ej: `"CEFR_LANGUAGES"`) a su módulo de estrategia correspondiente.
+        *   Modificar `orchestrator/tasks.py` para que, en lugar de importar `languages_strategy`, importe la `factory`. La tarea llamará a `factory.get_strategy(assessment.archetype)` para obtener dinámicamente el módulo correcto.
+
+2.  **Tarea 2 (Modelo de Datos): Especializar el Itinerario Lingüístico**
+    *   **Objetivo:** Permitir que la base de datos distinga entre exámenes de lenguas "Maior" y "Minor".
+    *   **Acción:**
+        *   En `assessment/models.py`, añadir al modelo `Assessment` el campo: `language_itinerary = models.CharField(max_length=10, choices=[('MAIOR', 'Maior'), ('MINOR', 'Minor')], null=True, blank=True)`.
+        *   Generar y aplicar la migración de base de datos correspondiente.
+
+3.  **Tarea 3 (Lógica de Clasificación Lingüística):**
+    *   **Objetivo:** Automatizar la detección del itinerario "Maior" o "Minor".
+    *   **Acción:**
+        *   En `orchestrator/tasks.py`, dentro de `generate_assessment_from_content_task`, justo después de obtener el `subject_name`, implementar una lógica que analice el nombre y determine si es "Maior" o "Minor", guardando el resultado en el nuevo campo `assessment.language_itinerary`.
+
+4.  **Tarea 4 (Refactorización de la Estrategia de Idiomas):**
+    *   **Objetivo:** Implementar los esqueletos de alta densidad definidos en el documento de arquetipos.
+    *   **Acción:**
+        *   En `languages_strategy.py`, la función `get_strategy_skeleton` se convertirá en un despachador que leerá el `language_itinerary` del assessment.
+        *   Crear dos funciones privadas: `_build_maior_skeleton()` y `_build_minor_skeleton()`, cada una devolviendo la estructura de bloques y la densidad de ítems especificada en `CAMPUSTUDIONLINE_ASSESSMENT_ARCHETYPES_SPEC.md`.

@@ -112,6 +112,7 @@ class Question(models.Model):
         CLOZE_OPEN = "QT_CLZ_OPN", "Cloze Abierto"
         TRANSFORMATION = "QT_TRF", "Transformación (Re-writing)"
         PRODUCTION = "QT_PROD", "Producción Libre"
+        ORDERING = "QT_ORDER", "Ordenación"
 
     class ResponseMode(models.TextChoices):
         RADIO = "REQ_RADIO", "Radio Buttons"
@@ -119,14 +120,16 @@ class Question(models.Model):
         INPUT = "REQ_INPUT", "Caja de texto inline"
         DUAL = "REQ_DUAL", "Escritura Dual (Texto + Archivo)"
         RECORDER = "REQ_REC", "Grabadora Multimedia"
+        MATCHING = "REQ_MATCH", "Matriz de Emparejamiento"
+        ORDERING = "REQ_ORDER", "Lista de Ordenación"
 
     assessment = models.ForeignKey(Assessment, on_delete=models.CASCADE, related_name="questions")
     section_label = models.CharField(max_length=100, blank=True, null=True, verbose_name="Cabecera de Sección")
     
     # Ejes del Santo Grial
-    source_type = models.CharField(max_length=10, choices=SourceType.choices, default=SourceType.DIRECT)
-    interaction_type = models.CharField(max_length=10, choices=InteractionType.choices, default=InteractionType.PRODUCTION)
-    response_mode = models.CharField(max_length=10, choices=ResponseMode.choices, default=ResponseMode.DUAL)
+    source_type = models.CharField(max_length=50, choices=SourceType.choices, default=SourceType.DIRECT)
+    interaction_type = models.CharField(max_length=50, choices=InteractionType.choices, default=InteractionType.PRODUCTION)
+    response_mode = models.CharField(max_length=50, choices=ResponseMode.choices, default=ResponseMode.DUAL)
     
     question_text = models.TextField()
     model_answer = models.TextField()

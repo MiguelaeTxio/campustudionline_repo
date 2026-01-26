@@ -1460,3 +1460,11 @@ Objetivos de la sesión:
 *  **Session:** Refactorización de Plantilla de Idiomas y Widgets Multimedia (UGR Standard)
 *  **Description:** Implementación de la nueva lógica de renderizado en `take_assessment_languages.html` basada en la matriz S-Q-R (Source-Interaction-Response). Integración de widgets multimedia (Cassette) y lógica de escritura dual. Desarrollo del parser para Cloze Engine. Carga de documentos maestros del sistema de evaluación.
 
+
+# 2026-01-25
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+## CSO # --SYSTEM -->
+*  **Session:** Implementación de Lógica de Emparejamiento y Ordenación
+*  **Description:** Ampliación del modelo de datos con tipos de interacción QT_MATCH y QT_ORDER, implementación de lógica de parsing en tasks.py, desarrollo de widgets específicos y adición de controles de parada en el reproductor de audio según la normativa UGR.
+

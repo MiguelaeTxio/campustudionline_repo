@@ -1,23 +1,71 @@
-# Emulador UGR: Estrategia de Idiomas (Modelo ACLES)
+# /home/MiguelAeTxio/PROJECTS/CampuStudiOnline/core/services/assessment_strategies/languages_strategy.py
+import json
+
+def get_language_config(subject_name):
+    """Determina el idioma objetivo y sus etiquetas localizadas."""
+    name = subject_name.upper()
+    if "CHINO" in name or "CHINESE" in name or "中文" in name:
+        return {"lang": "CHINESE", "labels": ["阅读", "阅读: 填空", "语法", "语法: 填空", "句型转换", "听力", "听力: 填空", "写作", "口语"]}
+    if "FRANC" in name or "FRENCH" in name:
+        return {"lang": "FRENCH", "labels": ["Compréhension Écrite", "Texte à trous", "Grammaire", "Cloze ouvert", "Transformations", "Compréhension Orale", "Dictée", "Production Écrite", "Production Orale"]}
+    # Default: Inglés / Castellano (Modelo UGR)
+    return {"lang": "TARGET_LANGUAGE", "labels": ["Reading", "Reading: Gapped", "Use of English", "Open Cloze", "Key Word Transformation", "Listening", "Listening: Completion", "Writing", "Speaking"]}
+
 def generate_languages_stimuli_prompt(content_text: str, subject_name: str) -> str:
-    return f"Actúa como Examinador UGR para '{subject_name}'. Genera Reading (350 palabras) y Listening Transcript. JSON: detected_language, cefr_level, reading_stimulus, listening_transcript."
+    cfg = get_language_config(subject_name)
+    return f"""Actúa como un Examinador del Centro de Lenguas Modernas (CLM) de la UGR.
+OBJETIVO: Generar estímulos para un examen de {cfg['lang']}.
+INSTRUCCIONES CRÍTICAS:
+1. El 'reading_stimulus' y el 'listening_transcript' DEBEN estar escritos íntegramente en {cfg['lang']}.
+2. Está TERMINANTEMENTE PROHIBIDO usar castellano o inglés en el contenido de los textos.
+3. El Reading debe tener unas 350-400 palabras de nivel académico.
+
+SALIDA JSON ÚNICAMENTE:
+{{
+  "detected_language": "{cfg['lang']}",
+  "cefr_level": "B1",
+  "reading_stimulus": "Texto en {cfg['lang']}...",
+  "listening_transcript": "Transcripción en {cfg['lang']}..."
+}}"""
 
 def generate_languages_exam_prompt(reading_text: str, listening_transcript: str, cefr_level: str = "B1") -> str:
-    return f"Tribunal UGR Nivel {cefr_level}. Crea examen de 9 preguntas siguiendo el Master Plan (Cloze, Test, Prod). JSON: questions [question_text, source_type, interaction_type, response_mode, options, model_answer]."
+    return f"""Eres un Tribunal de Acreditación Lingüística ACLES/UGR.
+Crea un examen basado en el Reading y Listening proporcionados.
+NIVEL: {cefr_level}.
+
+REGLAS DE ORO:
+1. Idioma: Todo el contenido (enunciados, opciones, respuestas) DEBE estar en el idioma del examen.
+2. Contrato Cloze: Para preguntas tipo 'QT_CLZ_OPT' o 'QT_CLZ_OPN', DEBES insertar los huecos en el 'question_text' usando corchetes.
+   Ejemplo: "Hoy [hace/está] un buen día" o "Yo [tengo] hambre".
+3. No incluyas letras de opción (a, b, c) en las cadenas de texto de 'options'.
+
+JSON STRUCTURE:
+{{
+  "questions": [
+    {{
+      "question_text": "Texto con [...] si aplica",
+      "interaction_type": "QT_SEL | QT_CLZ_OPT | QT_CLZ_OPN | QT_TRF | QT_PROD",
+      "options": ["opcion1", "opcion2"],
+      "model_answer": "respuesta_exacta"
+    }}
+  ]
+}}"""
 
 def get_strategy_skeleton(content_text, subject_name, **kwargs):
+    cfg = get_language_config(subject_name)
+    lbls = cfg['labels']
     return {
         'requires_api_stimulus': True,
         'prompt_func': 'generate_languages_stimuli_prompt',
         'skeleton': [
-            {'label': 'Reading: Multiple Choice', 'source': 'SRC_TXT', 'interaction': 'QT_SEL', 'response': 'REQ_RADIO'},
-            {'label': 'Reading: Gapped Text', 'source': 'SRC_TXT', 'interaction': 'QT_CLZ_OPN', 'response': 'REQ_DROP'},
-            {'label': 'Use of English: Multiple Choice Cloze', 'source': 'SRC_DIR', 'interaction': 'QT_CLZ_OPT', 'response': 'REQ_DROP'},
-            {'label': 'Use of English: Open Cloze', 'source': 'SRC_DIR', 'interaction': 'QT_CLZ_OPN', 'response': 'REQ_INPUT'},
-            {'label': 'Use of English: Keyword Transformation', 'source': 'SRC_DIR', 'interaction': 'QT_TRF', 'response': 'REQ_INPUT'},
-            {'label': 'Listening: Multiple Choice', 'source': 'SRC_AUD', 'interaction': 'QT_SEL', 'response': 'REQ_RADIO'},
-            {'label': 'Listening: Sentence Completion', 'source': 'SRC_AUD', 'interaction': 'QT_CLZ_OPN', 'response': 'REQ_INPUT'},
-            {'label': 'Writing Expression', 'source': 'SRC_TXT', 'interaction': 'QT_PROD', 'response': 'REQ_DUAL'},
-            {'label': 'Speaking Interaction', 'source': 'SRC_AUD', 'interaction': 'QT_PROD', 'response': 'REQ_REC'}
+            {'label': lbls[0], 'source': 'SRC_TXT', 'interaction': 'QT_SEL', 'response': 'REQ_RADIO'},
+            {'label': lbls[1], 'source': 'SRC_TXT', 'interaction': 'QT_CLZ_OPN', 'response': 'REQ_DROP'},
+            {'label': lbls[2], 'source': 'SRC_DIR', 'interaction': 'QT_CLZ_OPT', 'response': 'REQ_DROP'},
+            {'label': lbls[3], 'source': 'SRC_DIR', 'interaction': 'QT_CLZ_OPN', 'response': 'REQ_INPUT'},
+            {'label': lbls[4], 'source': 'SRC_DIR', 'interaction': 'QT_TRF', 'response': 'REQ_INPUT'},
+            {'label': lbls[5], 'source': 'SRC_AUD', 'interaction': 'QT_SEL', 'response': 'REQ_RADIO'},
+            {'label': lbls[6], 'source': 'SRC_AUD', 'interaction': 'QT_CLZ_OPN', 'response': 'REQ_INPUT'},
+            {'label': lbls[7], 'source': 'SRC_TXT', 'interaction': 'QT_PROD', 'response': 'REQ_DUAL'},
+            {'label': lbls[8], 'source': 'SRC_AUD', 'interaction': 'QT_PROD', 'response': 'REQ_REC'}
         ]
     }

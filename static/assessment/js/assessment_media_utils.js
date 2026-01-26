@@ -50,6 +50,21 @@ const AssessmentMedia = {
             this._setPlayingState(btn, wave, true);
         },
 
+        
+        stop: function(questionId) {
+            if (this.currentAudio) {
+                this.currentAudio.pause();
+                this.currentAudio.currentTime = 0;
+                
+                const btn = document.getElementById(`btn_tts_${questionId}`);
+                const wave = document.getElementById(`wave_tts_${questionId}`);
+                this._setPlayingState(btn, wave, false, true);
+                
+                this.currentAudio = null;
+                this.currentBtnId = null;
+            }
+        },
+
         _setPlayingState: function(btn, wave, isPlaying, isReset=false) {
             if (!btn) return;
             if (isReset) {

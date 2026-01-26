@@ -530,7 +530,15 @@ def _parse_assessment_text(text: str) -> list:
         if not isinstance(item, dict): continue
         
         q_text = item.get('question_text', '').strip()
-        q_type = item.get('question_type', 'open_ended').strip()
+        q_type_raw = item.get('interaction_type', item.get('question_type', 'QT_PROD')).strip()
+        # Mapeo de compatibilidad AI -> Matriz S-Q-R
+        mapping = {
+            'multiple_choice': 'QT_SEL',
+            'open_ended': 'QT_PROD',
+            'essay': 'QT_PROD',
+            'cloze': 'QT_CLZ_OPT'
+        }
+        q_type = mapping.get(q_type_raw, q_type_raw)
         q_options = item.get('options', [])
         q_answer = item.get('model_answer', '')
 
@@ -554,7 +562,7 @@ def _parse_assessment_text(text: str) -> list:
         if not q_answer: item['model_answer'] = "Respuesta no disponible."
         
         # Asignación final saneada
-        item['question_type'] = q_type
+        item['interaction_type'] = q_type
         final_questions.append(item)
 
     # DEDUPLICACIÓN (Fix: Evitar preguntas repetidas en el mismo examen)
@@ -1300,10 +1308,31 @@ def generate_assessment_from_content_task(self, assessment_id):
                         for idx, q_data in enumerate(questions_data):
                             if idx < len(questions):
                                 q_obj = questions[idx]
+                                
+                                # [HITO 6] RE-SINCRONIZACIÓN DE WIDGET (Evita Desync Instrucción/Widget)
+                                q_type = q_data.get('interaction_type', q_obj.interaction_type)
+                                q_obj.interaction_type = q_type
+                                
+                                if q_type == Question.InteractionType.SELECTION:
+                                    q_obj.response_mode = Question.ResponseMode.RADIO
+                                    q_obj.options = q_data.get('options', [])
+                                elif q_type == Question.InteractionType.CLOZE_OPTIONS:
+                                    q_obj.response_mode = Question.ResponseMode.DROPDOWN
+                                    q_obj.options = q_data.get('options', [])
+                                elif q_type == Question.InteractionType.CLOZE_OPEN:
+                                    q_obj.response_mode = Question.ResponseMode.INPUT
+                                elif q_type == Question.InteractionType.TRANSFORMATION:
+                                    q_obj.response_mode = Question.ResponseMode.INPUT
+
                                 q_obj.question_text = q_data.get('question_text', q_obj.question_text)
                                 q_obj.model_answer = q_data.get('model_answer', q_obj.model_answer)
-                                if q_obj.question_type == 'multiple_choice':
-                                    q_obj.options = q_data.get('options', [])
+                                
+                                # [HITO 6] Auto-Reparación de Cloze Engine (Self-Healing)
+                                if q_obj.interaction_type in [Question.InteractionType.CLOZE_OPTIONS, Question.InteractionType.CLOZE_OPEN]:
+                                    if '[' not in q_obj.question_text:
+                                        token = f"[{'/'.join(q_obj.options)}]" if q_obj.options else f"[{q_obj.model_answer}]"
+                                        q_obj.question_text = q_obj.question_text.replace(q_obj.model_answer, token) if q_obj.model_answer in q_obj.question_text else f"{q_obj.question_text} {token}"
+                                
                                 q_obj.save()
                                 a.questions_processed = idx + 1
                                 a.save(update_fields=['questions_processed'])

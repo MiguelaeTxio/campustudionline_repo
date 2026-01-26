@@ -40,8 +40,21 @@ def process_assessment_fase_b(assessment_id):
             raise Exception(f"Fallo en estímulos: {raw_json}")
 
         stimuli_data = json.loads(gemini_service.clean_json_response(raw_json))
-        assessment.reading_stimulus = stimuli_data.get("reading_stimulus")
-        assessment.listening_transcript = stimuli_data.get("listening_transcript")
+        
+        def _extract_text(val):
+            # Caso 1: Es el objeto AttributedDict del SDK de Google
+            if hasattr(val, 'text'):
+                return val.text.strip()
+            # Caso 2: Es un diccionario con claves comunes
+            if isinstance(val, dict):
+                return val.get('text', val.get('content', val.get('body', str(val))))
+            # Caso 3: Es una lista (a veces Gemini devuelve partes)
+            if isinstance(val, list):
+                return "".join([_extract_text(p) for p in val])
+            return str(val) if val else ""
+
+        assessment.reading_stimulus = _extract_text(stimuli_data.get("reading_stimulus"))
+        assessment.listening_transcript = _extract_text(stimuli_data.get("listening_transcript"))
         
         # 3. Generación de Preguntas
         exam_prompt = generate_languages_exam_prompt(
@@ -66,6 +79,13 @@ def process_assessment_fase_b(assessment_id):
             question_obj.question_text = data["question_text"]
             question_obj.model_answer = data["model_answer"]
             question_obj.options = data.get("options", [])
+            # [HITO 6] Parsing Estructural para Match/Order
+            if question_obj.interaction_type in ['QT_MATCH', 'QT_ORDER'] and not question_obj.options:
+                # Si Gemini no devuelve opciones, intentamos inferir o loguear error
+                # Para MATCH se espera lista de pares o diccionario
+                assessment.add_log_event(f"Advertencia: {question_obj.interaction_type} sin opciones en Q{question_obj.pk}", "WARNING")
+            
+
             
             # [HITO 6] Auto-Reparación de Cloze Engine (Self-Healing)
             # Si es tipo Cloze y no detectamos corchetes, inyectamos el token formateado.

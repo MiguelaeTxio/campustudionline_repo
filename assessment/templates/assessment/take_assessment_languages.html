@@ -59,7 +59,7 @@
                             {% if question.requires_audio and assessment.generated_audio %}
                                 <div class="mb-4 d-flex align-items-center p-3 bg-light rounded-3">
                                      <span class="me-3 fw-bold text-muted"><i class="fas fa-headphones"></i> Listen:</span>
-                                     <button type="button" class="btn btn-outline-primary btn-media-45 shadow-sm" id="btn_tts_{{ question.pk }}" onclick="AssessmentMedia.player.toggle('{{ assessment.generated_audio.url }}', '{{ question.pk }}')"><i class="fas fa-play"></i></button> 
+                                     <button type="button" class="btn btn-outline-primary btn-media-45 shadow-sm" id="btn_tts_{{ question.pk }}" onclick="AssessmentMedia.player.toggle('{{ assessment.generated_audio.url }}', '{{ question.pk }}')"><i class="fas fa-play"></i></button> <button type="button" class="btn btn-outline-danger btn-media-45 shadow-sm ms-2" onclick="AssessmentMedia.player.stop('{{ question.pk }}')"><i class="fas fa-stop"></i></button> 
                                      <div class="audio-wave d-none ms-3" id="wave_tts_{{ question.pk }}"><span></span><span></span><span></span><span></span><span></span></div>
                                 </div>
                             {% endif %}
@@ -89,6 +89,44 @@
                                             <input class="form-check-input me-3" type="radio" name="answer_q_{{ question.pk }}" value="{{ option }}" required>
                                             {{ option }}
                                         </label>
+                                    {% endfor %}
+                                </div>
+
+                            
+                            {# CASO E: Emparejamiento (Matching) #}
+                            {% elif question.response_mode == "REQ_MATCH" %}
+                                <div class="table-responsive mb-4">
+                                    <table class="table table-borderless table-hover align-middle">
+                                        <thead class="table-light"><tr><th scope="col" class="w-50">Elemento</th><th scope="col">Asociar con...</th></tr></thead>
+                                        <tbody>
+                                            {% for item in question.options %}
+                                            <tr>
+                                                {# Asumimos que options es una lista de dicts o strings. Si es string, lo mostramos #}
+                                                <td class="p-3 bg-white border rounded-start">{{ item.label|default:item }}</td>
+                                                <td class="p-3 bg-light border rounded-end">
+                                                    <select name="answer_q_{{ question.pk }}_item_{{ forloop.counter0 }}" class="form-select shadow-sm" required>
+                                                        <option value="" selected disabled>Seleccione...</option>
+                                                        {# Aquí idealmente iteraríamos sobre las opciones de destino 'targets', si el modelo lo separara #}
+                                                        {# Para MVP UGR, asumimos que las opciones de match están en un campo separado o usamos lógica simple #}
+                                                        {% for opt in question.options %}<option value="{{ opt.value|default:opt }}">{{ forloop.counter }}. {{ opt.value|default:opt }}</option>{% endfor %}
+                                                    </select>
+                                                </td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                            {# CASO F: Ordenación (Ordering) #}
+                            {% elif question.response_mode == "REQ_ORDER" %}
+                                <div class="list-group list-group-flush mb-4 rounded-4 border">
+                                    {% for item in question.options %}
+                                    <div class="list-group-item p-3 d-flex align-items-center gap-3">
+                                        <div class="flex-shrink-0">
+                                            <input type="number" name="answer_q_{{ question.pk }}_order_{{ forloop.counter0 }}" class="form-control text-center fw-bold text-primary" style="width: 70px;" min="1" max="{{ question.options|length }}" placeholder="#" required>
+                                        </div>
+                                        <div class="flex-grow-1">{{ item }}</div>
+                                    </div>
                                     {% endfor %}
                                 </div>
 
