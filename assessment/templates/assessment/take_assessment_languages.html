@@ -37,7 +37,7 @@
                 {% csrf_token %}
                 <ol class="list-unstyled">
                     {% for question in questions_list %}
-                        <li class="mb-5 p-4 bg-white border rounded-4 shadow-sm">
+                        <li class="mb-5 p-4 bg-white border rounded-4 shadow-sm" id="q_{{ question.pk }}">
                             
                             {# 1. CABECERA SECCIÓN #}
                             {% if question.section_label %}
@@ -101,13 +101,10 @@
                                         <tbody>
                                             {% for item in question.options %}
                                             <tr>
-                                                {# Asumimos que options es una lista de dicts o strings. Si es string, lo mostramos #}
                                                 <td class="p-3 bg-white border rounded-start">{{ item.label|default:item }}</td>
                                                 <td class="p-3 bg-light border rounded-end">
                                                     <select name="answer_q_{{ question.pk }}_item_{{ forloop.counter0 }}" class="form-select shadow-sm" required>
                                                         <option value="" selected disabled>Seleccione...</option>
-                                                        {# Aquí idealmente iteraríamos sobre las opciones de destino 'targets', si el modelo lo separara #}
-                                                        {# Para MVP UGR, asumimos que las opciones de match están en un campo separado o usamos lógica simple #}
                                                         {% for opt in question.options %}<option value="{{ opt.value|default:opt }}">{{ forloop.counter }}. {{ opt.value|default:opt }}</option>{% endfor %}
                                                     </select>
                                                 </td>
@@ -129,6 +126,14 @@
                                     </div>
                                     {% endfor %}
                                 </div>
+                            
+                            {# CASO G: Input de Texto Simple (Transformation / Short Answer) #}
+                            {% elif question.response_mode == "REQ_INPUT" and question.interaction_type != "QT_CLZ_OPN" %}
+                                {# NOTA: QT_CLZ_OPN se renderiza arriba con el engine, aquí solo cubrimos REQ_INPUT sueltos #}
+                                <div class="form-floating mb-4">
+                                    <input type="text" name="answer_q_{{ question.pk }}" class="form-control rounded-4 shadow-sm" placeholder="Respuesta..." required>
+                                    <label>Tu respuesta...</label>
+                                </div>
 
                             {# CASO C: Escritura Dual (Writing / Ensayos) #}
                             {% elif question.response_mode == "REQ_DUAL" %}
@@ -145,7 +150,7 @@
                                 </div>
 
                             {# CASO D: Cloze (Inputs/Selects INLINE) #}
-                            {# Ya gestionados arriba por render_cloze_engine, aquí no ponemos widget extra #}
+                            {# Ya gestionados arriba por render_cloze_engine #}
                             {% endif %}
 
                         </li>

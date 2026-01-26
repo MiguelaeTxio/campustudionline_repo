@@ -1,4 +1,3 @@
-# /home/MiguelAeTxio/PROJECTS/CampuStudiOnline/core/services/assessment_strategies/languages_strategy.py
 import json
 
 def get_language_config(subject_name):
@@ -51,21 +50,91 @@ JSON STRUCTURE:
   ]
 }}"""
 
+def _build_maior_skeleton(lbls):
+    """
+    ITINERARIO MAIOR (Estándar ACLES): Alta Densidad.
+    Total: ~35-40 preguntas.
+    """
+    skeleton = []
+    
+    # Bloque 1: Comprensión Lectora (10 ítems)
+    # Tarea 1.1: Selección Múltiple (5 ítems)
+    for _ in range(5):
+        skeleton.append({'label': lbls[0], 'source': 'SRC_TXT', 'interaction': 'QT_SEL', 'response': 'REQ_RADIO'})
+    # Tarea 1.2: Emparejamiento (Simulado con Matching/Selection para simplicidad de v1)
+    for _ in range(5):
+        skeleton.append({'label': lbls[1], 'source': 'SRC_TXT', 'interaction': 'QT_MATCH', 'response': 'REQ_MATCH'})
+
+    # Bloque 2: Uso de la Lengua (15 ítems)
+    # Tarea 2.1: Cloze (10 huecos)
+    for _ in range(10):
+        skeleton.append({'label': lbls[2], 'source': 'SRC_DIR', 'interaction': 'QT_CLZ_OPT', 'response': 'REQ_DROP'})
+    # Tarea 2.2: Keyword Transformation (5 frases)
+    for _ in range(5):
+        skeleton.append({'label': lbls[4], 'source': 'SRC_DIR', 'interaction': 'QT_TRF', 'response': 'REQ_INPUT'})
+
+    # Bloque 3: Comprensión Auditiva (8 ítems)
+    for _ in range(8):
+        skeleton.append({'label': lbls[5], 'source': 'SRC_AUD', 'interaction': 'QT_SEL', 'response': 'REQ_RADIO'})
+
+    # Bloque 4: Expresión Escrita (2 ítems)
+    skeleton.append({'label': lbls[7], 'source': 'SRC_TXT', 'interaction': 'QT_PROD', 'response': 'REQ_DUAL'}) # Carta
+    skeleton.append({'label': lbls[7], 'source': 'SRC_TXT', 'interaction': 'QT_PROD', 'response': 'REQ_DUAL'}) # Ensayo
+
+    # Bloque 5: Expresión Oral (1 ítem)
+    skeleton.append({'label': lbls[8], 'source': 'SRC_AUD', 'interaction': 'QT_PROD', 'response': 'REQ_REC'})
+    
+    return skeleton
+
+def _build_minor_skeleton(lbls):
+    """
+    ITINERARIO MINOR (Syllabus Based): Densidad Media.
+    Total: ~17 ítems.
+    """
+    skeleton = []
+    
+    # Bloque 1: Comprensión y Gramática (15 ítems)
+    for _ in range(5): # Reading
+        skeleton.append({'label': lbls[0], 'source': 'SRC_TXT', 'interaction': 'QT_SEL', 'response': 'REQ_RADIO'})
+    for _ in range(5): # Ordenación (simulada con Cloze Open para MVP)
+        skeleton.append({'label': lbls[3], 'source': 'SRC_DIR', 'interaction': 'QT_CLZ_OPN', 'response': 'REQ_INPUT'})
+    for _ in range(5): # Vocabulario exacto
+        skeleton.append({'label': lbls[3], 'source': 'SRC_DIR', 'interaction': 'QT_CLZ_OPN', 'response': 'REQ_INPUT'})
+
+    # Bloque 2: Producción (2 ítems)
+    skeleton.append({'label': lbls[7], 'source': 'SRC_DIR', 'interaction': 'QT_PROD', 'response': 'REQ_DUAL'})
+    skeleton.append({'label': lbls[8], 'source': 'SRC_DIR', 'interaction': 'QT_PROD', 'response': 'REQ_DUAL'}) # Caligrafía/Oral simple
+
+    return skeleton
+
 def get_strategy_skeleton(content_text, subject_name, **kwargs):
+    """
+    Factory method para obtener la estructura del examen.
+    [HITO 6] Ahora soporta itinerarios MAIOR/MINOR.
+    """
     cfg = get_language_config(subject_name)
     lbls = cfg['labels']
+    
+    # Detección de itinerario (si se pasa en kwargs o por nombre)
+    itinerary = kwargs.get('itinerary', None)
+    
+    # Fallback de detección por nombre si no viene explícito
+    if not itinerary:
+        name_upper = subject_name.upper()
+        if "MAIOR" in name_upper or "ESPECIALIDAD" in name_upper:
+            itinerary = "MAIOR"
+        elif "MINOR" in name_upper or "SEGUNDA LENGUA" in name_upper:
+            itinerary = "MINOR"
+        else:
+            itinerary = "MAIOR" # Default UGR
+
+    if itinerary == "MINOR":
+        skel = _build_minor_skeleton(lbls)
+    else:
+        skel = _build_maior_skeleton(lbls)
+
     return {
         'requires_api_stimulus': True,
         'prompt_func': 'generate_languages_stimuli_prompt',
-        'skeleton': [
-            {'label': lbls[0], 'source': 'SRC_TXT', 'interaction': 'QT_SEL', 'response': 'REQ_RADIO'},
-            {'label': lbls[1], 'source': 'SRC_TXT', 'interaction': 'QT_CLZ_OPN', 'response': 'REQ_DROP'},
-            {'label': lbls[2], 'source': 'SRC_DIR', 'interaction': 'QT_CLZ_OPT', 'response': 'REQ_DROP'},
-            {'label': lbls[3], 'source': 'SRC_DIR', 'interaction': 'QT_CLZ_OPN', 'response': 'REQ_INPUT'},
-            {'label': lbls[4], 'source': 'SRC_DIR', 'interaction': 'QT_TRF', 'response': 'REQ_INPUT'},
-            {'label': lbls[5], 'source': 'SRC_AUD', 'interaction': 'QT_SEL', 'response': 'REQ_RADIO'},
-            {'label': lbls[6], 'source': 'SRC_AUD', 'interaction': 'QT_CLZ_OPN', 'response': 'REQ_INPUT'},
-            {'label': lbls[7], 'source': 'SRC_TXT', 'interaction': 'QT_PROD', 'response': 'REQ_DUAL'},
-            {'label': lbls[8], 'source': 'SRC_AUD', 'interaction': 'QT_PROD', 'response': 'REQ_REC'}
-        ]
+        'skeleton': skel
     }

@@ -9,28 +9,20 @@ Al iniciar cualquier sesión de trabajo sobre el sistema de evaluaciones, es **I
 
 ---
 
-### HOJA DE RUTA PARA LA SIGUIENTE SESIÓN (IMPLEMENTACIÓN DEL ESTÁNDAR UGR)
+### HOJA DE RUTA PARA LA SIGUIENTE SESIÓN (DESPLIEGUE DE INTERFACES UGR)
 
-1.  **Tarea 1 (Arquitectura): Implementar el "Strategy Factory Pattern"**
-    *   **Objetivo:** Eliminar la llamada hardcodeada a `languages_strategy.py` y hacer que el sistema sea verdaderamente polimórfico.
-    *   **Acción:**
-        *   Crear el archivo `core/services/assessment_strategies/factory.py`.
-        *   Dentro de la factory, crear un diccionario que mapee cada `archetype` (ej: `"CEFR_LANGUAGES"`) a su módulo de estrategia correspondiente.
-        *   Modificar `orchestrator/tasks.py` para que, en lugar de importar `languages_strategy`, importe la `factory`. La tarea llamará a `factory.get_strategy(assessment.archetype)` para obtener dinámicamente el módulo correcto.
+1.  **Tarea 1 (Frontend Ciencias): Implementación de `take_assessment_sciences.html`**
+    *   **Objetivo:** Soporte nativo para notación matemática (LaTeX/MathJax) en el arquetipo `LOGIC_AND_TECH`.
+    *   **Acción:** Crear la plantilla específica. Integrar librería MathJax en el bloque `extra_js`. Asegurar renderizado correcto de fórmulas en enunciados y opciones.
 
-2.  **Tarea 2 (Modelo de Datos): Especializar el Itinerario Lingüístico**
-    *   **Objetivo:** Permitir que la base de datos distinga entre exámenes de lenguas "Maior" y "Minor".
-    *   **Acción:**
-        *   En `assessment/models.py`, añadir al modelo `Assessment` el campo: `language_itinerary = models.CharField(max_length=10, choices=[('MAIOR', 'Maior'), ('MINOR', 'Minor')], null=True, blank=True)`.
-        *   Generar y aplicar la migración de base de datos correspondiente.
+2.  **Tarea 2 (Frontend Derecho): Implementación de `take_assessment_legal.html`**
+    *   **Objetivo:** Interfaz de "Pantalla Dividida" (Split View) para el arquetipo `SOCIO_LEGAL`.
+    *   **Acción:** Crear la plantilla específica. Implementar layout CSS grid/flex donde el "Supuesto de Hecho" (Reading Stimulus) permanezca fijo a la izquierda (o arriba en móvil) mientras se responde a las preguntas.
 
-3.  **Tarea 3 (Lógica de Clasificación Lingüística):**
-    *   **Objetivo:** Automatizar la detección del itinerario "Maior" o "Minor".
-    *   **Acción:**
-        *   En `orchestrator/tasks.py`, dentro de `generate_assessment_from_content_task`, justo después de obtener el `subject_name`, implementar una lógica que analice el nombre y determine si es "Maior" o "Minor", guardando el resultado en el nuevo campo `assessment.language_itinerary`.
+3.  **Tarea 3 (Frontend Salud): Implementación de `take_assessment_health.html`**
+    *   **Objetivo:** Interfaz tipo ECOE (Estaciones Clínicas) para el arquetipo `HEALTH_SCIENCES`.
+    *   **Acción:** Crear plantilla específica. Optimizar el contenedor de "Estímulo" para mostrar imágenes médicas (Radiografías/ECG) con opción de zoom/lightbox.
 
-4.  **Tarea 4 (Refactorización de la Estrategia de Idiomas):**
-    *   **Objetivo:** Implementar los esqueletos de alta densidad definidos en el documento de arquetipos.
-    *   **Acción:**
-        *   En `languages_strategy.py`, la función `get_strategy_skeleton` se convertirá en un despachador que leerá el `language_itinerary` del assessment.
-        *   Crear dos funciones privadas: `_build_maior_skeleton()` y `_build_minor_skeleton()`, cada una devolviendo la estructura de bloques y la densidad de ítems especificada en `CAMPUSTUDIONLINE_ASSESSMENT_ARCHETYPES_SPEC.md`.
+4.  **Tarea 4 (Backend Views): Refactorización de Contexto de Vistas**
+    *   **Objetivo:** Inyectar datos específicos requeridos por las nuevas plantillas.
+    *   **Acción:** Revisar `assessment/views.py` (función `take_assessment`). Asegurar que el contexto pasado a la plantilla incluya configuraciones específicas (ej: flags para activar MathJax) según el `assessment.archetype`.

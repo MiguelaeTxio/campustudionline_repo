@@ -409,6 +409,7 @@
 ./assessment/migrations/0016_assessment_target_segment_useranswer_audio_file_and_more.py
 ./assessment/migrations/0014_assessment_event_log.py
 ./assessment/migrations/0029_alter_question_interaction_type_and_more.py
+./assessment/migrations/0031_assessment_language_itinerary.py
 ./assessment/migrations/0020_alter_assessment_archetype_and_more.py
 ./assessment/migrations/0017_question_options.py
 ./assessment/migrations/0001_initial.py
@@ -472,6 +473,7 @@
 ./core/context_processors.py
 ./core/services/assessment_strategies/legal_strategy.py
 ./core/services/assessment_strategies/health_strategy.py
+./core/services/assessment_strategies/factory.py
 ./core/services/assessment_strategies/classifier.py
 ./core/services/assessment_strategies/__init__.py
 ./core/services/assessment_strategies/languages_strategy.py

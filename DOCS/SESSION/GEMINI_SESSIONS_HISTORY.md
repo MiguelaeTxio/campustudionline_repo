@@ -1468,3 +1468,11 @@ Objetivos de la sesión:
 *  **Session:** Implementación de Lógica de Emparejamiento y Ordenación
 *  **Description:** Ampliación del modelo de datos con tipos de interacción QT_MATCH y QT_ORDER, implementación de lógica de parsing en tasks.py, desarrollo de widgets específicos y adición de controles de parada en el reproductor de audio según la normativa UGR.
 
+
+# 2026-01-26
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+## CAMA
+*  **Session:** Implementación de Strategy Factory y Arquetipos Lingüísticos UGR
+*  **Description:** Implementación del patrón Strategy Factory para la gestión polimórfica de evaluaciones. Modificación del modelo Assessment para soportar itinerarios Maior/Minor. Integración de lógica de clasificación automática de idiomas y refactorización de esqueletos de generación según especificación UGR.
+

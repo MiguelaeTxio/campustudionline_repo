@@ -9,6 +9,9 @@ class Assessment(models.Model):
     def is_minor_language(self):
         """Check if language is Minor via strategy. / Comprueba si es lengua Minor via estrategia."""
         if self.archetype == self.Archetype.LANGUAGES:
+            # [HITO 6] UGR: Prioridad al itinerario explícito si existe
+            if self.language_itinerary:
+                return self.language_itinerary == "MINOR"
             try:
                 from core.services.assessment_strategies.languages_strategy import is_minor_language
                 return is_minor_language(self.content.title)
@@ -42,11 +45,21 @@ class Assessment(models.Model):
         CANCELLED = "CANCELLED", "Cancelada por Administrador"
         USER_CANCELLED = "USER_CANCELLED", "Cancelado por el Usuario"
 
+    # [HITO 6] UGR: Itinerarios Lingüísticos
+    ITINERARY_CHOICES = [
+        ('MAIOR', 'Maior (Especialidad / C1)'),
+        ('MINOR', 'Minor (Segunda Lengua / A1-B2)'),
+    ]
+
     content_copy = models.ForeignKey("contents.ContentCopy", on_delete=models.CASCADE, related_name="assessments")
     content = models.ForeignKey("contents.ContentMaterial", on_delete=models.CASCADE, related_name="assessments", editable=False)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="assessments")
     status = models.CharField(max_length=50, choices=AssessmentStatus.choices, default=AssessmentStatus.PENDING)
     archetype = models.CharField(max_length=20, choices=Archetype.choices, default=Archetype.HUMANITIES, db_index=True)
+    
+    # [HITO 6] Nuevo Campo para Itinerario
+    language_itinerary = models.CharField(max_length=10, choices=ITINERARY_CHOICES, null=True, blank=True, verbose_name="Itinerario Lingüístico")
+    
     prompt_data = models.JSONField(default=dict, blank=True)
     selection_range = models.JSONField(default=dict, blank=True, null=True)
     reading_stimulus = models.TextField(blank=True, null=True)

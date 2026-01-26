@@ -38,10 +38,13 @@ from core.services.gemini_service import generate_text_content, clean_json_respo
 from core.services.gemini_schemas import ASSESSMENT_CORRECTION_SCHEMA
 # [HITO 6] ESTRATEGIAS SEGREGADAS
 from core.services.assessment_strategies.classifier import generate_classifier_prompt
-from core.services.assessment_strategies.legal_strategy import generate_legal_prompt
-from core.services.assessment_strategies.humanities_strategy import generate_humanities_prompt
+# [REFACTOR] Uso de Factory en lugar de imports directos
+from core.services.assessment_strategies.factory import AssessmentStrategyFactory
 from core.services.assessment_strategies.languages_strategy import generate_languages_stimuli_prompt, generate_languages_exam_prompt
 from core.services.assessment_strategies.sciences_strategy import generate_sciences_prompt
+from core.services.assessment_strategies.humanities_strategy import generate_humanities_prompt
+from core.services.assessment_strategies.legal_strategy import generate_legal_prompt
+
 
 from core.services.prompt_generators import (
     generate_course_metadata_prompt,
@@ -429,27 +432,22 @@ def _create_assessment_skeleton(assessment):
     FASE A (Determinista): Crea los registros de Question en la BD.
     Delega la definición estructural a la estrategia correspondiente.
     """
-    from core.services.assessment_strategies import sciences_strategy, humanities_strategy, health_strategy, languages_strategy, legal_strategy
     from assessment.models import Question
     
-    strategy_map = {
-        "LOGIC_AND_TECH": sciences_strategy,
-        "CEFR_LANGUAGES": languages_strategy,
-        "SOCIO_LEGAL": legal_strategy,
-        "HEALTH_SCIENCES": health_strategy,
-        "HUMANITIES_ARTS": humanities_strategy
-    }
-    
     subject_name = assessment.content_copy.original_content.title
-    strategy_mod = strategy_map.get(assessment.archetype, humanities_strategy)
+    
+    # [REFACTOR] Uso de Factory
+    strategy_mod = AssessmentStrategyFactory.get_strategy(assessment.archetype)
     
     # Obtener el esqueleto desde la estrategia
-    # (Pasamos el contenido aunque para la Fase A no siempre sea necesario)
-    skeleton_data = strategy_mod.get_strategy_skeleton("", subject_name)
+    # [HITO 6] Pasamos el itinerario si existe
+    itinerary = assessment.language_itinerary if hasattr(assessment, 'language_itinerary') else None
+    
+    skeleton_data = strategy_mod.get_strategy_skeleton("", subject_name, itinerary=itinerary)
     questions_to_create = skeleton_data.get('skeleton', [])
     
     if not questions_to_create:
-        # Fallback de seguridad por si una estrategia no devuelve esqueleto
+        # Fallback de seguridad
         questions_to_create = [{'label': 'Evaluación General', 'type': 'open_ended', 'widget': 'TEXT_AREA'}]
 
     with transaction.atomic():
@@ -1199,6 +1197,17 @@ def generate_assessment_from_content_task(self, assessment_id):
                         
                         subject_type = found
                         
+                        # [HITO 6] Detección Automática de Itinerario (MAIOR/MINOR)
+                        itinerary = None
+                        if subject_type == "CEFR_LANGUAGES":
+                            name_upper = subject_name.upper()
+                            if "MAIOR" in name_upper or "ESPECIALIDAD" in name_upper:
+                                itinerary = "MAIOR"
+                            elif "MINOR" in name_upper or "SEGUNDA LENGUA" in name_upper:
+                                itinerary = "MINOR"
+                            else:
+                                itinerary = "MAIOR" # Default UGR
+
                         # [V2] PERSISTENCIA INMEDIATA
                         with transaction.atomic():
                             aa = Assessment.objects.select_for_update().get(pk=assessment_id)
@@ -1210,16 +1219,20 @@ def generate_assessment_from_content_task(self, assessment_id):
                             else:
                                 aa.archetype = Assessment.Archetype.HUMANITIES
                             
+                            if itinerary:
+                                aa.language_itinerary = itinerary
+
                             if aa.prompt_data is None: aa.prompt_data = {}
                             aa.prompt_data['tribunal_type'] = found
-                            aa.save(update_fields=['archetype', 'prompt_data'])
+                            aa.save(update_fields=['archetype', 'prompt_data', 'language_itinerary'])
 
-                        log_assessment_task_event(assessment_id, f"Arquetipo Detectado y Guardado: {subject_type}")
+                        log_assessment_task_event(assessment_id, f"Arquetipo Detectado: {subject_type} | Itinerario: {itinerary or 'N/A'}")
                         step = 1
                     else:
                         raise ResourceExhausted(resp)
 
                 # --- PASO 1: PREPARACIÓN DE FUENTE (Bifurcación Radical) ---
+
                 elif step == 1:
                     selection = assessment.selection_range
                     filtered_content = filter_content_by_selection(full_content, selection) if selection else full_content
@@ -1227,20 +1240,13 @@ def generate_assessment_from_content_task(self, assessment_id):
                     db_reading = ""
                     db_listening = ""
                     
-                    # [HITO 6 - FASE A] Mapeo de Estrategia a Función de Esqueleto
-                    from core.services.assessment_strategies import sciences_strategy, humanities_strategy, health_strategy, languages_strategy, legal_strategy
-                    strategy_map = {
-                        "LOGIC_AND_TECH": sciences_strategy,
-                        "CEFR_LANGUAGES": languages_strategy,
-                        "SOCIO_LEGAL": legal_strategy,
-                        "HEALTH_SCIENCES": health_strategy,
-                        "HUMANITIES_ARTS": humanities_strategy
-                    }
-                    
-                    strategy_mod = strategy_map.get(subject_type, humanities_strategy)
+                    # [HITO 6 - FASE A] Uso de Factory
+                    strategy_mod = AssessmentStrategyFactory.get_strategy(subject_type)
                     log_assessment_task_event(assessment_id, f"Fase A: Preparando esqueleto con {subject_type}")
                     
-                    skeleton = strategy_mod.get_strategy_skeleton(filtered_content, subject_name)
+                    # Pasamos itinerario si ya lo tenemos en DB
+                    itinerary = assessment.language_itinerary
+                    skeleton = strategy_mod.get_strategy_skeleton(filtered_content, subject_name, itinerary=itinerary)
                     
                     if skeleton.get('requires_api_stimulus'):
                         log_assessment_task_event(assessment_id, "Fase A: Generando estímulos vía API (IDIOMAS)")
