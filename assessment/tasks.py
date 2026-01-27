@@ -7,7 +7,7 @@ from django.core.files.base import ContentFile
 from .models import Assessment, Question
 from orchestrator.models import ApiKey
 from core.services import gemini_service
-from core.services.assessment_strategies.languages_strategy import generate_languages_stimuli_prompt, generate_languages_exam_prompt
+from core.services.assessment_strategies.languages_strategy import generate_languages_stimuli_prompt, generate_languages_item_prompt
 
 logger = logging.getLogger(__name__)
 
@@ -57,7 +57,7 @@ def process_assessment_fase_b(assessment_id):
         assessment.listening_transcript = _extract_text(stimuli_data.get("listening_transcript"))
         
         # 3. Generación de Preguntas
-        exam_prompt = generate_languages_exam_prompt(
+        exam_prompt = generate_languages_item_prompt(
             assessment.reading_stimulus,
             assessment.listening_transcript,
             stimuli_data.get("cefr_level", "B1")

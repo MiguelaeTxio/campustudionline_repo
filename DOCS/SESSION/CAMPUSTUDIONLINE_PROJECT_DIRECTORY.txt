@@ -1,3 +1,4 @@
+./temp_patch_tasks.py
 ./requirements.in
 ./academic_directory/urls.py
 ./academic_directory/templates/academic_directory/academic_level_detail.html
@@ -575,6 +576,7 @@
 ./users/management/commands/setup_groups.py
 ./users/management/commands/generate_referral_codes.py
 ./users/management/commands/find_redundant_containers.py
+./ERROR_FILE.txt
 ./DOCS/DOCUMENTATION/ARCHITECTURE_AND_DATA_MODEL_REFERENCE.md
 ./DOCS/DOCUMENTATION/DEPENDENCY_GUIDE.md
 ./DOCS/SESSION/CAMPUSTUDIONLINE_SCHEDULE_INFRA_BACKEND_SESSION_SUMMARY.md
@@ -842,6 +844,7 @@
 ./public_seo_previews/material_27_30-dias-de-python.html
 ./public_seo_previews/material_5.html
 ./public_seo_previews/material_14_curso-de-selenium-qa.html
+./temp_patch_strategy.py
 ./commands_models.txt
 ./schedule/urls.py
 ./schedule/templates/schedule/event_confirm_delete.html

@@ -42,7 +42,7 @@ def render_markdown(text):
 
 
 @register.simple_tag
-def render_cloze_engine(text, response_mode, question_id):
+def render_cloze_engine(text, response_mode, question_id, external_options=None):
     """
     [HITO 6] Motor de renderizado para preguntas Cloze (Huecos).
     Transforma patrones [opcion1/opcion2] o [...] en widgets HTML.
@@ -58,11 +58,24 @@ def render_cloze_engine(text, response_mode, question_id):
         
         # Modo DROPDOWN (Select)
         if response_mode == 'REQ_DROP':
-            options = content.split('/')
+            # Estrategia Híbrida:
+            # 1. Si hay barras, es un Cloze Inline [op1/op2]
+            if '/' in content:
+                options = content.split('/')
+            # 2. Si no, usamos las opciones externas (si existen)
+            elif external_options and isinstance(external_options, list):
+                options = external_options
+            else:
+                # Fallback final: usar el contenido tal cual (ej: [...])
+                options = [content]
+
             options_html = f'<option value="" selected disabled>---</option>'
             for opt in options:
-                opt = opt.strip()
+                opt = str(opt).strip()
+                # Limpieza extra de comillas si se colaron
+                opt = opt.replace('"', '&quot;')
                 options_html += f'<option value="{opt}">{opt}</option>'
+            
             # Usamos un nombre de array para capturar múltiples respuestas: answer_q_ID_cloze[]
             return f'<select name="answer_q_{question_id}_cloze[]" class="form-select d-inline-block w-auto mx-1 border-primary bg-light fw-bold text-primary" style="min-width: 120px;">{options_html}</select>'
         
@@ -71,7 +84,6 @@ def render_cloze_engine(text, response_mode, question_id):
             # Ignoramos el contenido del corchete visualmente y mostramos input vacío
             return f'<input type="text" name="answer_q_{question_id}_cloze[]" class="form-control d-inline-block w-auto mx-1 border-primary bg-light text-center fw-bold" style="min-width: 140px; max-width: 200px;" placeholder="...">'
         
-        return f"[{content}]" # Fallback si el modo no coincide
 
     # Regex para capturar contenido entre corchetes: [algo]
     pattern = r'\[(.*?)\]'

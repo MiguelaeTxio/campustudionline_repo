@@ -40,7 +40,7 @@ from core.services.gemini_schemas import ASSESSMENT_CORRECTION_SCHEMA
 from core.services.assessment_strategies.classifier import generate_classifier_prompt
 # [REFACTOR] Uso de Factory en lugar de imports directos
 from core.services.assessment_strategies.factory import AssessmentStrategyFactory
-from core.services.assessment_strategies.languages_strategy import generate_languages_stimuli_prompt, generate_languages_exam_prompt
+from core.services.assessment_strategies.languages_strategy import generate_languages_stimuli_prompt
 from core.services.assessment_strategies.sciences_strategy import generate_sciences_prompt
 from core.services.assessment_strategies.humanities_strategy import generate_humanities_prompt
 from core.services.assessment_strategies.legal_strategy import generate_legal_prompt
@@ -556,7 +556,24 @@ def _parse_assessment_text(text: str) -> list:
             item['options'] = clean_options
 
         # Saneamiento general
-        if len(q_text) > 60000: item['question_text'] = q_text[:60000] + "..."
+        # [HITO 6] SANITIZATION (Regex Cleaning)
+        # 1. Remove numbering (e.g., "1.", "1)", "a)") at start
+        # [HITO 6] SANITIZATION (Regex Cleaning - ENHANCED)
+        # 1. Remove numbering (e.g., "1.", "1)", "a)", "1.-") at start
+        q_text = re.sub(r'^\s*(\d+|[a-zA-Z])[\.\)\-]+\s*', '', q_text)
+        # 2. Remove technical tags and garbage (e.g., "(QT_SEL)", "[CLOZE]", "**Pregunta**")
+        q_text = re.sub(r'\s*[\(\[]\s*(QT_[A-Z_]+|CLOZE|TEST|OPEN|GAP)\s*[\)\]]\s*', '', q_text, flags=re.IGNORECASE)
+        q_text = re.sub(r'\*\*(Pregunta|Question|Item)\*\*[:\s]*', '', q_text, flags=re.IGNORECASE)
+        # 3. Clean "Instruction:" prefixes often hallucinated
+        q_text = re.sub(r'^(Instruction|Instrucción|Enunciado)[:\s]*', '', q_text, flags=re.IGNORECASE)
+        # 2. Remove technical tags (e.g., "(QT_SEL)", "[CLOZE]")
+        q_text = re.sub(r'\s*[\(\[]\s*(QT_[A-Z_]+|CLOZE|TEST|OPEN)\s*[\)\]]\s*', '', q_text, flags=re.IGNORECASE)
+        # 3. Remove legacy interaction prompts
+        q_text = re.sub(r'\[---.*?REQUIRED.*?---\]', '', q_text)
+        
+        item['question_text'] = q_text.strip()
+
+        if len(q_text) > 60000: item['question_text'] = q_text[:60000] + "..." 
         if not q_answer: item['model_answer'] = "Respuesta no disponible."
         
         # Asignación final saneada
@@ -891,7 +908,7 @@ def generate_full_course_task(self, task_id):
 
                 if not success:
                     error_str = str(response_text)
-                    is_quota = "429" in error_str or "Resource" in error_str or "Quota" in error_str
+                    is_quota = "429" in error_str or "Resource" in error_str or "Quota" in error_str or "503" in error_str or "overloaded" in error_str
                     
                     if is_quota:
                         api_key.refresh_from_db()
@@ -932,7 +949,7 @@ def generate_full_course_task(self, task_id):
                 
                 if not success:
                     error_str = str(schema_or_error)
-                    is_quota = "429" in error_str or "Resource" in error_str or "Quota" in error_str
+                    is_quota = "429" in error_str or "Resource" in error_str or "Quota" in error_str or "503" in error_str or "overloaded" in error_str
                     
                     if is_quota:
                         api_key.refresh_from_db()
@@ -1038,7 +1055,7 @@ def generate_full_course_task(self, task_id):
 
                 else:
                     error_str = str(content_or_error)
-                    is_quota = "429" in error_str or "Resource" in error_str or "Quota" in error_str
+                    is_quota = "429" in error_str or "Resource" in error_str or "Quota" in error_str or "503" in error_str or "overloaded" in error_str
                     
                     if is_quota:
                         api_key.refresh_from_db()
@@ -1279,69 +1296,49 @@ def generate_assessment_from_content_task(self, assessment_id):
                         aa.save(update_fields=['reading_stimulus', 'listening_transcript', 'status'])
                     step = 2
 
-                # --- PASO 2: GENERACIÓN DE EXAMEN (Llamadas a archivos distintos) ---
+                # --- PASO 2: GENERACIÓN DE EXAMEN (FLUJO ATÓMICO 1:1) ---
                 elif step == 2:
-                    log_assessment_task_event(assessment_id, f"PASO 2 (Generación Preguntas) - {subject_type}")
+                    log_assessment_task_event(assessment_id, f"PASO 2 (Generación Atómica) - {subject_type}")
                     
-                    prompt = ""
-                    if subject_type == "CEFR_LANGUAGES":
-                        lvl = assessment.prompt_data.get('cefr_level', 'B1')
-                        prompt = generate_languages_exam_prompt(r_text_memory, l_text_memory, cefr_level=lvl)
-                    elif subject_type == "LOGIC_AND_TECH":
-                        prompt = generate_sciences_prompt(r_text_memory, subject_name=subject_name)
-                    elif subject_type == "SOCIO_LEGAL":
-                        prompt = generate_legal_prompt(r_text_memory, subject_name=subject_name)
-                    else:
-                        # Humanidades (Cualquiera de los tribunales)
-                        prompt = generate_humanities_prompt(r_text_memory, tribunal_type=subject_type)
-                    
-                    # [HITO 6] FASE A: Crear Esqueleto
+                    # 1. Fase A: Crear el esqueleto determinista en la base de datos
                     _create_assessment_skeleton(assessment)
+                    questions = assessment.questions.all().order_by('id')
                     
-                    # [HITO 6] FASE B: Rellenar con IA
-                    success, text, _ = generate_text_content(prompt, api_key=api_key)
-                    if not success: raise ResourceExhausted(text)
-                    
-                    questions_data = _parse_assessment_text(text)
-                    if not questions_data: raise ValueError("La IA no devolvió contenido pedagógico válido.")
-                    
-                    # Sincronización de contenido con el esqueleto persistido
-                    with transaction.atomic():
-                        a = Assessment.objects.select_for_update().get(pk=assessment_id)
-                        questions = list(a.questions.all().order_by('id'))
+                    # 2. Fase B: Bucle de llamadas a la API (Una por cada pregunta)
+                    for idx, q_obj in enumerate(questions, 1):
+                        log_assessment_task_event(assessment_id, f"Generando Ítem {idx}/{len(questions)} (ID: {q_obj.id})...")
                         
-                        # Mapeo 1:1 entre lo generado y lo estructurado
-                        for idx, q_data in enumerate(questions_data):
-                            if idx < len(questions):
-                                q_obj = questions[idx]
-                                
-                                # [HITO 6] RE-SINCRONIZACIÓN DE WIDGET (Evita Desync Instrucción/Widget)
-                                q_type = q_data.get('interaction_type', q_obj.interaction_type)
-                                q_obj.interaction_type = q_type
-                                
-                                if q_type == Question.InteractionType.SELECTION:
-                                    q_obj.response_mode = Question.ResponseMode.RADIO
-                                    q_obj.options = q_data.get('options', [])
-                                elif q_type == Question.InteractionType.CLOZE_OPTIONS:
-                                    q_obj.response_mode = Question.ResponseMode.DROPDOWN
-                                    q_obj.options = q_data.get('options', [])
-                                elif q_type == Question.InteractionType.CLOZE_OPEN:
-                                    q_obj.response_mode = Question.ResponseMode.INPUT
-                                elif q_type == Question.InteractionType.TRANSFORMATION:
-                                    q_obj.response_mode = Question.ResponseMode.INPUT
+                        if subject_type == "CEFR_LANGUAGES":
+                            from core.services.assessment_strategies.languages_strategy import generate_languages_item_prompt, get_language_config
+                            cfg = get_language_config(subject_name)
+                            lvl = assessment.prompt_data.get('cefr_level', 'B1')
+                            prompt = generate_languages_item_prompt(r_text_memory, l_text_memory, lvl, cfg['lang'], q_obj)
+                        else:
+                            # Otros arquetipos aún no migrados al flujo 1:1
+                            continue
 
-                                q_obj.question_text = q_data.get('question_text', q_obj.question_text)
-                                q_obj.model_answer = q_data.get('model_answer', q_obj.model_answer)
-                                
-                                # [HITO 6] Auto-Reparación de Cloze Engine (Self-Healing)
-                                if q_obj.interaction_type in [Question.InteractionType.CLOZE_OPTIONS, Question.InteractionType.CLOZE_OPEN]:
-                                    if '[' not in q_obj.question_text:
-                                        token = f"[{'/'.join(q_obj.options)}]" if q_obj.options else f"[{q_obj.model_answer}]"
-                                        q_obj.question_text = q_obj.question_text.replace(q_obj.model_answer, token) if q_obj.model_answer in q_obj.question_text else f"{q_obj.question_text} {token}"
-                                
+                        # Llamada individual
+                        success, resp, _ = generate_text_content(prompt, api_key=api_key)
+                        
+                        if success:
+                            data_list = _parse_assessment_text(resp)
+                            if data_list and len(data_list) > 0:
+                                data = data_list[0]
+                                q_obj.question_text = data.get('question_text', q_obj.question_text)
+                                q_obj.options = data.get('options', [])
+                                q_obj.model_answer = data.get('model_answer', q_obj.model_answer)
+                                # [REPARACIÓN CLOZE] Asegurar token si la IA falla
+                                if q_obj.is_cloze and '[...]' not in q_obj.question_text:
+                                    q_obj.question_text += " [...]"
                                 q_obj.save()
-                                a.questions_processed = idx + 1
-                                a.save(update_fields=['questions_processed'])
+                                
+                                assessment.questions_processed = idx
+                                assessment.save(update_fields=['questions_processed'])
+                            
+                            time.sleep(1) # Pausa de seguridad para la cuota
+                        else:
+                            raise ResourceExhausted(f"Error en ítem {idx}: {resp}")
+
                     step = 3
 
             except ResourceExhausted as e:
@@ -1369,7 +1366,7 @@ def generate_assessment_from_content_task(self, assessment_id):
             except (AIServiceCriticalError, ValueError) as e:
                 err_str = str(e)
                 # [PAE] Intercepción de Cuota Relanzada por gemini_service
-                if "QUOTA_EXCEEDED" in err_str:
+                if "QUOTA_EXCEEDED" in err_str or "503" in err_str or "overloaded" in err_str or "UNAVAILABLE" in err_str:
                     log_assessment_task_event(assessment_id, f"CUOTA DETECTADA EN SERVICIO: {api_key.name}. Derivando a rotación.", level="WARNING")
                     api_key.refresh_from_db()
                     api_key.consecutive_failures += 1

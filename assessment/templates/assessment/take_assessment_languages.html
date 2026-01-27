@@ -49,7 +49,7 @@
                                 {{ forloop.counter }}. 
                                 {# Si es CLOZE, pasamos por el render engine. Si no, markdown normal #}
                                 {% if question.interaction_type == "QT_CLZ_OPT" or question.interaction_type == "QT_CLZ_OPN" %}
-                                    {% render_cloze_engine question.question_text question.response_mode question.pk %}
+                                    {% render_cloze_engine question.question_text question.response_mode question.pk question.options %}
                                 {% else %}
                                     {{ question.display_text|render_markdown }}
                                 {% endif %}

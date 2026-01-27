@@ -1476,3 +1476,19 @@ Objetivos de la sesión:
 *  **Session:** Implementación de Strategy Factory y Arquetipos Lingüísticos UGR
 *  **Description:** Implementación del patrón Strategy Factory para la gestión polimórfica de evaluaciones. Modificación del modelo Assessment para soportar itinerarios Maior/Minor. Integración de lógica de clasificación automática de idiomas y refactorización de esqueletos de generación según especificación UGR.
 
+
+# 2026-01-26
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+## CAMA # --SYSTEM -->
+*  **Session:** Reparación de Emergencia - Arquetipo Idiomas y Lógica de Prompts
+*  **Description:** Corrección crítica de la estrategia de idiomas: eliminación de meta-preguntas, refuerzo de la inmersión lingüística, limpieza de etiquetas técnicas en UI (Regex en orchestrator) y corrección del formato Cloze. Incluye reingeniería de prompts en languages_strategy.py.
+
+
+# 2026-01-27
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+## AAAA
+*  **Session:** Reparación de Emergencia: Fix Importación y Saneamiento de Evaluaciones
+*  **Description:** Resolución crítica del bloqueo por ImportError en assessment/tasks.py mediante stubs de compatibilidad. Implementación de reglas estrictas de inmersión en languages_strategy.py y saneamiento de regex en el orquestador para eliminar metadatos técnicos. Mejora UX en plantillas Cloze.
+

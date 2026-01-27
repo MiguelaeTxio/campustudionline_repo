@@ -4,7 +4,15 @@
 ## I. ARQUETIPO: CEFR_LANGUAGES (Centro de Lenguas Modernas)
 Este arquetipo se divide en dos itinerarios con esqueletos y lógicas distintas.
 
-### A. ITINERARIO "MAIOR" (Estándar ACLES: Inglés, Francés, Alemán, Italiano)
+### A. ITINERARIO "MAIOR" (Especialidad Filológica / Acreditación B1-C2)
+*   **Densidad Total: 36 ítems.**
+*   **Inmersión:** 100% Idioma Objetivo (Instrucciones incluidas).
+*   **Estructura:** Reading (10) + Use of English (15) + Listening (8) + Writing (2) + Speaking (1).
+
+### B. ITINERARIO "MINOR" (Idioma Moderno / Lengua C / Niveles A1-A2)
+*   **Densidad Total: 17 ítems.**
+*   **Inmersión:** Híbrida (Instrucciones en CASTELLANO).
+*   **Estructura:** Reading (5) + Grammar/Cloze (10) + Writing (2).
 *   **Bloque 1: Comprensión Lectora (10 ítems):**
     *   Tarea 1.1: Selección Múltiple (5 ítems sobre Texto A). `interaction_type: QT_SEL`.
     *   Tarea 1.2: Emparejamiento Título-Párrafo (5 ítems sobre Texto A). `interaction_type: QT_MATCH`.

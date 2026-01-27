@@ -9,22 +9,20 @@ Al iniciar cualquier sesión de trabajo sobre el sistema de evaluaciones, es **I
 
 ---
 
-### HOJA DE RUTA PARA LA SIGUIENTE SESIÓN (REPARACIÓN DE EMERGENCIA - ARQUETIPO IDIOMAS)
+### HOJA DE RUTA PARA LA SIGUIENTE SESIÓN (RECONSTRUCCIÓN DEL EMULADOR UGR)
 
-**Estado Actual:** CRÍTICO. El sistema genera preguntas "meta" sobre el examen (ej: "¿Qué es ACLES?") en lugar de sobre el texto, filtra etiquetas técnicas (`QT_SEL`) al usuario final y rompe la regla de inmersión lingüística (preguntas en inglés para texto chino).
+**Estado Actual:** INESTABLE. Se ha reparado el `ImportError` y actualizado la Ley Técnica (Inmersión Progresiva), pero la implementación técnica de la universalidad de idiomas ha fallado por errores en los scripts de parcheo (`re.error: bad escape \s`). Celery probablemente persiste en un ciclo de reinicio (Tarpit) debido a un `TypeError` en `assessment/tasks.py`.
 
-1.  **Tarea 1 (Prompt Engineering Quirúrgico): Reparación de `languages_strategy.py`**
-    *   **Objetivo:** Eliminar la "alucinación de rol".
-    *   **Acción:** Reescribir `generate_languages_exam_prompt`. Eliminar instrucciones que confunden a la IA sobre su rol ("Actúa como tribunal") y sustituirlas por instrucciones funcionales estrictas ("Genera preguntas BASADAS EXCLUSIVAMENTE en el texto proporcionado").
-    *   **Acción:** Forzar el idioma de salida de las preguntas para que coincida con el del texto (Regla de Inmersión).
+**Tarea 1: Estabilización del Entorno (Freno al Tarpit)**
+- **Acción:** Corregir manualmente la firma de la función `generate_languages_item_prompt` en `assessment/tasks.py` para que acepte el argumento `itinerary`. Esto detendrá el consumo de CPU.
+- **Validación:** Ejecutar `python manage.py shell -c "import assessment.tasks"` hasta que el resultado sea `OK`.
 
-2.  **Tarea 2 (Saneamiento de Parser): Blindaje en `orchestrator/tasks.py`**
-    *   **Objetivo:** Limpiar la "basura técnica" visual.
-    *   **Acción:** Implementar una limpieza Regex en `_parse_assessment_text` para eliminar patrones como `(QT_SEL)`, `(QT_CLZ_OPT)` o prefijos numéricos que la IA inserta en el `question_text`.
+**Tarea 2: Implementación Universal (Languages Strategy)**
+- **Acción:** Aplicar la refactorización de `languages_strategy.py` usando `PEA` (Entrega de Archivo Completo) para evitar fallos de regex.
+- **Objetivo:** Extracción dinámica del idioma objetivo y esqueletos de 17 (MINOR) y 36 (MAIOR) ítems.
 
-3.  **Tarea 3 (Lógica Cloze): Reparación de Formato de Huecos**
-    *   **Objetivo:** Que los ejercicios de rellenar huecos sean oraciones con huecos, no preguntas.
-    *   **Acción:** Modificar el prompt para exigir explícitamente el formato "Oración con token `[...]`" para los tipos `QT_CLZ_*`, penalizando las oraciones interrogativas.
+**Tarea 3: Sincronización de Itinerarios**
+- **Acción:** Refactorizar el orquestador global para que la detección del itinerario sea jerárquica y se persista antes de la generación de ítems.
 
-4.  **Tarea 4 (Validación Visual): Auditoría de Plantillas**
-    *   **Objetivo:** Asegurar que el widget de dropdown se renderiza correctamente cuando el texto contiene el token `[...]`.
+**Tarea 4: Auditoría de Resultados**
+- **Acción:** Generar una evaluación para una asignatura MINOR (ej. Chino Inicial) y otra MAIOR para verificar que la inmersión lingüística se comporta según la nueva Ley Técnica.

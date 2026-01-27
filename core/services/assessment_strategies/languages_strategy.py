@@ -1,4 +1,5 @@
 import json
+import re
 
 def get_language_config(subject_name):
     """Determina el idioma objetivo y sus etiquetas localizadas."""
@@ -27,114 +28,87 @@ SALIDA JSON ÚNICAMENTE:
   "listening_transcript": "Transcripción en {cfg['lang']}..."
 }}"""
 
-def generate_languages_exam_prompt(reading_text: str, listening_transcript: str, cefr_level: str = "B1") -> str:
-    return f"""Eres un Tribunal de Acreditación Lingüística ACLES/UGR.
-Crea un examen basado en el Reading y Listening proporcionados.
-NIVEL: {cefr_level}.
+def generate_languages_item_prompt(reading_text: str, listening_transcript: str, cefr_level: str, target_lang: str, question_obj, itinerary: str = 'MAIOR') -> str:
+    """Genera el prompt para rrellenar UN SOLO objeto Question (Flujo Atómico)."""
+    section = question_obj.section_label
+    q_type = question_obj.interaction_type
+    
+    return f"""ACT AS: Professional Language Examiner.
+TARGET ITINERARY: {itinerary} (Standard UGR/CLM)
 
-REGLAS DE ORO:
-1. Idioma: Todo el contenido (enunciados, opciones, respuestas) DEBE estar en el idioma del examen.
-2. Contrato Cloze: Para preguntas tipo 'QT_CLZ_OPT' o 'QT_CLZ_OPN', DEBES insertar los huecos en el 'question_text' usando corchetes.
-   Ejemplo: "Hoy [hace/está] un buen día" o "Yo [tengo] hambre".
-3. No incluyas letras de opción (a, b, c) en las cadenas de texto de 'options'.
+MANDATORY INSTRUCTION LANGUAGE:
+- IF ITINERARY is 'MINOR': The 'question_text' (instruction) MUST BE IN SPANISH (e.g. "Elige la opción correcta").
+- IF ITINERARY is 'MAIOR': The 'question_text' (instruction) MUST BE IN {target_lang} (e.g. "Choose the correct option").
 
-JSON STRUCTURE:
+MANDATORY CONTENT LANGUAGE:
+- All 'options', 'model_answer' and the exercise body MUST BE in {target_lang}.
+
+JSON OUTPUT FORMAT:
 {{
-  "questions": [
-    {{
-      "question_text": "Texto con [...] si aplica",
-      "interaction_type": "QT_SEL | QT_CLZ_OPT | QT_CLZ_OPN | QT_TRF | QT_PROD",
-      "options": ["opcion1", "opcion2"],
-      "model_answer": "respuesta_exacta"
-    }}
-  ]
+  "question_text": "Spanish instruction + Content",
+  "interaction_type": "{q_type}",
+  "options": ["Option1 in {target_lang}", "Option2", "Option3", "Option4"],
+  "model_answer": "Correct answer in {target_lang}"
 }}"""
 
 def _build_maior_skeleton(lbls):
-    """
-    ITINERARIO MAIOR (Estándar ACLES): Alta Densidad.
-    Total: ~35-40 preguntas.
-    """
     skeleton = []
-    
-    # Bloque 1: Comprensión Lectora (10 ítems)
-    # Tarea 1.1: Selección Múltiple (5 ítems)
     for _ in range(5):
         skeleton.append({'label': lbls[0], 'source': 'SRC_TXT', 'interaction': 'QT_SEL', 'response': 'REQ_RADIO'})
-    # Tarea 1.2: Emparejamiento (Simulado con Matching/Selection para simplicidad de v1)
     for _ in range(5):
         skeleton.append({'label': lbls[1], 'source': 'SRC_TXT', 'interaction': 'QT_MATCH', 'response': 'REQ_MATCH'})
-
-    # Bloque 2: Uso de la Lengua (15 ítems)
-    # Tarea 2.1: Cloze (10 huecos)
     for _ in range(10):
         skeleton.append({'label': lbls[2], 'source': 'SRC_DIR', 'interaction': 'QT_CLZ_OPT', 'response': 'REQ_DROP'})
-    # Tarea 2.2: Keyword Transformation (5 frases)
     for _ in range(5):
         skeleton.append({'label': lbls[4], 'source': 'SRC_DIR', 'interaction': 'QT_TRF', 'response': 'REQ_INPUT'})
-
-    # Bloque 3: Comprensión Auditiva (8 ítems)
     for _ in range(8):
         skeleton.append({'label': lbls[5], 'source': 'SRC_AUD', 'interaction': 'QT_SEL', 'response': 'REQ_RADIO'})
-
-    # Bloque 4: Expresión Escrita (2 ítems)
-    skeleton.append({'label': lbls[7], 'source': 'SRC_TXT', 'interaction': 'QT_PROD', 'response': 'REQ_DUAL'}) # Carta
-    skeleton.append({'label': lbls[7], 'source': 'SRC_TXT', 'interaction': 'QT_PROD', 'response': 'REQ_DUAL'}) # Ensayo
-
-    # Bloque 5: Expresión Oral (1 ítem)
+    skeleton.append({'label': lbls[7], 'source': 'SRC_TXT', 'interaction': 'QT_PROD', 'response': 'REQ_DUAL'})
+    skeleton.append({'label': lbls[7], 'source': 'SRC_TXT', 'interaction': 'QT_PROD', 'response': 'REQ_DUAL'})
     skeleton.append({'label': lbls[8], 'source': 'SRC_AUD', 'interaction': 'QT_PROD', 'response': 'REQ_REC'})
-    
     return skeleton
 
 def _build_minor_skeleton(lbls):
-    """
-    ITINERARIO MINOR (Syllabus Based): Densidad Media.
-    Total: ~17 ítems.
-    """
     skeleton = []
-    
-    # Bloque 1: Comprensión y Gramática (15 ítems)
-    for _ in range(5): # Reading
+    for _ in range(5):
         skeleton.append({'label': lbls[0], 'source': 'SRC_TXT', 'interaction': 'QT_SEL', 'response': 'REQ_RADIO'})
-    for _ in range(5): # Ordenación (simulada con Cloze Open para MVP)
+    for _ in range(5):
         skeleton.append({'label': lbls[3], 'source': 'SRC_DIR', 'interaction': 'QT_CLZ_OPN', 'response': 'REQ_INPUT'})
-    for _ in range(5): # Vocabulario exacto
+    for _ in range(5):
         skeleton.append({'label': lbls[3], 'source': 'SRC_DIR', 'interaction': 'QT_CLZ_OPN', 'response': 'REQ_INPUT'})
-
-    # Bloque 2: Producción (2 ítems)
     skeleton.append({'label': lbls[7], 'source': 'SRC_DIR', 'interaction': 'QT_PROD', 'response': 'REQ_DUAL'})
-    skeleton.append({'label': lbls[8], 'source': 'SRC_DIR', 'interaction': 'QT_PROD', 'response': 'REQ_DUAL'}) # Caligrafía/Oral simple
-
+    skeleton.append({'label': lbls[8], 'source': 'SRC_DIR', 'interaction': 'QT_PROD', 'response': 'REQ_DUAL'})
     return skeleton
 
 def get_strategy_skeleton(content_text, subject_name, **kwargs):
-    """
-    Factory method para obtener la estructura del examen.
-    [HITO 6] Ahora soporta itinerarios MAIOR/MINOR.
-    """
     cfg = get_language_config(subject_name)
     lbls = cfg['labels']
-    
-    # Detección de itinerario (si se pasa en kwargs o por nombre)
     itinerary = kwargs.get('itinerary', None)
     
-    # Fallback de detección por nombre si no viene explícito
     if not itinerary:
         name_upper = subject_name.upper()
-        if "MAIOR" in name_upper or "ESPECIALIDAD" in name_upper:
-            itinerary = "MAIOR"
-        elif "MINOR" in name_upper or "SEGUNDA LENGUA" in name_upper:
+        # Detección agresiva: si contiene Minor/Mínor, es Minor.
+        if re.search(r"M[IÍ]NOR", name_upper) or "SEGUNDA LENGUA" in name_upper:
             itinerary = "MINOR"
         else:
-            itinerary = "MAIOR" # Default UGR
+            itinerary = "MAIOR"
 
     if itinerary == "MINOR":
         skel = _build_minor_skeleton(lbls)
     else:
         skel = _build_maior_skeleton(lbls)
-
     return {
         'requires_api_stimulus': True,
         'prompt_func': 'generate_languages_stimuli_prompt',
         'skeleton': skel
     }
+
+
+def generate_languages_exam_prompt(reading_text: str, listening_text: str) -> str:
+    """
+    [DEPRECATED] Función de compatibilidad para evitar ImportError en assessment/tasks.py.
+    Mantiene vivo el sistema mientras se migran las tareas antiguas.
+    """
+    return f"""OBJETIVO: Generar preguntas sobre el texto.
+    TEXTO: {reading_text[:500]}...
+    INSTRUCCIONES: Genera 5 preguntas en formato JSON estándar."""

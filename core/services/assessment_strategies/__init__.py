@@ -1,5 +1,5 @@
 from .legal_strategy import generate_legal_prompt
-from .languages_strategy import generate_languages_stimuli_prompt, generate_languages_exam_prompt
+from .languages_strategy import generate_languages_stimuli_prompt, generate_languages_item_prompt
 from .humanities_strategy import generate_humanities_prompt
 from .sciences_strategy import generate_sciences_prompt
 from .health_strategy import generate_health_prompt
