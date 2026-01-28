@@ -1139,10 +1139,11 @@ def generate_full_course_task(self, task_id):
 @shared_task(bind=True, acks_late=True, max_retries=5, default_retry_delay=60)
 def generate_assessment_from_content_task(self, assessment_id):
     """
-    [HITO 6 - V_FINAL] Pipeline con Estrategias Totalmente Segregadas (Archivos Diferentes).
+    [HITO 6 - V_IRON_CLAD] Persistencia Atómica vía .update().
+    Bypassa los rollbacks de Django forzando escrituras SQL directas.
     """
-    from django.shortcuts import get_object_or_404
-    log_assessment_task_event(assessment_id, f"TAREA GENERACIÓN: Inicio ejecución v{self.request.retries + 1}.")
+    from django.db import transaction
+    log_assessment_task_event(assessment_id, "MOTOR ATÓMICO: Iniciando con blindaje SQL directo.")
     
     try:
         assessment = Assessment.objects.get(pk=assessment_id)
@@ -1153,29 +1154,17 @@ def generate_assessment_from_content_task(self, assessment_id):
         subject_name = subject_obj.name if subject_obj else original_content.title
         branch_name = subject_obj.academic_year.degree.branch.name if (subject_obj and subject_obj.academic_year) else "General"
         
-        step = 0
-        subject_type = "HUMANITIES_GENERIC"
+        if assessment.prompt_data is None: assessment.prompt_data = {}
+        current_step = assessment.prompt_data.get('current_lifecycle_step', 0)
+        subject_type = assessment.prompt_data.get('tribunal_type', "HUMANITIES_GENERIC")
+        q_cache = assessment.prompt_data.get('questions_cache', {})
         
-        # [V2 - PERSISTENCIA] Recuperar estado si es un reintento
-        if assessment.prompt_data and assessment.prompt_data.get('tribunal_type'):
-             subject_type = assessment.prompt_data['tribunal_type']
-             log_assessment_task_event(assessment_id, f"Recuperando estado: Arquetipo {subject_type} desde DB.")
-             if step == 0: step = 1
-        elif assessment.archetype != Assessment.Archetype.HUMANITIES:
-             if assessment.archetype == Assessment.Archetype.LANGUAGES: subject_type = "LANGUAGES"
-             elif assessment.archetype == Assessment.Archetype.SCIENCES: subject_type = "EXACT_SCIENCES"
-             log_assessment_task_event(assessment_id, f"Recuperando estado: Arquetipo {assessment.archetype} desde DB.")
-             if step == 0: step = 1
-
-        # Variables de estado para pasar datos entre pasos
-        r_text_memory = assessment.reading_stimulus or "" 
+        r_text_memory = assessment.reading_stimulus or ""
         l_text_memory = assessment.listening_transcript or ""
 
-        # Si ya hay contenido en memoria, aseguramos el salto de paso
-        if (r_text_memory or l_text_memory) and step < 2:
-            step = 2
+        log_assessment_task_event(assessment_id, f"RECUPERACIÓN: Paso {current_step} | Caché: {len(q_cache)} ítems.")
 
-        while step <= 2:
+        while current_step <= 2:
             automation_settings = AutomationSettings.load()
             api_key = automation_settings.active_api_key
             
@@ -1185,232 +1174,123 @@ def generate_assessment_from_content_task(self, assessment_id):
                      automation_settings.active_api_key = api_key
                      automation_settings.save(update_fields=['active_api_key'])
                  else:
-                     log_assessment_task_event(assessment_id, "POOL AGOTADO. Esperando 5m...", level="ERROR")
-                     raise self.retry(countdown=300)
+                     generate_assessment_from_content_task.apply_async(args=[assessment_id], countdown=300)
+                     return
 
             try:
-                # --- PASO 0: CLASIFICACIÓN (Router) ---
-                if step == 0:
-                    log_assessment_task_event(assessment_id, f"PASO 0 (Clasificación) - Key: {api_key.name}")
+                if current_step == 0:
                     prompt = generate_classifier_prompt(subject_name, branch_name, rejected_archetypes=assessment.rejected_archetypes)
                     success, resp, _ = generate_text_content(prompt, api_key=api_key)
+                    if not success: raise ResourceExhausted(resp)
                     
-                    if success:
-                        raw_type = clean_json_response(resp).strip().upper()
-                        valid_types = ["LOGIC_AND_TECH", "CEFR_LANGUAGES", "SOCIO_LEGAL", "HEALTH_SCIENCES", "HUMANITIES_ARTS"]
-                        found = None
-                        for vt in valid_types:
-                            if vt in raw_type:
-                                found = vt
-                                break
-                        
-                        if not found:
-                            raise ValueError(f"El Rector no pudo clasificar la asignatura. Respuesta: {raw_type}")
-                        
-                        subject_type = found
-                        
-                        # [HITO 6] Detección Automática de Itinerario (MAIOR/MINOR)
-                        itinerary = None
-                        if subject_type == "CEFR_LANGUAGES":
-                            # [HITO 6] Detección Centralizada
-                            itinerary = "MINOR" if check_if_minor(subject_name) else "MAIOR"
-
-                        # [V2] PERSISTENCIA INMEDIATA
-                        with transaction.atomic():
-                            aa = Assessment.objects.select_for_update().get(pk=assessment_id)
-                            # Mapeo a Arquetipo Modelo
-                            if found == "CEFR_LANGUAGES":
-                                aa.archetype = Assessment.Archetype.LANGUAGES
-                            elif found == "LOGIC_AND_TECH":
-                                aa.archetype = Assessment.Archetype.SCIENCES
-                            else:
-                                aa.archetype = Assessment.Archetype.HUMANITIES
-                            
-                            if itinerary:
-                                aa.language_itinerary = itinerary
-
-                            if aa.prompt_data is None: aa.prompt_data = {}
-                            aa.prompt_data['tribunal_type'] = found
-                            aa.save(update_fields=['archetype', 'prompt_data', 'language_itinerary'])
-
-                        log_assessment_task_event(assessment_id, f"Arquetipo Detectado: {subject_type} | Itinerario: {itinerary or 'N/A'}")
-                        step = 1
-                    else:
-                        raise ResourceExhausted(resp)
-
-                # --- PASO 1: PREPARACIÓN DE FUENTE (Bifurcación Radical) ---
-
-                elif step == 1:
+                    ApiKey.objects.filter(id=api_key.id).update(consecutive_failures=0)
+                    found = clean_json_response(resp).strip().upper()
+                    subject_type = next((t for t in ["LOGIC_AND_TECH", "CEFR_LANGUAGES", "SOCIO_LEGAL", "HEALTH_SCIENCES", "HUMANITIES_ARTS"] if t in found), "HUMANITIES_ARTS")
+                    
+                    itinerary = None
+                    if subject_type == "CEFR_LANGUAGES": itinerary = "MINOR" if check_if_minor(subject_name) else "MAIOR"
+                    
+                    p_data = assessment.prompt_data
+                    p_data.update({'tribunal_type': subject_type, 'current_lifecycle_step': 1})
+                    
+                    Assessment.objects.filter(id=assessment_id).update(
+                        archetype=Assessment.Archetype.LANGUAGES if subject_type == "CEFR_LANGUAGES" else (Assessment.Archetype.SCIENCES if subject_type == "LOGIC_AND_TECH" else Assessment.Archetype.HUMANITIES),
+                        language_itinerary=itinerary,
+                        prompt_data=p_data
+                    )
                     assessment.refresh_from_db()
-                    selection = assessment.selection_range
-                    filtered_content = filter_content_by_selection(full_content, selection) if selection else full_content
-                    
-                    db_reading = ""
-                    db_listening = ""
-                    
-                    # [HITO 6 - FASE A] Uso de Factory
+                    current_step = 1
+
+                elif current_step == 1:
                     strategy_mod = AssessmentStrategyFactory.get_strategy(subject_type)
-                    log_assessment_task_event(assessment_id, f"Fase A: Preparando esqueleto con {subject_type}")
-                    
-                    # Pasamos itinerario si ya lo tenemos en DB
-                    itinerary = assessment.language_itinerary
-                    skeleton = strategy_mod.get_strategy_skeleton(filtered_content, subject_name, itinerary=itinerary)
-                    
+                    skeleton = strategy_mod.get_strategy_skeleton(full_content, subject_name, itinerary=assessment.language_itinerary)
                     if skeleton.get('requires_api_stimulus'):
-                        log_assessment_task_event(assessment_id, "Fase A: Generando estímulos vía API (IDIOMAS)")
-                        prompt = getattr(strategy_mod, skeleton['prompt_func'])(filtered_content, subject_name)
+                        prompt = getattr(strategy_mod, skeleton['prompt_func'])(full_content, subject_name)
                         success, text, _ = generate_text_content(prompt, api_key=api_key)
                         if not success: raise ResourceExhausted(text)
                         
+                        ApiKey.objects.filter(id=api_key.id).update(consecutive_failures=0)
                         dat = dirtyjson.loads(clean_json_response(text))
-                        db_reading = dat.get('reading_stimulus', '')
-                        db_listening = dat.get('listening_transcript', '')
-                        r_text_memory = db_reading
-                        l_text_memory = db_listening
-                        detected_level = dat.get("cefr_level", "B1")
-                    else:
-                        db_reading = skeleton.get('reading_stimulus', '')
-                        db_listening = skeleton.get('listening_transcript', '')
-                        r_text_memory = skeleton.get('source_for_exam', filtered_content)
-
-                    # Guardar en BBDD (Solo Idiomas tendrá datos visibles)
-                    with transaction.atomic():
-                        aa = Assessment.objects.select_for_update().get(pk=assessment_id)
-                        aa.reading_stimulus = db_reading
-                        aa.listening_transcript = db_listening
+                        p_data = assessment.prompt_data
+                        p_data.update({'cefr_level': dat.get("cefr_level", "B1"), 'current_lifecycle_step': 2})
                         
-                        # Persistir Nivel CEFR
-                        if subject_type == "CEFR_LANGUAGES" and 'detected_level' in locals():
-                             if aa.prompt_data is None: aa.prompt_data = {}
-                             aa.prompt_data['cefr_level'] = detected_level
-                        aa.status = Assessment.AssessmentStatus.PROCESSING
-                        aa.save(update_fields=['reading_stimulus', 'listening_transcript', 'status'])
-                    step = 2
+                        Assessment.objects.filter(id=assessment_id).update(
+                            reading_stimulus=dat.get('reading_stimulus', ''),
+                            listening_transcript=dat.get('listening_transcript', ''),
+                            status=Assessment.AssessmentStatus.PROCESSING,
+                            prompt_data=p_data
+                        )
+                    else:
+                        p_data = assessment.prompt_data
+                        p_data.update({'current_lifecycle_step': 2})
+                        Assessment.objects.filter(id=assessment_id).update(
+                            status=Assessment.AssessmentStatus.PROCESSING,
+                            prompt_data=p_data
+                        )
+                    assessment.refresh_from_db()
+                    r_text_memory, l_text_memory = assessment.reading_stimulus or full_content, assessment.listening_transcript or ""
+                    current_step = 2
 
-                # --- PASO 2: GENERACIÓN DE EXAMEN (FLUJO ATÓMICO 1:1) ---
-                elif step == 2:
-                    log_assessment_task_event(assessment_id, f"PASO 2 (Generación Atómica) - {subject_type}")
-                    
-                    # [FIX SISIFO V2] Idempotencia: Solo crear esqueleto si no existe
-                    if assessment.questions.count() == 0:
-                        _create_assessment_skeleton(assessment)
-                    
+                elif current_step == 2:
+                    if assessment.questions.count() == 0: _create_assessment_skeleton(assessment)
                     questions = assessment.questions.all().order_by('id')
+                    assessment.refresh_from_db(fields=['questions_processed'])
                     
-                    # [FIX SISIFO V2] Reanudación Matemática (Indestructible)
-                    # Saltamos todo lo que la BBDD dice que ya procesó, ignorando el texto
-                    last_processed = assessment.questions_processed
-                    
-                    # 2. Fase B: Bucle de llamadas a la API
                     for idx, q_obj in enumerate(questions, 1):
-                        # [FIX SISIFO V2] Reanudación Matemática
-                        if idx <= last_processed:
+                        s_idx = str(idx)
+                        if s_idx in q_cache:
+                            d = q_cache[s_idx]
+                            Question.objects.filter(id=q_obj.id).update(question_text=d['text'], options=d['options'], model_answer=d['answer'])
                             continue
 
-                        log_assessment_task_event(assessment_id, f"Generando Ítem {idx}/{len(questions)} (ID: {q_obj.id})...")
+                        prompt = ""
+                        if subject_type == "CEFR_LANGUAGES":
+                            prompt = generate_languages_item_prompt(r_text_memory, l_text_memory, assessment.prompt_data.get('cefr_level', 'B1'), q_obj, itinerary=assessment.language_itinerary, target_lang=get_target_language(subject_name))
+                        elif subject_type == "LOGIC_AND_TECH": prompt = generate_sciences_prompt(r_text_memory, q_obj)
+                        else: prompt = generate_humanities_prompt(r_text_memory, q_obj)
+
+                        success, resp, _ = generate_text_content(prompt, api_key=api_key)
+                        if not success: raise ResourceExhausted(resp)
                         
-                        # [RESTAURACIÓN V3] Lógica de generación (Recuperada)
-                        try:
-                            if subject_type == "CEFR_LANGUAGES":
-                                target_lang = get_target_language(subject_name)
-                                lvl = assessment.prompt_data.get('cefr_level', 'B1')
-                                itinerary = assessment.language_itinerary or ("MINOR" if check_if_minor(subject_name) else "MAIOR")
-                                prompt = generate_languages_item_prompt(r_text_memory, l_text_memory, lvl, q_obj, itinerary=itinerary, target_lang=target_lang)
-                            else:
-                                # Fallback genérico para otros arquetipos
-                                # Por ahora asumimos HUMANITIES/SCIENCES usan el flujo antiguo o necesitan implementación aquí
-                                # Para evitar roturas, si no es idiomas, continuamos (o lanzamos error si es estricto)
-                                continue
+                        ApiKey.objects.filter(id=api_key.id).update(consecutive_failures=0)
+                        d_list = _parse_assessment_text(resp)
+                        if d_list:
+                            d = d_list[0]
+                            q_cache[s_idx] = {'text': d['question_text'], 'options': d.get('options', []), 'answer': d['model_answer']}
+                            p_data = assessment.prompt_data
+                            p_data['questions_cache'] = q_cache
+                            Assessment.objects.filter(id=assessment_id).update(prompt_data=p_data, questions_processed=idx)
+                            Question.objects.filter(id=q_obj.id).update(question_text=d['question_text'], options=d.get('options', []), model_answer=d['answer'])
+                        time.sleep(1)
+                    current_step = 3
 
-                            success, resp, _ = generate_text_content(prompt, api_key=api_key)
-                            
-                            if success:
-                                data_list = _parse_assessment_text(resp)
-                                if data_list and len(data_list) > 0:
-                                    data = data_list[0]
-                                    q_obj.question_text = data.get('question_text', q_obj.question_text)
-                                    q_obj.options = data.get('options', [])
-                                    q_obj.model_answer = data.get('model_answer', q_obj.model_answer)
-                                    
-                                    # Auto-repair Cloze
-                                    if q_obj.is_cloze and '[...]' not in q_obj.question_text:
-                                        q_obj.question_text += " [...]"
-                                    
-                                    q_obj.save()
-                                    
-                                    # Actualización atómica del cursor de progreso
-                                    assessment.questions_processed = idx
-                                    assessment.save(update_fields=['questions_processed'])
-                                
-                                time.sleep(1) # Pausa obligatoria de cuota
-                            else:
-                                raise ResourceExhausted(f"Error en ítem {idx}: {resp}")
-                        except Exception as e:
-                            # Si falla un ítem específico, re-anzamos para que lo capture el try/except externo y maneje la cuota
-                            raise e
-                    step = 3
-
-            except ResourceExhausted as e:
-                # [HITO 6 - PAIR SINCRO] Rotación proactiva sincronizada con el motor de contenidos
-                api_key.refresh_from_db()
-                api_key.consecutive_failures += 1
-                api_key.save(update_fields=["consecutive_failures"])
-                log_assessment_task_event(assessment_id, f"STRIKE CUOTA ({api_key.consecutive_failures}/4): {api_key.name}", level="WARNING")
-                
-                if api_key.consecutive_failures >= 4:
-                    api_key.is_quarantined = True
-                    api_key.save(update_fields=["is_quarantined"])
-                    _request_quarantine_via_mailbox(api_key)
-                    
-                    # Rotación inmediata de la clave activa global
-                    next_k = ApiKey.objects.filter(is_enabled=True, is_quarantined=False).exclude(id=api_key.id).first()
-                    if next_k:
-                        automation_settings.active_api_key = next_k
-                        automation_settings.save(update_fields=['active_api_key'])
-                        log_assessment_task_event(assessment_id, f"ROTACIÓN PROACTIVA: Nueva clave activa '{next_k.name}'", level="INFO")
-                
-                time.sleep(30)
-                continue
-
-            except (AIServiceCriticalError, ValueError) as e:
+            except (ResourceExhausted, AIServiceCriticalError, ValueError) as e:
                 err_str = str(e)
-                # [PAE] Intercepción de Cuota Relanzada por gemini_service
-                if "QUOTA_EXCEEDED" in err_str or "503" in err_str or "overloaded" in err_str or "UNAVAILABLE" in err_str:
-                    log_assessment_task_event(assessment_id, f"CUOTA DETECTADA EN SERVICIO: {api_key.name}. Derivando a rotación.", level="WARNING")
+                if any(x in err_str.upper() for x in ["429", "QUOTA", "RESOURCE_EXHAUSTED", "503"]):
                     api_key.refresh_from_db()
                     api_key.consecutive_failures += 1
                     api_key.save(update_fields=["consecutive_failures"])
+                    log_assessment_task_event(assessment_id, f"PAUSA CUOTA ({api_key.consecutive_failures}/4): {api_key.name}. Reencolando asíncronamente.")
                     
                     if api_key.consecutive_failures >= 4:
                         api_key.is_quarantined = True
                         api_key.save(update_fields=["is_quarantined"])
                         _request_quarantine_via_mailbox(api_key)
-                        
                         next_k = ApiKey.objects.filter(is_enabled=True, is_quarantined=False).exclude(id=api_key.id).first()
                         if next_k:
                             automation_settings.active_api_key = next_k
                             automation_settings.save(update_fields=['active_api_key'])
-                            log_assessment_task_event(assessment_id, f"ROTACIÓN EXITOSA: {next_k.name}", level="INFO")
                     
-                    time.sleep(30)
-                    continue
+                    generate_assessment_from_content_task.apply_async(args=[assessment_id], countdown=15)
+                    return
+                raise e
 
-                # Error lógico real (No cuota)
-                log_assessment_task_event(assessment_id, f"ERROR LÓGICO/JSON: {err_str}. Reintentando...", level="WARNING")
-                time.sleep(30)
-                continue
-
-        # Finalización exitosa
-        with transaction.atomic():
-            comp_assessment = Assessment.objects.select_for_update().get(pk=assessment_id)
-            comp_assessment.status = Assessment.AssessmentStatus.COMPLETED
-            comp_assessment.last_error = None
-            comp_assessment.save()
-        log_assessment_task_event(assessment_id, "Proceso completado con ÉXITO.", level="SUCCESS")
+        Assessment.objects.filter(id=assessment_id).update(status=Assessment.AssessmentStatus.COMPLETED)
+        log_assessment_task_event(assessment_id, "FINALIZADO: Generación persistida vía SQL.", level="SUCCESS")
 
     except Exception as e:
-        log_assessment_task_event(assessment_id, f"ERROR FATAL: {str(e)}", level="ERROR")
-        Assessment.objects.filter(pk=assessment_id).update(status=Assessment.AssessmentStatus.GENERATION_FAILED_RETRYABLE, last_error=str(e))
+        log_assessment_task_event(assessment_id, f"FATAL: {str(e)}", level="ERROR")
+        Assessment.objects.filter(id=assessment_id).update(status=Assessment.AssessmentStatus.GENERATION_FAILED_RETRYABLE)
         raise self.retry(exc=e)
 
 @shared_task(bind=True, acks_late=True, max_retries=3, default_retry_delay=60)

@@ -7,16 +7,15 @@ Al iniciar cualquier sesión de trabajo sobre el sistema de evaluaciones, es **I
 
 ---
 
-### HOJA DE RUTA PARA LA SIGUIENTE SESIÓN (ESTADO DE FALLO CRÍTICO)
+### HOJA DE RUTA PARA LA SIGUIENTE SESIÓN (ESTADO DE FALLO DE PERSISTENCIA ATÓMICA)
 
-**Estado Actual:** CRÍTICO. El sistema de autoevaluaciones se encuentra totalmente roto. Las tres implementaciones de lógica de persistencia y reanudación (V1, V2 y V3) en `orchestrator/tasks.py` han fallado en erradicar el bucle de reinicio infinito. Tras cada error de cuota, el sistema reinicia la generación desde el ítem 1/17, resultando en un sistema inoperativo para esta funcionalidad.
+**Estado Actual:** CRÍTICO. El blindaje SQL directo (`.update()`) ha fallado en persistir el diccionario `questions_cache`. El sistema sigue reiniciando desde el ítem 1 al no encontrar datos en la caché al recuperar la tarea.
 
-**Tarea 1: Auditoría Técnica del Ciclo de Vida de Tareas**
-- **Acción:** Análisis forense del flujo en `generate_assessment_from_content_task`.
-- **Objetivo:** Identificar el fallo estructural en el código entregado que ignora los guardados de base de datos y provoca la regeneración sistemática del esqueleto de la evaluación.
+**Tarea 1: Diagnóstico de Escritura SQL Directa**
+- **Acción:** Verificar mediante scripts de shell si el comando `Assessment.objects.filter(id=assessment_id).update(prompt_data=p_data)` realmente modifica el registro en la base de datos MySQL de PythonAnywhere durante la ejecución de la tarea.
 
-**Tarea 2: Análisis de Persistencia Atómica**
-- **Acción:** Revisar si el manejo de excepciones está provocando rollbacks involuntarios que anulan el progreso de `questions_processed` a pesar de los comandos `save()`.
+**Tarea 2: Análisis de Hidratación de Objetos en Celery**
+- **Acción:** Investigar si el worker de Celery está trabajando con una instancia cacheada del objeto `Assessment` que ignora los cambios realizados por `.update()` en otros procesos o si el campo JSON se corrompe al serializarse.
 
-**Tarea 3: Depuración de Tareas Zombie**
-- **Acción:** Limpieza de registros y tareas huérfanas en Celery y Base de Datos resultantes de las implementaciones fallidas.
+**Tarea 3: Implementación de Persistencia Física (JSON File)**
+- **Acción:** Como medida de contingencia absoluta, considerar el volcado del progreso a un archivo físico `.json` en el sistema de archivos del servidor, omitiendo la base de datos para la caché de preguntas.

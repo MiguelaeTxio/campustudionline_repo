@@ -1508,3 +1508,11 @@ Objetivos de la sesión:
 *  **Session:** Corrección de Claves en Generación de Evaluaciones
 *  **Description:** Armonización de claves de diccionario (label/section_label) en orchestrator/tasks.py para evitar KeyError durante la Fase A. Verificación de densidad UGR (17 ítems) y auditoría de inmersión lingüística en estrategias.
 
+
+# 2026-01-28
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+## CYC
+*  **Session:** Depuración de Bucle Infinito en Generación de Evaluaciones
+*  **Description:** Análisis forense y corrección del fallo crítico en `generate_assessment_from_content_task` que provoca reinicios infinitos tras errores de cuota. Auditoría de persistencia atómica para garantizar la reanudación efectiva del progreso y eliminación de tareas zombie.
+
