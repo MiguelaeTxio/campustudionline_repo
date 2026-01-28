@@ -5,24 +5,23 @@ Al iniciar cualquier sesión de trabajo sobre el sistema de evaluaciones, es **I
 1.  `/home/MiguelAeTxio/PROJECTS/CampuStudiOnline/DOCS/MAINS/CAMPUSTUDIONLINE_ASSESSMENT_SYSTEM_MASTER_PLAN.md`
 2.  `/home/MiguelAeTxio/PROJECTS/CampuStudiOnline/DOCS/MAINS/CAMPUSTUDIONLINE_ASSESSMENT_ARCHETYPES_SPEC.md`
 
-**Nota para el cierre (`PCS`):** Esta sección debe ser copiada textualmente en la "Hoja de Ruta para la Siguiente Sesión" para garantizar la persistencia de la Ley.
-
 ---
 
-### HOJA DE RUTA PARA LA SIGUIENTE SESIÓN (RECONSTRUCCIÓN DEL EMULADOR UGR)
+### HOJA DE RUTA PARA LA SIGUIENTE SESIÓN (DEPURACIÓN CRÍTICA FASE A/B)
 
-**Estado Actual:** INESTABLE. Se ha reparado el `ImportError` y actualizado la Ley Técnica (Inmersión Progresiva), pero la implementación técnica de la universalidad de idiomas ha fallado por errores en los scripts de parcheo (`re.error: bad escape \s`). Celery probablemente persiste en un ciclo de reinicio (Tarpit) debido a un `TypeError` en `assessment/tasks.py`.
+**Estado Actual:** INESTABLE. El sistema ha sido estabilizado respecto a errores de referencia local (`UnboundLocalError`) y sintaxis de imports. Sin embargo, la generación atómica falla en la creación del esqueleto (Fase A) debido a una inconsistencia de claves entre el orquestador y la estrategia.
 
-**Tarea 1: Estabilización del Entorno (Freno al Tarpit)**
-- **Acción:** Corregir manualmente la firma de la función `generate_languages_item_prompt` en `assessment/tasks.py` para que acepte el argumento `itinerary`. Esto detendrá el consumo de CPU.
-- **Validación:** Ejecutar `python manage.py shell -c "import assessment.tasks"` hasta que el resultado sea `OK`.
+**LOG DE ERROR PARA ANÁLISIS:**
+`2026-01-28T06:26:36 ERROR ERROR FATAL: 'label'`
+`2026-01-28T06:26:36 INFO PASO 2 (Generación Atómica) - CEFR_LANGUAGES`
 
-**Tarea 2: Implementación Universal (Languages Strategy)**
-- **Acción:** Aplicar la refactorización de `languages_strategy.py` usando `PEA` (Entrega de Archivo Completo) para evitar fallos de regex.
-- **Objetivo:** Extracción dinámica del idioma objetivo y esqueletos de 17 (MINOR) y 36 (MAIOR) ítems.
+**Tarea 1: Armonización de Claves de Diccionario (Fix KeyError)**
+- **Acción:** Modificar la función `_create_assessment_skeleton` en `/home/MiguelAeTxio/PROJECTS/CampuStudiOnline/orchestrator/tasks.py`.
+- **Causa:** El orquestador busca `q_data['label']`, pero la nueva estrategia `languages_strategy.py` entrega `section_label`.
+- **Solución:** Implementar acceso seguro mediante `.get()` con fallbacks para todas las claves estructurales (`section_label`, `source_type`, `interaction_type`, `response_mode`).
 
-**Tarea 3: Sincronización de Itinerarios**
-- **Acción:** Refactorizar el orquestador global para que la detección del itinerario sea jerárquica y se persista antes de la generación de ítems.
+**Tarea 2: Verificación de Densidad UGR (17 ítems)**
+- **Acción:** Tras el fix de claves, ejecutar `verify_ugr_flow.py` y confirmar que se crean 17 preguntas para el itinerario MINOR.
 
-**Tarea 4: Auditoría de Resultados**
-- **Acción:** Generar una evaluación para una asignatura MINOR (ej. Chino Inicial) y otra MAIOR para verificar que la inmersión lingüística se comporta según la nueva Ley Técnica.
+**Tarea 3: Auditoría de Inmersión Lingüística**
+- **Acción:** Verificar que en el Paso 2 (Fase B), las instrucciones se generan en castellano para niveles MINOR, respetando la Ley Técnica UGR.

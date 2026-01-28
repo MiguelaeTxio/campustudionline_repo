@@ -40,11 +40,15 @@ from core.services.gemini_schemas import ASSESSMENT_CORRECTION_SCHEMA
 from core.services.assessment_strategies.classifier import generate_classifier_prompt
 # [REFACTOR] Uso de Factory en lugar de imports directos
 from core.services.assessment_strategies.factory import AssessmentStrategyFactory
-from core.services.assessment_strategies.languages_strategy import generate_languages_stimuli_prompt
+from core.services.assessment_strategies.languages_strategy import (
+    generate_languages_stimuli_prompt, 
+    is_minor_language as check_if_minor, 
+    get_target_language, 
+    generate_languages_item_prompt
+)
 from core.services.assessment_strategies.sciences_strategy import generate_sciences_prompt
 from core.services.assessment_strategies.humanities_strategy import generate_humanities_prompt
 from core.services.assessment_strategies.legal_strategy import generate_legal_prompt
-
 
 from core.services.prompt_generators import (
     generate_course_metadata_prompt,
@@ -57,7 +61,6 @@ from core.services.prompt_generators import (
 )
 from messaging.push_utils import send_notification_to_user
 from core.utils import send_unified_notification
-
 
 logger = logging.getLogger(__name__)
 User = get_user_model()
@@ -157,7 +160,6 @@ def _check_and_perform_daily_reset():
     except Exception as e:
         _log_structured_event(f"Error CRÍTICO en la lógica de reseteo diario integrado: {e}", "CRITICAL", {"traceback": traceback.format_exc()})
         logger.critical(f"Error CRÍTICO en _check_and_perform_daily_reset: {e}", exc_info=True)
-
 
 def _purge_zombie_tasks():
     try:
@@ -426,7 +428,6 @@ def _send_completion_notifications(new_content: ContentMaterial):
 # ==============================================================================
 # SECCIÓN 3: FUNCIONES AUXILIARES DE AUTOEVALUACIONES (ASSESSMENT)
 
-
 def _create_assessment_skeleton(assessment):
     """
     FASE A (Determinista): Crea los registros de Question en la BD.
@@ -464,7 +465,6 @@ def _create_assessment_skeleton(assessment):
             )
         assessment.total_questions_expected = len(questions_to_create)
         assessment.save(update_fields=['total_questions_expected'])
-
 
 # ==============================================================================
 
@@ -632,7 +632,6 @@ def global_orchestrator_task(self):
         except Exception:
             pass # Si falla el chequeo, continuamos por seguridad
 
-        
         _purge_zombie_tasks()  # [NUEVO] Limpieza preventiva de zombies
         _process_quarantine_requests()
         _check_and_perform_daily_reset()
@@ -800,9 +799,6 @@ def global_orchestrator_task(self):
             automation_settings.save(update_fields=['last_run_status'])
     finally:
         db.close_old_connections()
-
-
-
 
 @shared_task(bind=True, time_limit=21600, acks_late=True, rate_limit='12/m')
 def generate_full_course_task(self, task_id):
@@ -1139,8 +1135,6 @@ def generate_full_course_task(self, task_id):
     finally:
         db.close_old_connections()
 
-
-
 @shared_task(bind=True, acks_late=True, max_retries=5, default_retry_delay=60)
 def generate_assessment_from_content_task(self, assessment_id):
     """
@@ -1217,13 +1211,8 @@ def generate_assessment_from_content_task(self, assessment_id):
                         # [HITO 6] Detección Automática de Itinerario (MAIOR/MINOR)
                         itinerary = None
                         if subject_type == "CEFR_LANGUAGES":
-                            name_upper = subject_name.upper()
-                            if "MAIOR" in name_upper or "ESPECIALIDAD" in name_upper:
-                                itinerary = "MAIOR"
-                            elif "MINOR" in name_upper or "SEGUNDA LENGUA" in name_upper:
-                                itinerary = "MINOR"
-                            else:
-                                itinerary = "MAIOR" # Default UGR
+                            # [HITO 6] Detección Centralizada
+                            itinerary = "MINOR" if check_if_minor(subject_name) else "MAIOR"
 
                         # [V2] PERSISTENCIA INMEDIATA
                         with transaction.atomic():
@@ -1251,6 +1240,7 @@ def generate_assessment_from_content_task(self, assessment_id):
                 # --- PASO 1: PREPARACIÓN DE FUENTE (Bifurcación Radical) ---
 
                 elif step == 1:
+                    assessment.refresh_from_db()
                     selection = assessment.selection_range
                     filtered_content = filter_content_by_selection(full_content, selection) if selection else full_content
                     
@@ -1309,10 +1299,10 @@ def generate_assessment_from_content_task(self, assessment_id):
                         log_assessment_task_event(assessment_id, f"Generando Ítem {idx}/{len(questions)} (ID: {q_obj.id})...")
                         
                         if subject_type == "CEFR_LANGUAGES":
-                            from core.services.assessment_strategies.languages_strategy import generate_languages_item_prompt, get_language_config
-                            cfg = get_language_config(subject_name)
+                            target_lang = get_target_language(subject_name)
                             lvl = assessment.prompt_data.get('cefr_level', 'B1')
-                            prompt = generate_languages_item_prompt(r_text_memory, l_text_memory, lvl, cfg['lang'], q_obj)
+                            itinerary = assessment.language_itinerary or ("MINOR" if check_if_minor(subject_name) else "MAIOR")
+                            prompt = generate_languages_item_prompt(r_text_memory, l_text_memory, lvl, q_obj, itinerary=itinerary, target_lang=target_lang)
                         else:
                             # Otros arquetipos aún no migrados al flujo 1:1
                             continue
@@ -1403,7 +1393,6 @@ def generate_assessment_from_content_task(self, assessment_id):
         log_assessment_task_event(assessment_id, f"ERROR FATAL: {str(e)}", level="ERROR")
         Assessment.objects.filter(pk=assessment_id).update(status=Assessment.AssessmentStatus.GENERATION_FAILED_RETRYABLE, last_error=str(e))
         raise self.retry(exc=e)
-
 
 @shared_task(bind=True, acks_late=True, max_retries=3, default_retry_delay=60)
 def correct_assessment_task(self, assessment_id):

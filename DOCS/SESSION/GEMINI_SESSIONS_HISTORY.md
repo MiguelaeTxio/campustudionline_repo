@@ -1492,3 +1492,11 @@ Objetivos de la sesión:
 *  **Session:** Reparación de Emergencia: Fix Importación y Saneamiento de Evaluaciones
 *  **Description:** Resolución crítica del bloqueo por ImportError en assessment/tasks.py mediante stubs de compatibilidad. Implementación de reglas estrictas de inmersión en languages_strategy.py y saneamiento de regex en el orquestador para eliminar metadatos técnicos. Mejora UX en plantillas Cloze.
 
+
+# 2026-01-28
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+## CYC # --SYSTEM -->
+*  **Session:** Estabilización del Emulador UGR: Corrección de Tarpit y Estrategia Universal
+*  **Description:** Se abordará la reparación crítica del 'Tarpit' en Celery (assessment/tasks.py) causado por errores de firma, y la implementación definitiva de la estrategia de idiomas (languages_strategy.py) soportando itinerarios MAIOR/MINOR según la nueva Ley Técnica UGR. Se verificará la integridad de la generación de ítems y la sincronización jerárquica en el orquestador.
+
