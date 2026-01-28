@@ -456,10 +456,11 @@ def _create_assessment_skeleton(assessment):
         for q_data in questions_to_create:
             Question.objects.create(
                 assessment=assessment,
-                section_label=q_data['label'],
-                source_type=q_data.get('source', 'SRC_DIR'),
-                interaction_type=q_data.get('interaction', 'QT_PROD'),
-                response_mode=q_data.get('response', 'REQ_DUAL'),
+                # [HITO 6] Armonización de Claves (Verbose vs Legacy)
+                section_label=q_data.get('section_label', q_data.get('label', 'Sección')),
+                source_type=q_data.get('source_type', q_data.get('source', 'SRC_DIR')),
+                interaction_type=q_data.get('interaction_type', q_data.get('interaction', 'QT_PROD')),
+                response_mode=q_data.get('response_mode', q_data.get('response', 'REQ_DUAL')),
                 question_text="[GENERANDO CONTENIDO...]",
                 model_answer="[GENERANDO RESPUESTA...]"
             )
@@ -1290,45 +1291,63 @@ def generate_assessment_from_content_task(self, assessment_id):
                 elif step == 2:
                     log_assessment_task_event(assessment_id, f"PASO 2 (Generación Atómica) - {subject_type}")
                     
-                    # 1. Fase A: Crear el esqueleto determinista en la base de datos
-                    _create_assessment_skeleton(assessment)
+                    # [FIX SISIFO V2] Idempotencia: Solo crear esqueleto si no existe
+                    if assessment.questions.count() == 0:
+                        _create_assessment_skeleton(assessment)
+                    
                     questions = assessment.questions.all().order_by('id')
                     
-                    # 2. Fase B: Bucle de llamadas a la API (Una por cada pregunta)
+                    # [FIX SISIFO V2] Reanudación Matemática (Indestructible)
+                    # Saltamos todo lo que la BBDD dice que ya procesó, ignorando el texto
+                    last_processed = assessment.questions_processed
+                    
+                    # 2. Fase B: Bucle de llamadas a la API
                     for idx, q_obj in enumerate(questions, 1):
-                        log_assessment_task_event(assessment_id, f"Generando Ítem {idx}/{len(questions)} (ID: {q_obj.id})...")
-                        
-                        if subject_type == "CEFR_LANGUAGES":
-                            target_lang = get_target_language(subject_name)
-                            lvl = assessment.prompt_data.get('cefr_level', 'B1')
-                            itinerary = assessment.language_itinerary or ("MINOR" if check_if_minor(subject_name) else "MAIOR")
-                            prompt = generate_languages_item_prompt(r_text_memory, l_text_memory, lvl, q_obj, itinerary=itinerary, target_lang=target_lang)
-                        else:
-                            # Otros arquetipos aún no migrados al flujo 1:1
+                        # [FIX SISIFO V2] Reanudación Matemática
+                        if idx <= last_processed:
                             continue
 
-                        # Llamada individual
-                        success, resp, _ = generate_text_content(prompt, api_key=api_key)
+                        log_assessment_task_event(assessment_id, f"Generando Ítem {idx}/{len(questions)} (ID: {q_obj.id})...")
                         
-                        if success:
-                            data_list = _parse_assessment_text(resp)
-                            if data_list and len(data_list) > 0:
-                                data = data_list[0]
-                                q_obj.question_text = data.get('question_text', q_obj.question_text)
-                                q_obj.options = data.get('options', [])
-                                q_obj.model_answer = data.get('model_answer', q_obj.model_answer)
-                                # [REPARACIÓN CLOZE] Asegurar token si la IA falla
-                                if q_obj.is_cloze and '[...]' not in q_obj.question_text:
-                                    q_obj.question_text += " [...]"
-                                q_obj.save()
-                                
-                                assessment.questions_processed = idx
-                                assessment.save(update_fields=['questions_processed'])
-                            
-                            time.sleep(1) # Pausa de seguridad para la cuota
-                        else:
-                            raise ResourceExhausted(f"Error en ítem {idx}: {resp}")
+                        # [RESTAURACIÓN V3] Lógica de generación (Recuperada)
+                        try:
+                            if subject_type == "CEFR_LANGUAGES":
+                                target_lang = get_target_language(subject_name)
+                                lvl = assessment.prompt_data.get('cefr_level', 'B1')
+                                itinerary = assessment.language_itinerary or ("MINOR" if check_if_minor(subject_name) else "MAIOR")
+                                prompt = generate_languages_item_prompt(r_text_memory, l_text_memory, lvl, q_obj, itinerary=itinerary, target_lang=target_lang)
+                            else:
+                                # Fallback genérico para otros arquetipos
+                                # Por ahora asumimos HUMANITIES/SCIENCES usan el flujo antiguo o necesitan implementación aquí
+                                # Para evitar roturas, si no es idiomas, continuamos (o lanzamos error si es estricto)
+                                continue
 
+                            success, resp, _ = generate_text_content(prompt, api_key=api_key)
+                            
+                            if success:
+                                data_list = _parse_assessment_text(resp)
+                                if data_list and len(data_list) > 0:
+                                    data = data_list[0]
+                                    q_obj.question_text = data.get('question_text', q_obj.question_text)
+                                    q_obj.options = data.get('options', [])
+                                    q_obj.model_answer = data.get('model_answer', q_obj.model_answer)
+                                    
+                                    # Auto-repair Cloze
+                                    if q_obj.is_cloze and '[...]' not in q_obj.question_text:
+                                        q_obj.question_text += " [...]"
+                                    
+                                    q_obj.save()
+                                    
+                                    # Actualización atómica del cursor de progreso
+                                    assessment.questions_processed = idx
+                                    assessment.save(update_fields=['questions_processed'])
+                                
+                                time.sleep(1) # Pausa obligatoria de cuota
+                            else:
+                                raise ResourceExhausted(f"Error en ítem {idx}: {resp}")
+                        except Exception as e:
+                            # Si falla un ítem específico, re-anzamos para que lo capture el try/except externo y maneje la cuota
+                            raise e
                     step = 3
 
             except ResourceExhausted as e:

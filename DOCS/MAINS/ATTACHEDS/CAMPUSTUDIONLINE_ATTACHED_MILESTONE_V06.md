@@ -7,21 +7,16 @@ Al iniciar cualquier sesión de trabajo sobre el sistema de evaluaciones, es **I
 
 ---
 
-### HOJA DE RUTA PARA LA SIGUIENTE SESIÓN (DEPURACIÓN CRÍTICA FASE A/B)
+### HOJA DE RUTA PARA LA SIGUIENTE SESIÓN (ESTADO DE FALLO CRÍTICO)
 
-**Estado Actual:** INESTABLE. El sistema ha sido estabilizado respecto a errores de referencia local (`UnboundLocalError`) y sintaxis de imports. Sin embargo, la generación atómica falla en la creación del esqueleto (Fase A) debido a una inconsistencia de claves entre el orquestador y la estrategia.
+**Estado Actual:** CRÍTICO. El sistema de autoevaluaciones se encuentra totalmente roto. Las tres implementaciones de lógica de persistencia y reanudación (V1, V2 y V3) en `orchestrator/tasks.py` han fallado en erradicar el bucle de reinicio infinito. Tras cada error de cuota, el sistema reinicia la generación desde el ítem 1/17, resultando en un sistema inoperativo para esta funcionalidad.
 
-**LOG DE ERROR PARA ANÁLISIS:**
-`2026-01-28T06:26:36 ERROR ERROR FATAL: 'label'`
-`2026-01-28T06:26:36 INFO PASO 2 (Generación Atómica) - CEFR_LANGUAGES`
+**Tarea 1: Auditoría Técnica del Ciclo de Vida de Tareas**
+- **Acción:** Análisis forense del flujo en `generate_assessment_from_content_task`.
+- **Objetivo:** Identificar el fallo estructural en el código entregado que ignora los guardados de base de datos y provoca la regeneración sistemática del esqueleto de la evaluación.
 
-**Tarea 1: Armonización de Claves de Diccionario (Fix KeyError)**
-- **Acción:** Modificar la función `_create_assessment_skeleton` en `/home/MiguelAeTxio/PROJECTS/CampuStudiOnline/orchestrator/tasks.py`.
-- **Causa:** El orquestador busca `q_data['label']`, pero la nueva estrategia `languages_strategy.py` entrega `section_label`.
-- **Solución:** Implementar acceso seguro mediante `.get()` con fallbacks para todas las claves estructurales (`section_label`, `source_type`, `interaction_type`, `response_mode`).
+**Tarea 2: Análisis de Persistencia Atómica**
+- **Acción:** Revisar si el manejo de excepciones está provocando rollbacks involuntarios que anulan el progreso de `questions_processed` a pesar de los comandos `save()`.
 
-**Tarea 2: Verificación de Densidad UGR (17 ítems)**
-- **Acción:** Tras el fix de claves, ejecutar `verify_ugr_flow.py` y confirmar que se crean 17 preguntas para el itinerario MINOR.
-
-**Tarea 3: Auditoría de Inmersión Lingüística**
-- **Acción:** Verificar que en el Paso 2 (Fase B), las instrucciones se generan en castellano para niveles MINOR, respetando la Ley Técnica UGR.
+**Tarea 3: Depuración de Tareas Zombie**
+- **Acción:** Limpieza de registros y tareas huérfanas en Celery y Base de Datos resultantes de las implementaciones fallidas.

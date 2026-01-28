@@ -1500,3 +1500,11 @@ Objetivos de la sesión:
 *  **Session:** Estabilización del Emulador UGR: Corrección de Tarpit y Estrategia Universal
 *  **Description:** Se abordará la reparación crítica del 'Tarpit' en Celery (assessment/tasks.py) causado por errores de firma, y la implementación definitiva de la estrategia de idiomas (languages_strategy.py) soportando itinerarios MAIOR/MINOR según la nueva Ley Técnica UGR. Se verificará la integridad de la generación de ítems y la sincronización jerárquica en el orquestador.
 
+
+# 2026-01-28
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+## AAAA
+*  **Session:** Corrección de Claves en Generación de Evaluaciones
+*  **Description:** Armonización de claves de diccionario (label/section_label) en orchestrator/tasks.py para evitar KeyError durante la Fase A. Verificación de densidad UGR (17 ítems) y auditoría de inmersión lingüística en estrategias.
+
