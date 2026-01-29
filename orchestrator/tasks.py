@@ -749,6 +749,8 @@ def global_orchestrator_task(self):
                          automation_settings.last_run_status = final_message
                          automation_settings.save(update_fields=['last_run_status'])
                     break
+    except (Retry, MaxRetriesExceededError):
+        raise
     except Exception as e:
         status_msg = f"ERROR CRÍTICO EN BUCLE: {e}"
         _log_structured_event(status_msg, level="CRITICAL", details={"traceback": traceback.format_exc()})
@@ -1245,7 +1247,7 @@ def generate_assessment_from_content_task(self, assessment_id):
                             automation_settings.active_api_key = next_k
                             automation_settings.save(update_fields=['active_api_key'])
                     
-                    generate_assessment_from_content_task.apply_async(args=[assessment_id], countdown=15)
+                    generate_assessment_from_content_task.apply_async(args=[assessment_id], countdown=65)
                     return
                 raise e
 

@@ -2,7 +2,7 @@
 {% load i18n %}
 
 {# Compatibilidad de contexto: AJAX usa user_copy, Vista Principal usa content_copy #}
-{% with u_copy=user_copy %}
+{% with u_copy=user_copy|default:content_copy %}
 
 <div class="row" id="assessment-panel">
     <!-- Columna de Estado y Acciones Principales -->

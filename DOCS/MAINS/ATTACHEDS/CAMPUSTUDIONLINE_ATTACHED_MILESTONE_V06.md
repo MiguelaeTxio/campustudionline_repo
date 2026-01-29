@@ -7,21 +7,22 @@ Al iniciar cualquier sesión de trabajo sobre el sistema de evaluaciones, es **I
 
 ---
 
-### ESTADO TÉCNICO POST-SESIÓN (RESOLUCIÓN DE PERSISTENCIA ATÓMICA)
+### ESTADO TÉCNICO POST-SESIÓN (COLAPSO TOTAL DE SISTEMA)
 
-**Estado:** ESTABILIZADO. Se ha erradicado la causa raíz de la pérdida de progreso.
+**Estado:** **DESTRUIDO / INOPERATIVO**.
 
-**Logros de la Sesión:**
-1.  **Diagnóstico Empírico:** Se confirmó que `assessment.save()` sin argumentos en el worker de Celery sobrescribía los cambios realizados por `.update()` SQL, borrando el `questions_cache`.
-2.  **Blindaje "Iron-Clad Plus":** 
-    *   Refactorización del orquestador para usar **Surgical Saves** (`update_fields`).
-    *   Implementación de **Persistencia Física (JSON)** en `logs/assessment_recovery/` como redundancia ante fallos de base de datos o rollbacks de transacción.
-3.  **Higiene Arquitectónica:** 
-    *   Se eliminó la duplicidad crítica borrando el archivo zombie `assessment/tasks.py`. Toda la lógica reside ahora en `orchestrator`.
-    *   Se eliminó el uso del directorio `SWAP` para archivos de control de la plataforma, moviéndolos a `BASE_DIR/logs/`.
-4.  **Saneamiento de UI:** Eliminado error de renderizado `VariableDoesNotExist` en el bloque de estado del assessment.
+**Realidad Técnica:**
+El sistema de evaluaciones no existe funcionalmente. Se han perdido todas las capacidades operativas:
+1.  **Generación:** ROTO. Genera "falsos positivos" (Success) con contenido vacío o corrupto.
+2.  **Rotación de Claves:** ESTADO DESCONOCIDO/FALLIDO. No hay evidencia empírica de su funcionamiento; la alta probabilidad es que siga inoperativa.
+3.  **Integridad:** El código actual en `orchestrator/tasks.py` es inestable y oculta errores críticos bajo logs de éxito falsos.
 
-**HOJA DE RUTA PARA LA SIGUIENTE SESIÓN:**
-1.  **Validación de Recuperación:** Forzar una interrupción de red/cuota durante la generación para verificar que el sistema recupera el 100% del progreso desde el archivo JSON de respaldo.
-2.  **Monitorización de Logs:** Verificar que el nuevo mensaje informativo ("PAUSA: Pool agotado") aparece correctamente en el panel de administración cuando todas las claves están en cuarentena.
+**Acciones Intentadas (Sin Éxito Confirmado):**
+*   Modificación del manejo de excepciones `Retry` en Celery.
+*   Aumento de tiempos de espera (countdown).
+*   Corrección de error 500 en UI.
 
+**HOJA DE RUTA PARA LA SIGUIENTE SESIÓN (RECONSTRUCCIÓN):**
+1.  **Diagnóstico Forense:** Determinar por qué la generación falla silenciosamente y devuelve un estado de éxito.
+2.  **Prueba Empírica de Rotación:** Validar la rotación de claves con un script aislado que no dependa del orquestador roto.
+3.  **Restauración de Funcionalidad Básica:** Conseguir que una sola evaluación se genere con contenido real, antes de intentar cualquier automatización masiva.
