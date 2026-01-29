@@ -1516,3 +1516,11 @@ Objetivos de la sesión:
 *  **Session:** Depuración de Bucle Infinito en Generación de Evaluaciones
 *  **Description:** Análisis forense y corrección del fallo crítico en `generate_assessment_from_content_task` que provoca reinicios infinitos tras errores de cuota. Auditoría de persistencia atómica para garantizar la reanudación efectiva del progreso y eliminación de tareas zombie.
 
+
+# 2026-01-28
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+## EPI # --SYSTEM -->
+*  **Session:** Diagnóstico de Persistencia Atómica en Assessment
+*  **Description:** Investigación del fallo de persistencia en questions_cache durante ejecución Celery. Verificación de update() SQL y plan de contingencia con persistencia física.
+

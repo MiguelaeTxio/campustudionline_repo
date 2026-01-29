@@ -65,7 +65,9 @@ from core.utils import send_unified_notification
 logger = logging.getLogger(__name__)
 User = get_user_model()
 
-QUARANTINE_MAILBOX_FILE = "/home/MiguelAeTxio/SWAP/quarantine_requests.log"
+# [ARQUITECTURA] Rutas absolutas gestionadas por settings
+QUARANTINE_MAILBOX_FILE = os.path.join(settings.BASE_DIR, "quarantine_requests.log")
+RECOVERY_DIR = os.path.join(settings.BASE_DIR, "assessment_recovery")
 
 # ==============================================================================
 # SECCIÓN 1: FUNCIONES AUXILIARES DEL ORQUESTADOR
@@ -248,10 +250,6 @@ def _request_quarantine_via_mailbox(api_key: ApiKey):
         logger.critical(f"FALLO CRÍTICO DE ARQUITECTURA: No se pudo escribir en el buzón de cuarentena '{QUARANTINE_MAILBOX_FILE}': {e}", exc_info=True)
 
 def log_assessment_task_event(assessment_id, message, level="INFO", payload=None):
-    """
-    [PAIR] Implementación espejo de log_task_event para Assessments.
-    Garantiza persistencia atómica de logs independientemente del flujo principal.
-    """
     try:
         from assessment.models import Assessment
         timestamp = datetime.utcnow().isoformat() + "Z"
@@ -262,7 +260,6 @@ def log_assessment_task_event(assessment_id, message, level="INFO", payload=None
         }
         if payload:
             try:
-                # [SAFETY] Truncate massive payloads to prevent database bloat
                 payload_str = json.dumps(payload, ensure_ascii=False, sort_keys=True)
                 if len(payload_str) > 2000:
                     entry["payload"] = payload_str[:2000] + " ... [TRUNCATED]"
@@ -292,7 +289,6 @@ def log_task_event(task_id: str, message: str, is_error: bool = False, payload: 
         }
         if payload:
             try:
-                # [SAFETY] Truncate massive payloads to prevent database bloat
                 payload_str = json.dumps(payload, ensure_ascii=False, sort_keys=True)
                 if len(payload_str) > 2000:
                     entry["payload"] = payload_str[:2000] + " ... [TRUNCATED]"
@@ -315,15 +311,9 @@ def _parse_master_schema(markdown_text: str) -> list:
     return [(len(hashes), title.strip()) for hashes, title in headings]
 
 def _parse_markdown_with_separator(raw_text: str) -> tuple[str, str]:
-    # Regex flexible para encontrar el separador (case insensitive, con/sin espacios, guiones o hashtags)
-    # Ejemplos: "---FUENTES---", "## Fuentes", "--- Bibliografía ---"
     separator_pattern = r"(?i:^[-*_#]*\s*(?:FUENTES|BIBLIOGRAF[ÍI]A|REFERENCIAS)\s*[-*_#]*$)"
-    
-    # Buscar todas las coincidencias
     matches = list(re.finditer(separator_pattern, raw_text, re.MULTILINE))
-    
     if matches:
-        # Usar la última coincidencia válida para dividir
         last_match = matches[-1]
         content = raw_text[:last_match.start()].strip()
         sources = raw_text[last_match.end():].strip()
@@ -429,26 +419,15 @@ def _send_completion_notifications(new_content: ContentMaterial):
 # SECCIÓN 3: FUNCIONES AUXILIARES DE AUTOEVALUACIONES (ASSESSMENT)
 
 def _create_assessment_skeleton(assessment):
-    """
-    FASE A (Determinista): Crea los registros de Question en la BD.
-    Delega la definición estructural a la estrategia correspondiente.
-    """
     from assessment.models import Question
-    
     subject_name = assessment.content_copy.original_content.title
-    
-    # [REFACTOR] Uso de Factory
     strategy_mod = AssessmentStrategyFactory.get_strategy(assessment.archetype)
-    
-    # Obtener el esqueleto desde la estrategia
-    # [HITO 6] Pasamos el itinerario si existe
     itinerary = assessment.language_itinerary if hasattr(assessment, 'language_itinerary') else None
     
     skeleton_data = strategy_mod.get_strategy_skeleton("", subject_name, itinerary=itinerary)
     questions_to_create = skeleton_data.get('skeleton', [])
     
     if not questions_to_create:
-        # Fallback de seguridad
         questions_to_create = [{'label': 'Evaluación General', 'type': 'open_ended', 'widget': 'TEXT_AREA'}]
 
     with transaction.atomic():
@@ -456,7 +435,6 @@ def _create_assessment_skeleton(assessment):
         for q_data in questions_to_create:
             Question.objects.create(
                 assessment=assessment,
-                # [HITO 6] Armonización de Claves (Verbose vs Legacy)
                 section_label=q_data.get('section_label', q_data.get('label', 'Sección')),
                 source_type=q_data.get('source_type', q_data.get('source', 'SRC_DIR')),
                 interaction_type=q_data.get('interaction_type', q_data.get('interaction', 'QT_PROD')),
@@ -466,8 +444,6 @@ def _create_assessment_skeleton(assessment):
             )
         assessment.total_questions_expected = len(questions_to_create)
         assessment.save(update_fields=['total_questions_expected'])
-
-# ==============================================================================
 
 def log_timestamp(message):
     logger.info(f"[{timezone.now().strftime('%Y-%m-%d %H:%M:%S.%f')}] {message}")
@@ -483,7 +459,6 @@ def log_timestamp(message):
         pass
 
 def _log_assessment_event(assessment_id, message, level="INFO"):
-    """Wrapper para usar el método atómico del modelo."""
     try:
         with transaction.atomic():
             assessment = Assessment.objects.select_for_update().get(pk=assessment_id)
@@ -494,14 +469,8 @@ def _log_assessment_event(assessment_id, message, level="INFO"):
         logger.error(f"Error escribiendo log de Assessment {assessment_id}: {e}")
 
 def _parse_assessment_text(text: str) -> list:
-    """
-    [HITO 6 - EMULADOR UGR] Parser con Validación Estricta de Integridad.
-    No acepta preguntas tipo test sin opciones. Lanza excepción implícita para forzar reintento.
-    """
     text = clean_json_response(text)
     raw_list = []
-    
-    # 1. Extracción (dirtyjson)
     try:
         data = dirtyjson.loads(text)
         if isinstance(data, dict) and "questions" in data:
@@ -512,16 +481,12 @@ def _parse_assessment_text(text: str) -> list:
         pass
 
     if not raw_list:
-        # Fallback Regex (CORREGIDO: Usa triple comilla para evitar SyntaxError)
         try:
-            # Captura question_text y question_type de forma tolerante
             object_pattern = re.compile(r'''\{\s*(?:"|')?question_text(?:"|')?:\s*(?:"|')(.*?)(?:"|'),\s*(?:"|')?question_type(?:"|')?:\s*(?:"|')(.*?)(?:"|'),''', re.DOTALL)
             matches = object_pattern.findall(text)
-            # Nota: Este fallback es básico; confiamos en el reintento del orquestador si falla.
         except Exception:
             pass
 
-    # 2. Saneamiento y VALIDACIÓN DE INTEGRIDAD
     final_questions = []
     if not isinstance(raw_list, list): return []
 
@@ -530,7 +495,6 @@ def _parse_assessment_text(text: str) -> list:
         
         q_text = item.get('question_text', '').strip()
         q_type_raw = item.get('interaction_type', item.get('question_type', 'QT_PROD')).strip()
-        # Mapeo de compatibilidad AI -> Matriz S-Q-R
         mapping = {
             'multiple_choice': 'QT_SEL',
             'open_ended': 'QT_PROD',
@@ -541,35 +505,20 @@ def _parse_assessment_text(text: str) -> list:
         q_options = item.get('options', [])
         q_answer = item.get('model_answer', '')
 
-        # Regla 0: Texto obligatorio
         if not q_text: continue
 
-        # Regla 1: Integridad de Tipo Test (UGR Standard)
         if q_type == 'multiple_choice':
-            # Si no hay opciones o es una lista vacía o malformada
             if not q_options or not isinstance(q_options, list) or len(q_options) < 2:
-                # [STRICT MODE] Ignorar pregunta inválida para forzar posible reintento por lista vacía
                 continue 
-            
-            # Saneamiento de opciones
             clean_options = [str(opt).strip() for opt in q_options if str(opt).strip()]
             if len(clean_options) < 2: continue
             item['options'] = clean_options
 
-        # Saneamiento general
-        # [HITO 6] SANITIZATION (Regex Cleaning)
-        # 1. Remove numbering (e.g., "1.", "1)", "a)") at start
-        # [HITO 6] SANITIZATION (Regex Cleaning - ENHANCED)
-        # 1. Remove numbering (e.g., "1.", "1)", "a)", "1.-") at start
         q_text = re.sub(r'^\s*(\d+|[a-zA-Z])[\.\)\-]+\s*', '', q_text)
-        # 2. Remove technical tags and garbage (e.g., "(QT_SEL)", "[CLOZE]", "**Pregunta**")
         q_text = re.sub(r'\s*[\(\[]\s*(QT_[A-Z_]+|CLOZE|TEST|OPEN|GAP)\s*[\)\]]\s*', '', q_text, flags=re.IGNORECASE)
         q_text = re.sub(r'\*\*(Pregunta|Question|Item)\*\*[:\s]*', '', q_text, flags=re.IGNORECASE)
-        # 3. Clean "Instruction:" prefixes often hallucinated
         q_text = re.sub(r'^(Instruction|Instrucción|Enunciado)[:\s]*', '', q_text, flags=re.IGNORECASE)
-        # 2. Remove technical tags (e.g., "(QT_SEL)", "[CLOZE]")
         q_text = re.sub(r'\s*[\(\[]\s*(QT_[A-Z_]+|CLOZE|TEST|OPEN)\s*[\)\]]\s*', '', q_text, flags=re.IGNORECASE)
-        # 3. Remove legacy interaction prompts
         q_text = re.sub(r'\[---.*?REQUIRED.*?---\]', '', q_text)
         
         item['question_text'] = q_text.strip()
@@ -577,21 +526,17 @@ def _parse_assessment_text(text: str) -> list:
         if len(q_text) > 60000: item['question_text'] = q_text[:60000] + "..." 
         if not q_answer: item['model_answer'] = "Respuesta no disponible."
         
-        # Asignación final saneada
         item['interaction_type'] = q_type
         final_questions.append(item)
 
-    # DEDUPLICACIÓN (Fix: Evitar preguntas repetidas en el mismo examen)
     seen_texts = set()
     unique_questions = []
     for q in final_questions:
-        # Normalizamos para comparar (lowercase, sin espacios extra)
         normalized_text = " ".join(q['question_text'].lower().split())
         if normalized_text not in seen_texts:
             seen_texts.add(normalized_text)
             unique_questions.append(q)
         else:
-            # Opcional: Loguear duplicado descartado si se tuviera contexto
             pass
 
     return unique_questions
@@ -611,6 +556,32 @@ def _parse_correction_text(text: str) -> dict:
         feedback = feedback_match.group(1).strip()
     return {"score": score, "feedback": feedback}
 
+# [HITO 6 - TAREA 3] PERSISTENCIA FÍSICA (JSON BACKUP)
+def _get_backup_path(assessment_id):
+    # Asegurar existencia del directorio en cada llamada por seguridad
+    if not os.path.exists(RECOVERY_DIR):
+        os.makedirs(RECOVERY_DIR, exist_ok=True)
+    os.makedirs(RECOVERY_DIR, exist_ok=True)
+    return os.path.join(RECOVERY_DIR, f"assessment_recovery_{assessment_id}.json")
+
+def _save_json_backup(assessment_id, data):
+    try:
+        path = _get_backup_path(assessment_id)
+        with open(path, 'w') as f:
+            json.dump(data, f, indent=2, ensure_ascii=False)
+    except Exception as e:
+        logger.error(f"Fallo backup JSON {assessment_id}: {e}")
+
+def _load_json_backup(assessment_id):
+    path = _get_backup_path(assessment_id)
+    if os.path.exists(path):
+        try:
+            with open(path, 'r') as f:
+                return json.load(f)
+        except Exception as e:
+            logger.error(f"Fallo carga backup JSON {assessment_id}: {e}")
+    return {}
+
 # ==============================================================================
 # SECCIÓN 4: TAREAS CELERY
 # ==============================================================================
@@ -621,8 +592,6 @@ class ContentGenerationError(Exception):
 @shared_task(bind=True)
 def global_orchestrator_task(self):
     try:
-        # [V24.5 - HOTFIX] DEBOUNCE: Evitar ejecuciones superpuestas o saturación de cola
-        # Si la última ejecución fue hace menos de 45s, abortar para drenar la cola.
         try:
             settings_check = AutomationSettings.load()
             if settings_check.last_run_timestamp:
@@ -631,9 +600,9 @@ def global_orchestrator_task(self):
                     logger.warning(f'ORCHESTRATOR DEBOUNCE: Ejecución omitida (Delta: {delta.total_seconds():.1f}s < 45s). Drenando cola.')
                     return
         except Exception:
-            pass # Si falla el chequeo, continuamos por seguridad
+            pass 
 
-        _purge_zombie_tasks()  # [NUEVO] Limpieza preventiva de zombies
+        _purge_zombie_tasks()
         _process_quarantine_requests()
         _check_and_perform_daily_reset()
         db.close_old_connections()
@@ -647,8 +616,6 @@ def global_orchestrator_task(self):
             return
         active_key = automation_settings.active_api_key
         if active_key:
-            # HITO 24 - FIX DE ESTADO OBSOLETO: Forzar la lectura del estado real de la clave desde la BBDD
-            # para evitar decisiones basadas en el objeto cacheado en memoria por el worker de Celery.
             active_key.refresh_from_db()
         if not active_key or not active_key.is_enabled or active_key.is_quarantined:
             _log_structured_event(f"SINCRO: Clave activa ('{active_key.name if active_key else 'N/A'}') no es válida. Buscando reemplazo.", "INFO")
@@ -700,14 +667,10 @@ def global_orchestrator_task(self):
         task_to_rescue = PendingContentTask.objects.filter(status__in=[PendingContentTask.StatusChoices.FAILED_RETRYABLE, PendingContentTask.StatusChoices.FAILED_QUOTA]).order_by('created_at').first()
         if task_to_rescue:
             _log_structured_event(f"RESCATE (CONTENT): Re-encolando la tarea de contenido {task_to_rescue.id}.")
-            
-            # [FIX V24.5] RESETEO CRÍTICO: Limpiar historial de errores al cambiar de contexto/clave
-            # Evita que una clave nueva herede los 'strikes' de la anterior.
             sc = task_to_rescue.structured_content
             if sc.get("consecutive_quota_errors", 0) > 0:
                 sc["consecutive_quota_errors"] = 0
                 task_to_rescue.structured_content = sc
-            
             task_to_rescue.status = PendingContentTask.StatusChoices.PENDING
             task_to_rescue.save(update_fields=["status", "structured_content"])
             generate_full_course_task.delay(str(task_to_rescue.id))
@@ -749,11 +712,6 @@ def global_orchestrator_task(self):
                 automation_settings.last_run_status = status_msg
                 automation_settings.save(update_fields=['last_run_status'])
             return
-
-        # [HITO 24] CONTROL DE GENERACIÓN MASIVA
-        # Si este interruptor está apagado, el orquestador se detiene aquí.
-        # Esto permite que las Requests y Assessments (arriba) se procesen,
-        # pero evita el consumo de cuota en tareas de relleno (abajo).
         if not automation_settings.is_mass_generation_enabled:
             status_msg = "AHORRO DE ENERGÍA: Generación masiva desactivada. A la espera de solicitudes manuales."
             if automation_settings.last_run_status != status_msg:
@@ -808,7 +766,6 @@ def generate_full_course_task(self, task_id):
     task = None
     api_key = None
     try:
-        # --- BLOQUE DE INICIALIZACIÓN Y FUSIBLE ---
         time.sleep(2)
         automation_settings = AutomationSettings.load()
         api_key = automation_settings.active_api_key
@@ -826,12 +783,7 @@ def generate_full_course_task(self, task_id):
 
         task = PendingContentTask.objects.select_related('subject__academic_year__degree__branch__university', 'subject__content_hash_family').get(id=task_id)
         
-        # [V24.5 - FIX] DRENAJE RÁPIDO DE COLA
-        # Si la tarea ya fue abatida por el fusible en una ejecución paralela o previa,
-        # abortamos inmediatamente para evitar incrementar contadores o saturar logs
-        # mientras se vacía la cola de mensajes acumulados.
         if task.status == PendingContentTask.StatusChoices.FAILED_FATAL:
-            # Logueamos solo como debug/warning suave para no alarmar
             logger.warning(f"DRENAJE: Tarea {task_id} ya es FATAL. Omitiendo ejecución para vaciar cola.")
             return
 
@@ -858,10 +810,8 @@ def generate_full_course_task(self, task_id):
             task.save(update_fields=["status"])
             log_task_event(task_id, "Tarea iniciada (Status -> PROCESSING).")
 
-        # --- FASE 1: GENERACIÓN DE PLAN ---
         if not task.structured_content or "master_schema" not in task.structured_content:
             log_task_event(task_id, "Generando Plan de Trabajo...")
-            
             while True: 
                 task.refresh_from_db(fields=["status"])
                 if task.status == PendingContentTask.StatusChoices.PAUSED:
@@ -896,7 +846,6 @@ def generate_full_course_task(self, task_id):
                     
                 metadata_prompt = generate_course_metadata_prompt(topic_description, academic_context) + "\n\nJSON Only."
                 
-                # --- CAPTURA DE EXCEPCIONES LOCAL ---
                 try:
                     success, response_text, _ = generate_text_content(metadata_prompt, api_key=api_key, task_id=task_id)
                 except Exception as ex:
@@ -906,7 +855,6 @@ def generate_full_course_task(self, task_id):
                 if not success:
                     error_str = str(response_text)
                     is_quota = "429" in error_str or "Resource" in error_str or "Quota" in error_str or "503" in error_str or "overloaded" in error_str
-                    
                     if is_quota:
                         api_key.refresh_from_db()
                         api_key.consecutive_failures += 1
@@ -928,14 +876,12 @@ def generate_full_course_task(self, task_id):
                             time.sleep(60)
                         continue 
                     else:
-                        # Error no cuota: esperamos un poco y reintentamos localmente para no matar la tarea
                         log_task_event(task_id, f"ERROR INIT NO-CUOTA: {error_str}. Reintentando en 30s...", is_error=True)
                         time.sleep(30)
                         continue
 
                 cleaned_json_str = clean_json_response(response_text)
                 metadata = json.loads(cleaned_json_str)
-                
                 schema_prompt = generate_master_schema_prompt(topic_description, academic_context, learning_objectives, syllabus)
                 
                 try:
@@ -947,7 +893,6 @@ def generate_full_course_task(self, task_id):
                 if not success:
                     error_str = str(schema_or_error)
                     is_quota = "429" in error_str or "Resource" in error_str or "Quota" in error_str or "503" in error_str or "overloaded" in error_str
-                    
                     if is_quota:
                         api_key.refresh_from_db()
                         api_key.consecutive_failures += 1
@@ -989,14 +934,12 @@ def generate_full_course_task(self, task_id):
                 log_task_event(task_id, f"Plan generado: {section_count} secciones.")
                 break 
 
-        # --- FASE 2: GENERACIÓN DE CHUNKS ---
         task.refresh_from_db()
         parsed_schema = _parse_master_schema(task.structured_content["master_schema"])
         
         for index, (_, title) in enumerate(parsed_schema):
             db.close_old_connections()
             order = index + 1
-            
             if GeneratedContentChunk.objects.filter(task=task, order=order).exists():
                 continue
 
@@ -1009,7 +952,6 @@ def generate_full_course_task(self, task_id):
 
                 automation_settings = AutomationSettings.load()
                 api_key = automation_settings.active_api_key
-                
                 if not api_key or not api_key.is_enabled or api_key.is_quarantined:
                      api_key = ApiKey.objects.filter(is_enabled=True, is_quarantined=False).order_by('id').first()
                      if api_key:
@@ -1027,10 +969,8 @@ def generate_full_course_task(self, task_id):
                     master_schema=task.structured_content["master_schema"], 
                     academic_context=academic_context
                 )
-                
                 log_task_event(task_id, f'Generando {order}/{len(parsed_schema)}: "{title}" (Key: {api_key.name})')
 
-                # --- CAPTURA DE EXCEPCIONES LOCAL ---
                 try:
                     success, content_or_error, _ = generate_text_content(initial_prompt, api_key=api_key, task_id=task_id)
                 except Exception as ex:
@@ -1041,19 +981,16 @@ def generate_full_course_task(self, task_id):
                     content_text, sources_text = _parse_markdown_with_separator(content_or_error)
                     GeneratedContentChunk.objects.create(task=task, order=order, content=content_text, ai_sources=sources_text)
                     log_task_event(task_id, f"Sección {order} guardada OK.")
-                    
                     if api_key.consecutive_failures > 0:
                         log_task_event(task_id, f"CLAVE RECUPERADA: {api_key.name} (Reset contador).")
                         api_key.consecutive_failures = 0
                         api_key.save(update_fields=['consecutive_failures'])
-                    
                     time.sleep(5)
                     break 
 
                 else:
                     error_str = str(content_or_error)
                     is_quota = "429" in error_str or "Resource" in error_str or "Quota" in error_str or "503" in error_str or "overloaded" in error_str
-                    
                     if is_quota:
                         api_key.refresh_from_db()
                         api_key.consecutive_failures += 1
@@ -1079,7 +1016,6 @@ def generate_full_course_task(self, task_id):
                         log_task_event(task_id, f"ERROR CHUNK NO-CUOTA: {error_str}. Reintentando en 30s.", is_error=True)
                         time.sleep(30)
 
-        # --- FINALIZACIÓN ---
         task.refresh_from_db()
         if task.content_chunks.count() >= len(parsed_schema):
             log_task_event(task_id, "Ensamblando curso final...")
@@ -1120,7 +1056,6 @@ def generate_full_course_task(self, task_id):
 
     except Exception as e:
         err_str = str(e)
-        # Filtro de último recurso por si algo se escapa, pero ahora es difícil
         is_transient = isinstance(e, (TimeoutError, ConnectionError, OSError, OperationalError, InterfaceError)) or "Resource" in err_str or "429" in err_str or "Quota" in err_str
         
         if is_transient:
@@ -1141,9 +1076,10 @@ def generate_assessment_from_content_task(self, assessment_id):
     """
     [HITO 6 - V_IRON_CLAD] Persistencia Atómica vía .update().
     Bypassa los rollbacks de Django forzando escrituras SQL directas.
+    [HITO 6 - V_IRON_CLAD_PLUS] Ahora con respaldo físico JSON.
     """
     from django.db import transaction
-    log_assessment_task_event(assessment_id, "MOTOR ATÓMICO: Iniciando con blindaje SQL directo.")
+    log_assessment_task_event(assessment_id, "MOTOR ATÓMICO: Iniciando con blindaje SQL directo + Respaldo JSON.")
     
     try:
         assessment = Assessment.objects.get(pk=assessment_id)
@@ -1155,6 +1091,21 @@ def generate_assessment_from_content_task(self, assessment_id):
         branch_name = subject_obj.academic_year.degree.branch.name if (subject_obj and subject_obj.academic_year) else "General"
         
         if assessment.prompt_data is None: assessment.prompt_data = {}
+        
+        # [BACKUP RECOVERY] Fusión de datos DB + JSON
+        json_backup = _load_json_backup(assessment_id)
+        if json_backup:
+            if 'questions_cache' in json_backup:
+                current_cache = assessment.prompt_data.get('questions_cache', {})
+                current_cache.update(json_backup['questions_cache'])
+                assessment.prompt_data['questions_cache'] = current_cache
+            
+            # Recuperar campos críticos si faltan en DB
+            if 'reading_stimulus' in json_backup and not assessment.reading_stimulus:
+                assessment.reading_stimulus = json_backup['reading_stimulus']
+            if 'listening_transcript' in json_backup and not assessment.listening_transcript:
+                assessment.listening_transcript = json_backup['listening_transcript']
+        
         current_step = assessment.prompt_data.get('current_lifecycle_step', 0)
         subject_type = assessment.prompt_data.get('tribunal_type', "HUMANITIES_GENERIC")
         q_cache = assessment.prompt_data.get('questions_cache', {})
@@ -1174,6 +1125,7 @@ def generate_assessment_from_content_task(self, assessment_id):
                      automation_settings.active_api_key = api_key
                      automation_settings.save(update_fields=['active_api_key'])
                  else:
+                     log_assessment_task_event(assessment_id, "PAUSA: Pool de claves agotado. Reintentando en 5 min.", level="WARNING")
                      generate_assessment_from_content_task.apply_async(args=[assessment_id], countdown=300)
                      return
 
@@ -1198,6 +1150,9 @@ def generate_assessment_from_content_task(self, assessment_id):
                         language_itinerary=itinerary,
                         prompt_data=p_data
                     )
+                    # [BACKUP]
+                    _save_json_backup(assessment_id, {'prompt_data': p_data})
+                    
                     assessment.refresh_from_db()
                     current_step = 1
 
@@ -1205,21 +1160,27 @@ def generate_assessment_from_content_task(self, assessment_id):
                     strategy_mod = AssessmentStrategyFactory.get_strategy(subject_type)
                     skeleton = strategy_mod.get_strategy_skeleton(full_content, subject_name, itinerary=assessment.language_itinerary)
                     if skeleton.get('requires_api_stimulus'):
-                        prompt = getattr(strategy_mod, skeleton['prompt_func'])(full_content, subject_name)
-                        success, text, _ = generate_text_content(prompt, api_key=api_key)
-                        if not success: raise ResourceExhausted(text)
-                        
-                        ApiKey.objects.filter(id=api_key.id).update(consecutive_failures=0)
-                        dat = dirtyjson.loads(clean_json_response(text))
-                        p_data = assessment.prompt_data
-                        p_data.update({'cefr_level': dat.get("cefr_level", "B1"), 'current_lifecycle_step': 2})
-                        
-                        Assessment.objects.filter(id=assessment_id).update(
-                            reading_stimulus=dat.get('reading_stimulus', ''),
-                            listening_transcript=dat.get('listening_transcript', ''),
-                            status=Assessment.AssessmentStatus.PROCESSING,
-                            prompt_data=p_data
-                        )
+                        if not assessment.reading_stimulus: # Evitar regenerar si ya vino del backup
+                            prompt = getattr(strategy_mod, skeleton['prompt_func'])(full_content, subject_name)
+                            success, text, _ = generate_text_content(prompt, api_key=api_key)
+                            if not success: raise ResourceExhausted(text)
+                            
+                            ApiKey.objects.filter(id=api_key.id).update(consecutive_failures=0)
+                            dat = dirtyjson.loads(clean_json_response(text))
+                            r_stim = dat.get('reading_stimulus', '')
+                            l_stim = dat.get('listening_transcript', '')
+                            
+                            p_data = assessment.prompt_data
+                            p_data.update({'cefr_level': dat.get("cefr_level", "B1"), 'current_lifecycle_step': 2})
+                            
+                            Assessment.objects.filter(id=assessment_id).update(
+                                reading_stimulus=r_stim,
+                                listening_transcript=l_stim,
+                                status=Assessment.AssessmentStatus.PROCESSING,
+                                prompt_data=p_data
+                            )
+                            # [BACKUP]
+                            _save_json_backup(assessment_id, {'reading_stimulus': r_stim, 'listening_transcript': l_stim, 'questions_cache': q_cache})
                     else:
                         p_data = assessment.prompt_data
                         p_data.update({'current_lifecycle_step': 2})
@@ -1259,6 +1220,9 @@ def generate_assessment_from_content_task(self, assessment_id):
                             q_cache[s_idx] = {'text': d['question_text'], 'options': d.get('options', []), 'answer': d['model_answer']}
                             p_data = assessment.prompt_data
                             p_data['questions_cache'] = q_cache
+                            
+                            # [DOUBLE WRITE] DB + FILE
+                            _save_json_backup(assessment_id, {'questions_cache': q_cache, 'last_update': str(timezone.now())})
                             Assessment.objects.filter(id=assessment_id).update(prompt_data=p_data, questions_processed=idx)
                             Question.objects.filter(id=q_obj.id).update(question_text=d['question_text'], options=d.get('options', []), model_answer=d['answer'])
                         time.sleep(1)
@@ -1286,7 +1250,12 @@ def generate_assessment_from_content_task(self, assessment_id):
                 raise e
 
         Assessment.objects.filter(id=assessment_id).update(status=Assessment.AssessmentStatus.COMPLETED)
-        log_assessment_task_event(assessment_id, "FINALIZADO: Generación persistida vía SQL.", level="SUCCESS")
+        log_assessment_task_event(assessment_id, "FINALIZADO: Generación persistida vía SQL + JSON.", level="SUCCESS")
+        
+        # Limpieza de backup
+        try:
+             os.remove(_get_backup_path(assessment_id))
+        except: pass
 
     except Exception as e:
         log_assessment_task_event(assessment_id, f"FATAL: {str(e)}", level="ERROR")
@@ -1326,7 +1295,6 @@ def correct_assessment_task(self, assessment_id):
             raise ValueError("No se encontró una clave de API activa.")
         
         answers_to_correct = user_answers.filter(score__isnull=True)
-        # Actualizar progreso inicial
         initial_processed = user_answers.count() - answers_to_correct.count()
         Assessment.objects.filter(pk=assessment_id).update(questions_processed=initial_processed)
 
@@ -1341,10 +1309,7 @@ def correct_assessment_task(self, assessment_id):
                 continue
 
             prompt = (f"Evalúa la siguiente respuesta de un usuario, comparándola con la pregunta y la respuesta modelo.\n\n" f'Pregunta: "{answer.question.question_text}"\n' f'Respuesta Modelo: "{answer.question.model_answer}"\n' f'Respuesta del Usuario: "{answer.answer_text}"\n\n' f"{prompt_format_instructions}")
-            
-            # Log antes de la llamada
             _log_assessment_event(assessment_id, f"Corrigiendo respuesta {i}/{answers_to_correct.count()}...")
-            
             success, response_text, _ = generate_text_content(prompt, api_key=api_key)
             if not success:
                 raise AIServiceCriticalError(f"API falló para UserAnswer ID {answer.id}: {response_text}")
@@ -1357,13 +1322,9 @@ def correct_assessment_task(self, assessment_id):
                     answer.feedback = correction["feedback"]
                     answer.correction_expiration_date = expiration_date
                     answer.save(update_fields=["score", "feedback", "correction_expiration_date"])
-                
-                # Actualizar contador de progreso en Assessment
                 Assessment.objects.filter(pk=assessment_id).update(questions_processed=F("questions_processed") + 1)
-            
             time.sleep(2)
 
-        # [V2 RESILIENCIA] Notificación desacoplada de la transacción final.
         should_notify = False
         assessment_user = None
         content_title_val = None
@@ -1375,12 +1336,10 @@ def correct_assessment_task(self, assessment_id):
                 assessment_to_complete.results_expiration_date = expiration_date
                 assessment_to_complete.save(update_fields=["status", "results_expiration_date"])
                 _log_assessment_event(assessment_id, "CORRECTION_TASK: Corrección finalizada y resultados disponibles.", "SUCCESS")
-                
                 should_notify = True
                 assessment_user = assessment_to_complete.user
                 content_title_val = assessment_to_complete.content_copy.original_content.title
 
-        # Notificación
         if should_notify:
             try:
                 action_url = settings.BASE_URL + reverse("assessment:view_results", kwargs={"pk": assessment_id})
@@ -1415,13 +1374,8 @@ def expire_untaken_assessments():
     count = assessments_to_expire.count()
     if count == 0:
         return "No hay evaluaciones no realizadas para expirar."
-    
-    # [FIX V24] Capturar usuarios afectados antes del update para refrescar sidebar
     affected_users_ids = list(assessments_to_expire.values_list('user', flat=True).distinct())
-    
     updated_rows = assessments_to_expire.update(status="EXPIRED_UNTAKEN")
-    
-    # [FIX V24] Refrescar navegación
     if affected_users_ids:
         log_timestamp(f"EXPIRE_UNTAKEN_TASK: Refrescando navegación para {len(affected_users_ids)} usuarios.")
         for user_id in affected_users_ids:
@@ -1430,7 +1384,6 @@ def expire_untaken_assessments():
                 refresh_user_navigation(user)
             except Exception as e:
                 logger.error(f"Error refrescando navegación para usuario {user_id}: {e}")
-
     log_timestamp(f"EXPIRE_UNTAKEN_TASK: Se han hecho caducar {updated_rows} evaluaciones.")
     return f"Se han marcado como caducadas {updated_rows} evaluaciones."
 
@@ -1441,15 +1394,9 @@ def purge_and_penalize_corrections():
     expired_assessments = Assessment.objects.filter(status="RESULTS_AVAILABLE", results_expiration_date__lt=now).distinct()
     if not expired_assessments.exists():
         return "No hay evaluaciones para procesar."
-    
     assessments_to_penalize = expired_assessments.filter(was_viewed=False)
-    
-    # [FIX V24] Capturar usuarios afectados antes del update para refrescar sidebar
     affected_users_ids = list(assessments_to_penalize.values_list('user', flat=True).distinct())
-
     penalized_count = assessments_to_penalize.update(status="CORRECTION_EXPIRED")
-    
-    # [FIX V24] Refrescar navegación
     if affected_users_ids:
         log_timestamp(f"PURGE_PENALIZE_TASK: Refrescando navegación para {len(affected_users_ids)} usuarios.")
         for user_id in affected_users_ids:
@@ -1458,9 +1405,7 @@ def purge_and_penalize_corrections():
                 refresh_user_navigation(user)
             except Exception as e:
                 logger.error(f"Error refrescando navegación para usuario {user_id}: {e}")
-    
     if penalized_count > 0:
-        log_timestamp(f"PURGE_PENALIZE_TASK: Penalizadas {penalized_count} evaluaciones no vistas.")
         log_timestamp(f"PURGE_PENALIZE_TASK: Penalizadas {penalized_count} evaluaciones no vistas.")
     answers_to_purge = UserAnswer.objects.filter(question__assessment__in=expired_assessments, score__isnull=False)
     purged_count = answers_to_purge.update(score=None, feedback="La corrección y el feedback de esta respuesta han caducado.")

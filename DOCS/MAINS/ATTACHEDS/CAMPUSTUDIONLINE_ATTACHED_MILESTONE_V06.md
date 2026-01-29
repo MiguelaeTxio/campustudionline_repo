@@ -7,15 +7,21 @@ Al iniciar cualquier sesión de trabajo sobre el sistema de evaluaciones, es **I
 
 ---
 
-### HOJA DE RUTA PARA LA SIGUIENTE SESIÓN (ESTADO DE FALLO DE PERSISTENCIA ATÓMICA)
+### ESTADO TÉCNICO POST-SESIÓN (RESOLUCIÓN DE PERSISTENCIA ATÓMICA)
 
-**Estado Actual:** CRÍTICO. El blindaje SQL directo (`.update()`) ha fallado en persistir el diccionario `questions_cache`. El sistema sigue reiniciando desde el ítem 1 al no encontrar datos en la caché al recuperar la tarea.
+**Estado:** ESTABILIZADO. Se ha erradicado la causa raíz de la pérdida de progreso.
 
-**Tarea 1: Diagnóstico de Escritura SQL Directa**
-- **Acción:** Verificar mediante scripts de shell si el comando `Assessment.objects.filter(id=assessment_id).update(prompt_data=p_data)` realmente modifica el registro en la base de datos MySQL de PythonAnywhere durante la ejecución de la tarea.
+**Logros de la Sesión:**
+1.  **Diagnóstico Empírico:** Se confirmó que `assessment.save()` sin argumentos en el worker de Celery sobrescribía los cambios realizados por `.update()` SQL, borrando el `questions_cache`.
+2.  **Blindaje "Iron-Clad Plus":** 
+    *   Refactorización del orquestador para usar **Surgical Saves** (`update_fields`).
+    *   Implementación de **Persistencia Física (JSON)** en `logs/assessment_recovery/` como redundancia ante fallos de base de datos o rollbacks de transacción.
+3.  **Higiene Arquitectónica:** 
+    *   Se eliminó la duplicidad crítica borrando el archivo zombie `assessment/tasks.py`. Toda la lógica reside ahora en `orchestrator`.
+    *   Se eliminó el uso del directorio `SWAP` para archivos de control de la plataforma, moviéndolos a `BASE_DIR/logs/`.
+4.  **Saneamiento de UI:** Eliminado error de renderizado `VariableDoesNotExist` en el bloque de estado del assessment.
 
-**Tarea 2: Análisis de Hidratación de Objetos en Celery**
-- **Acción:** Investigar si el worker de Celery está trabajando con una instancia cacheada del objeto `Assessment` que ignora los cambios realizados por `.update()` en otros procesos o si el campo JSON se corrompe al serializarse.
+**HOJA DE RUTA PARA LA SIGUIENTE SESIÓN:**
+1.  **Validación de Recuperación:** Forzar una interrupción de red/cuota durante la generación para verificar que el sistema recupera el 100% del progreso desde el archivo JSON de respaldo.
+2.  **Monitorización de Logs:** Verificar que el nuevo mensaje informativo ("PAUSA: Pool agotado") aparece correctamente en el panel de administración cuando todas las claves están en cuarentena.
 
-**Tarea 3: Implementación de Persistencia Física (JSON File)**
-- **Acción:** Como medida de contingencia absoluta, considerar el volcado del progreso a un archivo físico `.json` en el sistema de archivos del servidor, omitiendo la base de datos para la caché de preguntas.

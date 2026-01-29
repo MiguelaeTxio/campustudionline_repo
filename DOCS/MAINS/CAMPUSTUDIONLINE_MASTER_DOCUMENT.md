@@ -17,7 +17,7 @@ CampuStudiOnline es una plataforma web de e-learning diseñada para centralizar 
 *   `academic_directory`: Expone una navegación pública de la estructura académica.
 *   `academic_structure`: Es el pilar de la jerarquía académica (`University` -> `Branch` -> `Degree` -> `Subject`).
 *   `announcements`: Un Tablón de Anuncios simple para comunicaciones generales.
-*   `assessment`: Gestiona el ciclo de vida de autoevaluaciones generadas por IA.
+*   `assessment`: Gestiona modelos y vistas de autoevaluación. Lógica de tareas centralizada en `orchestrator`.
 *   `chat`: Sistema de Comunicación Grupal con salas públicas/privadas, roles y membresías.
 *   `contents`: Es la Biblioteca Central y la Sala de Estudio.
 *   `core`: El núcleo de Django (settings, urls, etc.).

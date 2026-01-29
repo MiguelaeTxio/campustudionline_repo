@@ -2,7 +2,7 @@
 {% load i18n %}
 
 {# Compatibilidad de contexto: AJAX usa user_copy, Vista Principal usa content_copy #}
-{% with user_copy=user_copy|default:content_copy %}
+{% with u_copy=user_copy %}
 
 <div class="row" id="assessment-panel">
     <!-- Columna de Estado y Acciones Principales -->
@@ -79,7 +79,7 @@
 
             {% else %}
                 <!-- ENLACE DIRECTO LIMPIO A CONFIGURACIÓN -->
-                <a href="{% url 'assessment:configure_assessment' copy_pk=user_copy.pk %}" 
+                <a href="{% url 'assessment:configure_assessment' copy_pk=u_copy.pk %}" 
                    class="btn btn-primary w-100 {% if assessment_context.buttons.solicitar.is_disabled %}disabled{% endif %}"
                    {% if assessment_context.status == "EN_ESPERA" %}
                        data-bs-toggle="tooltip"
