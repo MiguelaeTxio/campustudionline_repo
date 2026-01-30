@@ -1,6 +1,22 @@
-# Emulador UGR: Estrategia Humanidades y Letras
+
+def generate_item_prompt(context_text, question_obj):
+    return f"""
+ROL: Catedrático de Humanidades.
+TAREA: Generar un comentario de texto o ensayo.
+TIPO: {question_obj.get_interaction_type_display()}
+SECCIÓN: {question_obj.section_label}
+
+CONTEXTO:
+{context_text[:4000]}...
+
+INSTRUCCIÓN TÉCNICA:
+Genera un objeto JSON válido con:
+- "question_text": La pregunta o tema a desarrollar.
+- "model_answer": Esquema de respuesta correcta o puntos clave.
+"""
+
 def generate_humanities_prompt(content_text, subject_name, tribunal_type="GENERIC"):
-    return f"Catedrático UGR. Comentario de Texto y Ensayo. JSON: questions."
+    return generate_item_prompt(content_text, type("MockQ", (), {"get_interaction_type_display": lambda: "General", "interaction_type": "QT_PROD", "section_label": "General"})())
 
 def get_strategy_skeleton(content_text, subject_name, **kwargs):
     return {

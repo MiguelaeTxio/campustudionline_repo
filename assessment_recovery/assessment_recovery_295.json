@@ -1,0 +1,64 @@
+{
+  "questions_cache": {
+    "1": {
+      "text": "Completa la siguiente oración eligiendo la palabra más adecuada.",
+      "options": [
+        "很 (hěn)",
+        "都 (dōu)",
+        "也 (yě)",
+        "不 (bù)"
+      ],
+      "answer": "我们也都喜欢看电影。"
+    },
+    "2": {
+      "text": "Completa la siguiente frase eligiendo la opción correcta.",
+      "options": [
+        "我去了商店买了一些水果。",
+        "他昨天晚上吃了很多东西。",
+        "她正在学习汉语，很有趣。",
+        "他们明天要去看电影。"
+      ],
+      "answer": "她正在学习汉语，很有趣。"
+    },
+    "3": {
+      "text": "Completa la siguiente oración eligiendo la opción más adecuada.",
+      "options": [
+        "他喜欢去公园散步。",
+        "她喜欢去公园散步。",
+        "他们喜欢去公园散步。",
+        "我喜欢去公园散步。"
+      ],
+      "answer": "她喜欢去公园散步。"
+    },
+    "4": {
+      "text": "Elige la opción correcta para completar la oración.",
+      "options": [
+        "他昨天买了一个新手机。",
+        "他昨天买手机一个新的。",
+        "他昨天手机买了一个新的。",
+        "他昨天一个新手机买了。"
+      ],
+      "answer": "他昨天买了一个新手机。"
+    },
+    "5": {
+      "text": "Elige la opción correcta para completar la oración.",
+      "options": [
+        "他昨天买了一个新手机。",
+        "他昨天买了新手机。",
+        "他昨天买新手机。",
+        "他昨天买手机。"
+      ],
+      "answer": "他昨天买了一个新手机。"
+    },
+    "6": {
+      "text": "Elige la opción correcta.",
+      "options": [
+        "他喜欢看书。",
+        "她喜欢在看书。",
+        "他们喜欢看书。",
+        "你们喜欢看书。"
+      ],
+      "answer": "他喜欢看书。"
+    }
+  }
+}

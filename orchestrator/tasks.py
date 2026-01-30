@@ -470,76 +470,26 @@ def _log_assessment_event(assessment_id, message, level="INFO"):
 
 def _parse_assessment_text(text: str) -> list:
     text = clean_json_response(text)
-    raw_list = []
     try:
         data = dirtyjson.loads(text)
-        if isinstance(data, dict) and "questions" in data:
-            raw_list = data["questions"]
-        elif isinstance(data, list):
-            raw_list = data
-    except Exception:
-        pass
-
-    if not raw_list:
-        try:
-            object_pattern = re.compile(r'''\{\s*(?:"|')?question_text(?:"|')?:\s*(?:"|')(.*?)(?:"|'),\s*(?:"|')?question_type(?:"|')?:\s*(?:"|')(.*?)(?:"|'),''', re.DOTALL)
-            matches = object_pattern.findall(text)
-        except Exception:
-            pass
-
-    final_questions = []
-    if not isinstance(raw_list, list): return []
-
-    for item in raw_list:
-        if not isinstance(item, dict): continue
+        # Soporte para lista, dict con clave "questions" o diccionario individual (Chino)
+        raw_list = data["questions"] if (isinstance(data, dict) and "questions" in data) else ([data] if isinstance(data, dict) else (data if isinstance(data, list) else []))
         
-        q_text = item.get('question_text', '').strip()
-        q_type_raw = item.get('interaction_type', item.get('question_type', 'QT_PROD')).strip()
-        mapping = {
-            'multiple_choice': 'QT_SEL',
-            'open_ended': 'QT_PROD',
-            'essay': 'QT_PROD',
-            'cloze': 'QT_CLZ_OPT'
-        }
-        q_type = mapping.get(q_type_raw, q_type_raw)
-        q_options = item.get('options', [])
-        q_answer = item.get('model_answer', '')
-
-        if not q_text: continue
-
-        if q_type == 'multiple_choice':
-            if not q_options or not isinstance(q_options, list) or len(q_options) < 2:
-                continue 
-            clean_options = [str(opt).strip() for opt in q_options if str(opt).strip()]
-            if len(clean_options) < 2: continue
-            item['options'] = clean_options
-
-        q_text = re.sub(r'^\s*(\d+|[a-zA-Z])[\.\)\-]+\s*', '', q_text)
-        q_text = re.sub(r'\s*[\(\[]\s*(QT_[A-Z_]+|CLOZE|TEST|OPEN|GAP)\s*[\)\]]\s*', '', q_text, flags=re.IGNORECASE)
-        q_text = re.sub(r'\*\*(Pregunta|Question|Item)\*\*[:\s]*', '', q_text, flags=re.IGNORECASE)
-        q_text = re.sub(r'^(Instruction|Instrucción|Enunciado)[:\s]*', '', q_text, flags=re.IGNORECASE)
-        q_text = re.sub(r'\s*[\(\[]\s*(QT_[A-Z_]+|CLOZE|TEST|OPEN)\s*[\)\]]\s*', '', q_text, flags=re.IGNORECASE)
-        q_text = re.sub(r'\[---.*?REQUIRED.*?---\]', '', q_text)
-        
-        item['question_text'] = q_text.strip()
-
-        if len(q_text) > 60000: item['question_text'] = q_text[:60000] + "..." 
-        if not q_answer: item['model_answer'] = "Respuesta no disponible."
-        
-        item['interaction_type'] = q_type
-        final_questions.append(item)
-
-    seen_texts = set()
-    unique_questions = []
-    for q in final_questions:
-        normalized_text = " ".join(q['question_text'].lower().split())
-        if normalized_text not in seen_texts:
-            seen_texts.add(normalized_text)
-            unique_questions.append(q)
-        else:
-            pass
-
-    return unique_questions
+        final_questions = []
+        for item in raw_list:
+            if not isinstance(item, dict) or not item.get('question_text'): continue
+            
+            # Limpieza y Normalización de Claves (answer vs model_answer)
+            clean_item = {
+                'question_text': re.sub(r'^\s*(\d+|[a-zA-Z])[\.\)\-]+\s*', '', item['question_text']).strip(),
+                'model_answer': item.get('model_answer', item.get('answer', 'Respuesta no disponible.')),
+                'options': item.get('options', [])
+            }
+            final_questions.append(clean_item)
+        return final_questions
+    except Exception as e:
+        logger.error(f"Error en _parse_assessment_text: {e}")
+        return []
 
 def _parse_correction_text(text: str) -> dict:
     score = None
@@ -558,10 +508,8 @@ def _parse_correction_text(text: str) -> dict:
 
 # [HITO 6 - TAREA 3] PERSISTENCIA FÍSICA (JSON BACKUP)
 def _get_backup_path(assessment_id):
-    # Asegurar existencia del directorio en cada llamada por seguridad
     if not os.path.exists(RECOVERY_DIR):
         os.makedirs(RECOVERY_DIR, exist_ok=True)
-    os.makedirs(RECOVERY_DIR, exist_ok=True)
     return os.path.join(RECOVERY_DIR, f"assessment_recovery_{assessment_id}.json")
 
 def _save_json_backup(assessment_id, data):
@@ -1076,341 +1024,182 @@ def generate_full_course_task(self, task_id):
 @shared_task(bind=True, acks_late=True, max_retries=5, default_retry_delay=60)
 def generate_assessment_from_content_task(self, assessment_id):
     """
-    [HITO 6 - V_IRON_CLAD] Persistencia Atómica vía .update().
-    Bypassa los rollbacks de Django forzando escrituras SQL directas.
-    [HITO 6 - V_IRON_CLAD_PLUS] Ahora con respaldo físico JSON.
+    [V_IRON_CLAD] Persistencia Atómica + Despacho dinámico vía Factory.
     """
-    from django.db import transaction
-    log_assessment_task_event(assessment_id, "MOTOR ATÓMICO: Iniciando con blindaje SQL directo + Respaldo JSON.")
-    
+    log_assessment_task_event(assessment_id, "MOTOR ATÓMICO: Iniciando con blindaje SQL directo + Factory.")
     try:
         assessment = Assessment.objects.get(pk=assessment_id)
         original_content = assessment.content_copy.original_content
         full_content = original_content.get_full_markdown_content()
-        
         subject_obj = original_content.subject.first()
         subject_name = subject_obj.name if subject_obj else original_content.title
         branch_name = subject_obj.academic_year.degree.branch.name if (subject_obj and subject_obj.academic_year) else "General"
         
         if assessment.prompt_data is None: assessment.prompt_data = {}
-        
-        # [BACKUP RECOVERY] Fusión de datos DB + JSON
         json_backup = _load_json_backup(assessment_id)
-        if json_backup:
-            if 'questions_cache' in json_backup:
-                current_cache = assessment.prompt_data.get('questions_cache', {})
-                current_cache.update(json_backup['questions_cache'])
-                assessment.prompt_data['questions_cache'] = current_cache
-            
-            # Recuperar campos críticos si faltan en DB
-            if 'reading_stimulus' in json_backup and not assessment.reading_stimulus:
-                assessment.reading_stimulus = json_backup['reading_stimulus']
-            if 'listening_transcript' in json_backup and not assessment.listening_transcript:
-                assessment.listening_transcript = json_backup['listening_transcript']
-        
-        current_step = assessment.prompt_data.get('current_lifecycle_step', 0)
-        subject_type = assessment.prompt_data.get('tribunal_type', "HUMANITIES_GENERIC")
-        q_cache = assessment.prompt_data.get('questions_cache', {})
-        
-        r_text_memory = assessment.reading_stimulus or ""
-        l_text_memory = assessment.listening_transcript or ""
+        if json_backup and 'questions_cache' in json_backup:
+            assessment.prompt_data.setdefault('questions_cache', {}).update(json_backup['questions_cache'])
 
-        log_assessment_task_event(assessment_id, f"RECUPERACIÓN: Paso {current_step} | Caché: {len(q_cache)} ítems.")
+        current_step = assessment.prompt_data.get('current_lifecycle_step', 0)
+        subject_type = assessment.prompt_data.get('tribunal_type', "HUMANITIES_ARTS")
+        q_cache = assessment.prompt_data.get('questions_cache', {})
+        r_text_memory = assessment.reading_stimulus or full_content
+        l_text_memory = assessment.listening_transcript or ""
 
         while current_step <= 2:
             automation_settings = AutomationSettings.load()
             api_key = automation_settings.active_api_key
-            
             if not api_key or not api_key.is_enabled or api_key.is_quarantined:
-                 api_key = ApiKey.objects.filter(is_enabled=True, is_quarantined=False).order_by('id').first()
-                 if api_key:
-                     automation_settings.active_api_key = api_key
-                     automation_settings.save(update_fields=['active_api_key'])
-                 else:
-                     log_assessment_task_event(assessment_id, "PAUSA: Pool de claves agotado. Reintentando en 5 min.", level="WARNING")
-                     generate_assessment_from_content_task.apply_async(args=[assessment_id], countdown=300)
-                     return
+                api_key = ApiKey.objects.filter(is_enabled=True, is_quarantined=False).order_by('id').first()
+                if not api_key:
+                    generate_assessment_from_content_task.apply_async(args=[assessment_id], countdown=300)
+                    return
+                automation_settings.active_api_key = api_key
+                automation_settings.save(update_fields=['active_api_key'])
 
             try:
                 if current_step == 0:
-                    prompt = generate_classifier_prompt(subject_name, branch_name, rejected_archetypes=assessment.rejected_archetypes)
+                    prompt = generate_classifier_prompt(subject_name, branch_name)
                     success, resp, _ = generate_text_content(prompt, api_key=api_key)
                     if not success: raise ResourceExhausted(resp)
-                    
-                    ApiKey.objects.filter(id=api_key.id).update(consecutive_failures=0)
                     found = clean_json_response(resp).strip().upper()
                     subject_type = next((t for t in ["LOGIC_AND_TECH", "CEFR_LANGUAGES", "SOCIO_LEGAL", "HEALTH_SCIENCES", "HUMANITIES_ARTS"] if t in found), "HUMANITIES_ARTS")
-                    
-                    itinerary = None
-                    if subject_type == "CEFR_LANGUAGES": itinerary = "MINOR" if check_if_minor(subject_name) else "MAIOR"
-                    
+                    itinerary = "MINOR" if subject_type == "CEFR_LANGUAGES" and check_if_minor(subject_name) else ("MAIOR" if subject_type == "CEFR_LANGUAGES" else None)
                     p_data = assessment.prompt_data
                     p_data.update({'tribunal_type': subject_type, 'current_lifecycle_step': 1})
-                    
-                    Assessment.objects.filter(id=assessment_id).update(
-                        archetype=Assessment.Archetype.LANGUAGES if subject_type == "CEFR_LANGUAGES" else (Assessment.Archetype.SCIENCES if subject_type == "LOGIC_AND_TECH" else Assessment.Archetype.HUMANITIES),
-                        language_itinerary=itinerary,
-                        prompt_data=p_data
-                    )
-                    # [BACKUP]
-                    _save_json_backup(assessment_id, {'prompt_data': p_data})
-                    
+                    Assessment.objects.filter(id=assessment_id).update(archetype=subject_type, language_itinerary=itinerary, prompt_data=p_data)
                     assessment.refresh_from_db()
                     current_step = 1
 
                 elif current_step == 1:
                     strategy_mod = AssessmentStrategyFactory.get_strategy(subject_type)
                     skeleton = strategy_mod.get_strategy_skeleton(full_content, subject_name, itinerary=assessment.language_itinerary)
-                    if skeleton.get('requires_api_stimulus'):
-                        if not assessment.reading_stimulus: # Evitar regenerar si ya vino del backup
-                            prompt = getattr(strategy_mod, skeleton['prompt_func'])(full_content, subject_name)
-                            success, text, _ = generate_text_content(prompt, api_key=api_key)
-                            if not success: raise ResourceExhausted(text)
-                            
-                            ApiKey.objects.filter(id=api_key.id).update(consecutive_failures=0)
-                            dat = dirtyjson.loads(clean_json_response(text))
-                            r_stim = dat.get('reading_stimulus', '')
-                            l_stim = dat.get('listening_transcript', '')
-                            
-                            p_data = assessment.prompt_data
-                            p_data.update({'cefr_level': dat.get("cefr_level", "B1"), 'current_lifecycle_step': 2})
-                            
-                            Assessment.objects.filter(id=assessment_id).update(
-                                reading_stimulus=r_stim,
-                                listening_transcript=l_stim,
-                                status=Assessment.AssessmentStatus.PROCESSING,
-                                prompt_data=p_data
-                            )
-                            # [BACKUP]
-                            _save_json_backup(assessment_id, {'reading_stimulus': r_stim, 'listening_transcript': l_stim, 'questions_cache': q_cache})
+                    if skeleton.get('requires_api_stimulus') and not assessment.reading_stimulus:
+                        prompt = getattr(strategy_mod, skeleton['prompt_func'])(full_content, subject_name)
+                        success, text, _ = generate_text_content(prompt, api_key=api_key)
+                        if not success: raise ResourceExhausted(text)
+                        dat = dirtyjson.loads(clean_json_response(text))
+                        r_stim, l_stim = dat.get('reading_stimulus', ''), dat.get('listening_transcript', '')
+                        p_data = assessment.prompt_data
+                        p_data.update({'cefr_level': dat.get("cefr_level", "B1"), 'current_lifecycle_step': 2})
+                        Assessment.objects.filter(id=assessment_id).update(reading_stimulus=r_stim, listening_transcript=l_stim, prompt_data=p_data)
                     else:
                         p_data = assessment.prompt_data
                         p_data.update({'current_lifecycle_step': 2})
-                        Assessment.objects.filter(id=assessment_id).update(
-                            status=Assessment.AssessmentStatus.PROCESSING,
-                            prompt_data=p_data
-                        )
+                        Assessment.objects.filter(id=assessment_id).update(prompt_data=p_data)
                     assessment.refresh_from_db()
-                    r_text_memory, l_text_memory = assessment.reading_stimulus or full_content, assessment.listening_transcript or ""
+                    r_text_memory = assessment.reading_stimulus or full_content
                     current_step = 2
 
                 elif current_step == 2:
                     if assessment.questions.count() == 0: _create_assessment_skeleton(assessment)
                     questions = assessment.questions.all().order_by('id')
-                    assessment.refresh_from_db(fields=['questions_processed'])
-                    
                     for idx, q_obj in enumerate(questions, 1):
                         s_idx = str(idx)
                         if s_idx in q_cache:
                             d = q_cache[s_idx]
-                            Question.objects.filter(id=q_obj.id).update(question_text=d['text'], options=d['options'], model_answer=d['answer'])
+                            Question.objects.filter(id=q_obj.id).update(question_text=d['text'], options=d.get('options', []), model_answer=d['answer'])
                             continue
 
-                        prompt = ""
+                        strategy_mod = AssessmentStrategyFactory.get_strategy(subject_type)
                         if subject_type == "CEFR_LANGUAGES":
                             prompt = generate_languages_item_prompt(r_text_memory, l_text_memory, assessment.prompt_data.get('cefr_level', 'B1'), q_obj, itinerary=assessment.language_itinerary, target_lang=get_target_language(subject_name))
-                        elif subject_type == "LOGIC_AND_TECH": prompt = generate_sciences_prompt(r_text_memory, q_obj)
-                        else: prompt = generate_humanities_prompt(r_text_memory, q_obj)
+                        elif hasattr(strategy_mod, 'generate_item_prompt'):
+                            prompt = strategy_mod.generate_item_prompt(r_text_memory, q_obj)
+                        else:
+                            prompt = generate_humanities_prompt(r_text_memory, q_obj)
 
                         success, resp, _ = generate_text_content(prompt, api_key=api_key)
                         if not success: raise ResourceExhausted(resp)
-                        
-                        ApiKey.objects.filter(id=api_key.id).update(consecutive_failures=0)
                         d_list = _parse_assessment_text(resp)
-                        if d_list:
-                            d = d_list[0]
-                            q_cache[s_idx] = {'text': d['question_text'], 'options': d.get('options', []), 'answer': d['model_answer']}
-                            p_data = assessment.prompt_data
-                            p_data['questions_cache'] = q_cache
-                            
-                            # [DOUBLE WRITE] DB + FILE
-                            _save_json_backup(assessment_id, {'questions_cache': q_cache, 'last_update': str(timezone.now())})
-                            Assessment.objects.filter(id=assessment_id).update(prompt_data=p_data, questions_processed=idx)
-                            Question.objects.filter(id=q_obj.id).update(question_text=d['question_text'], options=d.get('options', []), model_answer=d['answer'])
+                        if not d_list: raise ValueError(f"Fallo parseo Q{q_obj.id}. Respuesta: {resp[:50]}...")
+                        
+                        d = d_list[0]
+                        clean_data = {'text': d['question_text'], 'options': d.get('options', []), 'answer': d['model_answer']}
+                        q_cache[s_idx] = clean_data
+                        p_data = assessment.prompt_data
+                        p_data['questions_cache'] = q_cache
+                        _save_json_backup(assessment_id, {'questions_cache': q_cache})
+                        Assessment.objects.filter(id=assessment_id).update(prompt_data=p_data, questions_processed=idx)
+                        Question.objects.filter(id=q_obj.id).update(question_text=clean_data['text'], options=clean_data['options'], model_answer=clean_data['answer'])
                         time.sleep(1)
                     current_step = 3
 
             except (ResourceExhausted, AIServiceCriticalError, ValueError) as e:
-                err_str = str(e)
-                if any(x in err_str.upper() for x in ["429", "QUOTA", "RESOURCE_EXHAUSTED", "503"]):
-                    api_key.refresh_from_db()
-                    api_key.consecutive_failures += 1
-                    api_key.save(update_fields=["consecutive_failures"])
-                    log_assessment_task_event(assessment_id, f"PAUSA CUOTA ({api_key.consecutive_failures}/4): {api_key.name}. Reencolando asíncronamente.")
-                    
-                    if api_key.consecutive_failures >= 4:
-                        api_key.is_quarantined = True
-                        api_key.save(update_fields=["is_quarantined"])
-                        _request_quarantine_via_mailbox(api_key)
-                        next_k = ApiKey.objects.filter(is_enabled=True, is_quarantined=False).exclude(id=api_key.id).first()
-                        if next_k:
-                            automation_settings.active_api_key = next_k
-                            automation_settings.save(update_fields=['active_api_key'])
-                    
-                    generate_assessment_from_content_task.apply_async(args=[assessment_id], countdown=65)
-                    return
-                raise e
+                api_key.refresh_from_db()
+                api_key.consecutive_failures += 1
+                api_key.save(update_fields=['consecutive_failures'])
+                if api_key.consecutive_failures >= 4:
+                    api_key.is_quarantined = True
+                    api_key.save(update_fields=['is_quarantined'])
+                    _request_quarantine_via_mailbox(api_key)
+                raise self.retry(exc=e, countdown=70)
+
+        if assessment.questions.filter(question_text="[GENERANDO CONTENIDO...]").exists():
+            raise ValueError("Integridad Fallida: Quedaron preguntas vacías en DB.")
 
         Assessment.objects.filter(id=assessment_id).update(status=Assessment.AssessmentStatus.COMPLETED)
-        log_assessment_task_event(assessment_id, "FINALIZADO: Generación persistida vía SQL + JSON.", level="SUCCESS")
-        
-        # Limpieza de backup
-        try:
-             os.remove(_get_backup_path(assessment_id))
+        log_assessment_task_event(assessment_id, "Finalizado con éxito.", level="SUCCESS")
+        try: os.remove(_get_backup_path(assessment_id))
         except: pass
 
     except Exception as e:
-        log_assessment_task_event(assessment_id, f"FATAL: {str(e)}", level="ERROR")
+        log_assessment_task_event(assessment_id, f"Fallo Generación: {e}", level="ERROR")
         Assessment.objects.filter(id=assessment_id).update(status=Assessment.AssessmentStatus.GENERATION_FAILED_RETRYABLE)
         raise self.retry(exc=e)
 
 @shared_task(bind=True, acks_late=True, max_retries=3, default_retry_delay=60)
 def correct_assessment_task(self, assessment_id):
-    _log_assessment_event(assessment_id, "CORRECTION_TASK: Inicio del proceso de corrección.")
-    automation_settings = AutomationSettings.load()
-    if not automation_settings.is_running:
-        log_timestamp(f"CORRECTION_TASK: Orquestador global detenido. Reintentando en 5 min. ID: {assessment_id}")
-        raise self.retry(countdown=300)
-    assessment = None
+    _log_assessment_event(assessment_id, "CORRECTION_TASK: Inicio del proceso.")
     try:
         assessment = Assessment.objects.get(pk=assessment_id)
         if assessment.status == Assessment.AssessmentStatus.PAUSED:
-            log_timestamp(f"CORRECTION_TASK: Tarea en PAUSA. Reintentando en 1 min. ID: {assessment_id}")
             raise self.retry(countdown=60)
+        
         user_answers = UserAnswer.objects.filter(question__assessment=assessment).select_related("question")
         if not user_answers.exists():
             assessment.status = Assessment.AssessmentStatus.COMPLETED
             assessment.save(update_fields=["status"])
             return
+
         with transaction.atomic():
-            assessment_to_update = Assessment.objects.select_for_update().get(pk=assessment_id)
-            if assessment_to_update.status not in [Assessment.AssessmentStatus.AWAITING_CORRECTION, Assessment.AssessmentStatus.CORRECTING, Assessment.AssessmentStatus.CORRECTION_FAILED_RETRYABLE]:
-                 return f"Tarea de corrección omitida. Estado: {assessment_to_update.get_status_display()}."
-            assessment_to_update.status = Assessment.AssessmentStatus.CORRECTING
-            assessment_to_update.total_questions_expected = user_answers.count()
-            assessment_to_update.save(update_fields=["status", "total_questions_expected"])
-        app_settings = AssessmentSettings.get_settings()
-        expiration_date = timezone.now() + timedelta(days=app_settings.results_expiration_days)
-        prompt_format_instructions = ("**FORMATO DE SALIDA OBLIGATORIO:**\n" "PUNTUACION: [Un número entero de 0 a 100]\n" "FEEDBACK: [Tu feedback constructivo detallado]")
+            a_upd = Assessment.objects.select_for_update().get(pk=assessment_id)
+            a_upd.status = Assessment.AssessmentStatus.CORRECTING
+            a_upd.total_questions_expected = user_answers.count()
+            a_upd.save(update_fields=["status", "total_questions_expected"])
+
         api_key = ApiKey.objects.filter(is_enabled=True, is_quarantined=False).first()
-        if not api_key:
-            raise ValueError("No se encontró una clave de API activa.")
+        if not api_key: raise ValueError("Sin clave API disponible.")
         
         answers_to_correct = user_answers.filter(score__isnull=True)
-        initial_processed = user_answers.count() - answers_to_correct.count()
-        Assessment.objects.filter(pk=assessment_id).update(questions_processed=initial_processed)
-
-        for i, answer in enumerate(answers_to_correct, 1):
-            assessment.refresh_from_db(fields=['status'])
-            if assessment.status == Assessment.AssessmentStatus.PAUSED:
-                log_timestamp(f"CORRECTION_TASK: Tarea pausada durante la corrección. ID: {assessment_id}")
-                raise self.retry(countdown=60)
-            
+        for answer in answers_to_correct:
             if not answer.answer_text:
                 Assessment.objects.filter(pk=assessment_id).update(questions_processed=F("questions_processed") + 1)
                 continue
 
-            prompt = (f"Evalúa la siguiente respuesta de un usuario, comparándola con la pregunta y la respuesta modelo.\n\n" f'Pregunta: "{answer.question.question_text}"\n' f'Respuesta Modelo: "{answer.question.model_answer}"\n' f'Respuesta del Usuario: "{answer.answer_text}"\n\n' f"{prompt_format_instructions}")
-            _log_assessment_event(assessment_id, f"Corrigiendo respuesta {i}/{answers_to_correct.count()}...")
-            success, response_text, _ = generate_text_content(prompt, api_key=api_key)
-            if not success:
-                raise AIServiceCriticalError(f"API falló para UserAnswer ID {answer.id}: {response_text}")
-            
-            correction = _parse_correction_text(response_text)
-            
-            with transaction.atomic():
-                if correction and correction.get("score") is not None:
-                    answer.score = correction["score"]
-                    answer.feedback = correction["feedback"]
-                    answer.correction_expiration_date = expiration_date
-                    answer.save(update_fields=["score", "feedback", "correction_expiration_date"])
-                Assessment.objects.filter(pk=assessment_id).update(questions_processed=F("questions_processed") + 1)
+            prompt = (f"Evalúa respuesta: Pregunta: \"{answer.question.question_text}\" Modelo: \"{answer.question.model_answer}\" Usuario: \"{answer.answer_text}\" PUNTUACION: [0-100] FEEDBACK: [Texto]")
+            success, resp, _ = generate_text_content(prompt, api_key=api_key)
+            if success:
+                c = _parse_correction_text(resp)
+                if c['score'] is not None:
+                    answer.score, answer.feedback = c['score'], c['feedback']
+                    answer.save(update_fields=["score", "feedback"])
+            Assessment.objects.filter(pk=assessment_id).update(questions_processed=F("questions_processed") + 1)
             time.sleep(2)
 
-        should_notify = False
-        assessment_user = None
-        content_title_val = None
-        
-        with transaction.atomic():
-            assessment_to_complete = Assessment.objects.select_for_update().get(pk=assessment_id)
-            if assessment_to_complete.questions_processed >= assessment_to_complete.total_questions_expected:
-                assessment_to_complete.status = Assessment.AssessmentStatus.RESULTS_AVAILABLE
-                assessment_to_complete.results_expiration_date = expiration_date
-                assessment_to_complete.save(update_fields=["status", "results_expiration_date"])
-                _log_assessment_event(assessment_id, "CORRECTION_TASK: Corrección finalizada y resultados disponibles.", "SUCCESS")
-                should_notify = True
-                assessment_user = assessment_to_complete.user
-                content_title_val = assessment_to_complete.content_copy.original_content.title
-
-        if should_notify:
-            try:
-                action_url = settings.BASE_URL + reverse("assessment:view_results", kwargs={"pk": assessment_id})
-                context = {"assessment_pk": assessment_id, "content_title": content_title_val, "action_url": action_url}
-                send_unified_notification(user=assessment_user, subject_template="assessment/email/results_ready_subject.txt", body_template_prefix="assessment/email/results_ready_body", context=context)
-            except Exception as e:
-                logger.error(f"CORRECTION_TASK: Corrección finalizada pero falló notificación para ID {assessment_id}: {e}")
-    except (AIServiceCriticalError) as e:
-        logger.error(f"CORRECTION_TASK: ERROR RECUPERABLE para Assessment ID {assessment_id}: {e}", exc_info=False)
-        if assessment:
-            assessment.status = Assessment.AssessmentStatus.CORRECTION_FAILED_RETRYABLE
-            assessment.last_error = traceback.format_exc()
-            assessment.save(update_fields=["status", "last_error"])
-        raise self.retry(exc=e)
+        assessment.status = Assessment.AssessmentStatus.RESULTS_AVAILABLE
+        assessment.save(update_fields=["status"])
+        _log_assessment_event(assessment_id, "Corrección finalizada.", "SUCCESS")
     except Exception as e:
-        logger.critical(f"CORRECTION_TASK: ERROR FATAL/INESPERADO para Assessment ID {assessment_id}: {e}", exc_info=True)
-        if assessment:
-            try:
-                self.retry(exc=e)
-            except MaxRetriesExceededError:
-                assessment.status = Assessment.AssessmentStatus.GENERATION_FAILED_FATAL
-                assessment.last_error = traceback.format_exc()
-                assessment.save(update_fields=["status", "last_error"])
+        self.retry(exc=e)
 
 @shared_task(name="orchestrator.tasks.expire_untaken_assessments")
 def expire_untaken_assessments():
     now = timezone.now()
-    expiration_limit = getattr(settings, "ASSESSMENT_EXPIRATION_SECONDS", 86400)
-    expiration_threshold = now - timedelta(seconds=expiration_limit)
-    log_timestamp(f"EXPIRE_UNTAKEN_TASK: Buscando evaluaciones 'COMPLETED' creadas antes de {expiration_threshold}.")
-    assessments_to_expire = Assessment.objects.filter(status="COMPLETED", created_at__lt=expiration_threshold)
-    count = assessments_to_expire.count()
-    if count == 0:
-        return "No hay evaluaciones no realizadas para expirar."
-    affected_users_ids = list(assessments_to_expire.values_list('user', flat=True).distinct())
-    updated_rows = assessments_to_expire.update(status="EXPIRED_UNTAKEN")
-    if affected_users_ids:
-        log_timestamp(f"EXPIRE_UNTAKEN_TASK: Refrescando navegación para {len(affected_users_ids)} usuarios.")
-        for user_id in affected_users_ids:
-            try:
-                user = User.objects.get(pk=user_id)
-                refresh_user_navigation(user)
-            except Exception as e:
-                logger.error(f"Error refrescando navegación para usuario {user_id}: {e}")
-    log_timestamp(f"EXPIRE_UNTAKEN_TASK: Se han hecho caducar {updated_rows} evaluaciones.")
-    return f"Se han marcado como caducadas {updated_rows} evaluaciones."
+    threshold = now - timedelta(seconds=86400)
+    Assessment.objects.filter(status="COMPLETED", created_at__lt=threshold).update(status="EXPIRED_UNTAKEN")
 
 @shared_task(name="orchestrator.tasks.purge_and_penalize_corrections")
 def purge_and_penalize_corrections():
     now = timezone.now()
-    log_timestamp(f"PURGE_PENALIZE_TASK: Buscando correcciones caducadas antes de {now}.")
-    expired_assessments = Assessment.objects.filter(status="RESULTS_AVAILABLE", results_expiration_date__lt=now).distinct()
-    if not expired_assessments.exists():
-        return "No hay evaluaciones para procesar."
-    assessments_to_penalize = expired_assessments.filter(was_viewed=False)
-    affected_users_ids = list(assessments_to_penalize.values_list('user', flat=True).distinct())
-    penalized_count = assessments_to_penalize.update(status="CORRECTION_EXPIRED")
-    if affected_users_ids:
-        log_timestamp(f"PURGE_PENALIZE_TASK: Refrescando navegación para {len(affected_users_ids)} usuarios.")
-        for user_id in affected_users_ids:
-            try:
-                user = User.objects.get(pk=user_id)
-                refresh_user_navigation(user)
-            except Exception as e:
-                logger.error(f"Error refrescando navegación para usuario {user_id}: {e}")
-    if penalized_count > 0:
-        log_timestamp(f"PURGE_PENALIZE_TASK: Penalizadas {penalized_count} evaluaciones no vistas.")
-    answers_to_purge = UserAnswer.objects.filter(question__assessment__in=expired_assessments, score__isnull=False)
-    purged_count = answers_to_purge.update(score=None, feedback="La corrección y el feedback de esta respuesta han caducado.")
-    if purged_count > 0:
-        log_timestamp(f"PURGE_PENALIZE_TASK: Purgado el contenido de {purged_count} respuestas.")
-    return f"Tarea completada. Penalizadas: {penalized_count}. Purgadas: {purged_count}."
+    Assessment.objects.filter(status="RESULTS_AVAILABLE", results_expiration_date__lt=now).update(status="CORRECTION_EXPIRED")

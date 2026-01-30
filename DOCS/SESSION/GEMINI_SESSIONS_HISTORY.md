@@ -1532,3 +1532,11 @@ Objetivos de la sesión:
 *  **Session:** Validación de Recuperación de Evaluaciones y Monitorización de Logs
 *  **Description:** Ejecución de pruebas de validación para el sistema de persistencia "Iron-Clad Plus". Verificación de mecanismos de recuperación por respaldo JSON ante escenarios de interrupción forzada. Monitorización de logs administrativos para estados de "Pool Agotado". Adhesión estricta a la Ley Técnica del Emulador UGR.
 
+
+# 2026-01-29
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+## EDC # --SYSTEM -->
+*  **Session:** Diagnóstico y Reparación del Sistema de Generación de Evaluaciones
+*  **Description:** Investigación de fallos de generación silenciosa (falsos positivos). Implementación de validación de integridad estricta en orchestrator/tasks.py y script de diagnóstico de rotación de claves API.
+
