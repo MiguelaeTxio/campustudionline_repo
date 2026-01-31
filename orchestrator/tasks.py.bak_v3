@@ -1077,9 +1077,7 @@ def generate_assessment_from_content_task(self, assessment_id):
                         success, text, _ = generate_text_content(prompt, api_key=api_key)
                         if not success: raise ResourceExhausted(text)
                         dat = dirtyjson.loads(clean_json_response(text))
-                        r_stim_raw = dat.get("reading_stimulus", "")
-                        r_stim = r_stim_raw.get("text", r_stim_raw) if isinstance(r_stim_raw, dict) else r_stim_raw
-                        l_stim = dat.get("listening_transcript", "")
+                        r_stim, l_stim = dat.get('reading_stimulus', ''), dat.get('listening_transcript', '')
                         p_data = assessment.prompt_data
                         p_data.update({'cefr_level': dat.get("cefr_level", "B1"), 'current_lifecycle_step': 2})
                         Assessment.objects.filter(id=assessment_id).update(reading_stimulus=r_stim, listening_transcript=l_stim, prompt_data=p_data)

@@ -29,6 +29,7 @@
 ./academic_chat/management/commands/__init__.py
 ./academic_chat/management/commands/enroll_students_from_json.py
 ./academic_chat/management/__init__.py
+./TRASH_BIN/stress_test_rotation.py
 ./TRASH_BIN/validate_slugs.py
 ./TRASH_BIN/diagnose_og_image.py
 ./TRASH_BIN/delete_stuck_assessment.py
@@ -846,8 +847,6 @@
 ./public_seo_previews/material_5.html
 ./public_seo_previews/material_14_curso-de-selenium-qa.html
 ./temp_patch_strategy.py
-./assessment_recovery/assessment_recovery_295.json
-./assessment_recovery/assessment_recovery_290.json
 ./commands_models.txt
 ./schedule/urls.py
 ./schedule/templates/schedule/event_confirm_delete.html

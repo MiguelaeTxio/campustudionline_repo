@@ -2,120 +2,63 @@ import re
 import json
 
 def is_minor_language(subject_name):
+    """Identifica si es un nivel inicial (A1-A2) por palabras clave."""
     name = subject_name.upper()
-    if any(x in name for x in ["MINOR", "MÍNOR", "IDIOMA MODERNO", "LENGUA C", "INICIAL", "A1", "A2", "B1.1"]):
-        return True
-    return "FILOLOG" not in name and "ESTUDIOS" not in name and "LITERATURA" not in name
+    return any(x in name for x in ["MINOR", "MÍNOR", "IDIOMA MODERNO", "LENGUA C", "INICIAL", "A1", "A2", "NIVEL 1", "NIVEL I"])
 
 def get_target_language(subject_name):
-    name = subject_name.upper()
-    langs = {
-        "CHINO": "CHINESE (Simplified)", "CHINESE": "CHINESE (Simplified)", "中文": "CHINESE (Simplified)",
-        "FRANC": "FRENCH", "FRENCH": "FRENCH",
-        "ALEM": "GERMAN", "GERMAN": "GERMAN",
-        "JAPON": "JAPANESE", "JAPANESE": "JAPANESE",
-        "ITALIA": "ITALIAN", "ITALIAN": "ITALIAN",
-        "PORTU": "PORTUGUESE", "RUSO": "RUSSIAN", "ARABE": "ARABIC"
-    }
-    for key, val in langs.items():
-        if key in name: return val
-    return "ENGLISH"
-
-def get_localized_labels(target_lang):
-    if "CHINESE" in target_lang:
-        return ["Comprensión Lectora (阅读理解)", "Ordenación de Frases (句子排序)", "Gramática (语法)", "Cloze Abierto (完形填空)", "Transformación (句型转换)", "Comprensión Auditiva (听力理解)", "Dictado (听写)", "Expresión Escrita (写作)", "Caligrafía y Trazos (书法/写字)"]
-    return ["Comprensión Lectora", "Ordenación de Frases", "Gramática", "Cloze Abierto", "Transformación de Frases", "Comprensión Auditiva", "Dictado", "Expresión Escrita", "Expresión Oral"]
+    """Extrae el idioma puro eliminando el ruido administrativo."""
+    clean_name = re.sub(r'LENGUA MODERNA|MINOR|MAIOR|INICIAL|INTERMEDIO|AVANZADO|[0-9]|:|I|V', '', subject_name, flags=re.IGNORECASE)
+    return clean_name.strip()
 
 def get_strategy_skeleton(content_text, subject_name, **kwargs):
+    """Estructura atómica (Minor) o compleja (Maior) con etiquetas genéricas."""
     target_lang = get_target_language(subject_name)
-    lbls = get_localized_labels(target_lang)
     itinerary = kwargs.get('itinerary') or ("MINOR" if is_minor_language(subject_name) else "MAIOR")
 
     skeleton = []
     if itinerary == "MINOR":
-        # 5 Reading (Test)
-        for _ in range(5): skeleton.append({'section_label': lbls[0], 'source_type': 'SRC_TXT', 'interaction_type': 'QT_SEL', 'response_mode': 'REQ_RADIO'})
-        # 5 Multiple Choice Cloze
-        for _ in range(5): skeleton.append({'section_label': lbls[1], 'source_type': 'SRC_DIR', 'interaction_type': 'QT_CLZ_OPT', 'response_mode': 'REQ_DROP'})
-        # 5 Open Cloze (Rellenar huecos sin opciones)
-        for _ in range(5): skeleton.append({'section_label': lbls[3], 'source_type': 'SRC_DIR', 'interaction_type': 'QT_CLZ_OPN', 'response_mode': 'REQ_INPUT'})
-        # 2 Writing
-        for _ in range(2): skeleton.append({'section_label': lbls[7], 'source_type': 'SRC_DIR', 'interaction_type': 'QT_PROD', 'response_mode': 'REQ_DUAL'})
+        # Bloques Minor (Instrucciones en ES, Contenido en Idioma Objetivo)
+        for _ in range(5): skeleton.append({'section_label': 'Vocabulario', 'source_type': 'SRC_DIR', 'interaction_type': 'QT_SEL', 'response_mode': 'REQ_RADIO'})
+        for _ in range(5): skeleton.append({'section_label': 'Gramática', 'source_type': 'SRC_DIR', 'interaction_type': 'QT_CLZ_OPT', 'response_mode': 'REQ_DROP'})
+        for _ in range(5): skeleton.append({'section_label': 'Sintaxis', 'source_type': 'SRC_DIR', 'interaction_type': 'QT_ORDER', 'response_mode': 'REQ_ORDER'})
+        for _ in range(2): skeleton.append({'section_label': 'Escritura', 'source_type': 'SRC_DIR', 'interaction_type': 'QT_PROD', 'response_mode': 'REQ_DUAL'})
+        return {'requires_api_stimulus': False, 'skeleton': skeleton, 'itinerary': itinerary, 'target_lang': target_lang}
     else:
-        # Estructura MAIOR (36 ítems)
-        for _ in range(10): skeleton.append({'section_label': lbls[0], 'source_type': 'SRC_TXT', 'interaction_type': 'QT_SEL', 'response_mode': 'REQ_RADIO'})
-        for _ in range(10): skeleton.append({'section_label': lbls[1], 'source_type': 'SRC_DIR', 'interaction_type': 'QT_CLZ_OPT', 'response_mode': 'REQ_DROP'})
-        for _ in range(5): skeleton.append({'section_label': lbls[4], 'source_type': 'SRC_DIR', 'interaction_type': 'QT_TRF', 'response_mode': 'REQ_INPUT'})
-        for _ in range(8): skeleton.append({'section_label': lbls[5], 'source_type': 'SRC_AUD', 'interaction_type': 'QT_SEL', 'response_mode': 'REQ_RADIO'})
-        for _ in range(2): skeleton.append({'section_label': lbls[7], 'source_type': 'SRC_DIR', 'interaction_type': 'QT_PROD', 'response_mode': 'REQ_DUAL'})
-        skeleton.append({'section_label': lbls[8], 'source_type': 'SRC_AUD', 'interaction_type': 'QT_PROD', 'response_mode': 'REQ_REC'})
-
-    return {
-        'requires_api_stimulus': True,
-        'prompt_func': 'generate_languages_stimuli_prompt',
-        'skeleton': skeleton,
-        'itinerary': itinerary,
-        'target_lang': target_lang
-    }
+        # Bloques Maior (Inmersión Total)
+        for _ in range(10): skeleton.append({'section_label': 'Reading Comprehension', 'source_type': 'SRC_TXT', 'interaction_type': 'QT_SEL', 'response_mode': 'REQ_RADIO'})
+        for _ in range(10): skeleton.append({'section_label': 'Language Use', 'source_type': 'SRC_DIR', 'interaction_type': 'QT_CLZ_OPT', 'response_mode': 'REQ_DROP'})
+        for _ in range(5): skeleton.append({'section_label': 'Transformation', 'source_type': 'SRC_DIR', 'interaction_type': 'QT_TRF', 'response_mode': 'REQ_INPUT'})
+        for _ in range(8): skeleton.append({'section_label': 'Listening', 'source_type': 'SRC_AUD', 'interaction_type': 'QT_SEL', 'response_mode': 'REQ_RADIO'})
+        for _ in range(2): skeleton.append({'section_label': 'Writing', 'source_type': 'SRC_DIR', 'interaction_type': 'QT_PROD', 'response_mode': 'REQ_DUAL'})
+        skeleton.append({'section_label': 'Speaking', 'source_type': 'SRC_AUD', 'interaction_type': 'QT_PROD', 'response_mode': 'REQ_REC'})
+        return {'requires_api_stimulus': True, 'prompt_func': 'generate_languages_stimuli_prompt', 'skeleton': skeleton, 'itinerary': itinerary, 'target_lang': target_lang}
 
 def generate_languages_stimuli_prompt(content_text, subject_name):
+    """Genera estímulo obligando a la IA a identificar el idioma y usarlo."""
     target_lang = get_target_language(subject_name)
-    return f"""ROL: Examinador {target_lang}.
-TAREA: Generar estímulos base para examen.
-CONTEXTO: {subject_name}.
-CONTENIDO: {content_text[:1000]}
-
-INSTRUCCIONES:
-1. 'reading_stimulus': Texto de 400 palabras en {target_lang}.
-2. 'listening_transcript': Guion de audio en {target_lang}.
-3. Solo textos, sin preguntas.
-4. JSON Puro.
-"""
+    return f"""ACT AS AN ACADEMIC CHAIR.
+TASK: Generate a Reading Stimulus (500 words) in the target language: {target_lang}.
+STRICT RULE: The field 'reading_stimulus' MUST contain ONLY the clean text in {target_lang}. 
+No JSON nesting. No title/author keys.
+CONTENT BASE: {content_text[:1200]}"""
 
 def generate_languages_item_prompt(reading_text, listening_transcript, cefr_level, question_obj, itinerary='MAIOR', target_lang='ENGLISH'):
+    """Prompt Universal: Delega la localización de la etiqueta en la IA."""
     q_type = question_obj.interaction_type
-    s_type = question_obj.source_type
+    original_label = question_obj.section_label
     
-    context = ""
-    if s_type == 'SRC_TXT': context = f"TEXTO DE REFERENCIA:\n{reading_text}"
-    elif s_type == 'SRC_AUD': context = f"GUION DE AUDIO:\n{listening_transcript}"
-    else: context = "CONOCIMIENTO GENERAL DEL IDIOMA."
-
-    # [HITO 6] Blindaje Lingüístico Anti-Inglés e Inmersión en Castellano
-    system_instruction = ""
     if itinerary == 'MINOR':
-        system_instruction = f"""
-*** REGLA DE ORO DE IDIOMA (CUMPLIMIENTO OBLIGATORIO) ***
-- EL ESTUDIANTE ES ESPAÑOL Y NO ENTIENDE NADA DE INGLÉS (ENGLISH IS FORBIDDEN).
-- EL CAMPO 'question_text' DEBE CONTENER EXCLUSIVAMENTE CASTELLANO Y {target_lang}.
-- PROHIBICIÓN ABSOLUTA: NO UTILICES NI UNA SOLA PALABRA EN INGLÉS EN EL RESULTADO.
-- ESTRUCTURA OBLIGATORIA DEL 'question_text':
-    1. INSTRUCCIÓN EN CASTELLANO (Ej: 'Teniendo en cuenta el texto anterior, responde...')
-    2. SALTO DE LÍNEA (\n).
-    3. CONTENIDO/PREGUNTA EN {target_lang}.
-"""
-    else:
-        system_instruction = f"The 'question_text' MUST be 100% in {target_lang}. ENGLISH IS STRICTLY FORBIDDEN. If the target language is not English, do not use a single English word."
-
-    return f"""ACT AS AN EXPERT EXAM CREATOR.
-TASK: Create UNA (1) question of type {q_type} for a {cefr_level} level exam.
-
-TARGET LANGUAGE: {target_lang}
-STUDENT PROFILE: Spanish speaker (Understand ONLY Spanish and the Target Language).
-
-{system_instruction}
-
-CONTEXT FOR GENERATION:
-{context}
-
-REGLAS CRÍTICAS DE SALIDA:
-1. El campo 'question_text' NO puede contener inglés.
-2. Si es {q_type} 'QT_SEL': Formula la pregunta en {target_lang}.
-3. Si es {q_type} 'QT_CLZ_OPT' o 'QT_CLZ_OPN': Escribe la frase en {target_lang} con un hueco '[...]'.
-4. Si es {q_type} 'QT_ORDER': Entrega una frase desordenada en {target_lang}.
-
-EJEMPLO DE 'question_text' PARA MINOR CHINO (Bilingüe):
-"Lee el siguiente enunciado y selecciona la opción correcta:\\n\\n关于春节的说法..."
-
-SALIDA JSON PURO. SIN COMENTARIOS.
-"""
+        return f"""ACT AS AN EXAM CREATOR FOR THE LANGUAGE: {target_lang}.
+STUDENT: Spanish speaker (Beginner). 
+TASK: Create ONE (1) question of type {q_type}.
+INSTRUCTIONS: In SPANISH.
+CONTENT: In {target_lang}. NO ENGLISH.
+LOCALIZATION: Translate the section label '{original_label}' to {target_lang} and include it in the response if possible.
+FIELD 'model_answer': MANDATORY."""
+    
+    return f"""ACT AS A NATIVE EXAMINER IN {target_lang}.
+STRICT IMMERSION: Use 100% {target_lang}. 
+TASK: ONE (1) {q_type} question.
+LOCALIZATION: Translate the header '{original_label}' to {target_lang}.
+JSON SCHEMA: {{"question_text": "...", "options": ["...", "..."], "model_answer": "..."}}"""

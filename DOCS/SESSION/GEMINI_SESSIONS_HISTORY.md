@@ -1548,3 +1548,11 @@ Objetivos de la sesión:
 *  **Session:** Auditoría Evaluación #297, Logs Eventos y Rotación Claves
 *  **Description:** Verificación de contenido bilingüe en evaluación #297. Diagnosis de persistencia en event_log de generación atómica. Stress test de rotación de API Keys. Verificación de limpieza de JSONs de recuperación.
 
+
+# 2026-01-31
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+## CSO # --SYSTEM -->
+*  **Session:** Hito 06: Validación Lingüística HSK, Stress Test API y Auditoría Widgets
+*  **Description:** Validación de la inmersión bilingüe en exámenes MINOR (Chino/Japonés) asegurando la ausencia de inglés. Ejecución de pruebas de estrés sobre la rotación de claves API. Auditoría de renderizado de widgets de ordenación y caligrafía. Verificación de limpieza de archivos de recuperación.
+

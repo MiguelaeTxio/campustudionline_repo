@@ -8,24 +8,22 @@ Al iniciar cualquier sesión de trabajo sobre el sistema de evaluaciones, es **I
 ---
 
 # ANEXO: HITO 06 - SISTEMA DE AUTOEVALUACIONES CON IA
-# Estado: EN PROGRESO (BLINDAJE LINGÜÍSTICO Y REFORMULACIÓN HSK)
+# Estado: EN PROGRESO (ABSTRACCIÓN UNIVERSAL Y RIGOR UGR)
 
 ## 1. RESUMEN TÉCNICO ACUMULADO
 
 ### Fase 1: Infraestructura Base
-- Reconstrucción de `orchestrator/tasks.py` (indentación y funciones masivas).
-- Implementación de Factory Atómico para delegación de prompts por arquetipo.
-- Parser JSON robusto para soporte de objetos únicos (Caso Chino).
+- Reconstrucción de `orchestrator/tasks.py` para soporte de persistencia atómica y parser robusto.
+- Implementación de Factory Atómico para despacho dinámico de estrategias.
 
-### Fase 2: Rigor Académico y Localización (Sesión Actual)
-- **Blindaje Anti-Inglés:** Refactorizada `languages_strategy.py` con una instrucción de sistema agresiva que prohíbe el inglés y define al alumno como hispanohablante.
-- **Rigor HSK/UGR:** Reestructurado el esqueleto `MINOR` para incluir Ordenación de Frases (`QT_ORDER`) y Caligrafía/Trazos (`REQ_DUAL`), eliminando los Cloze genéricos que no aplicaban.
-- **Localización Castellano:** Traducidas todas las etiquetas de sección (`section_label`) para cumplir con la Regla de Oro del Idioma en la interfaz.
-- **Trazabilidad Atómica:** Inyectados logs de progreso por cada pregunta en `tasks.py` con blindaje de conexión `db.close_old_connections()`.
-- **Restauración de Badges:** Suavizada la lógica en `context_processors.py` para asegurar visibilidad de avisos en exámenes completados.
+### Fase 2: Arquitectura Universal de Idiomas (Sesión Actual)
+- **Motor Agnóstico al Idioma:** Refactorizada `languages_strategy.py` eliminando diccionarios finitos. Ahora el sistema extrae la raíz lingüística del nombre de la asignatura y delega la localización en la IA.
+- **Alineación Normativa UGR:** Corregido el itinerario **MINOR** eliminando el 'Reading Stimulus' de 400 palabras y pasando a un modelo de preguntas atómicas de gramática y vocabulario (Nivel HSK 1-3 / A1-A2).
+- **Blindaje de Parser:** Parcheado `tasks.py` para interceptar y limpiar fugas de objetos `AttributedDict` en los estímulos de lectura de itinerarios **MAIOR**.
+- **Validación de Resiliencia:** Ejecutado Stress Test exitoso de rotación de claves API ante límites de cuota y limpieza de archivos huérfanos en `assessment_recovery/`.
+- **Dinamización de Frontend:** Cabeceras de sección ahora se muestran en el idioma objetivo según la traducción de la IA.
 
 ## 2. HOJA DE RUTA PARA LA SIGUIENTE SESIÓN (LEY SUPREMA)
-1. **Validación de Inmersión Bilingüe:** Generar un examen MINOR (Chino/Japonés) y auditar que `question_text` es 100% [Castellano] + [Idioma Objetivo], sin intrusión de inglés.
-2. **Stress Test de Claves API:** Ejecutar el script `/home/MiguelAeTxio/PROJECTS/CampuStudiOnline/TRASH_BIN/stress_test_rotation.py` para verificar que la cuarentena y rotación funcionan tras el 5º fallo.
-3. **Auditoría de Widgets:** Verificar el renderizado de `REQ_ORDER` y `REQ_DUAL` en las nuevas tareas de ordenación y caligrafía.
-4. **Validación de Cleanup:** Comprobar que `assessment_recovery/` se limpia tras una generación exitosa.
+1. **Validación Cruzada de Idiomas:** Generar evaluaciones para lenguas minoritarias (ej. Catalán, Gallego) y no latinas (ej. Griego o Coreano) para validar la extracción de raíz y la localización dinámica de etiquetas.
+2. **Auditoría de Inmersión MAIOR:** Confirmar en exámenes de especialidad que el estímulo de lectura es texto plano limpio y que los 36 ítems mantienen el nivel académico exigido.
+3. **Arquetipo LOGIC_AND_TECH:** Iniciar el desarrollo del esqueleto para Ingeniería/Ciencias, implementando el soporte mandatorio para fórmulas LaTeX en enunciados y respuestas.
