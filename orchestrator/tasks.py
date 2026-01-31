@@ -261,23 +261,21 @@ def log_assessment_task_event(assessment_id, message, level="INFO", payload=None
         if payload:
             try:
                 payload_str = json.dumps(payload, ensure_ascii=False, sort_keys=True)
-                if len(payload_str) > 2000:
-                    entry["payload"] = payload_str[:2000] + " ... [TRUNCATED]"
-                else:
-                    entry["payload"] = payload_str
+                entry["payload"] = payload_str[:2000] + (" ... [TRUNCATED]" if len(payload_str) > 2000 else "")
             except TypeError:
                 entry["payload"] = str(payload)[:2000]
 
+        # [FIX HITO 6] Limpieza de conexiones y validación de tipo para persistencia en Celery
+        db.close_old_connections()
         with transaction.atomic():
             assessment = Assessment.objects.select_for_update().get(pk=assessment_id)
-            if assessment.event_log is None:
+            if not isinstance(assessment.event_log, list):
                 assessment.event_log = []
-            if isinstance(assessment.event_log, list):
-                assessment.event_log.insert(0, entry)
-                assessment.event_log = assessment.event_log[:100]
+            assessment.event_log.insert(0, entry)
+            assessment.event_log = assessment.event_log[:100]
             assessment.save(update_fields=['event_log'])
     except Exception as e:
-        logger.error(f"Error al escribir en event_log DB para Assessment {assessment_id}: {e}")
+        logger.error(f"Error CRÍTICO al escribir en event_log DB para Assessment {assessment_id}: {e}")
 
 def log_task_event(task_id: str, message: str, is_error: bool = False, payload: dict = None):
     try:
@@ -1095,6 +1093,7 @@ def generate_assessment_from_content_task(self, assessment_id):
                     if assessment.questions.count() == 0: _create_assessment_skeleton(assessment)
                     questions = assessment.questions.all().order_by('id')
                     for idx, q_obj in enumerate(questions, 1):
+                        log_assessment_task_event(assessment_id, f"Generando contenido para pregunta {idx}/{len(questions)}: {q_obj.section_label}")
                         s_idx = str(idx)
                         if s_idx in q_cache:
                             d = q_cache[s_idx]

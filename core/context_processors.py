@@ -58,8 +58,7 @@ def global_context(request):
             "COMPLETED": {
                 # Exámenes listos para hacer y no expirados
                 "count": base_query.filter(
-                    status=Assessment.AssessmentStatus.COMPLETED,
-                    expiration_date__gt=now
+                    status=Assessment.AssessmentStatus.COMPLETED
                 ).count(),
                 "status": "COMPLETED",
             },

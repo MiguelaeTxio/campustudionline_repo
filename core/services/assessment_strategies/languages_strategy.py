@@ -23,8 +23,8 @@ def get_target_language(subject_name):
 
 def get_localized_labels(target_lang):
     if "CHINESE" in target_lang:
-        return ["阅读理解 (Reading)", "完形填空 (Cloze)", "语法 (Grammar)", "句子排序 (Ordering)", "句型转换 (Transform)", "听力理解 (Listening)", "听写 (Dictation)", "写作 (Writing)", "口语 (Speaking)"]
-    return ["Reading Comprehension", "Multiple Choice Cloze", "Grammar", "Open Cloze", "Key Word Transformation", "Listening Comprehension", "Dictation", "Writing", "Speaking"]
+        return ["Comprensión Lectora (阅读理解)", "Ordenación de Frases (句子排序)", "Gramática (语法)", "Cloze Abierto (完形填空)", "Transformación (句型转换)", "Comprensión Auditiva (听力理解)", "Dictado (听写)", "Expresión Escrita (写作)", "Caligrafía y Trazos (书法/写字)"]
+    return ["Comprensión Lectora", "Ordenación de Frases", "Gramática", "Cloze Abierto", "Transformación de Frases", "Comprensión Auditiva", "Dictado", "Expresión Escrita", "Expresión Oral"]
 
 def get_strategy_skeleton(content_text, subject_name, **kwargs):
     target_lang = get_target_language(subject_name)
@@ -81,24 +81,41 @@ def generate_languages_item_prompt(reading_text, listening_transcript, cefr_leve
     elif s_type == 'SRC_AUD': context = f"GUION DE AUDIO:\n{listening_transcript}"
     else: context = "CONOCIMIENTO GENERAL DEL IDIOMA."
 
-    instr_lang = "CASTELLANO (Español)" if itinerary == 'MINOR' else target_lang
+    # [HITO 6] Blindaje Lingüístico Anti-Inglés e Inmersión en Castellano
+    system_instruction = ""
+    if itinerary == 'MINOR':
+        system_instruction = f"""
+*** REGLA DE ORO DE IDIOMA (CUMPLIMIENTO OBLIGATORIO) ***
+- EL ESTUDIANTE ES ESPAÑOL Y NO ENTIENDE NADA DE INGLÉS (ENGLISH IS FORBIDDEN).
+- EL CAMPO 'question_text' DEBE CONTENER EXCLUSIVAMENTE CASTELLANO Y {target_lang}.
+- PROHIBICIÓN ABSOLUTA: NO UTILICES NI UNA SOLA PALABRA EN INGLÉS EN EL RESULTADO.
+- ESTRUCTURA OBLIGATORIA DEL 'question_text':
+    1. INSTRUCCIÓN EN CASTELLANO (Ej: 'Teniendo en cuenta el texto anterior, responde...')
+    2. SALTO DE LÍNEA (\n).
+    3. CONTENIDO/PREGUNTA EN {target_lang}.
+"""
+    else:
+        system_instruction = f"The 'question_text' MUST be 100% in {target_lang}. ENGLISH IS STRICTLY FORBIDDEN. If the target language is not English, do not use a single English word."
 
-    return f"""ROL: Generador de ítems {target_lang} ({cefr_level}).
-TAREA: Crear UNA pregunta de tipo {q_type}.
-CONTEXTO: {context}
+    return f"""ACT AS AN EXPERT EXAM CREATOR.
+TASK: Create UNA (1) question of type {q_type} for a {cefr_level} level exam.
 
-REGLAS CRÍTICAS DE CONTENIDO (EVITA LA GENERACIÓN FANTASMA):
-1. El campo 'question_text' DEBE contener la instrucción en {instr_lang} SEGUIDA del contenido del ejercicio en {target_lang}.
-2. Si es {q_type} 'QT_SEL' (Test): 'question_text' debe incluir una pregunta específica sobre el texto.
-3. Si es {q_type} 'QT_CLZ_OPT' o 'QT_CLZ_OPN': 'question_text' debe incluir una frase completa con un hueco marcado como '[...]'.
-4. Si es {q_type} 'QT_PROD' (Writing): 'question_text' debe describir un escenario de redacción detallado.
+TARGET LANGUAGE: {target_lang}
+STUDENT PROFILE: Spanish speaker (Understand ONLY Spanish and the Target Language).
 
-EJEMPLO DE SALIDA (Para Minor Chino):
-{{
-  "question_text": "Elige la respuesta correcta basada en el texto: [Pregunta en Chino aquí]",
-  "options": ["Opción A", "Opción B", "Opción C", "Opción D"],
-  "model_answer": "Opción Correcta"
-}}
+{system_instruction}
 
-SALIDA JSON PURO. NO AÑADAS COMENTARIOS EXTRA.
+CONTEXT FOR GENERATION:
+{context}
+
+REGLAS CRÍTICAS DE SALIDA:
+1. El campo 'question_text' NO puede contener inglés.
+2. Si es {q_type} 'QT_SEL': Formula la pregunta en {target_lang}.
+3. Si es {q_type} 'QT_CLZ_OPT' o 'QT_CLZ_OPN': Escribe la frase en {target_lang} con un hueco '[...]'.
+4. Si es {q_type} 'QT_ORDER': Entrega una frase desordenada en {target_lang}.
+
+EJEMPLO DE 'question_text' PARA MINOR CHINO (Bilingüe):
+"Lee el siguiente enunciado y selecciona la opción correcta:\\n\\n关于春节的说法..."
+
+SALIDA JSON PURO. SIN COMENTARIOS.
 """

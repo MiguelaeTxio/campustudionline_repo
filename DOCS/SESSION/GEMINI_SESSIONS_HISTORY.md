@@ -1540,3 +1540,11 @@ Objetivos de la sesión:
 *  **Session:** Diagnóstico y Reparación del Sistema de Generación de Evaluaciones
 *  **Description:** Investigación de fallos de generación silenciosa (falsos positivos). Implementación de validación de integridad estricta en orchestrator/tasks.py y script de diagnóstico de rotación de claves API.
 
+
+# 2026-01-30
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+## NRA
+*  **Session:** Auditoría Evaluación #297, Logs Eventos y Rotación Claves
+*  **Description:** Verificación de contenido bilingüe en evaluación #297. Diagnosis de persistencia en event_log de generación atómica. Stress test de rotación de API Keys. Verificación de limpieza de JSONs de recuperación.
+

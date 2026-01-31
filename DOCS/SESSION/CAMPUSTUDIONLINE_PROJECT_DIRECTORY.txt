@@ -39,6 +39,7 @@
 ./TRASH_BIN/check_system_state_v2.py
 ./TRASH_BIN/diagnose_universia.py
 ./TRASH_BIN/deep_trace_universia.py
+./TRASH_BIN/audit_session_hito6_v2.py
 ./TRASH_BIN/audit_schedule_events.py
 ./TRASH_BIN/update_milestones_branding.py
 ./TRASH_BIN/fix_content_visibility.py
@@ -47,6 +48,7 @@
 ./TRASH_BIN/exploder_universia.py
 ./TRASH_BIN/audit_rotation_failure.py
 ./TRASH_BIN/test_agenda_integrity.py
+./TRASH_BIN/audit_session_hito6.py
 ./TRASH_BIN/audit_integrity.py
 ./TRASH_BIN/audit_fix_rotation.py
 ./TRASH_BIN/file00.txt

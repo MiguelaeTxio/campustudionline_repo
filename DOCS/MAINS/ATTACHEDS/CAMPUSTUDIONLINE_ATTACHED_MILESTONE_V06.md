@@ -8,22 +8,24 @@ Al iniciar cualquier sesión de trabajo sobre el sistema de evaluaciones, es **I
 ---
 
 # ANEXO: HITO 06 - SISTEMA DE AUTOEVALUACIONES CON IA
-# Estado: EN PROGRESO (NÚCLEO RECONSTRUIDO)
+# Estado: EN PROGRESO (BLINDAJE LINGÜÍSTICO Y REFORMULACIÓN HSK)
 
-## 1. RESUMEN TÉCNICO DE LA SESIÓN
-Se ha realizado una reconstrucción integral de la infraestructura de generación para subsanar un colapso de sintaxis y lógica.
+## 1. RESUMEN TÉCNICO ACUMULADO
 
-### Intervenciones Realizadas:
-- **Reconstrucción de `orchestrator/tasks.py`:** Restaurada la integridad del archivo con indentación de 4 espacios. Recuperadas las funciones de automatización masiva perdidas.
-- **Implementación de Factory Atómico:** El orquestador delega ahora la creación de prompts a las estrategias segregadas en tiempo de ejecución (Fase B).
-- **Corrección de Parser (Caso Chino #294):** El parser JSON ahora soporta objetos únicos (diccionarios) envolviéndolos automáticamente en listas, evitando el fallo de "Generación/Parseo".
-- **Mapeo de Claves Robusto:** Unificado el acceso a `model_answer` y `answer` en la caché y en los modelos de base de datos.
-- **Refuerzo de Estrategia de Idiomas:** Refactorizado el prompt en `languages_strategy.py` para obligar a la IA a incluir el enunciado y el contenido lingüístico, eliminando la "Generación Fantasma".
+### Fase 1: Infraestructura Base
+- Reconstrucción de `orchestrator/tasks.py` (indentación y funciones masivas).
+- Implementación de Factory Atómico para delegación de prompts por arquetipo.
+- Parser JSON robusto para soporte de objetos únicos (Caso Chino).
+
+### Fase 2: Rigor Académico y Localización (Sesión Actual)
+- **Blindaje Anti-Inglés:** Refactorizada `languages_strategy.py` con una instrucción de sistema agresiva que prohíbe el inglés y define al alumno como hispanohablante.
+- **Rigor HSK/UGR:** Reestructurado el esqueleto `MINOR` para incluir Ordenación de Frases (`QT_ORDER`) y Caligrafía/Trazos (`REQ_DUAL`), eliminando los Cloze genéricos que no aplicaban.
+- **Localización Castellano:** Traducidas todas las etiquetas de sección (`section_label`) para cumplir con la Regla de Oro del Idioma en la interfaz.
+- **Trazabilidad Atómica:** Inyectados logs de progreso por cada pregunta en `tasks.py` con blindaje de conexión `db.close_old_connections()`.
+- **Restauración de Badges:** Suavizada la lógica en `context_processors.py` para asegurar visibilidad de avisos en exámenes completados.
 
 ## 2. HOJA DE RUTA PARA LA SIGUIENTE SESIÓN (LEY SUPREMA)
-La próxima sesión debe regirse estrictamente por los siguientes puntos sin margen de suposición:
-
-1. **Auditoría de la Evaluación #297:** Verificar manualmente que el `question_text` contiene tanto la instrucción en castellano como el cuerpo del ejercicio en chino.
-2. **Diagnosis de Logs de Eventos:** Investigar la causa por la cual las subtareas de generación atómica no están persistiendo correctamente sus mensajes de progreso en el `event_log` visible en el panel de administración.
-3. **Simulación de Cuarentena (Stress Test):** Ejecutar un script para agotar la cuota de la clave activa y validar que el sistema realiza la rotación a la siguiente clave disponible sin abortar el examen en curso.
-4. **Verificación de Limpieza de Respaldo:** Comprobar que tras un `SUCCESS` en la generación, el archivo JSON correspondiente en `/home/MiguelAeTxio/PROJECTS/CampuStudiOnline/assessment_recovery/` es eliminado automáticamente.
+1. **Validación de Inmersión Bilingüe:** Generar un examen MINOR (Chino/Japonés) y auditar que `question_text` es 100% [Castellano] + [Idioma Objetivo], sin intrusión de inglés.
+2. **Stress Test de Claves API:** Ejecutar el script `/home/MiguelAeTxio/PROJECTS/CampuStudiOnline/TRASH_BIN/stress_test_rotation.py` para verificar que la cuarentena y rotación funcionan tras el 5º fallo.
+3. **Auditoría de Widgets:** Verificar el renderizado de `REQ_ORDER` y `REQ_DUAL` en las nuevas tareas de ordenación y caligrafía.
+4. **Validación de Cleanup:** Comprobar que `assessment_recovery/` se limpia tras una generación exitosa.
