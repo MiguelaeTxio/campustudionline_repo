@@ -1556,3 +1556,19 @@ Objetivos de la sesión:
 *  **Session:** Hito 06: Validación Lingüística HSK, Stress Test API y Auditoría Widgets
 *  **Description:** Validación de la inmersión bilingüe en exámenes MINOR (Chino/Japonés) asegurando la ausencia de inglés. Ejecución de pruebas de estrés sobre la rotación de claves API. Auditoría de renderizado de widgets de ordenación y caligrafía. Verificación de limpieza de archivos de recuperación.
 
+
+# 2026-02-01
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+## AAAA
+*  **Session:** Validación Multilingüe y Arquetipo LOGIC_AND_TECH
+*  **Description:** Ejecución de la validación cruzada para idiomas minoritarios y no latinos, confirmando la abstracción universal del motor. Auditoría de inmersión MAIOR. Inicio del desarrollo del arquetipo LOGIC_AND_TECH con soporte para LaTeX.
+
+
+# 2026-02-01
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+## AAAA
+*  **Session:** Auditoría Forense y Estabilización del Arquetipo de Idiomas (UGR)
+*  **Description:** Auditoría técnica de la evaluación #319 para 'Chino Minor: Intermedio 1', detectando un fallo crítico en la calibración de nivel por ignorar los objetivos académicos de la BBDD. Implementación de aviso de mantenimiento en la Sala de Estudio para proteger la UX. Definición de la estrategia de reparación basada en la inyección de 'learning_objectives' y 'course_content_outline' en el prompt de la IA para alcanzar el techo de calidad exigido por la UGR.
+
