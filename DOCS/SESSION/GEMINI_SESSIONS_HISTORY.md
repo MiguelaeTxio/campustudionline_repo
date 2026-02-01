@@ -1572,3 +1572,11 @@ Objetivos de la sesión:
 *  **Session:** Auditoría Forense y Estabilización del Arquetipo de Idiomas (UGR)
 *  **Description:** Auditoría técnica de la evaluación #319 para 'Chino Minor: Intermedio 1', detectando un fallo crítico en la calibración de nivel por ignorar los objetivos académicos de la BBDD. Implementación de aviso de mantenimiento en la Sala de Estudio para proteger la UX. Definición de la estrategia de reparación basada en la inyección de 'learning_objectives' y 'course_content_outline' en el prompt de la IA para alcanzar el techo de calidad exigido por la UGR.
 
+
+# 2026-02-01
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+## CYC
+*  **Session:** Alineación de Autoevaluaciones UGR: Del Syllabus Académico a la IA Generativa
+*  **Description:** Sexta sesión del Hito 6 enfocada en la re-alineación del sistema de autoevaluaciones. Tras un diagnóstico forense, se determina que la estrategia de idiomas ignora los datos del syllabus ('learning_objectives'). Se establece la hoja de ruta para conectar el 'Selection Range' con el prompt de la IA. Se inicia el blindaje de los protocolos del sistema en el Total Commander para garantizar el cumplimiento estricto del idioma y la operativa de archivos.
+

@@ -1,5 +1,5 @@
 
-def generate_item_prompt(context_text, question_obj):
+def generate_item_prompt(context_text, question_obj, **kwargs):
     return f"""
 ROL: Catedrático de Derecho.
 TAREA: Generar el contenido para una pregunta de examen basada en el arquetipo SOCIO_LEGAL.

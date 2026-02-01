@@ -1,5 +1,5 @@
 
-def generate_item_prompt(context_text, question_obj):
+def generate_item_prompt(context_text, question_obj, **kwargs):
     return f"""
 ROL: Profesor de Ingeniería/Ciencias.
 TAREA: Generar un problema o cuestión teórica.

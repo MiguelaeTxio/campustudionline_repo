@@ -40,7 +40,12 @@ from core.services.gemini_schemas import ASSESSMENT_CORRECTION_SCHEMA
 from core.services.assessment_strategies.classifier import generate_classifier_prompt
 # [REFACTOR] Uso de Factory en lugar de imports directos
 from core.services.assessment_strategies.factory import AssessmentStrategyFactory
-
+from core.services.assessment_strategies.languages_strategy import (
+    generate_languages_stimuli_prompt, 
+    is_minor_language as check_if_minor, 
+    get_target_language, 
+    generate_languages_item_prompt
+)
 from core.services.assessment_strategies.sciences_strategy import generate_sciences_prompt
 from core.services.assessment_strategies.humanities_strategy import generate_humanities_prompt
 from core.services.assessment_strategies.legal_strategy import generate_legal_prompt
@@ -48,7 +53,11 @@ from core.services.assessment_strategies.legal_strategy import generate_legal_pr
 from core.services.prompt_generators import (
     generate_course_metadata_prompt,
     generate_master_schema_prompt,
-    generate_atomic_content_prompt
+    generate_atomic_content_prompt,
+    generate_assessment_prompt,
+    generate_stimulus_creation_prompt,
+    generate_ugr_questions_prompt,
+
 )
 from messaging.push_utils import send_notification_to_user
 from core.utils import send_unified_notification
@@ -1013,9 +1022,9 @@ def generate_full_course_task(self, task_id):
 @shared_task(bind=True, acks_late=True, max_retries=5, default_retry_delay=60)
 def generate_assessment_from_content_task(self, assessment_id):
     """
-    [V_NUCLEAR_STABLE] Motor Atómico: Persistencia, Filtrado de Rango e Inyección Académica.
+    [V_IRON_CLAD] Persistencia Atómica + Despacho dinámico vía Factory.
     """
-    log_assessment_task_event(assessment_id, "MOTOR NUCLEAR: Iniciando generación con filtrado de rango y syllabus.")
+    log_assessment_task_event(assessment_id, "MOTOR ATÓMICO: Iniciando con blindaje SQL directo + Factory.")
     try:
         assessment = Assessment.objects.get(pk=assessment_id)
         original_content = assessment.content_copy.original_content
@@ -1053,11 +1062,7 @@ def generate_assessment_from_content_task(self, assessment_id):
                     if not success: raise ResourceExhausted(resp)
                     found = clean_json_response(resp).strip().upper()
                     subject_type = next((t for t in ["LOGIC_AND_TECH", "CEFR_LANGUAGES", "SOCIO_LEGAL", "HEALTH_SCIENCES", "HUMANITIES_ARTS"] if t in found), "HUMANITIES_ARTS")
-                    
-                    # Determinación de Itinerario (Capa Nuclear)
-                    from core.services.assessment_strategies.languages_strategy import is_minor_language
-                    itinerary = "MINOR" if subject_type == "CEFR_LANGUAGES" and is_minor_language(subject_name) else ("MAIOR" if subject_type == "CEFR_LANGUAGES" else None)
-                    
+                    itinerary = "MINOR" if subject_type == "CEFR_LANGUAGES" and check_if_minor(subject_name) else ("MAIOR" if subject_type == "CEFR_LANGUAGES" else None)
                     p_data = assessment.prompt_data
                     p_data.update({'tribunal_type': subject_type, 'current_lifecycle_step': 1})
                     Assessment.objects.filter(id=assessment_id).update(archetype=subject_type, language_itinerary=itinerary, prompt_data=p_data)
@@ -1068,8 +1073,7 @@ def generate_assessment_from_content_task(self, assessment_id):
                     strategy_mod = AssessmentStrategyFactory.get_strategy(subject_type)
                     skeleton = strategy_mod.get_strategy_skeleton(full_content, subject_name, itinerary=assessment.language_itinerary)
                     if skeleton.get('requires_api_stimulus') and not assessment.reading_stimulus:
-                        prompt_func = skeleton.get('prompt_func', 'generate_languages_stimuli_prompt')
-                        prompt = getattr(strategy_mod, prompt_func)(full_content, subject_name)
+                        prompt = getattr(strategy_mod, skeleton['prompt_func'])(full_content, subject_name)
                         success, text, _ = generate_text_content(prompt, api_key=api_key)
                         if not success: raise ResourceExhausted(text)
                         dat = dirtyjson.loads(clean_json_response(text))
@@ -1094,11 +1098,12 @@ def generate_assessment_from_content_task(self, assessment_id):
                     # [CAPA NUCLEAR] Filtrado de Rango y Extracción de Contexto Académico
                     selection_range = assessment.selection_range
                     filtered_content = filter_content_by_selection(full_content, selection_range) if selection_range else full_content
+                    
                     learning_objectives = subject_obj.learning_objectives if subject_obj else {}
                     course_outline = subject_obj.course_content_outline if subject_obj else []
 
                     for idx, q_obj in enumerate(questions, 1):
-                        log_assessment_task_event(assessment_id, f"Generando pregunta {idx}/{len(questions)}: {q_obj.section_label}")
+                        log_assessment_task_event(assessment_id, f"Generando contenido para pregunta {idx}/{len(questions)}: {q_obj.section_label}")
                         s_idx = str(idx)
                         if s_idx in q_cache:
                             d = q_cache[s_idx]
@@ -1106,15 +1111,12 @@ def generate_assessment_from_content_task(self, assessment_id):
                             continue
 
                         strategy_mod = AssessmentStrategyFactory.get_strategy(subject_type)
-                        prompt = strategy_mod.generate_item_prompt(
-                            filtered_content, 
-                            q_obj, 
-                            itinerary=assessment.language_itinerary, 
-                            target_lang=subject_name, 
-                            learning_objectives=learning_objectives, 
-                            syllabus=course_outline, 
-                            listening_transcript=l_text_memory
-                        )
+                        if subject_type == "CEFR_LANGUAGES":
+                            prompt = generate_languages_item_prompt(filtered_content, l_text_memory, assessment.prompt_data.get('cefr_level', 'B1'), q_obj, itinerary=assessment.language_itinerary, target_lang=get_target_language(subject_name), learning_objectives=learning_objectives, syllabus=course_outline)
+                        elif hasattr(strategy_mod, 'generate_item_prompt'):
+                            prompt = strategy_mod.generate_item_prompt(r_text_memory, q_obj)
+                        else:
+                            prompt = generate_humanities_prompt(r_text_memory, q_obj)
 
                         success, resp, _ = generate_text_content(prompt, api_key=api_key)
                         if not success: raise ResourceExhausted(resp)
@@ -1154,7 +1156,6 @@ def generate_assessment_from_content_task(self, assessment_id):
         log_assessment_task_event(assessment_id, f"Fallo Generación: {e}", level="ERROR")
         Assessment.objects.filter(id=assessment_id).update(status=Assessment.AssessmentStatus.GENERATION_FAILED_RETRYABLE)
         raise self.retry(exc=e)
-
 
 @shared_task(bind=True, acks_late=True, max_retries=3, default_retry_delay=60)
 def correct_assessment_task(self, assessment_id):

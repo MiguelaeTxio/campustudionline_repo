@@ -1,5 +1,5 @@
 
-def generate_item_prompt(context_text, question_obj):
+def generate_item_prompt(context_text, question_obj, **kwargs):
     return f"""
 ROL: Catedrático de Humanidades.
 TAREA: Generar un comentario de texto o ensayo.

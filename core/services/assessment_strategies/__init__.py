@@ -1,6 +1,3 @@
-from .legal_strategy import generate_legal_prompt
-from .languages_strategy import generate_languages_stimuli_prompt, generate_languages_item_prompt
-from .humanities_strategy import generate_humanities_prompt
-from .sciences_strategy import generate_sciences_prompt
-from .health_strategy import generate_health_prompt
-from .classifier import generate_classifier_prompt
+# /home/MiguelAeTxio/PROJECTS/CampuStudiOnline/core/services/assessment_strategies/__init__.py
+# Archivo vaciado para desacoplar importaciones rígidas.
+# El orquestador usa la Factory para acceder a las estrategias.
