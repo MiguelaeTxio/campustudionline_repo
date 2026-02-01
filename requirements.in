@@ -61,3 +61,5 @@ python-docx
 pypdf
 python-docx
 dirtyjson
+# ---- Herramientas de Desarrollo y Calidad (HITO 6 - djlint) ----
+djlint==1.36.0

@@ -1,0 +1,26 @@
+{
+  "questions_cache": {
+    "1": {
+      "text": "Quina és la paraula correcta per a 'casa' en català?",
+      "options": [
+        {
+          "text": "coche",
+          "is_correct": false
+        },
+        {
+          "text": "casa",
+          "is_correct": true
+        },
+        {
+          "text": "mesa",
+          "is_correct": false
+        },
+        {
+          "text": "libro",
+          "is_correct": false
+        }
+      ],
+      "answer": "casa"
+    }
+  }
+}

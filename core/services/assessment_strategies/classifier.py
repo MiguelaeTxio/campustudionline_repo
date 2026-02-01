@@ -21,7 +21,7 @@ def generate_classifier_prompt(subject_name: str, branch_name: str, rejected_arc
         "3. SOCIO_LEGAL: Marcos regulatorios, derecho, leyes estatales y sistemas de justicia. (Derecho, Jurisprudencia).\n"
         "4. HEALTH_SCIENCES: Intervención clínica, protocolos de salud, patologías y seguridad del paciente.\n"
         "5. HUMANITIES_ARTS: Análisis dialéctico, crítica de fuentes, historia, arte y estudios lingüísticos/teóricos de la lengua (Filología).\n\n"
-        "Regla de Oro: El estudio teórico/histórico de la lengua va a HUMANITIES_ARTS. El entrenamiento para hablar/escribir una lengua va a CEFR_LANGUAGES. El derecho y la justicia van a SOCIO_LEGAL."
+        "REGLA DE ORO DE LENGUAS (SISTEMA DE FILTRADO):\n" "   * CEFR_LANGUAGES: Aprendizaje instrumental. Busca palabras clave EXACTAS [\bword\b]: 'Idioma', 'Nivel', 'Inicial', 'Intermedio', 'Avanzado', 'Lengua Moderna', 'Minor', 'Maior', 'I, II, III, IV'.\n" "   * HUMANITIES_ARTS: Estudio académico/teórico. Busca palabras clave EXACTAS [\bword\b]: 'Historia', 'Literatura', 'Cultura', 'Cine', 'Filología', 'Pensamiento', 'Geografía', 'Norma y Uso'.\n" "   Ejemplo Crítico: 'Idioma Francés I' -> CEFR_LANGUAGES. 'El español actual: norma y uso' -> HUMANITIES_ARTS."
         f"{exclusion_clause}\n\n"
         "Responde ÚNICAMENTE con el nombre del Arquetipo (etiqueta en mayúsculas)."
     )

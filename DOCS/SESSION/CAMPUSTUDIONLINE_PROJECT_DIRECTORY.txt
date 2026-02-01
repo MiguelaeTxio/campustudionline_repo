@@ -847,6 +847,9 @@
 ./public_seo_previews/material_5.html
 ./public_seo_previews/material_14_curso-de-selenium-qa.html
 ./temp_patch_strategy.py
+./assessment_recovery/assessment_recovery_316.json
+./assessment_recovery/assessment_recovery_307.json
+./assessment_recovery/assessment_recovery_304.json
 ./commands_models.txt
 ./schedule/urls.py
 ./schedule/templates/schedule/event_confirm_delete.html

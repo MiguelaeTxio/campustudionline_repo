@@ -8,7 +8,7 @@ def is_minor_language(subject_name):
 
 def get_target_language(subject_name):
     """Extrae el idioma puro eliminando el ruido administrativo."""
-    clean_name = re.sub(r'LENGUA MODERNA|MINOR|MAIOR|INICIAL|INTERMEDIO|AVANZADO|[0-9]|:|I|V', '', subject_name, flags=re.IGNORECASE)
+    clean_name = re.sub(r'\b(LENGUA|MODERNA|MODERNO|MINOR|MAIOR|MÍNOR|INICIAL|INTERMEDIO|AVANZADO|NIVEL|IDIOMA|LENGUA\s+[A-C])\b|[0-9]+|[:()]|\b[IVXLC]+\b', '', subject_name, flags=re.IGNORECASE)
     return clean_name.strip()
 
 def get_strategy_skeleton(content_text, subject_name, **kwargs):
@@ -50,11 +50,13 @@ def generate_languages_item_prompt(reading_text, listening_transcript, cefr_leve
     
     if itinerary == 'MINOR':
         return f"""ACT AS AN EXAM CREATOR FOR THE LANGUAGE: {target_lang}.
+STRICT RULE: JSON ONLY. NO PREAMBLE. NO CONVERSATION.
 STUDENT: Spanish speaker (Beginner). 
 TASK: Create ONE (1) question of type {q_type}.
 INSTRUCTIONS: In SPANISH.
 CONTENT: In {target_lang}. NO ENGLISH.
-LOCALIZATION: Translate the section label '{original_label}' to {target_lang} and include it in the response if possible.
+LOCALIZATION: Translate the section label '{original_label}' to {target_lang}.
+SCHEMA: {{"question_text": "...", "options": ["...", "..."], "model_answer": "..."}}
 FIELD 'model_answer': MANDATORY."""
     
     return f"""ACT AS A NATIVE EXAMINER IN {target_lang}.
