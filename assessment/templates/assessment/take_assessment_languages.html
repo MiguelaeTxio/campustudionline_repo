@@ -1,35 +1,22 @@
 {% extends "base.html" %}
 {% load static %}{% load assessment_tags %}
-
+{% block extra_css %}
 <style>
 .btn-media-45 { width: 45px !important; height: 45px !important; border-radius: 50% !important; display: flex !important; align-items: center; justify-content: center; }
 .audio-wave { display: inline-flex; align-items: center; gap: 3px; height: 20px; vertical-align: middle; }
-.audio-wave:not(.d-none) { display: inline-flex !important; }
 .audio-wave span { display: block; width: 3px; height: 6px; background-color: #bb86fc; border-radius: 2px; animation: wave 1s infinite ease-in-out; }
-.audio-wave.paused span { animation-play-state: paused; opacity: 0.3; }
 @keyframes wave { 0%, 100% { height: 6px; opacity: 0.6; } 50% { height: 20px; opacity: 1; } }
-.upload-dashed { border: 2px dashed #dee2e6; border-radius: 15px; background: #fafafa; transition: all 0.3s; position: relative; cursor: pointer; }
+.upload-dashed { border: 2px dashed #dee2e6; border-radius: 15px; background: #fafafa; transition: all 0.3s; position: relative; cursor: pointer; overflow: hidden; min-height: 120px; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+.upload-dashed p { padding: 0 10px; line-height: 1.2; width: 100%; }
 .upload-dashed:hover { border-color: #0d6efd; background: #f8faff; }
 .upload-dashed input[type="file"] { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; }
-.blink-text { animation: blinker 1.5s linear infinite; }
-@keyframes blinker { 50% { opacity: 0; } }
 </style>
-
+{% endblock %}
 {% block content %}
 <div class="container mt-5">
     <div class="card shadow-lg border-0 rounded-4">
-        <div class="card-header bg-primary text-white py-3">
-            <h1 class="h4 mb-0 fw-bold">{{ page_title }}</h1>
-        </div>
+        <div class="card-header bg-primary text-white py-3"><h1 class="h4 mb-0 fw-bold">{{ page_title }}</h1></div>
         <div class="card-body p-4">
-            {# --- BOTÓN DE REPORTE DE FORMATO INCORRECTO (HITO 6) --- #}
-            <div class="d-flex justify-content-end mb-4">
-                <a href="{% url 'assessment:configure_assessment' copy_pk=assessment.content_copy.id %}?report_error=archetype" class="btn btn-warning rounded-pill px-4 shadow-sm fw-bold border-2">
-                    <i class="fas fa-robot-astray me-2"></i> 🤖 Formato Incorrecto
-                </a>
-            </div>
-            
-            {# --- A. SOURCE: Estímulo General de Lectura (Si existe) --- #}
             {% if assessment.reading_stimulus %}
             <div class="alert alert-light border shadow-sm mb-5 p-4 rounded-4">
                 <h5 class="text-primary fw-bold mb-3"><i class="fas fa-book-reader me-2"></i>{{ assessment.prompt_data.reading_header|default:"READING / TEXTO DE REFERENCIA" }}</h5>
@@ -38,141 +25,43 @@
                 </div>
             </div>
             {% endif %}
-            
             <form id="assessment-form" method="POST" enctype="multipart/form-data" action="{% url 'assessment:submit_assessment' pk=assessment.pk %}">
                 {% csrf_token %}
                 <ol class="list-unstyled">
                     {% for question in questions_list %}
                         <li class="mb-5 p-4 bg-white border rounded-4 shadow-sm" id="q_{{ question.pk }}">
-                            
-                            {# 1. CABECERA SECCIÓN #}
-                            {% if question.section_label %}
-                                <small class="text-primary fw-bold text-uppercase d-block mb-2"><i class="fas fa-tag me-1"></i> {{ question.section_label }}</small>
-                            {% endif %}
-                            
-                            {# 2. PREGUNTA / INSTRUCCIÓN (Renderizada) #}
+                            {% if question.section_label %}<small class="text-primary fw-bold text-uppercase d-block mb-2"><i class="fas fa-tag me-1"></i> {{ question.section_label }}</small>{% endif %}
                             <h5 class="fw-bold mb-4">
                                 {{ forloop.counter }}. 
-                                {# Si es CLOZE, pasamos por el render engine. Si no, markdown normal #}
                                 {% if question.interaction_type == "QT_CLZ_OPT" or question.interaction_type == "QT_CLZ_OPN" %}
                                     {% render_cloze_engine question.question_text question.response_mode question.pk question.options %}
                                 {% else %}
                                     {{ question.display_text|render_markdown }}
                                 {% endif %}
                             </h5>
-                            
-                            {# 3. SOURCE: Estímulo de Audio Específico (Si aplica) #}
-                            {% if question.requires_audio and assessment.generated_audio %}
-                                <div class="mb-4 d-flex align-items-center p-3 bg-light rounded-3">
-                                     <span class="me-3 fw-bold text-muted"><i class="fas fa-headphones"></i> Listen:</span>
-                                     <button type="button" class="btn btn-outline-primary btn-media-45 shadow-sm" id="btn_tts_{{ question.pk }}" onclick="AssessmentMedia.player.toggle('{{ assessment.generated_audio.url }}', '{{ question.pk }}')"><i class="fas fa-play"></i></button> <button type="button" class="btn btn-outline-danger btn-media-45 shadow-sm ms-2" onclick="AssessmentMedia.player.stop('{{ question.pk }}')"><i class="fas fa-stop"></i></button> 
-                                     <div class="audio-wave d-none ms-3" id="wave_tts_{{ question.pk }}"><span></span><span></span><span></span><span></span><span></span></div>
+                            {% if question.response_mode == "REQ_RADIO" %}
+                                <div class="list-group rounded-4 shadow-sm border-0">
+                                    {% for option in question.options %}<label class="list-group-item list-group-item-action py-3"><input class="form-check-input me-3" type="radio" name="answer_q_{{ question.pk }}" value="{{ option }}" required>{{ option }}</label>{% endfor %}
                                 </div>
-                            {% endif %}
-
-                            {# 4. RESPONSE: Widget de Respuesta según Matriz S-Q-R #}
-                            
-                            {# CASO A: Grabadora (Speaking) #}
-                            {% if question.response_mode == "REQ_REC" %}
-                                <div class="recorder-ui p-4 bg-light rounded-4 text-center mb-4 border">
-                                    <div class="d-flex justify-content-between align-items-center mb-3">
-                                        <div class="badge bg-dark rounded-pill px-4 py-2" id="timer_{{ question.pk }}">00:00</div>
-                                        <div class="audio-wave d-none" id="wave_rec_{{ question.pk }}"><span></span><span></span><span></span><span></span><span></span></div>
-                                    </div>
-                                    <div class="d-flex justify-content-center gap-3">
-                                        <button type="button" class="btn btn-danger btn-media-45 shadow-sm" id="btn_rec_{{ question.pk }}" onclick="AssessmentMedia.recorder.start('{{ question.pk }}')"><i class="fas fa-microphone"></i></button>
-                                        <button type="button" class="btn btn-secondary btn-media-45 shadow-sm" id="btn_stop_{{ question.pk }}" onclick="AssessmentMedia.recorder.stop('{{ question.pk }}')" disabled><i class="fas fa-stop"></i></button>
-                                    </div>
-                                    <div id="status_{{ question.pk }}" class="mt-2 small fw-bold text-muted">Pulsa micro para grabar</div>
-                                    <input type="file" name="attachment_q_{{ question.pk }}" id="audio_input_{{ question.pk }}" class="d-none">
-                                </div>                      
-                            
-                            {# CASO B: Radio Buttons (Test clásico) #}
-                            {% elif question.response_mode == "REQ_RADIO" %}
-                                <div class="list-group rounded-4 shadow-sm overflow-hidden border-0">
-                                    {% for option in question.options %}
-                                        <label class="list-group-item list-group-item-action py-3 cursor-pointer">
-                                            <input class="form-check-input me-3" type="radio" name="answer_q_{{ question.pk }}" value="{{ option }}" required>
-                                            {{ option }}
-                                        </label>
-                                    {% endfor %}
-                                </div>
-
-                            
-                            {# CASO E: Emparejamiento (Matching) #}
-                            {% elif question.response_mode == "REQ_MATCH" %}
-                                <div class="table-responsive mb-4">
-                                    <table class="table table-borderless table-hover align-middle">
-                                        <thead class="table-light"><tr><th scope="col" class="w-50">Elemento</th><th scope="col">Asociar con...</th></tr></thead>
-                                        <tbody>
-                                            {% for item in question.options %}
-                                            <tr>
-                                                <td class="p-3 bg-white border rounded-start">{{ item.label|default:item }}</td>
-                                                <td class="p-3 bg-light border rounded-end">
-                                                    <select name="answer_q_{{ question.pk }}_item_{{ forloop.counter0 }}" class="form-select shadow-sm" required>
-                                                        <option value="" selected disabled>Seleccione...</option>
-                                                        {% for opt in question.options %}<option value="{{ opt.value|default:opt }}">{{ forloop.counter }}. {{ opt.value|default:opt }}</option>{% endfor %}
-                                                    </select>
-                                                </td>
-                                            </tr>
-                                            {% endfor %}
-                                        </tbody>
-                                    </table>
-                                </div>
-
-                            {# CASO F: Ordenación (Ordering) #}
-                            {% elif question.response_mode == "REQ_ORDER" %}
-                                <div class="list-group list-group-flush mb-4 rounded-4 border">
-                                    {% for item in question.options %}
-                                    <div class="list-group-item p-3 d-flex align-items-center gap-3">
-                                        <div class="flex-shrink-0">
-                                            <input type="number" name="answer_q_{{ question.pk }}_order_{{ forloop.counter0 }}" class="form-control text-center fw-bold text-primary" style="width: 70px;" min="1" max="{{ question.options|length }}" placeholder="#" required>
-                                        </div>
-                                        <div class="flex-grow-1">{{ item }}</div>
-                                    </div>
-                                    {% endfor %}
-                                </div>
-                            
-                            {# CASO G: Input de Texto Simple (Transformation / Short Answer) #}
-                            {% elif question.response_mode == "REQ_INPUT" and question.interaction_type != "QT_CLZ_OPN" %}
-                                {# NOTA: QT_CLZ_OPN se renderiza arriba con el engine, aquí solo cubrimos REQ_INPUT sueltos #}
-                                <div class="form-floating mb-4">
-                                    <input type="text" name="answer_q_{{ question.pk }}" class="form-control rounded-4 shadow-sm" placeholder="Respuesta..." required>
-                                    <label>Tu respuesta...</label>
-                                </div>
-
-                            {# CASO C: Escritura Dual (Writing / Ensayos) #}
                             {% elif question.response_mode == "REQ_DUAL" %}
-                                <div class="form-floating mb-4">
-                                    <textarea name="answer_q_{{ question.pk }}" class="form-control rounded-4 shadow-sm" style="height: 180px" placeholder="." required></textarea>
-                                    <label>Escribe tu respuesta aquí...</label>
-                                </div>
+                                <div class="form-floating mb-4"><textarea name="answer_q_{{ question.pk }}" class="form-control rounded-4 shadow-sm" style="height: 180px" placeholder="." required></textarea><label>Escribe tu respuesta aquí...</label></div>
                                 <div class="upload-dashed p-4 text-center">
-                                    <i class="fas fa-cloud-upload-alt text-primary fa-2x mb-2"></i>
-                                    <p class="small text-muted mb-0"><strong>Subir archivo adjunto (Manuscrito/PDF)</strong></p>
+                                    <i class="fas fa-camera text-primary fa-2x mb-2"></i>
+                                    <p class="small text-muted mb-1"><strong>Subir archivo (Foto)</strong></p>
                                     <p class="x-small text-muted mb-0">Clic o arrastrar</p>
-                                    <input type="file" name="attachment_q_{{ question.pk }}" onchange="AssessmentMedia.ui.updateUpload(this, '{{ question.pk }}')">
+                                    <input type="file" name="attachment_q_{{ question.pk }}" accept="image/*" onchange="AssessmentMedia.ui.updateUpload(this, '{{ question.pk }}')">
                                     <div id="file_preview_{{ question.pk }}" class="mt-2 d-none text-success small fw-bold"><i class="fas fa-check-circle"></i> <span id="file_name_{{ question.pk }}"></span></div>
                                 </div>
-
-                            {# CASO D: Cloze (Inputs/Selects INLINE) #}
-                            {# Ya gestionados arriba por render_cloze_engine #}
                             {% endif %}
-
                         </li>
                     {% endfor %}
                 </ol>
-                <div class="d-grid gap-2">
-                    <button type="submit" class="btn btn-success btn-lg py-3 rounded-4 shadow-lg fw-bold text-uppercase">
-                        <i class="fas fa-paper-plane me-2"></i> Finalizar y Entregar Examen
-                    </button>
-                </div>
+                <div class="d-grid gap-2"><button type="submit" class="btn btn-success btn-lg py-3 rounded-4 shadow-lg fw-bold text-uppercase"><i class="fas fa-paper-plane me-2"></i> Finalizar y Entregar Examen</button></div>
             </form>
         </div>
     </div>
 </div>
 
-{# --- OFFCANVAS DE REFERENCIA (Accesible siempre) --- #}
 <div class="offcanvas offcanvas-start shadow-lg border-0" tabindex="-1" id="offcanvasRef" style="width: 85%;">
     <div class="offcanvas-header bg-primary text-white py-3"><h5 class="fw-bold"><i class="fas fa-book-open me-2"></i> Material de Referencia</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button></div>
     <div class="offcanvas-body p-4 fs-5" style="line-height: 1.8;">
@@ -184,13 +73,6 @@
     </div>
 </div>
 <div class="position-fixed top-50 start-0 translate-middle-y ms-2" style="z-index: 1060;">
-    <button class="btn btn-primary rounded-circle shadow-lg p-3 border-0" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRef" title="Ver Texto Referencia">
-        <i class="fas fa-book-open fa-lg"></i>
-    </button>
+    <button class="btn btn-primary rounded-circle shadow-lg p-3 border-0" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRef" title="Ver Texto Referencia"><i class="fas fa-book-open fa-lg"></i></button>
 </div>
-{% endblock %}
-
-{% block extra_js %}
-<script src="{% static 'assessment/js/assessment_media_utils.js' %}"></script>
-<script>document.addEventListener('DOMContentLoaded', () => { AssessmentMedia.init('{{ assessment.content.title|escapejs }}'); });</script>
 {% endblock %}

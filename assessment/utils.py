@@ -1,4 +1,3 @@
-# /home/MiguelAeTxio/PROJECTS/CampuStudiOnline/assessment/utils.py
 from datetime import timedelta
 from math import ceil
 from django.utils import timezone
@@ -93,8 +92,40 @@ def clean_selection_payload(selection_json):
     except: return None
 
 def filter_content_by_selection(markdown_text, selection_ids):
-    # Retorna el texto filtrado o el total si no hay selección
-    return markdown_text
+    """
+    [HITO 6] Segmentación real de contenido.
+    Extrae el texto comprendido entre el primer nodo seleccionado y el final 
+    de la sección del último nodo seleccionado.
+    """
+    if not markdown_text or not selection_ids:
+        return markdown_text
+
+    lines = markdown_text.split('\n')
+    node_indices = []
+    for sid in selection_ids:
+        try:
+            # Los IDs tienen el formato 'node_LINEINDEX' generado en extract_content_structure
+            idx = int(sid.split('_')[1])
+            node_indices.append(idx)
+        except (IndexError, ValueError):
+            continue
+
+    if not node_indices:
+        return markdown_text
+
+    start_line = min(node_indices)
+    last_node_line = max(node_indices)
+
+    # Determinamos el final: buscamos el siguiente encabezado tras el último seleccionado
+    header_pattern = re.compile(r'^(#{1,4})\s+')
+    end_line = len(lines)
+    for i in range(last_node_line + 1, len(lines)):
+        if header_pattern.match(lines[i].strip()):
+            end_line = i
+            break
+
+    filtered_content = '\n'.join(lines[start_line:end_line]).strip()
+    return filtered_content if filtered_content else markdown_text
 
 def get_next_best_archetype(current, rejected):
     choices = ["CEFR_LANGUAGES", "LOGIC_AND_TECH", "SOCIO_LEGAL", "HEALTH_SCIENCES", "HUMANITIES_ARTS"]

@@ -41,9 +41,6 @@ from core.services.assessment_strategies.classifier import generate_classifier_p
 # [REFACTOR] Uso de Factory en lugar de imports directos
 from core.services.assessment_strategies.factory import AssessmentStrategyFactory
 
-from core.services.assessment_strategies.sciences_strategy import generate_sciences_prompt
-from core.services.assessment_strategies.humanities_strategy import generate_humanities_prompt
-from core.services.assessment_strategies.legal_strategy import generate_legal_prompt
 
 from core.services.prompt_generators import (
     generate_course_metadata_prompt,
@@ -1106,6 +1103,9 @@ def generate_assessment_from_content_task(self, assessment_id):
                             continue
 
                         strategy_mod = AssessmentStrategyFactory.get_strategy(subject_type)
+                        # [MEMORIA DE SESIÓN] Extraemos textos de preguntas previas para evitar redundancia
+                        prev_texts = [v['text'] for v in q_cache.values()]
+                        
                         prompt = strategy_mod.generate_item_prompt(
                             filtered_content, 
                             q_obj, 
@@ -1113,7 +1113,8 @@ def generate_assessment_from_content_task(self, assessment_id):
                             target_lang=subject_name, 
                             learning_objectives=learning_objectives, 
                             syllabus=course_outline, 
-                            listening_transcript=l_text_memory
+                            listening_transcript=l_text_memory,
+                            already_covered=prev_texts
                         )
 
                         success, resp, _ = generate_text_content(prompt, api_key=api_key)
@@ -1122,7 +1123,17 @@ def generate_assessment_from_content_task(self, assessment_id):
                         if not d_list: raise ValueError(f"Fallo parseo Q{q_obj.id}. Respuesta: {resp[:50]}...")
                         
                         d = d_list[0]
-                        clean_data = {'text': d['question_text'], 'options': d.get('options', []), 'answer': d['model_answer']}
+                        options = d.get('options', [])
+                        # [GATEKEEPER] Validación de integridad para tipos de selección
+                        if q_obj.interaction_type in ["QT_SEL", "QT_CLZ_OPT"]:
+                            if not isinstance(options, list):
+                                raise ValueError(f"Fallo de esquema: 'options' no es una lista en Q:{q_obj.id}")
+                            # Normalizamos para detectar duplicados semánticos
+                            unique_options = set(str(o).strip().lower() for o in options)
+                            if len(unique_options) < 4:
+                                raise ValueError(f"Integridad Fallida: Se requieren 4 opciones únicas en Q:{q_obj.id}. Detectadas: {len(unique_options)}")
+                        
+                        clean_data = {'text': d['question_text'], 'options': options, 'answer': d['model_answer']}
                         q_cache[s_idx] = clean_data
                         p_data = assessment.prompt_data
                         p_data['questions_cache'] = q_cache
@@ -1133,14 +1144,25 @@ def generate_assessment_from_content_task(self, assessment_id):
                     current_step = 3
 
             except (ResourceExhausted, AIServiceCriticalError, ValueError) as e:
+                error_str = str(e)
+                is_quota = "429" in error_str or "Resource" in error_str or "Quota" in error_str
+                
+                if is_quota:
+                    log_assessment_task_event(assessment_id, "Límite de cuota (Gemini) detectado. Iniciando pausa de 75s para reset de RPM...", level="WARNING")
+                    time.sleep(75) # Espera activa para diferenciar RPM de RPD
+                
                 api_key.refresh_from_db()
                 api_key.consecutive_failures += 1
                 api_key.save(update_fields=['consecutive_failures'])
+                
                 if api_key.consecutive_failures >= 4:
                     api_key.is_quarantined = True
                     api_key.save(update_fields=['is_quarantined'])
                     _request_quarantine_via_mailbox(api_key)
-                raise self.retry(exc=e, countdown=70)
+                    log_assessment_task_event(assessment_id, f"Clave {api_key.name} agotada tras 4 intentos. Entrando en cuarentena.", level="ERROR")
+                
+                # Reintento de la tarea (Celery)
+                raise self.retry(exc=e, countdown=10)
 
         if assessment.questions.filter(question_text="[GENERANDO CONTENIDO...]").exists():
             raise ValueError("Integridad Fallida: Quedaron preguntas vacías en DB.")

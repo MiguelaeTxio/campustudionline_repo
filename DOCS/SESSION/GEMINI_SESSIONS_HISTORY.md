@@ -1580,3 +1580,17 @@ Objetivos de la sesión:
 *  **Session:** Alineación de Autoevaluaciones UGR: Del Syllabus Académico a la IA Generativa
 *  **Description:** Sexta sesión del Hito 6 enfocada en la re-alineación del sistema de autoevaluaciones. Tras un diagnóstico forense, se determina que la estrategia de idiomas ignora los datos del syllabus ('learning_objectives'). Se establece la hoja de ruta para conectar el 'Selection Range' con el prompt de la IA. Se inicia el blindaje de los protocolos del sistema en el Total Commander para garantizar el cumplimiento estricto del idioma y la operativa de archivos.
 
+
+# 2024-05-22
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+## EPI
+*  **Session:** Refinamiento Pedagógico y Lógica de Evaluación IA (Hito 6)
+*  **Description:** Sesión enfocada en el avance del sistema de autoevaluaciones bajo el protocolo 'Atomic Flow'. Se trabajará en la lógica de generación de preguntas para cumplir con los arquetipos pedagógicos definidos (Modelo UGR) y la integración de widgets específicos (MATH_INPUT, AUDIO_RECORDER, etc.) según el área de conocimiento.
+# 2026-02-01
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+## PLUTO # --SYSTEM -->
+*  **Session:** AUDITORÍA Y REALINEACIÓN UGR PARA IDIOMAS
+*  **Description:** Sesión crítica de reingeniería del sistema de evaluación para idiomas. Se procederá primero a la re-alineación documental, diferenciando explícitamente entre el modelo de Acreditación (CertAcles) y el de Grado Académico (UGR). Posteriormente, se auditará el flujo de datos para garantizar que el `course_content_outline` y `learning_objectives` del `Subject` se inyecten correctamente en la estrategia de generación, eliminando el hardcoding de nivel y asegurando una evaluación contextualizada al temario seleccionado.
+

@@ -1,30 +1,34 @@
+import json
 
-def generate_item_prompt(context_text, question_obj, **kwargs):
-    return f"""
-ROL: Profesor de Ingeniería/Ciencias.
-TAREA: Generar un problema o cuestión teórica.
-TIPO: {question_obj.get_interaction_type_display()}
-SECCIÓN: {question_obj.section_label}
-REQUISITO: Usa formato LaTeX para fórmulas matemáticas.
+def generate_item_prompt(content_text, question_obj, **kwargs):
+    already_covered = kwargs.get("already_covered", [])
+    objectives = kwargs.get("learning_objectives", {})
+    syllabus = kwargs.get("syllabus", [])
+    
+    memory_context = ""
+    if already_covered:
+        memory_context = "\nDO NOT REPEAT these problems:\n" + "\n".join([f"- {p[:80]}" for p in already_covered])
 
-CONTEXTO:
-{context_text[:3000]}...
+    prompt = f"""ACT AS AN ENGINEERING PROFESSOR (UGR). 
+CONTEXT: {json.dumps(objectives)} | SYLLABUS: {json.dumps(syllabus)}
+SOURCE: {content_text}
+{memory_context}
 
-INSTRUCCIÓN TÉCNICA:
-Genera un objeto JSON válido con:
-- "question_text": Enunciado del problema.
-- "model_answer": Solución paso a paso (con LaTeX).
-- "options": Lista de opciones (si es test).
-"""
+TASK: Generate ONE (1) technical question for "{question_obj.section_label}".
+Type: {question_obj.interaction_type}.
+REQUIREMENT: Use LaTeX for ALL mathematical formulas.
 
-def generate_sciences_prompt(content_text, subject_name="Técnica"):
-    return generate_item_prompt(content_text, type("MockQ", (), {"get_interaction_type_display": lambda: "General", "interaction_type": "QT_PROD", "section_label": "General"})())
+RULES:
+1. If QT_SEL: 4 UNIQUE options.
+2. If QT_PROD: Ask for step-by-step resolution. Tell the student to take a PHOTO of their calculations.
+JSON SCHEMA: {{"question_text": "...", "options": ["opt1", "opt2", "opt3", "opt4"], "model_answer": "Solution in LaTeX"}}"""
+    return prompt
 
 def get_strategy_skeleton(content_text, subject_name, **kwargs):
     return {
         'skeleton': [
-            {'label': 'Fundamentos Teóricos', 'source': 'SRC_DIR', 'interaction': 'QT_SEL', 'response': 'REQ_RADIO'},
-            {'label': 'Resolución de Problemas', 'source': 'SRC_DIR', 'interaction': 'QT_PROD', 'response': 'REQ_INPUT'},
-            {'label': 'Cálculo Avanzado', 'source': 'SRC_DIR', 'interaction': 'QT_PROD', 'response': 'REQ_INPUT'}
+            {'section_label': 'Fundamentos Teóricos', 'interaction_type': 'QT_SEL', 'response_mode': 'REQ_RADIO'},
+            {'section_label': 'Resolución de Problemas', 'interaction_type': 'QT_PROD', 'response_mode': 'REQ_DUAL'},
+            {'section_label': 'Cálculo Avanzado', 'interaction_type': 'QT_PROD', 'response_mode': 'REQ_DUAL'}
         ]
     }

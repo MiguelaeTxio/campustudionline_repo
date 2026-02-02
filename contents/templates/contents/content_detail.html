@@ -61,7 +61,7 @@
         {% if can_create_copy and not is_gated %}
             {% if not material.is_free_content and subject %}
                 {# [CASO ACADÉMICO] Se pasa el contexto de la asignatura para una creación de copia precisa #}
-                <a href="{% url 'study_room:create_content_copy' pk=material.pk subject_pk=subject.pk %}" class="btn btn-primary btn-sm content-link-preloader" id="tour-step-1-copy-button">
+                <a href="{% url 'study_room:create_content_copy' subject_pk=subject.pk pk=material.pk %}" class="btn btn-primary btn-sm content-link-preloader" id="tour-step-1-copy-button">
                     <i class="fas fa-copy"></i> Copiar para estudio
                 </a>
             {% else %}
@@ -224,4 +224,14 @@
         }
     });
 </script>
+
+<script>
+window.MathJax = {
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']],
+    displayMath: [['$$', '$$'], ['\\[', '\\]']]
+  }
+};
+</script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 {% endblock extra_js %}

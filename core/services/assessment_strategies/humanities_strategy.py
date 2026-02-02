@@ -1,28 +1,34 @@
+import json
 
-def generate_item_prompt(context_text, question_obj, **kwargs):
-    return f"""
-ROL: Catedrático de Humanidades.
-TAREA: Generar un comentario de texto o ensayo.
-TIPO: {question_obj.get_interaction_type_display()}
-SECCIÓN: {question_obj.section_label}
+def generate_item_prompt(content_text, question_obj, **kwargs):
+    already_covered = kwargs.get("already_covered", [])
+    objectives = kwargs.get("learning_objectives", {})
+    syllabus = kwargs.get("syllabus", [])
+    
+    memory_context = ""
+    if already_covered:
+        memory_context = "\nCRITICAL: DO NOT REPEAT these previous topics:\n" + "\n".join([f"- {p[:80]}" for p in already_covered])
 
-CONTEXTO:
-{context_text[:4000]}...
+    prompt = f"""ACT AS A HUMANITIES CHAIR (UGR). 
+PEDAGOGICAL CONTEXT: {json.dumps(objectives)} | SYLLABUS: {json.dumps(syllabus)}
+SOURCE MATERIAL: {content_text}
+{memory_context}
 
-INSTRUCCIÓN TÉCNICA:
-Genera un objeto JSON válido con:
-- "question_text": La pregunta o tema a desarrollar.
-- "model_answer": Esquema de respuesta correcta o puntos clave.
-"""
+TASK: Generate ONE (1) question for "{question_obj.section_label}".
+Type: {question_obj.interaction_type}.
 
-def generate_humanities_prompt(content_text, subject_name, tribunal_type="GENERIC"):
-    return generate_item_prompt(content_text, type("MockQ", (), {"get_interaction_type_display": lambda: "General", "interaction_type": "QT_PROD", "section_label": "General"})())
+RULES:
+1. Instructions and content MUST be in Spanish.
+2. If Type is QT_SEL: Provide 4 UNIQUE and plausible options.
+3. If Type is QT_PROD: Ask for an academic essay or critical analysis. Tell the student to take a PHOTO of their work.
+JSON SCHEMA: {{"question_text": "...", "options": ["opt1", "opt2", "opt3", "opt4"], "model_answer": "..."}}"""
+    return prompt
 
 def get_strategy_skeleton(content_text, subject_name, **kwargs):
     return {
         'skeleton': [
-            {'label': 'Contextualización', 'source': 'SRC_TXT', 'interaction': 'QT_SEL', 'response': 'REQ_RADIO'},
-            {'label': 'Comentario de Fuente', 'source': 'SRC_TXT', 'interaction': 'QT_PROD', 'response': 'REQ_DUAL'},
-            {'label': 'Ensayo Dialéctico', 'source': 'SRC_TXT', 'interaction': 'QT_PROD', 'response': 'REQ_DUAL'}
+            {'section_label': 'Contextualización', 'interaction_type': 'QT_SEL', 'response_mode': 'REQ_RADIO'},
+            {'section_label': 'Comentario de Fuente', 'interaction_type': 'QT_PROD', 'response_mode': 'REQ_DUAL'},
+            {'section_label': 'Ensayo Dialéctico', 'interaction_type': 'QT_PROD', 'response_mode': 'REQ_DUAL'}
         ]
     }

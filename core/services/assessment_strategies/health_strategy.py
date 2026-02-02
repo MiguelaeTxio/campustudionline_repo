@@ -1,29 +1,34 @@
+import json
 
-def generate_item_prompt(context_text, question_obj, **kwargs):
-    return f"""
-ROL: Tribunal Médico (ECOE).
-TAREA: Generar una estación clínica.
-TIPO: {question_obj.get_interaction_type_display()}
-SECCIÓN: {question_obj.section_label}
+def generate_item_prompt(content_text, question_obj, **kwargs):
+    already_covered = kwargs.get("already_covered", [])
+    objectives = kwargs.get("learning_objectives", {})
+    syllabus = kwargs.get("syllabus", [])
 
-CONTEXTO (Caso Clínico):
-{context_text[:4000]}...
+    memory_context = ""
+    if already_covered:
+        memory_context = "\nDO NOT REPEAT these clinical scenarios:\n" + "\n".join([f"- {p[:80]}" for p in already_covered])
 
-INSTRUCCIÓN TÉCNICA:
-Genera un objeto JSON válido con:
-- "question_text": Enunciado clínico o pregunta.
-- "model_answer": Protocolo o diagnóstico correcto.
-- "options": Lista de opciones (si aplica).
-"""
+    prompt = f"""ACT AS A MEDICAL TRIBUNAL (ECOE). 
+SYLLABUS: {json.dumps(syllabus)}
+CASE CONTEXT: {content_text}
+{memory_context}
 
-def generate_health_prompt(content_text, subject_name="Salud"):
-    return generate_item_prompt(content_text, type("MockQ", (), {"get_interaction_type_display": lambda: "General", "interaction_type": "QT_PROD", "section_label": "General"})())
+TASK: Generate ONE (1) clinical question for "{question_obj.section_label}".
+Type: {question_obj.interaction_type}.
+
+RULES:
+1. Focus on patient safety and evidence-based medicine.
+2. If QT_SEL: 4 UNIQUE options.
+3. If QT_PROD: Ask for diagnosis or nursing care plan. Tell the student to take a PHOTO of their clinical notes.
+JSON SCHEMA: {{"question_text": "...", "options": ["opt1", "opt2", "opt3", "opt4"], "model_answer": "Clinical protocol"}}"""
+    return prompt
 
 def get_strategy_skeleton(content_text, subject_name, **kwargs):
     return {
         'skeleton': [
-            {'label': 'Anamnesis y Exploración', 'source': 'SRC_DIR', 'interaction': 'QT_PROD', 'response': 'REQ_DUAL'},
-            {'label': 'Juicio Clínico', 'source': 'SRC_DIR', 'interaction': 'QT_PROD', 'response': 'REQ_DUAL'},
-            {'label': 'Plan Terapéutico', 'source': 'SRC_DIR', 'interaction': 'QT_PROD', 'response': 'REQ_DUAL'}
+            {'section_label': 'Anamnesis y Exploración', 'interaction_type': 'QT_PROD', 'response_mode': 'REQ_DUAL'},
+            {'section_label': 'Juicio Clínico', 'interaction_type': 'QT_PROD', 'response_mode': 'REQ_DUAL'},
+            {'section_label': 'Plan Terapéutico', 'interaction_type': 'QT_PROD', 'response_mode': 'REQ_DUAL'}
         ]
     }
