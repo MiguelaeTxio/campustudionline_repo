@@ -2,28 +2,21 @@ import re
 import json
 
 def get_script_family(target_lang):
-    """Determina la familia de grafías para aplicar reglas de UI y pedagogía."""
     lang_upper = target_lang.upper()
-    if any(x in lang_upper for x in ["CHINO", "JAPONÉS", "KANJI", "HANZI", "MANDARÍN"]):
-        return "LOGOGRAPHIC"
-    if any(x in lang_upper for x in ["ÁRABE", "HEBREO", "PERSA"]):
-        return "RTL"
-    if any(x in lang_upper for x in ["RUSO", "UCRANIANO", "BULGARO", "CIRÍLICO"]):
-        return "CYRILLIC"
+    if any(x in lang_upper for x in ["CHINO", "JAPONÉS", "KANJI", "HANZI", "MANDARÍN"]): return "LOGOGRAPHIC"
+    if any(x in lang_upper for x in ["ÁRABE", "HEBREO", "PERSA"]): return "RTL"
+    if any(x in lang_upper for x in ["RUSO", "UCRANIANO", "BULGARO", "CIRÍLICO"]): return "CYRILLIC"
     return "LATIN"
 
 def get_target_language(subject_name):
-    """Limpia el nombre de la asignatura para obtener el idioma puro."""
     clean_name = re.sub(r"\b(LENGUA|MODERNA|MODERNO|MINOR|MAIOR|MÍNOR|INICIAL|INTERMEDIO|AVANZADO|NIVEL|IDIOMA|LENGUA\s+[A-C])\b|[0-9]+|[:()]|\b[IVXLC]+\b", "", subject_name, flags=re.IGNORECASE)
     return clean_name.strip()
 
 def is_minor_language(subject_name):
-    """Utilidad para clasificación automática de itinerario."""
     name = subject_name.upper()
     return any(x in name for x in ["MINOR", "MÍNOR", "IDIOMA MODERNO", "LENGUA C", "INICIAL", "A1", "A2", "NIVEL 1", "NIVEL I"])
 
 def get_strategy_skeleton(content_text, subject_name, **kwargs):
-    """Define la estructura del examen según el itinerario."""
     target_lang = get_target_language(subject_name)
     script_family = get_script_family(target_lang)
     itinerary = kwargs.get("itinerary", "MINOR")
@@ -46,12 +39,22 @@ def generate_languages_stimuli_prompt(content_text, subject_name, **kwargs):
     return f"""ACT AS AN ACADEMIC EXAMINER. Generate Reading and Listening in {target_lang}. Syllabus: {content_text[:2000]} JSON: {{"reading_stimulus": "...", "listening_transcript": "...", "cefr_level": "..."}}"""
 
 def generate_item_prompt(content_text, question_obj, **kwargs):
-    """Motor de Generación: Blindaje Cloze (Prohibición de Teoría)."""
     target_lang = kwargs.get("target_lang", "English")
     itinerary = kwargs.get("itinerary", "MINOR")
     already_covered = kwargs.get("already_covered", [])
     instr_lang = "Spanish" if itinerary == "MINOR" else target_lang
     
+    target_upper = target_lang.upper()
+    is_english_target = "ENGLISH" in target_upper or "INGLÉS" in target_upper or "INGLES" in target_upper
+    
+    language_shield = ""
+    if not is_english_target:
+        language_shield = (
+            f"NEGATIVE CONSTRAINT (CRITICAL): DO NOT USE ENGLISH. "
+            f"The content MUST be purely in {target_lang}. "
+            f"If you use English words in the options or sentences, the task will be rejected."
+        )
+
     memory_context = ""
     if already_covered:
         memory_context = "\nCRITICAL: DO NOT REPEAT these previous questions/topics:\n" + "\n".join([f"- {p[:80]}" for p in already_covered])
@@ -73,6 +76,7 @@ GENERAL RULES:
 1. Instructions in {instr_lang}.
 2. For multiple choice: 4 UNIQUE and plausible options.
 3. For QT_PROD: Ask the student to take a PHOTO of the exercise.
+4. {language_shield}
 
 JSON SCHEMA:
 {{
@@ -83,3 +87,27 @@ JSON SCHEMA:
     return prompt
 
 generate_languages_item_prompt = generate_item_prompt
+
+def generate_correction_prompt(question_text, model_answer, student_answer):
+    """
+    [HITO 6] Estrategia de Corrección Lingüística (Cambridge/Trinity/CertAcles).
+    """
+    return f"""ACT AS A LANGUAGE EXAMINER (Cambridge/Trinity Standards).
+TASK: Grade the student's answer.
+
+CRITERIA:
+1. Grammar & Syntax: Is the structure correct?
+2. Vocabulary: Is the word choice precise?
+3. Spelling/Orthography: Are there mistakes?
+
+QUESTION: "{question_text}"
+MODEL ANSWER: "{model_answer}"
+STUDENT ANSWER: "{student_answer}"
+
+INSTRUCTIONS:
+- Rate from 0 to 100.
+- Provide feedback in SPANISH, correcting any specific mistake found.
+
+OUTPUT FORMAT:
+PUNTUACION: [0-100]
+FEEDBACK: [Detailed feedback with corrections]"""

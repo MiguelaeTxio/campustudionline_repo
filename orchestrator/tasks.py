@@ -1010,9 +1010,42 @@ def generate_full_course_task(self, task_id):
 @shared_task(bind=True, acks_late=True, max_retries=5, default_retry_delay=60)
 def generate_assessment_from_content_task(self, assessment_id):
     """
-    [V_NUCLEAR_STABLE] Motor Atómico: Persistencia, Filtrado de Rango e Inyección Académica.
+    [V_STRICT_SERIAL] Motor Atómico con Semáforo de Concurrencia.
+    Garantiza que solo una evaluación se procese a la vez en el pool.
     """
-    log_assessment_task_event(assessment_id, "MOTOR NUCLEAR: Iniciando generación con filtrado de rango y syllabus.")
+    db.close_old_connections()
+    
+    # 1. SEMÁFORO DE CONCURRENCIA (Exclusión Mutua)
+    try:
+        with transaction.atomic():
+            # Bloqueo de settings para sincronización
+            _settings = AssessmentSettings.get_settings()
+            
+            # Buscamos si hay OTRA evaluación en estado PROCESSING
+            other_active = Assessment.objects.filter(
+                status=Assessment.AssessmentStatus.PROCESSING
+            ).exclude(pk=assessment_id).exists()
+            
+            if other_active:
+                log_assessment_task_event(assessment_id, "CONCURRENCY LOCK: Otra evaluación está en proceso. Re-encolando...", level="INFO")
+                # Reintentamos en 45 segundos
+                raise self.retry(countdown=45)
+            
+            # Si no hay otras, tomamos el slot marcando como PROCESSING inmediatamente
+            assessment = Assessment.objects.select_for_update().get(pk=assessment_id)
+            if assessment.status != Assessment.AssessmentStatus.PROCESSING:
+                assessment.status = Assessment.AssessmentStatus.PROCESSING
+                assessment.save(update_fields=['status'])
+    except Retry:
+        raise
+    except Assessment.DoesNotExist:
+        logger.error(f"Assessment {assessment_id} no encontrado.")
+        return
+    except Exception as e:
+        logger.error(f"Error en Semáforo de Concurrencia: {e}")
+        raise self.retry(countdown=30)
+
+    log_assessment_task_event(assessment_id, "MOTOR NUCLEAR: Iniciando generación (Slot de exclusión mutua adquirido).")
     try:
         assessment = Assessment.objects.get(pk=assessment_id)
         original_content = assessment.content_copy.original_content
@@ -1038,8 +1071,9 @@ def generate_assessment_from_content_task(self, assessment_id):
             if not api_key or not api_key.is_enabled or api_key.is_quarantined:
                 api_key = ApiKey.objects.filter(is_enabled=True, is_quarantined=False).order_by('id').first()
                 if not api_key:
-                    generate_assessment_from_content_task.apply_async(args=[assessment_id], countdown=300)
-                    return
+                    # Si no hay llaves, liberamos el slot y esperamos
+                    Assessment.objects.filter(id=assessment_id).update(status=Assessment.AssessmentStatus.PENDING)
+                    raise self.retry(countdown=300)
                 automation_settings.active_api_key = api_key
                 automation_settings.save(update_fields=['active_api_key'])
 
@@ -1124,11 +1158,9 @@ def generate_assessment_from_content_task(self, assessment_id):
                         
                         d = d_list[0]
                         options = d.get('options', [])
-                        # [GATEKEEPER] Validación de integridad para tipos de selección
                         if q_obj.interaction_type in ["QT_SEL", "QT_CLZ_OPT"]:
                             if not isinstance(options, list):
                                 raise ValueError(f"Fallo de esquema: 'options' no es una lista en Q:{q_obj.id}")
-                            # Normalizamos para detectar duplicados semánticos
                             unique_options = set(str(o).strip().lower() for o in options)
                             if len(unique_options) < 4:
                                 raise ValueError(f"Integridad Fallida: Se requieren 4 opciones únicas en Q:{q_obj.id}. Detectadas: {len(unique_options)}")
@@ -1148,8 +1180,8 @@ def generate_assessment_from_content_task(self, assessment_id):
                 is_quota = "429" in error_str or "Resource" in error_str or "Quota" in error_str
                 
                 if is_quota:
-                    log_assessment_task_event(assessment_id, "Límite de cuota (Gemini) detectado. Iniciando pausa de 75s para reset de RPM...", level="WARNING")
-                    time.sleep(75) # Espera activa para diferenciar RPM de RPD
+                    log_assessment_task_event(assessment_id, "Límite de cuota detectado. Pausa de 75s...", level="WARNING")
+                    time.sleep(75)
                 
                 api_key.refresh_from_db()
                 api_key.consecutive_failures += 1
@@ -1159,13 +1191,8 @@ def generate_assessment_from_content_task(self, assessment_id):
                     api_key.is_quarantined = True
                     api_key.save(update_fields=['is_quarantined'])
                     _request_quarantine_via_mailbox(api_key)
-                    log_assessment_task_event(assessment_id, f"Clave {api_key.name} agotada tras 4 intentos. Entrando en cuarentena.", level="ERROR")
                 
-                # Reintento de la tarea (Celery)
                 raise self.retry(exc=e, countdown=10)
-
-        if assessment.questions.filter(question_text="[GENERANDO CONTENIDO...]").exists():
-            raise ValueError("Integridad Fallida: Quedaron preguntas vacías en DB.")
 
         Assessment.objects.filter(id=assessment_id).update(status=Assessment.AssessmentStatus.COMPLETED)
         log_assessment_task_event(assessment_id, "Finalizado con éxito.", level="SUCCESS")
@@ -1173,47 +1200,85 @@ def generate_assessment_from_content_task(self, assessment_id):
         except: pass
 
     except Exception as e:
+        # Si fallamos fatalmente, liberamos el slot marcando como FAILED
         log_assessment_task_event(assessment_id, f"Fallo Generación: {e}", level="ERROR")
         Assessment.objects.filter(id=assessment_id).update(status=Assessment.AssessmentStatus.GENERATION_FAILED_RETRYABLE)
         raise self.retry(exc=e)
+    finally:
+        db.close_old_connections()
 
 
 @shared_task(bind=True, acks_late=True, max_retries=3, default_retry_delay=60)
 def correct_assessment_task(self, assessment_id):
-    _log_assessment_event(assessment_id, "CORRECTION_TASK: Inicio del proceso.")
+    """
+    [V_SEGREGATED_SERIAL] Motor de Corrección con exclusión mutua.
+    """
+    db.close_old_connections()
+    
+    # SEMÁFORO DE CONCURRENCIA PARA CORRECCIÓN
+    try:
+        with transaction.atomic():
+            _settings = AssessmentSettings.get_settings()
+            other_active = Assessment.objects.filter(
+                status=Assessment.AssessmentStatus.CORRECTING
+            ).exclude(pk=assessment_id).exists()
+            
+            if other_active:
+                raise self.retry(countdown=45)
+            
+            a_upd = Assessment.objects.select_for_update().get(pk=assessment_id)
+            if a_upd.status == Assessment.AssessmentStatus.PAUSED:
+                raise self.retry(countdown=60)
+            a_upd.status = Assessment.AssessmentStatus.CORRECTING
+            a_upd.save(update_fields=["status"])
+    except Retry:
+        raise
+    except Exception:
+        raise self.retry(countdown=30)
+
+    _log_assessment_event(assessment_id, "CORRECTION_TASK: Inicio del proceso segregado serial.")
     try:
         assessment = Assessment.objects.get(pk=assessment_id)
-        if assessment.status == Assessment.AssessmentStatus.PAUSED:
-            raise self.retry(countdown=60)
-        
         user_answers = UserAnswer.objects.filter(question__assessment=assessment).select_related("question")
+        
         if not user_answers.exists():
             assessment.status = Assessment.AssessmentStatus.COMPLETED
             assessment.save(update_fields=["status"])
             return
 
-        with transaction.atomic():
-            a_upd = Assessment.objects.select_for_update().get(pk=assessment_id)
-            a_upd.status = Assessment.AssessmentStatus.CORRECTING
-            a_upd.total_questions_expected = user_answers.count()
-            a_upd.save(update_fields=["status", "total_questions_expected"])
-
         api_key = ApiKey.objects.filter(is_enabled=True, is_quarantined=False).first()
         if not api_key: raise ValueError("Sin clave API disponible.")
         
+        strategy_mod = AssessmentStrategyFactory.get_strategy(assessment.archetype)
+        
         answers_to_correct = user_answers.filter(score__isnull=True)
         for answer in answers_to_correct:
-            if not answer.answer_text:
+            if not answer.answer_text and not answer.attachment:
+                answer.score = 0
+                answer.feedback = "No answer provided."
+                answer.save(update_fields=["score", "feedback"])
                 Assessment.objects.filter(pk=assessment_id).update(questions_processed=F("questions_processed") + 1)
                 continue
 
-            prompt = (f"Evalúa respuesta: Pregunta: \"{answer.question.question_text}\" Modelo: \"{answer.question.model_answer}\" Usuario: \"{answer.answer_text}\" PUNTUACION: [0-100] FEEDBACK: [Texto]")
+            try:
+                if hasattr(strategy_mod, 'generate_correction_prompt'):
+                    prompt = strategy_mod.generate_correction_prompt(
+                        question_text=answer.question.question_text, 
+                        model_answer=answer.question.model_answer, 
+                        student_answer=answer.answer_text
+                    )
+                else:
+                    prompt = f"Grade this answer: Q: {answer.question.question_text} Model: {answer.question.model_answer} User: {answer.answer_text}"
+            except Exception:
+                prompt = f"Grade this: {answer.answer_text}"
+
             success, resp, _ = generate_text_content(prompt, api_key=api_key)
             if success:
                 c = _parse_correction_text(resp)
                 if c['score'] is not None:
                     answer.score, answer.feedback = c['score'], c['feedback']
                     answer.save(update_fields=["score", "feedback"])
+            
             Assessment.objects.filter(pk=assessment_id).update(questions_processed=F("questions_processed") + 1)
             time.sleep(2)
 
@@ -1221,7 +1286,10 @@ def correct_assessment_task(self, assessment_id):
         assessment.save(update_fields=["status"])
         _log_assessment_event(assessment_id, "Corrección finalizada.", "SUCCESS")
     except Exception as e:
+        Assessment.objects.filter(id=assessment_id).update(status=Assessment.AssessmentStatus.CORRECTION_FAILED_RETRYABLE)
         self.retry(exc=e)
+    finally:
+        db.close_old_connections()
 
 @shared_task(name="orchestrator.tasks.expire_untaken_assessments")
 def expire_untaken_assessments():
