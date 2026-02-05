@@ -1141,7 +1141,6 @@ def generate_assessment_from_content_task(self, assessment_id):
                 elif current_step == 2:
                     if assessment.questions.count() == 0: _create_assessment_skeleton(assessment)
                     questions = assessment.questions.all().order_by('id')
-                    ui_labels = assessment.prompt_data.get('ui_labels', {})
                     
                     # [CAPA NUCLEAR] Filtrado de Rango y Extracción de Contexto Académico
                     selection_range = assessment.selection_range
@@ -1150,7 +1149,7 @@ def generate_assessment_from_content_task(self, assessment_id):
                     course_outline = subject_obj.course_content_outline if subject_obj else []
 
                     for idx, q_obj in enumerate(questions, 1):
-                        log_assessment_task_event(assessment_id, f"Generando pregunta {idx}/{len(questions)}: {ui_labels.get(q_obj.section_label, q_obj.section_label)}")
+                        log_assessment_task_event(assessment_id, f"Generando pregunta {idx}/{len(questions)}: {q_obj.section_label}")
                         s_idx = str(idx)
                         if s_idx in q_cache:
                             d = q_cache[s_idx]
@@ -1199,32 +1198,23 @@ def generate_assessment_from_content_task(self, assessment_id):
                         time.sleep(1)
                     current_step = 3
 
-            except (ResourceExhausted, AIServiceCriticalError) as e:
+            except (ResourceExhausted, AIServiceCriticalError, ValueError) as e:
                 error_str = str(e)
+                is_quota = "429" in error_str or "Resource" in error_str or "Quota" in error_str
+                
+                if is_quota:
+                    log_assessment_task_event(assessment_id, "Límite de cuota detectado. Pausa de 75s...", level="WARNING")
+                    time.sleep(75)
+                
                 api_key.refresh_from_db()
-                if _is_daily_quota_error(error_str):
-                    log_assessment_task_event(assessment_id, f"CLAVE AGOTADA (DIARIA): '{api_key.name}'. Cuarentena.", level="ERROR")
+                api_key.consecutive_failures += 1
+                api_key.save(update_fields=['consecutive_failures'])
+                
+                if api_key.consecutive_failures >= 4:
                     api_key.is_quarantined = True
                     api_key.save(update_fields=['is_quarantined'])
                     _request_quarantine_via_mailbox(api_key)
-                    next_k = ApiKey.objects.filter(is_enabled=True, is_quarantined=False).exclude(id=api_key.id).first()
-                    if next_k:
-                        from .models import AutomationSettings
-                        AutomationSettings.objects.filter(pk=1).update(active_api_key=next_k)
-                    raise self.retry(exc=e, countdown=5)
-                elif _is_generic_quota_error(error_str):
-                    log_assessment_task_event(assessment_id, f"RPM LIMIT en '{api_key.name}'. Strike {api_key.consecutive_failures + 1}/4. Pausa 90s.", level="WARNING")
-                    time.sleep(90)
-                    api_key.consecutive_failures += 1
-                    api_key.save(update_fields=['consecutive_failures'])
-                    if api_key.consecutive_failures >= 4:
-                        api_key.is_quarantined = True
-                        api_key.save(update_fields=['is_quarantined'])
-                        _request_quarantine_via_mailbox(api_key)
-                    raise self.retry(exc=e, countdown=5)
-                raise self.retry(exc=e, countdown=30)
-            except ValueError as e:
-                log_assessment_task_event(assessment_id, f"ERROR DATOS: {str(e)[:100]}", level="ERROR")
+                
                 raise self.retry(exc=e, countdown=10)
 
         Assessment.objects.filter(id=assessment_id).update(status=Assessment.AssessmentStatus.COMPLETED)

@@ -18,9 +18,19 @@ Al iniciar cualquier sesión de trabajo sobre el sistema de evaluaciones, es **I
 
 ## 2. HOJA DE RUTA PARA LA SIGUIENTE SESIÓN (LEY SUPREMA)
 
-### PASO 1: ERRADICACIÓN DE HARDCODEO EN UI (INMERSIÓN DINÁMICA)
-- **Tarea:** Eliminar cadenas como "READING / TEXTO DE REFERENCIA" de las plantillas HTML (`take_assessment_languages.html` y `take_assessment.html`).
-- **Lógica:** Implementar el método `get_ui_labels` en todas las estrategias.
+### PASO 1: ACTUALIZAR DOCUMENTACIÓN CON LA REALIDAD DE LA UGR
+- **Tarea:** Cotejar la información de los archivos de documentación del hito 6 con la realidad de la UGR a través de la web:
+    `CAMPUSTUDIONLINE_ASSESSMENT_ARCHETYPES_SPEC.md`
+    `CAMPUSTUDIONLINE_ASSESSMENT_INTERACTION_MATRIX.md`
+    `CAMPUSTUDIONLINE_ASSESSMENT_MASTER_PLAN.md`
+    `CAMPUSTUDIONLINE_ASSESSMENT_SYSTEM_MASTER_PLAN.md`
+
+- **Lógica:** Comprobar el método `get_ui_labels` y su implementación en todas las estrategias.
+    Determinar que inconsistencias hay en la documentación y entre esta y la UGR.
+    Recuperar la descripción del último commit para conocer el alcance de la desincronización y fallas de la implementación.
+    Ejecutar un `comando S` para auditar los archivos clave y conocer el carrusel de errores a través de su historial.
+    Solucionar todas las discrepancias y realizar la implementación del emulador de evaluaciones de la UGR una vez actualizada la documentación.
+
 - **Inmersión:**
     - Itinerario MINOR: Etiquetas según documentación.
     - Itinerario MAIOR: Etiquetas según documentación.

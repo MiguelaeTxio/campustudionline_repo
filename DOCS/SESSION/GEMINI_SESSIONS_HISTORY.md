@@ -1594,3 +1594,11 @@ Objetivos de la sesión:
 *  **Session:** AUDITORÍA Y REALINEACIÓN UGR PARA IDIOMAS
 *  **Description:** Sesión crítica de reingeniería del sistema de evaluación para idiomas. Se procederá primero a la re-alineación documental, diferenciando explícitamente entre el modelo de Acreditación (CertAcles) y el de Grado Académico (UGR). Posteriormente, se auditará el flujo de datos para garantizar que el `course_content_outline` y `learning_objectives` del `Subject` se inyecten correctamente en la estrategia de generación, eliminando el hardcoding de nivel y asegurando una evaluación contextualizada al temario seleccionado.
 
+
+# 2026-02-03
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+## EDC # --SYSTEM -->
+*  **Session:** Erradicación de Hardcodeo en UI e Inmersión Dinámica en Evaluaciones
+*  **Description:** Implementación del método `get_ui_labels` en las estrategias de evaluación para eliminar cadenas estáticas en las plantillas HTML. Configuración de etiquetas dinámicas según el itinerario (Minor/Maior) para garantizar la inmersión lingüística correcta. Auditoría de la persistencia de `prompt_data` para asegurar la coherencia de las etiquetas durante todo el ciclo de vida de la evaluación.
+

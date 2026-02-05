@@ -32,3 +32,15 @@ def get_strategy_skeleton(content_text, subject_name, **kwargs):
             {'section_label': 'Plan Terapéutico', 'interaction_type': 'QT_PROD', 'response_mode': 'REQ_DUAL'}
         ]
     }
+
+def get_ui_labels(subject_name, **kwargs):
+    """Etiquetas de interfaz para arquetipo HEALTH SCIENCES."""
+    return {
+        "reading_header": "MATERIAL DE REFERENCIA",
+        "audio_header": "RECURSO AUDITIVO",
+        "recording_label": "RESPUESTA POR VOZ",
+        "write_answer_placeholder": "Desarrolla tu respuesta técnica aquí...",
+        "upload_label": "Subir Resolución (Foto/PDF)",
+        "upload_help": "Clic o arrastrar archivo",
+        "submit_button": "Entregar Evaluación"
+    }

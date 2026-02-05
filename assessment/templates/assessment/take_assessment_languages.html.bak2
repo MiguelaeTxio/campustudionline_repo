@@ -44,7 +44,7 @@
                                     {% for option in question.options %}<label class="list-group-item list-group-item-action py-3"><input class="form-check-input me-3" type="radio" name="answer_q_{{ question.pk }}" value="{{ option }}" required>{{ option }}</label>{% endfor %}
                                 </div>
                             {% elif question.response_mode == "REQ_DUAL" %}
-                                <div class="form-floating mb-4"><textarea name="answer_q_{{ question.pk }}" class="form-control rounded-4 shadow-sm" style="height: 180px" placeholder="." required></textarea><label>{{ assessment.prompt_data.ui_labels.write_answer_placeholder|default:"" }}</label></div>
+                                <div class="form-floating mb-4"><textarea name="answer_q_{{ question.pk }}" class="form-control rounded-4 shadow-sm" style="height: 180px" placeholder="." required></textarea><label>{{ assessment.prompt_data.ui_labels.write_answer_placeholder|default:"Escribe tu respuesta aquí..." }}</label></div>
                                 <div class="upload-dashed p-4 text-center">
                                     <i class="fas fa-camera text-primary fa-2x mb-2"></i>
                                     <p class="small text-muted mb-1"><strong>Subir archivo (Foto)</strong></p>

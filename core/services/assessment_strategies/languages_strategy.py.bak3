@@ -1,0 +1,147 @@
+import re
+import json
+
+def get_script_family(target_lang):
+    lang_upper = target_lang.upper()
+    if any(x in lang_upper for x in ["CHINO", "JAPONÉS", "KANJI", "HANZI", "MANDARÍN"]): return "LOGOGRAPHIC"
+    if any(x in lang_upper for x in ["ÁRABE", "HEBREO", "PERSA"]): return "RTL"
+    if any(x in lang_upper for x in ["RUSO", "UCRANIANO", "BULGARO", "CIRÍLICO"]): return "CYRILLIC"
+    return "LATIN"
+
+def get_target_language(subject_name):
+    clean_name = re.sub(r"\b(LENGUA|MODERNA|MODERNO|MINOR|MAIOR|MÍNOR|INICIAL|INTERMEDIO|AVANZADO|NIVEL|IDIOMA|LENGUA\s+[A-C])\b|[0-9]+|[:()]|\b[IVXLC]+\b", "", subject_name, flags=re.IGNORECASE)
+    return clean_name.strip()
+
+def is_minor_language(subject_name):
+    name = subject_name.upper()
+    return any(x in name for x in ["MINOR", "MÍNOR", "IDIOMA MODERNO", "LENGUA C", "INICIAL", "A1", "A2", "NIVEL 1", "NIVEL I"])
+
+def get_strategy_skeleton(content_text, subject_name, **kwargs):
+    target_lang = get_target_language(subject_name)
+    script_family = get_script_family(target_lang)
+    itinerary = kwargs.get("itinerary", "MINOR")
+    skeleton = []
+    if itinerary == "MINOR":
+        for _ in range(3): skeleton.append({"section_label": "Vocabulario", "interaction_type": "QT_SEL", "response_mode": "REQ_RADIO"})
+        for _ in range(4): skeleton.append({"section_label": "Gramática", "interaction_type": "QT_CLZ_OPT", "response_mode": "REQ_DROP"})
+        if script_family == "LOGOGRAPHIC":
+            skeleton.append({"section_label": "Caligrafía y Orden de Trazos", "interaction_type": "QT_PROD", "response_mode": "REQ_DUAL"})
+        skeleton.append({"section_label": "Sintaxis y Traducción Aplicada", "interaction_type": "QT_PROD", "response_mode": "REQ_DUAL"})
+        return {"requires_api_stimulus": True, "skeleton": skeleton, "itinerary": itinerary, "target_lang": target_lang}
+    
+    for _ in range(5): skeleton.append({'section_label': 'Comprensión Lectora', 'interaction_type': 'QT_SEL', 'response_mode': 'REQ_RADIO'})
+    for _ in range(5): skeleton.append({'section_label': 'Uso de la Lengua', 'interaction_type': 'QT_CLZ_OPT', 'response_mode': 'REQ_DROP'})
+    for _ in range(2): skeleton.append({'section_label': 'Expresión Escrita', 'interaction_type': 'QT_PROD', 'response_mode': 'REQ_DUAL'})
+    return {"requires_api_stimulus": True, "prompt_func": "generate_languages_stimuli_prompt", "skeleton": skeleton, "itinerary": itinerary, "target_lang": target_lang}
+
+
+def generate_languages_stimuli_prompt(content_text, subject_name, **kwargs):
+    target_lang = get_target_language(subject_name)
+    itinerary = kwargs.get("itinerary", "MINOR")
+    
+    return f"""ACT AS AN ACADEMIC EXAMINER (UGR). 
+Generate Reading/Listening stimuli for {target_lang}.
+Syllabus: {content_text[:2000]}
+
+UI IMMERSION RULES (CRITICAL):
+1. Detect the pedagogical level from the subject: "{subject_name}".
+2. If level is INITIAL/ACCESO (A1-A2) or MINOR: ui_labels must be BILINGUAL (Target / Spanish).
+3. If level is ADVANCED/MAIOR (B2-C2): ui_labels must be 100% in {target_lang} (Total Immersion).
+
+
+JSON SCHEMA:
+{
+  "section_label": "Localized header (e.g. 'Lecture' or '阅读' - matches the immersion level)",
+  "question_text": "...",
+  "options": [...],
+  "model_answer": "..."
+}"""
+
+
+def generate_item_prompt(content_text, question_obj, **kwargs):
+    target_lang = kwargs.get("target_lang", "English")
+    itinerary = kwargs.get("itinerary", "MINOR")
+    already_covered = kwargs.get("already_covered", [])
+    instr_lang = "Spanish" if itinerary == "MINOR" else target_lang
+    
+    target_upper = target_lang.upper()
+    is_english_target = "ENGLISH" in target_upper or "INGLÉS" in target_upper or "INGLES" in target_upper
+    
+    language_shield = ""
+    if not is_english_target:
+        language_shield = (
+            f"NEGATIVE CONSTRAINT (CRITICAL): DO NOT USE ENGLISH. "
+            f"The content MUST be purely in {target_lang}. "
+            f"If you use English words in the options or sentences, the task will be rejected."
+        )
+
+    memory_context = ""
+    if already_covered:
+        memory_context = "\nCRITICAL: DO NOT REPEAT these previous questions/topics:\n" + "\n".join([f"- {p[:80]}" for p in already_covered])
+
+    prompt = f"""ACT AS AN EXPERT PROFESSOR (UGR). TARGET: {target_lang}.
+SOURCE MATERIAL: {content_text}
+{memory_context}
+
+TASK: Generate ONE (1) question for "{question_obj.section_label}".
+Type: {question_obj.interaction_type}.
+
+CRITICAL RULES FOR CLOZE (QT_CLZ_OPT / QT_CLZ_OPN):
+1. MANDATORY: Create a PRACTICAL SENTENCE in {target_lang} with exactly ONE gap marked as "[...]".
+2. PROHIBITED: Do not ask theoretical questions (e.g., "What does this mean?" or "When is X used?").
+3. PROHIBITED: Do not mention lesson numbers or syllabus references in the question text.
+4. EXAMPLE: "Yesterday I [...] to the cinema" instead of "What is the past of go?".
+
+GENERAL RULES:
+1. Instructions in {instr_lang}.
+2. For multiple choice: 4 UNIQUE and plausible options.
+3. For QT_PROD: Ask the student to take a PHOTO of the exercise.
+4. {language_shield}
+
+
+JSON SCHEMA:
+{
+  "section_label": "Localized header (e.g. 'Lecture' or '阅读' - matches the immersion level)",
+  "question_text": "...",
+  "options": [...],
+  "model_answer": "..."
+}"""
+    return prompt
+
+generate_languages_item_prompt = generate_item_prompt
+
+def generate_correction_prompt(question_text, model_answer, student_answer):
+    """
+    [HITO 6] Estrategia de Corrección Lingüística (Cambridge/Trinity/CertAcles).
+    """
+    return f"""ACT AS A LANGUAGE EXAMINER (Cambridge/Trinity Standards).
+TASK: Grade the student's answer.
+
+CRITERIA:
+1. Grammar & Syntax: Is the structure correct?
+2. Vocabulary: Is the word choice precise?
+3. Spelling/Orthography: Are there mistakes?
+
+QUESTION: "{question_text}"
+MODEL ANSWER: "{model_answer}"
+STUDENT ANSWER: "{student_answer}"
+
+INSTRUCTIONS:
+- Rate from 0 to 100.
+- Provide feedback in SPANISH, correcting any specific mistake found.
+
+OUTPUT FORMAT:
+PUNTUACION: [0-100]
+FEEDBACK: [Detailed feedback with corrections]"""
+
+def get_ui_labels(subject_name, **kwargs):
+    """Fallback labels in Spanish if AI fails."""
+    return {
+        "reading_header": "LECTURA / TEXTO DE REFERENCIA",
+        "audio_header": "AUDIO / ESCUCHA",
+        "recording_label": "GRABACIÓN DE VOZ",
+        "write_answer_placeholder": "Escribe tu respuesta aquí...",
+        "upload_label": "Subir archivo (Foto)",
+        "upload_help": "Clic o arrastrar",
+        "submit_button": "Finalizar y Entregar Examen"
+    }

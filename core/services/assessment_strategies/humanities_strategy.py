@@ -80,3 +80,14 @@ INSTRUCTIONS:
 OUTPUT FORMAT:
 PUNTUACION: [0-100]
 FEEDBACK: [Detailed qualitative feedback]"""
+
+def get_ui_labels(subject_name, **kwargs):
+    return {
+        "reading_header": "FUENTE / TEXTO DE ANÁLISIS",
+        "audio_header": "RECURSO AUDIOVISUAL",
+        "recording_label": "RESPUESTA ORAL",
+        "write_answer_placeholder": "Desarrolla tu análisis académico aquí...",
+        "upload_label": "Subir Manuscrito/Imagen",
+        "upload_help": "Clic o arrastrar archivo",
+        "submit_button": "Entregar Evaluación"
+    }

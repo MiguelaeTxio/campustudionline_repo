@@ -1,0 +1,15 @@
+{
+  "questions_cache": {
+    "1": {
+      "text": "Completa la siguiente oración con la palabra más apropiada:",
+      "options": [
+        "了 (le)",
+        "在 (zài)",
+        "的 (de)",
+        "过 (guò)"
+      ],
+      "answer": "的 (de)",
+      "section_label": "Vocabulario"
+    }
+  }
+}
