@@ -36,11 +36,11 @@ def get_strategy_skeleton(content_text, subject_name, **kwargs):
 def get_ui_labels(subject_name, **kwargs):
     """Etiquetas de interfaz para arquetipo HEALTH SCIENCES."""
     return {
-        "reading_header": "MATERIAL DE REFERENCIA",
-        "audio_header": "RECURSO AUDITIVO",
-        "recording_label": "RESPUESTA POR VOZ",
-        "write_answer_placeholder": "Desarrolla tu respuesta técnica aquí...",
-        "upload_label": "Subir Resolución (Foto/PDF)",
-        "upload_help": "Clic o arrastrar archivo",
-        "submit_button": "Entregar Evaluación"
+        "reading_header": "HISTORIA CLÍNICA / CASO",
+        "audio_header": "AUSCULTACIÓN / ENTREVISTA",
+        "recording_label": "JUICIO CLÍNICO ORAL",
+        "upload_label": "Subir Informe/Pauta",
+        "upload_help": "Adjuntar notas clínicas",
+        "write_answer_placeholder": "Juicio diagnóstico y plan...",
+        "submit_button": "Finalizar ECOE"
     }

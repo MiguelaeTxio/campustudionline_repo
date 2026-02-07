@@ -1602,3 +1602,19 @@ Objetivos de la sesión:
 *  **Session:** Erradicación de Hardcodeo en UI e Inmersión Dinámica en Evaluaciones
 *  **Description:** Implementación del método `get_ui_labels` en las estrategias de evaluación para eliminar cadenas estáticas en las plantillas HTML. Configuración de etiquetas dinámicas según el itinerario (Minor/Maior) para garantizar la inmersión lingüística correcta. Auditoría de la persistencia de `prompt_data` para asegurar la coherencia de las etiquetas durante todo el ciclo de vida de la evaluación.
 
+
+# 2026-02-05
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+## NRA
+*  **Session:** Auditoría de Documentación UGR y Persistencia de Etiquetas
+*  **Description:** Revisión de especificaciones de arquetipos contra realidad UGR. Verificación de persistencia de ui_labels en ciclo de vida de evaluación y unificación de criterios en documentación técnica.
+
+
+# 2026-02-06
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+## CSO
+*  **Session:** Hito 6: Consolidación del Motor de Autoevaluaciones y Arquetipos Pedagógicos
+*  **Description:** Sesión centrada en el avance del Hito 6. Se abordará la implementación técnica y lógica de los arquetipos de evaluación definidos (Logic, Languages, Health, etc.), asegurando la correcta integración entre el modelo de datos de `assessment`, el orquestador de tareas y la generación de contenido mediante Gemini.
+

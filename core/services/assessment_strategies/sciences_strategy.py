@@ -37,10 +37,10 @@ def get_ui_labels(subject_name, **kwargs):
     """Etiquetas de interfaz para arquetipo SCIENCES & TECH."""
     return {
         "reading_header": "MATERIAL DE REFERENCIA",
-        "audio_header": "RECURSO AUDITIVO",
-        "recording_label": "RESPUESTA POR VOZ",
-        "write_answer_placeholder": "Desarrolla tu respuesta técnica aquí...",
+        "audio_header": "RECURSO DE APOYO",
+        "recording_label": "EXPLICACIÓN VERBAL",
         "upload_label": "Subir Resolución (Foto/PDF)",
-        "upload_help": "Clic o arrastrar archivo",
+        "upload_help": "Adjuntar cálculos manuscritos",
+        "write_answer_placeholder": "Desarrolla tu respuesta técnica aquí...",
         "submit_button": "Entregar Evaluación"
     }

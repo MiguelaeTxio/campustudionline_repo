@@ -1,11 +1,12 @@
 # ESPECIFICACIÓN TÉCNICA DEL SISTEMA DE EVALUACIONES (ESTÁNDAR UGR)
 # Versión: 3.0 (Consolidación Total - Realidad UGR/CLM/ETSIIT)
 
-## 1. ARQUITECTURA NUCLEAR: BLOQUES COMPETENCIALES
-El sistema debe operar bajo una arquitectura de Bloques de Alta Densidad, prohibiendo el modelo atómico 1:1.
+## 1. ARQUITECTURA NUCLEAR: MODELO ATÓMICO SERIALIZADO
+El sistema opera bajo una arquitectura de Generación Atómica (1:1), priorizando la estabilidad y el control de cuota de API.
 
-*   **Relación 1:N (Estímulo-Batería):** Un único `reading_stimulus` o `listening_stimulus` debe servir como base para una batería de múltiples `Question Objects` (mínimo 5-8 ítems).
-*   **Aislamiento de Bloques:** Las preguntas deben agruparse por competencia (Reading, Listening, etc.) a nivel de base de datos y de renderizado.
+*   **Relación 1:1 (Petición-Ítem):** Cada `Question Object` se genera mediante una llamada individual e independiente a la API de Gemini.
+*   **Serialización con Semáforo:** El orquestador garantiza que no se procesen evaluaciones simultáneas para proteger el pool de claves (Mutex en `orchestrator/tasks.py`).
+*   **Persistencia de Contexto:** Aunque la generación es atómica, se inyecta el `syllabus` y el `selection_range` en cada prompt para mantener la coherencia del examen.
 
 ## 2. DUALIDAD DE MODALIDADES DE EXAMEN
 El sistema debe ser capaz de generar dos tipos de evaluación distintos:

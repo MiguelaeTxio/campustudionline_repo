@@ -431,7 +431,7 @@ def _create_assessment_skeleton(assessment):
         for q_data in questions_to_create:
             Question.objects.create(
                 assessment=assessment,
-                section_label=q_data.get('section_label', q_data.get('label', 'Sección')),
+                section_label=q_data.get('section_label') or q_data.get('label') or 'Evaluación',
                 source_type=q_data.get('source_type', q_data.get('source', 'SRC_DIR')),
                 interaction_type=q_data.get('interaction_type', q_data.get('interaction', 'QT_PROD')),
                 response_mode=q_data.get('response_mode', q_data.get('response', 'REQ_DUAL')),
@@ -1020,6 +1020,7 @@ def generate_full_course_task(self, task_id):
 
 @shared_task(bind=True, acks_late=True, max_retries=5, default_retry_delay=60)
 def generate_assessment_from_content_task(self, assessment_id):
+    from .models import AutomationSettings  # [FIX] Asegurar disponibilidad local para evitar UnboundLocalError
     """
     [V_STRICT_SERIAL] Motor Atómico con Semáforo de Concurrencia.
     Garantiza que solo una evaluación se procese a la vez en el pool.
@@ -1030,7 +1031,7 @@ def generate_assessment_from_content_task(self, assessment_id):
     try:
         with transaction.atomic():
             # Bloqueo de settings para sincronización
-            _settings = AssessmentSettings.get_settings()
+            _settings = AssessmentSettings.objects.select_for_update().get(pk=1)
             
             # Buscamos si hay OTRA evaluación en estado PROCESSING
             other_active = Assessment.objects.filter(
@@ -1103,6 +1104,7 @@ def generate_assessment_from_content_task(self, assessment_id):
                     p_data = assessment.prompt_data
                     p_data.update({'tribunal_type': subject_type, 'current_lifecycle_step': 1})
                     Assessment.objects.filter(id=assessment_id).update(archetype=subject_type, language_itinerary=itinerary, prompt_data=p_data)
+                    assessment.refresh_from_db()  # [CRITICAL] Sincronizar memoria para el Skeleton
                     assessment.refresh_from_db()
                     current_step = 1
 
@@ -1120,7 +1122,14 @@ def generate_assessment_from_content_task(self, assessment_id):
                         l_stim = dat.get("listening_transcript", "")
                         p_data = assessment.prompt_data
                         p_data.update({'cefr_level': dat.get("cefr_level", "B1"), 'current_lifecycle_step': 2})
-                        ui_labels = dat.get("ui_labels", strategy_mod.get_ui_labels(subject_name, itinerary=assessment.language_itinerary))
+                        # [HITO 6] BLINDAJE DE UI LABELS (ANTI-ALUCINACIÓN)
+                        # Forzamos etiquetas estáticas para garantizar el idioma correcto.
+                        # Solo permitimos que la IA sugiera etiquetas en inmersión total (MAIOR).
+                        static_labels = strategy_mod.get_ui_labels(subject_name, itinerary=assessment.language_itinerary)
+                        if subject_type == "CEFR_LANGUAGES" and assessment.language_itinerary == "MAIOR":
+                            ui_labels = dat.get("ui_labels", static_labels)
+                        else:
+                            ui_labels = static_labels
                         p_data.update({
                             'cefr_level': dat.get("cefr_level", "B1"), 
                             'current_lifecycle_step': 2,
@@ -1160,6 +1169,11 @@ def generate_assessment_from_content_task(self, assessment_id):
                         strategy_mod = AssessmentStrategyFactory.get_strategy(subject_type)
                         # [MEMORIA DE SESIÓN] Extraemos textos de preguntas previas para evitar redundancia
                         prev_texts = [v['text'] for v in q_cache.values()]
+                        
+                                                # [HITO 6] Inyectamos la etiqueta traducida en el objeto de pregunta temporalmente
+                        # para que la IA sepa EXACTAMENTE qué bloque está generando (Reading, Writing, etc.)
+                        display_label = ui_labels.get(q_obj.section_label, q_obj.section_label)
+                        q_obj.section_label = display_label # Sobrescritura volátil para el prompt
                         
                         prompt = strategy_mod.generate_item_prompt(
                             filtered_content, 
@@ -1251,7 +1265,7 @@ def correct_assessment_task(self, assessment_id):
     # SEMÁFORO DE CONCURRENCIA PARA CORRECCIÓN
     try:
         with transaction.atomic():
-            _settings = AssessmentSettings.get_settings()
+            _settings = AssessmentSettings.objects.select_for_update().get(pk=1)
             other_active = Assessment.objects.filter(
                 status=Assessment.AssessmentStatus.CORRECTING
             ).exclude(pk=assessment_id).exists()

@@ -16,9 +16,11 @@
 5.  **HUMANITIES_ARTS:** (Artes/Letras). Foco en ensayo académico y dialéctica.
 
 ## 3. ESTÁNDARES TÉCNICOS
--   **TTS:** Acento nativo dinámico por asignatura.
--   **Frontend:** Soporte universal para Markdown, LaTeX (MathJax) y Audio v3.
--   **Persistencia:** Clasificación inamovible en `prompt_data` tras primera ejecución.
+-   **Resiliencia (Mutex):** El sistema utiliza un Semáforo de Concurrencia con exclusión mutua. Solo se permite procesar una evaluación a la vez por pool de claves para evitar errores 429.
+-   **Lógica de Reintento:** Ante colisiones de concurrencia, las tareas se re-encolan automáticamente con un countdown exponencial (45s -> 90s).
+-   **TTS:** Acento nativo dinámico por asignatura generado por Gemini.
+-   **Frontend:** Soporte universal para Markdown, LaTeX (MathJax) y Audio v3 (Play/Stop/Rec).
+-   **Persistencia:** Clasificación inamovible en `prompt_data` tras primera ejecución para garantizar la integridad pedagógica.
 
 
 ## 4. ESPECIFICACIÓN TÉCNICA DE ARQUETIPOS
