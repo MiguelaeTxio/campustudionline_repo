@@ -1,3 +1,0 @@
-{# /home/MiguelAeTxio/CampuStudiOnline/assessment/templates/assessment/email/results_ready_subject.txt #}
-{# ATENCIÓN!!! La aplicación de usuarios se llama 'users' pero el Namespace a usar es 'usuarios' #}
-Tus resultados de la evaluación de "{{ content_title }}" están disponibles

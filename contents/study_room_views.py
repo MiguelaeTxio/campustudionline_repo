@@ -19,11 +19,8 @@ from django.utils import timezone
 
 from .models import ContentMaterial as Content, ContentCopy, Annotation, FavoriteFolder, FreeContentMasterCategory, FreeContentSubCategory
 from academic_structure.models import Subject, University, Branch, Degree, AcademicYear
-from assessment.models import Assessment
-from assessment.utils import (
-    annotate_content_copy_queryset_with_assessment_states,
-    get_assessment_context
-)
+# [CLEANUP HITO 6] Eliminadas importaciones de Assessment
+
 from .views import markdown_to_html_internal, parse_yaml_front_matter
 
 logger = logging.getLogger("contents")
@@ -109,11 +106,9 @@ def create_content_copy(request, pk, subject_pk=None):
     original_content = get_object_or_404(Content, pk=pk)
     subject_context = None
 
-    # Lógica simplificada: Se confía en que el frontend envía el subject_pk cuando es necesario.
     if subject_pk:
         subject_context = get_object_or_404(Subject, pk=subject_pk)
 
-    # Comprobaciones de negocio (límites, permisos) se mantienen.
     if ContentCopy.objects.filter(user=request.user).count() >= 6:
         messages.error(request, "Has alcanzado el límite de 6 copias de estudio. Por favor, elimina alguna para poder crear una nueva.")
         return redirect(original_content.get_absolute_url())
@@ -146,7 +141,6 @@ def create_content_copy(request, pk, subject_pk=None):
         subject_context=subject_context
     )
     
-    # [FIX] Usar add_root para compatibilidad con django-treebeard (MP_Node)
     favorites_folder = FavoriteFolder.objects.filter(
         user=request.user, 
         folder_type=FavoriteFolder.FOLDER_TYPE_FAVORITES
@@ -167,26 +161,30 @@ def create_content_copy(request, pk, subject_pk=None):
 @login_required
 def edit_copy(request, pk):
     content_copy = get_object_or_404(ContentCopy, pk=pk, user=request.user)
-    FAILURE_STATUSES = [Assessment.AssessmentStatus.GENERATION_FAILED_RETRYABLE, Assessment.AssessmentStatus.GENERATION_FAILED_QUOTA, Assessment.AssessmentStatus.GENERATION_FAILED_FATAL, Assessment.AssessmentStatus.CORRECTION_FAILED_RETRYABLE, Assessment.AssessmentStatus.CORRECTION_FAILED_FATAL,]
-    latest_assessment = Assessment.objects.filter(content_copy=content_copy).order_by('-created_at').first()
-    if latest_assessment and latest_assessment.status in FAILURE_STATUSES and not latest_assessment.was_viewed:
-        latest_assessment.was_viewed = True
-        latest_assessment.save(update_fields=['was_viewed'])
-        logger.info(f"Notificación de fallo para Assessment ID {latest_assessment.id} marcada como vista.")
+    # [CLEANUP HITO 6] Eliminada lógica de Assessment
+
     if request.method == "POST":
         content_copy.html_content = request.POST.get("html_content", content_copy.html_content)
         content_copy.is_public = request.POST.get("is_public") == "on"
         content_copy.save(update_fields=["html_content", "is_public"])
         return JsonResponse({"status": "success", "message": "Cambios guardados."})
+
     db_annotations = content_copy.annotations.all().order_by("created_at")
     csrf_token = get_token(request)
-    annotation_config = {"createAnnotationUrl": reverse("study_room:create_annotation", kwargs={"pk": content_copy.pk}), "deleteAnnotationUrlBase": reverse("study_room:delete_annotation", kwargs={"pk": "00000000-0000-0000-0000-000000000000"}), "csrfToken": csrf_token,}
-    assessment_context = get_assessment_context(request.user, content_copy)
-    assessment_polling_config = {}
-    if assessment_context.get('status') in ["GENERANDOSE", "CORRIGIENDOSE"]:
-        if assessment_context.get('raw_assessment'):
-            assessment_polling_config = {"statusUrl": reverse("assessment:get_assessment_status", kwargs={"assessment_pk": assessment_context['raw_assessment'].pk}), "panelUpdateUrl": reverse("assessment:get_assessment_panel_content", kwargs={"copy_pk": content_copy.pk}), "csrfToken": csrf_token,}
-    context = {"content_copy": content_copy, "annotations": db_annotations, "annotation_config": json.dumps(annotation_config), "assessment_polling_config": json.dumps(assessment_polling_config), "assessment_context": assessment_context}
+    annotation_config = {
+        "createAnnotationUrl": reverse("study_room:create_annotation", kwargs={"pk": content_copy.pk}), 
+        "deleteAnnotationUrlBase": reverse("study_room:delete_annotation", kwargs={"pk": "00000000-0000-0000-0000-000000000000"}), 
+        "csrfToken": csrf_token,
+    }
+
+    # [CLEANUP HITO 6] Contexto simplificado por mantenimiento
+    context = {
+        "content_copy": content_copy, 
+        "annotations": db_annotations, 
+        "annotation_config": json.dumps(annotation_config), 
+        "assessment_polling_config": json.dumps({}), 
+        "assessment_context": {"status": "MANTENIMIENTO"}
+    }
     return render(request, "contents/study_room/edit_copy.html", context)
 
 def get_academic_breadcrumbs(university_slug=None, branch_slug=None, degree_slug=None, year=None, subject_slug=None):
@@ -211,17 +209,11 @@ def get_academic_breadcrumbs(university_slug=None, branch_slug=None, degree_slug
 def user_copies_list(request, university_slug=None, branch_slug=None, degree_slug=None, year=None, subject_slug=None, master_slug=None, sub_slug=None):
     """
     Vista resiliente y centrada en el usuario para listar copias de estudio.
-    Se apoya en UserStudyNavigation para la estructura visual (sidebar)
-    y usa esta vista solo para filtrar el contenido final.
     """
-    # Base QuerySet: Solo las copias del usuario
-    # [MODIFICADO] Se añade anotación de estados de evaluación para la UI
-    base_qs = ContentCopy.objects.filter(user=request.user).select_related(
+    base_copies = ContentCopy.objects.filter(user=request.user).select_related(
         "original_content",
         "subject_context"
     ).order_by("-updated_at")
-    
-    base_copies = annotate_content_copy_queryset_with_assessment_states(base_qs, request.user)
 
     context = {
         "page_title": "Mi Sala de Estudio", 
@@ -230,7 +222,6 @@ def user_copies_list(request, university_slug=None, branch_slug=None, degree_slu
     }
     
     items_list = []
-    level_name = "root"
 
     # --- MODO 1: NAVEGACIÓN ACADÉMICA ---
     if any([university_slug, branch_slug, degree_slug, year, subject_slug]):
@@ -260,9 +251,6 @@ def user_copies_list(request, university_slug=None, branch_slug=None, degree_slu
         elif degree_slug:
              items_list = [] 
              context.update({"page_title": f"Grado: {degree_slug}", "level_name": "years"})
-             
-        else:
-            pass
 
     # --- MODO 2: CONTENIDO LIBRE ---
     elif any([master_slug, sub_slug]):
@@ -350,11 +338,11 @@ def create_annotation(request, pk):
 
         annotation_data = {
             "id": str(annotation.id),
-            "annotation_type": annotation.annotation_type,
+            "annotation_type": annotation_type,
             "annotation_type_display": annotation.get_annotation_type_display(),
-            "content": annotation.content,
-            "color": annotation.color,
-            "selected_text": annotation.selected_text,
+            "content": content,
+            "color": color,
+            "selected_text": selected_text,
             "created_at": annotation.created_at.isoformat(),
         }
 

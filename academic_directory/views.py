@@ -11,7 +11,7 @@ from django.views.decorators.http import require_POST
 from academic_structure.models import University, Branch, Degree, Subject, AcademicYear
 from contents.models import ContentMaterial, FavoriteFolder
 from contents.utils import annotate_is_favorite
-from assessment.models import Assessment
+# [CLEANUP HITO 6] Eliminada importación de Assessment
 from orchestrator.models import ContentRequest
 
 ACADEMIC_DIRECTORY_TEMPLATE = "academic_directory/academic_level_detail.html"
@@ -174,7 +174,7 @@ def public_content_list_view(request, university_slug, branch_slug, degree_slug,
         "page_title": f"{subject.name} - Contenidos Públicos",
         "breadcrumb": breadcrumb,
         "current_level_name": subject.name,
-        "subject": subject,  # [CORRECCIÓN] Pasar el objeto subject al contexto
+        "subject": subject,
         "next_level_name": None,
         "next_level_items": None, 
         "public_contents": page_obj,

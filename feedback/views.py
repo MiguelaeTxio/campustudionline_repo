@@ -1,3 +1,4 @@
+# /home/MiguelAeTxio/PROJECTS/CampuStudiOnline/feedback/views.py
 import logging
 import hashlib
 import uuid
@@ -175,50 +176,4 @@ def submit_general_feedback(request):
         'is_content_report': False
     })
 
-
-@login_required
-def manual_format_request(request, assessment_pk):
-    """
-    Formulario final cuando el usuario rechaza todos los arquetipos automáticos.
-    """
-    from assessment.models import Assessment # Local import to avoid circular dependency
-    
-    assessment = get_object_or_404(Assessment, pk=assessment_pk, user=request.user)
-    content = assessment.content_copy.original_content
-    
-    if request.method == 'POST':
-        form = FeedbackReportForm(request.POST)
-        if form.is_valid():
-            report = form.save(commit=False)
-            report.user = request.user
-            report.report_type = FeedbackReport.TYPE_CONTENT_ERROR # O un nuevo tipo si existe
-            report.content_material = content
-            # Enriquecemos la descripción con metadatos técnicos del fallo
-            report.description = (
-                f"[AUTO-GENERATED CONTEXT]\n"
-                f"Assessment ID: {assessment.pk}\n"
-                f"Rejected Archetypes: {assessment.rejected_archetypes}\n"
-                f"Current Archetype: {assessment.archetype}\n"
-                f"User Description:\n{report.description}"
-            )
-            report.save()
-            
-            # Cancelamos la evaluación fallida para limpiar
-            assessment.status = Assessment.AssessmentStatus.USER_CANCELLED
-            assessment.save(update_fields=['status'])
-            
-            messages.success(request, "Solicitud enviada. Un instructor revisará el formato de tu asignatura.")
-            return redirect(content.get_absolute_url())
-    else:
-        initial_data = {
-            'title': f"Formato incorrecto en: {content.title}",
-            'description': "El examen generado no corresponde a mi asignatura. Necesito un formato que incluya..."
-        }
-        form = FeedbackReportForm(initial=initial_data)
-    
-    return render(request, 'feedback/report_form.html', {
-        'form': form,
-        'content_material': content,
-        'is_content_report': True,
-        'page_title': "Solicitud de Formato Manual"
-    })
+# [CLEANUP HITO 6] Eliminada vista manual_format_request y dependencias de Assessment

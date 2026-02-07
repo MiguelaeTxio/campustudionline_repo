@@ -149,14 +149,8 @@ CELERY_TASK_QUEUES = (
 CELERY_TASK_DEFAULT_QUEUE = 'default'
 CELERY_TASK_DEFAULT_ROUTING_KEY = 'task.default'
 
-CELERY_TASK_ROUTES = {    'orchestrator.tasks.generate_assessment_from_content_task': {
-        'queue': 'high_priority',
-        'routing_key': 'task.high_priority',
-    },
-    'orchestrator.tasks.correct_assessment_task': {
-        'queue': 'high_priority',
-        'routing_key': 'task.high_priority',
-    },
+CELERY_TASK_ROUTES = {    
+    # [CLEANUP HITO 6] Rutas de assessment eliminadas
 }
 
 # --- reCAPTCHA Configuration ---
@@ -208,7 +202,7 @@ INSTALLED_APPS = [
     "messaging.apps.MessagingConfig",
     "search.apps.SearchConfig",
     "academic_directory.apps.AcademicDirectoryConfig",
-    "assessment.apps.AssessmentConfig",
+    # "assessment.apps.AssessmentConfig",  <-- ELIMINADO HITO 6
     "push_tester.apps.PushTesterConfig",
     "favorites_prototype.apps.FavoritesPrototypeConfig",    "feedback.apps.FeedbackConfig",
     "universia.apps.UniversiaConfig",
@@ -388,10 +382,8 @@ SITE_ID = 1
 SITE_NAME = "CampuStudiOnline"
 
 # ==============================================================================
-# ASSESSMENT EXPIRATION AND LIMITS CONFIGURATION
+# ASSESSMENT CONFIGURATION (REMOVED HITO 6)
 # ==============================================================================
-ASSESSMENT_EXPIRATION_SECONDS = 86400
-CORRECTION_VISIBILITY_DURATION_SECONDS = 86400
 
 # Task scheduler for Celery Beat
 CELERY_BEAT_SCHEDULE = {
@@ -399,21 +391,12 @@ CELERY_BEAT_SCHEDULE = {
         "task": "schedule.tasks.check_scheduled_reminders",
         "schedule": crontab(minute=0), # Cada hora en punto
     },
-    "purge-and-penalize-corrections-periodic": {
-        "task": "orchestrator.tasks.purge_and_penalize_corrections",
-        "schedule": timedelta(hours=1),
-        "options": {"expires": 3500},
-    },
-    "expire-untaken-assessments-periodic": {
-        "task": "orchestrator.tasks.expire_untaken_assessments",
-        "schedule": timedelta(hours=1),
-        "options": {"expires": 3500},
-    },
     'run-global-orchestrator-every-5-minutes': {
         'task': 'orchestrator.tasks.global_orchestrator_task',
         'schedule': crontab(minute='*/5'),
         'options': {'queue': 'default'},
     },
+    # [CLEANUP HITO 6] Tareas periódicas de assessment eliminadas
 }
 # ==============================================================================
 

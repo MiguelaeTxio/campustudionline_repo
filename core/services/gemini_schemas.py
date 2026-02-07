@@ -1,5 +1,5 @@
-# /home/MiguelAeTxio/CampuStudiOnline/core/services/gemini_schemas.py
-# [V3 - METADATA_SCHEMA FIX] Se corrige la estructura de METADATA_SCHEMA para que sea una FunctionDeclaration válida, resolviendo el error crítico en la inicialización de tareas.
+# /home/MiguelAeTxio/PROJECTS/CampuStudiOnline/core/services/gemini_schemas.py
+# [V4 - CLEANUP HITO 6] Eliminación de esquemas de evaluación obsoletos. Preservación de esquemas de automatización.
 
 # --- Schema for Content Automation ---
 
@@ -139,55 +139,4 @@ METADATA_SCHEMA = {
             "clasificacion_intelectual",
         ],
     }
-}
-
-
-# --- Schemas for Assessment ---
-
-ASSESSMENT_QUESTIONS_SCHEMA = {
-    "name": "generate_assessment_questions",
-    "description": "Genera una lista de preguntas y respuestas modelo basadas en un texto.",
-    "parameters": {
-        "type": "object",
-        "properties": {
-            "preguntas": {
-                "type": "array",
-                "description": "La lista de preguntas de autoevaluación generadas.",
-                "items": {
-                    "type": "object",
-                    "properties": {
-                        "pregunta": {
-                            "type": "string",
-                            "description": "El texto de la pregunta.",
-                        },
-                        "respuesta_modelo": {
-                            "type": "string",
-                            "description": "Una respuesta detallada y bien explicada que sirva como modelo.",
-                        },
-                    },
-                    "required": ["pregunta", "respuesta_modelo"],
-                },
-            }
-        },
-        "required": ["preguntas"],
-    },
-}
-
-ASSESSMENT_CORRECTION_SCHEMA = {
-    "name": "correct_user_answer",
-    "description": "Evalúa la respuesta de un usuario y proporciona puntuación y feedback.",
-    "parameters": {
-        "type": "object",
-        "properties": {
-            "puntuacion": {
-                "type": "integer",
-                "description": "Un entero de 0 a 100 que representa la calidad de la respuesta del usuario.",
-            },
-            "feedback": {
-                "type": "string",
-                "description": "Una explicación constructiva y detallada sobre la respuesta, destacando aciertos y áreas de mejora.",
-            },
-        },
-        "required": ["puntuacion", "feedback"],
-    },
 }

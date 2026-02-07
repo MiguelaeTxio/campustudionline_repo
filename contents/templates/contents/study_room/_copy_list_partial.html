@@ -1,5 +1,4 @@
 {# /home/MiguelAeTxio/PROJECTS/CampuStudiOnline/contents/templates/contents/study_room/_copy_list_partial.html #}
-{% load assessment_tags %}
 
 <div class="list-group" id="tour-sala-estudio-dir-list">
     
@@ -9,7 +8,7 @@
             <h5 class="text-muted mt-3">Contenido Académico</h5>
             {% for university in academic_roots %}
                 <a href="{% url 'study_room:academic_directory_university' university_slug=university.slug %}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
-                    <div>{{ university.name }}{% render_assessment_indicators university %}</div>
+                    <div>{{ university.name }}</div>
                     <span class="badge bg-primary rounded-pill"><i class="fas fa-chevron-right"></i></span>
                 </a>
             {% endfor %}
@@ -18,7 +17,7 @@
             <h5 class="text-muted mt-4">Contenido Libre</h5>
             {% for master_cat in free_content_roots %}
                 <a href="{% url 'study_room:free_master_directory' master_slug=master_cat.slug %}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
-                    <div>{{ master_cat.name }}{% render_assessment_indicators master_cat %}</div>
+                    <div>{{ master_cat.name }}</div>
                     <span class="badge bg-primary rounded-pill"><i class="fas fa-chevron-right"></i></span>
                 </a>
             {% endfor %}
@@ -28,28 +27,28 @@
     {% elif level_name == 'branches' %}
         {% for branch in page_obj %}
             <a href="{% url 'study_room:academic_directory_branch' university_slug=current_university.slug branch_slug=branch.slug %}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
-                <div>{{ branch.name }}{% render_assessment_indicators branch %}</div>
+                <div>{{ branch.name }}</div>
                 <span class="badge bg-primary rounded-pill"><i class="fas fa-chevron-right"></i></span>
             </a>
         {% endfor %}
     {% elif level_name == 'degrees' %}
         {% for degree in page_obj %}
             <a href="{% url 'study_room:academic_directory_degree' university_slug=current_branch.university.slug branch_slug=current_branch.slug degree_slug=degree.slug %}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
-                <div>{{ degree.name }}{% render_assessment_indicators degree %}</div>
+                <div>{{ degree.name }}</div>
                 <span class="badge bg-primary rounded-pill"><i class="fas fa-chevron-right"></i></span>
             </a>
         {% endfor %}
     {% elif level_name == 'years' %}
         {% for year in page_obj %}
             <a href="{% url 'study_room:academic_directory_year' university_slug=current_degree.branch.university.slug branch_slug=current_degree.branch.slug degree_slug=current_degree.slug year=year.year %}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
-                <div>Año {{ year.year }}{% render_assessment_indicators year %}</div>
+                <div>Año {{ year.year }}</div>
                 <span class="badge bg-primary rounded-pill"><i class="fas fa-chevron-right"></i></span>
             </a>
         {% endfor %}
     {% elif level_name == 'subjects' %}
         {% for subject in page_obj %}
             <a href="{% url 'study_room:academic_directory_subject' university_slug=current_year.degree.branch.university.slug branch_slug=current_year.degree.branch.slug degree_slug=current_year.degree.slug year=current_year.year subject_slug=subject.slug %}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
-                <div>{{ subject.name }}{% render_assessment_indicators subject %}</div>
+                <div>{{ subject.name }}</div>
                 <span class="badge bg-primary rounded-pill"><i class="fas fa-chevron-right"></i></span>
             </a>
         {% endfor %}
@@ -58,7 +57,7 @@
     {% elif level_name == 'sub_categories' %}
         {% for sub_cat in page_obj %}
             <a href="{% url 'study_room:free_sub_directory' master_slug=current_master_category.slug sub_slug=sub_cat.slug %}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
-                <div>{{ sub_cat.name }}{% render_assessment_indicators sub_cat %}</div>
+                <div>{{ sub_cat.name }}</div>
                 <span class="badge bg-primary rounded-pill"><i class="fas fa-chevron-right"></i></span>
             </a>
         {% endfor %}
@@ -72,7 +71,6 @@
                         <a href="{% url 'study_room:edit_copy' pk=copy.pk %}" class="text-decoration-none content-link-preloader">
                             Copia de: {{ copy.original_content.title }}
                         </a>
-                        {% render_assessment_indicators copy %}
                     </h5>
                     {% if copy.is_public %}
                         <span class="badge bg-info text-dark">Pública</span>
@@ -113,7 +111,6 @@
                             <a href="{% url 'study_room:edit_copy' pk=copy.pk %}" class="text-decoration-none content-link-preloader">
                                 {{ copy.original_content.title }}
                             </a>
-                            {% render_assessment_indicators copy %}
                         </h5>
                         <small class="text-muted">{{ copy.updated_at|date:"d M, H:i" }}</small>
                     </div>
@@ -152,13 +149,13 @@
         <nav aria-label="Page navigation">
             <ul class="pagination justify-content-center">
                 {% if page_obj.has_previous %}
-                    <li class="page-item"><a class="page-link" href="?page=1">&laquo; Primera</a></li>
+                    <li class="page-item"><a class="page-link" href="?page=1">{% comment %} &laquo; {% endcomment %}Primera</a></li>
                     <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}">Anterior</a></li>
                 {% endif %}
                 <li class="page-item disabled"><a class="page-link" href="#" tabindex="-1" aria-disabled="True">Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</a></li>
                 {% if page_obj.has_next %}
                     <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">Siguiente</a></li>
-                    <li class="page-item"><a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">Última &raquo;</a></li>
+                    <li class="page-item"><a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">Última{% comment %} &raquo; {% endcomment %}</a></li>
                 {% endif %}
             </ul>
         </nav>

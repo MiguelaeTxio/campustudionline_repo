@@ -1,7 +1,6 @@
-{# /home/MiguelAeTxio/CampuStudiOnline/contents/templates/contents/study_room/copy_list.html #}
+{# /home/MiguelAeTxio/PROJECTS/CampuStudiOnline/contents/templates/contents/study_room/copy_list.html #}
 {% extends request.htmx|yesno:"_blank.html,base.html" %}
 {% load static %}
-{% load assessment_tags %}
 
 {% block title %}{{ page_title|default:"Sala de Estudio" }} - CampuStudiOnline{% endblock title %}
 
@@ -33,7 +32,7 @@
         </div>
     </div>
 
-    {% include 'assessment/partials/_assessment_legend.html' %}
+    {# [CLEANUP HITO 6] assessment_legend.html eliminado #}
     
     {% endif %}{# Cierre de if not request.htmx #}
 
@@ -81,34 +80,8 @@
                 }
             });
         }
-
-        document.body.addEventListener('click', function(event) {
-            const link = event.target.closest('.js-mark-viewed');
-            if (!link) return;
-
-            event.preventDefault(); 
-            
-            const assessmentPk = link.dataset.pk;
-            if (!assessmentPk) {
-                window.location.href = link.href;
-                return;
-            }
-            
-            const urlTemplate = "{% url 'assessment:mark_as_viewed_ajax' pk=0 %}";
-            const url = urlTemplate.replace('0', assessmentPk);
-            const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
-
-            fetch(url, {
-                method: 'POST',
-                headers: {
-                    'X-CSRFToken': csrfToken,
-                    'X-Requested-With': 'XMLHttpRequest'
-                }
-            })
-            .finally(() => {
-                window.location.href = link.href;
-            });
-        });
+        
+        // [CLEANUP HITO 6] Eliminado listener de js-mark-viewed y lógica de polling/notificación
     });
 </script>
 

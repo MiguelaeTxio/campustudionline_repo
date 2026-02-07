@@ -1,7 +1,6 @@
-{# /home/MiguelAeTxio/CampuStudiOnline/templates/base.html #}
+{# /home/MiguelAeTxio/PROJECTS/CampuStudiOnline/templates/base.html #}
 {% load static %}
 {% load auth_extras %}
-{% load assessment_tags %}
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -40,10 +39,27 @@
     <link rel="stylesheet" href="{% static 'css/preloader.css' %}">
     <link rel="stylesheet" href="{% static 'css/shepherd.css' %}">
     <link rel="stylesheet" href="{% static 'css/shepherd_custom.css' %}">
-    <style>body{display:flex;flex-direction:column;min-height:100vh;background-color:#f0f2f5}@media (min-width:992px){body{background-image:linear-gradient(rgba(255,255,255,.85),rgba(255,255,255,.85)),url("{% static 'images/logo_campustudionline.jpg' %}");background-repeat:no-repeat;background-position:center center;background-attachment:fixed;background-size:contain}}.main-content{flex:1;padding-bottom:60px;background-color:transparent}.footer{width:100%;background-color:#f8f9fa;text-align:center;padding:1rem 0}.badge-notification{margin-left:5px}.main-content table{width:100%;margin-bottom:1rem;border:1px solid #dee2e6;border-collapse:collapse;background-color:#fff}.main-content th,.main-content td{padding:.75rem;vertical-align:top;border:1px solid #dee2e6}.main-content thead th{vertical-align:bottom;border-bottom:2px solid #dee2e6;background-color:#f8f9fa}.main-content tbody tr:nth-of-type(odd){background-color:rgba(0,0,0,.05)}.no-select{-webkit-user-select:none;-ms-user-select:none;user-select:none;-webkit-touch-callout:none}.share-buttons .btn{margin:0 4px}#password-modal-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background-color:rgba(0,0,0,.6);display:flex;justify-content:center;align-items:center;z-index:2000}#password-modal-box{background-color:#fff;padding:25px 30px;border-radius:8px;box-shadow:0 5px 15px rgba(0,0,0,.3);width:90%;max-width:450px;text-align:center}#password-modal-error{color:#dc3545;font-size:.9rem;margin-top:10px}#notification-wall-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background-color:rgba(0,0,0,.8);display:flex;justify-content:center;align-items:center;z-index:3000;color:#fff;text-align:center}#notification-wall-box{max-width:600px;padding:2rem}
-    .list-group-item.list-group-item-light {
-        --bs-list-group-bg: #adb5bd;
-    }
+    <style>
+        body{display:flex;flex-direction:column;min-height:100vh;background-color:#f0f2f5}
+        @media (min-width:992px){body{background-image:linear-gradient(rgba(255,255,255,.85),rgba(255,255,255,.85)),url("{% static 'images/logo_campustudionline.jpg' %}");background-repeat:no-repeat;background-position:center center;background-attachment:fixed;background-size:contain}}
+        .main-content{flex:1;padding-bottom:60px;background-color:transparent}
+        .footer{width:100%;background-color:#f8f9fa;text-align:center;padding:1rem 0}
+        .badge-notification{margin-left:5px}
+        .main-content table{width:100%;margin-bottom:1rem;border:1px solid #dee2e6;border-collapse:collapse;background-color:#fff}
+        .main-content th,.main-content td{padding:.75rem;vertical-align:top;border:1px solid #dee2e6}
+        .main-content thead th{vertical-align:bottom;border-bottom:2px solid #dee2e6;background-color:#f8f9fa}
+        .main-content tbody tr:nth-of-type(odd){background-color:rgba(0,0,0,.05)}
+        .no-select{-webkit-user-select:none;-ms-user-select:none;user-select:none;-webkit-touch-callout:none}
+        .share-buttons .btn{margin:0 4px}
+        #password-modal-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background-color:rgba(0,0,0,.6);display:none;justify-content:center;align-items:center;z-index:2000}
+        #password-modal-box{background-color:#fff;padding:25px 30px;border-radius:8px;box-shadow:0 5px 15px rgba(0,0,0,.3);width:90%;max-width:450px;text-align:center}
+        #password-modal-error{color:#dc3545;font-size:.9rem;margin-top:10px}
+        #notification-wall-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background-color:rgba(0,0,0,.8);display:none;justify-content:center;align-items:center;z-index:3000;color:#fff;text-align:center}
+        #notification-wall-box{max-width:600px;padding:2rem}
+        .list-group-item.list-group-item-light {--bs-list-group-bg: #adb5bd;}
+        #cookie-consent-banner {display: none; z-index: 9999; border-top: 1px solid #444;}
+        .twitter-icon-svg {vertical-align: -0.125em;}
+        #toast-container {z-index: 1100;}
     </style>
     {% block extra_css %}{% endblock extra_css %}
     <link rel="stylesheet" href="{% static "universia/css/universia.css" %}">
@@ -60,19 +76,17 @@
     s.parentNode.insertBefore(t,s)}(window, document,'script',
     'https://connect.facebook.net/en_US/fbevents.js');
 
-    // GDPR Logic: Only track if cookies are accepted
     if (localStorage.getItem('cookiesAccepted')) {
         fbq('init', '{{ META_PIXEL_ID }}');
         fbq('track', 'PageView');
     } else {
-        // Optional: Listen for acceptance event if you want immediate tracking upon click
         document.addEventListener('cookiesAccepted', function() {
             fbq('init', '{{ META_PIXEL_ID }}');
             fbq('track', 'PageView');
         });
     }
     </script>
-    <noscript><img height="1" width="1" style="display:none"
+    <noscript><img height="1" width="1" class="d-none" alt=""
     src="https://www.facebook.com/tr?id={{ META_PIXEL_ID }}&ev=PageView&noscript=1"
     /></noscript>
     <!-- End Meta Pixel Code -->
@@ -80,8 +94,6 @@
 
     <script>window.protectionLevel='{{ protection_level|default:"full" }}';</script>
 
-
-    <!-- Meta Pixel Event (Server Deduplication) -->
     {% if meta_event %}
     <script>
         if (localStorage.getItem('cookiesAccepted')) {
@@ -97,7 +109,9 @@
 </head>
 <body>
     
-    <div aria-live="polite" aria-atomic="true" class="position-relative"><div id="toast-container" class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 1100"></div></div>
+    <div aria-live="polite" aria-atomic="true" class="position-relative">
+        <div id="toast-container" class="toast-container position-fixed top-0 end-0 p-3"></div>
+    </div>
     <div id="preloader" class="preloader-overlay">
         <div class="preloader-spinner"></div>
         <p id="preloader-text" class="preloader-text">Cargando...</p>
@@ -114,14 +128,27 @@
 
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary mb-4">
         <div class="container-fluid">
-            <a class="navbar-brand" href="{% url 'home' %}"><img src="{% static 'images/favicon.svg' %}" alt="Logo de CampuStudiOnline" height="30" class="d-inline-block align-text-top me-2">CampuStudiOnline</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navigationBar" aria-controls="navigationBar" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+            <a class="navbar-brand" href="{% url 'home' %}">
+                <img src="{% static 'images/favicon.svg' %}" alt="Logo de CampuStudiOnline" height="30" width="30" class="d-inline-block align-text-top me-2">
+                CampuStudiOnline
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navigationBar" aria-controls="navigationBar" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
             <div class="collapse navbar-collapse" id="navigationBar">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    <li class="nav-item" id="tour-nav-home"><a class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}" href="{% url 'home' %}"><i class="fas fa-home me-2"></i>Inicio</a></li>
-                    <li class="nav-item" id="tour-nav-schedule"><a class="nav-link {% if request.resolver_match.app_name == 'schedule' %}active{% endif %}" href="{% url 'schedule:calendar_view' %}"><i class="fas fa-calendar-alt me-2"></i>Agenda</a></li>
-                    <li class="nav-item" id="tour-nav-chat"><a class="nav-link {% if request.resolver_match.app_name == 'chat' %}active{% endif %}" href="{% url 'chat:index' %}"><i class="fas fa-comments me-2"></i>Chat</a></li>
-                    <li class="nav-item" id="tour-nav-announcements"><a class="nav-link {% if request.resolver_match.app_name == 'announcements' %}active{% endif %}" href="{% url 'announcements:announcement_list' %}"><i class="fas fa-bullhorn me-2"></i>Tablón de Anuncios</a></li>
+                    <li class="nav-item" id="tour-nav-home">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}" href="{% url 'home' %}"><i class="fas fa-home me-2"></i>Inicio</a>
+                    </li>
+                    <li class="nav-item" id="tour-nav-schedule">
+                        <a class="nav-link {% if request.resolver_match.app_name == 'schedule' %}active{% endif %}" href="{% url 'schedule:calendar_view' %}"><i class="fas fa-calendar-alt me-2"></i>Agenda</a>
+                    </li>
+                    <li class="nav-item" id="tour-nav-chat">
+                        <a class="nav-link {% if request.resolver_match.app_name == 'chat' %}active{% endif %}" href="{% url 'chat:index' %}"><i class="fas fa-comments me-2"></i>Chat</a>
+                    </li>
+                    <li class="nav-item" id="tour-nav-announcements">
+                        <a class="nav-link {% if request.resolver_match.app_name == 'announcements' %}active{% endif %}" href="{% url 'announcements:announcement_list' %}"><i class="fas fa-bullhorn me-2"></i>Tablón de Anuncios</a>
+                    </li>
                     <li class="nav-item" id="tour-nav-academic-directory">
                         <a class="nav-link {% if request.resolver_match.app_name == 'academic_directory' %}active{% endif %}" href="{% url 'academic_directory:university_list' %}">
                             <i class="fas fa-graduation-cap me-2"></i>Directorio Académico
@@ -138,28 +165,60 @@
                             <i class="fas fa-language me-2"></i>Sala de Traducción
                         </a>
                     </li>
-                                        
-<li class="nav-item" id="tour-nav-personal-directory"><a class="nav-link {% if request.resolver_match.app_name == 'contents' %}active{% endif %}" href="{% url 'contents:personal_workspace' %}"><i class="fas fa-address-book me-2"></i>Directorio Personal</a></li>
+                    <li class="nav-item" id="tour-nav-personal-directory">
+                        <a class="nav-link {% if request.resolver_match.app_name == 'contents' %}active{% endif %}" href="{% url 'contents:personal_workspace' %}"><i class="fas fa-address-book me-2"></i>Directorio Personal</a>
+                    </li>
                     <li class="nav-item" id="tour-nav-study-room">
                         <a class="nav-link {% if request.resolver_match.url_name == 'copy_directory_root' %}active{% endif %}" href="{% url 'study_room:copy_directory_root' %}">
                             <i class="fas fa-book-reader me-2"></i>Sala de Estudio
-                            {% include 'assessment/partials/_navbar_iv_display.html' with iv_data=study_room_iv_data %}
                         </a>
                     </li>
-                    <li class="nav-item" id="tour-nav-portfolio"><a class="nav-link {% if request.resolver_match.view_name == 'portfolio:public_portfolio_detail' and request.resolver_match.kwargs.username == user.username %}active{% endif %}" href="{% url 'portfolio:public_portfolio_detail' username=user.username %}"><i class="fas fa-address-card me-2"></i>Mi Portafolio</a></li>
+                    <li class="nav-item" id="tour-nav-portfolio">
+                        <a class="nav-link {% if request.resolver_match.view_name == 'portfolio:public_portfolio_detail' and request.resolver_match.kwargs.username == user.username %}active{% endif %}" href="{% url 'portfolio:public_portfolio_detail' username=user.username %}"><i class="fas fa-address-card me-2"></i>Mi Portafolio</a>
+                    </li>
                     {% endif %}
                 </ul>
                 {% if user.is_authenticated %}
-                    <form class="d-flex me-3" role="search" method="get" action="{% url 'search:global_search' %}" id="tour-nav-global-search"><input class="form-control form-control-sm" type="search" name="q" placeholder="Búsqueda global..." aria-label="Búsqueda global"><button class="btn btn-sm btn-outline-light ms-2" type="submit"><i class="fas fa-search"></i></button></form>
+                    <form class="d-flex me-3" role="search" method="get" action="{% url 'search:global_search' %}" id="tour-nav-global-search">
+                        <input class="form-control form-control-sm" type="search" name="q" placeholder="Búsqueda global..." aria-label="Búsqueda global">
+                        <button class="btn btn-sm btn-outline-light ms-2" type="submit"><i class="fas fa-search"></i></button>
+                    </form>
                     <ul class="navbar-nav mb-2 mb-lg-0 align-items-center">
                         <li class="nav-item me-2">
-                        <button class="btn nav-link" type="button" data-bs-toggle="offcanvas" data-bs-target="#studyNavigationSidebar" aria-controls="studyNavigationSidebar" title="Accesos Directos">
-                            <i class="fas fa-bars"></i>
-                        </button>
-                    </li>
-                    <li class="nav-item" id="tour-nav-private-messages"><a class="nav-link {% if request.resolver_match.app_name == 'messaging' and request.resolver_match.url_name == 'conversation_list' %}active{% endif %}" href="{% url 'messaging:conversation_list' %}"><i class="fab fa-whatsapp me-2"></i>Mensajes Privados{% if unread_p2p_message_count > 0 %}<span class="badge bg-danger rounded-pill badge-notification">{{ unread_p2p_message_count }}</span>{% endif %}</a></li>
-                        <li class="nav-item dropdown" id="tour-nav-user-menu"><a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="fas fa-user-circle me-2"></i> Hola, {{ user.username }}</a><ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown"><li><a class="dropdown-item {% if 'mi-cuenta' in request.path %}active{% endif %}" href="{% url 'users:account_detail' %}"><i class="fas fa-user-cog me-2"></i>Panel de Control</a></li>
-{% if user|has_group:"Comerciales" %}<li><a class="dropdown-item {% if request.resolver_match.view_name == 'users:commercial_dashboard' %}active{% endif %}" href="{% url 'users:commercial_dashboard' %}"><i class="fas fa-chart-line me-2"></i>Dashboard Comercial</a></li>{% endif %}{% if user.is_staff or user|has_group:"Colaboradores" %}<li><hr class="dropdown-divider"></li><li><a class="dropdown-item" href="{% url 'admin:index' %}"><i class="fas fa-user-shield me-2"></i>Panel de Administración</a></li>{% endif %}<li><hr class="dropdown-divider"></li><li><form method="post" action="{% url 'logout' %}" class="d-inline">{% csrf_token %}<button type="submit" class="dropdown-item"><i class="fas fa-sign-out-alt me-2"></i>Cerrar Sesión</button></form></li></ul></li>
+                            <button class="btn nav-link" type="button" data-bs-toggle="offcanvas" data-bs-target="#studyNavigationSidebar" aria-controls="studyNavigationSidebar" title="Accesos Directos">
+                                <i class="fas fa-bars"></i>
+                            </button>
+                        </li>
+                        <li class="nav-item" id="tour-nav-private-messages">
+                            <a class="nav-link {% if request.resolver_match.app_name == 'messaging' and request.resolver_match.url_name == 'conversation_list' %}active{% endif %}" href="{% url 'messaging:conversation_list' %}">
+                                <i class="fab fa-whatsapp me-2"></i>Mensajes Privados
+                                {% if unread_p2p_message_count > 0 %}
+                                    <span class="badge bg-danger rounded-pill badge-notification">{{ unread_p2p_message_count }}</span>
+                                {% endif %}
+                            </a>
+                        </li>
+                        <li class="nav-item dropdown" id="tour-nav-user-menu">
+                            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-user-circle me-2"></i> Hola, {{ user.username }}
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                                <li><a class="dropdown-item {% if 'mi-cuenta' in request.path %}active{% endif %}" href="{% url 'users:account_detail' %}"><i class="fas fa-user-cog me-2"></i>Panel de Control</a></li>
+                                {% if user|has_group:"Comerciales" %}
+                                    <li><a class="dropdown-item {% if request.resolver_match.view_name == 'users:commercial_dashboard' %}active{% endif %}" href="{% url 'users:commercial_dashboard' %}"><i class="fas fa-chart-line me-2"></i>Dashboard Comercial</a></li>
+                                {% endif %}
+                                {% if user.is_staff or user|has_group:"Colaboradores" %}
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><a class="dropdown-item" href="{% url 'admin:index' %}"><i class="fas fa-user-shield me-2"></i>Panel de Administración</a></li>
+                                {% endif %}
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <form method="post" action="{% url 'logout' %}" class="d-inline">
+                                        {% csrf_token %}
+                                        <button type="submit" class="dropdown-item"><i class="fas fa-sign-out-alt me-2"></i>Cerrar Sesión</button>
+                                    </form>
+                                </li>
+                            </ul>
+                        </li>
                     </ul>
                 {% else %}
                     <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-center">
@@ -170,18 +229,54 @@
             </div>
         </div>
     </nav>
+
     <main class="container mt-4 main-content">
-        {% if messages %}{% for message in messages %}<div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">{{ message }}<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>{% endfor %}{% endif %}
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
         {% block content %}{% endblock content %}
     </main>
-    <div id="notification-wall-overlay" style="display: none;"><div id="notification-wall-box"><h1 id="notification-wall-title" class="mb-3"></h1><p id="notification-wall-text" class="lead mb-4"></p><button id="notification-wall-button" class="btn btn-primary btn-lg"></button></div></div>
-    <div id="password-modal-overlay" style="display: none;"><div id="password-modal-box"><h5 id="password-modal-title" class="mb-3">Se requiere autenticación</h5><p id="password-modal-text" class="mb-3">Por favor, introduce tu contraseña para confirmar.</p><form id="password-modal-form" novalidate><div class="mb-3"><input type="password" id="password-modal-input" class="form-control" required autocomplete="current-password"><div id="password-modal-error" class="invalid-feedback text-center mt-2" style="display: none;"></div></div><div class="d-grid gap-2 d-sm-flex justify-content-sm-center"><button type="button" id="password-modal-cancel-btn" class="btn btn-secondary">Cancelar</button><button type="submit" class="btn btn-primary">Confirmar</button></div></form></div></div>
+
+    <div id="notification-wall-overlay">
+        <div id="notification-wall-box">
+            <h1 id="notification-wall-title" class="mb-3">Información</h1>
+            <p id="notification-wall-text" class="lead mb-4"></p>
+            <button id="notification-wall-button" class="btn btn-primary btn-lg">Entendido</button>
+        </div>
+    </div>
+
+    <div id="password-modal-overlay">
+        <div id="password-modal-box">
+            <h5 id="password-modal-title" class="mb-3">Se requiere autenticación</h5>
+            <p id="password-modal-text" class="mb-3">Por favor, introduce tu contraseña para confirmar.</p>
+            <form id="password-modal-form" novalidate>
+                <div class="mb-3">
+                    <input type="password" id="password-modal-input" class="form-control" required autocomplete="current-password">
+                    <div id="password-modal-error" class="invalid-feedback text-center mt-2"></div>
+                </div>
+                <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+                    <button type="button" id="password-modal-cancel-btn" class="btn btn-secondary">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Confirmar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <footer class="footer mt-auto">
         <div class="container">
             <div id="global-share-container" class="mb-2">
                 <div class="share-buttons">
                     <span class="me-2 text-muted small">Compartir esta página:</span>
-                    <a id="share-twitter" href="#" class="btn btn-dark btn-sm text-white" target="_blank" rel="noopener noreferrer" title="Compartir en Twitter"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-twitter-x" viewBox="0 0 16 16" style="vertical-align: -0.125em;"><path d="M12.6.75h2.454l-5.36 6.142L16 15.25h-4.937l-3.867-5.07-4.425 5.07H.316l5.733-6.57L0 .75h5.063l3.495 4.633L12.601.75Zm-.86 13.028h1.36L4.323 2.145H2.865l8.875 11.633Z"/></svg></a>
+                    <a id="share-twitter" href="#" class="btn btn-dark btn-sm text-white" target="_blank" rel="noopener noreferrer" title="Compartir en Twitter">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-twitter-x twitter-icon-svg" viewBox="0 0 16 16">
+                            <path d="M12.6.75h2.454l-5.36 6.142L16 15.25h-4.937l-3.867-5.07-4.425 5.07H.316l5.733-6.57L0 .75h5.063l3.495 4.633L12.601.75Zm-.86 13.028h1.36L4.323 2.145H2.865l8.875 11.633Z"/>
+                        </svg>
+                    </a>
                     <a id="share-linkedin" href="#" class="btn btn-primary btn-sm" target="_blank" rel="noopener noreferrer" title="Compartir en LinkedIn"><i class="fab fa-linkedin-in"></i></a>
                     <button id="copy-link-button" class="btn btn-dark btn-sm" title="Copiar enlace"><i id="copy-link-icon" class="fas fa-link"></i></button>
                 </div>
@@ -195,6 +290,7 @@
             <p class="mb-0 text-muted small">© {% now "Y" %} CampuStudiOnline. Todos los derechos reservados.</p>
         </div>
     </footer>
+
     <script src="{% static 'vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
     <script src="https://unpkg.com/htmx.org@1.9.12" integrity="sha384-ujb1lZYygJmzgSwoxRggbCHcjc0rB2XoQrxeTUQyRjrOnlCoYta87iKBWq3EsdM2" crossorigin="anonymous"></script>
     <script>
@@ -274,7 +370,7 @@
         <script src="{% static 'js/push_manager.js' %}"></script>
         <script>document.addEventListener('DOMContentLoaded',function(){const whiteListedUrls=['portfolio:public_portfolio_detail','users:account_settings','logout'];const currentViewName="{{ request.resolver_match.view_name }}";const isWhiteListed=whiteListedUrls.some(url=>currentViewName.endsWith(':'+url.split(':')[1])&&currentViewName.startsWith(url.split(':')[0]+':'));if(isWhiteListed){console.log("Notification Wall: Whitelisted page, verification not required.");return}if(!('Notification'in window)&&"{{ user.is_authenticated }}"==="True"){console.warn("Notification Wall: This browser does not support notifications, but user is authenticated. Displaying warning if necessary.")}else if(!('Notification'in window)&&"{{ user.is_authenticated }}"==="False"){console.log("Notification Wall: This browser does not support notifications and user is not authenticated. Wall does not apply.");return}else if(Notification.permission==='granted' &&"{{ user.is_authenticated }}"==="True"){console.log("Notification Wall: Notification permission granted and user is authenticated.");return}else if("{{ user.is_authenticated }}"==="False"){console.log("Notification Wall: User not authenticated. Wall does not apply.");return}const checkAndEnforcePermissions=()=>{const permission=Notification.permission;console.log(`Notification Wall: Current permission is '${permission}'.`);if(permission==='granted')return;const wallOverlay=document.getElementById('notification-wall-overlay');const wallTitle=document.getElementById('notification-wall-title');const wallText=document.getElementById('notification-wall-text');const wallButton=document.getElementById('notification-wall-button');if(permission==='denied'){wallTitle.textContent="Has bloqueado las notificaciones";wallText.innerHTML="Para usar la plataforma, es necesario que las actives manually. <br><br><strong>Haz clic en el candado (🔒) junto a la dirección web en tu navegador, busca 'Notificaciones' y selecciona 'Permitir'.</strong><br><br>Luego, recarga esta página.";wallButton.textContent="Hecho, recargar la página";wallButton.onclick=()=>window.location.reload()}else{wallTitle.textContent="¡Atención! Se requiere un permiso";wallText.innerHTML="Para usar la plataforma es imprescindible activar las notificaciones. Son necesarias para el chat, las salas de estudio y otras funciones clave. Sin ellas, no puedes continuar.";wallButton.textContent="Activar Notificaciones";wallButton.onclick=async()=>{try{const newPermission=await Notification.requestPermission();if(newPermission==='granted'){window.location.reload()}else{checkAndEnforcePermissions()}}catch(error){console.error("Error requesting notification permission:",error)}}}wallOverlay.style.display='flex'};if("{{ user.is_authenticated }}"==="True"&&Notification.permission!=='granted'){checkAndEnforcePermissions()}else{console.log("Notification Wall: Condition to activate wall not met (user not authenticated or permission granted).")}});</script>
     {% endif %}
-    <script>document.addEventListener('DOMContentLoaded',function(){const modalOverlay=document.getElementById('password-modal-overlay');const modalForm=document.getElementById('password-modal-form');if(!modalOverlay||!modalForm){window.requestPasswordAuthentication=function(){console.error("Attempted to call requestPasswordAuthentication, but the modal's HTML is not on the page.");return Promise.reject(new Error("Authentication modal not available."))};return}const modalBox=document.getElementById('password-modal-box');const modalTitle=document.getElementById('password-modal-title');const modalText=document.getElementById('password-modal-text');const modalInput=document.getElementById('password-modal-input');const modalError=document.getElementById('password-modal-error');const modalCancelBtn=document.getElementById('password-modal-cancel-btn');let resolvePasswordPromise;let rejectPasswordPromise;window.requestPasswordAuthentication=function(title,text){modalTitle.textContent=title||"Se requiere autenticación";modalText.textContent=text||"Por favor, introduce tu contraseña para confirmar.";modalInput.value='';modalError.style.display='none';modalOverlay.style.display='flex';modalInput.focus();return new Promise((resolve,reject)=>{resolvePasswordPromise=resolve;rejectPasswordPromise=reject})};modalForm.onsubmit=async function(e){e.preventDefault();modalError.style.display='none';const password=modalInput.value;if(!password){modalError.textContent="Por favor, introduce tu contraseña.";modalError.style.display='block';return}modalCancelBtn.disabled=!0;modalForm.querySelector('button[type="submit"]').disabled=!0;try{const csrfToken=document.querySelector('meta[name="csrf-token"]').content;const response=await fetch("{% url 'users:verify_password' %}",{method:'POST',headers:{'Content-Type':'application/json','X-CSRFToken':csrfToken,'X-Requested-With':'XMLHttpRequest'},body:JSON.stringify({password:password})});const data=await response.json();if(response.ok&&data.status==='success'){modalOverlay.style.display='none';resolvePasswordPromise(!0)}else{modalError.textContent=data.message||"Contraseña incorrecta o error de verificación.";modalError.style.display='block'}}catch(error){console.error("Error in password verification request:",error);modalError.textContent="Ocurrió un error al verificar la contraseña. Inténtalo de nuevo.";modalError.style.display='block'}finally{modalCancelBtn.disabled=!1;modalForm.querySelector('button[type="submit"]').disabled=!1;modalInput.focus()}};modalCancelBtn.onclick=function(){modalOverlay.style.display='none';if(rejectPasswordPromise){rejectPasswordPromise(new Error("Password authentication cancelled by user."))}};document.addEventListener('keydown',function(event){if(event.key==='Escape'&&modalOverlay.style.display==='flex'){modalCancelBtn.click()}});modalBox.addEventListener('click',function(event){event.stopPropagation()})});</script>
+    <script>document.addEventListener('DOMContentLoaded',function(){const modalOverlay=document.getElementById('password-modal-overlay');const modalForm=document.getElementById('password-modal-form');if(!modalOverlay||!modalForm){window.requestPasswordAuthentication=function(){console.error("Attempted to call requestPasswordAuthentication, but the modal's HTML is on the page.");return Promise.reject(new Error("Authentication modal not available."))};return}const modalBox=document.getElementById('password-modal-box');const modalTitle=document.getElementById('password-modal-title');const modalText=document.getElementById('password-modal-text');const modalInput=document.getElementById('password-modal-input');const modalError=document.getElementById('password-modal-error');const modalCancelBtn=document.getElementById('password-modal-cancel-btn');let resolvePasswordPromise;let rejectPasswordPromise;window.requestPasswordAuthentication=function(title,text){modalTitle.textContent=title||"Se requiere autenticación";modalText.textContent=text||"Por favor, introduce tu contraseña para confirmar.";modalInput.value='';modalError.style.display='none';modalOverlay.style.display='flex';modalInput.focus();return new Promise((resolve,reject)=>{resolvePasswordPromise=resolve;rejectPasswordPromise=reject})};modalForm.onsubmit=async function(e){e.preventDefault();modalError.style.display='none';const password=modalInput.value;if(!password){modalError.textContent="Por favor, introduce tu contraseña.";modalError.style.display='block';return}modalCancelBtn.disabled=!0;modalForm.querySelector('button[type="submit"]').disabled=!0;try{const csrfToken=document.querySelector('meta[name="csrf-token"]').content;const response=await fetch("{% url 'users:verify_password' %}",{method:'POST',headers:{'Content-Type':'application/json','X-CSRFToken':csrfToken,'X-Requested-With':'XMLHttpRequest'},body:JSON.stringify({password:password})});const data=await response.json();if(response.ok&&data.status==='success'){modalOverlay.style.display='none';resolvePasswordPromise(!0)}else{modalError.textContent=data.message||"Contraseña incorrecta o error de verificación.";modalError.style.display='block'}}catch(error){console.error("Error in password verification request:",error);modalError.textContent="Ocurrió un error al verificar la contraseña. Inténtalo de nuevo.";modalError.style.display='block'}finally{modalCancelBtn.disabled=!1;modalForm.querySelector('button[type="submit"]').disabled=!1;modalInput.focus()}};modalCancelBtn.onclick=function(){modalOverlay.style.display='none';if(rejectPasswordPromise){rejectPasswordPromise(new Error("Password authentication cancelled by user."))}};document.addEventListener('keydown',function(event){if(event.key==='Escape'&&modalOverlay.style.display==='flex'){modalCancelBtn.click()}});modalBox.addEventListener('click',function(event){event.stopPropagation()})});</script>
     
     <script>
     document.addEventListener('DOMContentLoaded', function() {
@@ -367,21 +463,19 @@
                 });
             });
         </script>
-    
-    
-
-{% endblock extra_js %}
+    {% endblock extra_js %}
     {% if user.is_authenticated %}
         {% include "contents/partials/_navigation_sidebar.html" %}
     {% endif %}
 
     <!-- Cookie Consent Banner -->
-    <div id="cookie-consent-banner" class="fixed-bottom bg-dark text-white p-4 shadow-lg" style="display: none; z-index: 9999; border-top: 1px solid #444;">
+    <div id="cookie-consent-banner" class="fixed-bottom bg-dark text-white p-4 shadow-lg border-top">
         <div class="container">
             <div class="row align-items-center">
                 <div class="col-lg-8 mb-3 mb-lg-0">
                     <p class="mb-0">
-                        <strong>Su privacidad es importante para nosotros.</strong><br>
+                        <strong>Su privacidad es importante para nosotros.</strong>
+                        <br>
                         Utilizamos cookies propias y de terceros para fines analíticos y para mostrarle publicidad personalizada en base a un perfil elaborado a partir de sus hábitos de navegación.
                         Puede aceptar todas las cookies pulsando el botón "Aceptar", rechazarlas pulsando "Rechazar" o obtener más información en nuestra <a href="/core/legal/cookies/" class="text-info text-decoration-underline">Política de Cookies</a>.
                     </p>

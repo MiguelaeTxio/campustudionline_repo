@@ -48,7 +48,7 @@ urlpatterns = [
     path("jsi18n/", JavaScriptCatalog.as_view(), name="javascript-catalog"),
     path("service-worker.js", ServiceWorkerView.as_view(), name="service_worker"),
     path("admin/orchestrator/", include("orchestrator.admin_urls")),
-    path("admin/assessment/", include("assessment.admin_urls", namespace="assessment_admin")),
+    # path("admin/assessment/", include("assessment.admin_urls", namespace="assessment_admin")), # ELIMINADO HITO 6
     path("admin/contents/", include("contents.admin_urls", namespace="contents_admin")),
     path("admin/", admin.site.urls),
     path("", user_views.home_view, name="home"),
@@ -142,7 +142,7 @@ urlpatterns = [
         include("academic_directory.urls", namespace="academic_directory"),
     ),
     path("feedback/", include("feedback.urls", namespace="feedback")),
-    path("assessment/", include("assessment.urls", namespace="assessment")),
+    # path("assessment/", include("assessment.urls", namespace="assessment")), # ELIMINADO HITO 6
     path("push-tester/", include("push_tester.urls", namespace="push_tester")),
     path("universia/", include("universia.urls", namespace="universia")),
     path("schedule/", include("schedule.urls", namespace="schedule")),    

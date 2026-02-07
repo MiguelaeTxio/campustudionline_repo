@@ -118,7 +118,7 @@
                                                 {{ item.name }}
                                                 
                                             </span>
-                                            <form action="{% url 'academic_directory:request_content' %}" method="POST" class="m-0">
+                                            <form action="{% url 'academic_directory:request_content' %}" method="post" class="m-0">
                                                 {% csrf_token %}
                                                 <input type="hidden" name="subject_id" value="{{ item.id }}">
                                                 <button type="submit" class="btn btn-primary btn-sm">
@@ -206,33 +206,5 @@
         <script src="{% static 'js/tours/academic_directory_tour.js' %}"></script>
     {% endif %}
 
-    <script>
-        document.body.addEventListener('click', function(event) {
-            const link = event.target.closest('.js-mark-viewed');
-            if (!link) return;
-
-            event.preventDefault();
-            
-            const assessmentPk = link.dataset.pk;
-            if (!assessmentPk) {
-                window.location.href = link.href;
-                return;
-            }
-            
-            const urlTemplate = "{% url 'assessment:mark_as_viewed_ajax' pk=0 %}";
-            const url = urlTemplate.replace('0', assessmentPk);
-            const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
-
-            fetch(url, {
-                method: 'POST',
-                headers: {
-                    'X-CSRFToken': csrfToken,
-                    'X-Requested-With': 'XMLHttpRequest'
-                }
-            })
-            .finally(() => {
-                window.location.href = link.href;
-            });
-        });
-    </script>
+    {# [CLEANUP HITO 6] Bloque de script de assessment eliminado #}
 {% endblock extra_js %}

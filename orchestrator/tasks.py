@@ -1,3 +1,4 @@
+# /home/MiguelAeTxio/PROJECTS/CampuStudiOnline/orchestrator/tasks.py
 import logging
 import traceback
 import os
@@ -26,8 +27,6 @@ from google.api_core.exceptions import ResourceExhausted, DeadlineExceeded
 from .models import AutomationSettings, ApiKey, PendingContentTask, GeneratedContentChunk, ContentRequest
 from academic_structure.models import Subject
 from users.models import CustomUser
-from assessment.models import Assessment, Question, UserAnswer, AssessmentSettings
-from assessment.utils import filter_content_by_selection
 from contents.services.navigation_builder import refresh_user_navigation
 from contents.models import (
     ContentMaterial,
@@ -35,12 +34,6 @@ from contents.models import (
     FreeContentSubCategory,
 )
 from core.services.gemini_service import generate_text_content, clean_json_response, AIServiceCriticalError
-from core.services.gemini_schemas import ASSESSMENT_CORRECTION_SCHEMA
-# [HITO 6] ESTRATEGIAS SEGREGADAS
-from core.services.assessment_strategies.classifier import generate_classifier_prompt
-# [REFACTOR] Uso de Factory en lugar de imports directos
-from core.services.assessment_strategies.factory import AssessmentStrategyFactory
-
 
 from core.services.prompt_generators import (
     generate_course_metadata_prompt,
@@ -55,7 +48,6 @@ User = get_user_model()
 
 # [ARQUITECTURA] Rutas absolutas gestionadas por settings
 QUARANTINE_MAILBOX_FILE = os.path.join(settings.BASE_DIR, "quarantine_requests.log")
-RECOVERY_DIR = os.path.join(settings.BASE_DIR, "assessment_recovery")
 
 # ==============================================================================
 # SECCIÓN 1: FUNCIONES AUXILIARES DEL ORQUESTADOR
@@ -63,16 +55,16 @@ RECOVERY_DIR = os.path.join(settings.BASE_DIR, "assessment_recovery")
 
 def _log_structured_event(message: str, level: str = "INFO", details: dict = None):
     try:
-        settings = AutomationSettings.load()
+        settings_obj = AutomationSettings.load()
         log_entry = {
             "timestamp": timezone.now().isoformat(),
             "level": level,
             "message": message,
             "details": details or {}
         }
-        settings.event_log.insert(0, log_entry)
-        settings.event_log = settings.event_log[:100]
-        settings.save(update_fields=['event_log'])
+        settings_obj.event_log.insert(0, log_entry)
+        settings_obj.event_log = settings_obj.event_log[:100]
+        settings_obj.save(update_fields=['event_log'])
     except Exception as e:
         logger.error(f"CRITICAL: No se pudo escribir en el event_log estructurado: {e}", exc_info=True)
 
@@ -156,7 +148,6 @@ def _purge_zombie_tasks():
         automation_settings = AutomationSettings.load()
         threshold = timezone.now() - timedelta(hours=automation_settings.zombie_task_threshold_hours)
         
-        # Identificar tareas realmente abandonadas (sin tocar PENDING ni estados de espera)
         zombies = PendingContentTask.objects.exclude(
             status__in=[
                 PendingContentTask.StatusChoices.PROCESSING, 
@@ -170,26 +161,25 @@ def _purge_zombie_tasks():
         
         count = zombies.count()
         if count > 0:
-            # Borrado masivo
             zombies.delete()
             _log_structured_event(f"LIMPIEZA AUTOMÁTICA: Se han eliminado {count} tareas residuales inactivas por >24h.", "WARNING")
     except Exception as e:
         logger.error(f"Error en limpieza de zombies: {e}")
 
-def _get_next_subject_queryset(settings):
+def _get_next_subject_queryset(settings_obj):
     base_queryset = Subject.objects.filter(content_materials__isnull=True)
     active_task_subject_names = PendingContentTask.objects.exclude(
         status__in=[PendingContentTask.StatusChoices.COMPLETED, PendingContentTask.StatusChoices.FAILED_FATAL]
     ).values_list('subject__name', flat=True).distinct()
     query = base_queryset.exclude(name__in=active_task_subject_names)
-    if settings.seed_branch:
-        query = query.filter(academic_year__degree__branch=settings.seed_branch)
-    if settings.seed_degree:
-        query = query.filter(academic_year__degree=settings.seed_degree)
-    if settings.seed_year:
+    if settings_obj.seed_branch:
+        query = query.filter(academic_year__degree__branch=settings_obj.seed_branch)
+    if settings_obj.seed_degree:
+        query = query.filter(academic_year__degree=settings_obj.seed_degree)
+    if settings_obj.seed_year:
         try:
             year_map = {"Primero": 1, "Segundo": 2, "Tercero": 3, "Cuarto": 4, "Quinto": 5}
-            year_int = year_map.get(settings.seed_year)
+            year_int = year_map.get(settings_obj.seed_year)
             if year_int:
                 query = query.filter(academic_year__year=year_int)
         except (ValueError, TypeError):
@@ -236,34 +226,6 @@ def _request_quarantine_via_mailbox(api_key: ApiKey):
         logger.warning(f"BUZÓN: Solicitud de cuarentena enviada para la clave '{api_key.name}' (ID: {api_key.id}).")
     except Exception as e:
         logger.critical(f"FALLO CRÍTICO DE ARQUITECTURA: No se pudo escribir en el buzón de cuarentena '{QUARANTINE_MAILBOX_FILE}': {e}", exc_info=True)
-
-def log_assessment_task_event(assessment_id, message, level="INFO", payload=None):
-    try:
-        from assessment.models import Assessment
-        timestamp = datetime.utcnow().isoformat() + "Z"
-        entry = {
-            "timestamp": timestamp,
-            "level": level,
-            "message": message,
-        }
-        if payload:
-            try:
-                payload_str = json.dumps(payload, ensure_ascii=False, sort_keys=True)
-                entry["payload"] = payload_str[:2000] + (" ... [TRUNCATED]" if len(payload_str) > 2000 else "")
-            except TypeError:
-                entry["payload"] = str(payload)[:2000]
-
-        # [FIX HITO 6] Limpieza de conexiones y validación de tipo para persistencia en Celery
-        db.close_old_connections()
-        with transaction.atomic():
-            assessment = Assessment.objects.select_for_update().get(pk=assessment_id)
-            if not isinstance(assessment.event_log, list):
-                assessment.event_log = []
-            assessment.event_log.insert(0, entry)
-            assessment.event_log = assessment.event_log[:100]
-            assessment.save(update_fields=['event_log'])
-    except Exception as e:
-        logger.error(f"Error CRÍTICO al escribir en event_log DB para Assessment {assessment_id}: {e}")
 
 def log_task_event(task_id: str, message: str, is_error: bool = False, payload: dict = None):
     try:
@@ -402,133 +364,7 @@ def _send_completion_notifications(new_content: ContentMaterial):
         logger.error(f"Error al enviar notificaciones de finalización para el contenido {new_content.id}: {e}", exc_info=True)
 
 # ==============================================================================
-# SECCIÓN 3: FUNCIONES AUXILIARES DE AUTOEVALUACIONES (ASSESSMENT)
-def _is_daily_quota_error(error_msg):
-    """Detecta si el error es explícitamente por límite diario (20 reqs)."""
-    msg = str(error_msg)
-    return any(p in msg for p in ["PerDay", "limit: 20", "quotaValue: 20", "GenerateRequestsPerDay"])
-
-def _is_generic_quota_error(error_msg):
-    """Detecta errores 429 o de cuota genéricos."""
-    msg = str(error_msg)
-    return "429" in msg or "Resource" in msg or "Quota" in msg
-
-
-def _create_assessment_skeleton(assessment):
-    from assessment.models import Question
-    subject_name = assessment.content_copy.original_content.title
-    strategy_mod = AssessmentStrategyFactory.get_strategy(assessment.archetype)
-    itinerary = assessment.language_itinerary if hasattr(assessment, 'language_itinerary') else None
-    
-    skeleton_data = strategy_mod.get_strategy_skeleton("", subject_name, itinerary=itinerary)
-    questions_to_create = skeleton_data.get('skeleton', [])
-    
-    if not questions_to_create:
-        questions_to_create = [{'label': 'Evaluación General', 'type': 'open_ended', 'widget': 'TEXT_AREA'}]
-
-    with transaction.atomic():
-        assessment.questions.all().delete()
-        for q_data in questions_to_create:
-            Question.objects.create(
-                assessment=assessment,
-                section_label=q_data.get('section_label') or q_data.get('label') or 'Evaluación',
-                source_type=q_data.get('source_type', q_data.get('source', 'SRC_DIR')),
-                interaction_type=q_data.get('interaction_type', q_data.get('interaction', 'QT_PROD')),
-                response_mode=q_data.get('response_mode', q_data.get('response', 'REQ_DUAL')),
-                question_text="[GENERANDO CONTENIDO...]",
-                model_answer="[GENERANDO RESPUESTA...]"
-            )
-        assessment.total_questions_expected = len(questions_to_create)
-        assessment.save(update_fields=['total_questions_expected'])
-
-def log_timestamp(message):
-    logger.info(f"[{timezone.now().strftime('%Y-%m-%d %H:%M:%S.%f')}] {message}")
-    try:
-        from assessment.models import AssessmentSettings
-        s = AssessmentSettings.get_settings()
-        entry = {"timestamp": timezone.now().isoformat(), "message": str(message)}
-        if s.event_log is None: s.event_log = []
-        s.event_log.insert(0, entry)
-        s.event_log = s.event_log[:100]
-        s.save(update_fields=["event_log"])
-    except Exception:
-        pass
-
-def _log_assessment_event(assessment_id, message, level="INFO"):
-    try:
-        with transaction.atomic():
-            assessment = Assessment.objects.select_for_update().get(pk=assessment_id)
-            assessment.add_log_event(message, level)
-    except Assessment.DoesNotExist:
-        logger.error(f"No se pudo loguear evento para Assessment {assessment_id}: No existe.")
-    except Exception as e:
-        logger.error(f"Error escribiendo log de Assessment {assessment_id}: {e}")
-
-def _parse_assessment_text(text: str) -> list:
-    text = clean_json_response(text)
-    try:
-        data = dirtyjson.loads(text)
-        # Soporte para lista, dict con clave "questions" o diccionario individual (Chino)
-        raw_list = data["questions"] if (isinstance(data, dict) and "questions" in data) else ([data] if isinstance(data, dict) else (data if isinstance(data, list) else []))
-        
-        final_questions = []
-        for item in raw_list:
-            if not isinstance(item, dict) or not item.get('question_text'): continue
-            
-            # Limpieza y Normalización de Claves (answer vs model_answer)
-            clean_item = {
-                'question_text': re.sub(r'^\s*(\d+|[a-zA-Z])[\.\)\-]+\s*', '', item['question_text']).strip(),
-                'section_label': item.get('section_label'),
-                'model_answer': item.get('model_answer', item.get('answer', 'Respuesta no disponible.')),
-                'options': item.get('options', [])
-            }
-            final_questions.append(clean_item)
-        return final_questions
-    except Exception as e:
-        logger.error(f"Error en _parse_assessment_text: {e}")
-        return []
-
-def _parse_correction_text(text: str) -> dict:
-    score = None
-    feedback = ""
-    score_match = re.search(r"PUNTUACION:\s*(\d+)", text, re.IGNORECASE)
-    if score_match:
-        try:
-            score = int(score_match.group(1))
-            if not (0 <= score <= 100): score = None
-        except (ValueError, IndexError):
-            score = None
-    feedback_match = re.search(r"FEEDBACK:\s*(.*)", text, re.DOTALL | re.IGNORECASE)
-    if feedback_match:
-        feedback = feedback_match.group(1).strip()
-    return {"score": score, "feedback": feedback}
-
-# [HITO 6 - TAREA 3] PERSISTENCIA FÍSICA (JSON BACKUP)
-def _get_backup_path(assessment_id):
-    if not os.path.exists(RECOVERY_DIR):
-        os.makedirs(RECOVERY_DIR, exist_ok=True)
-    return os.path.join(RECOVERY_DIR, f"assessment_recovery_{assessment_id}.json")
-
-def _save_json_backup(assessment_id, data):
-    try:
-        path = _get_backup_path(assessment_id)
-        with open(path, 'w') as f:
-            json.dump(data, f, indent=2, ensure_ascii=False)
-    except Exception as e:
-        logger.error(f"Fallo backup JSON {assessment_id}: {e}")
-
-def _load_json_backup(assessment_id):
-    path = _get_backup_path(assessment_id)
-    if os.path.exists(path):
-        try:
-            with open(path, 'r') as f:
-                return json.load(f)
-        except Exception as e:
-            logger.error(f"Fallo carga backup JSON {assessment_id}: {e}")
-    return {}
-
-# ==============================================================================
-# SECCIÓN 4: TAREAS CELERY
+# SECCIÓN 3: TAREAS CELERY
 # ==============================================================================
 
 class ContentGenerationError(Exception):
@@ -591,24 +427,9 @@ def global_orchestrator_task(self):
             _log_structured_event(message, "WARNING", {"task_id": str(task.id)})
             task.status = PendingContentTask.StatusChoices.FAILED_RETRYABLE
             task.save(update_fields=["status"])
-        zombie_assessment_tasks = Assessment.objects.filter(status=Assessment.AssessmentStatus.PROCESSING, created_at__lt=zombie_threshold)
-        for task in zombie_assessment_tasks:
-            message = f"VIGILANTE (ASSESSMENT): Tarea '{task.id}' detectada como ZOMBIE. Marcada para rescate."
-            _log_structured_event(message, "WARNING", {"task_id": str(task.id)})
-            task.status = Assessment.AssessmentStatus.GENERATION_FAILED_RETRYABLE
-            task.save(update_fields=["status"])
-        assessment_gen_to_rescue = Assessment.objects.filter(status=Assessment.AssessmentStatus.GENERATION_FAILED_RETRYABLE).order_by('created_at').first()
-        if assessment_gen_to_rescue:
-            _log_structured_event(f"RESCATE (ASSESSMENT-GEN): Re-encolando la tarea de generación de evaluación {assessment_gen_to_rescue.id}.")
-            assessment_gen_to_rescue.status = Assessment.AssessmentStatus.PENDING
-            assessment_gen_to_rescue.save(update_fields=["status"])
-            generate_assessment_from_content_task.delay(assessment_gen_to_rescue.id)
-            return
-        assessment_corr_to_rescue = Assessment.objects.filter(status=Assessment.AssessmentStatus.CORRECTION_FAILED_RETRYABLE).order_by('created_at').first()
-        if assessment_corr_to_rescue:
-            _log_structured_event(f"RESCATE (ASSESSMENT-CORR): Re-encolando la tarea de corrección de evaluación {assessment_corr_to_rescue.id}.")
-            correct_assessment_task.delay(assessment_corr_to_rescue.id)
-            return
+        
+        # [LIMPIEZA HITO 6] Lógica de rescate de assessment eliminada
+
         task_to_rescue = PendingContentTask.objects.filter(status__in=[PendingContentTask.StatusChoices.FAILED_RETRYABLE, PendingContentTask.StatusChoices.FAILED_QUOTA]).order_by('created_at').first()
         if task_to_rescue:
             _log_structured_event(f"RESCATE (CONTENT): Re-encolando la tarea de contenido {task_to_rescue.id}.")
@@ -641,15 +462,9 @@ def global_orchestrator_task(self):
             automation_settings.last_run_timestamp = timezone.now()
             automation_settings.save(update_fields=['last_run_status', 'last_run_timestamp'])
             return
-        pending_assessment = Assessment.objects.filter(status=Assessment.AssessmentStatus.PENDING).order_by('created_at').first()
-        if pending_assessment:
-            _log_structured_event(f"PRIORIDAD 2 (ASSESSMENT): Reclamada la evaluación pendiente {pending_assessment.id}.", "INFO")
-            generate_assessment_from_content_task.delay(pending_assessment.id)
-            status_msg = f"TAREA LANZADA (ASSESSMENT): '{pending_assessment.id}'."
-            automation_settings.last_run_status = status_msg
-            automation_settings.last_run_timestamp = timezone.now()
-            automation_settings.save(update_fields=['last_run_status', 'last_run_timestamp'])
-            return
+        
+        # [LIMPIEZA HITO 6] Búsqueda de evaluaciones pendientes eliminada
+
         if PendingContentTask.objects.filter(status__in=[PendingContentTask.StatusChoices.PROCESSING, PendingContentTask.StatusChoices.PENDING]).exists():
             status_msg = "EN ESPERA: Hay tareas de contenido activas. La generación masiva se pospone."
             if automation_settings.last_run_status != status_msg:
@@ -1017,334 +832,3 @@ def generate_full_course_task(self, task_id):
 
     finally:
         db.close_old_connections()
-
-@shared_task(bind=True, acks_late=True, max_retries=5, default_retry_delay=60)
-def generate_assessment_from_content_task(self, assessment_id):
-    from .models import AutomationSettings  # [FIX] Asegurar disponibilidad local para evitar UnboundLocalError
-    """
-    [V_STRICT_SERIAL] Motor Atómico con Semáforo de Concurrencia.
-    Garantiza que solo una evaluación se procese a la vez en el pool.
-    """
-    db.close_old_connections()
-    
-    # 1. SEMÁFORO DE CONCURRENCIA (Exclusión Mutua)
-    try:
-        with transaction.atomic():
-            # Bloqueo de settings para sincronización
-            _settings = AssessmentSettings.objects.select_for_update().get(pk=1)
-            
-            # Buscamos si hay OTRA evaluación en estado PROCESSING
-            other_active = Assessment.objects.filter(
-                status=Assessment.AssessmentStatus.PROCESSING
-            ).exclude(pk=assessment_id).exists()
-            
-            if other_active:
-                log_assessment_task_event(assessment_id, "CONCURRENCY LOCK: Otra evaluación está en proceso. Re-encolando...", level="INFO")
-                # Reintentamos en 45 segundos
-                raise self.retry(countdown=45)
-            
-            # Si no hay otras, tomamos el slot marcando como PROCESSING inmediatamente
-            assessment = Assessment.objects.select_for_update().get(pk=assessment_id)
-            if assessment.status != Assessment.AssessmentStatus.PROCESSING:
-                assessment.status = Assessment.AssessmentStatus.PROCESSING
-                assessment.save(update_fields=['status'])
-    except Retry:
-        raise
-    except Assessment.DoesNotExist:
-        logger.error(f"Assessment {assessment_id} no encontrado.")
-        return
-    except Exception as e:
-        logger.error(f"Error en Semáforo de Concurrencia: {e}")
-        raise self.retry(countdown=30)
-
-    log_assessment_task_event(assessment_id, "MOTOR NUCLEAR: Iniciando generación (Slot de exclusión mutua adquirido).")
-    try:
-        assessment = Assessment.objects.get(pk=assessment_id)
-        original_content = assessment.content_copy.original_content
-        full_content = original_content.get_full_markdown_content()
-        subject_obj = original_content.subject.first()
-        subject_name = subject_obj.name if subject_obj else original_content.title
-        branch_name = subject_obj.academic_year.degree.branch.name if (subject_obj and subject_obj.academic_year) else "General"
-        
-        if assessment.prompt_data is None: assessment.prompt_data = {}
-        json_backup = _load_json_backup(assessment_id)
-        if json_backup and 'questions_cache' in json_backup:
-            assessment.prompt_data.setdefault('questions_cache', {}).update(json_backup['questions_cache'])
-
-        current_step = assessment.prompt_data.get('current_lifecycle_step', 0)
-        subject_type = assessment.prompt_data.get('tribunal_type', "HUMANITIES_ARTS")
-        q_cache = assessment.prompt_data.get('questions_cache', {})
-        r_text_memory = assessment.reading_stimulus or full_content
-        l_text_memory = assessment.listening_transcript or ""
-
-        while current_step <= 2:
-            automation_settings = AutomationSettings.load()
-            api_key = automation_settings.active_api_key
-            if not api_key or not api_key.is_enabled or api_key.is_quarantined:
-                api_key = ApiKey.objects.filter(is_enabled=True, is_quarantined=False).order_by('id').first()
-                if not api_key:
-                    # Si no hay llaves, liberamos el slot y esperamos
-                    Assessment.objects.filter(id=assessment_id).update(status=Assessment.AssessmentStatus.PENDING)
-                    raise self.retry(countdown=300)
-                automation_settings.active_api_key = api_key
-                automation_settings.save(update_fields=['active_api_key'])
-
-            try:
-                if current_step == 0:
-                    prompt = generate_classifier_prompt(subject_name, branch_name)
-                    success, resp, _ = generate_text_content(prompt, api_key=api_key)
-                    if not success: raise ResourceExhausted(resp)
-                    found = clean_json_response(resp).strip().upper()
-                    subject_type = next((t for t in ["LOGIC_AND_TECH", "CEFR_LANGUAGES", "SOCIO_LEGAL", "HEALTH_SCIENCES", "HUMANITIES_ARTS"] if t in found), "HUMANITIES_ARTS")
-                    
-                    # Determinación de Itinerario (Capa Nuclear)
-                    from core.services.assessment_strategies.languages_strategy import is_minor_language
-                    itinerary = "MINOR" if subject_type == "CEFR_LANGUAGES" and is_minor_language(subject_name) else ("MAIOR" if subject_type == "CEFR_LANGUAGES" else None)
-                    
-                    p_data = assessment.prompt_data
-                    p_data.update({'tribunal_type': subject_type, 'current_lifecycle_step': 1})
-                    Assessment.objects.filter(id=assessment_id).update(archetype=subject_type, language_itinerary=itinerary, prompt_data=p_data)
-                    assessment.refresh_from_db()  # [CRITICAL] Sincronizar memoria para el Skeleton
-                    assessment.refresh_from_db()
-                    current_step = 1
-
-                elif current_step == 1:
-                    strategy_mod = AssessmentStrategyFactory.get_strategy(subject_type)
-                    skeleton = strategy_mod.get_strategy_skeleton(full_content, subject_name, itinerary=assessment.language_itinerary)
-                    if skeleton.get('requires_api_stimulus') and not assessment.reading_stimulus:
-                        prompt_func = skeleton.get('prompt_func', 'generate_languages_stimuli_prompt')
-                        prompt = getattr(strategy_mod, prompt_func)(full_content, subject_name)
-                        success, text, _ = generate_text_content(prompt, api_key=api_key)
-                        if not success: raise ResourceExhausted(text)
-                        dat = dirtyjson.loads(clean_json_response(text))
-                        r_stim_raw = dat.get("reading_stimulus", "")
-                        r_stim = r_stim_raw.get("text", r_stim_raw) if isinstance(r_stim_raw, dict) else r_stim_raw
-                        l_stim = dat.get("listening_transcript", "")
-                        p_data = assessment.prompt_data
-                        p_data.update({'cefr_level': dat.get("cefr_level", "B1"), 'current_lifecycle_step': 2})
-                        # [HITO 6] BLINDAJE DE UI LABELS (ANTI-ALUCINACIÓN)
-                        # Forzamos etiquetas estáticas para garantizar el idioma correcto.
-                        # Solo permitimos que la IA sugiera etiquetas en inmersión total (MAIOR).
-                        static_labels = strategy_mod.get_ui_labels(subject_name, itinerary=assessment.language_itinerary)
-                        if subject_type == "CEFR_LANGUAGES" and assessment.language_itinerary == "MAIOR":
-                            ui_labels = dat.get("ui_labels", static_labels)
-                        else:
-                            ui_labels = static_labels
-                        p_data.update({
-                            'cefr_level': dat.get("cefr_level", "B1"), 
-                            'current_lifecycle_step': 2,
-                            'ui_labels': ui_labels
-                        })
-                        Assessment.objects.filter(id=assessment_id).update(reading_stimulus=r_stim, listening_transcript=l_stim, prompt_data=p_data)
-                    else:
-                        p_data = assessment.prompt_data
-                        p_data.update({
-                            'current_lifecycle_step': 2,
-                            'ui_labels': strategy_mod.get_ui_labels(subject_name, itinerary=assessment.language_itinerary)
-                        })
-                        Assessment.objects.filter(id=assessment_id).update(prompt_data=p_data)
-                    assessment.refresh_from_db()
-                    r_text_memory = assessment.reading_stimulus or full_content
-                    current_step = 2
-
-                elif current_step == 2:
-                    if assessment.questions.count() == 0: _create_assessment_skeleton(assessment)
-                    questions = assessment.questions.all().order_by('id')
-                    ui_labels = assessment.prompt_data.get('ui_labels', {})
-                    
-                    # [CAPA NUCLEAR] Filtrado de Rango y Extracción de Contexto Académico
-                    selection_range = assessment.selection_range
-                    filtered_content = filter_content_by_selection(full_content, selection_range) if selection_range else full_content
-                    learning_objectives = subject_obj.learning_objectives if subject_obj else {}
-                    course_outline = subject_obj.course_content_outline if subject_obj else []
-
-                    for idx, q_obj in enumerate(questions, 1):
-                        log_assessment_task_event(assessment_id, f"Generando pregunta {idx}/{len(questions)}: {ui_labels.get(q_obj.section_label, q_obj.section_label)}")
-                        s_idx = str(idx)
-                        if s_idx in q_cache:
-                            d = q_cache[s_idx]
-                            Question.objects.filter(id=q_obj.id).update(question_text=d['text'], options=d.get('options', []), model_answer=d['answer'], section_label=d.get('section_label', q_obj.section_label))
-                            continue
-
-                        strategy_mod = AssessmentStrategyFactory.get_strategy(subject_type)
-                        # [MEMORIA DE SESIÓN] Extraemos textos de preguntas previas para evitar redundancia
-                        prev_texts = [v['text'] for v in q_cache.values()]
-                        
-                                                # [HITO 6] Inyectamos la etiqueta traducida en el objeto de pregunta temporalmente
-                        # para que la IA sepa EXACTAMENTE qué bloque está generando (Reading, Writing, etc.)
-                        display_label = ui_labels.get(q_obj.section_label, q_obj.section_label)
-                        q_obj.section_label = display_label # Sobrescritura volátil para el prompt
-                        
-                        prompt = strategy_mod.generate_item_prompt(
-                            filtered_content, 
-                            q_obj, 
-                            itinerary=assessment.language_itinerary, 
-                            target_lang=subject_name, 
-                            learning_objectives=learning_objectives, 
-                            syllabus=course_outline, 
-                            listening_transcript=l_text_memory,
-                            already_covered=prev_texts
-                        )
-
-                        success, resp, _ = generate_text_content(prompt, api_key=api_key)
-                        if not success: raise ResourceExhausted(resp)
-                        d_list = _parse_assessment_text(resp)
-                        if not d_list: raise ValueError(f"Fallo parseo Q{q_obj.id}. Respuesta: {resp[:50]}...")
-                        
-                        d = d_list[0]
-                        options = d.get('options', [])
-                        if q_obj.interaction_type in ["QT_SEL", "QT_CLZ_OPT"]:
-                            if not isinstance(options, list):
-                                raise ValueError(f"Fallo de esquema: 'options' no es una lista en Q:{q_obj.id}")
-                            unique_options = set(str(o).strip().lower() for o in options)
-                            if len(unique_options) < 4:
-                                raise ValueError(f"Integridad Fallida: Se requieren 4 opciones únicas en Q:{q_obj.id}. Detectadas: {len(unique_options)}")
-                        
-                        clean_data = {'text': d['question_text'], 'options': options, 'answer': d['model_answer'], 'section_label': d.get('section_label')}
-                        q_cache[s_idx] = clean_data
-                        p_data = assessment.prompt_data
-                        p_data['questions_cache'] = q_cache
-                        _save_json_backup(assessment_id, {'questions_cache': q_cache})
-                        Assessment.objects.filter(id=assessment_id).update(prompt_data=p_data, questions_processed=idx)
-                        update_fields = {'question_text': clean_data['text'], 'options': clean_data['options'], 'model_answer': clean_data['answer']}
-                        if clean_data.get('section_label'):
-                            update_fields['section_label'] = clean_data['section_label']
-                        Question.objects.filter(id=q_obj.id).update(**update_fields)
-                        time.sleep(1)
-                    current_step = 3
-
-            except (ResourceExhausted, AIServiceCriticalError) as e:
-                error_str = str(e)
-                api_key.refresh_from_db()
-                if _is_daily_quota_error(error_str):
-                    log_assessment_task_event(assessment_id, f"CLAVE AGOTADA (DIARIA): '{api_key.name}'. Cuarentena.", level="ERROR")
-                    api_key.is_quarantined = True
-                    api_key.save(update_fields=['is_quarantined'])
-                    _request_quarantine_via_mailbox(api_key)
-                    next_k = ApiKey.objects.filter(is_enabled=True, is_quarantined=False).exclude(id=api_key.id).first()
-                    if next_k:
-                        from .models import AutomationSettings
-                        AutomationSettings.objects.filter(pk=1).update(active_api_key=next_k)
-                    raise self.retry(exc=e, countdown=5)
-                elif _is_generic_quota_error(error_str):
-                    log_assessment_task_event(assessment_id, f"RPM LIMIT en '{api_key.name}'. Strike {api_key.consecutive_failures + 1}/4. Pausa 90s.", level="WARNING")
-                    time.sleep(90)
-                    api_key.consecutive_failures += 1
-                    api_key.save(update_fields=['consecutive_failures'])
-                    if api_key.consecutive_failures >= 4:
-                        api_key.is_quarantined = True
-                        api_key.save(update_fields=['is_quarantined'])
-                        _request_quarantine_via_mailbox(api_key)
-                    raise self.retry(exc=e, countdown=5)
-                raise self.retry(exc=e, countdown=30)
-            except ValueError as e:
-                log_assessment_task_event(assessment_id, f"ERROR DATOS: {str(e)[:100]}", level="ERROR")
-                raise self.retry(exc=e, countdown=10)
-
-        Assessment.objects.filter(id=assessment_id).update(status=Assessment.AssessmentStatus.COMPLETED)
-        log_assessment_task_event(assessment_id, "Finalizado con éxito.", level="SUCCESS")
-        try: os.remove(_get_backup_path(assessment_id))
-        except: pass
-
-    except Exception as e:
-        # Si fallamos fatalmente, liberamos el slot marcando como FAILED
-        log_assessment_task_event(assessment_id, f"Fallo Generación: {e}", level="ERROR")
-        Assessment.objects.filter(id=assessment_id).update(status=Assessment.AssessmentStatus.GENERATION_FAILED_RETRYABLE)
-        raise self.retry(exc=e)
-    finally:
-        db.close_old_connections()
-
-
-@shared_task(bind=True, acks_late=True, max_retries=3, default_retry_delay=60)
-def correct_assessment_task(self, assessment_id):
-    """
-    [V_SEGREGATED_SERIAL] Motor de Corrección con exclusión mutua.
-    """
-    db.close_old_connections()
-    
-    # SEMÁFORO DE CONCURRENCIA PARA CORRECCIÓN
-    try:
-        with transaction.atomic():
-            _settings = AssessmentSettings.objects.select_for_update().get(pk=1)
-            other_active = Assessment.objects.filter(
-                status=Assessment.AssessmentStatus.CORRECTING
-            ).exclude(pk=assessment_id).exists()
-            
-            if other_active:
-                raise self.retry(countdown=45)
-            
-            a_upd = Assessment.objects.select_for_update().get(pk=assessment_id)
-            if a_upd.status == Assessment.AssessmentStatus.PAUSED:
-                raise self.retry(countdown=60)
-            a_upd.status = Assessment.AssessmentStatus.CORRECTING
-            a_upd.save(update_fields=["status"])
-    except Retry:
-        raise
-    except Exception:
-        raise self.retry(countdown=30)
-
-    _log_assessment_event(assessment_id, "CORRECTION_TASK: Inicio del proceso segregado serial.")
-    try:
-        assessment = Assessment.objects.get(pk=assessment_id)
-        user_answers = UserAnswer.objects.filter(question__assessment=assessment).select_related("question")
-        
-        if not user_answers.exists():
-            assessment.status = Assessment.AssessmentStatus.COMPLETED
-            assessment.save(update_fields=["status"])
-            return
-
-        api_key = ApiKey.objects.filter(is_enabled=True, is_quarantined=False).first()
-        if not api_key: raise ValueError("Sin clave API disponible.")
-        
-        strategy_mod = AssessmentStrategyFactory.get_strategy(assessment.archetype)
-        
-        answers_to_correct = user_answers.filter(score__isnull=True)
-        for answer in answers_to_correct:
-            if not answer.answer_text and not answer.attachment:
-                answer.score = 0
-                answer.feedback = "No answer provided."
-                answer.save(update_fields=["score", "feedback"])
-                Assessment.objects.filter(pk=assessment_id).update(questions_processed=F("questions_processed") + 1)
-                continue
-
-            try:
-                if hasattr(strategy_mod, 'generate_correction_prompt'):
-                    prompt = strategy_mod.generate_correction_prompt(
-                        question_text=answer.question.question_text, 
-                        model_answer=answer.question.model_answer, 
-                        student_answer=answer.answer_text
-                    )
-                else:
-                    prompt = f"Grade this answer: Q: {answer.question.question_text} Model: {answer.question.model_answer} User: {answer.answer_text}"
-            except Exception:
-                prompt = f"Grade this: {answer.answer_text}"
-
-            success, resp, _ = generate_text_content(prompt, api_key=api_key)
-            if success:
-                c = _parse_correction_text(resp)
-                if c['score'] is not None:
-                    answer.score, answer.feedback = c['score'], c['feedback']
-                    answer.save(update_fields=["score", "feedback"])
-            
-            Assessment.objects.filter(pk=assessment_id).update(questions_processed=F("questions_processed") + 1)
-            time.sleep(2)
-
-        assessment.status = Assessment.AssessmentStatus.RESULTS_AVAILABLE
-        assessment.save(update_fields=["status"])
-        _log_assessment_event(assessment_id, "Corrección finalizada.", "SUCCESS")
-    except Exception as e:
-        Assessment.objects.filter(id=assessment_id).update(status=Assessment.AssessmentStatus.CORRECTION_FAILED_RETRYABLE)
-        self.retry(exc=e)
-    finally:
-        db.close_old_connections()
-
-@shared_task(name="orchestrator.tasks.expire_untaken_assessments")
-def expire_untaken_assessments():
-    now = timezone.now()
-    threshold = now - timedelta(seconds=86400)
-    Assessment.objects.filter(status="COMPLETED", created_at__lt=threshold).update(status="EXPIRED_UNTAKEN")
-
-@shared_task(name="orchestrator.tasks.purge_and_penalize_corrections")
-def purge_and_penalize_corrections():
-    now = timezone.now()
-    Assessment.objects.filter(status="RESULTS_AVAILABLE", results_expiration_date__lt=now).update(status="CORRECTION_EXPIRED")

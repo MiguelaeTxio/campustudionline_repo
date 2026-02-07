@@ -1,7 +1,6 @@
-{# /home/MiguelAeTxio/CampuStudiOnline/contents/templates/contents/study_room/edit_copy.html #}
+{# /home/MiguelAeTxio/PROJECTS/CampuStudiOnline/contents/templates/contents/study_room/edit_copy.html #}
 {% extends "base.html" %}
 {% load static %}
-{% load assessment_tags %}
 
 {% block title %}Editar Copia: {{ content_copy.original_content.title|default:"Contenido sin título" }} - CampuStudiOnline{% endblock title %}
 
@@ -13,29 +12,42 @@
     #form-copy { display: none; }
     #annotations-list-container { max-height: 500px; overflow-y: auto; }
     #universia-widget-container { position: fixed; bottom: 30px; right: 30px; z-index: 9999; }
+    .maintenance-overlay { 
+        position: relative;
+        overflow: hidden;
+    }
+    .maintenance-badge {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        z-index: 10;
+    }
 </style>
 {% endblock extra_css %}
 
 {% block content %}
 <div class="container-fluid mt-4">
-    {# --- MODAL DE MANTENIMIENTO --- #}
-    <div class="modal fade" id="reformWarningModal" tabindex="-1" aria-hidden="true">
+    {# --- MODAL DE RECONSTRUCCIÓN (NUKE HITO 6) --- #}
+    <div class="modal fade" id="assessmentMaintenanceModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content border-warning">
                 <div class="modal-header modal-warning-header">
-                    <h5 class="modal-title"><i class="fas fa-exclamation-triangle me-2"></i> Aviso de Mantenimiento</h5>
+                    <h5 class="modal-title"><i class="fas fa-hard-hat me-2"></i> En Construcción</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <p class="mb-0">Esta página está sufriendo remodelaciones. Se encuentra en mantenimiento de mejora de la funcionalidad y puede encontrar inconsistencias.</p>
+                    <p class="mb-2"><strong>¡Estamos evolucionando!</strong></p>
+                    <p>El sistema de evaluaciones se está reconstruyendo desde cero para cumplir con los nuevos **estándares de acreditación académica**.</p>
+                    <p class="text-muted small">Disculpe las molestias mientras mejoramos su experiencia de aprendizaje. Esta funcionalidad volverá a estar activa pronto.</p>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-warning btn-sm" data-bs-dismiss="modal">Entendido</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Entendido</button>
                 </div>
             </div>
         </div>
     </div>
-    {# ------------------------------ #}
+    {# ---------------------------------------------- #}
+
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="{% url 'home' %}">Inicio</a></li>
@@ -43,16 +55,28 @@
             <li class="breadcrumb-item active" aria-current="page">Editar Copia</li>
         </ol>
     </nav>
+    
     <div class="card shadow-sm mb-4" id="tour-assessment-card">
-        <div class="card-header">
+        <div class="card-header d-flex justify-content-between align-items-center">
             <h2 class="h5 mb-0">Autoevaluación con IA</h2>
+            <span class="badge bg-warning text-dark"><i class="fas fa-wrench me-1"></i> Mantenimiento Hito 6</span>
         </div>
         <div class="card-body">
-            <div id="assessment-panel-container">
-                {% include "assessment/partials/assessment_status_block.html" %}
+            {# --- PANEL DE ASSESSMENT (BLOQUEADO POR RECONSTRUCCIÓN) --- #}
+            <div id="assessment-panel-container" class="text-center p-4 bg-light border rounded position-relative">
+                <div class="mb-3 text-muted">
+                    <i class="fas fa-tools fa-3x mb-3"></i>
+                    <h5>Sistema de Evaluación Inoperativo Temporalmente</h5>
+                    <p class="small">Estamos implementando el nuevo motor de acreditación académica.</p>
+                </div>
+                <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#assessmentMaintenanceModal">
+                    <i class="fas fa-clipboard-check me-2"></i> Solicitar Evaluación
+                </button>
             </div>
+            {# ---------------------------------------------------------- #}
         </div>
     </div>
+
     <div class="row">
         <div class="col-lg-8">
             <div class="card shadow-sm mb-4">
@@ -160,16 +184,15 @@
 {% block extra_js %}
 <script>
     window.annotationConfig = {{ annotation_config|safe }};
-    window.assessmentPollingConfig = {{ assessment_polling_config|safe }};
-    window.assessmentTourDemoURL = "{% url 'assessment:take_assessment_demo' %}";
+    window.assessmentPollingConfig = null;
+    window.assessmentTourDemoURL = "#";
 
     document.addEventListener('DOMContentLoaded', function() {
-        var myModal = new bootstrap.Modal(document.getElementById('reformWarningModal'));
-        myModal.show();
+        var maintenanceModal = new bootstrap.Modal(document.getElementById('assessmentMaintenanceModal'));
+        maintenanceModal.show();
     });
 </script>
 <script src="{% static 'js/annotation_handler.js' %}"></script>
-<script src="{% static 'js/assessment_status_handler.js' %}"></script>
 <script src="{% static 'contents/study_room_tour.js' %}"></script>
 <script src="{% static 'universia/js/universia.js' %}"></script>
 
