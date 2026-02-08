@@ -1618,3 +1618,35 @@ Objetivos de la sesión:
 *  **Session:** Hito 6: Consolidación del Motor de Autoevaluaciones y Arquetipos Pedagógicos
 *  **Description:** Sesión centrada en el avance del Hito 6. Se abordará la implementación técnica y lógica de los arquetipos de evaluación definidos (Logic, Languages, Health, etc.), asegurando la correcta integración entre el modelo de datos de `assessment`, el orquestador de tareas y la generación de contenido mediante Gemini.
 
+
+# 2026-02-08
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+## CYC # --SYSTEM -->
+*  **Session:** CampuStudiOnline: Fase Nuke - Eliminación y Reconstrucción de Autoevaluaciones (Hito 6)
+*  **Description:** Inicio de la Fase Nuke del Hito 6. El objetivo es eliminar sistemáticamente toda la infraestructura previa de 'assessments' (modelos, estrategias, lógica en orchestrator y documentación obsoleta) para limpiar la deuda técnica. Se implementará un bloqueo en frontend (modal 'En Construcción') y se comenzará la documentación estricta de los nuevos arquetipos de acreditación UGR.
+
+
+# 2026-02-08
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+## EPI
+*  **Session:** Fase Nuke: Re-arquitectura del Sistema de Autoevaluaciones UGR
+*  **Description:** Inicio de la purga técnica del módulo de evaluaciones obsoleto. El plan de acción comprende la eliminación de estrategias y modelos antiguos, la desvinculación del orquestador y la desactivación del frontend mediante un modal informativo. Se establece la base para una nueva documentación exhaustiva basada en los arquetipos de acreditación de la Universidad de Granada, definiendo una estructura de archivos segregada y una lógica de carga selectiva de componentes pedagógicos.
+
+
+# 2026-02-08
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+## PLUTO
+*  **Session:** Inicio Implementación Assessment V2 - Creación App y Modelos Base
+*  **Description:** Inicio de la Fase 2 del Hito 6. Creación de la aplicación `assessment_v2`. Configuración inicial en `settings.py`. Implementación de la estructura de modelos segregada: `plans.py` (Suscripciones), `tracking.py` (Costes API) y `main.py` (Exámenes). Generación de migraciones iniciales.
+
+
+# 2026-02-08
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+## MAMC # --SYSTEM -->
+*  **Session:** Hito 6: Inicio Implementación Assessment V2
+*  **Description:** Arranque de la fase de implementación Alpha del sistema de autoevaluación. Creación de la aplicación assessment_v2, integración en settings y definición de modelos de datos fundamentales (SubscriptionPlan, TokenUsage, Exam, Submission) según especificaciones de la UGR/UCO.
+

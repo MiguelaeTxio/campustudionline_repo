@@ -428,7 +428,6 @@ def global_orchestrator_task(self):
             task.status = PendingContentTask.StatusChoices.FAILED_RETRYABLE
             task.save(update_fields=["status"])
         
-        # [LIMPIEZA HITO 6] Lógica de rescate de assessment eliminada
 
         task_to_rescue = PendingContentTask.objects.filter(status__in=[PendingContentTask.StatusChoices.FAILED_RETRYABLE, PendingContentTask.StatusChoices.FAILED_QUOTA]).order_by('created_at').first()
         if task_to_rescue:
@@ -463,7 +462,6 @@ def global_orchestrator_task(self):
             automation_settings.save(update_fields=['last_run_status', 'last_run_timestamp'])
             return
         
-        # [LIMPIEZA HITO 6] Búsqueda de evaluaciones pendientes eliminada
 
         if PendingContentTask.objects.filter(status__in=[PendingContentTask.StatusChoices.PROCESSING, PendingContentTask.StatusChoices.PENDING]).exists():
             status_msg = "EN ESPERA: Hay tareas de contenido activas. La generación masiva se pospone."

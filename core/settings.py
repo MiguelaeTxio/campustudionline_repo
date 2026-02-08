@@ -150,7 +150,6 @@ CELERY_TASK_DEFAULT_QUEUE = 'default'
 CELERY_TASK_DEFAULT_ROUTING_KEY = 'task.default'
 
 CELERY_TASK_ROUTES = {    
-    # [CLEANUP HITO 6] Rutas de assessment eliminadas
 }
 
 # --- reCAPTCHA Configuration ---
@@ -202,12 +201,12 @@ INSTALLED_APPS = [
     "messaging.apps.MessagingConfig",
     "search.apps.SearchConfig",
     "academic_directory.apps.AcademicDirectoryConfig",
-    # "assessment.apps.AssessmentConfig",  <-- ELIMINADO HITO 6
     "push_tester.apps.PushTesterConfig",
     "favorites_prototype.apps.FavoritesPrototypeConfig",    "feedback.apps.FeedbackConfig",
     "universia.apps.UniversiaConfig",
     "schedule.apps.ScheduleConfig",
     "translation_room.apps.TranslationRoomConfig",
+    "assessment_v2.apps.AssessmentV2Config",
 ]
 
 AUTH_USER_MODEL = "users.CustomUser"
@@ -396,7 +395,6 @@ CELERY_BEAT_SCHEDULE = {
         'schedule': crontab(minute='*/5'),
         'options': {'queue': 'default'},
     },
-    # [CLEANUP HITO 6] Tareas periódicas de assessment eliminadas
 }
 # ==============================================================================
 

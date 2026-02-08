@@ -12,16 +12,6 @@
     #form-copy { display: none; }
     #annotations-list-container { max-height: 500px; overflow-y: auto; }
     #universia-widget-container { position: fixed; bottom: 30px; right: 30px; z-index: 9999; }
-    .maintenance-overlay { 
-        position: relative;
-        overflow: hidden;
-    }
-    .maintenance-badge {
-        position: absolute;
-        top: 10px;
-        right: 10px;
-        z-index: 10;
-    }
 </style>
 {% endblock extra_css %}
 
@@ -46,7 +36,6 @@
             </div>
         </div>
     </div>
-    {# ---------------------------------------------- #}
 
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
@@ -55,14 +44,13 @@
             <li class="breadcrumb-item active" aria-current="page">Editar Copia</li>
         </ol>
     </nav>
-    
-    <div class="card shadow-sm mb-4" id="tour-assessment-card">
+
+    <div class="card shadow-sm mb-4">
         <div class="card-header d-flex justify-content-between align-items-center">
             <h2 class="h5 mb-0">Autoevaluación con IA</h2>
-            <span class="badge bg-warning text-dark"><i class="fas fa-wrench me-1"></i> Mantenimiento Hito 6</span>
+            <span class="badge bg-warning text-dark"><i class="fas fa-wrench me-1"></i> Mantenimiento Sistema de Evaluación</span>
         </div>
         <div class="card-body">
-            {# --- PANEL DE ASSESSMENT (BLOQUEADO POR RECONSTRUCCIÓN) --- #}
             <div id="assessment-panel-container" class="text-center p-4 bg-light border rounded position-relative">
                 <div class="mb-3 text-muted">
                     <i class="fas fa-tools fa-3x mb-3"></i>
@@ -73,7 +61,6 @@
                     <i class="fas fa-clipboard-check me-2"></i> Solicitar Evaluación
                 </button>
             </div>
-            {# ---------------------------------------------------------- #}
         </div>
     </div>
 
@@ -83,9 +70,6 @@
                 <div class="card-header bg-light d-flex justify-content-between align-items-center">
                     <h1 class="card-title mb-0 h3">{{ content_copy.original_content.title|default:"Editar Copia" }}</h1>
                     <div>
-                        <button id="start-study-room-tour-button" class="btn btn-outline-info btn-sm me-2">
-                            <i class="fas fa-route me-1"></i> Visita Guiada
-                        </button>
                         <button id="btn-save-copy" class="btn btn-primary btn-sm"><i class="fas fa-save me-1"></i> Guardar Cambios</button>
                     </div>
                 </div>
@@ -95,11 +79,6 @@
                         <input type="hidden" name="html_content" id="hidden_html_content_input">
                         <input type="checkbox" name="is_public" id="hidden_is_public_input" {% if content_copy.is_public %}checked{% endif %}>
                     </form>
-                    <div class="form-check mt-3 mb-3">
-                        <input class="form-check-input" type="checkbox" id="visible_is_public_checkbox" {% if content_copy.is_public %}checked{% endif %}>
-                        <label class="form-check-label" for="visible_is_public_checkbox">Hacer esta copia pública</label>
-                        <small class="form-text text-muted d-block">Si marcas esta opción, tu copia con anotaciones será visible para todos los usuarios.</small>
-                    </div>
                     <div id="material-content" class="editable-content" contenteditable="true" inputmode="none" tabindex="0">
                         {{ content_copy.html_content|safe }}
                     </div>
@@ -114,67 +93,22 @@
                 <div id="annotations-list-container" class="card-body">
                     <div id="annotations-list">
                         {% for annotation in annotations %}
-                            <a href="#annotation-{{ annotation.id }}" class="annotation-link" data-annotation-id="{{ annotation.id }}">
-                                <div class="annotation-item" id="li-annotation-{{ annotation.id }}">
-                                    <div class="annotation-header d-flex justify-content-between align-items-center">
-                                        <span class="annotation-type badge {% if annotation.annotation_type == 'highlight' %}bg-warning text-dark{% elif annotation.annotation_type == 'note' %}bg-info text-dark{% elif annotation.annotation_type == 'mark' %}bg-danger text-white{% else %}bg-secondary text-white{% endif %}">
-                                            {{ annotation.get_annotation_type_display }}
-                                        </span>
-                                        <div>
-                                            <small class="text-muted me-2">{{ annotation.created_at|date:"d/m/y H:i" }}</small>
-                                            <button class="btn-delete-annotation btn btn-sm btn-link text-danger p-0" data-id="{{ annotation.id }}" title="Eliminar anotación">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
-                                        </div>
-                                    </div>
-                                    <div class="annotation-content" style="{% if annotation.annotation_type == 'highlight' %}background-color: {{ annotation.color }};{% elif annotation.annotation_type == 'mark' %}color: {{ annotation.color }}; font-weight:bold;{% elif annotation.annotation_type == 'note' %}border-bottom: 2px dotted {{ annotation.color }};{% endif %}">
-                                        {% if annotation.annotation_type == 'note' %}
-                                            {% if annotation.selected_text %}
-                                                <em>Referencia: "{{ annotation.selected_text|truncatewords:10 }}"</em><br>
-                                            {% endif %}
-                                            {{ annotation.content|linebreaksbr }}
-                                        {% else %}
-                                            {{ annotation.selected_text|truncatewords:10 }}
-                                        {% endif %}
-                                    </div>
+                            <div class="annotation-item" id="li-annotation-{{ annotation.id }}">
+                                <div class="annotation-header d-flex justify-content-between align-items-center">
+                                    <span class="annotation-type badge {% if annotation.annotation_type == 'highlight' %}bg-warning text-dark{% elif annotation.annotation_type == 'note' %}bg-info text-dark{% else %}bg-secondary text-white{% endif %}">
+                                        {{ annotation.get_annotation_type_display }}
+                                    </span>
+                                    <button class="btn-delete-annotation btn btn-sm btn-link text-danger p-0" data-id="{{ annotation.id }}"><i class="fas fa-trash"></i></button>
                                 </div>
-                            </a>
+                                <div class="annotation-content">
+                                    {{ annotation.selected_text|truncatewords:10 }}
+                                </div>
+                            </div>
                         {% empty %}
-                            <p class="text-muted">No tienes anotaciones en este material.</p>
+                            <p class="text-muted">No tienes anotaciones.</p>
                         {% endfor %}
                     </div>
                 </div>
-            </div>
-        </div>
-    </div>
-</div>
-{# --- UNIVERSIA WIDGET (SALA DE ESTUDIO) --- #}
-<div id="universia-widget-container" data-content-title="{{ content_copy.original_content.title|default:'Material de Estudio' }}">
-</div>
-{# ------------------------------------------ #}
-<!-- Herramientas y Modales -->
-<div id="floating-toolbar" class="floating-toolbar">
-    <input type="color" id="floating-annotation-color" class="color-picker-input" value="#FFD700">
-    <button id="floating-btn-highlight" class="btn-tool" title="Subrayar (Alt+H)"><i class="fas fa-highlighter"></i></button>
-    <button id="floating-btn-note" class="btn-tool" title="Añadir Nota (Alt+N)"><i class="fas fa-sticky-note"></i></button>
-    <button id="floating-btn-mark" class="btn-tool" title="Marcar (Alt+M)"><i class="fas fa-marker"></i></button>
-</div>
-<div class="modal fade" id="noteModal" tabindex="-1" aria-labelledby="noteModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="noteModalLabel">Añadir Nota</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <div class="mb-3">
-                    <label for="note-text-input" class="form-label">Contenido de la nota:</label>
-                    <textarea id="note-text-input" class="form-control" rows="4" placeholder="Escribe tu nota aquí..."></textarea>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                <button type="button" id="save-note-button" class="btn btn-primary">Guardar Nota</button>
             </div>
         </div>
     </div>
@@ -183,26 +117,11 @@
 
 {% block extra_js %}
 <script>
-    window.annotationConfig = {{ annotation_config|safe }};
-    window.assessmentPollingConfig = null;
-    window.assessmentTourDemoURL = "#";
-
     document.addEventListener('DOMContentLoaded', function() {
         var maintenanceModal = new bootstrap.Modal(document.getElementById('assessmentMaintenanceModal'));
         maintenanceModal.show();
     });
 </script>
 <script src="{% static 'js/annotation_handler.js' %}"></script>
-<script src="{% static 'contents/study_room_tour.js' %}"></script>
 <script src="{% static 'universia/js/universia.js' %}"></script>
-
-<script>
-window.MathJax = {
-  tex: {
-    inlineMath: [['$', '$'], ['\\(', '\\)']],
-    displayMath: [['$$', '$$'], ['\\[', '\\]']]
-  }
-};
-</script>
-<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 {% endblock extra_js %}

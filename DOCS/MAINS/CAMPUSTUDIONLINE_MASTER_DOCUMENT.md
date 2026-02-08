@@ -18,6 +18,7 @@ CampuStudiOnline es una plataforma web de e-learning diseñada para centralizar 
 *   `academic_structure`: Es el pilar de la jerarquía académica (`University` -> `Branch` -> `Degree` -> `Subject`).
 *   `announcements`: Un Tablón de Anuncios simple para comunicaciones generales.
 *   `assessment`: Gestiona modelos y vistas de autoevaluación. Lógica de tareas centralizada en `orchestrator`.
+*   `assessment_v2`: Nuevo motor de acreditación (v2) con arquitectura segregada, gestión de planes y tracking de costes.
 *   `chat`: Sistema de Comunicación Grupal con salas públicas/privadas, roles y membresías.
 *   `contents`: Es la Biblioteca Central y la Sala de Estudio.
 *   `core`: El núcleo de Django (settings, urls, etc.).
@@ -119,57 +120,3 @@ CampuStudiOnline es una plataforma web de e-learning diseñada para centralizar 
 (Ver anexo `CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V29.md`)
 
 ---
-## 5. Módulo de Autoevaluaciones (Especificación Técnica)
-
-### 5.1. Protocolo de Generación "Atomic Flow"
-El sistema opera bajo un flujo de dos fases para garantizar el control total de la experiencia de usuario:
-*   **Fase A (Determinista / Python):** Creación del esqueleto en base de datos. Se definen `section_label` (titulillo localizado) y `widget_type` sin intervención de la IA.
-*   **Fase B (Pedagógica / API):** Relleno de contenido. La IA genera el `question_text` y `model_answer` para ajustarse al contenedor creado en la Fase A.
-
-### 5.2. Definición Estructural por Arquetipo (Modelo UGR)
-
-#### I. LOGIC_AND_TECH (Ciencias Exactas/Ingeniería)
-*   **Foco:** Rigor formal y resolución de problemas.
-*   **Esqueleto:** 4 Preguntas de desarrollo abierto.
-*   **Widgets:** `MATH_INPUT` (LaTeX obligatorio).
-
-#### II. CEFR_LANGUAGES (Idiomas)
-*   **Foco:** Inmersión total y 4 destrezas (CertAcles).
-*   **Esqueleto:** 
-    1. Reading (2x Test) -> Widget: `RADIO_SELECT`.
-    2. Listening (2x Test) -> Widget: `RADIO_SELECT` + Audio Player.
-    3. Writing (1x Desarrollo) -> Widget: `FILE_UPLOAD` (Minor/Trazo) o `TEXT_AREA`.
-    4. Speaking (1x Producción) -> Widget: `AUDIO_RECORDER`.
-*   **Localización:** Cabeceras en idioma objetivo (ej: *Ascolto*, *阅读*).
-
-#### III. SOCIO_LEGAL (Derecho y Sociales)
-*   **Foco:** Aplicación de la norma y dictamen jurídico.
-*   **Esqueleto:** 
-    1. Terminología (2x Test) -> `RADIO_SELECT`.
-    2. Referencia Normativa (1x Abierta) -> `TEXT_AREA`.
-    3. Dictamen de Caso (1x Desarrollo) -> `FILE_UPLOAD` (Subida de escrito).
-
-#### IV. HEALTH_SCIENCES (Salud)
-*   **Foco:** Seguridad del paciente y razonamiento clínico (ECOE).
-*   **Esqueleto:** 
-    1. Fundamentos/Técnicas (2x Test) -> `RADIO_SELECT`.
-    2. Diagnóstico/Juicio (1x Abierta) -> `TEXT_AREA`.
-    3. Plan de Actuación (1x Práctica) -> `FILE_UPLOAD` (Algoritmos manuscritos).
-
-#### V. HUMANITIES_ARTS (Artes y Letras)
-*   **Foco:** Análisis crítico, comentario de fuentes y dialéctica.
-*   **Esqueleto:** 
-    1. Conceptos (2x Test) -> `RADIO_SELECT`.
-    2. Comentario de Fuente/Obra (1x Abierta) -> `TEXT_AREA`.
-    3. Ensayo Académico (1x Desarrollo) -> `TEXT_AREA`.
-
-### 5.3. Estándares de UX
-*   **Widget FILE_UPLOAD:** Se activa automáticamente mediante la propiedad `requires_upload` en preguntas que exijan caligrafía (Chino/Japonés) o entregas de documentos físicos (Derecho/Salud).
-*   **Localización de Cabeceras:** El campo `section_label` debe mostrarse como título destacado sobre el enunciado de la pregunta.
-
----
-
-## 6. ESPECIFICACIÓN DE DISEÑO CURRICULAR (EMULADOR UGR)
-### DOCUMENTO SUPREMO DE ARQUETIPOS
-Todo desarrollo, mantenimiento o refactorización del sistema de autoevaluaciones debe adherirse estrictamente a la granularidad, enfoques pedagógicos y reglas de interfaz definidas en el siguiente documento de referencia obligatoria:
-- `/home/MiguelAeTxio/PROJECTS/CampuStudiOnline/DOCS/MAINS/CAMPUSTUDIONLINE_ASSESSMENT_ARCHETYPES_SPEC.md`
