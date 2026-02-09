@@ -405,6 +405,13 @@
 ./portfolio/migrations/__init__.py
 ./portfolio/migrations/0001_initial.py
 ./portfolio/tests.py
+./assessment_v2/services/engine/factory.py
+./assessment_v2/services/engine/__init__.py
+./assessment_v2/services/engine/strategies/base.py
+./assessment_v2/services/engine/strategies/__init__.py
+./assessment_v2/services/engine/strategies/languages.py
+./assessment_v2/services/__init__.py
+./assessment_v2/services/quotas.py
 ./assessment_v2/admin.py
 ./assessment_v2/models/tracking.py
 ./assessment_v2/models/plans.py
@@ -414,8 +421,10 @@
 ./assessment_v2/views.py
 ./assessment_v2/apps.py
 ./assessment_v2/migrations/__init__.py
+./assessment_v2/migrations/0002_alter_subscriptionplan_can_access_c_level_and_more.py
 ./assessment_v2/migrations/0001_initial.py
 ./assessment_v2/tests.py
+./assessment_v2/management/commands/sync_subscriptions.py
 ./core/context_processors.py
 ./core/services/gemini_schemas.py
 ./core/services/gemini_service.py

@@ -1650,3 +1650,16 @@ Objetivos de la sesión:
 *  **Session:** Hito 6: Inicio Implementación Assessment V2
 *  **Description:** Arranque de la fase de implementación Alpha del sistema de autoevaluación. Creación de la aplicación assessment_v2, integración en settings y definición de modelos de datos fundamentales (SubscriptionPlan, TokenUsage, Exam, Submission) según especificaciones de la UGR/UCO.
 
+
+# 2026-02-08
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+## EDC # --SYSTEM -->
+*  **Session:** Hito 06: Implementación del Motor de Evaluación y Servicios de Cuotas
+*  **Description:** Sesión centrada en la Fase 2 del Hito 06. Se procederá a la implementación de la lógica de negocio para el sistema de autoevaluación (v2).
+Objetivos principales:
+1. Implementación del servicio de cuotas (`services/quotas.py`) verificando `UserSubscription` y `TokenUsage`.
+2. Desarrollo de la `ExamFactory` y orquestación de creación de exámenes.
+3. Definición de la estrategia base y la implementación concreta `LanguagesStrategy`.
+Carga de contexto obligatoria: Documentación técnica V06DOC y modelos de `assessment_v2`.
+

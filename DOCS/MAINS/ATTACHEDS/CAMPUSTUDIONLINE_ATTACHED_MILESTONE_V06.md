@@ -17,23 +17,22 @@ La próxima sesión debe cargarse con los siguientes documentos para garantizar 
 ---
 
 # ANEXO: HITO 06 - SISTEMA DE AUTOEVALUACIONES CON IA
-# ESTADO: EN PROGRESO (FASE IMPLEMENTACIÓN - ESTRUCTURA BASE COMPLETADA)
+# ESTADO: EN PROGRESO (FASE 2: LÓGICA DE NEGOCIO COMPLETADA)
 
 ## 1. RESUMEN TÉCNICO
-Se ha establecido la arquitectura segregada del sistema. La aplicación `assessment_v2` ha sido creada e integrada. Los modelos de datos fundamentales (`SubscriptionPlan`, `UserSubscription`, `TokenUsage`, `CostLog`, `Exam`, `Submission`) han sido implementados y migrados a la base de datos, siguiendo las especificaciones de los anexos V06DOC.
+Se ha implementado el "Cerebro" del sistema de evaluación v2. La infraestructura de cuotas es operativa, permitiendo una gestión precisa de la frecuencia de uso por plan de suscripción. Se ha establecido el patrón Factory y la primera estrategia concreta (Idiomas), asegurando un estándar de "Calidad Total" (C-Level) para todos los niveles de usuario.
 
 ## 2. HOJA DE RUTA PARA LA SIGUIENTE SESIÓN (LEY SUPREMA)
-Continuación de la **Fase 2: Implementación Alpha**. El objetivo es dotar de lógica al esqueleto creado, implementando los servicios de validación y el motor de generación.
+Inicio de la **Fase 3: Integración de Flujo y UI**. El objetivo es conectar la lógica de backend con la interfaz de usuario y el motor asíncrono.
 
-### TAREAS DE IMPLEMENTACIÓN (MOTOR Y SERVICIOS)
-1.  **Servicio de Cuotas y Planes (`services/quotas.py`):**
-    *   Implementar lógica para verificar `daily_exam_limit` y `weekly_exam_limit` consultando `UserSubscription` y `TokenUsage`.
-    *   Implementar decoradores o mixins para validación de acceso.
-2.  **Fábrica de Exámenes (`services/engine/factory.py`):**
-    *   Crear la clase `ExamFactory` responsable de orquestar la creación del objeto `Exam`.
-    *   Implementar la lógica de selección de estrategia basada en el `archetype_id`.
-3.  **Estrategias de Generación (`services/engine/strategies/`):**
-    *   Definir la interfaz base `BaseAssessmentStrategy` en `base.py`.
-    *   Implementar la primera estrategia concreta: `LanguagesStrategy` (`languages.py`) correspondiente al Arquetipo 1 (CertAccles).
-4.  **Integración con Gemini (Preliminar):**
-    *   Configurar los prompts de sistema para el Arquetipo 1 en `CONTENT_PROMPTS.md` (o archivo dedicado si se requiere).
+### TAREAS DE IMPLEMENTACIÓN (VISTAS Y TAREAS)
+1.  **Vista de Creación de Examen (`views.py`):**
+    *   Implementar `ExamCreateView` (FormView/CreateView).
+    *   Integrar `QuotaService.check_exam_eligibility` como guardián de la vista.
+2.  **Orquestación Asíncrona (`tasks.py`):**
+    *   Definir la tarea Celery `generate_exam_task`.
+    *   Lógica: Obtener estrategia -> Generar estructura -> Llamada a Gemini -> Guardar JSON en `Exam.structure`.
+3.  **Frontend Base (Templates):**
+    *   Crear el template de "Preparando Evaluación" con polling/HTMX para detectar el cambio de estado del examen de `GENERATING` a `READY`.
+4.  **Refinamiento de Prompts:**
+    *   Expandir `LanguagesStrategy.get_system_prompt` con las directrices de los documentos V06DOC_METADATA y V06DOC_LEVELS.
