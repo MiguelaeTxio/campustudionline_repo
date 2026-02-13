@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-5 text-center">
+    <div class="card shadow-lg p-5">
+        <h2 class="mb-4">Generando Evaluación Completa (5 Destrezas)</h2>
+        <div id="status-container"
+             hx-get="{% url 'assessment_v2:exam_status' object.uuid %}"
+             hx-trigger="every 2s"
+             hx-swap="none">
+            <div class="spinner-border text-primary" role="status"></div>
+            <p class="mt-3">Nivel: {{ object.get_pedagogical_level_display }}</p>
+            <p class="small text-muted">Generando: Reading (Cloze/Matching), Listening, Writing, Mediación, Speaking...</p>
+        </div>
+    </div>
+</div>
+{% endblock %}

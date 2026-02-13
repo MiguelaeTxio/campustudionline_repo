@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-4">
+    <div class="card shadow-sm border-0">
+        <div class="card-header bg-white border-bottom">
+            <h4 class="h5 mb-0 text-primary"><i class="fas fa-robot me-2"></i> Configurar Evaluación</h4>
+        </div>
+        <div class="card-body p-4">
+            
+            {% if system_deduction %}
+            <div class="alert alert-info d-flex align-items-center mb-4">
+                <i class="fas fa-magic fa-2x me-3"></i>
+                <div>
+                    <strong>Configuración Automática Detectada:</strong><br>
+                    <small class="text-muted">El sistema ha analizado la asignatura <em>{{ system_deduction.subject_name }}</em>:</small>
+                    <ul class="mb-0 small mt-1">
+                        <li>Perfil: <strong>{{ system_deduction.archetype }}</strong> ({{ system_deduction.itinerary }})</li>
+                        <li>Nivel: <strong>{{ system_deduction.level }}</strong></li>
+                    </ul>
+                </div>
+            </div>
+            {% endif %}
+
+            <form method="post" id="examForm">
+                {% csrf_token %}
+                <input type="hidden" name="content_id" value="{{ content_material.id }}">
+
+                <div class="mb-4">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <label class="form-label h6 mb-0">Selección de Temario (Rango)</label>
+                        <button type="button" class="btn btn-sm btn-outline-secondary" onclick="resetSelectors()">
+                            <i class="fas fa-undo me-1"></i> Reiniciar Selección
+                        </button>
+                    </div>
+                    <p class="text-muted small">Define qué parte del contenido quieres evaluar.</p>
+                    
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                <select name="start_index" id="start_index" class="form-select" required>
+                                    <option value="" selected disabled>Selecciona inicio...</option>
+                                    {% for item in toc %}
+                                        <option value="{{ item.index }}">{{ item.title }}</option>
+                                    {% endfor %}
+                                </select>
+                                <label for="start_index">Desde</label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                <select name="end_index" id="end_index" class="form-select" required>
+                                    <option value="" selected disabled>Selecciona final...</option>
+                                    {% for item in toc reversed %}
+                                        <option value="{{ item.index }}">{{ item.title }}</option>
+                                    {% endfor %}
+                                </select>
+                                <label for="end_index">Hasta</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-grid gap-2">
+                    <button type="submit" class="btn btn-primary btn-lg">
+                        <i class="fas fa-play me-2"></i> Generar Examen
+                    </button>
+                    <a href="{% url 'study_room:copy_directory_root' %}" class="btn btn-light">Cancelar</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    function resetSelectors() {
+        document.getElementById('start_index').selectedIndex = 0;
+        document.getElementById('end_index').selectedIndex = 0;
+        // Restaurar opciones ocultas si se implementa lógica de filtrado
+    }
+</script>
+{% endblock %}

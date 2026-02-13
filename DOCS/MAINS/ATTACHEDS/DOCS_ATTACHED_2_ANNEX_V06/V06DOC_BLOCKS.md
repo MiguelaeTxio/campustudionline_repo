@@ -1,5 +1,4 @@
-# /home/MiguelAeTxio/PROJECTS/CampuStudiOnline/DOCS/MAINS/ATTACHEDS/DOCS_ATTACHED_2_ANNEX_V06/V06DOC_BLOCKS.md
-# V06DOC_BLOCKS - CATÁLOGO DE MOTORES DE EVALUACIÓN (V1.0)
+# V06DOC_BLOCKS - CATÁLOGO DE MOTORES DE EVALUACIÓN (V1.1)
 
 ## 1. BLOQUES DE EVALUACIÓN OBJETIVA Y TÉCNICA
 
@@ -41,3 +40,19 @@
 *   EV-PALE (Transcripción y Exégesis de Fuentes Primarias):
     *   Mecánica: Transcripción exacta y comentario crítico de fuentes originales.
     *   Calidad: Rigor en normas de edición crítica y datación.
+
+## 3. BLOQUES LINGÜÍSTICOS ESTRUCTURALES (NUEVO V1.1)
+
+*   CLO-OPEN (Open Cloze / Rellenado Abierto):
+    *   Mecánica: Completar huecos en un texto sin opciones visibles. Evalúa gramática y colocaciones precisas.
+    *   Calidad: Validación estricta de lema/morfología.
+    *   Widget: W-TXT-CLOZE (Modo Input).
+
+*   CLO-MULTI (Multiple Choice Cloze / Rellenado Selectivo):
+    *   Mecánica: Completar huecos eligiendo entre 4 opciones semánticas/gramaticales.
+    *   Calidad: Distractores basados en "False Friends" o errores comunes.
+    *   Widget: W-TXT-CLOZE (Modo Dropdown).
+
+*   MAT-LINK (Matching / Emparejamiento):
+    *   Mecánica: Vincular párrafos con títulos (Reading) o hablantes con ideas (Listening).
+    *   Widget: W-MIX-MATCH.

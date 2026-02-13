@@ -1,5 +1,4 @@
-# /home/MiguelAeTxio/PROJECTS/CampuStudiOnline/DOCS/MAINS/ATTACHEDS/DOCS_ATTACHED_2_ANNEX_V06/V06DOC_WIDGETS.md
-# V06DOC_WIDGETS - CATÁLOGO DE COMPONENTES DE INTERFAZ (V1.0)
+# V06DOC_WIDGETS - CATÁLOGO DE COMPONENTES DE INTERFAZ (V1.1)
 
 ## 1. LIBRERÍA DE COMPONENTES TÉCNICOS
 
@@ -11,7 +10,7 @@
     *   Funciones: Zoom HD de imágenes médicas, herramientas de medida y marcado de hallazgos.
 *   W-OBJ-STRIKE (Selector de Respuesta con Riesgo):
     *   Uso: Lenguas y Materias Troncales.
-    *   Funciones: Sistema de descarte visual (tachado) e indicador de riesgo de penalización.
+    *   Funciones: Sistema de descarte visual (tachado) e indicador de riesgo de penalización. Soporte para Media Assets (Audio/Imagen context).
 
 ## 2. LIBRERÍA DE COMPONENTES DISCURSIVOS Y DE ACCIÓN
 
@@ -27,3 +26,12 @@
 *   W-LAW-NAV (Navegador de Marco Normativo):
     *   Uso: Derecho y Ciencias Sociales.
     *   Funciones: Acceso a repositorio legal/normativo emulado, buscador de jurisprudencia y cita rápida.
+
+## 3. LIBRERÍA DE COMPONENTES LINGÜÍSTICOS Y ESTRUCTURALES (NUEVO V1.1)
+
+*   W-TXT-CLOZE (Integrador de Huecos en Texto):
+    *   Uso: Lenguas (Use of English) y Derecho (Completar escritos).
+    *   Funciones: Renderizado de texto fluido con inputs incrustados. Soporta modo "Open" (Caja de texto) y "Select" (Dropdown en el hueco).
+*   W-MIX-MATCH (Matriz de Vinculación):
+    *   Uso: Lenguas (Reading Headlines) y Ciencias (Concepto-Definición).
+    *   Funciones: Arrastrar y soltar (Drag & Drop) o conectores visuales entre dos columnas.

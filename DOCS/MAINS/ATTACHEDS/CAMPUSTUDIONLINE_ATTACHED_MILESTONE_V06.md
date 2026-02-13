@@ -11,28 +11,33 @@ La próxima sesión debe cargarse con los siguientes documentos para garantizar 
 *   V06DOC_LEVELS.md
 *   V06DOC_TEMPLATES.md
 *   V06DOC_STRUCTURE.md
+*   V06DOC_LOGIC_MAPPING.md
 
 ### PARTE MUTABLE PERO MANDATORIA EN TODOS LOS PCS
 
 ---
 
 # ANEXO: HITO 06 - SISTEMA DE AUTOEVALUACIONES CON IA
-# ESTADO: EN PROGRESO (FASE 2: LÓGICA DE NEGOCIO COMPLETADA)
+# ESTADO: EN PROGRESO (FASE 3: UX PENDIENTE DE REFINAMIENTO)
 
 ## 1. RESUMEN TÉCNICO
-Se ha implementado el "Cerebro" del sistema de evaluación v2. La infraestructura de cuotas es operativa, permitiendo una gestión precisa de la frecuencia de uso por plan de suscripción. Se ha establecido el patrón Factory y la primera estrategia concreta (Idiomas), asegurando un estándar de "Calidad Total" (C-Level) para todos los niveles de usuario.
+Se ha implementado el núcleo funcional del generador de exámenes (V2):
+*   **Orquestación:** Tarea `generate_exam_task` funcional con inyección de contexto.
+*   **Lógica de Negocio:** Algoritmo de deducción automática (`V06DOC_LOGIC_MAPPING`) implementado en backend.
+*   **Frontend Básico:** Interfaz de selección de rango operativa pero **NO REFINADA**.
 
 ## 2. HOJA DE RUTA PARA LA SIGUIENTE SESIÓN (LEY SUPREMA)
-Inicio de la **Fase 3: Integración de Flujo y UI**. El objetivo es conectar la lógica de backend con la interfaz de usuario y el motor asíncrono.
+Finalizar la **Fase 3 (UX)** y pasar a **Validación**.
 
-### TAREAS DE IMPLEMENTACIÓN (VISTAS Y TAREAS)
-1.  **Vista de Creación de Examen (`views.py`):**
-    *   Implementar `ExamCreateView` (FormView/CreateView).
-    *   Integrar `QuotaService.check_exam_eligibility` como guardián de la vista.
-2.  **Orquestación Asíncrona (`tasks.py`):**
-    *   Definir la tarea Celery `generate_exam_task`.
-    *   Lógica: Obtener estrategia -> Generar estructura -> Llamada a Gemini -> Guardar JSON en `Exam.structure`.
-3.  **Frontend Base (Templates):**
-    *   Crear el template de "Preparando Evaluación" con polling/HTMX para detectar el cambio de estado del examen de `GENERATING` a `READY`.
-4.  **Refinamiento de Prompts:**
-    *   Expandir `LanguagesStrategy.get_system_prompt` con las directrices de los documentos V06DOC_METADATA y V06DOC_LEVELS.
+### TAREAS CRÍTICAS PENDIENTES (UX SELECTOR DE RANGO)
+1.  **Limpieza de TOC (`contents/utils.py`):**
+    *   Filtrar H1 (Título del documento).
+    *   Excluir metadatos: "Tabla de Contenidos", "Bibliografía", "Fuentes".
+2.  **Lógica de Selectores (`exam_create.html`):**
+    *   **Selector INICIO:** Orden natural (1 -> N).
+    *   **Selector FINAL:** Orden inverso (N -> 1).
+    *   Implementar botón de "Reiniciar Selección".
+3.  **Validación de Flujo:**
+    *   Verificar que la deducción automática (Regex) funciona correctamente con asignaturas reales.
+
+---

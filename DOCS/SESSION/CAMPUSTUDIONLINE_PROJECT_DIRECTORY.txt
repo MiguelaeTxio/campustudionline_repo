@@ -1,4 +1,3 @@
-./temp_patch_tasks.py
 ./requirements.in
 ./academic_directory/urls.py
 ./academic_directory/templates/academic_directory/academic_level_detail.html
@@ -116,7 +115,6 @@
 ./search/models.py
 ./search/migrations/__init__.py
 ./search/tests.py
-./temp_clean_tasks.py
 ./chat/urls.py
 ./chat/templates/chat/index.html
 ./chat/templates/chat/room_detail.html
@@ -202,7 +200,6 @@
 ./templates/admin/base_site.html
 ./templates/includes/pagination_controls.html
 ./AI_INCIDENTS.txt
-./temp_patch_implementation.py
 ./google_credentials.json
 ./contents/services/__init__.py
 ./contents/services/navigation_builder.py
@@ -412,6 +409,9 @@
 ./assessment_v2/services/engine/strategies/languages.py
 ./assessment_v2/services/__init__.py
 ./assessment_v2/services/quotas.py
+./assessment_v2/urls.py
+./assessment_v2/templates/assessment_v2/exam_generating.html
+./assessment_v2/templates/assessment_v2/exam_create.html
 ./assessment_v2/admin.py
 ./assessment_v2/models/tracking.py
 ./assessment_v2/models/plans.py
@@ -596,6 +596,7 @@
 ./DOCS/MAINS/ATTACHEDS/DOCS_ATTACHED_2_ANNEX_V06/V06DOC_SUBARCHETYPES.md
 ./DOCS/MAINS/ATTACHEDS/DOCS_ATTACHED_2_ANNEX_V06/V06DOC_BLOCKS.md
 ./DOCS/MAINS/ATTACHEDS/DOCS_ATTACHED_2_ANNEX_V06/V06DOC_SUBDIVISIONS.md
+./DOCS/MAINS/ATTACHEDS/DOCS_ATTACHED_2_ANNEX_V06/V06DOC_LOGIC_MAPPING.md
 ./DOCS/MAINS/ATTACHEDS/DOCS_ATTACHED_2_ANNEX_V06/V06DOC_LEVELS.md
 ./DOCS/MAINS/ATTACHEDS/DOCS_ATTACHED_2_ANNEX_V06/V06DOC_ARCHETYPES.md
 ./DOCS/MAINS/ATTACHEDS/CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V18.md
@@ -796,7 +797,6 @@
 ./public_seo_previews/material_5.html
 ./public_seo_previews/material_14_curso-de-selenium-qa.html
 ./commands_fix_rotation.txt
-./temp_patch_strategy.py
 ./commands_models.txt
 ./schedule/urls.py
 ./schedule/templates/schedule/event_confirm_delete.html

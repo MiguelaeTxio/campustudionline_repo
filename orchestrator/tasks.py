@@ -830,3 +830,74 @@ def generate_full_course_task(self, task_id):
 
     finally:
         db.close_old_connections()
+
+# --- [UPDATED TASK V3: REAL CONTEXT SUPPORT] ---
+# Esta tarea soporta la inyección de contexto real del temario
+@shared_task(bind=True, max_retries=3)
+def generate_exam_task(self, exam_uuid, context_text=None, topic=None):
+    """
+    Orquesta la generación del examen usando CONTEXTO REAL (Rango de Temario).
+    """
+    try:
+        from assessment_v2.models.main import Exam
+        from assessment_v2.services.engine.factory import AssessmentFactory
+        from core.services.gemini_service import GeminiService
+        import json
+        
+        logger.info(f"Starting generation for Exam {exam_uuid}. Topic: {topic}")
+        exam = Exam.objects.get(uuid=exam_uuid)
+        
+        exam.status = Exam.STATUS_GENERATING
+        exam.save()
+
+        strategy = AssessmentFactory.get_strategy(
+            exam.archetype_id,
+            exam.sub_archetype_id,
+            exam.itinerary_id,
+            exam.pedagogical_level
+        )
+
+        system_prompt = strategy.get_system_prompt()
+        base_structure = strategy.generate_structure()
+        
+        # INYECCIÓN DEL MATERIAL DE ESTUDIO (RANGO SELECCIONADO)
+        material_prompt = ""
+        if context_text:
+            # Truncamos si es excesivo para evitar error 429/ContextLimit
+            safe_context = context_text[:50000] 
+            material_prompt = f"\\n\\nMATERIAL DE REFERENCIA (FUENTE DE VERDAD):\\n{safe_context}\\n\\n"
+
+        user_message = (
+            f"CONTEXTO ACADÉMICO: {topic or 'General'}. "
+            f"{material_prompt}"
+            f"INSTRUCCIÓN: Genera el examen basándote EXCLUSIVAMENTE en el Material de Referencia proporcionado. "
+            f"Rellena el siguiente esquema JSON: {json.dumps(base_structure)}"
+        )
+
+        ai_response = GeminiService.generate(
+            system_prompt=system_prompt,
+            user_prompt=user_message,
+            temperature=0.5
+        )
+
+        if isinstance(ai_response, str):
+            cleaned_response = ai_response.replace('```json', '').replace('```', '').strip()
+            exam_structure = json.loads(cleaned_response)
+        else:
+            exam_structure = ai_response
+
+        if 'subdivision_sequence' not in exam_structure:
+            raise ValueError("Estructura inválida recibida de IA.")
+
+        exam.structure = exam_structure
+        exam.status = Exam.STATUS_READY
+        exam.save()
+        logger.info(f"Exam {exam_uuid} generated successfully.")
+
+    except Exception as e:
+        logger.error(f"Error generating exam {exam_uuid}: {str(e)}")
+        if 'exam' in locals():
+            exam.status = Exam.STATUS_ERROR
+            exam.error_log = str(e)
+            exam.save()
+        raise self.retry(exc=e, countdown=60)

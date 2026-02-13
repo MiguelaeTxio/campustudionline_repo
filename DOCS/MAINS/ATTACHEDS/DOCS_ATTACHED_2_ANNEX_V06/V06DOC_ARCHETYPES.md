@@ -1,13 +1,23 @@
-# /home/MiguelAeTxio/PROJECTS/CampuStudiOnline/DOCS/MAINS/ATTACHEDS/DOCS_ATTACHED_2_ANNEX_V06/V06DOC_ARCHETYPES.md
-# V06DOC_ARCHETYPES - PLANO MAESTRO DE ACREDITACIÓN UGR (V1.0)
+# V06DOC_ARCHETYPES - PLANO MAESTRO DE ACREDITACIÓN UGR (V1.1)
 
 ## 1. ARQUETIPO: LENGUAS EXTRANJERAS (CERTACCLES)
 *   **Mecánica:** Secuencial obligatoria con bloqueos de tiempo. Sin retroceso entre destrezas.
 *   **Fin:** Acreditación oficial de competencia operativa (B1/B2/C1/C2).
 *   **Itinerarios:** General (MCER), Académico (EMI), Fines Específicos.
 *   **Niveles:** A1 a C2.
-*   **Destrezas:** Reading, Listening, Writing, Speaking, Mediación.
-*   **Bloques:** Multiple Choice, Gap-filling, Essay, Monologue, Interaction.
+*   **Destrezas (UGR Standard):**
+    1. Reading (Comprensión Lectora).
+    2. Listening (Comprensión Auditiva).
+    3. Writing (Expresión Escrita).
+    4. Speaking (Expresión Oral).
+    5. Mediación (Integrada o separada).
+*   **Bloques Típicos:**
+    *   Multiple Choice (PRM-STRIKE).
+    *   Open Cloze / Gap-filling (CLO-OPEN).
+    *   Multiple Choice Cloze (CLO-MULTI).
+    *   Matching / Headings (MAT-LINK).
+    *   Essay / Email (DRA-HOLO).
+    *   Interaction (UniversIA).
 *   **Criterio de Éxito:** Mínimo del 50-60% obligatorio en CADA destreza.
 
 ## 2. ARQUETIPO: CIENCIAS DE LA SALUD (ECOE)

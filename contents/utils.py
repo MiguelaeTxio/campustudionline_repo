@@ -124,3 +124,59 @@ def annotate_is_favorite(queryset, user):
             )
         )
     return queryset
+import re
+
+def extract_toc_from_markdown(markdown_text):
+    """
+    Extrae una tabla de contenidos lineal del texto markdown.
+    Retorna una lista de diccionarios con índice, título y nivel.
+    """
+    if not markdown_text:
+        return []
+    
+    # Regex para encabezados Markdown (# Título, ## Título...)
+    header_pattern = re.compile(r'^(#{1,6})\s+(.+)$', re.MULTILINE)
+    matches = list(header_pattern.finditer(markdown_text))
+    
+    toc = []
+    for i, match in enumerate(matches):
+        toc.append({
+            'index': i,
+            'title': match.group(2).strip(),
+            'level': len(match.group(1)),
+            'start_pos': match.start()
+        })
+    return toc
+
+def extract_content_range(markdown_text, start_index, end_index):
+    """
+    Extrae el texto comprendido entre el encabezado start_index y end_index.
+    """
+    if not markdown_text:
+        return ""
+    
+    header_pattern = re.compile(r'^(#{1,6})\s+(.+)$', re.MULTILINE)
+    matches = list(header_pattern.finditer(markdown_text))
+    
+    if not matches:
+        return markdown_text 
+        
+    try:
+        start_index = int(start_index)
+        end_index = int(end_index)
+    except (ValueError, TypeError):
+        return markdown_text
+
+    # Validación de límites
+    if start_index < 0: start_index = 0
+    if end_index >= len(matches): end_index = len(matches) - 1
+    if start_index > end_index: start_index = end_index
+
+    start_pos = matches[start_index].start()
+    
+    # El final es el inicio del siguiente encabezado después del end_index
+    if end_index + 1 < len(matches):
+        end_pos = matches[end_index + 1].start()
+        return markdown_text[start_pos:end_pos]
+    else:
+        return markdown_text[start_pos:]

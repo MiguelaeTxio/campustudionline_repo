@@ -1663,3 +1663,19 @@ Objetivos principales:
 3. Definición de la estrategia base y la implementación concreta `LanguagesStrategy`.
 Carga de contexto obligatoria: Documentación técnica V06DOC y modelos de `assessment_v2`.
 
+
+# 2026-02-10
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+## MAMC # --SYSTEM -->
+*  **Session:** Inicio Fase 3 Evaluación IA: Vistas, Orquestación y Frontend
+*  **Description:** Implementación de la Fase 3 del Hito 6. Creación de `ExamCreateView` en `assessment_v2` integrando la validación de cuotas mediante `QuotaService`. Definición de tareas asíncronas en Celery (`orchestrator/tasks.py`) para la generación de estructuras de examen. Refinamiento de la estrategia de idiomas (`LanguagesStrategy`) y preparación de templates base para el flujo de estado del examen.
+
+
+# 2026-02-12
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+## MAMC # --SYSTEM -->
+*  **Session:** Hito 6 Fase 3: Integración Backend-Frontend y Orquestación Asíncrona de Evaluaciones
+*  **Description:** Implementación de la lógica de negocio para la creación de exámenes: desarrollo de `ExamCreateView` con integración de `QuotaService` para validación de límites. Configuración de la tarea asíncrona `generate_exam_task` en Celery para la generación de estructuras JSON mediante estrategias de IA. Preparación de endpoints y templates para el ciclo de vida del examen (Generación -> Polling -> Ready).
+
