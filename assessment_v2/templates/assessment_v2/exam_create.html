@@ -14,7 +14,7 @@
                     <strong>Configuración Automática Detectada:</strong><br>
                     <small class="text-muted">El sistema ha analizado la asignatura <em>{{ system_deduction.subject_name }}</em>:</small>
                     <ul class="mb-0 small mt-1">
-                        <li>Perfil: <strong>{{ system_deduction.archetype }}</strong> ({{ system_deduction.itinerary }})</li>
+                        <li>Perfil: <strong>{{ system_deduction.archetype }} - {{ system_deduction.sub_archetype }}</strong> ({{ system_deduction.itinerary }})</li>
                         <li>Nivel: <strong>{{ system_deduction.level }}</strong></li>
                     </ul>
                 </div>
@@ -32,29 +32,30 @@
                             <i class="fas fa-undo me-1"></i> Reiniciar Selección
                         </button>
                     </div>
-                    <p class="text-muted small">Define qué parte del contenido quieres evaluar.</p>
+                    <p class="text-muted small">Define qué parte del contenido quieres evaluar. El sistema filtrará automáticamente las secciones no evaluables.</p>
                     
                     <div class="row g-3">
                         <div class="col-md-6">
                             <div class="form-floating">
-                                <select name="start_index" id="start_index" class="form-select" required>
-                                    <option value="" selected disabled>Selecciona inicio...</option>
+                                <select name="start_index" id="start_index" class="form-select" required onchange="updateEndSelector()">
+                                    <option value="" selected disabled>Selecciona punto de partida...</option>
                                     {% for item in toc %}
                                         <option value="{{ item.index }}">{{ item.title }}</option>
                                     {% endfor %}
                                 </select>
-                                <label for="start_index">Desde</label>
+                                <label for="start_index">Desde (Capítulo inicial)</label>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-floating">
+                                <!-- Eliminado el filtro 'reversed' para mantener orden natural -->
                                 <select name="end_index" id="end_index" class="form-select" required>
-                                    <option value="" selected disabled>Selecciona final...</option>
-                                    {% for item in toc reversed %}
+                                    <option value="" selected disabled>Selecciona punto final...</option>
+                                    {% for item in toc %}
                                         <option value="{{ item.index }}">{{ item.title }}</option>
                                     {% endfor %}
                                 </select>
-                                <label for="end_index">Hasta</label>
+                                <label for="end_index">Hasta (Capítulo final)</label>
                             </div>
                         </div>
                     </div>
@@ -72,10 +73,38 @@
 </div>
 
 <script>
+    function updateEndSelector() {
+        const startSelect = document.getElementById('start_index');
+        const endSelect = document.getElementById('end_index');
+        const selectedStartIndex = parseInt(startSelect.value);
+
+        if (isNaN(selectedStartIndex)) return;
+
+        for (let i = 0; i < endSelect.options.length; i++) {
+            const option = endSelect.options[i];
+            const optionIndex = parseInt(option.value);
+
+            if (isNaN(optionIndex)) continue;
+
+            if (optionIndex < selectedStartIndex) {
+                option.disabled = true;
+                if (endSelect.value == option.value) {
+                    endSelect.selectedIndex = 0;
+                }
+            } else {
+                option.disabled = false;
+            }
+        }
+    }
+
     function resetSelectors() {
-        document.getElementById('start_index').selectedIndex = 0;
-        document.getElementById('end_index').selectedIndex = 0;
-        // Restaurar opciones ocultas si se implementa lógica de filtrado
+        const startSelect = document.getElementById('start_index');
+        const endSelect = document.getElementById('end_index');
+        startSelect.selectedIndex = 0;
+        endSelect.selectedIndex = 0;
+        for (let i = 0; i < endSelect.options.length; i++) {
+            endSelect.options[i].disabled = false;
+        }
     }
 </script>
 {% endblock %}

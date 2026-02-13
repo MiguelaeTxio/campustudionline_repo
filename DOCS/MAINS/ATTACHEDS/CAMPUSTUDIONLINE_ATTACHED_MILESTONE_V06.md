@@ -18,26 +18,29 @@ La próxima sesión debe cargarse con los siguientes documentos para garantizar 
 ---
 
 # ANEXO: HITO 06 - SISTEMA DE AUTOEVALUACIONES CON IA
-# ESTADO: EN PROGRESO (FASE 3: UX PENDIENTE DE REFINAMIENTO)
+# ESTADO: EN PROGRESO (FASE 3: INFRAESTRUCTURA BASE COMPLETADA)
 
-## 1. RESUMEN TÉCNICO
-Se ha implementado el núcleo funcional del generador de exámenes (V2):
-*   **Orquestación:** Tarea `generate_exam_task` funcional con inyección de contexto.
-*   **Lógica de Negocio:** Algoritmo de deducción automática (`V06DOC_LOGIC_MAPPING`) implementado en backend.
-*   **Frontend Básico:** Interfaz de selección de rango operativa pero **NO REFINADA**.
+## 1. RESUMEN TÉCNICO DE LA SESIÓN
+Se ha instalado la infraestructura común para todos los subarquetipos:
+*   **Señalización (Badges):** Implementado `BadgeService` y `context_processor`. Los badges se integraron en el NavBar (dentro de "Sala de Estudio") para dar feedback de estados (Generando/Listo).
+*   **Motor de Seguimiento (Tracking):** Creado `TrackingService` e implementados modelos `TokenUsage` y `CostLog`. La tarea Celery ya registra el consumo de tokens y el coste estimado.
+*   **Contrato Pedagógico:** Creada la clase abstracta `BaseExamStrategy` y sincronizada la `ExamFactory`.
+*   **UX de Selección:** Implementado el filtrado de metadatos/H1 en la TOC (`utils.py`) y la lógica de restricción de rangos en el frontend (`exam_create.html`).
 
 ## 2. HOJA DE RUTA PARA LA SIGUIENTE SESIÓN (LEY SUPREMA)
-Finalizar la **Fase 3 (UX)** y pasar a **Validación**.
+Objetivo: Reparación Administrativa y Consolidación del Engine.
 
-### TAREAS CRÍTICAS PENDIENTES (UX SELECTOR DE RANGO)
-1.  **Limpieza de TOC (`contents/utils.py`):**
-    *   Filtrar H1 (Título del documento).
-    *   Excluir metadatos: "Tabla de Contenidos", "Bibliografía", "Fuentes".
-2.  **Lógica de Selectores (`exam_create.html`):**
-    *   **Selector INICIO:** Orden natural (1 -> N).
-    *   **Selector FINAL:** Orden inverso (N -> 1).
-    *   Implementar botón de "Reiniciar Selección".
-3.  **Validación de Flujo:**
-    *   Verificar que la deducción automática (Regex) funciona correctamente con asignaturas reales.
+### TAREAS CRÍTICAS (ORDEN OBLIGATORIO)
+1.  **Reparación del Admin (Glitch Visual):**
+    *   Limpiar `templates/admin/base_site.html` eliminando el texto `class="button">` que se renderiza por un comentario mal cerrado.
+    *   Restaurar el acceso al "Motor" (Planes/Cuotas) apuntando el botón a la lista de aplicaciones de `assessment_v2`.
+2.  **Evolución del Engine (`BaseExamStrategy`):**
+    *   Implementar el método `generate_structure()` en la clase base para que fabrique el esqueleto JSON del "Exam Contract".
+3.  **Refactorización de Tarea Celery:**
+    *   Asegurar que `generate_exam_task` instancie la estrategia correcta y use `generate_structure` para el prompt.
+4.  **Integración de Badges en SideBar:**
+    *   Modificar `contents/templates/contents/partials/_navigation_sidebar.html` para replicar los indicadores del NavBar.
+5.  **Desarrollo del Dashboard de Exámenes:**
+    *   Crear la vista de lista en `assessment_v2` para que el usuario gestione sus evaluaciones previas.
 
 ---

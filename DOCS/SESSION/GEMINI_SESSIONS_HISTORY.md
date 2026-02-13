@@ -1679,3 +1679,11 @@ Carga de contexto obligatoria: Documentación técnica V06DOC y modelos de `asse
 *  **Session:** Hito 6 Fase 3: Integración Backend-Frontend y Orquestación Asíncrona de Evaluaciones
 *  **Description:** Implementación de la lógica de negocio para la creación de exámenes: desarrollo de `ExamCreateView` con integración de `QuotaService` para validación de límites. Configuración de la tarea asíncrona `generate_exam_task` en Celery para la generación de estructuras JSON mediante estrategias de IA. Preparación de endpoints y templates para el ciclo de vida del examen (Generación -> Polling -> Ready).
 
+
+# 2026-02-13
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+## AAAA # --SYSTEM -->
+*  **Session:** Hito 6: Refinamiento UX de Creación de Exámenes y Limpieza de Contenidos
+*  **Description:** Finalización de la Fase 3 del Hito 6. Implementación de lógica de filtrado en TOC para excluir metadatos y títulos redundantes. Refinamiento de la UX en selectores de rango (lógica inversa y reinicio) en el formulario de creación. Validación del motor de deducción de arquetipos por Regex.
+

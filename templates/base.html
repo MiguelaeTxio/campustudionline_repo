@@ -184,6 +184,21 @@
                         <button class="btn btn-sm btn-outline-light ms-2" type="submit"><i class="fas fa-search"></i></button>
                     </form>
                     <ul class="navbar-nav mb-2 mb-lg-0 align-items-center">
+                        
+                        <li class="nav-item me-3">
+                            <a class="nav-link position-relative" href="{% url 'study_room:copy_directory_root' %}" title="Mis Exámenes">
+                                <i class="fas fa-file-invoice"></i>
+                                {% if assessment_badges.ready > 0 %}
+                                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-success">
+                                        {{ assessment_badges.ready }}
+                                    </span>
+                                {% elif assessment_badges.generating > 0 %}
+                                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-warning">
+                                        <i class="fas fa-spinner fa-spin"></i>
+                                    </span>
+                                {% endif %}
+                            </a>
+                        </li>
                         <li class="nav-item me-2">
                             <button class="btn nav-link" type="button" data-bs-toggle="offcanvas" data-bs-target="#studyNavigationSidebar" aria-controls="studyNavigationSidebar" title="Accesos Directos">
                                 <i class="fas fa-bars"></i>

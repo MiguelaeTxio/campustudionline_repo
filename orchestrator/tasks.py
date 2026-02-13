@@ -840,7 +840,8 @@ def generate_exam_task(self, exam_uuid, context_text=None, topic=None):
     """
     try:
         from assessment_v2.models.main import Exam
-        from assessment_v2.services.engine.factory import AssessmentFactory
+        from assessment_v2.services.engine.factory import ExamFactory
+        from assessment_v2.services.tracking import TrackingService
         from core.services.gemini_service import GeminiService
         import json
         
@@ -850,7 +851,7 @@ def generate_exam_task(self, exam_uuid, context_text=None, topic=None):
         exam.status = Exam.STATUS_GENERATING
         exam.save()
 
-        strategy = AssessmentFactory.get_strategy(
+        strategy = ExamFactory.get_strategy(
             exam.archetype_id,
             exam.sub_archetype_id,
             exam.itinerary_id,
@@ -874,7 +875,8 @@ def generate_exam_task(self, exam_uuid, context_text=None, topic=None):
             f"Rellena el siguiente esquema JSON: {json.dumps(base_structure)}"
         )
 
-        ai_response = GeminiService.generate(
+        # Ejecución con captura de metadatos de tokens (V06DOC_STRUCTURE)
+        ai_response, usage_metadata = GeminiService.generate(
             system_prompt=system_prompt,
             user_prompt=user_message,
             temperature=0.5
@@ -888,6 +890,16 @@ def generate_exam_task(self, exam_uuid, context_text=None, topic=None):
 
         if 'subdivision_sequence' not in exam_structure:
             raise ValueError("Estructura inválida recibida de IA.")
+
+                # Registro de consumo y costes
+        if usage_metadata:
+            TrackingService.record_usage(
+                user=exam.user,
+                exam=exam,
+                model_name="gemini-2.5-flash-lite",
+                input_tokens=usage_metadata.get('prompt_token_count', 0),
+                output_tokens=usage_metadata.get('candidates_token_count', 0)
+            )
 
         exam.structure = exam_structure
         exam.status = Exam.STATUS_READY

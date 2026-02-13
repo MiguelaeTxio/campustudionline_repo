@@ -94,7 +94,7 @@ class ExamCreateView(LoginRequiredMixin, View):
                 content = copy.original_content
             
             context['content_material'] = content
-            context['toc'] = extract_toc_from_markdown(content.markdown_content)
+            context['toc'] = extract_toc_from_markdown(content.markdown_content, filter_metadata=True)
             
             subject = content.subject.first()
             if subject:

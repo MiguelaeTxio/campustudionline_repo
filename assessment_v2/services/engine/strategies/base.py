@@ -1,14 +1,51 @@
 # /home/MiguelAeTxio/PROJECTS/CampuStudiOnline/assessment_v2/services/engine/strategies/base.py
 from abc import ABC, abstractmethod
 
-class BaseAssessmentStrategy(ABC):
-    def __init__(self, **kwargs):
-        self.pedagogical_level = kwargs.get('pedagogical_level', 'LVL_B')
+class BaseExamStrategy(ABC):
+    """
+    Clase abstracta que define el contrato común para todas las estrategias de examen.
+    Garantiza que todos los arquetipos cumplan con el estándar UGR-LEVEL (V06DOC_TEMPLATES).
+    """
 
-    @abstractmethod
-    def generate_structure(self):
-        pass
+    def __init__(self, pedagogical_level='LVL_B', itinerary_id='ITIN_GEN', **kwargs):
+        self.pedagogical_level = pedagogical_level
+        self.itinerary_id = itinerary_id
+        self.config = kwargs
 
     @abstractmethod
     def get_system_prompt(self):
+        """Devuelve el prompt de sistema específico para el arquetipo académico."""
         pass
+
+    @abstractmethod
+    def get_user_prompt(self, context_text, topic):
+        """Genera el prompt de usuario inyectando el contexto del material de estudio."""
+        pass
+
+    @abstractmethod
+    def get_output_schema(self):
+        """Define el esquema JSON esperado para la respuesta del modelo de IA."""
+        pass
+
+    def get_common_metadata(self):
+        """Genera el bloque EXAM_HEADER común a todos los contratos de examen."""
+        return {
+            "pedagogical_level": self.pedagogical_level,
+            "itinerary_id": self.itinerary_id,
+            "grading_params": self._get_grading_params()
+        }
+
+    def _get_grading_params(self):
+        """
+        Calcula los pesos y umbrales de corrección basados en la matriz 
+        de intersección pedagógica (V06DOC_LEVELS).
+        """
+        if self.pedagogical_level == 'LVL_C':
+            # Rigor Catedrático: Mayor penalización y factor de rigor alto
+            return {"rigor_factor": 1.6, "penalty_threshold": 0.0}
+        
+        if self.itinerary_id == 'ITIN_MAI':
+            return {"rigor_factor": 1.3, "penalty_threshold": 0.3}
+            
+        # Default (Minor/Lvl B)
+        return {"rigor_factor": 1.0, "penalty_threshold": 0.5}
