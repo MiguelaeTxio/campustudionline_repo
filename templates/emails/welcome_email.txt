@@ -13,7 +13,7 @@ En CampuStudiOnline, podrás:
 Te animamos a explorar la plataforma y empezar a interactuar. Si tienes alguna pregunta, no dudes en consultar nuestra sección de ayuda o contactar con el soporte.
 
 ¡Empieza tu viaje en CampuStudiOnline ahora mismo!
-Visita CampuStudiOnline: {{ site_url }}{% url 'inicio' %}
+Visita CampuStudiOnline: {{ site_url }}{% url 'home' %}
 
 Saludos cordiales,
 El equipo de CampuStudiOnline

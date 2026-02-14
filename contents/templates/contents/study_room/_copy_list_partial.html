@@ -71,6 +71,17 @@
                         <a href="{% url 'study_room:edit_copy' pk=copy.pk %}" class="text-decoration-none content-link-preloader">
                             Copia de: {{ copy.original_content.title }}
                         </a>
+                        {% if copy.assessment_status == 'PENDING' or copy.assessment_status == 'PROCESSING' or copy.assessment_status == 'AWAITING_CORRECTION' or copy.assessment_status == 'CORRECTING' %}
+                            <i class="fas fa-spinner fa-spin text-info ms-2" title="Procesando..."></i>
+                        {% elif copy.assessment_status == 'COMPLETED' or copy.assessment_status == 'READY' %}
+                            <i class="fas fa-play-circle text-warning ms-2" title="¡Examen listo!"></i>
+                        {% elif copy.assessment_status == 'RESULTS_AVAILABLE' %}
+                            <i class="fas fa-star text-success ms-2" title="Nuevos Resultados"></i>
+                        {% elif copy.assessment_status == 'GRADED' %}
+                            <i class="fas fa-clipboard-check text-success ms-2" title="Completado"></i>
+                        {% elif 'FAILED' in copy.assessment_status or copy.assessment_status == 'ERROR' or copy.assessment_status == 'CANCELLED' %}
+                            <i class="fas fa-exclamation-triangle text-danger ms-2" title="Atención requerida"></i>
+                        {% endif %}
                     </h5>
                     {% if copy.is_public %}
                         <span class="badge bg-info text-dark">Pública</span>
@@ -111,6 +122,17 @@
                             <a href="{% url 'study_room:edit_copy' pk=copy.pk %}" class="text-decoration-none content-link-preloader">
                                 {{ copy.original_content.title }}
                             </a>
+                        {% if copy.assessment_status == 'PENDING' or copy.assessment_status == 'PROCESSING' or copy.assessment_status == 'AWAITING_CORRECTION' or copy.assessment_status == 'CORRECTING' %}
+                            <i class="fas fa-spinner fa-spin text-info ms-2" title="Procesando..."></i>
+                        {% elif copy.assessment_status == 'COMPLETED' or copy.assessment_status == 'READY' %}
+                            <i class="fas fa-play-circle text-warning ms-2" title="¡Examen listo!"></i>
+                        {% elif copy.assessment_status == 'RESULTS_AVAILABLE' %}
+                            <i class="fas fa-star text-success ms-2" title="Nuevos Resultados"></i>
+                        {% elif copy.assessment_status == 'GRADED' %}
+                            <i class="fas fa-clipboard-check text-success ms-2" title="Completado"></i>
+                        {% elif 'FAILED' in copy.assessment_status or copy.assessment_status == 'ERROR' or copy.assessment_status == 'CANCELLED' %}
+                            <i class="fas fa-exclamation-triangle text-danger ms-2" title="Atención requerida"></i>
+                        {% endif %}
                         </h5>
                         <small class="text-muted">{{ copy.updated_at|date:"d M, H:i" }}</small>
                     </div>

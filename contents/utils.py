@@ -1,9 +1,10 @@
-# /home/MiguelAeTxio/CampuStudiOnline/contents/utils.py
+# /home/MiguelAeTxio/PROJECTS/CampuStudiOnline/contents/utils.py
 # ATENCIÓN!!! La aplicación de usuarios se llama 'users' pero el Namespace a usar es 'usuarios'
 
 import logging
 import os
 import tempfile
+import re
 from io import BytesIO
 from django.conf import settings
 from django.template.loader import render_to_string
@@ -124,12 +125,14 @@ def annotate_is_favorite(queryset, user):
             )
         )
     return queryset
-import re
 
-def extract_toc_from_markdown(markdown_text):
+
+def extract_toc_from_markdown(markdown_text, filter_metadata=False):
     """
     Extrae una tabla de contenidos lineal del texto markdown.
     Retorna una lista de diccionarios con índice, título y nivel.
+    Si filter_metadata es True, excluye el título principal (H1) y 
+    secciones administrativas mediante coincidencia exacta.
     """
     if not markdown_text:
         return []
@@ -140,13 +143,28 @@ def extract_toc_from_markdown(markdown_text):
     
     toc = []
     for i, match in enumerate(matches):
+        level = len(match.group(1))
+        title = match.group(2).strip()
+        
+        if filter_metadata:
+            # 1. Excluir Título principal (Nivel 1 siempre es el título del curso)
+            if level == 1:
+                continue
+            
+            # 2. Excluir secciones administrativas por coincidencia exacta (Case Insensitive)
+            # Esto evita filtrar "Fuentes tipográficas" pero sí filtra "Fuentes" o "Tabla de Contenidos"
+            admin_pattern = r'(?i)^(fuentes|bibliografía|referencias|tabla de contenidos|fuentes y bibliografía)$'
+            if re.search(admin_pattern, title):
+                continue
+
         toc.append({
             'index': i,
-            'title': match.group(2).strip(),
-            'level': len(match.group(1)),
+            'title': title,
+            'level': level,
             'start_pos': match.start()
         })
     return toc
+
 
 def extract_content_range(markdown_text, start_index, end_index):
     """

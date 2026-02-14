@@ -28,7 +28,7 @@ class BaseExamStrategy(ABC):
         pass
 
     def get_common_metadata(self):
-        """Genera el bloque EXAM_HEADER común a todos los contratos de examen."""
+        """Genera los parámetros pedagógicos y de rigor del examen."""
         return {
             "pedagogical_level": self.pedagogical_level,
             "itinerary_id": self.itinerary_id,
@@ -41,11 +41,36 @@ class BaseExamStrategy(ABC):
         de intersección pedagógica (V06DOC_LEVELS).
         """
         if self.pedagogical_level == 'LVL_C':
-            # Rigor Catedrático: Mayor penalización y factor de rigor alto
             return {"rigor_factor": 1.6, "penalty_threshold": 0.0}
         
         if self.itinerary_id == 'ITIN_MAI':
             return {"rigor_factor": 1.3, "penalty_threshold": 0.3}
             
-        # Default (Minor/Lvl B)
         return {"rigor_factor": 1.0, "penalty_threshold": 0.5}
+
+    def generate_structure(self, exam_uuid, archetype_id, sub_archetype_id):
+        """
+        Genera el esqueleto JSON completo del 'Exam Contract' (V06DOC_TEMPLATES).
+        Recibe los identificadores de instancia para completar la cabecera.
+        """
+        return {
+            "exam_header": {
+                "exam_id": str(exam_uuid),
+                "archetype_id": archetype_id,
+                "sub_archetype_id": sub_archetype_id,
+                "itinerary_id": self.itinerary_id,
+                "pedagogical_level": self.pedagogical_level,
+                "grading_params": self._get_grading_params()
+            },
+            "subdivision_sequence": [
+                {
+                    "subdivision_id": "SD_PLACEHOLDER",
+                    "title": "Sección de Evaluación",
+                    "instructions": "Instrucciones de la fase...",
+                    "time_limit": 0,
+                    "items": []
+                }
+            ],
+            "student_submission": {},
+            "grading_report": {}
+        }

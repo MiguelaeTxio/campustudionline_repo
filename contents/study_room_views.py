@@ -17,6 +17,7 @@ from django.urls import reverse
 from django.utils.html import escape
 from django.utils import timezone
 
+from assessment_v2.models.main import Exam
 from .models import ContentMaterial as Content, ContentCopy, Annotation, FavoriteFolder, FreeContentMasterCategory, FreeContentSubCategory
 from academic_structure.models import Subject, University, Branch, Degree, AcademicYear
 # [CLEANUP HITO 6] Eliminadas importaciones de Assessment
@@ -210,9 +211,13 @@ def user_copies_list(request, university_slug=None, branch_slug=None, degree_slu
     """
     Vista resiliente y centrada en el usuario para listar copias de estudio.
     """
+    # Anotación de estado de evaluación (V2)
+    latest_exam = Exam.objects.filter(content_copy=OuterRef('pk')).order_by('-created_at')
     base_copies = ContentCopy.objects.filter(user=request.user).select_related(
         "original_content",
         "subject_context"
+    ).annotate(
+        assessment_status=Subquery(latest_exam.values('status')[:1])
     ).order_by("-updated_at")
 
     context = {

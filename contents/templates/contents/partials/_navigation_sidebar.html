@@ -1,3 +1,10 @@
+<style>
+    .nav-sidebar-avatar { width: 32px; height: 32px; }
+    .nav-sidebar-label-micro { font-size: 0.7rem; }
+    .nav-sidebar-label-mini { font-size: 0.75rem; }
+    .nav-sidebar-spinner { width: 0.8rem; height: 0.8rem; }
+</style>
+
 <div class="offcanvas offcanvas-start" tabindex="-1" id="studyNavigationSidebar" aria-labelledby="studyNavigationSidebarLabel">
   <div class="offcanvas-header bg-light">
     <h5 class="offcanvas-title" id="studyNavigationSidebarLabel">
@@ -8,9 +15,9 @@
   <div class="offcanvas-body p-0">
     <!-- User Info Section -->
     <div class="p-3 border-bottom bg-white">
-      <small class="text-muted text-uppercase fw-bold" style="font-size: 0.7rem;">Usuario</small>
+      <small class="text-muted text-uppercase fw-bold nav-sidebar-label-micro">Usuario</small>
       <div class="d-flex align-items-center mt-2">
-        <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-2" style="width: 32px; height: 32px;">
+        <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-2 nav-sidebar-avatar">
           {{ user.username|slice:":1"|upper }}
         </div>
         <span class="fw-bold text-dark">{{ user.username }}</span>
@@ -23,7 +30,7 @@
         
         <!-- SECCIÓN 1: FAVORITOS Y CARPETAS -->
         <div class="p-2 bg-light border-bottom">
-            <small class="text-muted fw-bold text-uppercase ms-2" style="font-size: 0.75rem;">Mis Carpetas</small>
+            <small class="text-muted fw-bold text-uppercase ms-2 nav-sidebar-label-mini">Mis Carpetas</small>
         </div>
         
         {% for folder in user_navigation_tree.favorites %}
@@ -34,9 +41,9 @@
             </div>
         {% endfor %}
 
-        <!-- SECCIÓN 2: COPIAS DE ESTUDIO (ACADÉMICAS) - VERSIÓN PLANA -->
+        <!-- SECCIÓN 2: COPIAS DE ESTUDIO (ACADÉMICAS) -->
         <div class="p-2 bg-light border-bottom border-top mt-2">
-            <small class="text-muted fw-bold text-uppercase ms-2" style="font-size: 0.75rem;">Asignaturas</small>
+            <small class="text-muted fw-bold text-uppercase ms-2 nav-sidebar-label-mini">Asignaturas</small>
         </div>
         
         {% for subject_name, copies in user_navigation_tree.study_copies.academic.items %}
@@ -47,18 +54,18 @@
                         {{ copy.title }}
                     </div>
                     <div class="flex-shrink-0 d-flex align-items-center">
-                        {% if copy.assessment_status == 'PENDING' or copy.assessment_status == 'PROCESSING' or copy.assessment_status == 'AWAITING_CORRECTION' or copy.assessment_status == 'CORRECTING' %}
-                            <div class="spinner-grow text-info ms-2" style="width: 0.8rem; height: 0.8rem;" role="status" title="Procesando..."></div>
-                        {% elif copy.assessment_status == 'COMPLETED' %}
-                            <i class="fas fa-play-circle text-warning ms-2 fs-6" title="¡Examen listo!"></i>
-                        {% elif copy.assessment_status == 'RESULTS_AVAILABLE' %}
-                            {% if not copy.assessment_viewed %}
-                                <i class="fas fa-star text-success ms-2 fs-6" title="Nuevos Resultados"></i>
-                            {% else %}
-                                <i class="fas fa-clipboard-check text-success ms-2" title="Completado"></i>
-                            {% endif %}
-                        {% elif 'FAILED' in copy.assessment_status or copy.assessment_status == 'CANCELLED' %}
-                                <i class="fas fa-exclamation-triangle text-danger ms-2" title="Atención requerida"></i>
+                        {% if copy.assessment_status == 'GENERATING' %}
+                            <div class="spinner-grow text-warning ms-2 nav-sidebar-spinner" role="status" title="Generando Examen IA..."></div>
+                        {% elif copy.assessment_status == 'READY' %}
+                            <i class="fas fa-play-circle text-primary ms-2 fs-6" title="Examen Listo para Iniciar"></i>
+                        {% elif copy.assessment_status == 'IN_PROGRESS' %}
+                            <i class="fas fa-pencil-alt text-warning ms-2 fs-6" title="En Progreso"></i>
+                        {% elif copy.assessment_status == 'GRADING' %}
+                            <div class="spinner-border text-info ms-2 nav-sidebar-spinner" role="status" title="Corrigiendo..."></div>
+                        {% elif copy.assessment_status == 'GRADED' or copy.assessment_status == 'COMPLETED' %}
+                            <i class="fas fa-check-circle text-success ms-2 fs-6" title="Calificado"></i>
+                        {% elif copy.assessment_status == 'ERROR' %}
+                             <i class="fas fa-exclamation-circle text-danger ms-2" title="Atención requerida"></i>
                         {% endif %}
                     </div>
                 </a>
@@ -72,7 +79,7 @@
         <!-- SECCIÓN 3: CONTENIDO LIBRE -->
         {% if user_navigation_tree.study_copies.free %}
             <div class="p-2 bg-light border-bottom border-top mt-2">
-                <small class="text-muted fw-bold text-uppercase ms-2" style="font-size: 0.75rem;">Contenido Libre</small>
+                <small class="text-muted fw-bold text-uppercase ms-2 nav-sidebar-label-mini">Contenido Libre</small>
             </div>
             {% for copy in user_navigation_tree.study_copies.free %}
                 <a href="{{ copy.url }}" class="list-group-item list-group-item-action border-0 px-3 py-2 d-flex align-items-center justify-content-between">
@@ -81,14 +88,12 @@
                         {{ copy.title }}
                     </div>
                     <div class="flex-shrink-0 d-flex align-items-center">
-                        {% if copy.assessment_status == 'PENDING' or copy.assessment_status == 'PROCESSING' %}
-                            <div class="spinner-grow text-info ms-2" style="width: 0.8rem; height: 0.8rem;" role="status"></div>
-                        {% elif copy.assessment_status == 'COMPLETED' %}
-                            <i class="fas fa-play-circle text-warning ms-2 fs-6"></i>
-                        {% elif copy.assessment_status == 'RESULTS_AVAILABLE' %}
-                            <i class="fas fa-star text-success ms-2 fs-6"></i>
-                        {% elif 'FAILED' in copy.assessment_status or copy.assessment_status == 'CANCELLED' %}
-                                <i class="fas fa-exclamation-triangle text-danger ms-2"></i>
+                         {% if copy.assessment_status == 'GENERATING' %}
+                            <div class="spinner-grow text-warning ms-2 nav-sidebar-spinner" role="status"></div>
+                        {% elif copy.assessment_status == 'READY' %}
+                            <i class="fas fa-play-circle text-primary ms-2 fs-6"></i>
+                        {% elif copy.assessment_status == 'GRADED' %}
+                            <i class="fas fa-check-circle text-success ms-2 fs-6"></i>
                         {% endif %}
                     </div>
                 </a>

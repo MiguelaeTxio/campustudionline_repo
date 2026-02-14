@@ -859,7 +859,7 @@ def generate_exam_task(self, exam_uuid, context_text=None, topic=None):
         )
 
         system_prompt = strategy.get_system_prompt()
-        base_structure = strategy.generate_structure()
+        base_structure = strategy.generate_structure(exam_uuid=exam.uuid, archetype_id=exam.archetype_id, sub_archetype_id=exam.sub_archetype_id)
         
         # INYECCIÓN DEL MATERIAL DE ESTUDIO (RANGO SELECCIONADO)
         material_prompt = ""

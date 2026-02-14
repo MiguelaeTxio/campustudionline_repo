@@ -1,3 +1,4 @@
+# /home/MiguelAeTxio/PROJECTS/CampuStudiOnline/assessment_v2/models/main.py
 import uuid
 from django.db import models
 from django.conf import settings
@@ -26,6 +27,17 @@ class Exam(models.Model):
 
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True, db_index=True)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='exams_v2', verbose_name=_('Estudiante'))
+    
+    # Campo recuperado: Vínculo con el material de estudio
+    content_copy = models.ForeignKey(
+        'contents.ContentCopy', 
+        on_delete=models.CASCADE, 
+        related_name='exams', 
+        null=True, 
+        blank=True,
+        verbose_name=_('Copia de Estudio')
+    )
+
     archetype_id = models.CharField(_('ID Arquetipo'), max_length=50)
     sub_archetype_id = models.CharField(_('ID Sub-Arquetipo'), max_length=50)
     itinerary_id = models.CharField(_('ID Itinerario'), max_length=50)

@@ -1,0 +1,133 @@
+{# /home/MiguelAeTxio/PROJECTS/CampuStudiOnline/assessment_v2/templates/admin/assessment_v2/dashboard.html #}
+{% extends "admin/base_site.html" %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block extrastyle %}{{ block.super }}
+<style>
+    .dashboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; }
+    .metric-card { background-color: #f8f9fa; border: 1px solid #dee2e6; border-radius: 4px; padding: 15px; text-align: center; }
+    .metric-card h3 { margin: 0 0 10px 0; font-size: 1em; color: #666; text-transform: uppercase; }
+    .metric-card .value { font-size: 2em; font-weight: bold; color: #333; }
+    .module h2 { margin-top: 20px; border-bottom: 1px solid #eee; padding-bottom: 5px; }
+    .task-status-badge { display: inline-block; padding: 3px 8px; border-radius: 4px; color: white; font-weight: bold; font-size: 0.8em; }
+    .status-GRADED { background-color: #28a745; }
+    .status-ERROR { background-color: #dc3545; }
+    .status-GENERATING, .status-GRADING { background-color: #007bff; }
+    .status-PENDING { background-color: #fd7e14; }
+    .status-default { background-color: #6c757d; }
+    .full-width-table { width: 100%; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+    <div class="module">
+        <h2>Métricas de Evaluaciones (V2)</h2>
+        <div class="dashboard-grid">
+            <div class="metric-card">
+                <h3>Hoy</h3>
+                <div class="value">{{ metrics.today }}</div>
+            </div>
+            <div class="metric-card">
+                <h3>Esta Semana</h3>
+                <div class="value">{{ metrics.week }}</div>
+            </div>
+            <div class="metric-card">
+                <h3>Total Histórico</h3>
+                <div class="value">{{ metrics.total }}</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="module">
+        <h2>Generación en Proceso</h2>
+        {% if processing_task %}
+        <table class="full-width-table">
+            <thead>
+                <tr>
+                    <th>UUID</th>
+                    <th>Usuario</th>
+                    <th>Inicio</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><a href="{% url 'admin:assessment_v2_exam_change' processing_task.pk %}">{{ processing_task.uuid|slice:":8" }}</a></td>
+                    <td>{{ processing_task.user.username }}</td>
+                    <td>{{ processing_task.created_at|date:"d/m/Y H:i" }}</td>
+                    <td><span class="task-status-badge status-{{ processing_task.status }}">{{ processing_task.get_status_display }}</span></td>
+                    <td>
+                        <a href="{% url 'admin:assessment_admin:assessment_pause_task' processing_task.pk %}" class="button">Marcar Revisión</a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        {% else %}
+        <p>No hay ninguna generación activa en este momento.</p>
+        {% endif %}
+    </div>
+
+    <div class="module">
+        <h2>Próximos en Cola</h2>
+        {% if pending_tasks %}
+        <table class="full-width-table">
+            <thead>
+                <tr>
+                    <th>UUID</th>
+                    <th>Usuario</th>
+                    <th>Solicitado</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for task in pending_tasks %}
+                <tr>
+                    <td><a href="{% url 'admin:assessment_v2_exam_change' task.pk %}">{{ task.uuid|slice:":8" }}</a></td>
+                    <td>{{ task.user.username }}</td>
+                    <td>{{ task.created_at|date:"d/m/Y H:i" }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p>Cola de espera vacía.</p>
+        {% endif %}
+    </div>
+
+    <div class="module">
+        <h2>Últimas Finalizadas</h2>
+        {% if finished_tasks %}
+        <table class="full-width-table">
+            <thead>
+                <tr>
+                    <th>UUID</th>
+                    <th>Usuario</th>
+                    <th>Estado</th>
+                    <th>Finalizado</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for task in finished_tasks %}
+                <tr>
+                    <td><a href="{% url 'admin:assessment_v2_exam_change' task.pk %}">{{ task.uuid|slice:":8" }}</a></td>
+                    <td>{{ task.user.username }}</td>
+                    <td>
+                        <span class="task-status-badge status-{{ task.status|default:'default' }}">
+                            {{ task.get_status_display }}
+                        </span>
+                    </td>
+                    <td>{{ task.updated_at|date:"d/m/Y H:i" }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p>No hay historial reciente disponible.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

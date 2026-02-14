@@ -1687,3 +1687,18 @@ Carga de contexto obligatoria: Documentación técnica V06DOC y modelos de `asse
 *  **Session:** Hito 6: Refinamiento UX de Creación de Exámenes y Limpieza de Contenidos
 *  **Description:** Finalización de la Fase 3 del Hito 6. Implementación de lógica de filtrado en TOC para excluir metadatos y títulos redundantes. Refinamiento de la UX en selectores de rango (lógica inversa y reinicio) en el formulario de creación. Validación del motor de deducción de arquetipos por Regex.
 
+# 2026-02-14
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+## AAAA # --SYSTEM -->
+*  **Session:** Hito 6: Reparación Admin, Engine Structure y Dashboard
+*  **Description:** Se abordará la corrección del glitch visual en el admin, la implementación del método `generate_structure` en `BaseExamStrategy`, la integración de badges en el sidebar de contenidos y la creación del listado de exámenes en `assessment_v2`.
+
+
+# 2026-02-14
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+## CYC # --SYSTEM -->
+*  **Session:** Reparación Admin y Consolidación Engine Hito 6
+*  **Description:** Corrección visual en admin/base_site.html. Implementación de generate_structure en BaseExamStrategy. Refactorización de tarea Celery para uso de Factory. Integración de badges en Sidebar y creación de Dashboard.
+
