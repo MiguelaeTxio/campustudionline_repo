@@ -80,7 +80,8 @@ def clean_json_response(raw_text: str) -> str:
 
 # --- Public Functions ---
 
-def generate_text_content(prompt: str, api_key: ApiKey, task_id: str = None) -> Tuple[bool, str, str]:
+def generate_text_content(prompt: str, api_key: ApiKey, task_id: str = None) -> Tuple[bool, str, str, dict]:
+    usage_metadata = {"input_tokens": 0, "output_tokens": 0}
     """
     [V7-Stateless-SDKv1] Genera texto usando Gemini 3 Flash Preview.
     """
@@ -118,22 +119,25 @@ def generate_text_content(prompt: str, api_key: ApiKey, task_id: str = None) -> 
                 logger.error(f"Error CRÍTICO en el registro atómico para la tarea {task_id}: {e}", exc_info=True)
 
         response = _execute_gemini_call(prompt, api_key, generation_config, safety_settings)
+        if hasattr(response, "usage_metadata"):
+            usage_metadata["input_tokens"] = response.usage_metadata.prompt_token_count
+            usage_metadata["output_tokens"] = response.usage_metadata.candidates_token_count
 
         if not response.candidates:
             msg = "Respuesta bloqueada o vacía (SDK v1 - Sin candidatos)."
-            return False, msg, api_key.name
+            return False, msg, api_key.name, usage_metadata
 
         candidate = response.candidates[0]
         # Finish Reason en SDK v1
         finish_reason = str(candidate.finish_reason)
         
         if "RECITATION" in finish_reason:
-             return False, "RECITATION_ERROR: Bloqueo por derechos de autor (Recitación).", api_key.name
+             return False, "RECITATION_ERROR: Bloqueo por derechos de autor (Recitación).", api_key.name, usage_metadata
 
         if not response.text:
-             return False, "Error: El modelo no generó texto visible.", api_key.name
+             return False, "Error: El modelo no generó texto visible.", api_key.name, usage_metadata
 
-        return True, response.text.strip(), api_key.name
+        return True, response.text.strip(), api_key.name, usage_metadata
 
     except Exception as e:
         error_str = str(e)
@@ -160,21 +164,24 @@ def generate_audio_content(prompt: str, api_key: ApiKey) -> Tuple[bool, bytes, s
 
     try:
         response = _execute_gemini_call(prompt, api_key, generation_config, safety_settings)
+        if hasattr(response, "usage_metadata"):
+            usage_metadata["input_tokens"] = response.usage_metadata.prompt_token_count
+            usage_metadata["output_tokens"] = response.usage_metadata.candidates_token_count
         
         # En generación de audio, el contenido viene en las partes de la respuesta
         if response.data:
-            return True, response.data, api_key.name
+            return True, response.data, api_key.name, usage_metadata
         
         # Fallback para algunas versiones del SDK que lo devuelven en partes
         for candidate in response.candidates:
             for part in candidate.content.parts:
                 if part.inline_data:
-                    return True, part.inline_data.data, api_key.name
+                    return True, part.inline_data.data, api_key.name, usage_metadata
                     
-        return False, b"", api_key.name
+        return False, b"", api_key.name, usage_metadata
     except Exception as e:
         logger.error(f"Fallo en generación de audio nativo: {e}")
-        return False, b"", api_key.name
+        return False, b"", api_key.name, usage_metadata
 
 def generate_multimodal_correction(prompt: str, audio_path: str, api_key: ApiKey) -> Tuple[bool, str, str]:
     """
@@ -197,7 +204,7 @@ def generate_multimodal_correction(prompt: str, audio_path: str, api_key: ApiKey
                                      "HARM_CATEGORY_SEXUALLY_EXPLICIT", "HARM_CATEGORY_DANGEROUS_CONTENT"]]
 
         response = _execute_gemini_call(contents, api_key, generation_config, safety_settings)
-        return True, response.text.strip(), api_key.name
+        return True, response.text.strip(), api_key.name, usage_metadata
     except Exception as e:
         logger.error(f"Error en corrección multimodal: {e}")
-        return False, str(e), api_key.name
+        return False, str(e), api_key.name, usage_metadata

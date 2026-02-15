@@ -1717,3 +1717,11 @@ Carga de contexto obligatoria: Documentación técnica V06DOC y modelos de `asse
 ## EPI
 *  **Session:** Estandarización de Plantillas JSON y Lógica de Generación V2
 *  **Description:** Consolidación de la arquitectura de evaluación V2 siguiendo el contrato 'UGR-Level'. Se inicia la integración de las estrategias de deducción (Logic Mapping) y la estructura de subdivisiones (Templates) para la generación de exámenes mediante IA. El objetivo es asegurar el cumplimiento de la matriz de intersección pedagógica definida en la constelación v06DOC, mapeando Arquetipos, Itinerarios y Niveles directamente desde la estructura académica para alimentar el motor de Gemini.
+
+# 2026-02-15
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+## PLUTO # --SYSTEM -->
+*  **Session:** Hito 06 F3: Cierre de Ciclo de Evaluación (Frontend JS, Reportes y Tracking)
+*  **Description:** Implementación de la lógica final del ciclo de examen. Desarrollo del script JavaScript en 'exam_take.html' para la recolección de datos de widgets y envío POST. Creación de 'ExamReportView' y la plantilla 'exam_report.html' para la visualización de resultados y feedback. Integración de metadatos de consumo de tokens en 'gemini_service.py' vinculados a 'TrackingService'.
+

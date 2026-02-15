@@ -612,7 +612,7 @@ def generate_full_course_task(self, task_id):
                 metadata_prompt = generate_course_metadata_prompt(topic_description, academic_context) + "\n\nJSON Only."
                 
                 try:
-                    success, response_text, _ = generate_text_content(metadata_prompt, api_key=api_key, task_id=task_id)
+                    success, response_text, _, usage = generate_text_content(metadata_prompt, api_key=api_key, task_id=task_id)
                 except Exception as ex:
                     success = False
                     response_text = str(ex)
@@ -650,7 +650,7 @@ def generate_full_course_task(self, task_id):
                 schema_prompt = generate_master_schema_prompt(topic_description, academic_context, learning_objectives, syllabus)
                 
                 try:
-                    success, schema_or_error, _ = generate_text_content(schema_prompt, api_key=api_key, task_id=task_id)
+                    success, schema_or_error, _, usage = generate_text_content(schema_prompt, api_key=api_key, task_id=task_id)
                 except Exception as ex:
                     success = False
                     schema_or_error = str(ex)
@@ -737,7 +737,7 @@ def generate_full_course_task(self, task_id):
                 log_task_event(task_id, f'Generando {order}/{len(parsed_schema)}: "{title}" (Key: {api_key.name})')
 
                 try:
-                    success, content_or_error, _ = generate_text_content(initial_prompt, api_key=api_key, task_id=task_id)
+                    success, content_or_error, _, usage = generate_text_content(initial_prompt, api_key=api_key, task_id=task_id)
                 except Exception as ex:
                     success = False
                     content_or_error = str(ex)
@@ -873,7 +873,7 @@ def generate_exam_task(self, exam_uuid, context_text=None, topic=None):
         automation_settings = AutomationSettings.load()
         api_key = automation_settings.active_api_key
         
-        success, response_text, api_key_name = generate_text_content(
+        success, response_text, api_key_name, usage = generate_text_content(
             user_message, 
             api_key=api_key
         )
@@ -915,8 +915,8 @@ def generate_exam_task(self, exam_uuid, context_text=None, topic=None):
                 user=exam.user, 
                 exam=exam, 
                 model_name="gemini-2.5-flash-lite",
-                input_tokens=0, # Captura real pendiente en gemini_service
-                output_tokens=0, 
+                input_tokens=usage["input_tokens"],
+                output_tokens=usage["output_tokens"], 
                 api_key_name=api_key_name
             )
 
