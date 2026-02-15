@@ -6,59 +6,86 @@ import json
 class LanguagesStrategy(BaseExamStrategy):
     """
     Exam strategy for languages based on international standards.
-    Implements UGR-standard penalty formulas for objective items.
+    Implements UGR-standard penalty formulas and high-fidelity AI prompts.
     
     ---
     
     Estrategia de examen para idiomas basada en estándares internacionales.
-    Implementa fórmulas de penalización estándar UGR para ítems objetivos.
+    Implementa fórmulas de penalización estándar UGR y prompts de IA de alta fidelidad.
     """
 
     def grade_item(self, item, student_input):
         """
-        Implements the UGR formula: [Correct - (Incorrect/(N-1))].
-        Current implementation for PRM-STRIKE (Multiple Choice).
+        Implements objective grading (UGR formula) and prepares production items.
         ---
-        Implementa la fórmula UGR: [Aciertos - (Errores/(N-1))].
-        Implementación actual para PRM-STRIKE (Selección Múltiple).
+        Implementa calificación objetiva (fórmula UGR) y prepara ítems de producción.
         """
         logic = item.grading_logic
-        correct_answer = logic.get('correct_answer')
-        penalty = Decimal(str(logic.get('penalty_factor', 0.33)))
+        block_type = item.block_type
         
-        # Logic for Multiple Choice (PRM-STRIKE)
-        if item.block_type == 'PRM-STRIKE':
+        # 1. Bloques Objetivos: PRM-STRIKE, CLO-MULTI (Fórmula UGR: A - E/(N-1))
+        if block_type in ['PRM-STRIKE', 'CLO-MULTI']:
+            correct_answer = logic.get('correct_answer')
+            penalty = Decimal(str(logic.get('penalty_factor', 0.33)))
             if student_input == correct_answer:
                 return Decimal('1.0'), {"status": "CORRECT", "detail": "Match found."}
             elif student_input:
-                # Apply penalty for wrong answer to discourage guessing
                 return -penalty, {"status": "INCORRECT", "penalty_applied": float(penalty)}
-        
-        # Production blocks (DRA-HOLO, BMT-SHIFT) currently default to pending
-        return Decimal('0.0'), {"status": "PENDING_AI_REVIEW", "detail": "Requires linguistic analysis."}
+            return Decimal('0.0'), {"status": "UNANSWERED"}
 
-    def get_output_schema(self):
-        """Returns the item payload schema description."""
-        return "Object containing block_type, widget_id, content, grading_logic, and metadata."
+        # 2. Bloques de Producción: DRA-HOLO (Rúbrica Holística V06DOC_BLOCKS)
+        if block_type == 'DRA-HOLO':
+            return Decimal('0.0'), {
+                "status": "REQUIRES_UNIVERSIA_GRADING",
+                "engine": "DRA-HOLO_V1",
+                "rubric": {
+                    "rigor": "Evaluación del sesgo académico y precisión (V06DOC_LEVELS)",
+                    "estructura": "Coherencia y organización del discurso",
+                    "terminología": "Densidad de tecnicismos según nivel",
+                    "forma": "Registro y corrección formal (Penalización hasta -2.5)"
+                },
+                "justification_role": "Catedrático UGR"
+            }
+        
+        return Decimal('0.0'), {"status": "PENDING_AI_REVIEW"}
 
     def get_system_prompt(self):
-        """Inyecta las mecánicas de V06DOC_BLOCKS en el cerebro de la IA."""
-        p_factor = 0.33 # Penalty factor for 4 options
+        """
+        Generates a high-fidelity system prompt based on V06DOC_LEVELS and V06DOC_METADATA.
+        ---
+        Genera un prompt de sistema de alta fidelidad basado en V06DOC_LEVELS y V06DOC_METADATA.
+        """
+        # Configuración de Rigor y Emulación (V06DOC_LEVELS)
+        rigor_map = {
+            'LVL_A': {'rigor': 0.8, 'density': 'Baja', 'distractors': 'Obvios', 'role': 'Tutor de Apoyo'},
+            'LVL_B': {'rigor': 1.0, 'density': 'Media', 'distractors': 'Plausibles', 'role': 'Evaluador Competente'},
+            'LVL_C': {'rigor': 1.6, 'density': 'Máxima', 'distractors': 'Lógica de error común', 'role': 'Catedrático Exigente'}
+        }
+        config = rigor_map.get(self.pedagogical_level, rigor_map['LVL_B'])
+        
         return f"""
-ROLE: UniversIA Linguistic Expert.
-PEDAGOGICAL LEVEL: {self.pedagogical_level}
+ROLE: {config['role']} especializado en Lingüística.
+PEDAGOGICAL LEVEL: {self.pedagogical_level} (Rigor x{config['rigor']})
 ITINERARY: {self.itinerary_id}
 
-TECHNICAL INSTRUCTIONS:
-Generate items following V06DOC_BLOCKS mechanics:
-1. PRM-STRIKE: Multiple Choice with penalty_factor={p_factor}.
-2. CLO-MULTI: Multiple Choice Cloze (Text with selectables).
-3. MAT-LINK: Matching (Link headers to paragraphs).
-4. DRA-HOLO: Holistic rubrics for production.
-"""
+EMULATION PARAMETERS (V06DOC_LEVELS):
+- DENSITY_INDEX: {config['density']} de tecnicismos.
+- DISTRACTOR_QUALITY: {config['distractors']}.
+- GRADING_BIAS: {'Constructivo' if 'MIN' in self.itinerary_id else 'Punitivo/Selectivo'}.
 
-    def get_user_prompt(self, context_text, topic):
-        return f"Generate assessment items for topic '{topic}' using this material: {context_text}"
+BLOCK MECHANICS (V06DOC_BLOCKS):
+1. PRM-STRIKE: Penalty 0.33. Focus on conceptual errors.
+2. CLO-OPEN/MULTI: Strict lexical validation.
+3. DRA-HOLO: Grading in 4 ejes: Rigor, Estructura, Terminología, Forma.
+   - FORM_PEN: Apply up to -2.5 for formal/syntax errors.
+
+FEEDBACK TAXONOMY (V06DOC_METADATA):
+All justifications must use:
+- FB_CONCEPT: For base theoretical errors.
+- FB_FORMAL: For register/syntax issues.
+- FB_PROCEDURAL: For method/logic errors.
+- FB_SAFETY: For critical security/protocol violations (if applicable).
+"""
 
     def generate_structure(self, exam_uuid, sub_archetype_id='SUB-LIN-CERT'):
         """Creates the initial relational structure skeleton."""

@@ -12,6 +12,7 @@ class AcademicDeductor:
     def deduce_archetype(subject):
         """
         Deduces the ARCH_ID based on the subject name and academic branch.
+        Deduce el ARCH_ID basándose en el nombre de la asignatura y la rama académica.
         """
         name = subject.name.lower()
         branch_name = subject.academic_year.degree.branch.name.lower()
@@ -38,15 +39,27 @@ class AcademicDeductor:
     def deduce_itinerary(subject):
         """
         Deduces the ITIN_ID based on terminology and subject type.
+        Supports ITIN_ROT and ITIN_PROF for health and engineering.
+        ---
+        Deduce el ITIN_ID basándose en la terminología y el tipo de asignatura.
+        Soporta ITIN_ROT e ITIN_PROF para salud e ingeniería.
         """
         name = subject.name.lower()
+        branch_name = subject.academic_year.degree.branch.name.lower()
         
+        # 1. Detección Explícita (V06DOC_LOGIC_MAPPING)
         if re.search(r'\bmaior\b', name):
             return 'ITIN_MAI'
         if re.search(r'\bminor\b', name):
             return 'ITIN_MIN'
         
-        # Fallback by official subject type
+        # 2. Mapeo por Rama Académica (Itinerarios Específicos Hito 6)
+        if any(k in branch_name for k in ['salud', 'medicina', 'enfermería', 'veterinaria']):
+            return 'ITIN_ROT'
+        if any(k in branch_name for k in ['ingeniería', 'técnica', 'arquitectura']):
+            return 'ITIN_PROF'
+        
+        # 3. Fallback por tipo oficial de asignatura
         if subject.subject_type in [Subject.SubjectType.CORE, Subject.SubjectType.MANDATORY]:
             return 'ITIN_MAI'
         
@@ -56,6 +69,7 @@ class AcademicDeductor:
     def deduce_level(subject):
         """
         Deduces the LVL_ID (Pedagogical Level).
+        Deduce el LVL_ID (Nivel Pedagógico).
         """
         name = subject.name.lower()
         year = subject.academic_year.year if subject.academic_year else 1
@@ -80,6 +94,7 @@ class AcademicDeductor:
     def get_context_metadata(cls, subject):
         """
         Returns the full metadata pack for the Exam Contract.
+        Devuelve el paquete completo de metadatos para el Contrato de Examen.
         """
         return {
             'archetype_id': cls.deduce_archetype(subject),

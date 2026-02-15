@@ -1725,3 +1725,11 @@ Carga de contexto obligatoria: Documentación técnica V06DOC y modelos de `asse
 *  **Session:** Hito 06 F3: Cierre de Ciclo de Evaluación (Frontend JS, Reportes y Tracking)
 *  **Description:** Implementación de la lógica final del ciclo de examen. Desarrollo del script JavaScript en 'exam_take.html' para la recolección de datos de widgets y envío POST. Creación de 'ExamReportView' y la plantilla 'exam_report.html' para la visualización de resultados y feedback. Integración de metadatos de consumo de tokens en 'gemini_service.py' vinculados a 'TrackingService'.
 
+
+# 15/02/2026
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+## MAMC
+*  **Session:** Refactor de AcademicDeductor e Implementación de Calificación IA UniversIA
+*  **Description:** Inicio de la fase final del Hito 6 centrado en la rectificación lógica del motor de deducción académica y la habilitación de la calificación por IA para bloques de producción (DRA-HOLO). Se contempla la inyección de lógica Kill-Switch para itinerarios de seguridad (ECOE) y el cierre del ciclo de UI con plantillas de examen y feedback detallado.
+

@@ -1,0 +1,169 @@
+{% extends "base.html" %}
+{% load i18n static %}
+
+{% block content %}
+<div class="container-fluid mt-4 px-4" id="exam-container" data-exam-uuid="{{ exam.uuid }}">
+    {# CABECERA TÉCNICA (V06DOC_TEMPLATES) #}
+    <div class="card mb-4 border-primary shadow-sm">
+        <div class="card-body bg-light">
+            <h2 class="h4 border-bottom pb-2">{% trans "Sesión de Evaluación UniversIA" %}</h2>
+            <div class="row text-muted small">
+                <div class="col-md-3"><strong>{% trans "Arquetipo" %}:</strong> {{ exam.archetype_id }}</div>
+                <div class="col-md-3"><strong>{% trans "Nivel" %}:</strong> {{ exam.pedagogical_level }}</div>
+                <div class="col-md-3"><strong>{% trans "Itinerario" %}:</strong> {{ exam.itinerary_id }}</div>
+                <div class="col-md-3 text-end"><span id="exam-timer" class="badge bg-dark">00:00:00</span></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        {# ÁREA DE TRABAJO PRINCIPAL #}
+        <div class="col-lg-8">
+            {% for section in exam.sections.all %}
+            <section class="exam-section mb-5" data-section-id="{{ section.subdivision_id }}">
+                <div class="d-flex justify-content-between align-items-center bg-secondary text-white p-2 rounded mb-3">
+                    <h3 class="h5 mb-0">{{ section.title }}</h3>
+                    {% if section.time_limit %}<span class="badge bg-warning text-dark">{% trans "Tiempo Límite" %}: {{ section.time_limit }}s</span>{% endif %}
+                </div>
+                <div class="alert alert-info py-2 small"><em>{{ section.instructions }}</em></div>
+
+                {% for item in section.items.all %}
+                <div class="card mb-4 exam-item" data-item-id="{{ item.id }}" data-block-type="{{ item.block_type }}" data-widget-id="{{ item.widget_id }}">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <p class="fw-bold mb-3">{{ forloop.counter }}. {{ item.content.stem }}</p>
+                            <span class="badge bg-light text-dark border">{{ item.metadata.competency_tag }}</span>
+                        </div>
+
+                        {# RENDERIZADO DINÁMICO DE WIDGETS (V06DOC_WIDGETS) #}
+
+                        {# 1. LIBRERÍA TÉCNICA #}
+                        {% if item.widget_id == 'W-TECH-CALC' %}
+                        <div class="widget-container p-3 border rounded bg-dark text-success font-monospace">
+                            <label class="small text-secondary d-block mb-1">{% trans "CONSOLA DE CÁLCULO PROCEDIMENTAL" %}</label>
+                            <input type="text" class="form-control bg-dark text-success border-success response-input" placeholder=">> [Input result or formula]">
+                        </div>
+
+                        {% elif item.widget_id == 'W-CLIN-SCAN' %}
+                        <div class="widget-container p-2 border rounded text-center">
+                            <img src="{{ item.content.media_assets.0 }}" class="img-fluid rounded mb-2 border" style="max-height: 400px;">
+                            <input type="text" class="form-control response-input" placeholder="{% trans 'Indica hallazgos detectados...' %}">
+                        </div>
+
+                        {# 2. LIBRERÍA DISCURSIVA #}
+                        {% elif item.widget_id == 'W-HUM-TEXT' %}
+                        <div class="widget-container">
+                            <textarea class="form-control response-input" rows="8" placeholder="{% trans 'Redacte su exégesis crítica aquí...' %}"></textarea>
+                        </div>
+
+                        {% elif item.widget_id == 'W-PROC-ACTION' %}
+                        <div class="widget-container p-3 border rounded bg-light">
+                            <label class="d-block mb-2 fw-bold text-danger">{% trans "CHECKLIST DE SEGURIDAD CRÍTICA" %}</label>
+                            {% for step in item.content.steps %}
+                            <div class="form-check mb-1">
+                                <input class="form-check-input response-input-check" type="checkbox" value="{{ step }}" id="step-{{ item.id }}-{{ forloop.counter }}">
+                                <label class="form-check-label" for="step-{{ item.id }}-{{ forloop.counter }}">{{ step }}</label>
+                            </div>
+                            {% endfor %}
+                        </div>
+
+                        {# 3. LIBRERÍA LINGÜÍSTICA #}
+                        {% elif item.widget_id == 'W-OBJ-STRIKE' %}
+                        <div class="widget-container">
+                            {% for option in item.content.options %}
+                            <div class="form-check mb-2">
+                                <input class="form-check-input response-input" type="radio" name="item-{{ item.id }}" value="{{ option }}" id="opt-{{ item.id }}-{{ forloop.counter }}">
+                                <label class="form-check-label" for="opt-{{ item.id }}-{{ forloop.counter }}">{{ option }}</label>
+                            </div>
+                            {% endfor %}
+                        </div>
+
+                        {% elif item.widget_id == 'W-TXT-CLOZE' %}
+                        <div class="widget-container border p-3 rounded bg-white shadow-sm italic-text">
+                             {{ item.content.text_with_holes|safe }}
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            </section>
+            {% endfor %}
+        </div>
+
+        {# PANEL LATERAL DE APOYO (V06DOC_WIDGETS: W-LAW-NAV) #}
+        <div class="col-lg-4">
+            <div class="sticky-top" style="top: 20px; z-index: 1020;">
+                <div class="card border-dark">
+                    <div class="card-header bg-dark text-white py-1">
+                        <span class="small fw-bold">{% trans "RECURSOS DE CONSULTA" %}</span>
+                    </div>
+                    <div class="card-body p-0" style="height: 70vh; overflow-y: auto;">
+                        <div id="resource-viewer" class="p-3 small text-muted">
+                            <p>{% trans "Seleccione un bloque para cargar el marco normativo o bibliografía asociada." %}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="d-grid gap-2 mb-5 mt-4">
+        <button id="submit-exam" class="btn btn-primary btn-lg shadow">{% trans "FINALIZAR EVALUACIÓN" %}</button>
+    </div>
+</div>
+
+<script>
+document.getElementById('submit-exam').addEventListener('click', async function() {
+    this.disabled = true;
+    this.innerHTML = '{% trans "Procesando Calificación..." %}';
+
+    const container = document.getElementById('exam-container');
+    const examUuid = container.dataset.examUuid;
+    const items = document.querySelectorAll('.exam-item');
+    const responses = {};
+
+    items.forEach(item => {
+        const itemId = item.dataset.itemId;
+        const blockType = item.dataset.blockType;
+        const widgetId = item.dataset.widgetId;
+        
+        if (widgetId === 'W-OBJ-STRIKE') {
+            const selected = item.querySelector('input:checked');
+            responses[itemId] = selected ? selected.value : '';
+        } else if (widgetId === 'W-PROC-ACTION') {
+            const checked = Array.from(item.querySelectorAll('.response-input-check:checked')).map(el => el.value);
+            responses[itemId] = checked;
+        } else if (widgetId === 'W-TXT-CLOZE') {
+            // Captura de múltiples inputs en cloze
+            const inputs = Array.from(item.querySelectorAll('.cloze-input')).map(el => el.value);
+            responses[itemId] = inputs;
+        } else {
+            const input = item.querySelector('.response-input');
+            responses[itemId] = input ? input.value : '';
+        }
+    });
+
+    try {
+        const response = await fetch(`/assessment_v2/submit/${examUuid}/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: JSON.stringify({responses: responses})
+        });
+
+        const result = await response.json();
+        if (result.status === 'SUCCESS') {
+            window.location.href = result.url;
+        } else {
+            alert('Error: ' + result.message);
+            this.disabled = false;
+        }
+    } catch (err) {
+        alert('{% trans "Error de conexión con el servidor de calificación." %}');
+        this.disabled = false;
+    }
+});
+</script>
+{% endblock %}

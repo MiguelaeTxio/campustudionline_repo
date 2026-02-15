@@ -6,9 +6,19 @@ class BadgeService:
     """
     Servicio centralizado para la gestión de indicadores visuales (Badges).
     Sincronizado con los estados de la tarea Celery.
+    
+    ---
+    
+    Centralized service for visual indicator (Badge) management.
+    Synchronized with Celery task states.
     """
     @staticmethod
     def get_user_badges(user):
+        """
+        Calculates the number of assessments in key states for a given user.
+        ---
+        Calcula el número de evaluaciones en estados clave para un usuario dado.
+        """
         if not user.is_authenticated:
             return {}
         
@@ -21,11 +31,13 @@ class BadgeService:
         }
         
         for item in status_counts:
-            # PENDING o GENERATING se consideran trabajo en curso (Badge Amarillo/Spinner)
-            if item['status'] in [Exam.STATUS_PENDING, Exam.STATUS_GENERATING]:
+            # PENDING or GENERATING are considered work in progress (Yellow Badge/Spinner)
+            # PENDIENTE o GENERANDO se consideran trabajo en curso (Badge Amarillo/Spinner)
+            if item['status'] in ['PENDING', 'GENERATING']:
                 badges['generating'] += item['total']
-            elif item['status'] == Exam.STATUS_READY:
+            elif item['status'] == 'READY':
                 badges['ready'] = item['total']
-            # 'grading' se implementará en la fase de corrección
+            elif item['status'] == 'GRADING':
+                badges['grading'] += item['total']
                 
         return badges

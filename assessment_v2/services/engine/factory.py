@@ -1,5 +1,9 @@
 # /home/MiguelAeTxio/PROJECTS/CampuStudiOnline/assessment_v2/services/engine/factory.py
 from .strategies.languages import LanguagesStrategy
+from .strategies.health import HealthStrategy
+from .strategies.tech import TechnicalStrategy
+from .strategies.social import SocialStrategy
+from .strategies.humanities import HumanitiesStrategy
 from .logic import AcademicDeductor
 
 class ExamFactory:
@@ -32,6 +36,8 @@ class ExamFactory:
     def get_strategy(archetype_id, pedagogical_level='LVL_B', itinerary_id='ITIN_MIN', **kwargs):
         """
         Returns a configured instance of the corresponding strategy.
+        ---
+        Devuelve una instancia configurada de la estrategia correspondiente.
         """
         strategy_kwargs = {
             'pedagogical_level': pedagogical_level,
@@ -39,10 +45,15 @@ class ExamFactory:
             **kwargs
         }
 
-        # Currently, all archetypes route to LanguagesStrategy for initial V2 testing,
-        # but configured with their specific pedagogical levels and itineraries.
-        if archetype_id == ExamFactory.ARCH_LANG:
-            return LanguagesStrategy(**strategy_kwargs)
-        
-        # Fallback for archetypes in development (Milestone 6)
-        return LanguagesStrategy(**strategy_kwargs)
+        # Mapping for Milestone 6: All archetypes now route to their specific implementation.
+        # Mapeo para el Hito 6: Todos los arquetipos ahora se dirigen a su implementación específica.
+        mapping = {
+            ExamFactory.ARCH_LANG: LanguagesStrategy,
+            ExamFactory.ARCH_HEALTH: HealthStrategy,
+            ExamFactory.ARCH_TECH: TechnicalStrategy,
+            ExamFactory.ARCH_SOC: SocialStrategy,
+            ExamFactory.ARCH_HUM: HumanitiesStrategy,
+        }
+
+        strategy_class = mapping.get(archetype_id, LanguagesStrategy)
+        return strategy_class(**strategy_kwargs)
