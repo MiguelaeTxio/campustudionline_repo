@@ -404,6 +404,7 @@
 ./portfolio/tests.py
 ./assessment_v2/context_processors.py
 ./assessment_v2/services/engine/factory.py
+./assessment_v2/services/engine/logic.py
 ./assessment_v2/services/engine/__init__.py
 ./assessment_v2/services/engine/strategies/base.py
 ./assessment_v2/services/engine/strategies/__init__.py
@@ -426,6 +427,7 @@
 ./assessment_v2/__init__.py
 ./assessment_v2/views.py
 ./assessment_v2/apps.py
+./assessment_v2/migrations/0004_remove_exam_structure_exam_grading_params_and_more.py
 ./assessment_v2/migrations/0003_exam_content_copy.py
 ./assessment_v2/migrations/__init__.py
 ./assessment_v2/migrations/0002_alter_subscriptionplan_can_access_c_level_and_more.py

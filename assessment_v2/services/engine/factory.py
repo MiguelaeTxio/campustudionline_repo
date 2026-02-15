@@ -1,34 +1,48 @@
 # /home/MiguelAeTxio/PROJECTS/CampuStudiOnline/assessment_v2/services/engine/factory.py
 from .strategies.languages import LanguagesStrategy
+from .logic import AcademicDeductor
 
 class ExamFactory:
     """
-    Factoría para instanciar la estrategia de examen adecuada según el arquetipo.
-    Alineado con V06DOC_ARCHETYPES y V06DOC_LOGIC_MAPPING.
+    Factory to instantiate the appropriate exam strategy based on the archetype.
+    Factoría para instanciar la estrategia de examen adecuada según el arquetipo deducido.
     """
     ARCH_LANG = 'ARCH_LANG'
     ARCH_HEALTH = 'ARCH_HEALTH'
     ARCH_TECH = 'ARCH_TECH'
     ARCH_SOC = 'ARCH_SOC'
     ARCH_HUM = 'ARCH_HUM'
-    ARCH_GEN = 'ARCH_GEN'
 
     @staticmethod
-    def get_strategy(archetype_id, **kwargs):
+    def get_strategy_for_subject(subject, **kwargs):
         """
-        Retorna una instancia de la estrategia correspondiente.
+        Main entry point: Deduces metadata from Subject and returns the strategy.
+        Punto de entrada: Deduce metadatos del sujeto y retorna la estrategia configurada.
         """
+        metadata = AcademicDeductor.get_context_metadata(subject)
+        
+        return ExamFactory.get_strategy(
+            archetype_id=metadata['archetype_id'],
+            pedagogical_level=metadata['pedagogical_level'],
+            itinerary_id=metadata['itinerary_id'],
+            **kwargs
+        )
+
+    @staticmethod
+    def get_strategy(archetype_id, pedagogical_level='LVL_B', itinerary_id='ITIN_MIN', **kwargs):
+        """
+        Returns a configured instance of the corresponding strategy.
+        """
+        strategy_kwargs = {
+            'pedagogical_level': pedagogical_level,
+            'itinerary_id': itinerary_id,
+            **kwargs
+        }
+
+        # Currently, all archetypes route to LanguagesStrategy for initial V2 testing,
+        # but configured with their specific pedagogical levels and itineraries.
         if archetype_id == ExamFactory.ARCH_LANG:
-            return LanguagesStrategy(**kwargs)
+            return LanguagesStrategy(**strategy_kwargs)
         
-        # Por ahora, el resto de arquetipos usan la lógica genérica 
-        # o lanzan error hasta que sus estrategias específicas sean creadas.
-        # Según Roadmap Hito 6, estamos consolidando la base primero.
-        
-        if archetype_id in [ExamFactory.ARCH_HEALTH, ExamFactory.ARCH_TECH, 
-                            ExamFactory.ARCH_SOC, ExamFactory.ARCH_HUM, ExamFactory.ARCH_GEN]:
-            # Fallback a LanguagesStrategy temporalmente o lanzar error de implementación
-            # Para cumplir con el flujo, permitimos el flujo pero notificamos.
-            return LanguagesStrategy(**kwargs) 
-            
-        raise ValueError(f"Arquetipo {archetype_id} no reconocido o no implementado.")
+        # Fallback for archetypes in development (Milestone 6)
+        return LanguagesStrategy(**strategy_kwargs)

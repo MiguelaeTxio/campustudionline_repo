@@ -43,6 +43,11 @@ from core.services.prompt_generators import (
 from messaging.push_utils import send_notification_to_user
 from core.utils import send_unified_notification
 
+# --- NUEVAS IMPORTACIONES HITO 6 ---
+from assessment_v2.models.main import Exam, ExamSection, ExamItem
+from assessment_v2.services.engine.factory import ExamFactory
+from assessment_v2.services.tracking import TrackingService
+
 logger = logging.getLogger(__name__)
 User = get_user_model()
 
@@ -831,85 +836,99 @@ def generate_full_course_task(self, task_id):
     finally:
         db.close_old_connections()
 
-# --- [UPDATED TASK V3: REAL CONTEXT SUPPORT] ---
-# Esta tarea soporta la inyección de contexto real del temario
-@shared_task(bind=True, max_retries=3)
+# ==============================================================================
+# HITO 6: GENERACIÓN DE EXAMEN RELACIONAL
+# ==============================================================================
+
+@shared_task(bind=True, time_limit=1800)
 def generate_exam_task(self, exam_uuid, context_text=None, topic=None):
     """
-    Orquesta la generación del examen usando CONTEXTO REAL (Rango de Temario).
+    Orchestrates exam generation using RELATIONAL MAPPING and API BLINDAJE.
+    Orquesta la generación del examen usando MAPEO RELACIONAL y BLINDAJE de API.
+    Cumple V06DOC_STRUCTURE y V06DOC_TEMPLATES.
     """
+    db.close_old_connections()
+    exam = None
     try:
-        from assessment_v2.models.main import Exam
-        from assessment_v2.services.engine.factory import ExamFactory
-        from assessment_v2.services.tracking import TrackingService
-        from core.services.gemini_service import GeminiService
-        import json
-        
-        logger.info(f"Starting generation for Exam {exam_uuid}. Topic: {topic}")
-        exam = Exam.objects.get(uuid=exam_uuid)
-        
-        exam.status = Exam.STATUS_GENERATING
-        exam.save()
+        exam = Exam.objects.select_related('user', 'content_copy').get(uuid=exam_uuid)
+        exam.status = 'GENERATING'
+        exam.save(update_fields=['status'])
 
-        strategy = ExamFactory.get_strategy(
-            exam.archetype_id,
-            exam.sub_archetype_id,
-            exam.itinerary_id,
-            exam.pedagogical_level
-        )
-
+        # 1. Recuperar Configuración Pedagógica (Logic Mapping)
+        # Obtenemos el Subject a través de la ContentCopy vinculada
+        subject = exam.content_copy.content_material.subject.first()
+        strategy = ExamFactory.get_strategy_for_subject(subject)
+        
+        # 2. Preparar Prompts
         system_prompt = strategy.get_system_prompt()
-        base_structure = strategy.generate_structure(exam_uuid=exam.uuid, archetype_id=exam.archetype_id, sub_archetype_id=exam.sub_archetype_id)
+        base_structure = strategy.generate_structure(exam_uuid=exam.uuid)
         
-        # INYECCIÓN DEL MATERIAL DE ESTUDIO (RANGO SELECCIONADO)
-        material_prompt = ""
-        if context_text:
-            # Truncamos si es excesivo para evitar error 429/ContextLimit
-            safe_context = context_text[:50000] 
-            material_prompt = f"\\n\\nMATERIAL DE REFERENCIA (FUENTE DE VERDAD):\\n{safe_context}\\n\\n"
-
         user_message = (
-            f"CONTEXTO ACADÉMICO: {topic or 'General'}. "
-            f"{material_prompt}"
-            f"INSTRUCCIÓN: Genera el examen basándote EXCLUSIVAMENTE en el Material de Referencia proporcionado. "
-            f"Rellena el siguiente esquema JSON: {json.dumps(base_structure)}"
+            f"TEMA: {topic or subject.name}. "
+            f"MATERIAL DE REFERENCIA:\n{context_text[:40000] if context_text else 'Sin contexto específico.'}\n\n"
+            f"INSTRUCCIÓN: Genera los ítems para completar este esquema JSON: {json.dumps(base_structure)}"
         )
 
-        # Ejecución con captura de metadatos de tokens (V06DOC_STRUCTURE)
-        ai_response, usage_metadata = GeminiService.generate(
-            system_prompt=system_prompt,
-            user_prompt=user_message,
-            temperature=0.5
+        # 3. Llamada Blindada (Usa el pool de claves del Orquestador)
+        automation_settings = AutomationSettings.load()
+        api_key = automation_settings.active_api_key
+        
+        success, response_text, api_key_name = generate_text_content(
+            user_message, 
+            api_key=api_key
         )
 
-        if isinstance(ai_response, str):
-            cleaned_response = ai_response.replace('```json', '').replace('```', '').strip()
-            exam_structure = json.loads(cleaned_response)
-        else:
-            exam_structure = ai_response
+        if not success:
+            raise AIServiceCriticalError(f"IA_FAILURE: {response_text}")
 
-        if 'subdivision_sequence' not in exam_structure:
-            raise ValueError("Estructura inválida recibida de IA.")
+        # 4. Mapeo Relacional (V06DOC_TEMPLATES)
+        cleaned_json = clean_json_response(response_text)
+        data = json.loads(cleaned_json)
+        
+        with transaction.atomic():
+            # Limpiar posibles intentos previos y guardar parámetros de rigor
+            exam.sections.all().delete()
+            exam.grading_params = strategy._get_grading_params()
+            
+            for idx, section_data in enumerate(data.get('subdivision_sequence', [])):
+                section = ExamSection.objects.create(
+                    exam=exam,
+                    subdivision_id=section_data['subdivision_id'],
+                    title=section_data['title'],
+                    instructions=section_data.get('instructions', ''),
+                    order=idx
+                )
+                
+                for item_idx, item_data in enumerate(section_data.get('items', [])):
+                    ExamItem.objects.create(
+                        section=section,
+                        block_type=item_data['block_type'],
+                        widget_id=item_data['widget_id'],
+                        content=item_data['content'],
+                        grading_logic=item_data['grading_logic'],
+                        metadata=item_data['metadata'],
+                        order=item_idx
+                    )
 
-                # Registro de consumo y costes
-        if usage_metadata:
+            # 5. Registro de Consumo (V06DOC_STRUCTURE)
             TrackingService.record_usage(
-                user=exam.user,
-                exam=exam,
+                user=exam.user, 
+                exam=exam, 
                 model_name="gemini-2.5-flash-lite",
-                input_tokens=usage_metadata.get('prompt_token_count', 0),
-                output_tokens=usage_metadata.get('candidates_token_count', 0)
+                input_tokens=0, # Captura real pendiente en gemini_service
+                output_tokens=0, 
+                api_key_name=api_key_name
             )
 
-        exam.structure = exam_structure
-        exam.status = Exam.STATUS_READY
-        exam.save()
-        logger.info(f"Exam {exam_uuid} generated successfully.")
+            exam.status = 'READY'
+            exam.save(update_fields=['status', 'grading_params'])
+            
+        logger.info(f"EXAM_SUCCESS: {exam_uuid} relational mapping complete.")
 
     except Exception as e:
-        logger.error(f"Error generating exam {exam_uuid}: {str(e)}")
-        if 'exam' in locals():
-            exam.status = Exam.STATUS_ERROR
-            exam.error_log = str(e)
-            exam.save()
-        raise self.retry(exc=e, countdown=60)
+        logger.error(f"EXAM_ERROR: {exam_uuid}: {str(e)}", exc_info=True)
+        if exam:
+            exam.status = 'ERROR'
+            exam.error_log = traceback.format_exc()
+            exam.save(update_fields=['status', 'error_log'])
+        raise

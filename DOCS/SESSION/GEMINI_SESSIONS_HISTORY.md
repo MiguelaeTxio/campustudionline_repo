@@ -1702,3 +1702,18 @@ Carga de contexto obligatoria: Documentación técnica V06DOC y modelos de `asse
 *  **Session:** Reparación Admin y Consolidación Engine Hito 6
 *  **Description:** Corrección visual en admin/base_site.html. Implementación de generate_structure en BaseExamStrategy. Refactorización de tarea Celery para uso de Factory. Integración de badges en Sidebar y creación de Dashboard.
 
+
+# 2026-02-15
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+## EPI # --SYSTEM -->
+*  **Session:** Estandarización de Protocolos de IA para Evaluación
+*  **Description:** Definición y refinamiento de la lógica de negocio para el sistema de autoevaluación (Hito 6), integrando los modelos de assessment_v2 con el orquestador y alineando los flujos de trabajo con la documentación satélite del hito.
+
+
+# 2026-02-15
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+## EPI
+*  **Session:** Estandarización de Plantillas JSON y Lógica de Generación V2
+*  **Description:** Consolidación de la arquitectura de evaluación V2 siguiendo el contrato 'UGR-Level'. Se inicia la integración de las estrategias de deducción (Logic Mapping) y la estructura de subdivisiones (Templates) para la generación de exámenes mediante IA. El objetivo es asegurar el cumplimiento de la matriz de intersección pedagógica definida en la constelación v06DOC, mapeando Arquetipos, Itinerarios y Niveles directamente desde la estructura académica para alimentar el motor de Gemini.

@@ -18,26 +18,23 @@ La próxima sesión debe cargarse con los siguientes documentos para garantizar 
 ---
 
 # ANEXO: HITO 06 - SISTEMA DE AUTOEVALUACIONES CON IA
-# ESTADO: EN PROGRESO (FASE 3: CONSOLIDACIÓN DE INTERFAZ Y ADMIN)
+# ESTADO: EN PROGRESO (FASE 3: CONSOLIDACIÓN DE INTERFAZ Y ENTREGA)
 
 ## 1. RESUMEN TÉCNICO DE LA SESIÓN
-Se ha restaurado la consistencia operativa y visual del sistema tras un reinicio:
-*   **Reparación del Admin:** Reconexión del botón "Centro de Control de Evaluaciones" con la vista personalizada `assessment_dashboard_view` y corrección de redirecciones en `admin_views.py`.
-*   **Sincronización de Interfaz (V2):** Actualizada la Barra Lateral (`_navigation_sidebar.html`) para interpretar y señalizar los estados nativos de la V2 (`GENERATING`, `READY`, `GRADING`, `GRADED`).
-*   **Limpieza de NavBar:** Extirpado el icono intruso `fa-file-invoice` de `base.html`, devolviendo la señalización a un contexto estrictamente integrado (Sidebar y Sala de Estudio).
-*   **Higiene de Código:** Eliminados estilos en línea en componentes del frontend para cumplir con la validación `djlint`.
+Se ha realizado una reconstrucción estructural profunda alineada con el Santo Grial (v06DOC):
+*   **Mapeo Relacional:** Refactorizado el modelo de datos en 'assessment_v2/models/main.py' para sustituir el JSON plano por tablas relacionales ('ExamSection', 'ExamItem').
+*   **Automatización Pedagógica:** Implementado el 'AcademicDeductor' (logic.py) para clasificar exámenes mediante regex según 'V06DOC_LOGIC_MAPPING'.
+*   **Segregación de Orquestación:** Refactorizada 'generate_exam_task' en 'orchestrator/tasks.py' para gestionar la persistencia relacional y el control de costes mediante 'TrackingService'.
+*   **Motor de Calificación:** Integrada la fórmula de penalización interna [Aciertos - (Errores/(N-1))] en 'LanguagesStrategy' según 'V06DOC_BLOCKS'.
+*   **Estandarización UI:** Creado el motor de renderizado de widgets en 'exam_take.html' y el primer componente funcional: 'W-OBJ-STRIKE'.
 
 ## 2. HOJA DE RUTA PARA LA SIGUIENTE SESIÓN (LEY SUPREMA)
-**FUENTE DE VERDAD ABSOLUTA:** Es **MANDATORIO** y de **ESTRICTO CUMPLIMIENTO** utilizar la constelación documental **`v06DOC`** como la **ÚNICA FUENTE DE INSPIRACIÓN** para cualquier implementación técnica.
+**FUENTE DE VERDAD ABSOLUTA:** Es **MANDATORIO** utilizar la constelación documental **v06DOC** para completar la interfaz.
 
 ### TAREAS CRÍTICAS (ORDEN OBLIGATORIO)
-1.  **Desarrollo de Plantillas de Examen (JSON Contract):**
-    *   Implementar la lógica en las estrategias para rellenar la `subdivision_sequence` siguiendo estrictamente `V06DOC_TEMPLATES`.
-2.  **Lógica de Generación de Ítems:**
-    *   Integrar los bloques de evaluación (`PRM-STRIKE`, `RPP-TRAZA`) en el prompt de la IA basándose en el material de estudio seleccionado.
-3.  **Refinamiento de la Tarea Celery:**
-    *   Asegurar que la inyección de contexto real del temario produzca ítems que cumplan con la "Matriz de Intersección Pedagógica" de `V06DOC_LEVELS`.
-4.  **Consolidación del Dashboard de Usuario:**
-    *   Crear la vista de historial de exámenes realizados para que el estudiante pueda revisar sus calificaciones y reportes de la V2.
-
----
+1.  **Cierre del Ciclo de Usuario (Frontend JS):**
+    *   Implementar en 'exam_take.html' el script JS que recolecte respuestas de widgets y realice el 'POST' a 'ExamSubmitView'.
+2.  **Visualización de Resultados (Exam Report):**
+    *   Crear 'ExamReportView' y la plantilla 'exam_report.html' para mostrar el desglose de calificación y el feedback del reporte.
+3.  **Captura Real de Consumo:**
+    *   Actualizar 'gemini_service.py' para retornar metadatos de tokens y vincularlos al 'TrackingService' desde la tarea de Celery.

@@ -1,0 +1,98 @@
+# /home/MiguelAeTxio/PROJECTS/CampuStudiOnline/assessment_v2/services/engine/strategies/languages.py
+from django.utils.translation import gettext_lazy as _
+from .base import BaseExamStrategy
+import json
+
+class LanguagesStrategy(BaseExamStrategy):
+    """
+    Estrategia de evaluación para idiomas basada en estándares internacionales.
+    Implementa los bloques de evaluación CLOZE y MATCHING (V06DOC_BLOCKS).
+    """
+
+    def generate_structure(self, exam_uuid, sub_archetype_id='SUB-LIN-CERT'):
+        """
+        Define el esqueleto para Lenguas integrando el Exam Header estandarizado.
+        """
+        # 1. Obtener esqueleto base de la clase padre (Exam Contract V2)
+        contract = self.generate_contract_skeleton(
+            exam_uuid=exam_uuid, 
+            archetype_id='ARCH_LANG', 
+            sub_archetype_id=sub_archetype_id
+        )
+
+        # 2. Inyectar secuencia de subdivisiones específica de Idiomas
+        contract["subdivision_sequence"] = [
+            {
+                "subdivision_id": "SD_READ",
+                "title": "Comprensión Lectora & Use of English",
+                "instructions": "Analice los textos y resuelva los ejercicios de gramática y vocabulario.",
+                "time_limit": 3600,
+                "items": [] # IA generará PRM-STRIKE, CLO-MULTI, MAT-LINK
+            },
+            {
+                "subdivision_id": "SD_LIST",
+                "title": "Comprensión Auditiva",
+                "instructions": "Escuche las grabaciones y responda a las cuestiones planteadas.",
+                "time_limit": 2400,
+                "items": [] # IA generará MAT-LINK, PRM-STRIKE
+            },
+            {
+                "subdivision_id": "SD_WRIT",
+                "title": "Expresión Escrita",
+                "instructions": "Redacción de textos formales/académicos siguiendo las rúbricas.",
+                "time_limit": 3600,
+                "items": [] # IA generará DRA-HOLO
+            },
+            {
+                "subdivision_id": "SD_MEDI",
+                "title": "Mediación Lingüística",
+                "instructions": "Traducción de conceptos y adaptación de registros.",
+                "time_limit": 1800,
+                "items": [] # IA generará BMT-SHIFT
+            },
+            {
+                "subdivision_id": "SD_SPEAK",
+                "title": "Expresión Oral",
+                "instructions": "Interacción con el asistente UniversIA.",
+                "time_limit": 900,
+                "items": [] # IA generará INTERACTION
+            }
+        ]
+        return contract
+
+    def get_output_schema(self):
+        """Define la descripción del esquema JSON para el prompt."""
+        return "Un objeto JSON que siga estrictamente la estructura 'subdivision_sequence' del Exam Contract V2."
+
+    def get_system_prompt(self):
+        """
+        Prompt de Sistema conforme a V06DOC_METADATA.
+        """
+        return f"""
+ROLE: Eres 'UniversIA', experto en evaluación lingüística y diseño de exámenes de certificación.
+OBJECTIVE: Generar un examen de idiomas nivel {self.pedagogical_level} con itinerario {self.itinerary_id}.
+OUTPUT FORMAT: JSON estricto rellenando la lista 'items' de cada subdivisión.
+
+BLOQUES DISPONIBLES (V06DOC_BLOCKS):
+- PRM-STRIKE: Test con penalización. Widget: W-OBJ-STRIKE.
+- CLO-MULTI: Use of English con opciones. Widget: W-TXT-CLOZE.
+- CLO-OPEN: Rellenado de huecos libre. Widget: W-TXT-CLOZE.
+- MAT-LINK: Emparejamiento. Widget: W-MIX-MATCH.
+- DRA-HOLO: Redacción con rúbrica analítica. Widget: W-HUM-TEXT.
+- BMT-SHIFT: Mediación. Widget: W-HUM-TEXT.
+
+INSTRUCCIONES TÉCNICAS:
+1. Nivel {self.pedagogical_level}: Ajustar complejidad léxica y gramatical.
+2. Itinerario {self.itinerary_id}: Determinar el sesgo (Académico vs Profesional).
+3. Estilo: Rigor académico, sin alucinaciones, distractores plausibles en los test.
+"""
+
+    def get_user_prompt(self, context_text, topic):
+        """Genera el prompt de usuario inyectando el material de estudio."""
+        return f"""
+TEMA: {topic}
+CONTEXTO DE ESTUDIO:
+{context_text}
+
+TAREA: Genera el contenido de los 'items' para las subdivisiones SD_READ, SD_LIST, SD_WRIT y SD_MEDI basándote exclusivamente en el material proporcionado.
+"""

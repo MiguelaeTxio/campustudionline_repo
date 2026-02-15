@@ -1,104 +1,73 @@
-from django.utils.translation import gettext_lazy as _
-from .base import BaseAssessmentStrategy
+# /home/MiguelAeTxio/PROJECTS/CampuStudiOnline/assessment_v2/services/engine/strategies/languages.py
+from .base import BaseExamStrategy
+from decimal import Decimal
 import json
 
-class LanguagesStrategy(BaseAssessmentStrategy):
-    def generate_structure(self):
+class LanguagesStrategy(BaseExamStrategy):
+    """
+    Exam strategy for languages based on international standards.
+    Implements UGR-standard penalty formulas for objective items.
+    
+    ---
+    
+    Estrategia de examen para idiomas basada en estándares internacionales.
+    Implementa fórmulas de penalización estándar UGR para ítems objetivos.
+    """
+
+    def grade_item(self, item, student_input):
         """
-        Define el esqueleto COMPLETO para Lenguas (CertAccles/MCER).
-        Utiliza los nuevos bloques documentados en V06DOC_BLOCKS (V1.1).
+        Implements the UGR formula: [Correct - (Incorrect/(N-1))].
+        Current implementation for PRM-STRIKE (Multiple Choice).
+        ---
+        Implementa la fórmula UGR: [Aciertos - (Errores/(N-1))].
+        Implementación actual para PRM-STRIKE (Selección Múltiple).
         """
-        return {
-            "subdivision_sequence": [
-                {
-                    "subdivision_id": "SD_READ",
-                    "title": "Comprensión Lectora (Reading & Use of English)",
-                    "instructions": "Lea los textos y complete los ejercicios de gramática y vocabulario.",
-                    "time_limit": 3600,
-                    "items": [] 
-                    # IA TARGET: 
-                    # 1. MAT-LINK (Matching Headings)
-                    # 2. PRM-STRIKE (Multiple Choice Reading)
-                    # 3. CLO-MULTI (Multiple Choice Cloze)
-                },
-                {
-                    "subdivision_id": "SD_LIST",
-                    "title": "Comprensión Auditiva (Listening)",
-                    "instructions": "Escuche los audios y responda.",
-                    "time_limit": 2400,
-                    "items": []
-                    # IA TARGET:
-                    # 1. MAT-LINK (Matching Speakers)
-                    # 2. PRM-STRIKE (Interview/Conversation)
-                },
-                {
-                    "subdivision_id": "SD_WRIT",
-                    "title": "Expresión Escrita (Writing)",
-                    "instructions": "Redacte los textos solicitados.",
-                    "time_limit": 3600,
-                    "items": []
-                    # IA TARGET:
-                    # 1. DRA-HOLO (Short Essay / Email)
-                    # 2. DRA-HOLO (Report / Article)
-                },
-                {
-                    "subdivision_id": "SD_MEDI",
-                    "title": "Mediación Lingüística",
-                    "instructions": "Transfiera la información al idioma destino o registro adecuado.",
-                    "time_limit": 1800,
-                    "items": []
-                    # IA TARGET:
-                    # 1. BMT-SHIFT (Text Mediation)
-                },
-                {
-                    "subdivision_id": "SD_SPEAK",
-                    "title": "Expresión Oral (Speaking)",
-                    "instructions": "Interactúe con el examinador (UniversIA).",
-                    "time_limit": 900,
-                    "items": []
-                    # IA TARGET:
-                    # 1. INTERACTION (Prompt for W-COMM-DIALOG)
-                }
-            ]
-        }
+        logic = item.grading_logic
+        correct_answer = logic.get('correct_answer')
+        penalty = Decimal(str(logic.get('penalty_factor', 0.33)))
+        
+        # Logic for Multiple Choice (PRM-STRIKE)
+        if item.block_type == 'PRM-STRIKE':
+            if student_input == correct_answer:
+                return Decimal('1.0'), {"status": "CORRECT", "detail": "Match found."}
+            elif student_input:
+                # Apply penalty for wrong answer to discourage guessing
+                return -penalty, {"status": "INCORRECT", "penalty_applied": float(penalty)}
+        
+        # Production blocks (DRA-HOLO, BMT-SHIFT) currently default to pending
+        return Decimal('0.0'), {"status": "PENDING_AI_REVIEW", "detail": "Requires linguistic analysis."}
+
+    def get_output_schema(self):
+        """Returns the item payload schema description."""
+        return "Object containing block_type, widget_id, content, grading_logic, and metadata."
 
     def get_system_prompt(self):
-        """
-        Prompt de Sistema conforme a V06DOC_TEMPLATES y V06DOC_METADATA.
-        Instruye el uso de los widgets W-TXT-CLOZE, W-MIX-MATCH, etc.
-        """
+        """Inyecta las mecánicas de V06DOC_BLOCKS en el cerebro de la IA."""
+        p_factor = 0.33 # Penalty factor for 4 options
         return f"""
-ROLE: Eres 'UniversIA', arquitecto pedagógico de certificación de idiomas (MCER).
-OBJECTIVE: Generar examen completo (5 destrezas) nivel {self.pedagogical_level}.
-OUTPUT FORMAT: JSON estricto rellenando la estructura base.
+ROLE: UniversIA Linguistic Expert.
+PEDAGOGICAL LEVEL: {self.pedagogical_level}
+ITINERARY: {self.itinerary_id}
 
-MANDATORY JSON SCHEMA FOR ITEMS (V06DOC_TEMPLATES):
-{{
-  "block_type": "PRM-STRIKE | CLO-MULTI | CLO-OPEN | MAT-LINK | DRA-HOLO | BMT-SHIFT",
-  "widget_id": "W-OBJ-STRIKE | W-TXT-CLOZE | W-MIX-MATCH | W-HUM-TEXT | W-COMM-DIALOG",
-  "content": {{
-    "stem": "Enunciado...",
-    "media_assets": ["url_audio_placeholder"], 
-    "text_body": "Texto con huecos {{1}} para Cloze...",
-    "options": [ ... ],
-    "matches": [ {{ "left": "A", "right": "1" }} ] // Para Matching
-  }},
-  "grading_logic": {{ ... }},
-  "metadata": {{ "competency_tag": "COMP_GEN", "cognitive_tag": "COG_..." }}
-}}
-
-RULES (V06DOC_ARCHETYPES):
-1. SD_READ:
-   - 1x MAT-LINK (Matching Headings/Paragraphs).
-   - 1x PRM-STRIKE (Reading Comprehension).
-   - 1x CLO-MULTI (Use of English - Multiple Choice Cloze).
-2. SD_LIST:
-   - 1x MAT-LINK (Matching Speakers).
-   - 1x PRM-STRIKE (Multiple Choice).
-3. SD_WRIT: 2x DRA-HOLO (Essay + Report/Email).
-4. SD_MEDI: 1x BMT-SHIFT (Mediación).
-5. SD_SPEAK: 1x INTERACTION (Prompt para W-COMM-DIALOG).
-
-LEVEL ADJUSTMENT ({self.pedagogical_level}):
-- Ajusta vocabulario y complejidad gramatical estrictamente al nivel.
+TECHNICAL INSTRUCTIONS:
+Generate items following V06DOC_BLOCKS mechanics:
+1. PRM-STRIKE: Multiple Choice with penalty_factor={p_factor}.
+2. CLO-MULTI: Multiple Choice Cloze (Text with selectables).
+3. MAT-LINK: Matching (Link headers to paragraphs).
+4. DRA-HOLO: Holistic rubrics for production.
 """
+
+    def get_user_prompt(self, context_text, topic):
+        return f"Generate assessment items for topic '{topic}' using this material: {context_text}"
+
+    def generate_structure(self, exam_uuid, sub_archetype_id='SUB-LIN-CERT'):
+        """Creates the initial relational structure skeleton."""
+        contract = self.generate_contract_skeleton(exam_uuid, 'ARCH_LANG', sub_archetype_id)
+        contract["subdivision_sequence"] = [
+            {"subdivision_id": "SD_READ", "title": "Reading & Use of English", "items": []},
+            {"subdivision_id": "SD_LIST", "title": "Listening", "items": []},
+            {"subdivision_id": "SD_WRIT", "title": "Writing", "items": []},
+            {"subdivision_id": "SD_MEDI", "title": "Mediation", "items": []},
+            {"subdivision_id": "SD_SPEAK", "title": "Speaking", "items": []}
+        ]
+        return contract
