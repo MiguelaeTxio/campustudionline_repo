@@ -423,6 +423,7 @@
 ./assessment_v2/templates/assessment_v2/partials/assessment_legend.html
 ./assessment_v2/templates/assessment_v2/exam_generating.html
 ./assessment_v2/templates/assessment_v2/exam_create.html
+./assessment_v2/templates/admin/assessment_v2/_exam_log_modal_content.html
 ./assessment_v2/templates/admin/assessment_v2/dashboard.html
 ./assessment_v2/admin.py
 ./assessment_v2/admin_views.py
@@ -433,6 +434,7 @@
 ./assessment_v2/__init__.py
 ./assessment_v2/views.py
 ./assessment_v2/apps.py
+./assessment_v2/migrations/0005_exam_event_log.py
 ./assessment_v2/migrations/0004_remove_exam_structure_exam_grading_params_and_more.py
 ./assessment_v2/migrations/0003_exam_content_copy.py
 ./assessment_v2/migrations/__init__.py

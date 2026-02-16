@@ -1733,3 +1733,11 @@ Carga de contexto obligatoria: Documentación técnica V06DOC y modelos de `asse
 *  **Session:** Refactor de AcademicDeductor e Implementación de Calificación IA UniversIA
 *  **Description:** Inicio de la fase final del Hito 6 centrado en la rectificación lógica del motor de deducción académica y la habilitación de la calificación por IA para bloques de producción (DRA-HOLO). Se contempla la inyección de lógica Kill-Switch para itinerarios de seguridad (ECOE) y el cierre del ciclo de UI con plantillas de examen y feedback detallado.
 
+
+# 2026-02-16
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+## EDC # --SYSTEM -->
+*  **Session:** Restauración del Dashboard del Orquestador y Validación Final de Assessment V2
+*  **Description:** Fase 4 del Hito 6. Diagnóstico y reparación de la regresión en la visualización de logs del Dashboard. Validación funcional (Smoke Tests) de widgets críticos (Cálculo y Kill-Switch).
+

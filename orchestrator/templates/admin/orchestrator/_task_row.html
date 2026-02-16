@@ -1,19 +1,19 @@
 {% comment %}
 Ruta: /home/MiguelAeTxio/PROJECTS/CampuStudiOnline/orchestrator/templates/admin/orchestrator/_task_row.html
-[V2 - REFACTORIZADO HTMX]
-Este parcial renderiza una única fila (<tr>) para un objeto 'task' (PendingContentTask).
-Ahora es un componente dinámico que se auto-actualiza mediante HTMX.
+[V2.3 - NO ENTITIES - NO INLINE STYLES]
 {% endcomment %}
 <tr id="task-row-{{ task.id }}" class="{% cycle 'row1' 'row2' %}">
     <td><strong>{{ task }}</strong></td>
     <td>
-        {% if task.status == 'PROCESSING' %}<span style="color: #fd7e14;font-weight:bold;">{{ task.get_status_display }}</span>
-        {% elif task.status == 'PAUSED' %}<span style="color: #6c757d;font-weight:bold;">{{ task.get_status_display }}</span>
-        {% elif task.status == 'PENDING' %}<span style="color: #007bff;font-weight:bold;">{{ task.get_status_display }}</span>
-        {% elif task.status == 'FAILED' or task.status == 'CANCELLED' %}<span style="color: #dc3545;font-weight:bold;">{{ task.get_status_display }}</span>
-        {% elif task.status == 'FAILED_RETRYABLE' or task.status == 'FAILED_QUOTA' %}<span style="color: #ff8c00;font-weight:bold;">{{ task.get_status_display }}</span>
-        {% elif task.status == 'FAILED_FATAL' %}<span style="color: #8b0000;font-weight:bold; cursor: help;" title="Último Error:&#10;{{ task.last_error|default:'No hay detalles del error.' }}">{{ task.get_status_display }}</span>
-        {% elif task.status == 'COMPLETED' %}<span style="color: #28a745;font-weight:bold;">{{ task.get_status_display }}</span>
+        {% if task.status == 'PROCESSING' %}<span class="st-bold st-processing">{{ task.get_status_display }}</span>
+        {% elif task.status == 'PAUSED' %}<span class="st-bold st-paused">{{ task.get_status_display }}</span>
+        {% elif task.status == 'PENDING' %}<span class="st-bold st-pending">{{ task.get_status_display }}</span>
+        {% elif task.status == 'FAILED' or task.status == 'CANCELLED' %}<span class="st-bold st-failed">{{ task.get_status_display }}</span>
+        {% elif task.status == 'FAILED_RETRYABLE' or task.status == 'FAILED_QUOTA' %}<span class="st-bold st-warning">{{ task.get_status_display }}</span>
+        {% elif task.status == 'FAILED_FATAL' %}
+            <span class="st-bold st-fatal" title="Último Error:
+{{ task.last_error|default:'No hay detalles del error.' }}">{{ task.get_status_display }}</span>
+        {% elif task.status == 'COMPLETED' %}<span class="st-bold st-completed">{{ task.get_status_display }}</span>
         {% else %}<span>{{ task.get_status_display }}</span>{% endif %}
     </td>
     <td>{{ task.assigned_to.username }}</td>
@@ -25,28 +25,38 @@ Ahora es un componente dinámico que se auto-actualiza mediante HTMX.
         {% endif %}
     </td>
     <td class="task-actions">
-        <a href="{% url 'orchestrator:task_log_full_page' task_id=task.id %}" class="button" target="_blank">Ver Log</a>
+        <a href="{% url 'orchestrator:task_log_full_page' task_id=task.id %}" class="button" target="_blank">Full Log</a>
+        
+        <button type="button"
+                hx-get="{% url 'orchestrator:get_modal_log_content' task_id=task.id %}" 
+                hx-target="#modal-log-content" 
+                hx-swap="innerHTML"
+                onclick="openLogModal()"
+                class="button btn-task btn-log-quick">Log Rápido</button>
         
         {% if task.status == 'PROCESSING' %}
-            <button hx-post="{% url 'orchestrator:pause_task' task_id=task.id %}" 
+            <button type="button"
+                    hx-post="{% url 'orchestrator:pause_task' task_id=task.id %}" 
                     hx-target="#task-row-{{ task.id }}" 
                     hx-swap="outerHTML"
-                    class="button" style="background-color: #ffc107; color: #212529;">Pausar</button>
+                    class="button btn-task btn-pause">Pausar</button>
         {% endif %}
         
         {% if task.status == 'PAUSED' %}
-            <button hx-post="{% url 'orchestrator:resume_task' task_id=task.id %}" 
+            <button type="button"
+                    hx-post="{% url 'orchestrator:resume_task' task_id=task.id %}" 
                     hx-target="#task-row-{{ task.id }}" 
                     hx-swap="outerHTML"
-                    class="button" style="background-color: #28a745;">Reanudar</button>
+                    class="button btn-task btn-resume">Reanudar</button>
         {% endif %}
         
         {% if task.status != 'COMPLETED' and task.status != 'FAILED' and task.status != 'FAILED_FATAL' %}
-            <button hx-post="{% url 'orchestrator:cancel_task' task_id=task.id %}" 
+            <button type="button"
+                    hx-post="{% url 'orchestrator:cancel_task' task_id=task.id %}" 
                     hx-target="#task-row-{{ task.id }}" 
                     hx-swap="outerHTML"
-                    hx-confirm="¿Estás seguro de que quieres cancelar esta tarea? Esta acción la marcará como 'Fallida' y no se podrá reanudar."
-                    class="button" style="background-color: #dc3545;">Cancelar</button>
+                    hx-confirm="¿Estás seguro de que quieres cancelar esta tarea?"
+                    class="button btn-task btn-cancel">Cancelar</button>
         {% endif %}
     </td>
 </tr>

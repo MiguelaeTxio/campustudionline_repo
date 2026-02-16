@@ -1,0 +1,37 @@
+{% comment %}
+Ruta: /home/MiguelAeTxio/PROJECTS/CampuStudiOnline/assessment_v2/templates/admin/assessment_v2/_exam_log_modal_content.html
+Visor de trazabilidad para Assessment V2.
+{% endcomment %}
+<div class="log-container">
+    <div class="log-header">
+        <strong>Examen UUID:</strong> {{ exam.uuid }}<br>
+        <strong>Usuario:</strong> {{ exam.user.username }}
+    </div>
+    <hr class="log-separator">
+    
+    {% for entry in event_log_reversed %}
+        <div class="log-entry">
+            <div class="log-meta">
+                <span class="log-timestamp">{{ entry.timestamp|slice:":19" }}</span>
+                <span class="log-level-badge level-{{ entry.level|lower }}">
+                    {{ entry.level }}
+                </span>
+            </div>
+            <div class="log-message">{{ entry.message }}</div>
+            {% if entry.payload %}
+                <div class="log-payload">
+                    <pre>{{ entry.payload }}</pre>
+                </div>
+            {% endif %}
+        </div>
+    {% empty %}
+        <p class="log-empty">No hay eventos registrados para este examen.</p>
+    {% endfor %}
+
+    {% if exam.error_log %}
+        <div class="log-error-section">
+            <div class="log-level-badge level-error">FALLO FATAL</div>
+            <pre class="log-error-text">{{ exam.error_log }}</pre>
+        </div>
+    {% endif %}
+</div>

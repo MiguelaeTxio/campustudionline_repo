@@ -34,7 +34,11 @@ class Exam(models.Model):
     grading_params = models.JSONField(_('Parámetros de Rigor'), default=dict)
 
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='PENDING', db_index=True)
+    
+    # Trazabilidad y Logs
+    event_log = models.JSONField(_('Log de Eventos'), default=list, blank=True)
     error_log = models.TextField(_('Log de Error'), blank=True, null=True)
+    
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

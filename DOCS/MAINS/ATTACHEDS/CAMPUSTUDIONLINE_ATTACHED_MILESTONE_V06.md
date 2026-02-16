@@ -16,28 +16,31 @@ La próxima sesión debe cargarse OBLIGATORIAMENTE con la siguiente constelació
 ---
 
 # ANEXO: HITO 06 - SISTEMA DE AUTOEVALUACIONES CON IA
-# ESTADO: EN PROGRESO (FASE 4: CIERRE TÉCNICO Y RESTAURACIÓN)
+# ESTADO: EN PROGRESO (FASE 4: BLOQUEO TÉCNICO POR NAMESPACE)
 
 ## 1. RESUMEN TÉCNICO DE LA SESIÓN
-*   **Motor Pedagógico:** Implementadas las 5 estrategias (`Languages`, `Health`, `Tech`, `Social`, `Humanities`) con sus lógicas específicas (`KILL_SWITCH`, `RPP-TRAZA`, etc.).
-*   **Orquestación:** Refactorizada la `ExamFactory` para enrutamiento real por arquetipo.
-*   **Interfaz:** Completado `exam_take.html` con la librería de widgets y `exam_report.html` con feedback detallado.
-*   **Corrección Crítica:** Restaurada la lógica de filtrado de TOC y selector de rango en `views.py` usando `contents/utils.py`.
-*   **Incidencia Pendiente:** Pérdida de logs en el Custom Dashboard por regresión en commits previos.
+*   **Restauración de Logs:** Reintroducido el campo `event_log` (JSONField) en `assessment_v2.models.main.Exam`.
+*   **Interfaz V2:** Creada la vista `get_exam_log_content_view` y el template parcial `_exam_log_modal_content.html` para visualización vía HTMX.
+*   **Conflicto de Enrutamiento:** Se detectó un error `NoReverseMatch` persistente. Los intentos de registro mediante tuplas en `core/urls.py` han fallado al entrar en colisión con el contexto `admin`.
 
 ## 2. HOJA DE RUTA PARA LA SIGUIENTE SESIÓN (LEY SUPREMA)
-**OBJETIVO:** Restauración de herramientas de administración y validación final.
+**OBJETIVO:** Estabilización de la capa de transporte (URLs) y validación de los Arquetipos TECH/HEALTH.
 
 ### TAREAS CRÍTICAS (ORDEN OBLIGATORIO)
 
-1.  **RESTAURACIÓN DEL DASHBOARD (PRIORIDAD 0):**
-    *   Ejecutar auditoría `git log` para localizar el "Punto Cero" (hash previo al inicio de Assessment V2).
-    *   Restaurar `orchestrator/admin_views.py` y `orchestrator/templates/admin/orchestrator/dashboard.html` a ese estado.
-    *   Verificar la recuperación de la visualización de logs.
+1.  **LIMPIEZA RADICAL DE RUTAS (PRIORIDAD 0):**
+    *   **Archivo `core/urls.py`:** Sustituir la línea de inclusión de `assessment_v2.admin_urls` por una declaración simple: `path("admin/assessment_v2/management/", include("assessment_v2.admin_urls"))`.
+    *   **Archivo `assessment_v2/admin_urls.py`:** Confirmar `app_name = 'assessment_admin'`.
+    *   **Archivo `assessment_v2/admin.py`:** Eliminar cualquier método `get_urls` o `include` interno. La administración debe ser plana y delegar al registro global de `core/urls.py`.
+    *   **Auditoría de Templates:** Eliminar cualquier prefijo `admin:` en las etiquetas `{% url %}` que apunten a `assessment_admin`.
 
-2.  **Validación Funcional (Smoke Test):**
-    *   Generar un examen de Ingeniería (Arquetipo TECH) y verificar widget de cálculo.
-    *   Generar un examen de Salud (Arquetipo HEALTH) y verificar Kill-Switch.
+2.  **RECONEXIÓN Y VERIFICACIÓN DE DASHBOARD:**
+    *   Cargar el Dashboard V2 y pulsar el botón "Ver Log" en un examen existente.
+    *   Verificar que el modal se despliega y el contenido se inyecta correctamente vía HTMX.
 
-3.  **Cierre del Hito:**
-    *   Si el Dashboard y los Tests pasan, marcar Hito 6 como COMPLETADO.
+3.  **SMOKE TESTS (ARQUETIPOS):**
+    *   **Test TECH:** Generar un examen de Ingeniería y verificar que la estrategia `tech.py` configura el widget `W-TECH-CALC`.
+    *   **Test HEALTH:** Generar un examen de Salud y verificar que la estrategia `health.py` activa los parámetros de `KILL_SWITCH`.
+
+4.  **CIERRE DEL HITO:**
+    *   Tras validación, marcar Hito 6 como COMPLETADO y proceder al Hito 7.

@@ -141,7 +141,7 @@ def get_sub_categories_htmx(request):
 def task_log_full_page_view(request, task_id):
     task = get_object_or_404(PendingContentTask, id=task_id)
     # El log se almacena como una lista de diccionarios. Lo invertimos para la vista.
-    task_log_reversed = list(reversed(task.task_log))
+    task_log_reversed = list(reversed(task.task_log or []))
     
     context = admin.site.each_context(request)
     context.update({
@@ -379,7 +379,7 @@ def task_row_partial_view(request, task_id):
 @staff_member_required
 def get_modal_log_content_view(request, task_id):
     task = get_object_or_404(PendingContentTask, id=task_id)
-    task_log_reversed = list(reversed(task.task_log))
+    task_log_reversed = list(reversed(task.task_log or []))
     return render(request, "admin/orchestrator/_task_log_modal_content.html", {"task": task, "task_log_reversed": task_log_reversed})
 
 @staff_member_required

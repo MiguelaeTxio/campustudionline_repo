@@ -19,6 +19,33 @@
     .status-PENDING { background-color: #fd7e14; }
     .status-default { background-color: #6c757d; }
     .full-width-table { width: 100%; }
+
+    /* Visor de Logs V2 */
+    .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 9999; justify-content: center; align-items: center; }
+    .modal-overlay.active { display: flex; }
+    .modal-container { background: white; width: 90%; max-width: 1100px; height: 85vh; border-radius: 8px; display: flex; flex-direction: column; overflow: hidden; }
+    .modal-header { padding: 15px 20px; background: #f1f1f1; border-bottom: 1px solid #ddd; display: flex; justify-content: space-between; align-items: center; }
+    .modal-body { flex-grow: 1; padding: 0; overflow-y: auto; background: #1e1e1e; color: #d4d4d4; }
+    .close-modal-btn { background: none; border: none; font-size: 28px; cursor: pointer; color: #666; font-weight: bold; }
+    
+    /* Estilos del contenido del log (Parcial) */
+    .log-container { padding: 20px; font-family: 'Courier New', Courier, monospace; }
+    .log-header { margin-bottom: 15px; color: #888; font-size: 0.9em; }
+    .log-separator { border: 0; border-top: 1px solid #333; margin: 15px 0; }
+    .log-entry { border-bottom: 1px solid #333; padding: 10px 0; }
+    .log-meta { display: flex; gap: 15px; margin-bottom: 5px; font-size: 0.85em; }
+    .log-timestamp { color: #569cd6; }
+    .log-level-badge { padding: 2px 6px; border-radius: 3px; font-weight: bold; font-size: 0.8em; }
+    .level-error { background: #f44336; color: white; }
+    .level-success { background: #4caf50; color: white; }
+    .level-info { background: #2196f3; color: white; }
+    .log-message { color: #ce9178; line-height: 1.4; }
+    .log-payload pre, .log-error-text { background: #2d2d2d; padding: 10px; border-radius: 4px; color: #9cdcfe; margin-top: 5px; font-size: 0.85em; white-space: pre-wrap; }
+    .log-error-section { margin-top: 20px; border: 1px solid #f44336; padding: 10px; border-radius: 4px; }
+    
+    /* Botones de acción */
+    .btn-log { background-color: #17a2b8 !important; color: white !important; margin-left: 5px; border: none !important; }
+
 </style>
 {% endblock %}
 
@@ -62,7 +89,8 @@
                     <td>{{ processing_task.created_at|date:"d/m/Y H:i" }}</td>
                     <td><span class="task-status-badge status-{{ processing_task.status }}">{{ processing_task.get_status_display }}</span></td>
                     <td>
-                        <a href="{% url 'admin:assessment_admin:assessment_pause_task' processing_task.pk %}" class="button">Marcar Revisión</a>
+                        <a href="{% url 'assessment_admin:assessment_pause_task' processing_task.pk %}" class="button">Marcar Revisión</a>
+                        <button type="button" hx-get="{% url 'assessment_admin:get_exam_log_content' processing_task.pk %}" hx-target="#modal-log-content" hx-swap="innerHTML" onclick="openLogModal()" class="button btn-log">Ver Log</button>
                     </td>
                 </tr>
             </tbody>
@@ -121,6 +149,7 @@
                         </span>
                     </td>
                     <td>{{ task.updated_at|date:"d/m/Y H:i" }}</td>
+                    <td><button type="button" hx-get="{% url 'assessment_admin:get_exam_log_content' task.pk %}" hx-target="#modal-log-content" hx-swap="innerHTML" onclick="openLogModal()" class="button btn-log">Ver Log</button></td>
                 </tr>
                 {% endfor %}
             </tbody>
@@ -130,4 +159,24 @@
         {% endif %}
     </div>
 </div>
+
+    <!-- MODAL DE LOGS HTMX -->
+    <div id="log-modal" class="modal-overlay">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h3 style="margin:0">Historial Detallado de Evaluación</h3>
+                <button type="button" class="close-modal-btn" onclick="closeLogModal()">×</button>
+            </div>
+            <div id="modal-log-content" class="modal-body">
+                <div style="padding: 40px; text-align: center;">Cargando trazabilidad de la IA...</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function closeLogModal() { document.getElementById('log-modal').classList.remove('active'); }
+        function openLogModal() { document.getElementById('log-modal').classList.add('active'); }
+        document.addEventListener('keydown', function(e){ if(e.key === "Escape") closeLogModal(); });
+    </script>
+
 {% endblock %}

@@ -4,7 +4,7 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib import admin, messages
 from django.utils import timezone
 from django.db.models import Count
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse
 from .models.main import Exam
 from datetime import timedelta
@@ -44,4 +44,19 @@ def pause_exam_task(request, pk):
     # Lógica de pausa (Placeholder para integración con Celery)
     messages.info(request, f"Examen {exam.uuid} marcado para revisión.")
     # [FIXED] Redirección corregida al namespace del dashboard interactivo
-    return HttpResponseRedirect(reverse('admin:assessment_admin:assessment_dashboard'))
+    return HttpResponseRedirect(reverse('assessment_admin:assessment_dashboard'))
+
+
+@staff_member_required
+def get_exam_log_content_view(request, pk):
+    """
+    Devuelve el fragmento HTML con el log de eventos del examen para el modal.
+    """
+    exam = get_object_or_404(Exam, pk=pk)
+    # Invertimos el log para ver lo más reciente arriba
+    event_log_reversed = list(reversed(exam.event_log or []))
+    
+    return render(request, "admin/assessment_v2/_exam_log_modal_content.html", {
+        "exam": exam,
+        "event_log_reversed": event_log_reversed
+    })

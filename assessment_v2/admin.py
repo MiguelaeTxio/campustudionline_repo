@@ -11,13 +11,6 @@ class ExamAdmin(admin.ModelAdmin):
     """
     Administración de Exámenes con integración de Dashboard personalizado.
     """
-    def get_urls(self):
-        urls = super().get_urls()
-        # Inyectamos las rutas del dashboard personalizado dentro del contexto de Exam
-        custom_urls = [
-            path('management/', include('assessment_v2.admin_urls')),
-        ]
-        return custom_urls + urls
 
     list_display = ('uuid_short', 'user', 'archetype_id', 'status_badge', 'created_at')
     list_filter = ('status', 'archetype_id', 'created_at')
