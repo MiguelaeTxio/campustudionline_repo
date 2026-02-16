@@ -48,7 +48,7 @@ urlpatterns = [
     path("jsi18n/", JavaScriptCatalog.as_view(), name="javascript-catalog"),
     path("service-worker.js", ServiceWorkerView.as_view(), name="service_worker"),
     path("admin/orchestrator/", include("orchestrator.admin_urls")),
-            path("admin/assessment_v2/management/", include("assessment_v2.admin_urls")),
+    path("admin/assessment_v2/management/", include(("assessment_v2.admin_urls", "assessment_admin"), namespace="assessment_admin")),
     path("admin/contents/", include("contents.admin_urls", namespace="contents_admin")),
     path("admin/", admin.site.urls),
     path("", user_views.home_view, name="home"),

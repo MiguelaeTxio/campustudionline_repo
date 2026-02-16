@@ -856,8 +856,9 @@ def generate_exam_task(self, exam_uuid, context_text=None, topic=None):
 
         # 1. Recuperar Configuración Pedagógica (Logic Mapping)
         # Obtenemos el Subject a través de la ContentCopy vinculada
-        subject = exam.content_copy.content_material.subject.first()
-        strategy = ExamFactory.get_strategy_for_subject(subject)
+        material = exam.content_copy.original_content
+        subject = material.subject.first()
+        strategy = ExamFactory.get_strategy_for_subject(subject, context_title=material.title)
         
         # 2. Preparar Prompts
         system_prompt = strategy.get_system_prompt()

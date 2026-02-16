@@ -35,19 +35,53 @@ class TechnicalStrategy(BaseExamStrategy):
 
     def get_user_prompt(self, context_text, topic):
         """
-        Injects study context for engineering problems.
+        Generates the specific user instruction for Technical Exams (RPP-TRAZA Model).
         ---
-        Inyecta contexto de estudio para problemas de ingeniería.
+        Genera la instrucción específica de usuario para exámenes técnicos (Modelo RPP-TRAZA).
         """
-        return f"Generate engineering problems for '{topic}' focusing on structural/logical design based on: {context_text}"
+        return (
+            f"TEMA: {topic}. "
+            f"MATERIAL DE REFERENCIA: {context_text[:40000]} "
+            f"INSTRUCCIÓN: Actúa como Catedrático de Ingeniería UGR. Genera problemas técnicos "
+            f"que requieran modelado y cálculo. Usa el bloque RPP-TRAZA para permitir "
+            f"la puntuación parcial por pasos lógicos. "
+            f"Nivel: {self.pedagogical_level}. Itinerario: {self.itinerary_id}."
+        )
 
     def get_output_schema(self):
         """
-        Defines the JSON schema for technical items.
+        Defines the high-fidelity JSON structure for the Technical Exam Contract.
         ---
-        Define el esquema JSON para ítems técnicos.
+        Define la estructura JSON de alta fidelidad para el Contrato de Examen Técnico.
         """
-        return "JSON with RPP-TRAZA and W-TECH-CALC widget_id."
+        return {
+            "subdivision_sequence": [
+                {
+                    "subdivision_id": "SD_THEO | SD_MODEL | SD_CALC",
+                    "title": "string",
+                    "instructions": "string",
+                    "items": [
+                        {
+                            "block_type": "RPP-TRAZA | PRM-STRIKE | RBT-CANON",
+                            "widget_id": "W-TECH-CALC | W-OBJ-STRIKE",
+                            "content": {
+                                "stem": "string",
+                                "media_assets": ["urls"]
+                            },
+                            "grading_logic": {
+                                "correct_answer": "any",
+                                "step_matrix": "JSON object with step weights",
+                                "penalty_factor": 0.2
+                            },
+                            "metadata": {
+                                "competency_tag": "COMP_ESP | COMP_PROF",
+                                "cognitive_tag": "COG_APP | COG_ANA"
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
 
     def generate_structure(self, exam_uuid, sub_archetype_id='SUB-TEC-SOFT'):
         """

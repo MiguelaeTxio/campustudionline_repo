@@ -72,10 +72,55 @@ GRADING BIAS (V06DOC_SUBDIVISIONS):
 """
 
     def get_user_prompt(self, context_text, topic):
-        return f"Generate a clinical case and evaluation steps for '{topic}' based on: {context_text}"
+        """
+        Generates the specific user instruction for Health Exams (ECOE Model).
+        ---
+        Genera la instrucción específica de usuario para exámenes de salud (Modelo ECOE).
+        """
+        return (
+            f"TEMA: {topic}. "
+            f"MATERIAL DE REFERENCIA: {context_text[:40000]} "
+            f"INSTRUCCIÓN: Actúa como evaluador clínico UGR. Genera un caso clínico real "
+            f"con estaciones de Anamnesis, Técnica y Ética. "
+            f"Nivel: {self.pedagogical_level}. Itinerario: {self.itinerary_id}. "
+            f"REGLA DE ORO: Si detectas un paso de riesgo letal, usa el bloque CDS-KILL."
+        )
 
     def get_output_schema(self):
-        return "JSON following V06DOC_TEMPLATES (ITEM_PAYLOAD) with block_type CDS-KILL/PRM-STRIKE/ILC-CONTEXT."
+        """
+        Defines the high-fidelity JSON structure for the ECOE Exam Contract.
+        ---
+        Define la estructura JSON de alta fidelidad para el Contrato de Examen ECOE.
+        """
+        return {
+            "subdivision_sequence": [
+                {
+                    "subdivision_id": "SD_FACT | SD_PROC | SD_ETHI",
+                    "title": "string",
+                    "instructions": "string",
+                    "items": [
+                        {
+                            "block_type": "CDS-KILL | PRM-STRIKE | ILC-CONTEXT",
+                            "widget_id": "W-PROC-ACTION | W-OBJ-STRIKE | W-CLIN-SCAN",
+                            "content": {
+                                "stem": "string",
+                                "options": "list (for PRM)",
+                                "media_assets": ["urls"]
+                            },
+                            "grading_logic": {
+                                "correct_answer": "any",
+                                "kill_switch": True,
+                                "penalty_factor": 0.5
+                            },
+                            "metadata": {
+                                "competency_tag": "COMP_ESP | COMP_PROF",
+                                "cognitive_tag": "COG_APP | COG_ANA | COG_EVAL"
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
 
     def generate_structure(self, exam_uuid, sub_archetype_id='SUB-SAN-MED'):
         contract = self.generate_contract_skeleton(exam_uuid, 'ARCH_HEALTH', sub_archetype_id)

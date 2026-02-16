@@ -46,6 +46,8 @@
     /* Botones de acción */
     .btn-log { background-color: #17a2b8 !important; color: white !important; margin-left: 5px; border: none !important; }
 
+    .modal-header-title { margin: 0; }
+    .modal-loading { padding: 40px; text-align: center; }
 </style>
 {% endblock %}
 
@@ -136,6 +138,7 @@
                     <th>Usuario</th>
                     <th>Estado</th>
                     <th>Finalizado</th>
+                    <th>Acciones</th>
                 </tr>
             </thead>
             <tbody>
@@ -164,11 +167,11 @@
     <div id="log-modal" class="modal-overlay">
         <div class="modal-container">
             <div class="modal-header">
-                <h3 style="margin:0">Historial Detallado de Evaluación</h3>
+                <h3 class="modal-header-title">Historial Detallado de Evaluación</h3>
                 <button type="button" class="close-modal-btn" onclick="closeLogModal()">×</button>
             </div>
             <div id="modal-log-content" class="modal-body">
-                <div style="padding: 40px; text-align: center;">Cargando trazabilidad de la IA...</div>
+                <div class="modal-loading">Cargando trazabilidad de la IA...</div>
             </div>
         </div>
     </div>

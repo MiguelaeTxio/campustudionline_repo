@@ -32,19 +32,53 @@ class HumanitiesStrategy(BaseExamStrategy):
 
     def get_user_prompt(self, context_text, topic):
         """
-        Injects context for source criticism.
+        Generates the specific user instruction for Humanities Exams (Hermeneutic Model).
         ---
-        Inyecta contexto para la crítica de fuentes.
+        Genera la instrucción específica de usuario para exámenes de humanidades (Modelo Hermenéutico).
         """
-        return f"Generate essay topics and source analysis for '{topic}' based on: {context_text}"
+        return (
+            f"TEMA: {topic}. "
+            f"MATERIAL DE REFERENCIA: {context_text[:40000]} "
+            f"INSTRUCCIÓN: Actúa como Catedrático de Humanidades UGR. Genera ejercicios de "
+            f"exégesis de fuentes primarias y disertación dialéctica. "
+            f"Nivel: {self.pedagogical_level}. Itinerario: {self.itinerary_id}. "
+            f"Rigor: Máxima corrección formal y calidad discursiva."
+        )
 
     def get_output_schema(self):
         """
-        Defines the schema for ARCH_HUM.
+        Defines the high-fidelity JSON structure for the Humanities Exam Contract.
         ---
-        Define el esquema para ARCH_HUM.
+        Define la estructura JSON de alta fidelidad para el Contrato de Examen de Humanidades.
         """
-        return "JSON with DRA-HOLO and EV-PALE blocks."
+        return {
+            "subdivision_sequence": [
+                {
+                    "subdivision_id": "SD_SOURCE | SD_DISC | SD_ARTE",
+                    "title": "string",
+                    "instructions": "string",
+                    "items": [
+                        {
+                            "block_type": "EV-PALE | DRA-HOLO | BMT-SHIFT",
+                            "widget_id": "W-HUM-TEXT | W-COMM-DIALOG",
+                            "content": {
+                                "stem": "string",
+                                "source_material": "string",
+                                "media_assets": ["urls"]
+                            },
+                            "grading_logic": {
+                                "holistic_rubric": True,
+                                "formal_penalty_max": 2.5
+                            },
+                            "metadata": {
+                                "competency_tag": "COMP_GEN | COMP_TRA",
+                                "cognitive_tag": "COG_ANA | COG_CREA"
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
 
     def generate_structure(self, exam_uuid, sub_archetype_id='SUB-HUM-HIST'):
         """

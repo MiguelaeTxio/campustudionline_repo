@@ -41,7 +41,7 @@ class ExamCreateView(LoginRequiredMixin, View):
             if subject:
                 # Automate metadata using the platform's quality standard
                 # Automatiza los metadatos usando el estándar de calidad de la plataforma
-                metadata = AcademicDeductor.get_context_metadata(subject)
+                metadata = AcademicDeductor.get_context_metadata(subject, context_title=content.title)
                 
                 # Use the centralized utility to get a clean, filtered TOC
                 # Usa la utilidad centralizada para obtener un TOC limpio y filtrado
@@ -75,7 +75,7 @@ class ExamCreateView(LoginRequiredMixin, View):
         content_copy = get_object_or_404(ContentCopy, user=request.user, original_content=content)
         
         subject = content.subject.first()
-        metadata = AcademicDeductor.get_context_metadata(subject)
+        metadata = AcademicDeductor.get_context_metadata(subject, context_title=content.title)
         
         # Use the centralized utility to correctly extract the content range
         # Usa la utilidad centralizada para extraer correctamente el rango de contenido

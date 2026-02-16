@@ -9,12 +9,12 @@ class AcademicDeductor:
     """
 
     @staticmethod
-    def deduce_archetype(subject):
+    def deduce_archetype(subject, context_title=None):
         """
         Deduces the ARCH_ID based on the subject name and academic branch.
         Deduce el ARCH_ID basándose en el nombre de la asignatura y la rama académica.
         """
-        name = subject.name.lower()
+        name = (context_title or subject.name).lower()
         branch_name = subject.academic_year.degree.branch.name.lower()
 
         # 1. Languages
@@ -36,7 +36,7 @@ class AcademicDeductor:
         return 'ARCH_SOC'
 
     @staticmethod
-    def deduce_itinerary(subject):
+    def deduce_itinerary(subject, context_title=None):
         """
         Deduces the ITIN_ID based on terminology and subject type.
         Supports ITIN_ROT and ITIN_PROF for health and engineering.
@@ -44,7 +44,7 @@ class AcademicDeductor:
         Deduce el ITIN_ID basándose en la terminología y el tipo de asignatura.
         Soporta ITIN_ROT e ITIN_PROF para salud e ingeniería.
         """
-        name = subject.name.lower()
+        name = (context_title or subject.name).lower()
         branch_name = subject.academic_year.degree.branch.name.lower()
         
         # 1. Detección Explícita (V06DOC_LOGIC_MAPPING)
@@ -66,21 +66,21 @@ class AcademicDeductor:
         return 'ITIN_MIN'
 
     @staticmethod
-    def deduce_level(subject):
+    def deduce_level(subject, context_title=None):
         """
         Deduces the LVL_ID (Pedagogical Level).
         Deduce el LVL_ID (Nivel Pedagógico).
         """
-        name = subject.name.lower()
+        name = (context_title or subject.name).lower()
         year = subject.academic_year.year if subject.academic_year else 1
 
         # 1. Semantic detection
-        if re.search(r'(inicial|básico|basico|a1|a2|intro)', name):
-            return 'LVL_A'
-        if re.search(r'(intermedio|b1|b2)', name):
-            return 'LVL_B'
-        if re.search(r'(avanzado|superior|c1|c2)', name):
+        if re.search(r'(avanzado|superior|c1|c2| nivel iii\b|\b iii\b)', name):
             return 'LVL_C'
+        if re.search(r'(intermedio|b1|b2| nivel ii\b|\b ii\b)', name):
+            return 'LVL_B'
+        if re.search(r'(inicial|básico|basico|a1|a2|intro| nivel i\b|\b i\b)', name):
+            return 'LVL_A'
 
         # 2. Year-based fallback
         if year <= 2:
@@ -91,13 +91,13 @@ class AcademicDeductor:
         return 'LVL_C'
 
     @classmethod
-    def get_context_metadata(cls, subject):
+    def get_context_metadata(cls, subject, context_title=None):
         """
         Returns the full metadata pack for the Exam Contract.
         Devuelve el paquete completo de metadatos para el Contrato de Examen.
         """
         return {
-            'archetype_id': cls.deduce_archetype(subject),
-            'itinerary_id': cls.deduce_itinerary(subject),
-            'pedagogical_level': cls.deduce_level(subject),
+            'archetype_id': cls.deduce_archetype(subject, context_title),
+            'itinerary_id': cls.deduce_itinerary(subject, context_title),
+            'pedagogical_level': cls.deduce_level(subject, context_title),
         }

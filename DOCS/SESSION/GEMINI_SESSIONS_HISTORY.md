@@ -1741,3 +1741,10 @@ Carga de contexto obligatoria: Documentación técnica V06DOC y modelos de `asse
 *  **Session:** Restauración del Dashboard del Orquestador y Validación Final de Assessment V2
 *  **Description:** Fase 4 del Hito 6. Diagnóstico y reparación de la regresión en la visualización de logs del Dashboard. Validación funcional (Smoke Tests) de widgets críticos (Cálculo y Kill-Switch).
 
+# 2026-02-16
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+## NRA # --SYSTEM -->
+*  **Session:** Hito 06: Estabilización de Enrutamiento y Smoke Tests de Arquetipos
+*  **Description:** Ejecución de la Fase 4 del Hito 6. Limpieza radical de conflictos de namespace en `core/urls.py` y `assessment_v2`. Verificación de inyección HTMX en el Dashboard. Validación de generadores de exámenes para arquetipos TECH y HEALTH.
+

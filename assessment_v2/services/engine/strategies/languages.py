@@ -87,6 +87,57 @@ All justifications must use:
 - FB_SAFETY: For critical security/protocol violations (if applicable).
 """
 
+
+    def get_user_prompt(self, context_text, topic):
+        """
+        Generates the specific user instruction for Language Exams (CERTACCLES Model).
+        ---
+        Genera la instrucción específica de usuario para exámenes de idiomas (Modelo CERTACCLES).
+        """
+        return (
+            f"TEMA: {topic}. "
+            f"MATERIAL DE REFERENCIA: {context_text[:40000]} "
+            f"INSTRUCCIÓN: Actúa como examinador oficial de idiomas de la UGR. Genera un examen "
+            f"siguiendo las destrezas de Reading, Writing y Use of English basadas en el texto. "
+            f"Nivel de rigor: {self.pedagogical_level}. Itinerario: {self.itinerary_id}."
+        )
+
+    def get_output_schema(self):
+        """
+        Defines the high-fidelity JSON structure for the Language Exam Contract.
+        ---
+        Define la estructura JSON de alta fidelidad para el Contrato de Examen de Idiomas.
+        """
+        return {
+            "subdivision_sequence": [
+                {
+                    "subdivision_id": "SD_READ | SD_WRIT | SD_MEDI",
+                    "title": "string",
+                    "instructions": "string",
+                    "items": [
+                        {
+                            "block_type": "PRM-STRIKE | CLO-OPEN | CLO-MULTI | MAT-LINK",
+                            "widget_id": "W-OBJ-STRIKE | W-TXT-CLOZE | W-MIX-MATCH",
+                            "content": {
+                                "stem": "string",
+                                "options": "list (if PRM/CLO-MULTI)",
+                                "media_assets": []
+                            },
+                            "grading_logic": {
+                                "correct_answer": "any",
+                                "penalty_factor": 0.33,
+                                "kill_switch": False
+                            },
+                            "metadata": {
+                                "competency_tag": "COMP_GEN | COMP_ESP",
+                                "cognitive_tag": "COG_REM | COG_UND | COG_APP"
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+
     def generate_structure(self, exam_uuid, sub_archetype_id='SUB-LIN-CERT'):
         """Creates the initial relational structure skeleton."""
         contract = self.generate_contract_skeleton(exam_uuid, 'ARCH_LANG', sub_archetype_id)

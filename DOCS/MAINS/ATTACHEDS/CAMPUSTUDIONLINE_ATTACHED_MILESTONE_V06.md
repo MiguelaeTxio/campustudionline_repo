@@ -1,7 +1,7 @@
 ### PARTE INMUTABLE (MANDATORIA EN TODOS LOS PCS)
 
 **DIRECTRIZ DE CARGA OBLIGATORIA (LEY DE CONTINUIDAD):**
-La próxima sesión debe cargarse OBLIGATORIAMENTE con la siguiente constelación documental para garantizar el contexto del Estándar de Máxima Calidad:
+La próxima sesión debe cargarse OBLIGATORIAMENTE con la siguiente constelación documental:
 *   V06DOC_ARCHETYPES.md
 *   V06DOC_SUBARCHETYPES.md
 *   V06DOC_SUBDIVISIONS.md
@@ -12,35 +12,40 @@ La próxima sesión debe cargarse OBLIGATORIAMENTE con la siguiente constelació
 *   V06DOC_TEMPLATES.md
 *   V06DOC_STRUCTURE.md
 *   V06DOC_LOGIC_MAPPING.md
+*   V06DOC_ROADMAP.md
+
+**PROTOCOLO DEL MANIFIESTO (FUENTE DE LA VERDAD):**
+El archivo V06DOC_ROADMAP.md es la ÚNICA fuente de verdad para el progreso. 
+1. Es OBLIGATORIO auditar este archivo al inicio de cada sesión.
+2. Es MANDATORIO actualizar su estado atómico (Checklist) al cierre de cada sesión.
+3. No se permite la simplificación ni omisión de requisitos definidos en los documentos satélite.
 
 ---
 
 # ANEXO: HITO 06 - SISTEMA DE AUTOEVALUACIONES CON IA
-# ESTADO: EN PROGRESO (FASE 4: BLOQUEO TÉCNICO POR NAMESPACE)
+# ESTADO: EN PROGRESO (FASE 3: ESTABILIZACIÓN Y VALIDACIÓN)
 
 ## 1. RESUMEN TÉCNICO DE LA SESIÓN
-*   **Restauración de Logs:** Reintroducido el campo `event_log` (JSONField) en `assessment_v2.models.main.Exam`.
-*   **Interfaz V2:** Creada la vista `get_exam_log_content_view` y el template parcial `_exam_log_modal_content.html` para visualización vía HTMX.
-*   **Conflicto de Enrutamiento:** Se detectó un error `NoReverseMatch` persistente. Los intentos de registro mediante tuplas en `core/urls.py` han fallado al entrar en colisión con el contexto `admin`.
+*   **Limpieza de Transporte:** Corregido Error 500 mediante el registro de namespace 'assessment_admin' en core/urls.py y corrección de enlaces en templates globales.
+*   **Deducción Académica:** Implementado AcademicDeductor sensible al contexto (material.title). Invertida la prioridad de niveles (C->B->A) para evitar degradación de rango.
+*   **Saneamiento del Motor:** Implementación de clases concretas para las 5 estrategias maestras (LANG, HEALTH, TECH, SOC, HUM) cumpliendo BaseExamStrategy.
+*   **Alineación Documental:** Generado Roadmap Atómico (V1.2) que refleja el 100% de los requisitos de la UGR.
 
 ## 2. HOJA DE RUTA PARA LA SIGUIENTE SESIÓN (LEY SUPREMA)
-**OBJETIVO:** Estabilización de la capa de transporte (URLs) y validación de los Arquetipos TECH/HEALTH.
+**OBJETIVO:** Validación Atómica de Motores de Bloques (Fase 3 del Roadmap).
 
 ### TAREAS CRÍTICAS (ORDEN OBLIGATORIO)
 
-1.  **LIMPIEZA RADICAL DE RUTAS (PRIORIDAD 0):**
-    *   **Archivo `core/urls.py`:** Sustituir la línea de inclusión de `assessment_v2.admin_urls` por una declaración simple: `path("admin/assessment_v2/management/", include("assessment_v2.admin_urls"))`.
-    *   **Archivo `assessment_v2/admin_urls.py`:** Confirmar `app_name = 'assessment_admin'`.
-    *   **Archivo `assessment_v2/admin.py`:** Eliminar cualquier método `get_urls` o `include` interno. La administración debe ser plana y delegar al registro global de `core/urls.py`.
-    *   **Auditoría de Templates:** Eliminar cualquier prefijo `admin:` en las etiquetas `{% url %}` que apunten a `assessment_admin`.
+1.  **SMOKE TEST: ARQUETIPO TECH (BLOQUE RPP-TRAZA):**
+    *   Generar examen de Ingeniería y auditar que el JSON contract asigne W-TECH-CALC.
+    *   Verificar que la lógica de calificación asigne el 50% de peso al planteamiento lógico.
 
-2.  **RECONEXIÓN Y VERIFICACIÓN DE DASHBOARD:**
-    *   Cargar el Dashboard V2 y pulsar el botón "Ver Log" en un examen existente.
-    *   Verificar que el modal se despliega y el contenido se inyecta correctamente vía HTMX.
+2.  **SMOKE TEST: ARQUETIPO HEALTH (BLOQUE CDS-KILL):**
+    *   Generar examen de Salud y auditar la inyección de KILL_SWITCH: True en pasos críticos.
+    *   Verificar que la omisión de un paso de seguridad activa FATAL_ERROR.
 
-3.  **SMOKE TESTS (ARQUETIPOS):**
-    *   **Test TECH:** Generar un examen de Ingeniería y verificar que la estrategia `tech.py` configura el widget `W-TECH-CALC`.
-    *   **Test HEALTH:** Generar un examen de Salud y verificar que la estrategia `health.py` activa los parámetros de `KILL_SWITCH`.
+3.  **AUDITORÍA DE INTEGRACIÓN HTMX:**
+    *   Verificar la inyección de logs en el Dashboard V2 tras el reinicio del Worker.
 
-4.  **CIERRE DEL HITO:**
-    *   Tras validación, marcar Hito 6 como COMPLETADO y proceder al Hito 7.
+---
+**DIRECTRIZ TÉCNICA:** Prohibido iniciar el Hito 07 hasta que todos los bloques de la Sección 3 del Roadmap estén verificados.

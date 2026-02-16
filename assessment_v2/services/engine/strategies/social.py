@@ -30,19 +30,52 @@ class SocialStrategy(BaseExamStrategy):
 
     def get_user_prompt(self, context_text, topic):
         """
-        Injects context for juridical/social cases.
+        Generates the specific user instruction for Social/Legal Exams (Casuistic Model).
         ---
-        Inyecta contexto para casos jurídicos/sociales.
+        Genera la instrucción específica de usuario para exámenes sociales/jurídicos (Modelo Casuístico).
         """
-        return f"Generate case studies for '{topic}' requiring regulatory framing based on: {context_text}"
+        return (
+            f"TEMA: {topic}. "
+            f"MATERIAL DE REFERENCIA: {context_text[:40000]} "
+            f"INSTRUCCIÓN: Actúa como Magistrado o Consultor Senior. Genera un supuesto de hecho "
+            f"real que requiera encuadre normativo y dictamen técnico. Usa el widget W-LAW-NAV."
+            f"Nivel: {self.pedagogical_level}. Itinerario: {self.itinerary_id}."
+        )
 
     def get_output_schema(self):
         """
-        Defines the schema for ARCH_SOC.
+        Defines the high-fidelity JSON structure for the Social/Legal Exam Contract.
         ---
-        Define el esquema para ARCH_SOC.
+        Define la estructura JSON de alta fidelidad para el Contrato de Examen Social/Jurídico.
         """
-        return "JSON with case study blocks and W-LAW-NAV widget_id."
+        return {
+            "subdivision_sequence": [
+                {
+                    "subdivision_id": "SD_FACT | SD_NORM | SD_PROC",
+                    "title": "string",
+                    "instructions": "string",
+                    "items": [
+                        {
+                            "block_type": "ILC-CONTEXT | PRM-STRIKE",
+                            "widget_id": "W-LAW-NAV | W-OBJ-STRIKE",
+                            "content": {
+                                "stem": "string",
+                                "options": "list (for PRM)",
+                                "case_context": "string"
+                            },
+                            "grading_logic": {
+                                "correct_answer": "any",
+                                "legal_precedent_required": "boolean"
+                            },
+                            "metadata": {
+                                "competency_tag": "COMP_ESP | COMP_TRA",
+                                "cognitive_tag": "COG_ANA | COG_EVAL"
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
 
     def generate_structure(self, exam_uuid, sub_archetype_id='SUB-SOC-JUR'):
         """

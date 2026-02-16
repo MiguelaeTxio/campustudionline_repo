@@ -18,12 +18,12 @@ class ExamFactory:
     ARCH_HUM = 'ARCH_HUM'
 
     @staticmethod
-    def get_strategy_for_subject(subject, **kwargs):
+    def get_strategy_for_subject(subject, context_title=None, **kwargs):
         """
         Main entry point: Deduces metadata from Subject and returns the strategy.
         Punto de entrada: Deduce metadatos del sujeto y retorna la estrategia configurada.
         """
-        metadata = AcademicDeductor.get_context_metadata(subject)
+        metadata = AcademicDeductor.get_context_metadata(subject, context_title=context_title)
         
         return ExamFactory.get_strategy(
             archetype_id=metadata['archetype_id'],
