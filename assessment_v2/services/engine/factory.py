@@ -23,23 +23,27 @@ class ExamFactory:
         Main entry point: Deduces metadata from Subject and returns the strategy.
         Punto de entrada: Deduce metadatos del sujeto y retorna la estrategia configurada.
         """
+        # The Deductor extracts the full constellation: Archetype, Sub-archetype, Level, and Itinerary.
+        # El Deductor extrae la constelación completa: Arquetipo, Sub-arquetipo, Nivel e Itinerario.
         metadata = AcademicDeductor.get_context_metadata(subject, context_title=context_title)
         
         return ExamFactory.get_strategy(
             archetype_id=metadata['archetype_id'],
+            sub_archetype_id=metadata['sub_archetype_id'], # Inyección de Identidad / Identity Injection
             pedagogical_level=metadata['pedagogical_level'],
             itinerary_id=metadata['itinerary_id'],
             **kwargs
         )
 
     @staticmethod
-    def get_strategy(archetype_id, pedagogical_level='LVL_B', itinerary_id='ITIN_MIN', **kwargs):
+    def get_strategy(archetype_id, sub_archetype_id='DEFAULT', pedagogical_level='LVL_B', itinerary_id='ITIN_MIN', **kwargs):
         """
         Returns a configured instance of the corresponding strategy.
         ---
         Devuelve una instancia configurada de la estrategia correspondiente.
         """
         strategy_kwargs = {
+            'sub_archetype_id': sub_archetype_id, # Requirement for BaseExamStrategy / Requisito para BaseExamStrategy
             'pedagogical_level': pedagogical_level,
             'itinerary_id': itinerary_id,
             **kwargs

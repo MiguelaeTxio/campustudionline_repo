@@ -11,10 +11,10 @@ from decimal import Decimal
 import json
 import re
 
-from .models.main import Exam, Submission, ExamItem
+from .models.main import Exam, Submission
 from .services.engine.factory import ExamFactory
 from .services.quotas import QuotaService
-from .services.engine.logic import AcademicDeductor
+from .services.engine.logic import AcademicDeductor, GradingOrchestrator
 from orchestrator.tasks import generate_exam_task
 from contents.models import ContentMaterial, ContentCopy
 from contents.utils import extract_toc_from_markdown, extract_content_range
@@ -53,7 +53,7 @@ class ExamCreateView(LoginRequiredMixin, View):
                     'system_deduction': {
                         'subject_name': subject.name,
                         'archetype': metadata['archetype_id'],
-                        'sub_archetype': 'SUB-LIN-CERT' if metadata['archetype_id'] == 'ARCH_LANG' else 'SUB-GENERIC',
+                        'sub_archetype': metadata['sub_archetype_id'], # Fixed: Using dynamic sub_archetype / Corregido: Uso de sub_archetype dinámico
                         'itinerary': metadata['itinerary_id'],
                         'level': metadata['pedagogical_level']
                     }
@@ -89,6 +89,7 @@ class ExamCreateView(LoginRequiredMixin, View):
             user=request.user,
             content_copy=content_copy,  # LINKED: Business Rule Compliance
             archetype_id=metadata['archetype_id'],
+            sub_archetype_id=metadata['sub_archetype_id'], # IDENTITY PERSISTENCE / PERSISTENCIA DE IDENTIDAD
             itinerary_id=metadata['itinerary_id'],
             pedagogical_level=metadata['pedagogical_level']
         )
@@ -145,31 +146,31 @@ class ExamSubmitView(LoginRequiredMixin, View):
         exam = get_object_or_404(Exam, uuid=uuid, user=request.user, status='READY')
         try:
             data = json.loads(request.body)
-            responses = data.get('responses', {})
             
             # Instantiate strategy via factory to access the quality-grading engine
             # Instancia la estrategia a través de la factoría para acceder al motor de calificación
-            strategy = ExamFactory.get_strategy(exam.archetype_id, exam.pedagogical_level, exam.itinerary_id)
+            strategy = ExamFactory.get_strategy(
+                archetype_id=exam.archetype_id, 
+                sub_archetype_id=exam.sub_archetype_id,
+                pedagogical_level=exam.pedagogical_level, 
+                itinerary_id=exam.itinerary_id
+            )
             
-            total_score, report = Decimal('0.0'), {}
             with transaction.atomic():
-                for item_id, student_input in responses.items():
-                    item = ExamItem.objects.get(id=item_id, section__exam=exam)
-                    score, item_report = strategy.grade_item(item, student_input)
-                    total_score += score
-                    report[item_id] = {"score": float(score), "report": item_report}
-
                 # Persist official submission (V06DOC_TEMPLATES)
                 # Persiste la entrega oficial (V06DOC_TEMPLATES)
-                Submission.objects.create(
+                submission = Submission.objects.create(
                     exam=exam,
-                    student_responses=responses,
-                    grading_report=report,
-                    final_score=max(total_score, Decimal('0.0')),
-                    graded_at=timezone.now()
+                    student_responses=data,
+                    submitted_at=timezone.now()
                 )
+                
+                # EXECUTE SPECIALIZED GRADING (Handles Section-Level Kill Switches)
+                # EJECUTA LA CALIFICACIÓN ESPECIALIZADA (Gestiona anulación de secciones)
+                GradingOrchestrator.grade_submission(submission, strategy)
+
                 exam.status = 'GRADED'
-                exam.save(update_fields=['status'])
+                exam.save(update_fields=['status', 'updated_at'])
 
             return JsonResponse({'status': 'SUCCESS', 'url': reverse('assessment_v2:exam_report', args=[uuid])})
         except Exception as e:

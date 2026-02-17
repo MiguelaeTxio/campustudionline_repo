@@ -1,9 +1,31 @@
 {% extends "base.html" %}
 {% load i18n static %}
 
+{# /home/MiguelAeTxio/PROJECTS/CampuStudiOnline/assessment_v2/templates/assessment_v2/exam_take.html #}
+
+{% block extra_css %}
+<style>
+    /* UI Fidelity Styles / Estilos de fidelidad de UI */
+    .striked-option { text-decoration: line-through; opacity: 0.5; }
+    .split-container { display: flex; gap: 20px; }
+    .source-panel { flex: 1; background: #f8f9fa; padding: 15px; border-right: 2px solid #dee2e6; max-height: 500px; overflow-y: auto; }
+    .editor-panel { flex: 1; }
+    .img-scan-viewport { max-height: 500px; width: auto; height: auto; cursor: crosshair; }
+    .markers-overlay-layer { pointer-events: none; }
+    .marker-dot { position: absolute; width: 12px; height: 12px; background: red; border: 2px solid white; border-radius: 50%; transform: translate(-50%, -50%); }
+    .cloze-box { line-height: 2.2; }
+    .cloze-input { display: inline-block; width: auto; min-width: 100px; border-bottom: 2px solid #007bff !important; border: none; padding: 0 5px; }
+    .chat-history-viewport { height: 150px; overflow-y: auto; }
+    .sticky-resource-panel { top: 20px; z-index: 1020; }
+    .law-nav-body { height: 75vh; overflow-y: auto; }
+    .draggable-item { cursor: grab; z-index: 10; }
+    .target-drop.active { border: 2px dashed #007bff; background: #e7f1ff; }
+</style>
+{% endblock %}
+
 {% block content %}
 <div class="container-fluid mt-4 px-4" id="exam-container" data-exam-uuid="{{ exam.uuid }}">
-    {# CABECERA TÉCNICA (V06DOC_TEMPLATES) #}
+    {# TECHNICAL HEADER / CABECERA TÉCNICA #}
     <div class="card mb-4 border-primary shadow-sm">
         <div class="card-body bg-light">
             <h2 class="h4 border-bottom pb-2">{% trans "Sesión de Evaluación UniversIA" %}</h2>
@@ -17,7 +39,6 @@
     </div>
 
     <div class="row">
-        {# ÁREA DE TRABAJO PRINCIPAL #}
         <div class="col-lg-8">
             {% for section in exam.sections.all %}
             <section class="exam-section mb-5" data-section-id="{{ section.subdivision_id }}">
@@ -35,52 +56,99 @@
                             <span class="badge bg-light text-dark border">{{ item.metadata.competency_tag }}</span>
                         </div>
 
-                        {# RENDERIZADO DINÁMICO DE WIDGETS (V06DOC_WIDGETS) #}
+                        {# WIDGET RENDERERS / RENDERIZADORES DE WIDGETS #}
 
-                        {# 1. LIBRERÍA TÉCNICA #}
                         {% if item.widget_id == 'W-TECH-CALC' %}
-                        <div class="widget-container p-3 border rounded bg-dark text-success font-monospace">
-                            <label class="small text-secondary d-block mb-1">{% trans "CONSOLA DE CÁLCULO PROCEDIMENTAL" %}</label>
-                            <input type="text" class="form-control bg-dark text-success border-success response-input" placeholder=">> [Input result or formula]">
+                        <div class="widget-container p-3 border rounded bg-dark text-success font-monospace" id="calc-{{ item.id }}">
+                            <div class="steps-log mb-2 small text-secondary" id="log-{{ item.id }}">
+                                <!-- Steps will be injected here / Los pasos se inyectarán aquí -->
+                            </div>
+                            <div class="input-group">
+                                <span class="input-group-text bg-dark text-success border-success">>></span>
+                                <input type="text" class="form-control bg-dark text-success border-success calc-input" 
+                                       placeholder="{% trans 'Paso de cálculo + ENTER...' %}">
+                            </div>
                         </div>
 
                         {% elif item.widget_id == 'W-CLIN-SCAN' %}
                         <div class="widget-container p-2 border rounded text-center">
-                            <img src="{{ item.content.media_assets.0 }}" class="img-fluid rounded mb-2 border" style="max-height: 400px;">
-                            <input type="text" class="form-control response-input" placeholder="{% trans 'Indica hallazgos detectados...' %}">
+                            <div class="image-wrapper position-relative d-inline-block scan-container" data-item-id="{{ item.id }}">
+                                <img src="{{ item.content.media_assets.0 }}" class="img-fluid rounded border shadow-sm img-scan-viewport" 
+                                     alt="{% trans 'Evidencia Clínica' %}" width="800" height="600">
+                                <div class="markers-overlay position-absolute top-0 start-0 w-100 h-100 markers-overlay-layer" id="overlay-{{ item.id }}"></div>
+                            </div>
+                            <input type="text" class="form-control mt-2 response-input" placeholder="{% trans 'Indique juicio diagnóstico...' %}">
                         </div>
 
-                        {# 2. LIBRERÍA DISCURSIVA #}
-                        {% elif item.widget_id == 'W-HUM-TEXT' %}
+                        {% elif item.widget_id == 'W-OBJ-STRIKE' %}
                         <div class="widget-container">
-                            <textarea class="form-control response-input" rows="8" placeholder="{% trans 'Redacte su exégesis crítica aquí...' %}"></textarea>
+                            {% for option in item.content.options %}
+                            <div class="form-check mb-2 d-flex align-items-center">
+                                <input class="form-check-input response-input" type="radio" name="item-{{ item.id }}" value="{{ option }}" id="opt-{{ item.id }}-{{ forloop.counter }}">
+                                <label class="form-check-label ms-2 flex-grow-1" for="opt-{{ item.id }}-{{ forloop.counter }}">{{ option }}</label>
+                                <button type="button" class="btn btn-sm btn-outline-secondary py-0 ms-2 btn-strike" title="{% trans 'Tachar' %}">×</button>
+                            </div>
+                            {% endfor %}
+                        </div>
+
+                        {% elif item.widget_id == 'W-HUM-TEXT' %}
+                        <div class="widget-container split-container">
+                            <div class="source-panel small rounded">
+                                <h6>{% trans "Material de Referencia" %}</h6>
+                                {{ item.content.source_material|linebreaks }}
+                            </div>
+                            <div class="editor-panel">
+                                <textarea class="form-control response-input" rows="12" placeholder="{% trans 'Redacción de exégesis...' %}"></textarea>
+                            </div>
                         </div>
 
                         {% elif item.widget_id == 'W-PROC-ACTION' %}
-                        <div class="widget-container p-3 border rounded bg-light">
-                            <label class="d-block mb-2 fw-bold text-danger">{% trans "CHECKLIST DE SEGURIDAD CRÍTICA" %}</label>
+                        <div class="widget-container p-3 border rounded border-danger shadow-sm">
+                            <h6 class="text-danger fw-bold">{% trans "PUNTOS DE CONTROL CRÍTICO" %}</h6>
                             {% for step in item.content.steps %}
-                            <div class="form-check mb-1">
+                            <div class="form-check mb-2">
                                 <input class="form-check-input response-input-check" type="checkbox" value="{{ step }}" id="step-{{ item.id }}-{{ forloop.counter }}">
                                 <label class="form-check-label" for="step-{{ item.id }}-{{ forloop.counter }}">{{ step }}</label>
                             </div>
                             {% endfor %}
                         </div>
 
-                        {# 3. LIBRERÍA LINGÜÍSTICA #}
-                        {% elif item.widget_id == 'W-OBJ-STRIKE' %}
-                        <div class="widget-container">
-                            {% for option in item.content.options %}
-                            <div class="form-check mb-2">
-                                <input class="form-check-input response-input" type="radio" name="item-{{ item.id }}" value="{{ option }}" id="opt-{{ item.id }}-{{ forloop.counter }}">
-                                <label class="form-check-label" for="opt-{{ item.id }}-{{ forloop.counter }}">{{ option }}</label>
-                            </div>
-                            {% endfor %}
+                        {% elif item.widget_id == 'W-TXT-CLOZE' %}
+                        <div class="widget-container border p-4 rounded bg-white shadow-sm cloze-box">
+                             {{ item.content.text_with_holes|safe }}
                         </div>
 
-                        {% elif item.widget_id == 'W-TXT-CLOZE' %}
-                        <div class="widget-container border p-3 rounded bg-white shadow-sm italic-text">
-                             {{ item.content.text_with_holes|safe }}
+                        {% elif item.widget_id == 'W-MIX-MATCH' %}
+                        <div class="widget-container p-3 border rounded bg-light" id="mix-{{ item.id }}">
+                            <div class="row">
+                                <div class="col-6">
+                                    <div class="list-group">
+                                        {% for source in item.content.sources %}
+                                        <div class="list-group-item draggable-item" draggable="true" data-source="{{ source }}">{{ source }}</div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="list-group">
+                                        {% for target in item.content.targets %}
+                                        <div class="list-group-item target-drop p-3 border-dashed" data-target="{{ target }}">
+                                            <span class="text-muted small">{% trans "Soltar para vincular a" %}: {{ target }}</span>
+                                        </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {% elif item.widget_id == 'W-COMM-DIALOG' %}
+                        <div class="widget-container p-3 border rounded bg-primary bg-opacity-10">
+                            <div class="chat-history-viewport mb-3 p-2 bg-white rounded border" id="chat-{{ item.id }}">
+                                <div class="text-secondary small italic">{% trans "En espera de interacción..." %}</div>
+                            </div>
+                            <div class="d-flex gap-2">
+                                <button type="button" class="btn btn-danger btn-sm rounded-pill px-3 btn-record">{% trans "Grabar" %}</button>
+                                <button type="button" class="btn btn-outline-primary btn-sm rounded-pill btn-listen">{% trans "Escuchar" %}</button>
+                            </div>
                         </div>
                         {% endif %}
                     </div>
@@ -90,16 +158,14 @@
             {% endfor %}
         </div>
 
-        {# PANEL LATERAL DE APOYO (V06DOC_WIDGETS: W-LAW-NAV) #}
+        {# SIDEPANEL #}
         <div class="col-lg-4">
-            <div class="sticky-top" style="top: 20px; z-index: 1020;">
-                <div class="card border-dark">
-                    <div class="card-header bg-dark text-white py-1">
-                        <span class="small fw-bold">{% trans "RECURSOS DE CONSULTA" %}</span>
-                    </div>
-                    <div class="card-body p-0" style="height: 70vh; overflow-y: auto;">
-                        <div id="resource-viewer" class="p-3 small text-muted">
-                            <p>{% trans "Seleccione un bloque para cargar el marco normativo o bibliografía asociada." %}</p>
+            <div class="sticky-top sticky-resource-panel">
+                <div class="card border-dark shadow">
+                    <div class="card-header bg-dark text-white"><span class="small fw-bold">{% trans "W-LAW-NAV / RECURSOS" %}</span></div>
+                    <div class="card-body p-0 law-nav-body">
+                        <div id="normative-results" class="p-3 small text-center text-muted mt-5">
+                            <p>{% trans "Seleccione un bloque para cargar el marco normativo." %}</p>
                         </div>
                     </div>
                 </div>
@@ -108,62 +174,122 @@
     </div>
 
     <div class="d-grid gap-2 mb-5 mt-4">
-        <button id="submit-exam" class="btn btn-primary btn-lg shadow">{% trans "FINALIZAR EVALUACIÓN" %}</button>
+        <button id="submit-exam" class="btn btn-primary btn-lg shadow-lg py-3">{% trans "FINALIZAR EVALUACIÓN" %}</button>
     </div>
 </div>
 
 <script>
-document.getElementById('submit-exam').addEventListener('click', async function() {
-    this.disabled = true;
-    this.innerHTML = '{% trans "Procesando Calificación..." %}';
+    // In-memory state for complex widgets / Estado en memoria para widgets complejos
+    const widgetState = {
+        calcSteps: {},
+        scanMarkers: {},
+        mixLinks: {}
+    };
 
-    const container = document.getElementById('exam-container');
-    const examUuid = container.dataset.examUuid;
-    const items = document.querySelectorAll('.exam-item');
-    const responses = {};
-
-    items.forEach(item => {
-        const itemId = item.dataset.itemId;
-        const blockType = item.dataset.blockType;
-        const widgetId = item.dataset.widgetId;
-        
-        if (widgetId === 'W-OBJ-STRIKE') {
-            const selected = item.querySelector('input:checked');
-            responses[itemId] = selected ? selected.value : '';
-        } else if (widgetId === 'W-PROC-ACTION') {
-            const checked = Array.from(item.querySelectorAll('.response-input-check:checked')).map(el => el.value);
-            responses[itemId] = checked;
-        } else if (widgetId === 'W-TXT-CLOZE') {
-            // Captura de múltiples inputs en cloze
-            const inputs = Array.from(item.querySelectorAll('.cloze-input')).map(el => el.value);
-            responses[itemId] = inputs;
-        } else {
-            const input = item.querySelector('.response-input');
-            responses[itemId] = input ? input.value : '';
-        }
+    // 1. W-TECH-CALC: Multi-step log logic / Lógica de log multietapa
+    document.querySelectorAll('.calc-input').forEach(input => {
+        input.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                const itemId = this.closest('.exam-item').dataset.itemId;
+                const val = this.value.trim();
+                if (!val) return;
+                if (!widgetState.calcSteps[itemId]) widgetState.calcSteps[itemId] = [];
+                widgetState.calcSteps[itemId].push(val);
+                const log = document.getElementById(`log-${itemId}`);
+                log.innerHTML += `<div>Step ${widgetState.calcSteps[itemId].length}: ${val}</div>`;
+                this.value = '';
+            }
+        });
     });
 
-    try {
-        const response = await fetch(`/assessment_v2/submit/${examUuid}/`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': '{{ csrf_token }}'
-            },
-            body: JSON.stringify({responses: responses})
+    // 2. W-CLIN-SCAN: Marker logic / Lógica de marcadores
+    document.querySelectorAll('.scan-container').forEach(container => {
+        container.addEventListener('click', function(e) {
+            const rect = this.getBoundingClientRect();
+            const x = ((e.clientX - rect.left) / rect.width * 100).toFixed(2);
+            const y = ((e.clientY - rect.top) / rect.height * 100).toFixed(2);
+            const itemId = this.dataset.itemId;
+            if (!widgetState.scanMarkers[itemId]) widgetState.scanMarkers[itemId] = [];
+            widgetState.scanMarkers[itemId].push({x, y});
+            const overlay = document.getElementById(`overlay-${itemId}`);
+            const dot = document.createElement('div');
+            dot.className = 'marker-dot';
+            dot.style.left = `${x}%`;
+            dot.style.top = `${y}%`;
+            overlay.appendChild(dot);
+        });
+    });
+
+    // 3. W-MIX-MATCH: Drag & Drop logic / Lógica de arrastrar y soltar
+    document.querySelectorAll('.draggable-item').forEach(item => {
+        item.addEventListener('dragstart', e => e.dataTransfer.setData('text/plain', e.target.dataset.source));
+    });
+    document.querySelectorAll('.target-drop').forEach(target => {
+        target.addEventListener('dragover', e => { e.preventDefault(); target.classList.add('active'); });
+        target.addEventListener('dragleave', () => target.classList.remove('active'));
+        target.addEventListener('drop', e => {
+            e.preventDefault();
+            target.classList.remove('active');
+            const source = e.dataTransfer.getData('text/plain');
+            const targetId = target.dataset.target;
+            const itemId = target.closest('.exam-item').dataset.itemId;
+            if (!widgetState.mixLinks[itemId]) widgetState.mixLinks[itemId] = {};
+            widgetState.mixLinks[itemId][source] = targetId;
+            target.innerHTML = `<span class="badge bg-success">${source}</span> <i class="bi bi-arrow-right"></i> ${targetId}`;
+        });
+    });
+
+    // Strikethrough Logic / Lógica de tachado
+    document.querySelectorAll('.btn-strike').forEach(btn => {
+        btn.addEventListener('click', function() {
+            this.previousElementSibling.classList.toggle('striked-option');
+        });
+    });
+
+    // Global Submission / Entrega Global
+    document.getElementById('submit-exam').addEventListener('click', async function() {
+        const btn = this;
+        btn.disabled = true;
+        const examUuid = document.getElementById('exam-container').dataset.examUuid;
+        const items = document.querySelectorAll('.exam-item');
+        const responses = {};
+
+        items.forEach(item => {
+            const itemId = item.dataset.itemId;
+            const widgetId = item.dataset.widgetId;
+            
+            if (widgetId === 'W-TECH-CALC') {
+                responses[itemId] = { steps: widgetState.calcSteps[itemId] || [] };
+            } else if (widgetId === 'W-CLIN-SCAN') {
+                responses[itemId] = { 
+                    markers: widgetState.scanMarkers[itemId] || [], 
+                    diagnosis: item.querySelector('.response-input').value 
+                };
+            } else if (widgetId === 'W-MIX-MATCH') {
+                responses[itemId] = widgetState.mixLinks[itemId] || {};
+            } else if (widgetId === 'W-OBJ-STRIKE') {
+                const sel = item.querySelector('input:checked');
+                responses[itemId] = sel ? sel.value : '';
+            } else if (widgetId === 'W-PROC-ACTION') {
+                responses[itemId] = Array.from(item.querySelectorAll('.response-input-check:checked')).map(el => el.value);
+            } else if (widgetId === 'W-TXT-CLOZE') {
+                responses[itemId] = Array.from(item.querySelectorAll('.cloze-input')).map(el => el.value);
+            } else {
+                const input = item.querySelector('.response-input');
+                responses[itemId] = input ? input.value : '';
+            }
         });
 
-        const result = await response.json();
-        if (result.status === 'SUCCESS') {
-            window.location.href = result.url;
-        } else {
-            alert('Error: ' + result.message);
-            this.disabled = false;
-        }
-    } catch (err) {
-        alert('{% trans "Error de conexión con el servidor de calificación." %}');
-        this.disabled = false;
-    }
-});
+        try {
+            const response = await fetch(`/assessment_v2/submit/${examUuid}/`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'X-CSRFToken': '{{ csrf_token }}' },
+                body: JSON.stringify({responses: responses})
+            });
+            const result = await response.json();
+            if (result.status === 'SUCCESS') window.location.href = result.url;
+            else { alert('Error: ' + result.message); btn.disabled = false; }
+        } catch (err) { alert('Error de conexión.'); btn.disabled = false; }
+    });
 </script>
 {% endblock %}

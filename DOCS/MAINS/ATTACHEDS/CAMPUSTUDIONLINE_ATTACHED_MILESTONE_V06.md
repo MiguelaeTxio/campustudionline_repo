@@ -18,34 +18,33 @@ La próxima sesión debe cargarse OBLIGATORIAMENTE con la siguiente constelació
 El archivo V06DOC_ROADMAP.md es la ÚNICA fuente de verdad para el progreso. 
 1. Es OBLIGATORIO auditar este archivo al inicio de cada sesión.
 2. Es MANDATORIO actualizar su estado atómico (Checklist) al cierre de cada sesión.
-3. No se permite la simplificación ni omisión de requisitos definidos en los documentos satélite.
 
 ---
 
 # ANEXO: HITO 06 - SISTEMA DE AUTOEVALUACIONES CON IA
-# ESTADO: EN PROGRESO (FASE 3: ESTABILIZACIÓN Y VALIDACIÓN)
+# ESTADO: EN PROGRESO (FASE 4: VALIDACIÓN DE INTERFAZ Y ORQUESTACIÓN)
 
 ## 1. RESUMEN TÉCNICO DE LA SESIÓN
-*   **Limpieza de Transporte:** Corregido Error 500 mediante el registro de namespace 'assessment_admin' en core/urls.py y corrección de enlaces en templates globales.
-*   **Deducción Académica:** Implementado AcademicDeductor sensible al contexto (material.title). Invertida la prioridad de niveles (C->B->A) para evitar degradación de rango.
-*   **Saneamiento del Motor:** Implementación de clases concretas para las 5 estrategias maestras (LANG, HEALTH, TECH, SOC, HUM) cumpliendo BaseExamStrategy.
-*   **Alineación Documental:** Generado Roadmap Atómico (V1.2) que refleja el 100% de los requisitos de la UGR.
+*   **Saneamiento de Herencia:** Reconstrucción de `BaseExamStrategy` y `ExamFactory` para la inyección obligatoria del `sub_archetype_id`.
+*   **Cerebro de Deducción:** Implementada identificación heurística para los 22 sub-arquetipos definidos en V06.
+*   **Orquestación de Calificación:** Implementado `GradingOrchestrator` que aplica factores de rigor matemático (0.8 - 1.6) y ejecuta la anulación de sección por `KILL_SWITCH` (Seguridad Crítica).
+*   **Interfaz Interactiva:** Refactorizado `exam_take.html` para soportar 9 widgets interactivos con lógica JS real (marcado X,Y, logs de cálculo, drag & drop) cumpliendo estándares Lint (H006, H021).
+*   **Registro de Consumo:** Integrado `TrackingService` en el núcleo de las estrategias para auditoría de costes.
 
 ## 2. HOJA DE RUTA PARA LA SIGUIENTE SESIÓN (LEY SUPREMA)
-**OBJETIVO:** Validación Atómica de Motores de Bloques (Fase 3 del Roadmap).
+**OBJETIVO:** Auditoría Integral de Sincronización y Refinamiento de Feedback.
 
 ### TAREAS CRÍTICAS (ORDEN OBLIGATORIO)
 
-1.  **SMOKE TEST: ARQUETIPO TECH (BLOQUE RPP-TRAZA):**
-    *   Generar examen de Ingeniería y auditar que el JSON contract asigne W-TECH-CALC.
-    *   Verificar que la lógica de calificación asigne el 50% de peso al planteamiento lógico.
+1.  **AUDITORÍA INICIAL DE INTEGRIDAD:** 
+    *   Realizar un barrido integral, absoluto y microscópico comparando la documentación V06 contra el código consolidado para garantizar que no existe ni una sola omisión técnica.
 
-2.  **SMOKE TEST: ARQUETIPO HEALTH (BLOQUE CDS-KILL):**
-    *   Generar examen de Salud y auditar la inyección de KILL_SWITCH: True en pasos críticos.
-    *   Verificar que la omisión de un paso de seguridad activa FATAL_ERROR.
+2.  **REFINAMIENTO DE REPORTING (FASE 5):**
+    *   Integrar la taxonomía de feedback (FB_*) en el `GradingOrchestrator`.
+    *   Personalizar el informe de resultados (`exam_report.html`) según el Rol del Catedrático inyectado.
 
-3.  **AUDITORÍA DE INTEGRACIÓN HTMX:**
-    *   Verificar la inyección de logs en el Dashboard V2 tras el reinicio del Worker.
+3.  **VALIDACIÓN ESTRATEGIA AI:**
+    *   Probar la generación de exámenes reales usando `models/gemini-2.5-flash-lite` verificando que el prompt inyecta correctamente el sub-arquetipo detectado.
 
 ---
-**DIRECTRIZ TÉCNICA:** Prohibido iniciar el Hito 07 hasta que todos los bloques de la Sección 3 del Roadmap estén verificados.
+**DIRECTRIZ TÉCNICA:** No iniciar la Fase 6 hasta que la auditoría microscópica inicial de la próxima sesión confirme el 100% de alineación.

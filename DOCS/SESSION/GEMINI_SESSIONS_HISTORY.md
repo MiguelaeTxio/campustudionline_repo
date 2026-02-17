@@ -1748,3 +1748,19 @@ Carga de contexto obligatoria: Documentación técnica V06DOC y modelos de `asse
 *  **Session:** Hito 06: Estabilización de Enrutamiento y Smoke Tests de Arquetipos
 *  **Description:** Ejecución de la Fase 4 del Hito 6. Limpieza radical de conflictos de namespace en `core/urls.py` y `assessment_v2`. Verificación de inyección HTMX en el Dashboard. Validación de generadores de exámenes para arquetipos TECH y HEALTH.
 
+
+# 2026-02-16
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+## CSO # --SYSTEM -->
+*  **Session:** Validación Atómica de Motores TECH y HEALTH
+*  **Description:** Ejecución de Smoke Tests para los arquetipos TECH (Bloque RPP-TRAZA) y HEALTH (Bloque CDS-KILL). Verificación de asignación de widgets W-TECH-CALC y lógica de Kill Switch. Auditoría de integración HTMX en Dashboard.
+
+
+# 2026-02-16
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+## CAMA # --SYSTEM -->
+*  **Session:** Validación de Motores de Evaluación: Arquetipos TECH y HEALTH (RPP-TRAZA & CDS-KILL)
+*  **Description:** Ejecución de Smoke Tests para los bloques de evaluación RPP-TRAZA (Ingeniería) y CDS-KILL (Salud). Verificación de la asignación de widgets específicos (W-TECH-CALC), lógica de calificación con peso en planteamiento (50%) y mecanismos de seguridad crítica (Kill Switch/Fatal Error). Auditoría de integración HTMX y logs en Dashboard V2.
+
