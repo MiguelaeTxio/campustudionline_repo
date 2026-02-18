@@ -14,7 +14,7 @@ class TrackingService:
     """
 
     @staticmethod
-    def record_usage(user, exam, model_name, input_tokens, output_tokens, operation_type="EXAM_GEN"):
+    def record_usage(user, exam, model_name, input_tokens, output_tokens, operation_type="EXAM_GEN", api_key_name=None):
         """
         Registra el uso de tokens en el log diario y crea un log de coste detallado.
         """
@@ -43,6 +43,7 @@ class TrackingService:
                     exam=exam,
                     operation_type=operation_type,
                     model_name=model_name,
+                    api_key_name=api_key_name,
                     input_tokens=input_tokens,
                     output_tokens=output_tokens,
                     cost_usd=cost_usd

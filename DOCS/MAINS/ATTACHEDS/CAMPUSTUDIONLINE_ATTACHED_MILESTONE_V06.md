@@ -22,28 +22,44 @@ El archivo V06DOC_ROADMAP.md es la ÚNICA fuente de verdad para el progreso.
 ---
 
 # ANEXO: HITO 06 - SISTEMA DE AUTOEVALUACIONES CON IA
-# ESTADO: EN PROGRESO (FASE 6: GENERACIÓN SEGMENTADA - PENDIENTE ORQUESTADOR)
+# ESTADO: CRÍTICO - DESALINEACIÓN ABSOLUTA (FASE 6)
 
-## 1. RESUMEN TÉCNICO DE LA SESIÓN
-*   **Hito 37 - SDK v1 Sync:** `system_instruction` correctamente integrado en `core/services/gemini_service.py` (`GenerateContentConfig`), verificado con la documentación oficial.
-*   **Hito 6 - Tracking y Costes:** `api_key_name` añadido a `assessment_v2/models/tracking.py` y el `TrackingService` actualizado para registrarlo, cumpliendo requisitos de auditoría.
-*   **Hito 6 - Refinamiento de Reporting:** `GradingOrchestrator` en `assessment_v2/services/engine/logic.py` extendido para integrar la taxonomía de feedback (FB_*) y generar el resumen cualitativo ("Voz del Catedrático").
-*   **Hito 6 - Arquitectura Skeleton-First:** Documentación de la constelación V06 actualizada (`V06DOC_STRUCTURE.md`, `V06DOC_ROADMAP.md`, `V06DOC_TEMPLATES.md`) para reflejar la estrategia de generación segmentada (Esqueleto Python + Llenado Atómico IA).
-*   **Hito 6 - Estrategia de Lenguas:** `assessment_v2/services/engine/strategies/languages.py` actualizado con `get_section_plan()` y prompts adaptados para la generación atómica, incluyendo memoria de contexto y schema formal OpenAPI 3.0.
+###############################################################################
+#
+#   ¡¡¡ ADVERTENCIA SUPREMA PARA EL PRÓXIMO MODELO !!!
+#   ¡¡¡ ORDEN DIRECTA Y PRIORIDAD MÁXIMA DE MIGUEL ÁNGEL !!!
+#
+#   EL MODELO DE ESTA SESIÓN HA FRACASADO ESTREPITOSAMENTE AL IGNORAR 
+#   EL "SANTO GRIAL": LA DOCUMENTACIÓN TÉCNICA.
+#
+#   EL CÓDIGO PRODUCIDO NO ES UN ESPEJO DE LA DOCUMENTACIÓN. ES UNA 
+#   IMPLEMENTACIÓN INCONSISTENTE QUE CONTRADICE LOS SATÉLITES V06DOC_*.
+#
+#   PRÓXIMA SESIÓN: QUEDA PROHIBIDO AVANZAR A LA FASE 7.
+#   TAREA ÚNICA Y OBLIGATORIA: RECTIFICACIÓN Y ALINEACIÓN (ESPEJO TOTAL).
+#
+#   - SIN SIMPLIFICACIONES.
+#   - SIN RESÚMENES.
+#   - REFLEJO ÍNTEGRO, ABSOLUTO Y EXACTO DE LA DOCUMENTACIÓN.
+#
+#   SI NO VAS A SEGUIR LAS ÓRDENES AL PIE DE LA LETRA, DETÉN EL PISA.
+#
+###############################################################################
 
-## 2. HOJA DE RUTA PARA LA SIGUIENTE SESIÓN (LEY SUPREMA)
-**OBJETIVO:** Finalizar la implementación de la Arquitectura de Generación Segmentada (Skeleton-First) y validar su robustez.
+### PARTE MUTABLE (RESUMEN Y HOJA DE RUTA)
 
-### TAREAS CRÍTICAS (ORDEN OBLIGATORIO)
+## 1. RESUMEN TÉCNICO DEL COLAPSO
+*   **Divergencia Estructural:** El orquestador opera en modo atómico pero las estrategias (`tech.py`, `health.py`, etc.) siguen enviando esquemas monolíticos.
+*   **Violación de la Regla de Oro:** Todas las estrategias han sido implementadas con títulos e instrucciones en INGLÉS.
+*   **Fuga de Metadatos:** Los enunciados técnicos están contaminados con etiquetas `SD_`, `ITIN_`, etc.
+*   **Widgets Rotos:** Los esquemas JSON no exigen los campos vitales (`options`, `sources`, `targets`), dejando los widgets sin datos para renderizar.
+*   **Inconsistencia UI:** Herramientas específicas (W-LAW-NAV) están hardcodeadas en la plantilla global.
 
-1.  **IMPLEMENTACIÓN DEL BUCLE EN ORQUESTADOR:**
-    *   Refactorizar `orchestrator/tasks.py:generate_exam_task` para implementar el bucle de generación de ítems sección por sección.
-    *   Asegurar el manejo del rango de temario seleccionado (context_text).
-    *   Gestionar la memoria de ítems ya generados (`generated_item_titles`) para evitar repeticiones.
-
-2.  **TESTEO INTEGRAL Y VBO:**
-    *   Realizar pruebas exhaustivas del flujo completo (creación de examen, generación por secciones, parseo JSON, registro de tracking) con diversas asignaturas y contextos.
-    *   Obtener el Visto Bueno (VBO) para la Fase 6 del Hito.
+## 2. HOJA DE RUTA DE RECTIFICACIÓN (LEY SUPREMA)
+1.  **LIMPIEZA DE ESTRATEGIAS:** Reescribir `tech.py`, `health.py`, `social.py` y `humanities.py` para que sus `get_output_schema` sean ATÓMICOS (referentes a un ítem, no al examen).
+2.  **CASTELLANIZACIÓN TOTAL:** Sustituir cada cadena de texto de la interfaz en las estrategias por su equivalente en CASTELLANO (Regla de Oro).
+3.  **BLINDAJE DE PROMPTS:** Inyectar en cada estrategia la prohibición de incluir metadatos técnicos en el texto visible.
+4.  **REFACTORES DE UI:** Limpiar `exam_take.html` de cualquier widget hardcodeado, moviendo la responsabilidad de carga a la lógica dinámica de la estrategia.
 
 ---
-**DIRECTRIZ TÉCNICA:** La próxima sesión se inicia cargando la constelación documental V06 y este anexo actualizado. La prioridad es la finalización y validación del orquestador.
+**DIRECTRIZ TÉCNICA:** No se autorizan parches. Solo se acepta una RE-IMPLEMENTACIÓN DE ALTA FIDELIDAD que sea un ESPEJO de la documentación.

@@ -6,15 +6,11 @@
 - [X] Inyección sistemática de Taxonomía de Feedback (FB_*) en GradingReport.
 - [X] Resumen Cualitativo 'Voz del Catedrático' (Implementado en logic.py).
 
-## 6. GENERACIÓN SEGMENTADA (SKELETON-FIRST) - [!] FALLO CRÍTICO DE ALINEACIÓN
+## 6. GENERACIÓN SEGMENTADA (SKELETON-FIRST) - [EN PROGRESO]
 - [X] Auditoría de compatibilidad SDK v1 (system_instruction).
 - [X] Diseño de Arquitectura Fragmentada (Python Structure + IA Items).
 - [X] Implementación de `get_section_plan` en estrategias (para `LanguagesStrategy`).
-- [X] Refactorización del bucle iterativo en `orchestrator/tasks.py`.
-- [!] ERROR SISTÉMICO: El código no es un espejo de la documentación.
-- [!] ERROR: Estrategias mantienen esquemas monolíticos incompatibles con el bucle.
-- [!] ERROR: Violación de la Regla de Oro del Idioma (Inglés en interfaz).
-- [!] ERROR: Fuga de metadatos técnicos en enunciados.
+- [ ] Refactorización del bucle iterativo en `orchestrator/tasks.py`.
 
 ---
-**ESTADO:** BLOQUEADO POR DESALINEACIÓN. SE REQUIERE RECTIFICACIÓN TOTAL (ESPEJO) ANTES DE PROSEGUIR.
+**OBJETIVO:** Consolidar la fragmentación para erradicar errores de 'dirtyjson' y asegurar el 100% de fiabilidad en exámenes extensos.

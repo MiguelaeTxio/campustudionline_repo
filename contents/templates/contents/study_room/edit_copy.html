@@ -8,6 +8,10 @@
 <link rel="stylesheet" href="{% static 'css/annotations.css' %}">
 <link rel="stylesheet" href="{% static 'universia/css/universia.css' %}">
 <style>
+    .assessment-v2-dash { border-left: 5px solid #79aec8; background-color: #f8f9fa; border-radius: 4px; }
+    .status-ready-pulse { color: #28a745; animation: pulse-green 2s infinite; }
+    @keyframes pulse-green { 0% { opacity: 1; } 50% { opacity: 0.6; } 100% { opacity: 1; } }
+    .cooldown-timer { font-family: 'Courier New', Courier, monospace; font-weight: bold; color: #ba2121; }
     .modal-warning-header { background-color: #ffc107; color: #000; }
     #form-copy { display: none; }
     #annotations-list-container { max-height: 500px; overflow-y: auto; }
@@ -26,71 +30,55 @@
         </ol>
     </nav>
 
-    {# --- LÓGICA DE DESPLIEGUE SELECTIVO (SOLO USER ID 1) --- #}
-    {% if request.user.id == 1 %}
-        {# --- VISTA ADMIN: SISTEMA V2 ACTIVO --- #}
-        <div class="card shadow-sm mb-4 border-primary">
-            <div class="card-header bg-white d-flex justify-content-between align-items-center">
-                <h2 class="h5 mb-0 text-primary"><i class="fas fa-brain me-2"></i> Autoevaluación con IA (V2)</h2>
-                <span class="badge bg-success"><i class="fas fa-check-circle me-1"></i> BETA ACTIVA</span>
-            </div>
+    {# --- DASHBOARD DE EVALUACIÓN V2 (REHABILITADO PARA ADMIN) --- #}
+    {% if request.user.is_staff or request.user.id == 1 %}
+        <div class="card shadow-sm mb-4 assessment-v2-dash">
             <div class="card-body">
-                <div class="d-flex flex-column flex-md-row justify-content-between align-items-center gap-3">
-                    <div>
-                        <h5 class="card-title">Generar Examen Personalizado</h5>
-                        <p class="card-text text-muted mb-0">
-                            Configura una prueba basada en el contenido de <strong>{{ content_copy.original_content.title }}</strong>.
-                            <br><small class="text-info"><i class="fas fa-info-circle"></i> Visible solo para administradores.</small>
-                        </p>
+                <div class="row align-items-center">
+                    <div class="col-md-7">
+                        <h5 class="mb-1 text-primary"><i class="fas fa-microchip me-2"></i> Asistente de Evaluación Académica V2</h5>
+                        <div class="small text-muted">
+                            {% if latest_exam %}
+                                <p class="mb-0">
+                                    Último Examen: <strong>{{ latest_exam.get_status_display }}</strong>
+                                    {% if latest_exam.status == 'READY' %}
+                                        <span class="ms-2 status-ready-pulse"><i class="fas fa-check-circle"></i> Disponible</span>
+                                    {% else %}
+                                        <span class="ms-2">(Iniciado: {{ latest_exam.created_at|date:"d/m H:i" }})</span>
+                                    {% endif %}
+                                </p>
+                            {% else %}
+                                <p class="mb-0">No se han generado evaluaciones previas para esta copia.</p>
+                            {% endif %}
+                        </div>
                     </div>
-                    <div class="flex-shrink-0">
-                        <a href="{% url 'assessment_v2:exam_create' %}?content_id={{ content_copy.original_content.id }}" class="btn btn-primary btn-lg">
-                            <i class="fas fa-magic me-2"></i> Crear Examen
-                        </a>
+                    <div class="col-md-5 text-md-end mt-3 mt-md-0">
+                        {% if latest_exam and latest_exam.status == 'READY' %}
+                            <a href="{% url 'assessment_v2:take_exam' latest_exam.uuid %}" class="btn btn-success btn-lg px-4">
+                                <i class="fas fa-play-circle me-2"></i> REALIZAR EVALUACIÓN
+                            </a>
+                        {% elif quota_status.can_generate %}
+                            <a href="{% url 'assessment_v2:exam_create' %}?content_id={{ content_copy.original_content.id }}" class="btn btn-primary">
+                                <i class="fas fa-plus-circle me-2"></i> SOLICITAR NUEVA EVALUACIÓN
+                            </a>
+                        {% else %}
+                            <div class="alert alert-warning d-inline-block mb-0 py-2">
+                                <i class="fas fa-history me-1"></i> Cooldown: Disponible en 
+                                <span class="cooldown-timer" data-until="{{ quota_status.next_available|date:'c' }}">--:--:--</span>
+                            </div>
+                        {% endif %}
                     </div>
                 </div>
             </div>
         </div>
     {% else %}
         {# --- VISTA PÚBLICA: MANTENIMIENTO --- #}
-        
-        {# Modal de Mantenimiento #}
-        <div class="modal fade" id="assessmentMaintenanceModal" tabindex="-1" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content border-warning">
-                    <div class="modal-header modal-warning-header">
-                        <h5 class="modal-title"><i class="fas fa-hard-hat me-2"></i> En Construcción</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <p class="mb-2"><strong>¡Estamos evolucionando!</strong></p>
-                        <p>El sistema de evaluaciones se está reconstruyendo desde cero para cumplir con los nuevos estándares de acreditación académica.</p>
-                        <p class="text-muted small">Disculpe las molestias. Esta funcionalidad volverá pronto.</p>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Entendido</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        {# Panel Bloqueado #}
         <div class="card shadow-sm mb-4">
-            <div class="card-header d-flex justify-content-between align-items-center">
-                <h2 class="h5 mb-0">Autoevaluación con IA</h2>
-                <span class="badge bg-warning text-dark"><i class="fas fa-wrench me-1"></i> En Mantenimiento</span>
+            <div class="card-header bg-light">
+                <h2 class="h5 mb-0"><i class="fas fa-wrench me-2"></i> Autoevaluación con IA</h2>
             </div>
-            <div class="card-body">
-                <div id="assessment-panel-container" class="text-center p-4 bg-light border rounded position-relative">
-                    <div class="mb-3 text-muted">
-                        <i class="fas fa-tools fa-3x mb-3"></i>
-                        <h5>Mejorando la Experiencia</h5>
-                        <p class="small">Estamos implementando el nuevo motor de acreditación académica.</p>
-                    </div>
-                    <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#assessmentMaintenanceModal">
-                        <i class="fas fa-info-circle me-2"></i> Más Información
-                    </button>
-                </div>
+            <div class="card-body text-center p-4">
+                <p class="text-muted mb-0">El sistema de evaluación está siendo actualizado para cumplir con los estándares UGR. Estará disponible en breve.</p>
             </div>
         </div>
     {% endif %}
@@ -124,15 +112,13 @@
                 <div id="annotations-list-container" class="card-body">
                     <div id="annotations-list">
                         {% for annotation in annotations %}
-                            <div class="annotation-item" id="li-annotation-{{ annotation.id }}">
+                            <div class="annotation-item mb-3 p-2 border-bottom" id="li-annotation-{{ annotation.id }}">
                                 <div class="annotation-header d-flex justify-content-between align-items-center">
-                                    <span class="annotation-type badge {% if annotation.annotation_type == 'highlight' %}bg-warning text-dark{% elif annotation.annotation_type == 'note' %}bg-info text-dark{% else %}bg-secondary text-white{% endif %}">
-                                        {{ annotation.get_annotation_type_display }}
-                                    </span>
-                                    <button class="btn-delete-annotation btn btn-sm btn-link text-danger p-0" data-id="{{ annotation.id }}"><i class="fas fa-trash"></i></button>
+                                    <span class="badge bg-info text-dark">{{ annotation.get_annotation_type_display }}</span>
+                                    <small class="text-muted">{{ annotation.created_at|date:"d/m H:i" }}</small>
                                 </div>
-                                <div class="annotation-content">
-                                    {{ annotation.selected_text|truncatewords:10 }}
+                                <div class="annotation-content mt-1">
+                                    {{ annotation.selected_text|truncatewords:12 }}
                                 </div>
                             </div>
                         {% empty %}
@@ -144,9 +130,33 @@
         </div>
     </div>
 </div>
+
+<div id="universia-widget-container" data-content-title="{{ content_copy.original_content.title|default:'Material de Estudio' }}"></div>
+
 {% endblock content %}
 
 {% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const timerElement = document.querySelector('.cooldown-timer');
+        if (timerElement) {
+            const targetDate = new Date(timerElement.dataset.until).getTime();
+            const x = setInterval(function() {
+                const now = new Date().getTime();
+                const distance = targetDate - now;
+                if (distance < 0) {
+                    clearInterval(x);
+                    location.reload();
+                    return;
+                }
+                const h = Math.floor(distance / (1000 * 60 * 60));
+                const m = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                const s = Math.floor((distance % (1000 * 60)) / 1000);
+                timerElement.innerHTML = `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+            }, 1000);
+        }
+    });
+</script>
 <script src="{% static 'js/annotation_handler.js' %}"></script>
 <script src="{% static 'universia/js/universia.js' %}"></script>
 {% endblock extra_js %}

@@ -20,9 +20,9 @@ def assessment_dashboard_view(request):
     
     # Métricas adaptadas
     metrics = {
-        'today': Exam.objects.filter(status='GRADED', updated_at__date=now.date()).count(),
-        'week': Exam.objects.filter(status='GRADED', updated_at__gt=now - timedelta(days=7)).count(),
-        'total': Exam.objects.filter(status='GRADED').count(),
+        'today': Exam.objects.filter(status__in=['READY', 'GRADED'], updated_at__date=now.date()).count(),
+        'week': Exam.objects.filter(status__in=['READY', 'GRADED'], updated_at__gt=now - timedelta(days=7)).count(),
+        'total': Exam.objects.filter(status__in=['READY', 'GRADED']).count(),
     }
 
     processing_task = Exam.objects.filter(status__in=['GENERATING', 'GRADING']).first()

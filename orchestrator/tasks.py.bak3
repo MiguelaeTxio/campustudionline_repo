@@ -285,8 +285,6 @@ def generate_exam_task(self, exam_uuid, context_text=None, topic=None):
             
             # Recuperamos la instancia de sección DB
             db_section = sections_map.get(subdivision_id)
-            exam.event_log.append({'ts': timezone.now().isoformat(), 'msg': f'Generando ítems para sección: {subdivision_id}'})
-            exam.save(update_fields=['event_log'])
             if not db_section:
                 logger.warning(f"Sección {subdivision_id} no encontrada en DB map. Saltando.")
                 continue
@@ -337,8 +335,6 @@ def generate_exam_task(self, exam_uuid, context_text=None, topic=None):
                 section_payload = dirtyjson.loads(cleaned_json)
                 
                 items_list = section_payload.get("items", [])
-                exam.event_log.append({'ts': timezone.now().isoformat(), 'msg': f'Sección {subdivision_id} parseada: {len(items_list)} ítems detectados.'})
-                exam.save(update_fields=['event_log'])
                 
                 with transaction.atomic():
                     for item_idx, item_data in enumerate(items_list):

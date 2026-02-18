@@ -1,5 +1,4 @@
 # /home/MiguelAeTxio/PROJECTS/CampuStudiOnline/assessment_v2/services/engine/strategies/languages.py
-import json
 from .base import BaseExamStrategy
 from decimal import Decimal
 import re

@@ -1,6 +1,7 @@
 import logging
 from django.db import transaction
 from django.apps import apps
+from django.urls import reverse
 from django.db.models import Prefetch, Q
 from django.utils import timezone
 from contents.models import UserStudyNavigation, FavoriteFolder, ContentCopy
@@ -91,16 +92,16 @@ class NavigationTreeBuilder:
 
     def _build_copies_section(self):
         # Evitamos importación circular obteniendo el modelo dinámicamente
-        Assessment = apps.get_model('assessment', 'Assessment')
+        Assessment = apps.get_model('assessment_v2', 'Exam')
         
         # Subquery para obtener el estado de la evaluación más reciente
         
 
         # Anotamos el queryset para evitar N+1 consultas
-        Assessment = apps.get_model('assessment', 'Assessment')
+        Assessment = apps.get_model('assessment_v2', 'Exam')
         
         # [FIX V24] Filtrado estricto para coincidir con Dashboard
-        visible_statuses = ['PENDING', 'PROCESSING', 'COMPLETED', 'AWAITING_CORRECTION', 'CORRECTING', 'RESULTS_AVAILABLE', 'GENERATION_FAILED_FATAL', 'CORRECTION_FAILED_FATAL', 'CANCELLED', 'GENERATION_FAILED_QUOTA']
+        visible_statuses = ['PENDING', 'GENERATING', 'READY', 'IN_PROGRESS', 'COMPLETED', 'GRADING', 'GRADED', 'ERROR']
         
         now = timezone.now()
         assessments_qs = Assessment.objects.filter(
@@ -133,6 +134,7 @@ class NavigationTreeBuilder:
                 "url": copy.get_absolute_url() if hasattr(copy, 'get_absolute_url') else '#',
                 "assessment_status": copy._active_assessments[0].status if getattr(copy, '_active_assessments', []) else None,
                 "assessment_viewed": copy._active_assessments[0].was_viewed if getattr(copy, '_active_assessments', []) else None,
+                "exam_url": reverse("assessment_v2:take_exam", args=[copy._active_assessments[0].uuid]) if getattr(copy, "_active_assessments", []) and copy._active_assessments[0].status == "READY" else None,
             }
 
             if copy.subject_context:

@@ -18,6 +18,7 @@ from django.utils.html import escape
 from django.utils import timezone
 
 from assessment_v2.models.main import Exam
+from assessment_v2.services.quotas import QuotaService
 from .models import ContentMaterial as Content, ContentCopy, Annotation, FavoriteFolder, FreeContentMasterCategory, FreeContentSubCategory
 from academic_structure.models import Subject, University, Branch, Degree, AcademicYear
 # [CLEANUP HITO 6] Eliminadas importaciones de Assessment
@@ -178,13 +179,16 @@ def edit_copy(request, pk):
         "csrfToken": csrf_token,
     }
 
-    # [CLEANUP HITO 6] Contexto simplificado por mantenimiento
+    # [REHABILITADO HITO 6] Telemetría de Evaluación V2 para el Dashboard de UI
+    latest_exam = Exam.objects.filter(content_copy=content_copy).order_by('-created_at').first()
+    quota_status = QuotaService.get_quota_details(request.user)
+
     context = {
-        "content_copy": content_copy, 
-        "annotations": db_annotations, 
-        "annotation_config": json.dumps(annotation_config), 
-        "assessment_polling_config": json.dumps({}), 
-        "assessment_context": {"status": "MANTENIMIENTO"}
+        'content_copy': content_copy,
+        'annotations': db_annotations,
+        'annotation_config': json.dumps(annotation_config),
+        'latest_exam': latest_exam,
+        'quota_status': quota_status,
     }
     return render(request, "contents/study_room/edit_copy.html", context)
 

@@ -1772,3 +1772,11 @@ Carga de contexto obligatoria: Documentación técnica V06DOC y modelos de `asse
 *  **Session:** H06: Auditoría del Motor y Refinamiento de Feedback
 *  **Description:** Sesión de auditoría técnica profunda sobre la arquitectura assessment_v2 para validar la alineación con la documentación V06. Implementación de la taxonomía de feedback y personalización de informes por rol.
 
+
+# 18/02/2026
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+## CYC
+*  **Session:** Hito 6 Fase 6: Implementación del Bucle de Orquestación Segmentada
+*  **Description:** Refactorización de orchestrator/tasks.py para implementar la generación iterativa de ítems bajo la arquitectura Skeleton-First. Integración con el método get_section_plan de las estrategias y gestión de memoria de contexto para evitar duplicidad en la generación de autoevaluaciones.
+

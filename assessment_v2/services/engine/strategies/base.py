@@ -40,7 +40,7 @@ class BaseExamStrategy(ABC):
         pass
 
     @abstractmethod
-    def get_user_prompt(self, context_text, topic):
+    def get_user_prompt(self, context_text, topic, generated_item_titles=None):
         """
         Generates the user prompt injecting the study material context.
         ---
@@ -132,6 +132,42 @@ class BaseExamStrategy(ABC):
                 "grading_params": self.rigor_params
             },
             "subdivision_sequence": [],
+            "student_submission": {},
+            "grading_report": {}
+        }
+
+    @abstractmethod
+    def get_section_plan(self):
+        """
+        Returns the mandatory section list for the orchestrator to build the DB skeleton.
+        Ref: V06DOC_ARCHETYPES.
+        ---
+        Devuelve la lista mandatoria de secciones para que el orquestador construya el esqueleto en la BBDD.
+        Ref: V06DOC_ARCHETYPES.
+        """
+        pass
+
+    def generate_structure(self, exam_uuid):
+        """
+        Generates the complete JSON skeleton of the 'Exam Contract'.
+        Assembles sections from get_section_plan().
+        Ref: V06DOC_STRUCTURE & V06DOC_TEMPLATES.
+        ---
+        Genera el esqueleto JSON completo del 'Exam Contract'.
+        Ensambla las secciones desde get_section_plan().
+        Ref: V06DOC_STRUCTURE & V06DOC_TEMPLATES.
+        """
+        archetype_id = getattr(self, 'archetype_id', 'UNKNOWN')
+        return {
+            "exam_header": {
+                "exam_id": str(exam_uuid),
+                "archetype_id": archetype_id,
+                "sub_archetype_id": self.sub_archetype_id,
+                "itinerary_id": self.itinerary_id,
+                "pedagogical_level": self.pedagogical_level,
+                "grading_params": self.rigor_params
+            },
+            "subdivision_sequence": self.get_section_plan(),
             "student_submission": {},
             "grading_report": {}
         }

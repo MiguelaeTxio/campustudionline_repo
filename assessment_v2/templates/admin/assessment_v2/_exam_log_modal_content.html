@@ -1,6 +1,6 @@
 {% comment %}
 Ruta: /home/MiguelAeTxio/PROJECTS/CampuStudiOnline/assessment_v2/templates/admin/assessment_v2/_exam_log_modal_content.html
-Visor de trazabilidad para Assessment V2.
+Visor de trazabilidad para Assessment V2. Corregido para llaves ts/msg (Hito 6).
 {% endcomment %}
 <div class="log-container">
     <div class="log-header">
@@ -12,12 +12,15 @@ Visor de trazabilidad para Assessment V2.
     {% for entry in event_log_reversed %}
         <div class="log-entry">
             <div class="log-meta">
-                <span class="log-timestamp">{{ entry.timestamp|slice:":19" }}</span>
-                <span class="log-level-badge level-{{ entry.level|lower }}">
-                    {{ entry.level }}
-                </span>
+                {# Sincronización con llaves ts y msg de la auditoría forense #}
+                <span class="log-timestamp">{{ entry.ts|slice:":19" }}</span>
+                {% if entry.usage %}
+                    <span class="log-level-badge level-info">
+                        IA: {{ entry.usage.total_tokens|default:"Ok" }}
+                    </span>
+                {% endif %}
             </div>
-            <div class="log-message">{{ entry.message }}</div>
+            <div class="log-message">{{ entry.msg }}</div>
             {% if entry.payload %}
                 <div class="log-payload">
                     <pre>{{ entry.payload }}</pre>

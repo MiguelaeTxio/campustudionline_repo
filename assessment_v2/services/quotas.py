@@ -65,3 +65,30 @@ class QuotaService:
             return False, f"Límite semanal alcanzado ({weekly_count}/{plan.weekly_exam_limit})."
 
         return True, "OK"
+
+    @classmethod
+    def get_quota_details(cls, user):
+        """
+        Returns detailed timing and availability for the UI Dashboard.
+        ---
+        Devuelve tiempos detallados y disponibilidad para el Dashboard de la UI.
+        """
+        subscription = cls.get_or_create_default_subscription(user)
+        plan = subscription.plan
+        now = timezone.now()
+
+        day_start = now - timedelta(hours=24)
+        daily_exams = Exam.objects.filter(user=user, created_at__gte=day_start).order_by('created_at')
+        daily_count = daily_exams.count()
+
+        next_available = None
+        if daily_count >= plan.daily_exam_limit:
+            # El próximo hueco se libera 24h después del examen más antiguo de la ventana móvil
+            next_available = daily_exams.first().created_at + timedelta(hours=24)
+
+        return {
+            'daily_usage': daily_count,
+            'daily_limit': plan.daily_exam_limit,
+            'next_available': next_available,
+            'can_generate': daily_count < plan.daily_exam_limit
+        }
