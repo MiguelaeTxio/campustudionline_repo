@@ -1,3 +1,4 @@
+# /home/MiguelAeTxio/PROJECTS/CampuStudiOnline/academic_structure/admin.py
 from django.contrib import admin
 from django.utils.html import format_html
 import json
@@ -6,27 +7,27 @@ from .models import University, Branch, Degree, AcademicYear, Subject
 
 @admin.register(University)
 class UniversityAdmin(admin.ModelAdmin):
-    list_display = ("name", "code", "url")
+    list_display = ("id", "name", "code", "url")
     search_fields = ("name", "code")
 
 
 @admin.register(Branch)
 class BranchAdmin(admin.ModelAdmin):
-    list_display = ("name", "university")
+    list_display = ("id", "name", "university")
     search_fields = ("name", "university__name")
     list_filter = ("university",)
 
 
 @admin.register(Degree)
 class DegreeAdmin(admin.ModelAdmin):
-    list_display = ("name", "branch", "degree_type")
+    list_display = ("id", "name", "branch", "degree_type")
     search_fields = ("name", "branch__name")
     list_filter = ("branch__university", "branch", "degree_type")
 
 
 @admin.register(AcademicYear)
 class AcademicYearAdmin(admin.ModelAdmin):
-    list_display = ('year', 'degree')
+    list_display = ('id', 'year', 'degree')
     search_fields = ('degree__name',)
     list_filter = ('degree__branch__university', 'degree__branch', 'degree')
     ordering = ('degree__name', 'year')
@@ -34,7 +35,7 @@ class AcademicYearAdmin(admin.ModelAdmin):
 
 @admin.register(Subject)
 class SubjectAdmin(admin.ModelAdmin):
-    list_display = ("name", "get_degree", "get_year", "semester", "subject_type")
+    list_display = ("id", "name", "get_degree", "get_year", "semester", "subject_type")
     search_fields = ("name", "academic_year__degree__name")
     list_filter = (
         "academic_year__degree__branch__university",

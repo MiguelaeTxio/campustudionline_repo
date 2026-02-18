@@ -1,4 +1,4 @@
-# /home/MiguelAeTxio/CampuStudiOnline/contents/admin.py
+# /home/MiguelAeTxio/PROJECTS/CampuStudiOnline/contents/admin.py
 from django.contrib import admin, messages
 from .models import (
     FavoriteFolder,
@@ -32,7 +32,7 @@ def generate_public_previews_action_for_admin(modeladmin, request, queryset):
 
 @admin.register(ContentMaterial)
 class ContentMaterialAdmin(admin.ModelAdmin):
-    list_display = ("title", "creator", "is_public", "updated_at")
+    list_display = ("id", "title", "creator", "is_public", "updated_at")
     list_filter = ("is_free_content", "is_public", "master_category", )
     search_fields = ("title", "creator__username", "master_category__name", "sub_category__name", "subject__name")
     actions = [generate_public_previews_action_for_admin]
@@ -66,32 +66,32 @@ class ContentMaterialAdmin(admin.ModelAdmin):
 
 @admin.register(ContentCopy)
 class ContentCopyAdmin(admin.ModelAdmin):
-    list_display = ("original_content", "user", "is_public", "updated_at")
+    list_display = ("id", "original_content", "user", "is_public", "updated_at")
     list_filter = ("is_public",)
     search_fields = ("original_content__title", "user__username")
     autocomplete_fields = ["original_content", "user"]
 
 @admin.register(Annotation)
 class AnnotationAdmin(admin.ModelAdmin):
-    list_display = ("copy", "annotation_type", "created_at")
+    list_display = ("id", "copy", "annotation_type", "created_at")
     list_filter = ("annotation_type",)
     search_fields = ("content", "copy__original_content__title")
     autocomplete_fields = ["copy"]
 
 @admin.register(FavoriteFolder)
 class FavoriteFolderAdmin(admin.ModelAdmin):
-    list_display = ('name', 'user', 'id')
+    list_display = ("id", "name", "user")
     search_fields = ('name', 'user__username')
 
 @admin.register(FreeContentMasterCategory)
 class FreeContentMasterCategoryAdmin(admin.ModelAdmin):
-    list_display = ("name", "display_order", "slug")
+    list_display = ("id", "name", "display_order", "slug")
     search_fields = ("name",)
     ordering = ("display_order", "name")
 
 @admin.register(FreeContentSubCategory)
 class FreeContentSubCategoryAdmin(admin.ModelAdmin):
-    list_display = ("name", "master_category", "display_order", "slug")
+    list_display = ("id", "name", "master_category", "display_order", "slug")
     search_fields = ("name", "master_category__name")
     list_filter = ("master_category",)
     autocomplete_fields = ["master_category"]

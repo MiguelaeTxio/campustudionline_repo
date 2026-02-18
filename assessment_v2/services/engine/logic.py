@@ -2,6 +2,7 @@
 import re
 from decimal import Decimal
 from django.utils import timezone
+from django.utils.translation import gettext as _
 from academic_structure.models import Subject
 
 class AcademicDeductor:
@@ -161,20 +162,31 @@ class GradingOrchestrator:
     """
     Orchestrates the grading process for a submission.
     Ensures compliance with V06DOC_BLOCKS (Section 2: CDS-KILL Annulment).
+    Enriches the report with Feedback Taxonomy (V06DOC_METADATA).
     ---
     Orquesta el proceso de calificación de una entrega.
     Garantiza el cumplimiento de V06DOC_BLOCKS (Sección 2: Anulación por CDS-KILL).
+    Enriquece el informe con Taxonomía de Feedback (V06DOC_METADATA).
     """
 
     @staticmethod
     def grade_submission(submission, strategy):
         """
         Grades all items and sections, applying section-level kill-switches.
+        Generates a qualitative report based on the Professor Role.
         ---
         Califica todos los ítems y secciones, aplicando interruptores de anulación (kill-switches).
+        Genera un informe cualitativo basado en el Rol del Catedrático.
         """
         responses = submission.student_responses.get('responses', {})
-        report = {"sections": [], "global_flags": []}
+        report = {
+            "sections": [], 
+            "global_flags": [],
+            "feedback_stats": {
+                "FB_CONCEPT": 0, "FB_FORMAL": 0, "FB_PROCEDURAL": 0, "FB_SAFETY": 0
+            },
+            "qualitative_summary": ""
+        }
         total_exam_score = Decimal('0.0')
         exam = submission.exam
         
@@ -188,7 +200,8 @@ class GradingOrchestrator:
                 "subdivision_id": section.subdivision_id,
                 "title": section.title,
                 "items": [],
-                "status": "COMPLETED"
+                "status": "COMPLETED",
+                "section_score": 0.0
             }
 
             for item in section.items.all():
@@ -199,17 +212,25 @@ class GradingOrchestrator:
                 # Aplicar Ajuste de Rigor (Ref: V06DOC_LEVELS)
                 item_final_score = strategy.apply_rigor_adjustment(item_raw_score)
                 
+                # Feedback Taxonomy Counting
+                fb_category = item_feedback.get('feedback_category', 'FB_CONCEPT')
+                if fb_category in report['feedback_stats']:
+                    report['feedback_stats'][fb_category] += 1
+                
                 # Check for Section-Level Kill Switch (Ref: V06DOC_BLOCKS)
                 # Comprobar Interruptor de Anulación de Sección
                 if item_feedback.get('kill_switch_activated', False):
                     section_kill_activated = True
                     section_report['status'] = "ANNULLED_BY_SAFETY_BREACH"
                     report['global_flags'].append(f"KILL_SWITCH triggered in {section.subdivision_id}")
+                    # Safety Feedback Priority
+                    report['feedback_stats']['FB_SAFETY'] += 1
 
                 section_report['items'].append({
                     "id": item.id,
                     "score": float(item_final_score),
-                    "feedback": item_feedback
+                    "feedback": item_feedback,
+                    "feedback_category": fb_category
                 })
                 section_score += item_final_score
 
@@ -225,6 +246,11 @@ class GradingOrchestrator:
         # Final Exam Score (Average of sections)
         final_score = (total_exam_score / sections.count()) if sections.count() > 0 else Decimal('0.0')
         
+        # Generate Qualitative Summary (Professor Role)
+        report['qualitative_summary'] = GradingOrchestrator._generate_qualitative_feedback(
+            final_score, exam.pedagogical_level, exam.itinerary_id, report['feedback_stats']
+        )
+        
         submission.grading_report = report
         submission.final_score = final_score
         submission.passed = final_score >= Decimal('0.5')
@@ -232,3 +258,46 @@ class GradingOrchestrator:
         submission.save()
 
         return report
+
+    @staticmethod
+    def _generate_qualitative_feedback(score, level, itinerary, stats):
+        """
+        Generates the 'Professor's Voice' summary based on academic level and itinerary.
+        ---
+        Genera el resumen 'Voz del Catedrático' basado en el nivel académico e itinerario.
+        """
+        score_float = float(score)
+        
+        # 1. Define Tone / Definir Tono
+        if level == 'LVL_C' or itinerary == 'ITIN_MAI' or itinerary == 'ITIN_INV':
+            tone = "ACADEMIC_RIGOROUS" # Severo, exigente, terminología precisa
+        elif level == 'LVL_A':
+            tone = "DIDACTIC_SUPPORTIVE" # Constructivo, orientador
+        else:
+            tone = "PROFESSIONAL_NEUTRAL" # Objetivo, funcional
+
+        # 2. Select Template / Seleccionar Plantilla
+        if tone == "ACADEMIC_RIGOROUS":
+            if score_float >= 0.9:
+                return _("Excelente dominio. Su argumentación denota madurez crítica y precisión terminológica propia del nivel experto.")
+            elif score_float >= 0.5:
+                return _("Suficiente. Demuestra competencia base, pero se detectan imprecisiones formales que deben depurarse para el nivel superior.")
+            else:
+                fail_focus = "conceptuales" if stats['FB_CONCEPT'] > stats['FB_FORMAL'] else "formales"
+                return _(f"Insuficiente. Carece del rigor exigido para la especialidad. Revise urgentemente las bases {fail_focus}.")
+        
+        elif tone == "DIDACTIC_SUPPORTIVE":
+            if score_float >= 0.8:
+                return _("¡Muy buen trabajo! Has asimilado los conceptos clave y vas por buen camino.")
+            elif score_float >= 0.5:
+                return _("Aprobado. Tienes la base, pero necesitas practicar más para ganar seguridad.")
+            else:
+                return _("No te desanimes. Enfócate en repasar los conceptos fundamentales marcados en rojo.")
+        
+        else: # PROFESSIONAL
+            if score_float >= 0.8:
+                return _("Competencia validada. Desempeño apto para el entorno profesional.")
+            elif score_float >= 0.5:
+                return _("Apto condicional. Cumple requisitos mínimos pero requiere supervisión.")
+            else:
+                return _("No apto. No cumple con los estándares mínimos de seguridad o técnica.")

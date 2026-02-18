@@ -1,3 +1,4 @@
+# /home/MiguelAeTxio/PROJECTS/CampuStudiOnline/core/services/gemini_service.py
 import json
 import logging
 import re
@@ -26,7 +27,7 @@ class AIServiceCriticalError(Exception):
 
 # --- Helper Functions (Stateless Design) ---
 
-def _execute_gemini_call(contents, api_key: ApiKey, generation_config: dict, safety_settings: list) -> types.GenerateContentResponse:
+def _execute_gemini_call(contents, api_key: ApiKey, generation_config: dict, safety_settings: list, system_instruction: str = None) -> types.GenerateContentResponse:
     """
     Configura el cliente unificado (v1) y realiza la llamada.
     Habilitado para multimodalidad (Texto, Audio, Imagen).
@@ -37,14 +38,18 @@ def _execute_gemini_call(contents, api_key: ApiKey, generation_config: dict, saf
     time.sleep(PROACTIVE_DELAY_SECONDS)
     
     # Combinar configuración base con la dinámica (ej: response_mime_type)
+    # [CORRECCIÓN SDK v1] system_instruction se integra en el config
     config_params = {
         "max_output_tokens": generation_config.get("max_output_tokens", 8192),
         "safety_settings": safety_settings,
+        "system_instruction": system_instruction,
     }
     if "response_mime_type" in generation_config:
         config_params["response_mime_type"] = generation_config["response_mime_type"]
     if "speech_config" in generation_config:
         config_params["speech_config"] = generation_config["speech_config"]
+    if "response_schema" in generation_config:
+        config_params["response_schema"] = generation_config["response_schema"]
 
     config = types.GenerateContentConfig(**config_params)
 
@@ -80,7 +85,7 @@ def clean_json_response(raw_text: str) -> str:
 
 # --- Public Functions ---
 
-def generate_text_content(prompt: str, api_key: ApiKey, task_id: str = None) -> Tuple[bool, str, str, dict]:
+def generate_text_content(prompt: str, api_key: ApiKey, task_id: str = None, system_instruction: str = None) -> Tuple[bool, str, str, dict]:
     usage_metadata = {"input_tokens": 0, "output_tokens": 0}
     """
     [V7-Stateless-SDKv1] Genera texto usando Gemini 3 Flash Preview.
@@ -118,7 +123,7 @@ def generate_text_content(prompt: str, api_key: ApiKey, task_id: str = None) -> 
             except Exception as e:
                 logger.error(f"Error CRÍTICO en el registro atómico para la tarea {task_id}: {e}", exc_info=True)
 
-        response = _execute_gemini_call(prompt, api_key, generation_config, safety_settings)
+        response = _execute_gemini_call(prompt, api_key, generation_config, safety_settings, system_instruction=system_instruction)
         if hasattr(response, "usage_metadata"):
             usage_metadata["input_tokens"] = response.usage_metadata.prompt_token_count
             usage_metadata["output_tokens"] = response.usage_metadata.candidates_token_count
@@ -164,24 +169,20 @@ def generate_audio_content(prompt: str, api_key: ApiKey) -> Tuple[bool, bytes, s
 
     try:
         response = _execute_gemini_call(prompt, api_key, generation_config, safety_settings)
-        if hasattr(response, "usage_metadata"):
-            usage_metadata["input_tokens"] = response.usage_metadata.prompt_token_count
-            usage_metadata["output_tokens"] = response.usage_metadata.candidates_token_count
-        
         # En generación de audio, el contenido viene en las partes de la respuesta
         if response.data:
-            return True, response.data, api_key.name, usage_metadata
+            return True, response.data, api_key.name
         
         # Fallback para algunas versiones del SDK que lo devuelven en partes
         for candidate in response.candidates:
             for part in candidate.content.parts:
                 if part.inline_data:
-                    return True, part.inline_data.data, api_key.name, usage_metadata
+                    return True, part.inline_data.data, api_key.name
                     
-        return False, b"", api_key.name, usage_metadata
+        return False, b"", api_key.name
     except Exception as e:
         logger.error(f"Fallo en generación de audio nativo: {e}")
-        return False, b"", api_key.name, usage_metadata
+        return False, b"", api_key.name
 
 def generate_multimodal_correction(prompt: str, audio_path: str, api_key: ApiKey) -> Tuple[bool, str, str]:
     """
@@ -204,7 +205,7 @@ def generate_multimodal_correction(prompt: str, audio_path: str, api_key: ApiKey
                                      "HARM_CATEGORY_SEXUALLY_EXPLICIT", "HARM_CATEGORY_DANGEROUS_CONTENT"]]
 
         response = _execute_gemini_call(contents, api_key, generation_config, safety_settings)
-        return True, response.text.strip(), api_key.name, usage_metadata
+        return True, response.text.strip(), api_key.name
     except Exception as e:
         logger.error(f"Error en corrección multimodal: {e}")
-        return False, str(e), api_key.name, usage_metadata
+        return False, str(e), api_key.name

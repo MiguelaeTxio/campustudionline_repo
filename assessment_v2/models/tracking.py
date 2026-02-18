@@ -1,3 +1,4 @@
+# /home/MiguelAeTxio/PROJECTS/CampuStudiOnline/assessment_v2/models/tracking.py
 from django.db import models
 from django.conf import settings
 from django.utils.translation import gettext_lazy as _
@@ -22,6 +23,8 @@ class CostLog(models.Model):
     exam = models.ForeignKey('assessment_v2.Exam', on_delete=models.SET_NULL, null=True, blank=True, related_name='cost_logs', verbose_name=_('Examen Relacionado'))
     operation_type = models.CharField(_('Tipo de Operación'), max_length=50)
     model_name = models.CharField(_('Modelo IA'), max_length=100)
+    # [HITO 6] Campo para auditoría de costes por clave API
+    api_key_name = models.CharField(_('Clave API'), max_length=100, null=True, blank=True)
     input_tokens = models.PositiveIntegerField(_('Tokens Entrada'))
     output_tokens = models.PositiveIntegerField(_('Tokens Salida'))
     cost_usd = models.DecimalField(_('Coste (USD)'), max_digits=10, decimal_places=6)

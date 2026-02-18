@@ -22,29 +22,28 @@ El archivo V06DOC_ROADMAP.md es la ÚNICA fuente de verdad para el progreso.
 ---
 
 # ANEXO: HITO 06 - SISTEMA DE AUTOEVALUACIONES CON IA
-# ESTADO: EN PROGRESO (FASE 4: VALIDACIÓN DE INTERFAZ Y ORQUESTACIÓN)
+# ESTADO: EN PROGRESO (FASE 6: GENERACIÓN SEGMENTADA - PENDIENTE ORQUESTADOR)
 
 ## 1. RESUMEN TÉCNICO DE LA SESIÓN
-*   **Saneamiento de Herencia:** Reconstrucción de `BaseExamStrategy` y `ExamFactory` para la inyección obligatoria del `sub_archetype_id`.
-*   **Cerebro de Deducción:** Implementada identificación heurística para los 22 sub-arquetipos definidos en V06.
-*   **Orquestación de Calificación:** Implementado `GradingOrchestrator` que aplica factores de rigor matemático (0.8 - 1.6) y ejecuta la anulación de sección por `KILL_SWITCH` (Seguridad Crítica).
-*   **Interfaz Interactiva:** Refactorizado `exam_take.html` para soportar 9 widgets interactivos con lógica JS real (marcado X,Y, logs de cálculo, drag & drop) cumpliendo estándares Lint (H006, H021).
-*   **Registro de Consumo:** Integrado `TrackingService` en el núcleo de las estrategias para auditoría de costes.
+*   **Hito 37 - SDK v1 Sync:** `system_instruction` correctamente integrado en `core/services/gemini_service.py` (`GenerateContentConfig`), verificado con la documentación oficial.
+*   **Hito 6 - Tracking y Costes:** `api_key_name` añadido a `assessment_v2/models/tracking.py` y el `TrackingService` actualizado para registrarlo, cumpliendo requisitos de auditoría.
+*   **Hito 6 - Refinamiento de Reporting:** `GradingOrchestrator` en `assessment_v2/services/engine/logic.py` extendido para integrar la taxonomía de feedback (FB_*) y generar el resumen cualitativo ("Voz del Catedrático").
+*   **Hito 6 - Arquitectura Skeleton-First:** Documentación de la constelación V06 actualizada (`V06DOC_STRUCTURE.md`, `V06DOC_ROADMAP.md`, `V06DOC_TEMPLATES.md`) para reflejar la estrategia de generación segmentada (Esqueleto Python + Llenado Atómico IA).
+*   **Hito 6 - Estrategia de Lenguas:** `assessment_v2/services/engine/strategies/languages.py` actualizado con `get_section_plan()` y prompts adaptados para la generación atómica, incluyendo memoria de contexto y schema formal OpenAPI 3.0.
 
 ## 2. HOJA DE RUTA PARA LA SIGUIENTE SESIÓN (LEY SUPREMA)
-**OBJETIVO:** Auditoría Integral de Sincronización y Refinamiento de Feedback.
+**OBJETIVO:** Finalizar la implementación de la Arquitectura de Generación Segmentada (Skeleton-First) y validar su robustez.
 
 ### TAREAS CRÍTICAS (ORDEN OBLIGATORIO)
 
-1.  **AUDITORÍA INICIAL DE INTEGRIDAD:** 
-    *   Realizar un barrido integral, absoluto y microscópico comparando la documentación V06 contra el código consolidado para garantizar que no existe ni una sola omisión técnica.
+1.  **IMPLEMENTACIÓN DEL BUCLE EN ORQUESTADOR:**
+    *   Refactorizar `orchestrator/tasks.py:generate_exam_task` para implementar el bucle de generación de ítems sección por sección.
+    *   Asegurar el manejo del rango de temario seleccionado (context_text).
+    *   Gestionar la memoria de ítems ya generados (`generated_item_titles`) para evitar repeticiones.
 
-2.  **REFINAMIENTO DE REPORTING (FASE 5):**
-    *   Integrar la taxonomía de feedback (FB_*) en el `GradingOrchestrator`.
-    *   Personalizar el informe de resultados (`exam_report.html`) según el Rol del Catedrático inyectado.
-
-3.  **VALIDACIÓN ESTRATEGIA AI:**
-    *   Probar la generación de exámenes reales usando `models/gemini-2.5-flash-lite` verificando que el prompt inyecta correctamente el sub-arquetipo detectado.
+2.  **TESTEO INTEGRAL Y VBO:**
+    *   Realizar pruebas exhaustivas del flujo completo (creación de examen, generación por secciones, parseo JSON, registro de tracking) con diversas asignaturas y contextos.
+    *   Obtener el Visto Bueno (VBO) para la Fase 6 del Hito.
 
 ---
-**DIRECTRIZ TÉCNICA:** No iniciar la Fase 6 hasta que la auditoría microscópica inicial de la próxima sesión confirme el 100% de alineación.
+**DIRECTRIZ TÉCNICA:** La próxima sesión se inicia cargando la constelación documental V06 y este anexo actualizado. La prioridad es la finalización y validación del orquestador.
