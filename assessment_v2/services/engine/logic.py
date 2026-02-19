@@ -1,90 +1,21 @@
 # /home/MiguelAeTxio/PROJECTS/CampuStudiOnline/assessment_v2/services/engine/logic.py
 import re
+import logging
 from decimal import Decimal
 from django.utils import timezone
 from django.utils.translation import gettext as _
 from academic_structure.models import Subject
+from orchestrator.models import AutomationSettings
+from core.services.gemini_service import classify_subject_identity, AIServiceCriticalError
+
+logger = logging.getLogger(__name__)
 
 class AcademicDeductor:
     """
-    Service for heuristic deduction of academic parameters.
-    Servicio de deducción heurística de parámetros académicos según el estándar de la plataforma.
+    Service for hybrid deduction of academic parameters (IA + Logic).
+    Servicio de deducción híbrida de parámetros académicos (IA + Lógica).
+    Ref: V06DOC_LOGIC_MAPPING V1.3.
     """
-
-    @staticmethod
-    def deduce_archetype(subject, context_title=None):
-        """
-        Deduces the ARCH_ID based on the subject name and academic branch.
-        Deduce el ARCH_ID basándose en el nombre de la asignatura y la rama académica.
-        """
-        name = (context_title or subject.name).lower()
-        branch_name = subject.academic_year.degree.branch.name.lower()
-
-        # 1. Languages
-        if re.search(r'(lengua|idioma|language|lingüística|translation)', name):
-            return 'ARCH_LANG'
-        
-        # 2. Health Sciences
-        if any(keyword in branch_name for keyword in ['salud', 'medicina', 'enfermería', 'veterinaria', 'farmacia', 'odontología']):
-            return 'ARCH_HEALTH'
-        
-        # 3. Technical Sciences & Engineering
-        if any(keyword in branch_name for keyword in ['ingeniería', 'técnica', 'arquitectura', 'ciencias', 'física', 'matemática']):
-            return 'ARCH_TECH'
-
-        # 4. Arts & Humanities
-        if any(keyword in branch_name for keyword in ['artes', 'humanidades', 'filosofía', 'historia', 'educación', 'bellas']):
-            return 'ARCH_HUM'
-
-        return 'ARCH_SOC'
-
-    @staticmethod
-    def deduce_sub_archetype(archetype_id, subject, context_title=None):
-        """
-        Deduces the specific Sub-Archetype (22 specializations) based on V06DOC_SUBARCHETYPES.
-        ---
-        Deduce el Sub-Arquetipo específico (22 especialidades) basado en V06DOC_SUBARCHETYPES.
-        """
-        name = (context_title or subject.name).lower()
-        
-        # TECH Mapping / Mapeo TECH
-        if archetype_id == 'ARCH_TECH':
-            if re.search(r'(software|informát|computac|programac|datos)', name): return 'SUB-TEC-SOFT'
-            if re.search(r'(civil|camin|estruct|geotec|hidrául)', name): return 'SUB-TEC-CIVIL'
-            if re.search(r'(indus|termodin|máquin|eléctr|energ)', name): return 'SUB-TEC-INDUS'
-            if re.search(r'(químic|reacc|cinét)', name): return 'SUB-TEC-CHEM'
-            return 'SUB-TEC-PURE'
-
-        # HEALTH Mapping / Mapeo SALUD
-        if archetype_id == 'ARCH_HEALTH':
-            if re.search(r'(medicin|cirug|patolog|clínic)', name): return 'SUB-SAN-MED'
-            if re.search(r'(enfermer|cuidad|nanda|dietét)', name): return 'SUB-SAN-CUID'
-            if re.search(r'(bioquím|farmac|laborat|analít)', name): return 'SUB-SAN-BIO'
-            if re.search(r'(psicolog|psiquia|conduct|mente)', name): return 'SUB-SAN-PSY'
-            return 'SUB-SAN-VET'
-
-        # LANG Mapping / Mapeo LENGUAS
-        if archetype_id == 'ARCH_LANG':
-            if re.search(r'(técnic|profes|fines|business)', name): return 'SUB-LIN-PROF'
-            if re.search(r'(literat|filolog|crític|poes)', name): return 'SUB-LIN-LIT'
-            return 'SUB-LIN-CERT'
-
-        # SOC Mapping / Mapeo SOCIALES
-        if archetype_id == 'ARCH_SOC':
-            if re.search(r'(derech|juríd|legal|norma|boe)', name): return 'SUB-SOC-JUR'
-            if re.search(r'(econom|ade|contab|finan|auditor)', name): return 'SUB-SOC-ECON'
-            if re.search(r'(sociolog|polít|estado|antrop)', name): return 'SUB-SOC-BEHAV'
-            return 'SUB-SOC-COMM'
-
-        # HUM Mapping / Mapeo HUMANIDADES
-        if archetype_id == 'ARCH_HUM':
-            if re.search(r'(histori|arqueol|antig|cronol)', name): return 'SUB-HUM-HIST'
-            if re.search(r'(filosof|lógic|ética|metaf)', name): return 'SUB-HUM-PHIL'
-            if re.search(r'(educac|pedagog|didáct|lomloe|dua)', name): return 'SUB-HUM-EDU'
-            if re.search(r'(músic|armon|solfe|audit)', name): return 'SUB-ART-MUS'
-            return 'SUB-ART-CREA'
-
-        return 'DEFAULT'
 
     @staticmethod
     def deduce_itinerary(subject, context_title=None):
@@ -144,18 +75,64 @@ class AcademicDeductor:
         
         return 'LVL_C'
 
+    @staticmethod
+    def deduce_immersion_mode(archetype_id, itinerary_id, pedagogical_level):
+        """
+        Deduces the immersion mode based on the UGR Matrix (V06DOC_LEVELS V1.2).
+        ---
+        Deduce el modo de inmersión basado en la Matriz UGR (V06DOC_LEVELS V1.2).
+        """
+        if archetype_id != 'ARCH_LANG':
+            return 'VEHICULAR'
+        
+        if pedagogical_level == 'LVL_C':
+            return 'TOTAL'
+        
+        if itinerary_id == 'ITIN_MAI':
+            return 'TOTAL' if pedagogical_level == 'LVL_B' else 'BILINGUAL'
+        
+        # ITIN_MIN
+        return 'BILINGUAL' if pedagogical_level == 'LVL_B' else 'VEHICULAR'
+
     @classmethod
     def get_context_metadata(cls, subject, context_title=None):
         """
-        Returns the full metadata pack for the Exam Contract.
-        Devuelve el paquete completo de metadatos para el Contrato de Examen.
+        Main entry point: Resolves identity via AI and parameters via Python.
+        Punto de entrada principal: Resuelve identidad vía IA y parámetros vía Python.
         """
-        archetype_id = cls.deduce_archetype(subject, context_title)
+        # FASE 1: Identidad Cognitiva (IA)
+        # Ref: V06DOC_LOGIC_MAPPING V1.3 Section 1
+        settings = AutomationSettings.load()
+        api_key = settings.active_api_key
+        
+        if not api_key:
+            raise AIServiceCriticalError("No hay claves de API activas para la clasificación.")
+
+        success, identity, _ = classify_subject_identity(
+            subject_name=context_title or subject.name,
+            branch_name=subject.academic_year.degree.branch.name,
+            degree_name=subject.academic_year.degree.name,
+            api_key=api_key
+        )
+
+        if not success:
+            # Propagamos el error para que el orquestador ejecute el protocolo de reintentos de 10 min
+            raise AIServiceCriticalError("Fallo en la clasificación IA de la asignatura.")
+
+        archetype_id = identity.get('archetype_id', 'ARCH_SOC')
+        sub_archetype_id = identity.get('sub_archetype_id', 'DEFAULT')
+
+        # FASE 2: Parámetros Deterministas (Python)
+        # Ref: V06DOC_LOGIC_MAPPING V1.3 Section 2
+        itinerary_id = cls.deduce_itinerary(subject, context_title)
+        level_id = cls.deduce_level(subject, context_title)
+        
         return {
             'archetype_id': archetype_id,
-            'sub_archetype_id': cls.deduce_sub_archetype(archetype_id, subject, context_title),
-            'itinerary_id': cls.deduce_itinerary(subject, context_title),
-            'pedagogical_level': cls.deduce_level(subject, context_title),
+            'sub_archetype_id': sub_archetype_id,
+            'itinerary_id': itinerary_id,
+            'pedagogical_level': level_id,
+            'immersion_mode': cls.deduce_immersion_mode(archetype_id, itinerary_id, level_id),
         }
 
 class GradingOrchestrator:

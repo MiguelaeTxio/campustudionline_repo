@@ -1,5 +1,5 @@
-# /home/MiguelAeTxio/PROJECTS/CampuStudiOnline/DOCS/MAINS/ATTACHEDS/DOCS_ATTACHED_2_ANNEX_V06/V06DOC_LEVELS.md
-# V06DOC_LEVELS - MATRIZ DE INTERSECCIÓN PEDAGÓGICA (V1.0)
+<!-- /home/MiguelAeTxio/PROJECTS/CampuStudiOnline/DOCS/MAINS/ATTACHEDS/DOCS_ATTACHED_2_ANNEX_V06/V06DOC_LEVELS.md -->
+# V06DOC_LEVELS - MATRIZ DE INTERSECCIÓN PEDAGÓGICA (V1.2)
 
 Este documento define el cerebro pedagógico del emulador y las reglas de ajuste del motor de IA.
 
@@ -35,3 +35,17 @@ Este documento define el cerebro pedagógico del emulador y las reglas de ajuste
 *   DENSITY_INDEX: Cantidad de tecnicismos por cada 100 palabras en el enunciado (Bajo en LVL_A | Máximo en LVL_C).
 *   DISTRACTOR_QUALITY: Nivel de plausibilidad de las opciones erróneas (Lógica de error común en LVL_C).
 *   GRADING_BIAS: Sesgo punitivo (Constructivo en Minor | Punitivo/Selectivo en Maior).
+
+## 4. PROTOCOLO DE IDIOMA DE EVALUACIÓN (NORMATIVA UGR/CLM)
+
+La determinación del idioma en las instrucciones y títulos de sección (interfaz del examen) se rige por la normativa oficial de la UGR y el CLM:
+
+### 4.1. Arquetipo de Lenguas (ARCH_LANG)
+*   **Nivel A (A1/A2):**
+    *   **Itinerario MINOR:** Castellano (Para garantizar la comprensión de la tarea).
+    *   **Itinerario MAIOR:** Bilingüe (Inmersión progresiva).
+*   **Nivel B / C (B1 a C2):**
+    *   **Todos los Itinerarios:** Inmersión Total (Idioma Objetivo). La comprensión de la instrucción es parte de la evaluación.
+
+### 4.2. Resto de Arquetipos (TECH, HEALTH, SOC, HUM)
+*   **Idioma Vehicular:** Castellano obligatorio por seguridad jurídica, salvo excepciones internacionales documentadas.

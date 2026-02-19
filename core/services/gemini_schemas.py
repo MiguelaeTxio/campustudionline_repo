@@ -140,3 +140,28 @@ METADATA_SCHEMA = {
         ],
     }
 }
+
+# --- Schema for Academic Assessment (Milestone 6) ---
+
+ACADEMIC_CLASSIFICATION_SCHEMA = {
+    "type": "object",
+    "properties": {
+        "archetype_id": {
+            "type": "string",
+            "enum": ["ARCH_LANG", "ARCH_HEALTH", "ARCH_TECH", "ARCH_SOC", "ARCH_HUM"],
+            "description": "El arquetipo principal de la asignatura."
+        },
+        "sub_archetype_id": {
+            "type": "string",
+            "enum": [
+                "SUB-LIN-CERT", "SUB-LIN-PROF", "SUB-LIN-LIT",
+                "SUB-SAN-MED", "SUB-SAN-CUID", "SUB-SAN-BIO", "SUB-SAN-PSY", "SUB-SAN-VET",
+                "SUB-TEC-SOFT", "SUB-TEC-CIVIL", "SUB-TEC-INDUS", "SUB-TEC-PURE", "SUB-TEC-CHEM",
+                "SUB-SOC-JUR", "SUB-SOC-ECON", "SUB-SOC-BEHAV", "SUB-SOC-COMM",
+                "SUB-HUM-HIST", "SUB-HUM-PHIL", "SUB-HUM-EDU", "SUB-ART-CREA", "SUB-ART-MUS"
+            ],
+            "description": "El ID técnico de especialidad (Ref: V06DOC_SUBARCHETYPES)."
+        }
+    },
+    "required": ["archetype_id", "sub_archetype_id"]
+}

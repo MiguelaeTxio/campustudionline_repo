@@ -34,13 +34,13 @@ class TechnicalStrategy(BaseExamStrategy):
                  # We mark as PENDING but acknowledge receipt.
                  return Decimal('0.0'), {
                      "status": "PENDING_AI_ANALYSIS", 
-                     "detail": "File uploaded. Queued for visual trace analysis.",
+                     "detail": "Archivo subido correctamente. En cola para análisis de traza visual.",
                      "file_received": True
                  }
 
             # Standard JSON Step Trace
             if not isinstance(student_input, dict) or 'steps' not in student_input:
-                return Decimal('0.0'), {"status": "FORMAT_ERROR", "detail": "Invalid RPP-TRAZA input structure"}
+                return Decimal('0.0'), {"status": "FORMAT_ERROR", "detail": "Estructura de entrada RPP-TRAZA inválida."}
 
             step_matrix = logic.get('step_matrix', [])
             total_weight = Decimal('0.0')
@@ -62,16 +62,16 @@ class TechnicalStrategy(BaseExamStrategy):
                     # Fuzzy match for numbers/formulas
                     if self._validate_technical_value(step_val, expected_val):
                         earned_score += step_weight
-                        trace_log.append(f"Step {expected_step['id']}: OK")
+                        trace_log.append(f"Paso {expected_step['id']}: OK")
                     else:
                         # Logic for ITIN_PROF (Normative/Safety) -> Error is fatal if critical
                         if self.itinerary_id == 'ITIN_PROF' and expected_step.get('critical', False):
                             fatal_error_triggered = True
-                            trace_log.append(f"Step {expected_step['id']}: FATAL (Normative Breach)")
+                            trace_log.append(f"Paso {expected_step['id']}: FATAL (Incumplimiento Normativo)")
                         else:
-                            trace_log.append(f"Step {expected_step['id']}: FAIL")
+                            trace_log.append(f"Paso {expected_step['id']}: FALLO")
                 else:
-                    trace_log.append(f"Step {expected_step['id']}: OMITTED")
+                    trace_log.append(f"Paso {expected_step['id']}: OMITIDO")
 
             if fatal_error_triggered:
                 return Decimal('0.0'), {"status": "FATAL_ERROR", "trace": trace_log, "feedback_category": "FB_SAFETY"}
@@ -93,9 +93,9 @@ class TechnicalStrategy(BaseExamStrategy):
             correct_answer = logic.get('correct_answer')
             num_options = len(item.content.get('options', []))
             
-            if student_input == correct_answer:
+            if str(student_input).strip() == str(correct_answer).strip():
                 return Decimal('1.0'), {"status": "CORRECT"}
-            elif student_input is None or student_input == "":
+            elif student_input is None or str(student_input).strip() == "":
                 return Decimal('0.0'), {"status": "OMITTED"}
             else:
                 # UGR Formula
@@ -146,6 +146,21 @@ class TechnicalStrategy(BaseExamStrategy):
             # String comparison
             return str(input_val).strip().lower() == str(expected_val).strip().lower()
 
+    def get_section_plan(self):
+        """
+        Returns the mandatory section list for the orchestrator to build the DB skeleton.
+        Ref: V06DOC_ARCHETYPES.
+        ---
+        Devuelve la lista mandatoria de secciones para que el orquestador construya el esqueleto en la BBDD.
+        Ref: V06DOC_ARCHETYPES.
+        """
+        return [
+            {"subdivision_id": "SD_THEO", "title": "Fundamentos Teóricos", "instructions": "Demuestra tu dominio de los principios y leyes fundamentales.", "time_limit": 600},
+            {"subdivision_id": "SD_MODEL", "title": "Modelado y Abstracción", "instructions": "Formaliza el problema planteado en lenguaje matemático o lógico.", "time_limit": 900},
+            {"subdivision_id": "SD_CALC", "title": "Cálculo y Resolución", "instructions": "Desarrolla la solución paso a paso. Se evalúa la traza procedimental.", "time_limit": 1200},
+            {"subdivision_id": "SD_VERIF", "title": "Verificación y Normativa", "instructions": "Comprueba la coherencia de los resultados y su adecuación a la norma.", "time_limit": 600}
+        ]
+
     def get_system_prompt(self):
         """
         Dynamic Role Generation based on Sub-Archetypes (V06DOC_SUBARCHETYPES).
@@ -180,73 +195,81 @@ class TechnicalStrategy(BaseExamStrategy):
         elif self.pedagogical_level == 'LVL_A':
             level_prompt = "Nivel A (Acceso): Fundamentos básicos, definiciones claras."
 
-        return f"{base_role}\n{itin_prompt}\n{level_prompt}\nBLOCKS: Use RPP-TRAZA for calculations, RBT-CANON for definitions."
+        return f"{base_role}\n{itin_prompt}\n{level_prompt}\nBLOQUES: Usa RPP-TRAZA para cálculos, RBT-CANON para definiciones."
 
-    def get_user_prompt(self, context_text, topic):
+    def get_user_prompt(self, context_text, topic, subdivision_id, generated_item_titles=None):
         """
-        User instruction generator compliant with V06DOC_TEMPLATES.
+        Generates the user prompt injecting the study material context (ATOMIC).
+        ---
+        Genera el prompt de usuario inyectando el contexto del material de estudio (ATÓMICO).
         """
+        memory = f"\nEvita repetir estos conceptos ya generados: {', '.join(generated_item_titles)}" if generated_item_titles else ""
         return (
-            f"GENERATE EXAM JSON.\n"
-            f"TOPIC: {topic}\n"
-            f"CONTEXT: {context_text[:50000]}\n"
+            f"GENERA 3 ÍTEMS para la sección: {subdivision_id}.\n"
+            f"TEMA: {topic}. {memory}\n"
+            f"CONTEXTO: {context_text[:50000]}\n"
             f"CONFIG: Archetype={self.archetype_id}, Sub={self.sub_archetype_id}, Itin={self.itinerary_id}, Level={self.pedagogical_level}.\n"
-            f"REQUIREMENTS:\n"
-            f"1. Use 'RPP-TRAZA' for any calculation. Define 'step_matrix' with logical steps.\n"
-            f"2. Use 'W-TECH-CALC' widget for input.\n"
-            f"3. If Itinerary is PROF, cite specific norms (ISO/CTE).\n"
-            f"4. Output must match V06DOC_TEMPLATES schema."
+            f"REQUISITOS:\n"
+            f"1. Para la fase {subdivision_id}, utiliza el bloque más adecuado (RPP-TRAZA para cálculo o PRM-STRIKE para teoría).\n"
+            f"2. Salida estrictamente JSON (Array 'items')."
         )
 
     def get_output_schema(self):
         """
-        High-fidelity JSON Schema for ARCH_TECH.
-        Allows file uploads in grading logic (via widget config).
+        Defines the expected JSON schema for the AI model response (ATOMIC).
+        ---
+        Define el esquema JSON esperado para la respuesta del modelo de IA (ATÓMICO).
         """
         return {
-            "subdivision_sequence": [
-                {
-                    "subdivision_id": "SD_THEO | SD_MODEL | SD_CALC | SD_VERIF",
-                    "title": "string",
-                    "instructions": "string",
-                    "items": [
-                        {
-                            "block_type": "RPP-TRAZA | PRM-STRIKE | RBT-CANON",
-                            "widget_id": "W-TECH-CALC | W-OBJ-STRIKE",
+            "type": "object",
+            "properties": {
+                "items": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "block_type": {"type": "string", "enum": ["RPP-TRAZA", "PRM-STRIKE", "RBT-CANON"]},
+                            "widget_id": {"type": "string", "enum": ["W-TECH-CALC", "W-OBJ-STRIKE"]},
                             "content": {
-                                "stem": "string",
-                                "media_assets": ["urls"],
-                                "allow_file_upload": True 
+                                "type": "object",
+                                "properties": {
+                                    "stem": {"type": "string"},
+                                    "options": {"type": "array", "items": {"type": "string"}},
+                                    "media_assets": {"type": "array", "items": {"type": "string"}}
+                                },
+                                "required": ["stem"]
                             },
                             "grading_logic": {
-                                "correct_answer": "any",
-                                "step_matrix": [
-                                    {"id": 1, "value": "val", "weight": 0.2, "critical": False}
-                                ],
-                                "keywords": ["list", "of", "lexemes"],
-                                "penalty_factor": 0.25
+                                "type": "object",
+                                "properties": {
+                                    "correct_answer": {"type": ["string", "number", "boolean"]},
+                                    "step_matrix": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "object",
+                                            "properties": {
+                                                "id": {"type": "integer"},
+                                                "value": {"type": "string"},
+                                                "weight": {"type": "number"},
+                                                "critical": {"type": "boolean"}
+                                            },
+                                            "required": ["id", "value"]
+                                        }
+                                    }
+                                }
                             },
                             "metadata": {
-                                "competency_tag": "COMP_ESP | COMP_PROF",
-                                "cognitive_tag": "COG_APP | COG_ANA"
+                                "type": "object",
+                                "properties": {
+                                    "competency_tag": {"type": "string"},
+                                    "cognitive_tag": {"type": "string"}
+                                },
+                                "required": ["competency_tag", "cognitive_tag"]
                             }
-                        }
-                    ]
+                        },
+                        "required": ["block_type", "widget_id", "content", "grading_logic", "metadata"]
+                    }
                 }
-            ]
+            },
+            "required": ["items"]
         }
-
-    def generate_structure(self, exam_uuid, sub_archetype_id='SUB-TEC-SOFT'):
-        """
-        Generates the exam structure with specific Subdivisions defined in V06DOC_SUBDIVISIONS (Group B).
-        """
-        contract = self.generate_contract_skeleton(exam_uuid, 'ARCH_TECH', sub_archetype_id)
-        
-        # Specific subdivisions for Technical Group
-        contract["subdivision_sequence"] = [
-            {"subdivision_id": "SD_THEO", "title": "Fundamentos Teóricos", "items": []},
-            {"subdivision_id": "SD_MODEL", "title": "Modelado y Abstracción", "items": []},
-            {"subdivision_id": "SD_CALC", "title": "Cálculo y Resolución", "items": []},
-            {"subdivision_id": "SD_VERIF", "title": "Verificación y Normativa", "items": []}
-        ]
-        return contract

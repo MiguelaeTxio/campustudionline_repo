@@ -47,14 +47,14 @@ class HealthStrategy(BaseExamStrategy):
         # Ref: V06DOC_BLOCKS Section 1
         elif block_type == 'PRM-STRIKE':
             correct_answer = logic.get('correct_answer')
-            if student_input == correct_answer:
+            if str(student_input).strip() == str(correct_answer).strip():
                 return Decimal('1.0'), {"status": "CORRECT"}
             elif not student_input:
                 return Decimal('0.0'), {"status": "OMITTED"}
             else:
                 # Higher penalty in Health (especially in ROT)
                 num_options = len(item.content.get('options', []))
-                penalty_base = Decimal('1.0') / Decimal(str(num_options - 1)) if num_options > 1 else Decimal('0.5')
+                penalty_base = Decimal('1.0') / Decimal(str(max(1, num_options - 1))) if num_options > 1 else Decimal('0.5')
                 
                 # Double penalty for wrong diagnosis in Rotatorio
                 if self.itinerary_id == 'ITIN_ROT':
@@ -78,6 +78,32 @@ class HealthStrategy(BaseExamStrategy):
 
         return Decimal('0.0'), {"status": "PENDING"}
 
+    def get_section_plan(self):
+        """
+        Returns the mandatory section list for the orchestrator (SKELETON-FIRST).
+        Ref: V06DOC_ARCHETYPES.
+        """
+        return [
+            {
+                "subdivision_id": "SD_FACT",
+                "title": "Estación 1: Anamnesis y Hechos",
+                "instructions": "Recopila los datos clínicos relevantes y antecedentes del paciente.",
+                "time_limit": 300
+            },
+            {
+                "subdivision_id": "SD_PROC",
+                "title": "Estación 2: Procedimiento Clínico",
+                "instructions": "Ejecuta la técnica o exploración requerida. Atención a la seguridad.",
+                "time_limit": 600
+            },
+            {
+                "subdivision_id": "SD_ETHI",
+                "title": "Estación 3: Juicio Ético y Seguridad",
+                "instructions": "Valora las implicaciones deontológicas y riesgos del caso.",
+                "time_limit": 300
+            }
+        ]
+
     def get_system_prompt(self):
         """
         Generates clinical role based on Sub-Archetype (V06DOC_SUBARCHETYPES).
@@ -97,63 +123,66 @@ class HealthStrategy(BaseExamStrategy):
 
         return f"{base_role}\n{itin_ctx}\nUsa bloques CDS-KILL para protocolos obligatorios y ILC-CONTEXT para interpretación de pruebas (Analíticas/Rayos X)."
 
-    def get_user_prompt(self, context_text, topic):
+    def get_user_prompt(self, context_text, topic, subdivision_id, generated_item_titles=None):
         """
-        ECOE generation instruction.
+        Atomic generation prompt for a specific subdivision (V06DOC_TEMPLATES).
         """
+        memory = f"\nÍtems ya generados: {', '.join(generated_item_titles)}" if generated_item_titles else ""
         return (
-            f"GENERATE HEALTH EXAM (ECOE MODEL).\n"
-            f"TOPIC: {topic}\n"
+            f"GENERA 3 ÍTEMS para la sección: {subdivision_id}.\n"
+            f"TEMA: {topic}. {memory}\n"
             f"REF: {context_text[:50000]}\n"
-            f"SUB-ARCH: {self.sub_archetype_id}. ITIN: {self.itinerary_id}.\n"
-            f"RULES:\n"
-            f"1. Create a clinical case with Anamnesis, Procedure, and Ethics.\n"
-            f"2. Include at least one CDS-KILL block with kill_switch: True for a vital safety step.\n"
-            f"3. Use W-CLIN-SCAN for items requiring diagnostic imaging interpretation."
+            f"CONFIG: Arquetipo={self.sub_archetype_id}, Itinerario={self.itinerary_id}, Nivel={self.pedagogical_level}.\n"
+            f"REQUISITOS:\n"
+            f"1. Si es SD_PROC, incluye al menos un bloque CDS-KILL con kill_switch: True para un paso vital.\n"
+            f"2. Usa W-CLIN-SCAN para ítems que requieran interpretación de imágenes (Rayo X, ECG).\n"
+            f"3. Salida estrictamente JSON (Array 'items')."
         )
 
     def get_output_schema(self):
         """
-        Full ECOE JSON Contract.
+        Atomic JSON Schema for ARCH_HEALTH.
         """
         return {
-            "subdivision_sequence": [
-                {
-                    "subdivision_id": "SD_FACT | SD_PROC | SD_ETHI",
-                    "title": "string",
-                    "items": [
-                        {
-                            "block_type": "CDS-KILL | PRM-STRIKE | ILC-CONTEXT",
-                            "widget_id": "W-PROC-ACTION | W-OBJ-STRIKE | W-CLIN-SCAN",
+            "type": "object",
+            "properties": {
+                "items": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "block_type": {"type": "string", "enum": ["CDS-KILL", "PRM-STRIKE", "ILC-CONTEXT"]},
+                            "widget_id": {"type": "string", "enum": ["W-PROC-ACTION", "W-OBJ-STRIKE", "W-CLIN-SCAN"]},
                             "content": {
-                                "stem": "string",
-                                "options": "list (for PRM)",
-                                "media_assets": ["urls"]
+                                "type": "object",
+                                "properties": {
+                                    "stem": {"type": "string"},
+                                    "options": {"type": "array", "items": {"type": "string"}},
+                                    "media_assets": {"type": "array", "items": {"type": "string"}}
+                                },
+                                "required": ["stem"]
                             },
                             "grading_logic": {
-                                "correct_answer": "any",
-                                "kill_switch": True,
-                                "penalty_factor": 0.5,
-                                "keywords": ["diagnostic", "terms"]
+                                "type": "object",
+                                "properties": {
+                                    "correct_answer": {"type": ["string", "boolean"]},
+                                    "kill_switch": {"type": "boolean"},
+                                    "penalty_factor": {"type": "number"},
+                                    "keywords": {"type": "array", "items": {"type": "string"}}
+                                }
                             },
                             "metadata": {
-                                "competency_tag": "COMP_ESP | COMP_PROF",
-                                "cognitive_tag": "COG_APP | COG_ANA | COG_EVAL"
+                                "type": "object",
+                                "properties": {
+                                    "competency_tag": {"type": "string"},
+                                    "cognitive_tag": {"type": "string"}
+                                },
+                                "required": ["competency_tag", "cognitive_tag"]
                             }
-                        }
-                    ]
+                        },
+                        "required": ["block_type", "widget_id", "content", "grading_logic", "metadata"]
+                    }
                 }
-            ]
+            },
+            "required": ["items"]
         }
-
-    def generate_structure(self, exam_uuid, sub_archetype_id='SUB-SAN-MED'):
-        """
-        ECOE Stations (V06DOC_SUBDIVISIONS Group C).
-        """
-        contract = self.generate_contract_skeleton(exam_uuid, 'ARCH_HEALTH', sub_archetype_id)
-        contract["subdivision_sequence"] = [
-            {"subdivision_id": "SD_FACT", "title": "Estación 1: Anamnesis y Hechos", "items": []},
-            {"subdivision_id": "SD_PROC", "title": "Estación 2: Procedimiento Clínico", "items": []},
-            {"subdivision_id": "SD_ETHI", "title": "Estación 3: Juicio Ético y Seguridad", "items": []}
-        ]
-        return contract

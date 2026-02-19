@@ -1780,3 +1780,11 @@ Carga de contexto obligatoria: Documentación técnica V06DOC y modelos de `asse
 *  **Session:** Hito 6 Fase 6: Implementación del Bucle de Orquestación Segmentada
 *  **Description:** Refactorización de orchestrator/tasks.py para implementar la generación iterativa de ítems bajo la arquitectura Skeleton-First. Integración con el método get_section_plan de las estrategias y gestión de memoria de contexto para evitar duplicidad en la generación de autoevaluaciones.
 
+
+# 2026-02-19
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+## EPI # --SYSTEM -->
+*  **Session:** Rectificación y Alineación Absoluta de Estrategias de Evaluación (V06)
+*  **Description:** Implementación estricta de la arquitectura segregada definida en la documentación V06. Reescritura de las estrategias (Tech, Health, Social, Humanities) para garantizar la generación atómica de ítems, el cumplimiento de la Regla de Oro del Idioma (Castellano en UI) y la eliminación de metadatos técnicos en la salida. Limpieza de widgets hardcodeados en plantillas.
+

@@ -67,6 +67,17 @@ class LanguagesStrategy(BaseExamStrategy):
 
         return Decimal("0.0"), {"status": "PENDING"}
 
+    def _get_immersion_mode(self):
+        """
+        Heuristic to determine the interface language based on V06DOC_LEVELS V1.2 (UGR Normative).
+        Deduce el modo de inmersión según la normativa de la UGR.
+        """
+        if self.pedagogical_level == 'LVL_C':
+            return 'TOTAL'
+        if self.itinerary_id == 'ITIN_MAI':
+            return 'TOTAL' if self.pedagogical_level == 'LVL_B' else 'BILINGUAL'
+        return 'BILINGUAL' if self.pedagogical_level == 'LVL_B' else 'VEHICULAR'
+
     def get_section_plan(self):
         """
         Returns the mandatory section list for the orchestrator to build the DB skeleton.
@@ -75,31 +86,67 @@ class LanguagesStrategy(BaseExamStrategy):
         Devuelve la lista mandatoria de secciones para que el orquestador construya el esqueleto en la BBDD.
         Ref: V06DOC_ARCHETYPES (Secuencia de Lenguas).
         """
-        return [
-            {"subdivision_id": "SD_READ", "title": "Reading Comprehension", "instructions": "Read the text and solve the linguistic challenges."},
-            {"subdivision_id": "SD_LIST", "title": "Listening Comprehension", "instructions": "Analyze the audio transcripts and identify semantic nuances."},
-            {"subdivision_id": "SD_WRIT", "title": "Written Production", "instructions": "Produce an academic text respecting formal register and specific terminology."},
-            {"subdivision_id": "SD_MEDI", "title": "Linguistic Mediation", "instructions": "Synthesize and adapt information between different registers or languages."}
+        mode = self._get_immersion_mode()
+        
+        # Estructura de mapeo para inmersión UGR
+        sections_data = [
+            {
+                "id": "SD_READ", 
+                "veh": "Comprensión Lectora", "tar": "Reading Comprehension",
+                "i_veh": "Lee el texto y resuelve los desafíos lingüísticos.", "i_tar": "Read the text and solve the linguistic challenges."
+            },
+            {
+                "id": "SD_LIST", 
+                "veh": "Comprensión Auditiva", "tar": "Listening Comprehension",
+                "i_veh": "Analiza las transcripciones de audio e identifica matices semánticos.", "i_tar": "Analyze the audio transcripts and identify semantic nuances."
+            },
+            {
+                "id": "SD_WRIT", 
+                "veh": "Producción Escrita", "tar": "Written Production",
+                "i_veh": "Produce un texto académico respetando el registro formal.", "i_tar": "Produce an academic text respecting formal register."
+            },
+            {
+                "id": "SD_MEDI", 
+                "veh": "Mediación Lingüística", "tar": "Linguistic Mediation",
+                "i_veh": "Sintetiza y adapta información entre diferentes registros.", "i_tar": "Synthesize and adapt information between different registers."
+            }
         ]
+
+        plan = []
+        for s in sections_data:
+            if mode == 'VEHICULAR':
+                title, instr = s['veh'], s['i_veh']
+            elif mode == 'BILINGUAL':
+                title, instr = f"{s['veh']} / {s['tar']}", s['i_tar']
+            else: # TOTAL
+                title, instr = s['tar'], s['i_tar']
+            
+            plan.append({
+                "subdivision_id": s['id'],
+                "title": title,
+                "instructions": instr,
+                "time_limit": 900
+            })
+        return plan
 
     def get_system_prompt(self):
         """
-        Dynamic Role for Languages (V06DOC_SUBARCHETYPES).
+        Returns the specific system prompt for the academic archetype.
 
-        Rol dinámico para lenguas (V06DOC_SUBARCHETYPES).
+        Devuelve el prompt de sistema específico para el arquetipo académico.
         """
         roles = {
-            "SUB-LIN-CERT": "Examinador CertAccles/MCER. Foco: Estandarización, Gramática, Uso de la lengua.",
+            "SUB-LIN-CERT": "Examinador CertAccles/MCER. Foco: Estandarización, Gramática.",
             "SUB-LIN-PROF": "Experto en LSP (Language for Specific Purposes). Foco: Terminología Técnica.",
             "SUB-LIN-LIT": "Filólogo/Crítico Literario. Foco: Exégesis, Retórica, Análisis métrico."
         }
         base_role = roles.get(self.sub_archetype_id, "Profesor de Lenguas.")
-        context = "RIGOR: MAIOR (Catedrático). No aceptes paráfrasis en terminología." if self.itinerary_id == "ITIN_MAI" else "RIGOR: MINOR (Funcional). Feedback constructivo."
+        mode = self._get_immersion_mode()
         
         return (
-            f"IDENTIDAD: {base_role} {context}\n"
-            f"FORMATO: Responde EXCLUSIVAMENTE con un JSON que cumpla el schema OpenAPI 3.0 proporcionado.\n"
-            f"REGLA CRÍTICA: Sin explicaciones ni etiquetas Markdown. Solo el JSON."
+            f"IDENTIDAD: {base_role}\n"
+            f"MODO DE INMERSIÓN: {mode}. Si es TOTAL, genera TODA la salida en el idioma objetivo.\n"
+            f"REGLA CRÍTICA: Sin explicaciones. Solo el JSON atómico."
         )
 
     def get_user_prompt(self, context_text, topic, subdivision_id, generated_item_titles=None):
@@ -108,11 +155,13 @@ class LanguagesStrategy(BaseExamStrategy):
 
         Prompt de generación atómica para una subdivisión específica con memoria de contexto.
         """
-        memory = "\nAVOID REPETITION: The following items have already been generated: " + ", ".join(generated_item_titles) if generated_item_titles else ""
+        memory = "\nEVITA REPETICIÓN: " + ", ".join(generated_item_titles) if generated_item_titles else ""
         return (
-            f"GENERATE 3 ITEMS for subdivision: {subdivision_id}.\n"
+            f"GENERA 3 ÍTEMS para la sección: {subdivision_id}.\n"
             f"TEMA: {topic}. NIVEL: {self.pedagogical_level}.{memory}\n"
-            f"CONTEXTO DOCENTE (RANGO SELECCIONADO):\n{context_text[:15000]}\n\nCONTRATO JSON OBLIGATORIO:\n{json.dumps(self.get_output_schema())}"
+            f"CONTEXTO DOCENTE:\n{context_text[:15000]}\n\n"
+            f"CONFIG: Arquetipo={self.sub_archetype_id}, Itinerario={self.itinerary_id}, Modo={self._get_immersion_mode()}.\n"
+            f"SALIDA: JSON estricto (Array 'items')."
         )
 
     def get_output_schema(self):
@@ -137,7 +186,8 @@ class LanguagesStrategy(BaseExamStrategy):
                                 "type": "object",
                                 "properties": {
                                     "stem": {"type": "string"},
-                                    "text_with_gaps": {"type": "string"}
+                                    "text_with_gaps": {"type": "string"},
+                                    "options": {"type": "array", "items": {"type": "string"}}
                                 },
                                 "required": ["stem"]
                             },

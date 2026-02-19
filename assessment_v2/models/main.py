@@ -29,6 +29,7 @@ class Exam(models.Model):
     sub_archetype_id = models.CharField(_('ID Sub-Arquetipo'), max_length=50)
     itinerary_id = models.CharField(_('ID Itinerario'), max_length=50)
     pedagogical_level = models.CharField(_('Nivel Pedagógico'), max_length=20)
+    immersion_mode = models.CharField(_('Modo de Inmersión'), max_length=20, default='VEHICULAR')
     
     # Configuración de Rigor (V06DOC_LEVELS)
     grading_params = models.JSONField(_('Parámetros de Rigor'), default=dict)

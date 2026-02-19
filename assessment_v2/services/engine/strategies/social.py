@@ -33,7 +33,7 @@ class SocialStrategy(BaseExamStrategy):
             if self.itinerary_id == 'ITIN_PROF':
                 # Professional level demands 100% citation accuracy
                 if citations_found < len(required_citations):
-                    return Decimal('0.3'), {"status": "INSUFFICIENT_FUNDAMENTATION", "detail": "Missing mandatory legal/normative citations."}
+                    return Decimal('0.3'), {"status": "INSUFFICIENT_FUNDAMENTATION", "detail": "Faltan citas legales o normativas obligatorias."}
 
             score = Decimal(str(citations_found / len(required_citations))) if required_citations else Decimal('1.0')
             return score, {"status": "GRADED", "citations": citations_found}
@@ -41,11 +41,37 @@ class SocialStrategy(BaseExamStrategy):
         # --- MOTOR: PRM-STRIKE (Standard) ---
         elif block_type == 'PRM-STRIKE':
             correct_answer = logic.get('correct_answer')
-            if student_input == correct_answer:
+            if str(student_input).strip() == str(correct_answer).strip():
                 return Decimal('1.0'), {"status": "CORRECT"}
             return Decimal('-0.25'), {"status": "INCORRECT"}
 
         return Decimal('0.0'), {"status": "PENDING_MANUAL_REVIEW"}
+
+    def get_section_plan(self):
+        """
+        Returns the mandatory section list for the orchestrator (SKELETON-FIRST).
+        Ref: V06DOC_ARCHETYPES.
+        """
+        return [
+            {
+                "subdivision_id": "SD_FACT",
+                "title": "Hechos y Datos Relevantes",
+                "instructions": "Identifica y jerarquiza los hechos probados o datos clave del supuesto.",
+                "time_limit": 600
+            },
+            {
+                "subdivision_id": "SD_NORM",
+                "title": "Encuadre Normativo / Legal",
+                "instructions": "Localiza y cita la normativa, jurisprudencia o marco teórico aplicable.",
+                "time_limit": 900
+            },
+            {
+                "subdivision_id": "SD_PROC",
+                "title": "Propuesta de Resolución / Trámite",
+                "instructions": "Redacta la propuesta de resolución, dictamen o trámite procesal fundamentado.",
+                "time_limit": 1200
+            }
+        ]
 
     def get_system_prompt(self):
         """
@@ -67,42 +93,64 @@ class SocialStrategy(BaseExamStrategy):
 
         return f"{base_role}\n{context}\nESTRUCTURA: Usa subdivisiones SD_FACT, SD_NORM y SD_PROC."
 
-    def get_user_prompt(self, context_text, topic):
+    def get_user_prompt(self, context_text, topic, subdivision_id, generated_item_titles=None):
+        """
+        Atomic generation prompt for a specific subdivision (V06DOC_TEMPLATES).
+        """
+        memory = f"\nEvitar repetir estos conceptos: {', '.join(generated_item_titles)}" if generated_item_titles else ""
         return (
-            f"GENERATE SOCIAL/LEGAL EXAM.\n"
-            f"TOPIC: {topic}\n"
+            f"GENERA 3 ÍTEMS para la sección: {subdivision_id}.\n"
+            f"TEMA: {topic}. {memory}\n"
             f"REF: {context_text[:50000]}\n"
-            f"CONFIG: Sub-Arch={self.sub_archetype_id}, Itin={self.itinerary_id}, Level={self.pedagogical_level}.\n"
-            f"REQUIREMENTS:\n"
-            f"1. Create a Case Study involving real-world data or legal disputes.\n"
-            f"2. Use W-LAW-NAV for legal search simulations if JUR.\n"
-            f"3. Output JSON with subdivision_sequence."
+            f"CONFIG: Arquetipo={self.sub_archetype_id}, Itinerario={self.itinerary_id}, Nivel={self.pedagogical_level}.\n"
+            f"REQUISITOS:\n"
+            f"1. Crea un Caso Práctico que involucre datos reales o disputas legales.\n"
+            f"2. Usa W-LAW-NAV para simulaciones de búsqueda legal si el sub-arquetipo es JUR.\n"
+            f"3. Salida estrictamente JSON (Array 'items')."
         )
 
     def get_output_schema(self):
+        """
+        Atomic JSON Schema for ARCH_SOC.
+        """
         return {
-            "subdivision_sequence": [
-                {
-                    "subdivision_id": "SD_FACT | SD_NORM | SD_PROC | SD_ETHI",
-                    "title": "string",
-                    "items": [
-                        {
-                            "block_type": "CASO-PRACTICO | PRM-STRIKE",
-                            "widget_id": "W-LAW-NAV | W-OBJ-STRIKE | W-HUM-TEXT",
-                            "content": {"stem": "string", "case_data": "dict"},
-                            "grading_logic": {"correct_answer": "any", "required_norms": ["list"]},
-                            "metadata": {"competency_tag": "COMP_PROF | COMP_ESP"}
-                        }
-                    ]
+            "type": "object",
+            "properties": {
+                "items": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "block_type": {"type": "string", "enum": ["CASO-PRACTICO", "PRM-STRIKE"]},
+                            "widget_id": {"type": "string", "enum": ["W-LAW-NAV", "W-OBJ-STRIKE", "W-HUM-TEXT"]},
+                            "content": {
+                                "type": "object",
+                                "properties": {
+                                    "stem": {"type": "string"},
+                                    "case_data": {"type": "object"},
+                                    "options": {"type": "array", "items": {"type": "string"}}
+                                },
+                                "required": ["stem"]
+                            },
+                            "grading_logic": {
+                                "type": "object",
+                                "properties": {
+                                    "correct_answer": {"type": ["string", "number"]},
+                                    "required_norms": {"type": "array", "items": {"type": "string"}}
+                                }
+                            },
+                            "metadata": {
+                                "type": "object",
+                                "properties": {
+                                    "competency_tag": {"type": "string"},
+                                    "cognitive_tag": {"type": "string"}
+                                },
+                                "required": ["competency_tag", "cognitive_tag"]
+                            }
+                        },
+                        "required": ["block_type", "widget_id", "content", "grading_logic", "metadata"]
+                    }
                 }
-            ]
+            },
+            "required": ["items"]
         }
-
-    def generate_structure(self, exam_uuid, sub_archetype_id='SUB-SOC-JUR'):
-        contract = self.generate_contract_skeleton(exam_uuid, 'ARCH_SOC', sub_archetype_id)
-        contract["subdivision_sequence"] = [
-            {"subdivision_id": "SD_FACT", "title": "Hechos y Datos Relevantes", "items": []},
-            {"subdivision_id": "SD_NORM", "title": "Encuadre Normativo / Legal", "items": []},
-            {"subdivision_id": "SD_PROC", "title": "Propuesta de Resolución / Trámite", "items": []}
-        ]
-        return contract

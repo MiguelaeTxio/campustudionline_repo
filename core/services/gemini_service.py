@@ -209,3 +209,45 @@ def generate_multimodal_correction(prompt: str, audio_path: str, api_key: ApiKey
     except Exception as e:
         logger.error(f"Error en corrección multimodal: {e}")
         return False, str(e), api_key.name
+
+def classify_subject_identity(subject_name: str, branch_name: str, degree_name: str, api_key: ApiKey) -> Tuple[bool, dict, str]:
+    """
+    [HITO 6] Clasifica una asignatura usando la IA para resolver ambigüedad semántica (Protocolo Híbrido).
+    """
+    from .gemini_schemas import ACADEMIC_CLASSIFICATION_SCHEMA
+    
+    close_old_connections()
+    
+    prompt = (
+        f"Clasifica la siguiente asignatura según la taxonomía de la plataforma:\n"
+        f"- Asignatura: {subject_name}\n"
+        f"- Rama: {branch_name}\n"
+        f"- Grado: {degree_name}\n"
+    )
+    
+    system_instruction = (
+        "Eres un experto en taxonomía académica universitaria. Clasifica la asignatura "
+        "enviada en uno de los arquetipos permitidos y detecta su sub-arquetipo técnico "
+        "específico basándote en su área de conocimiento real."
+    )
+
+    generation_config = {
+        "response_mime_type": "application/json",
+        "response_schema": ACADEMIC_CLASSIFICATION_SCHEMA,
+    }
+    
+    safety_settings = [types.SafetySetting(category=c, threshold="BLOCK_NONE") 
+                       for c in ["HARM_CATEGORY_HARASSMENT", "HARM_CATEGORY_HATE_SPEECH", 
+                                 "HARM_CATEGORY_SEXUALLY_EXPLICIT", "HARM_CATEGORY_DANGEROUS_CONTENT"]]
+
+    try:
+        response = _execute_gemini_call(prompt, api_key, generation_config, safety_settings, system_instruction=system_instruction)
+        
+        if not response.text:
+            return False, {}, api_key.name
+            
+        data = json.loads(clean_json_response(response.text))
+        return True, data, api_key.name
+    except Exception as e:
+        logger.error(f"Error en clasificación por IA: {e}")
+        return False, {}, api_key.name

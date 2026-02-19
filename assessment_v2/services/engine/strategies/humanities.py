@@ -45,9 +45,29 @@ class HumanitiesStrategy(BaseExamStrategy):
             correct_transcription = logic.get('correct_transcription', '')
             if str(student_input).strip() == correct_transcription.strip():
                 return Decimal('1.0'), {"status": "CORRECT_TRANSCRIPTION"}
-            return Decimal('0.5'), {"status": "PARTIAL_TRANSCRIPTION", "detail": "Transcription errors found."}
+            return Decimal('0.5'), {"status": "PARTIAL_TRANSCRIPTION", "detail": "Errores de transcripción encontrados."}
 
         return Decimal('0.0'), {"status": "PENDING_MANUAL_REVIEW"}
+
+    def get_section_plan(self):
+        """
+        Returns the mandatory section list for the orchestrator (SKELETON-FIRST).
+        Ref: V06DOC_ARCHETYPES.
+        """
+        return [
+            {
+                "subdivision_id": "SD_SOURCE",
+                "title": "Análisis y Crítica de Fuentes",
+                "instructions": "Analiza la fuente primaria proporcionada, verificando su autenticidad y contexto histórico o estético.",
+                "time_limit": 900
+            },
+            {
+                "subdivision_id": "SD_DISC",
+                "title": "Discurso e Interpretación Crítica",
+                "instructions": "Desarrolla un discurso crítico argumentado sobre las tesis o conceptos planteados.",
+                "time_limit": 1500
+            }
+        ]
 
     def get_system_prompt(self):
         """
@@ -71,41 +91,65 @@ class HumanitiesStrategy(BaseExamStrategy):
 
         return f"{base_role}\n{itin_ctx}\nESTRUCTURA: Usa subdivisiones SD_SOURCE y SD_DISC. Evalúa con Rúbrica Holística DRA-HOLO."
 
-    def get_user_prompt(self, context_text, topic):
+    def get_user_prompt(self, context_text, topic, subdivision_id, generated_item_titles=None):
+        """
+        Atomic generation prompt for a specific subdivision (V06DOC_TEMPLATES).
+        """
+        memory = f"\nEvitar repetir estos conceptos: {', '.join(generated_item_titles)}" if generated_item_titles else ""
         return (
-            f"GENERATE HUMANITIES EXAM.\n"
-            f"TOPIC: {topic}\n"
+            f"GENERA 3 ÍTEMS para la sección: {subdivision_id}.\n"
+            f"TEMA: {topic}. {memory}\n"
             f"REF: {context_text[:50000]}\n"
-            f"CONFIG: Sub-Arch={self.sub_archetype_id}, Itin={self.itinerary_id}, Level={self.pedagogical_level}.\n"
-            f"REQUIREMENTS:\n"
-            f"1. Focus on source criticism (SD_SOURCE) and critical discourse (SD_DISC).\n"
-            f"2. Use DRA-HOLO for long-form essays.\n"
-            f"3. If EDU, ensure the item focuses on teaching strategies."
+            f"CONFIG: Arquetipo={self.sub_archetype_id}, Itinerario={self.itinerary_id}, Nivel={self.pedagogical_level}.\n"
+            f"REQUISITOS:\n"
+            f"1. Foco en crítica de fuentes (SD_SOURCE) y discurso crítico (SD_DISC).\n"
+            f"2. Usa DRA-HOLO para ensayos largos o EV-PALE para transcripciones.\n"
+            f"3. Si el sub-arquetipo es EDU, asegura que el ítem se centre en estrategias de enseñanza.\n"
+            f"4. Salida estrictamente JSON (Array 'items')."
         )
 
     def get_output_schema(self):
+        """
+        Atomic JSON Schema for ARCH_HUM.
+        """
         return {
-            "subdivision_sequence": [
-                {
-                    "subdivision_id": "SD_SOURCE | SD_DISC | SD_ARTE",
-                    "title": "string",
-                    "items": [
-                        {
-                            "block_type": "DRA-HOLO | EV-PALE | PRM-STRIKE",
-                            "widget_id": "W-HUM-TEXT | W-OBJ-STRIKE",
-                            "content": {"stem": "string", "source_material": "string"},
-                            "grading_logic": {"rubric_criteria": ["list"], "correct_transcription": "string"},
-                            "metadata": {"competency_tag": "COMP_GEN | COMP_TRA"}
-                        }
-                    ]
+            "type": "object",
+            "properties": {
+                "items": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "block_type": {"type": "string", "enum": ["DRA-HOLO", "EV-PALE", "PRM-STRIKE"]},
+                            "widget_id": {"type": "string", "enum": ["W-HUM-TEXT", "W-OBJ-STRIKE"]},
+                            "content": {
+                                "type": "object",
+                                "properties": {
+                                    "stem": {"type": "string"},
+                                    "source_material": {"type": "string"},
+                                    "options": {"type": "array", "items": {"type": "string"}}
+                                },
+                                "required": ["stem"]
+                            },
+                            "grading_logic": {
+                                "type": "object",
+                                "properties": {
+                                    "rubric_criteria": {"type": "array", "items": {"type": "string"}},
+                                    "correct_transcription": {"type": "string"}
+                                }
+                            },
+                            "metadata": {
+                                "type": "object",
+                                "properties": {
+                                    "competency_tag": {"type": "string"},
+                                    "cognitive_tag": {"type": "string"}
+                                },
+                                "required": ["competency_tag", "cognitive_tag"]
+                            }
+                        },
+                        "required": ["block_type", "widget_id", "content", "grading_logic", "metadata"]
+                    }
                 }
-            ]
+            },
+            "required": ["items"]
         }
-
-    def generate_structure(self, exam_uuid, sub_archetype_id='SUB-HUM-HIST'):
-        contract = self.generate_contract_skeleton(exam_uuid, 'ARCH_HUM', sub_archetype_id)
-        contract["subdivision_sequence"] = [
-            {"subdivision_id": "SD_SOURCE", "title": "Análisis y Crítica de Fuentes", "items": []},
-            {"subdivision_id": "SD_DISC", "title": "Discurso e Interpretación Crítica", "items": []}
-        ]
-        return contract

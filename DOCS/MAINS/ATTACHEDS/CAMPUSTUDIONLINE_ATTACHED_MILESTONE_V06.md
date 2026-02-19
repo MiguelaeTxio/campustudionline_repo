@@ -1,3 +1,5 @@
+<!-- /home/MiguelAeTxio/PROJECTS/CampuStudiOnline/DOCS/MAINS/ATTACHEDS/CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md -->
+
 ### PARTE INMUTABLE (MANDATORIA EN TODOS LOS PCS)
 
 **DIRECTRIZ DE CARGA OBLIGATORIA (LEY DE CONTINUIDAD):**
@@ -22,44 +24,26 @@ El archivo V06DOC_ROADMAP.md es la ÚNICA fuente de verdad para el progreso.
 ---
 
 # ANEXO: HITO 06 - SISTEMA DE AUTOEVALUACIONES CON IA
-# ESTADO: CRÍTICO - DESALINEACIÓN ABSOLUTA (FASE 6)
-
-###############################################################################
-#
-#   ¡¡¡ ADVERTENCIA SUPREMA PARA EL PRÓXIMO MODELO !!!
-#   ¡¡¡ ORDEN DIRECTA Y PRIORIDAD MÁXIMA DE MIGUEL ÁNGEL !!!
-#
-#   EL MODELO DE ESTA SESIÓN HA FRACASADO ESTREPITOSAMENTE AL IGNORAR 
-#   EL "SANTO GRIAL": LA DOCUMENTACIÓN TÉCNICA.
-#
-#   EL CÓDIGO PRODUCIDO NO ES UN ESPEJO DE LA DOCUMENTACIÓN. ES UNA 
-#   IMPLEMENTACIÓN INCONSISTENTE QUE CONTRADICE LOS SATÉLITES V06DOC_*.
-#
-#   PRÓXIMA SESIÓN: QUEDA PROHIBIDO AVANZAR A LA FASE 7.
-#   TAREA ÚNICA Y OBLIGATORIA: RECTIFICACIÓN Y ALINEACIÓN (ESPEJO TOTAL).
-#
-#   - SIN SIMPLIFICACIONES.
-#   - SIN RESÚMENES.
-#   - REFLEJO ÍNTEGRO, ABSOLUTO Y EXACTO DE LA DOCUMENTACIÓN.
-#
-#   SI NO VAS A SEGUIR LAS ÓRDENES AL PIE DE LA LETRA, DETÉN EL PISA.
-#
-###############################################################################
+# ESTADO: RECTIFICACIÓN ESTRUCTURAL COMPLETADA (FASE 6 - EPI)
 
 ### PARTE MUTABLE (RESUMEN Y HOJA DE RUTA)
 
-## 1. RESUMEN TÉCNICO DEL COLAPSO
-*   **Divergencia Estructural:** El orquestador opera en modo atómico pero las estrategias (`tech.py`, `health.py`, etc.) siguen enviando esquemas monolíticos.
-*   **Violación de la Regla de Oro:** Todas las estrategias han sido implementadas con títulos e instrucciones en INGLÉS.
-*   **Fuga de Metadatos:** Los enunciados técnicos están contaminados con etiquetas `SD_`, `ITIN_`, etc.
-*   **Widgets Rotos:** Los esquemas JSON no exigen los campos vitales (`options`, `sources`, `targets`), dejando los widgets sin datos para renderizar.
-*   **Inconsistencia UI:** Herramientas específicas (W-LAW-NAV) están hardcodeadas en la plantilla global.
+## 1. RESUMEN TÉCNICO DE LA RECTIFICACIÓN (SESIÓN EPI)
+*   **Alineación Documental:** Se han rectificado `V06DOC_LEVELS` y `V06DOC_LOGIC_MAPPING` para integrar la Matriz de Inmersión Lingüística oficial de la UGR.
+*   **Identidad Cognitiva:** Implementada la clasificación de asignaturas vía API (`gemini-2.5-flash-lite`) en `logic.py`, eliminando los diccionarios Regex obsoletos.
+*   **Estrategias Espejo:** Las 5 estrategias (`tech`, `health`, `social`, `hum`, `lang`) han sido reescritas bajo el modelo Atómico (Skeleton-First), implementando `get_section_plan` y esquemas de salida compatibles con OpenAPI 3.0.
+*   **Validación:** Superada la auditoría híbrida (IA + Python). El sistema deduce correctamente la inmersión (Chino A1=Vehicular, Italiano C1=Total).
 
-## 2. HOJA DE RUTA DE RECTIFICACIÓN (LEY SUPREMA)
-1.  **LIMPIEZA DE ESTRATEGIAS:** Reescribir `tech.py`, `health.py`, `social.py` y `humanities.py` para que sus `get_output_schema` sean ATÓMICOS (referentes a un ítem, no al examen).
-2.  **CASTELLANIZACIÓN TOTAL:** Sustituir cada cadena de texto de la interfaz en las estrategias por su equivalente en CASTELLANO (Regla de Oro).
-3.  **BLINDAJE DE PROMPTS:** Inyectar en cada estrategia la prohibición de incluir metadatos técnicos en el texto visible.
-4.  **REFACTORES DE UI:** Limpiar `exam_take.html` de cualquier widget hardcodeado, moviendo la responsabilidad de carga a la lógica dinámica de la estrategia.
+## 2. HOJA DE RUTA PARA LA SIGUIENTE SESIÓN (LEY SUPREMA)
+**PROHIBIDO AVANZAR SIN CUMPLIR ESTOS PUNTOS SEGÚN V06DOC_STRUCTURE:**
 
----
-**DIRECTRIZ TÉCNICA:** No se autorizan parches. Solo se acepta una RE-IMPLEMENTACIÓN DE ALTA FIDELIDAD que sea un ESPEJO de la documentación.
+1.  **REFACTORIZACIÓN DEL ORQUESTADOR (`orchestrator/tasks.py`):**
+    *   Modificar el bucle de generación para que sea iterativo por sección.
+    *   Implementar la creación previa de `ExamSection` antes de las llamadas a la IA.
+    *   Inyectar el `immersion_mode` y `pedagogical_level` en los prompts atómicos.
+2.  **REFACTORIZACIÓN DE UI (`exam_take.html`):**
+    *   Eliminar widgets hardcodeados.
+    *   Implementar la lógica dinámica de carga de widgets basándose en el `widget_id` del contrato JSON.
+3.  **SISTEMA DE REINTENTOS:**
+    *   Implementar el protocolo de resiliencia (3 reintentos / 10 min) en caso de fallo de API de clasificación.
+
