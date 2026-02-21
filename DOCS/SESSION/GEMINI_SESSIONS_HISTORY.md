@@ -1834,3 +1834,11 @@ Carga de contexto obligatoria: Documentación técnica V06DOC y modelos de `asse
 ## NRA
 *  **Session:** Rectificación Estructural del Orquestador y UI de Evaluaciones (Hito 06)
 *  **Description:** Inicio de la fase de rectificación crítica para alinear el código con la arquitectura Skeleton-First definida en la constelación V06. La sesión se centra en la refactorización del bucle de generación en 'orchestrator/tasks.py' para transmutarlo de un modelo monolítico a uno atómico por secciones, la implementación del sistema de reintentos en la clasificación de asignaturas y la dinamización de la interfaz de exámenes 'exam_take.html' mediante la carga de widgets bajo demanda según el contrato JSON. Se busca erradicar la desalineación sistémica y asegurar la inmersión lingüística normativa.
+
+# 2026-02-21
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+## CSO
+*  **Session:** Refactorización Atómica del Hito 6: Skeleton-First y UI Dinámica
+*  **Description:** En esta sesión se ha procedido a desbloquear el desarrollo del Hito 6 mediante una reestructuración profunda del sistema de autoevaluaciones. Se ha refactorizado el orquestador de tareas Celery para implementar un bucle iterativo de generación por secciones (Skeleton-First), garantizando la integridad relacional de la base de datos antes de las llamadas a la IA. Paralelamente, se ha rediseñado la interfaz de toma de exámenes para eliminar la lógica estática, implementando un renderizado dinámico de widgets compatible con los esquemas JSON de Gemini y superando la auditoría de calidad con djlint. Finalmente, se ha actualizado la documentación satélite y el roadmap para certificar el levantamiento del bloqueo técnico.
+
