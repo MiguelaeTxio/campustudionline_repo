@@ -104,7 +104,12 @@ class LanguagesStrategy(BaseExamStrategy):
                 "id": "SD_WRIT", 
                 "veh": "Producción Escrita", "tar": "Written Production",
                 "i_veh": "Produce un texto académico respetando el registro formal.", "i_tar": "Produce an academic text respecting formal register."
+            },            {
+                "id": "SD_SPEAK", 
+                "veh": "Expresión Oral", "tar": "Speaking",
+                "i_veh": "Interacción fluida evaluada mediante el módulo UniversIA.", "i_tar": "Fluent interaction evaluated via the UniversIA module."
             },
+
             {
                 "id": "SD_MEDI", 
                 "veh": "Mediación Lingüística", "tar": "Linguistic Mediation",

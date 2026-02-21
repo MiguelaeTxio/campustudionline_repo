@@ -1,11 +1,11 @@
 <!-- /home/MiguelAeTxio/PROJECTS/CampuStudiOnline/DOCS/MAINS/ATTACHEDS/DOCS_ATTACHED_2_ANNEX_V06/V06DOC_LOGIC_MAPPING.md -->
-# V06DOC_LOGIC_MAPPING - PROTOCOLO DE CLASIFICACIÓN ACADÉMICA (V1.3)
+# V06DOC_LOGIC_MAPPING - PROTOCOLO DE CLASIFICACIÓN ACADÉMICA (V1.4)
 
 Este documento define el procedimiento híbrido para la clasificación de asignaturas y su protocolo de resiliencia.
 
-## 1. FASE IA: IDENTIFICACIÓN DE NATURALEZA (COGNITIVA)
+## 1. FASE IA: IDENTIFICACIÓN DE NATURALEZA Y LOCALIZACIÓN
 
-Se utiliza `gemini-2.5-flash-lite` exclusivamente para resolver la ambigüedad semántica del catálogo de asignaturas (>20.000 registros).
+Se utiliza `gemini-2.5-flash-lite` exclusivamente para resolver la ambigüedad semántica y la adaptación lingüística de la estructura.
 
 ### 1.1. Entrada del Clasificador
 *   `Subject.name`, `Branch.name`, `Degree.name`.
@@ -14,6 +14,8 @@ Se utiliza `gemini-2.5-flash-lite` exclusivamente para resolver la ambigüedad s
 La IA solo debe proporcionar la identidad técnica:
 *   `archetype_id`: [ARCH_LANG | ARCH_HEALTH | ARCH_TECH | ARCH_SOC | ARCH_HUM].
 *   `sub_archetype_id`: ID técnico de especialidad (Ref: V06DOC_SUBARCHETYPES).
+*   `target_language_code`: Código ISO 639-1 detectado (ej: 'pl', 'ja', 'fr').
+*   `localized_sections`: Objeto con títulos e instrucciones traducidos al idioma objetivo para las 5 secciones estándar (Reading, Listening, Writing, Speaking, Mediation).
 
 ## 2. FASE PYTHON: DEDUCCIÓN DE PARÁMETROS (DETERMINISTA)
 

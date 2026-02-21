@@ -32,6 +32,8 @@ class ExamFactory:
             sub_archetype_id=metadata['sub_archetype_id'], # Inyección de Identidad / Identity Injection
             pedagogical_level=metadata['pedagogical_level'],
             itinerary_id=metadata['itinerary_id'],
+            target_language_code=metadata.get('target_language_code', 'en'),
+            localized_sections=metadata.get('localized_sections', {}),
             **kwargs
         )
 

@@ -50,6 +50,7 @@
                             {% else %}
                                 <p class="mb-0">No se han generado evaluaciones previas para esta copia.</p>
                             {% endif %}
+                            <small class="text-info"><i class="fas fa-info-circle"></i> Visible solo para administradores.</small>
                         </div>
                     </div>
                     <div class="col-md-5 text-md-end mt-3 mt-md-0">
@@ -74,11 +75,21 @@
     {% else %}
         {# --- VISTA PÚBLICA: MANTENIMIENTO --- #}
         <div class="card shadow-sm mb-4">
-            <div class="card-header bg-light">
-                <h2 class="h5 mb-0"><i class="fas fa-wrench me-2"></i> Autoevaluación con IA</h2>
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h2 class="h5 mb-0">Autoevaluación con IA</h2>
+                <span class="badge bg-warning text-dark"><i class="fas fa-wrench me-1"></i> En Mantenimiento</span>
             </div>
-            <div class="card-body text-center p-4">
-                <p class="text-muted mb-0">El sistema de evaluación está siendo actualizado para cumplir con los estándares UGR. Estará disponible en breve.</p>
+            <div class="card-body">
+                <div id="assessment-panel-container" class="text-center p-4 bg-light border rounded position-relative">
+                    <div class="mb-3 text-muted">
+                        <i class="fas fa-tools fa-3x mb-3"></i>
+                        <h5>Mejorando la Experiencia</h5>
+                        <p class="small">Estamos implementando el nuevo motor de acreditación académica.</p>
+                    </div>
+                    <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#assessmentMaintenanceModal">
+                        <i class="fas fa-info-circle me-2"></i> Más Información
+                    </button>
+                </div>
             </div>
         </div>
     {% endif %}
@@ -126,6 +137,25 @@
                         {% endfor %}
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
+</div>
+{# --- MODAL DE MANTENIMIENTO RECUPERADO DE GIT --- #}
+<div class="modal fade" id="assessmentMaintenanceModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-warning">
+            <div class="modal-header modal-warning-header">
+                <h5 class="modal-title"><i class="fas fa-hard-hat me-2"></i> En Construcción</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p class="mb-2"><strong>¡Estamos evolucionando!</strong></p>
+                <p>El sistema de evaluaciones se está reconstruyendo desde cero para cumplir con los nuevos estándares de acreditación académica.</p>
+                <p class="text-muted small">Disculpe las molestias. Esta funcionalidad volverá pronto.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Entendido</button>
             </div>
         </div>
     </div>

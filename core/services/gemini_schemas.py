@@ -161,7 +161,23 @@ ACADEMIC_CLASSIFICATION_SCHEMA = {
                 "SUB-HUM-HIST", "SUB-HUM-PHIL", "SUB-HUM-EDU", "SUB-ART-CREA", "SUB-ART-MUS"
             ],
             "description": "El ID técnico de especialidad (Ref: V06DOC_SUBARCHETYPES)."
-        }
+        },
+        "target_language_code": {
+            "type": "string",
+            "description": "Código ISO 639-1 del idioma objetivo si es ARCH_LANG (ej: 'en', 'fr', 'de'). 'es' para el resto."
+        },
+        "localized_sections": {
+            "type": "object",
+            "description": "Traducción de títulos e instrucciones al idioma objetivo (solo para ARCH_LANG).",
+            "properties": {
+                "SD_READ": {"type": "array", "items": {"type": "string"}, "description": "[Título, Instrucción]"},
+                "SD_LIST": {"type": "array", "items": {"type": "string"}, "description": "[Título, Instrucción]"},
+                "SD_WRIT": {"type": "array", "items": {"type": "string"}, "description": "[Título, Instrucción]"},
+                "SD_SPEAK": {"type": "array", "items": {"type": "string"}, "description": "[Título, Instrucción]"},
+                "SD_MEDI": {"type": "array", "items": {"type": "string"}, "description": "[Título, Instrucción]"}
+            }
+        },
+
     },
-    "required": ["archetype_id", "sub_archetype_id"]
+    "required": ["archetype_id", "sub_archetype_id", "target_language_code", "localized_sections"]
 }

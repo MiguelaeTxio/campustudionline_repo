@@ -22,21 +22,20 @@ El archivo V06DOC_ROADMAP.md es la ÚNICA fuente de verdad para el progreso.
 ---
 
 # ANEXO: HITO 06 - SISTEMA DE AUTOEVALUACIONES CON IA
-# ESTADO: REFACTORIZACIÓN TÉCNICA COMPLETADA (DESBLOQUEADO)
+# ESTADO: INFRAESTRUCTURA Y ADAPTACIÓN LINGÜÍSTICA VALIDADAS (ESPEJO ABSOLUTO)
 
 ### PARTE MUTABLE (RESUMEN Y HOJA DE RUTA)
 
 ## 1. RESUMEN TÉCNICO DE LA SESIÓN (CSO)
-*   **Orquestación Atómica:** Se ha refactorizado `orchestrator/tasks.py` implementando el bucle iterativo por sección y el modelo *Skeleton-First*.
-*   **Resiliencia:** Implementado el protocolo de reintentos (3 intentos / 10 min) para la API de clasificación.
-*   **UI Dinámica:** Refactorizada `exam_take.html` eliminando lógica hardcodeada. Los widgets se cargan dinámicamente según el `widget_id` del contrato JSON.
-*   **Calidad de Código:** Superada la validación de `djlint` tras corregir errores de estructura y accesibilidad.
-*   **Documentación:** Actualizado `V06DOC_ROADMAP.md`, levantando oficialmente el bloqueo crítico de alineación.
+*   **Sincronización Forense:** Restaurada la sección 'SD_SPEAK' en 'LanguagesStrategy'. El código es ahora un espejo exacto de 'V06DOC_ARCHETYPES'.
+*   **Integridad Absoluta UGR:** Implementado motor de inmersión dinámica vía IA. Gemini asume la autoridad de traducción académica (detección de idioma y localización de secciones), erradicando las listas estáticas.
+*   **Blindaje de Seguridad:** Recuperado del historial de Git el 'restrictedAccessModal' y los bloqueos de visibilidad Staff en la Sala de Estudio.
+*   **Persistencia Validada:** Superados tests de integridad en JSONFields de 'Submission' con estructuras complejas.
+*   **Documentación Sellada:** Actualizados 'V06DOC_LOGIC_MAPPING' (V1.4), 'V06DOC_LEVELS' (V1.2) y 'V06DOC_ROADMAP' (V1.5).
 
 ## 2. HOJA DE RUTA PARA LA SIGUIENTE SESIÓN (LEY SUPREMA)
 **PROHIBIDO AVANZAR SIN CUMPLIR ESTOS PUNTOS:**
 
-1.  **TEST DE INTEGRACIÓN ACADÉMICA:** Generar examen de 'Lenguas' (B2) para verificar `immersion_mode='TOTAL'` (instrucciones en idioma objetivo).
-2.  **VERIFICACIÓN DE PERSISTENCIA:** Validar el guardado de `student_responses` para widgets complejos (`W-MIX-MATCH`, `W-TECH-CALC`).
-3.  **AUDITORÍA SKELETON-FIRST:** Verificar en BD la creación previa de `ExamSection` antes de las llamadas a Gemini.
-
+1.  **AUDITORÍA DE ARQUETIPOS TÉCNICOS:** Verificar quirúrgicamente que 'HealthStrategy' y 'TechnicalStrategy' reflejan fielmente sus respectivos documentos 'V06DOC_SUBARCHETYPES'.
+2.  **TEST DE GENERACIÓN ATÓMICA (CELERY):** Ejecutar una tarea de generación real y verificar que el bucle de 'orchestrator/tasks.py' vincula ítems a secciones de forma atómica.
+3.  **VALIDACIÓN DEL MOTOR DE CALIFICACIÓN:** Testear el 'Rigor Engine' y el resumen 'Voz del Catedrático' inyectando respuestas de prueba.

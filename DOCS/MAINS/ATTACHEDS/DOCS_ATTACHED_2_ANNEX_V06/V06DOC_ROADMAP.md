@@ -1,5 +1,5 @@
 <!-- /home/MiguelAeTxio/PROJECTS/CampuStudiOnline/DOCS/MAINS/ATTACHEDS/DOCS_ATTACHED_2_ANNEX_V06/V06DOC_ROADMAP.md -->
-# V06DOC_ROADMAP - MANIFIESTO DE CUMPLIMIENTO TÉCNICO (V1.4)
+# V06DOC_ROADMAP - MANIFIESTO DE CUMPLIMIENTO TÉCNICO (V1.5)
 
 ## 5. REGLAS DE NEGOCIO Y FEEDBACK - [X] 100%
 - [X] Aplicación de Rigor Engine (x0.8, x1.3, x1.6).
@@ -14,6 +14,13 @@
 - [X] Sincronización Documental: El código del orquestador ahora refleja fielmente V06DOC_STRUCTURE.
 - [X] Refactorización de UI: Widgets dinámicos implementados con tags de traducción (Regla de Oro).
 - [X] Sistema de Resiliencia: Protocolo de 3 reintentos/10min implementado.
+
+
+## 7. INTEGRIDAD Y LOCALIZACIÓN DINÁMICA (IA) - [X] 100%
+- [X] Auditoría Forense: Restauración de 'SD_SPEAK' para espejo total con V06DOC_ARCHETYPES.
+- [X] Delegación de Autoridad: La IA asume la traducción dinámica de secciones (Erradicación de listas estáticas).
+- [X] Validación de Persistencia: Verificado soporte JSON para widgets V2 complejos.
+- [X] Blindaje de Seguridad: Restauración del sistema de bloqueo Staff y Modal Académico.
 
 ---
 **ESTADO:** FASE DE ESTABILIZACIÓN Y PRUEBAS. BLOQUEO LEVANTADO.

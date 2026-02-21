@@ -227,8 +227,12 @@ def classify_subject_identity(subject_name: str, branch_name: str, degree_name: 
     
     system_instruction = (
         "Eres un experto en taxonomía académica universitaria. Clasifica la asignatura "
-        "enviada en uno de los arquetipos permitidos y detecta su sub-arquetipo técnico "
-        "específico basándote en su área de conocimiento real."
+        "enviada en uno de los arquetipos permitidos y detecta su sub-arquetipo técnico. "
+        "Si el arquetipo es ARCH_LANG, detecta el idioma objetivo (ej: Polaco, Japonés) "
+        "y genera obligatoriamente el campo 'localized_sections' con los títulos e "
+        "instrucciones traducidos fielmente a dicho idioma para las 5 secciones estándar "
+        "(SD_READ, SD_LIST, SD_WRIT, SD_SPEAK, SD_MEDI). Para otros arquetipos, devuelve "
+        "estas secciones en Castellano."
     )
 
     generation_config = {

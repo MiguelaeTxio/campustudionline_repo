@@ -121,6 +121,8 @@ class AcademicDeductor:
 
         archetype_id = identity.get('archetype_id', 'ARCH_SOC')
         sub_archetype_id = identity.get('sub_archetype_id', 'DEFAULT')
+        target_language_code = identity.get('target_language_code', 'es')
+        localized_sections = identity.get('localized_sections', {})
 
         # FASE 2: Parámetros Deterministas (Python)
         # Ref: V06DOC_LOGIC_MAPPING V1.3 Section 2
@@ -132,6 +134,8 @@ class AcademicDeductor:
             'sub_archetype_id': sub_archetype_id,
             'itinerary_id': itinerary_id,
             'pedagogical_level': level_id,
+            'target_language_code': target_language_code,
+            'localized_sections': localized_sections,
             'immersion_mode': cls.deduce_immersion_mode(archetype_id, itinerary_id, level_id),
         }
 
