@@ -100,8 +100,8 @@
 # CAMPUSTUDIONLINE --ROADMAP
 # CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
 ## EDC
-*  **Session:** Diagnóstico y Corrección de la Caducidad Inconsistente de Resultados de Autoevaluación
-*  **Description:** Auditar y corregir la lógica de purgado de resultados de autoevaluaciones (`purge_and_penalize_corrections`) para resolver la inconsistencia entre la fecha de expiración mostrada y el mensaje de caducidad prematura, garantizando la coherencia del estado para el usuario.
+*  **Session:** Reparación Crítica del Generador de Contenidos y Optimización del Admin
+*  **Description:** Sesión de emergencia para corregir la regresión en `orchestrator/tasks.py` que causaba bucles de alucinación en el contenido. Se reparó la lógica de visibilidad de materiales en el Directorio Académico (`academic_directory/views.py`) tras diagnosticar la invisibilidad de 'Alemán I' (UAL). Se ejecutó una purga selectiva de contenidos basura y se optimizó el rendimiento del panel de administración en las aplicaciones `contents` y `chat` mediante `list_select_related` para solucionar el cuello de botella de consultas N+1.
 
 # 13/11/2025
 # CAMPUSTUDIONLINE --ROADMAP
@@ -1787,4 +1787,43 @@ Carga de contexto obligatoria: Documentación técnica V06DOC y modelos de `asse
 ## EPI # --SYSTEM -->
 *  **Session:** Rectificación y Alineación Absoluta de Estrategias de Evaluación (V06)
 *  **Description:** Implementación estricta de la arquitectura segregada definida en la documentación V06. Reescritura de las estrategias (Tech, Health, Social, Humanities) para garantizar la generación atómica de ítems, el cumplimiento de la Regla de Oro del Idioma (Castellano en UI) y la eliminación de metadatos técnicos en la salida. Limpieza de widgets hardcodeados en plantillas.
+
+# 2026-02-19
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+## PLUTO
+*  **Session:** Implementación Skeleton-First en Evaluación IA
+*  **Description:** Sesión dedicada a la rectificación estructural del Hito 6. Se procederá a refactorizar el orquestador (orchestrator/tasks.py) para implementar el bucle iterativo atómico por sección (Skeleton-First), inyectando metadatos pedagógicos. Se adaptará la UI (exam_take.html) para carga dinámica de widgets y se implementará un protocolo de resiliencia (reintentos) en la clasificación IA para garantizar la estabilidad del sistema.
+
+
+# 2026-02-20
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+## MAMC
+*  **Session:** Sistema de Autoevaluaciones con IA
+*  **Description:** Sesión orientada al desarrollo e integración del sistema de autoevaluaciones impulsado por IA. Se abordarán las tareas definidas en la constelación de documentos del Hito 6 para fortalecer el motor de evaluación (assessment_v2), validación de esquemas y la lógica transversal del proyecto.
+
+
+# 2026-02-20
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+## MAMC
+*  **Session:** Rectificación Estructural: Motor Evaluador IA
+*  **Description:** Sesión crítica para subsanar la desalineación estructural (Skeleton-First) del motor de autoevaluaciones. Se refactorizará el orquestador (orchestrator/tasks.py) para generación iterativa atómica, se adaptará la UI (exam_take.html) a la carga dinámica de widgets y se implementará el protocolo de resiliencia ante fallos de la API.
+
+
+# 2026-02-20
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06
+## MAMC # --SYSTEM -->
+*  **Session:** Hito 06: Refactorización Skeleton-First y Orquestación Atómica
+*  **Description:** Implementación del patrón Skeleton-First en orchestrator/tasks.py. Modificación del bucle de generación para crear estructura (ExamSection) previa a la inyección atómica de ítems vía IA. Implementación de lógica de reintentos en logic.py y preparación de carga dinámica de widgets en exam_take.html. Objetivo: Desbloqueo del Hito 6 según Manifiesto V1.4.
+
+
+# 2026-02-20
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+## EDC
+*  **Session:** Implementación del Patrón Skeleton-First en el Orquestador de Exámenes
+*  **Description:** Refactorización del orquestador (tasks.py) para separar la creación estructural (ExamSection) del llenado de contenido (ExamItem) mediante bucles iterativos y llamadas atómicas a la IA. Implementación de inyección de metadatos pedagógicos y sistema de reintentos para clasificación.
 

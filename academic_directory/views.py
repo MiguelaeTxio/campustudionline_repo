@@ -152,8 +152,13 @@ def subject_list_view(request, university_slug, branch_slug, degree_slug, year):
 def public_content_list_view(request, university_slug, branch_slug, degree_slug, year, subject_slug):
     subject = get_object_or_404(Subject.objects.select_related("academic_year__degree__branch__university", "content_hash_family"), slug=subject_slug, academic_year__year=year, academic_year__degree__slug=degree_slug, academic_year__degree__branch__slug=branch_slug, academic_year__degree__branch__university__slug=university_slug)
     
-    content_material = subject.content_hash_family.content_material if subject.content_hash_family else None
-    public_contents_qs = ContentMaterial.objects.filter(pk=content_material.pk) if content_material else ContentMaterial.objects.none()
+    # --- Reparación Quirúrgica: Visibilidad Híbrida (M2M + HashFamily) ---
+    material_ids = list(subject.content_materials.filter(is_public=True).values_list('pk', flat=True))
+    if subject.content_hash_family and subject.content_hash_family.content_material:
+        m_family = subject.content_hash_family.content_material
+        if m_family.is_public and m_family.pk not in material_ids:
+            material_ids.append(m_family.pk)
+    public_contents_qs = ContentMaterial.objects.filter(pk__in=material_ids)
 
     public_contents_qs = annotate_is_favorite(public_contents_qs, request.user)
 

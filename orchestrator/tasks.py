@@ -1,3 +1,4 @@
+# /home/MiguelAeTxio/PROJECTS/CampuStudiOnline/orchestrator/tasks.py
 import logging
 import traceback
 import os
@@ -120,7 +121,7 @@ def _purge_zombie_tasks():
         logger.error(f"Error purga zombies: {e}")
 
 # ==============================================================================
-# SECCIÓN 2: GENERACIÓN DE CONTENIDO (PRESERVADA)
+# SECCIÓN 2: GENERACIÓN DE CONTENIDO (RESTAURADO V24.13)
 # ==============================================================================
 
 def log_task_event(task_id: str, message: str, is_error: bool = False, payload: dict = None):
@@ -158,6 +159,41 @@ def _assemble_final_markdown_from_chunks(course_title: str, metadata: dict, mast
         body.append(f'<a id="{slug}"></a>\n{"#" * level} {title}\n{c.content if c else "Error."}')
     return "\n\n".join(yaml + intro + body)
 
+def _send_completion_notifications(new_content: ContentMaterial):
+    try:
+        first_subject = new_content.subject.first()
+        if not first_subject: return
+        content_request = ContentRequest.objects.filter(subject=first_subject).first()
+        if not content_request: return
+        requesters = content_request.requesters.all()
+        if not requesters: return
+        content_url = new_content.get_absolute_url()
+        full_url = f"https://{settings.ALLOWED_HOSTS[0]}{content_url}"
+        push_title = "¡Contenido Disponible!"
+        push_body = f"El material de estudio para '{new_content.title}' ya está disponible."
+        email_subject = f"[CampuStudiOnline] El contenido para '{new_content.title}' está listo"
+        email_body_text = (f"¡Hola!\n\nNos complace informarte que el material de estudio para la asignatura '{new_content.title}' que solicitaste ha sido generado y ya está disponible en la plataforma.\n\n"
+                           f"Puedes acceder a él directamente a través del siguiente enlace:\n{full_url}\n\n"
+                           f"Gracias por tu paciencia y por ayudarnos a mejorar CampuStudiOnline.\n\n"
+                           f"Atentamente,\nEl equipo de CampuStudiOnline")
+        context = {'content_title': new_content.title, 'content_url': full_url}
+        html_message = render_to_string('orchestrator/email/content_completion.html', context)
+        for user in requesters:
+            send_notification_to_user(user, push_title, push_body, url=content_url)
+            send_mail(subject=email_subject, message=email_body_text, from_email=settings.DEFAULT_FROM_EMAIL, recipient_list=[user.email], fail_silently=True, html_message=html_message)
+        content_request.status = ContentRequest.StatusChoices.FULFILLED
+        content_request.save(update_fields=["status"])
+    except Exception as e:
+        logger.error(f"Error notifications: {e}")
+
+def _get_next_subject_queryset(settings_obj):
+    base_queryset = Subject.objects.filter(content_materials__isnull=True)
+    active_task_subject_names = PendingContentTask.objects.exclude(status__in=[PendingContentTask.StatusChoices.COMPLETED, PendingContentTask.StatusChoices.FAILED_FATAL]).values_list('subject__name', flat=True).distinct()
+    query = base_queryset.exclude(name__in=active_task_subject_names)
+    if settings_obj.seed_branch: query = query.filter(academic_year__degree__branch=settings_obj.seed_branch)
+    if settings_obj.seed_degree: query = query.filter(academic_year__degree=settings_obj.seed_degree)
+    return query
+
 # ==============================================================================
 # SECCIÓN 3: TAREAS CELERY - CONTENIDO (PRESERVADA)
 # ==============================================================================
@@ -179,216 +215,176 @@ def global_orchestrator_task(self):
                 automation_settings.active_api_key = next_key
                 automation_settings.save(update_fields=['active_api_key'])
             else: return
-
-        # Rescate de tareas y lógica masiva omitida por brevedad en el cat, 
-        # pero mantenida en la lógica funcional del servidor.
     except Exception as e:
         logger.critical(f"Error orquestador: {e}")
 
 @shared_task(bind=True, time_limit=21600)
 def generate_full_course_task(self, task_id):
-    # Lógica de generación de curso completa...
-    pass
+    """Restored logic V24.13 ULTRA-BLINDADO."""
+    db.close_old_connections()
+    logger.info(f"[V24.13 ULTRA-BLINDADO] Iniciando Tarea {task_id}.")
+    task = None
+    try:
+        time.sleep(2)
+        automation_settings = AutomationSettings.load()
+        api_key = automation_settings.active_api_key
+        if not api_key or not api_key.is_enabled or api_key.is_quarantined:
+             next_key = ApiKey.objects.filter(is_enabled=True, is_quarantined=False).order_by('id').first()
+             if next_key:
+                 automation_settings.active_api_key = next_key
+                 automation_settings.save(update_fields=['active_api_key'])
+                 api_key = next_key
+             else:
+                 raise self.retry(countdown=900)
+
+        task = PendingContentTask.objects.select_related('subject__academic_year__degree__branch__university', 'subject__content_hash_family').get(id=task_id)
+        if task.status == PendingContentTask.StatusChoices.FAILED_FATAL: return
+
+        PendingContentTask.objects.filter(id=task_id).update(global_actuation_count=F('global_actuation_count') + 1)
+        task.refresh_from_db(fields=['global_actuation_count'])
+        
+        if task.global_actuation_count > automation_settings.max_task_actuations:
+            task.status = PendingContentTask.StatusChoices.FAILED_FATAL
+            task.save(update_fields=["status"])
+            return
+
+        if task.status in [PendingContentTask.StatusChoices.PENDING, PendingContentTask.StatusChoices.FAILED_RETRYABLE, PendingContentTask.StatusChoices.FAILED_QUOTA]:
+            task.status = PendingContentTask.StatusChoices.PROCESSING
+            task.save(update_fields=["status"])
+
+        if not task.structured_content or "master_schema" not in task.structured_content:
+            log_task_event(task_id, "Generando Plan de Trabajo...")
+            topic_description = task.subject.name if task.subject else task.prompt_text
+            metadata_prompt = generate_course_metadata_prompt(topic_description, "") + "\n\nJSON Only."
+            success, response_text, _, usage = generate_text_content(metadata_prompt, api_key=api_key)
+            if not success: raise self.retry(countdown=60)
+            
+            metadata = json.loads(clean_json_response(response_text))
+            schema_prompt = generate_master_schema_prompt(topic_description, "", "", "")
+            success, schema_text, _, _ = generate_text_content(schema_prompt, api_key=api_key)
+            if not success: raise self.retry(countdown=60)
+            
+            task.section_count = len(_parse_master_schema(schema_text))
+            task.structured_content = {"metadata": metadata, "master_schema": schema_text, "academic_context": ""}
+            task.save(update_fields=["structured_content", "section_count"])
+
+        parsed_schema = _parse_master_schema(task.structured_content["master_schema"])
+        for index, (_, title) in enumerate(parsed_schema, 1):
+            if GeneratedContentChunk.objects.filter(task=task, order=index).exists(): continue
+            prompt = generate_atomic_content_prompt(task.subject.name if task.subject else task.course_title, title, task.structured_content["master_schema"], "")
+            success, content, _, _ = generate_text_content(prompt, api_key=api_key)
+            if success:
+                c, s = _parse_markdown_with_separator(content)
+                GeneratedContentChunk.objects.create(task=task, order=index, content=c, ai_sources=s)
+                time.sleep(5)
+            else: raise self.retry(countdown=70)
+
+        task.refresh_from_db()
+        if task.content_chunks.count() >= task.section_count:
+            final_md = _assemble_final_markdown_from_chunks(task.subject.name if task.subject else task.course_title, task.structured_content["metadata"], task.structured_content["master_schema"], list(task.content_chunks.all()))
+            with transaction.atomic():
+                nm = ContentMaterial.objects.create(title=task.subject.name if task.subject else task.course_title, markdown_content=final_md, creator=task.assigned_to, is_public=True)
+                if task.subject: nm.subject.add(task.subject)
+                task.content_material = nm
+                task.status = PendingContentTask.StatusChoices.COMPLETED
+                task.save(update_fields=["status", "content_material"])
+            _send_completion_notifications(nm)
+    except Exception as e:
+        if isinstance(e, Retry): raise e
+        if task:
+            task.status = PendingContentTask.StatusChoices.FAILED_FATAL
+            task.last_error = traceback.format_exc()
+            task.save(update_fields=["status", "last_error"])
 
 # ==============================================================================
-# HITO 6: GENERACIÓN DE EXAMEN (VERSIÓN ULTRA-FIDELITY 100% SEGMENTADA)
+# HITO 6: GENERACIÓN DE EXAMEN (SKELETON-FIRST ATÓMICO)
 # ==============================================================================
 
-@shared_task(bind=True, time_limit=1800)
+@shared_task(bind=True, time_limit=1800, max_retries=3)
 def generate_exam_task(self, exam_uuid, context_text=None, topic=None):
-    """
-    Orchestrates exam generation with 100% fidelity to V06DOC_* satellites.
-    Implements Skeleton-First architecture with Atomic Prompting loop.
-    
-    Orquesta la generación de exámenes con 100% de fidelidad a los satélites V06DOC_*.
-    Implementa arquitectura Skeleton-First con bucle de Prompting Atómico.
-    """
     db.close_old_connections()
     exam = None
     try:
-        # 1. RECUPERACIÓN Y REGISTRO DE SESIÓN (V06DOC_STRUCTURE)
         exam = Exam.objects.select_related('user', 'content_copy').get(uuid=exam_uuid)
-        exam.status = 'GENERATING'
-        exam.event_log.append({
-            "ts": timezone.now().isoformat(), 
-            "msg": "Generación V06-SEGMENTADA iniciada (Skeleton-First)"
-        })
-        exam.save(update_fields=['status', 'event_log'])
+        if self.request.retries == 0:
+            exam.status = 'GENERATING'
+            exam.event_log.append({"ts": timezone.now().isoformat(), "msg": "Iniciando Skeleton-First"})
+            exam.save(update_fields=['status', 'event_log'])
 
-        # 2. DEDUCCIÓN ACADÉMICA Y SINCRONIZACIÓN (V06DOC_LOGIC_MAPPING & TEMPLATES)
         material = exam.content_copy.original_content
         subject = material.subject.first()
         
-        # Deducción de metadatos (Arquetipo, Itinerario, Nivel)
-        metadata = AcademicDeductor.get_context_metadata(subject, context_title=material.title)
+        # PROTOCOLO DE RESILIENCIA (10 MIN RETRY)
+        try:
+            metadata = AcademicDeductor.get_context_metadata(subject, context_title=material.title)
+        except AIServiceCriticalError as e:
+            exam.event_log.append({"ts": timezone.now().isoformat(), "msg": "API Clasificación Fallida. Reintento 10min."})
+            exam.save(update_fields=['event_log'])
+            raise self.retry(exc=e, countdown=600)
         
-        # Sincronización obligatoria del Header en la Base de Datos
         exam.archetype_id = metadata['archetype_id']
         exam.sub_archetype_id = metadata['sub_archetype_id']
         exam.itinerary_id = metadata['itinerary_id']
         exam.pedagogical_level = metadata['pedagogical_level']
+        exam.immersion_mode = metadata['immersion_mode']
         
-        # 3. SELECCIÓN DE ESTRATEGIA Y RIGOR (V06DOC_LEVELS)
-        strategy = ExamFactory.get_strategy(
-            archetype_id=exam.archetype_id,
-            pedagogical_level=exam.pedagogical_level,
-            itinerary_id=exam.itinerary_id
-        )
-        # Persistencia de la matriz de rigor (Factor x0.8 a x1.6)
+        strategy = ExamFactory.get_strategy(exam.archetype_id, exam.pedagogical_level, exam.itinerary_id)
         exam.grading_params = strategy._get_grading_params()
         exam.save()
 
-        # 4. FASE ESTRUCTURAL: GENERACIÓN DEL ESQUELETO (PYTHON-SIDE)
-        # El orquestador solicita la estructura canónica a la estrategia.
-        # Esto es determinista y no consume tokens de IA.
+        # FASE ESTRUCTURAL
         base_structure = strategy.generate_structure(exam_uuid=exam.uuid)
-        
-        # Persistencia del esqueleto de secciones (ExamSection)
         with transaction.atomic():
-            exam.sections.all().delete() # Limpieza preventiva
-            sections_map = {} # Mapa temporal para acceso rápido por subdivision_id
-            
-            for idx, section_data in enumerate(base_structure.get('subdivision_sequence', [])):
+            exam.sections.all().delete()
+            sections_map = {}
+            for idx, s_data in enumerate(base_structure.get('subdivision_sequence', [])):
                 section = ExamSection.objects.create(
-                    exam=exam,
-                    subdivision_id=section_data['subdivision_id'],
-                    title=section_data['title'],
-                    instructions=section_data.get('instructions', ''),
-                    time_limit=section_data.get('time_limit', 0),
-                    order=idx
+                    exam=exam, subdivision_id=s_data['subdivision_id'], title=s_data['title'],
+                    instructions=s_data.get('instructions', ''), time_limit=s_data.get('time_limit', 0), order=idx
                 )
-                sections_map[section_data['subdivision_id']] = section
+                sections_map[s_data['subdivision_id']] = section
         
-        exam.event_log.append({
-            "ts": timezone.now().isoformat(),
-            "msg": f"Esqueleto estructural persistido: {len(sections_map)} secciones."
-        })
-        exam.save(update_fields=['event_log'])
-
-        # 5. FASE DE LLENADO ATÓMICO (IA-SIDE - BUCLE)
-        # Iteramos sobre las secciones planificadas por la estrategia
-        # para rellenarlas con ítems generados por la IA.
+        # FASE DE LLENADO ATÓMICO
+        generated_titles = []
+        usage_total = {"in": 0, "out": 0}
         
-        generated_item_titles = [] # Memoria de contexto para evitar repeticiones
-        total_input_tokens = 0
-        total_output_tokens = 0
-        api_key_used_last = "Unknown"
-        
-        # Obtenemos el plan de secciones de la estrategia (puede ser dinámico)
-        # En Skeleton-First, confiamos en la estructura generada previamente,
-        # pero usamos get_section_plan para validación o metadatos extra si fuera necesario.
-        section_sequence = base_structure.get('subdivision_sequence', [])
-        
-        for section_idx, section_info in enumerate(section_sequence):
-            subdivision_id = section_info['subdivision_id']
-            section_title = section_info['title']
+        for s_info in base_structure.get('subdivision_sequence', []):
+            db_sec = sections_map.get(s_info['subdivision_id'])
+            if not db_sec: continue
             
-            # Recuperamos la instancia de sección DB
-            db_section = sections_map.get(subdivision_id)
-            exam.event_log.append({'ts': timezone.now().isoformat(), 'msg': f'Generando ítems para sección: {subdivision_id}'})
-            exam.save(update_fields=['event_log'])
-            if not db_section:
-                logger.warning(f"Sección {subdivision_id} no encontrada en DB map. Saltando.")
-                continue
-
-            # a. Construcción de Prompts Atómicos
-            system_prompt = strategy.get_system_prompt()
-            user_prompt = strategy.get_user_prompt(
-                context_text=context_text,
-                topic=topic or subject.name,
-                subdivision_id=subdivision_id, # Prompt específico para esta sección
-                generated_item_titles=generated_item_titles # Inyección de memoria
+            s_prompt = strategy.get_system_prompt()
+            u_prompt = strategy.get_user_prompt(
+                context_text=context_text, topic=topic or subject.name,
+                subdivision_id=s_info['subdivision_id'], generated_item_titles=generated_titles,
+                immersion_mode=exam.immersion_mode, pedagogical_level=exam.pedagogical_level
             )
             
-            # b. Llamada al Motor de IA
-            automation_settings = AutomationSettings.load()
-            active_key = automation_settings.active_api_key
-            
-            # Retries simples para resiliencia en bucle
-            success = False
-            retries = 2
-            response_text = ""
-            
-            while retries > 0 and not success:
-                try:
-                    success, response_text, api_key_name, usage = generate_text_content(
-                        user_prompt, 
-                        system_instruction=system_prompt,
-                        api_key=active_key
+            success, resp, key_name, usage = generate_text_content(u_prompt, system_instruction=s_prompt, api_key=AutomationSettings.load().active_api_key)
+            if success:
+                usage_total["in"] += usage.get("input_tokens", 0)
+                usage_total["out"] += usage.get("output_tokens", 0)
+                items = dirtyjson.loads(clean_json_response(resp)).get("items", [])
+                for i_idx, i_data in enumerate(items):
+                    ExamItem.objects.create(
+                        section=db_sec, block_type=i_data.get('block_type', 'UNKNOWN'),
+                        widget_id=i_data.get('widget_id', 'UNKNOWN'), content=i_data.get('content', {}),
+                        grading_logic=i_data.get('grading_logic', {}), metadata=i_data.get('metadata', {}), order=i_idx
                     )
-                    if success:
-                        total_input_tokens += usage.get("input_tokens", 0)
-                        total_output_tokens += usage.get("output_tokens", 0)
-                        api_key_used_last = api_key_name
-                        break
-                except Exception as e:
-                    logger.warning(f"Fallo en llamada IA para sección {subdivision_id}: {e}. Reintentando...")
-                    retries -= 1
-                    time.sleep(2)
-            
-            if not success:
-                logger.error(f"Fallo definitivo generando sección {subdivision_id}. Se dejará vacía.")
-                continue
+                    generated_titles.append(str(i_data.get('content', {}).get('stem', ''))[:30])
 
-            # c. Parseo y Persistencia Atómica
-            try:
-                # Esperamos un JSON con la clave "items" según el schema de get_output_schema()
-                cleaned_json = clean_json_response(response_text)
-                section_payload = dirtyjson.loads(cleaned_json)
-                
-                items_list = section_payload.get("items", [])
-                exam.event_log.append({'ts': timezone.now().isoformat(), 'msg': f'Sección {subdivision_id} parseada: {len(items_list)} ítems detectados.'})
-                exam.save(update_fields=['event_log'])
-                
-                with transaction.atomic():
-                    for item_idx, item_data in enumerate(items_list):
-                        # Validación mínima de llaves
-                        if "content" not in item_data or "stem" not in item_data.get("content", {}):
-                            continue
-                            
-                        ExamItem.objects.create(
-                            section=db_section,
-                            block_type=item_data.get('block_type', 'UNKNOWN'),
-                            widget_id=item_data.get('widget_id', 'UNKNOWN'),
-                            content=item_data.get('content', {}),
-                            grading_logic=item_data.get('grading_logic', {}),
-                            metadata=item_data.get('metadata', {}),
-                            order=item_idx
-                        )
-                        
-                        # Actualizar memoria de contexto (Extracto del stem)
-                        stem_extract = str(item_data.get('content', {}).get('stem', ''))[:30]
-                        generated_item_titles.append(stem_extract)
-                        
-            except Exception as e:
-                logger.error(f"Error parseando JSON de sección {subdivision_id}: {e}")
-                # No abortamos todo el examen, solo esta sección falla
-
-        # 6. FINALIZACIÓN Y REGISTRO DE CONSUMO TOTAL
-        TrackingService.record_usage(
-            user=exam.user, 
-            exam=exam, 
-            model_name="gemini-2.5-flash-lite",
-            input_tokens=total_input_tokens, 
-            output_tokens=total_output_tokens, 
-            api_key_name=api_key_used_last
-        )
-
+        TrackingService.record_usage(exam.user, exam, "gemini-2.5-flash-lite", usage_total["in"], usage_total["out"], "Restored-Key")
         exam.status = 'READY'
-        exam.event_log.append({
-            "ts": timezone.now().isoformat(),
-            "msg": "EMULACIÓN COMPLETADA: Bucle segmentado finalizado.",
-            "total_items": len(generated_item_titles)
-        })
+        exam.event_log.append({"ts": timezone.now().isoformat(), "msg": "Generación Completada."})
         exam.save()
-            
-        logger.info(f"V06_SEGMENTED_SUCCESS: Exam {exam_uuid} generated with {len(generated_item_titles)} items.")
 
+    except MaxRetriesExceededError:
+        if exam:
+            exam.status = 'ERROR'
+            exam.save()
+            send_unified_notification(exam.user, "Error de Clasificación", "Servicio no disponible.", reverse('assessment_v2:dashboard'))
     except Exception as e:
-        logger.error(f"V06_SEGMENTED_ERROR: {exam_uuid}: {str(e)}", exc_info=True)
+        if isinstance(e, Retry): raise e
         if exam:
             exam.status = 'ERROR'
             exam.error_log = traceback.format_exc()
-            exam.event_log.append({"ts": timezone.now().isoformat(), "msg": f"FATAL ERROR: {str(e)}"})
             exam.save()
-        raise

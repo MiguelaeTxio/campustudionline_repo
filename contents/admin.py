@@ -33,11 +33,12 @@ def generate_public_previews_action_for_admin(modeladmin, request, queryset):
 @admin.register(ContentMaterial)
 class ContentMaterialAdmin(admin.ModelAdmin):
     list_display = ("id", "title", "creator", "is_public", "updated_at")
+    list_select_related = ("creator", "master_category", "sub_category")
     list_filter = ("is_free_content", "is_public", "master_category", )
     search_fields = ("title", "creator__username", "master_category__name", "sub_category__name", "subject__name")
     actions = [generate_public_previews_action_for_admin]
     readonly_fields = ("created_at", "updated_at")
-    autocomplete_fields = ["creator", "subject"]
+    autocomplete_fields = ["creator", "subject", "master_category", "sub_category"]
     fieldsets = (
         (None, {"fields": ("title", "is_free_content", "short_description", "creator", "is_public")}),
         ("Categorización Académica (Rellenar solo si NO es Contenido Libre)", {"fields": ("subject",), "classes": ("collapse",)}),

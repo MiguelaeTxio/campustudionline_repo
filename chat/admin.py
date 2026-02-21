@@ -13,6 +13,7 @@ class RoomMembershipInline(admin.TabularInline):
 
 @admin.register(ChatRoom)
 class ChatRoomAdmin(admin.ModelAdmin):
+    list_select_related = ("creator", "target_subject", "target_master_category", "target_sub_category")
     list_display = (
         "name",
         "slug",
@@ -53,6 +54,7 @@ class ChatRoomAdmin(admin.ModelAdmin):
 
 @admin.register(RoomMembership)
 class RoomMembershipAdmin(admin.ModelAdmin):
+    list_select_related = ("user", "room")
     list_display = ("user", "room", "status", "role", "is_silenced", "date_joined")
     list_filter = ("room", "status", "role", "is_silenced", "date_joined")
     search_fields = ("user__username", "room__name")
@@ -63,6 +65,7 @@ class RoomMembershipAdmin(admin.ModelAdmin):
 
 @admin.register(ChatMessage)
 class ChatMessageAdmin(admin.ModelAdmin):
+    list_select_related = ("room", "sender")
     list_display = ("room", "sender_username_display", "get_short_content", "timestamp")
     list_filter = ("room", "sender_username_display", "timestamp")
     search_fields = ("sender_username_display", "content", "room__name")
