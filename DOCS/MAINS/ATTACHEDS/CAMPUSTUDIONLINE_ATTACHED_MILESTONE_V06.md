@@ -1,5 +1,3 @@
-<!-- /home/MiguelAeTxio/PROJECTS/CampuStudiOnline/DOCS/MAINS/ATTACHEDS/CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md -->
-
 ### PARTE INMUTABLE (MANDATORIA EN TODOS LOS PCS)
 
 **DIRECTRIZ DE CARGA OBLIGATORIA (LEY DE CONTINUIDAD):**
@@ -24,26 +22,21 @@ El archivo V06DOC_ROADMAP.md es la ÚNICA fuente de verdad para el progreso.
 ---
 
 # ANEXO: HITO 06 - SISTEMA DE AUTOEVALUACIONES CON IA
-# ESTADO: RECTIFICACIÓN ESTRUCTURAL COMPLETADA (FASE 6 - EPI)
+# ESTADO: REFACTORIZACIÓN TÉCNICA COMPLETADA (DESBLOQUEADO)
 
 ### PARTE MUTABLE (RESUMEN Y HOJA DE RUTA)
 
-## 1. RESUMEN TÉCNICO DE LA RECTIFICACIÓN (SESIÓN EPI)
-*   **Alineación Documental:** Se han rectificado `V06DOC_LEVELS` y `V06DOC_LOGIC_MAPPING` para integrar la Matriz de Inmersión Lingüística oficial de la UGR.
-*   **Identidad Cognitiva:** Implementada la clasificación de asignaturas vía API (`gemini-2.5-flash-lite`) en `logic.py`, eliminando los diccionarios Regex obsoletos.
-*   **Estrategias Espejo:** Las 5 estrategias (`tech`, `health`, `social`, `hum`, `lang`) han sido reescritas bajo el modelo Atómico (Skeleton-First), implementando `get_section_plan` y esquemas de salida compatibles con OpenAPI 3.0.
-*   **Validación:** Superada la auditoría híbrida (IA + Python). El sistema deduce correctamente la inmersión (Chino A1=Vehicular, Italiano C1=Total).
+## 1. RESUMEN TÉCNICO DE LA SESIÓN (CSO)
+*   **Orquestación Atómica:** Se ha refactorizado `orchestrator/tasks.py` implementando el bucle iterativo por sección y el modelo *Skeleton-First*.
+*   **Resiliencia:** Implementado el protocolo de reintentos (3 intentos / 10 min) para la API de clasificación.
+*   **UI Dinámica:** Refactorizada `exam_take.html` eliminando lógica hardcodeada. Los widgets se cargan dinámicamente según el `widget_id` del contrato JSON.
+*   **Calidad de Código:** Superada la validación de `djlint` tras corregir errores de estructura y accesibilidad.
+*   **Documentación:** Actualizado `V06DOC_ROADMAP.md`, levantando oficialmente el bloqueo crítico de alineación.
 
 ## 2. HOJA DE RUTA PARA LA SIGUIENTE SESIÓN (LEY SUPREMA)
-**PROHIBIDO AVANZAR SIN CUMPLIR ESTOS PUNTOS SEGÚN V06DOC_STRUCTURE:**
+**PROHIBIDO AVANZAR SIN CUMPLIR ESTOS PUNTOS:**
 
-1.  **REFACTORIZACIÓN DEL ORQUESTADOR (`orchestrator/tasks.py`):**
-    *   Modificar el bucle de generación para que sea iterativo por sección.
-    *   Implementar la creación previa de `ExamSection` antes de las llamadas a la IA.
-    *   Inyectar el `immersion_mode` y `pedagogical_level` en los prompts atómicos.
-2.  **REFACTORIZACIÓN DE UI (`exam_take.html`):**
-    *   Eliminar widgets hardcodeados.
-    *   Implementar la lógica dinámica de carga de widgets basándose en el `widget_id` del contrato JSON.
-3.  **SISTEMA DE REINTENTOS:**
-    *   Implementar el protocolo de resiliencia (3 reintentos / 10 min) en caso de fallo de API de clasificación.
+1.  **TEST DE INTEGRACIÓN ACADÉMICA:** Generar examen de 'Lenguas' (B2) para verificar `immersion_mode='TOTAL'` (instrucciones en idioma objetivo).
+2.  **VERIFICACIÓN DE PERSISTENCIA:** Validar el guardado de `student_responses` para widgets complejos (`W-MIX-MATCH`, `W-TECH-CALC`).
+3.  **AUDITORÍA SKELETON-FIRST:** Verificar en BD la creación previa de `ExamSection` antes de las llamadas a Gemini.
 

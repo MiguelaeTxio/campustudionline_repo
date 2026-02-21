@@ -20,6 +20,17 @@
     .law-nav-body { height: 75vh; overflow-y: auto; }
     .draggable-item { cursor: grab; z-index: 10; }
     .target-drop.active { border: 2px dashed #007bff; background: #e7f1ff; }
+
+    /* V06 Refactor Styles */
+    .steps-log-viewport { min-height: 50px; }
+    .scan-container-wrapper { cursor: crosshair; }
+    .img-scan-max { max-height: 500px; width: 100%; height: auto; }
+    .img-thumb-max { max-height: 200px; width: auto; height: auto; }
+    .source-panel-scroll { max-height: 60vh; overflow-y: auto; }
+    .editor-textarea { resize: none; }
+    .chat-viewport { height: 200px; overflow-y: auto; }
+    .border-dashed { border-style: dashed !important; }
+    .mix-match-list { min-height: 200px; }
 </style>
 {% endblock %}
 
@@ -58,54 +69,78 @@
 
                         {# WIDGET RENDERERS / RENDERIZADORES DE WIDGETS #}
 
+                        {# WIDGET RENDERERS / RENDERIZADORES DE WIDGETS (DINÁMICO V06) #}
+
+                        {# 1. WIDGETS TÉCNICOS Y DE CÁLCULO #}
                         {% if item.widget_id == 'W-TECH-CALC' %}
                         <div class="widget-container p-3 border rounded bg-dark text-success font-monospace" id="calc-{{ item.id }}">
-                            <div class="steps-log mb-2 small text-secondary" id="log-{{ item.id }}">
-                                <!-- Steps will be injected here / Los pasos se inyectarán aquí -->
-                            </div>
+                            <div class="steps-log mb-2 small text-secondary steps-log-viewport" id="log-{{ item.id }}"></div>
                             <div class="input-group">
                                 <span class="input-group-text bg-dark text-success border-success">>></span>
                                 <input type="text" class="form-control bg-dark text-success border-success calc-input" 
-                                       placeholder="{% trans 'Paso de cálculo + ENTER...' %}">
+                                       placeholder="{% trans 'Ingrese paso y presione ENTER...' %}" autocomplete="off">
                             </div>
                         </div>
 
+                        {# 2. WIDGETS CLÍNICOS Y DE IMAGEN #}
                         {% elif item.widget_id == 'W-CLIN-SCAN' %}
-                        <div class="widget-container p-2 border rounded text-center">
-                            <div class="image-wrapper position-relative d-inline-block scan-container" data-item-id="{{ item.id }}">
-                                <img src="{{ item.content.media_assets.0 }}" class="img-fluid rounded border shadow-sm img-scan-viewport" 
+                        <div class="widget-container p-2 border rounded text-center bg-white">
+                            {% if item.content.media_assets %}
+                            <div class="image-wrapper position-relative d-inline-block scan-container scan-container-wrapper" data-item-id="{{ item.id }}">
+                                <img src="{{ item.content.media_assets.0 }}" class="img-fluid rounded border shadow-sm img-scan-max" 
                                      alt="{% trans 'Evidencia Clínica' %}" width="800" height="600">
                                 <div class="markers-overlay position-absolute top-0 start-0 w-100 h-100 markers-overlay-layer" id="overlay-{{ item.id }}"></div>
                             </div>
-                            <input type="text" class="form-control mt-2 response-input" placeholder="{% trans 'Indique juicio diagnóstico...' %}">
+                            {% else %}
+                            <div class="alert alert-warning">{% trans "Error: Recurso de imagen no disponible." %}</div>
+                            {% endif %}
+                            <input type="text" class="form-control mt-2 response-input" placeholder="{% trans 'Escriba su juicio diagnóstico...' %}">
                         </div>
 
+                        {# 3. WIDGETS DE SELECCIÓN MÚLTIPLE #}
                         {% elif item.widget_id == 'W-OBJ-STRIKE' %}
-                        <div class="widget-container">
+                        <div class="widget-container p-3 bg-white border rounded">
+                            {% if item.content.media_assets %}
+                                <div class="mb-3 text-center">
+                                    <img src="{{ item.content.media_assets.0 }}" class="img-fluid rounded img-thumb-max" 
+                                         alt="{% trans 'Recurso Visual' %}" width="300" height="200">
+                                </div>
+                            {% endif %}
                             {% for option in item.content.options %}
                             <div class="form-check mb-2 d-flex align-items-center">
                                 <input class="form-check-input response-input" type="radio" name="item-{{ item.id }}" value="{{ option }}" id="opt-{{ item.id }}-{{ forloop.counter }}">
                                 <label class="form-check-label ms-2 flex-grow-1" for="opt-{{ item.id }}-{{ forloop.counter }}">{{ option }}</label>
-                                <button type="button" class="btn btn-sm btn-outline-secondary py-0 ms-2 btn-strike" title="{% trans 'Tachar' %}">×</button>
+                                <button type="button" class="btn btn-sm btn-outline-secondary py-0 ms-2 btn-strike" tabindex="-1" title="{% trans 'Tachar opción' %}">
+                                    <i class="bi bi-x-lg"></i> ×
+                                </button>
                             </div>
                             {% endfor %}
                         </div>
 
+                        {# 4. WIDGETS DISCURSIVOS #}
                         {% elif item.widget_id == 'W-HUM-TEXT' %}
-                        <div class="widget-container split-container">
-                            <div class="source-panel small rounded">
-                                <h6>{% trans "Material de Referencia" %}</h6>
-                                {{ item.content.source_material|linebreaks }}
+                        <div class="widget-container split-container row g-0 border rounded">
+                            <div class="col-md-6 source-panel bg-light p-3 border-end source-panel-scroll">
+                                <h6 class="text-muted border-bottom pb-2">{% trans "Fuente / Referencia" %}</h6>
+                                {% if item.content.media_assets %}
+                                    <img src="{{ item.content.media_assets.0 }}" class="img-fluid mb-2" alt="{% trans 'Fuente Visual' %}" width="400" height="300">
+                                {% endif %}
+                                <div class="source-text text-justify small">{{ item.content.stem|linebreaks }}</div>
                             </div>
-                            <div class="editor-panel">
-                                <textarea class="form-control response-input" rows="12" placeholder="{% trans 'Redacción de exégesis...' %}"></textarea>
+                            <div class="col-md-6 editor-panel p-3">
+                                <h6 class="text-muted border-bottom pb-2">{% trans "Ensayo Crítico" %}</h6>
+                                <textarea class="form-control response-input border-0 h-100 font-serif editor-textarea" rows="15" 
+                                          placeholder="{% trans 'Comience su disertación aquí...' %}"></textarea>
                             </div>
                         </div>
 
-                        {% elif item.widget_id == 'W-PROC-ACTION' %}
-                        <div class="widget-container p-3 border rounded border-danger shadow-sm">
-                            <h6 class="text-danger fw-bold">{% trans "PUNTOS DE CONTROL CRÍTICO" %}</h6>
-                            {% for step in item.content.steps %}
+                        {# 5. WIDGETS DE CHECKLIST #}
+                        {% elif item.widget_id == 'W-PROC-ACTION' or item.widget_id == 'CDS-KILL' %}
+                        <div class="widget-container p-3 border rounded border-danger bg-white shadow-sm">
+                            <h6 class="text-danger fw-bold border-bottom border-danger pb-2 mb-3">
+                                <i class="bi bi-exclamation-triangle-fill"></i> {% trans "PUNTOS DE CONTROL CRÍTICO (FAIL-SAFE)" %}
+                            </h6>
+                            {% for step in item.content.options %} 
                             <div class="form-check mb-2">
                                 <input class="form-check-input response-input-check" type="checkbox" value="{{ step }}" id="step-{{ item.id }}-{{ forloop.counter }}">
                                 <label class="form-check-label" for="step-{{ item.id }}-{{ forloop.counter }}">{{ step }}</label>
@@ -113,26 +148,36 @@
                             {% endfor %}
                         </div>
 
+                        {# 6. WIDGETS LINGÜÍSTICOS #}
                         {% elif item.widget_id == 'W-TXT-CLOZE' %}
-                        <div class="widget-container border p-4 rounded bg-white shadow-sm cloze-box">
-                             {{ item.content.text_with_holes|safe }}
+                        <div class="widget-container border p-4 rounded bg-white shadow-sm cloze-box font-serif fs-5">
+                             {{ item.content.text_with_gaps|safe }}
                         </div>
 
+                        {# 7. WIDGETS DE VINCULACIÓN #}
                         {% elif item.widget_id == 'W-MIX-MATCH' %}
                         <div class="widget-container p-3 border rounded bg-light" id="mix-{{ item.id }}">
+                            <div class="alert alert-secondary small py-1 mb-2">
+                                <i class="bi bi-info-circle"></i> {% trans "Arrastre los elementos de la izquierda a sus objetivos a la derecha." %}
+                            </div>
                             <div class="row">
                                 <div class="col-6">
-                                    <div class="list-group">
-                                        {% for source in item.content.sources %}
-                                        <div class="list-group-item draggable-item" draggable="true" data-source="{{ source }}">{{ source }}</div>
+                                    <h6 class="text-muted text-center">{% trans "Elementos" %}</h6>
+                                    <div class="list-group mix-match-list">
+                                        {% for source in item.content.options %}
+                                        <div class="list-group-item draggable-item bg-white shadow-sm mb-1" draggable="true" data-source="{{ source }}">
+                                            {{ source }}
+                                        </div>
                                         {% endfor %}
                                     </div>
                                 </div>
                                 <div class="col-6">
+                                    <h6 class="text-muted text-center">{% trans "Categorías / Destinos" %}</h6>
                                     <div class="list-group">
                                         {% for target in item.content.targets %}
-                                        <div class="list-group-item target-drop p-3 border-dashed" data-target="{{ target }}">
-                                            <span class="text-muted small">{% trans "Soltar para vincular a" %}: {{ target }}</span>
+                                        <div class="list-group-item target-drop p-3 border-dashed mb-1 text-center text-muted bg-white" 
+                                             data-target="{{ target }}" data-item-id="{{ item.id }}">
+                                            {{ target }}
                                         </div>
                                         {% endfor %}
                                     </div>
@@ -140,15 +185,25 @@
                             </div>
                         </div>
 
+                        {# 8. WIDGET DIALÓGICO #}
                         {% elif item.widget_id == 'W-COMM-DIALOG' %}
                         <div class="widget-container p-3 border rounded bg-primary bg-opacity-10">
-                            <div class="chat-history-viewport mb-3 p-2 bg-white rounded border" id="chat-{{ item.id }}">
-                                <div class="text-secondary small italic">{% trans "En espera de interacción..." %}</div>
+                            <div class="chat-history-viewport mb-3 p-2 bg-white rounded border chat-viewport" id="chat-{{ item.id }}">
+                                <div class="text-secondary small italic text-center mt-5">{% trans "Presione GRABAR para iniciar la interacción..." %}</div>
                             </div>
-                            <div class="d-flex gap-2">
-                                <button type="button" class="btn btn-danger btn-sm rounded-pill px-3 btn-record">{% trans "Grabar" %}</button>
-                                <button type="button" class="btn btn-outline-primary btn-sm rounded-pill btn-listen">{% trans "Escuchar" %}</button>
+                            <div class="d-flex gap-2 justify-content-center">
+                                <button type="button" class="btn btn-danger rounded-pill px-4 btn-record">
+                                    <i class="bi bi-mic-fill"></i> {% trans "Grabar Respuesta" %}
+                                </button>
                             </div>
+                        </div>
+                        
+                        {# FALLBACK GENÉRICO #}
+                        {% else %}
+                        <div class="widget-container p-3 border rounded bg-warning bg-opacity-25">
+                            <p class="text-danger fw-bold">{% trans "Widget no reconocido:" %} {{ item.widget_id }}</p>
+                            <pre class="small">{{ item.content|pprint }}</pre>
+                            <textarea class="form-control response-input" placeholder="{% trans 'Escriba su respuesta aquí...' %}"></textarea>
                         </div>
                         {% endif %}
                     </div>
@@ -157,7 +212,7 @@
             </section>
             {% endfor %}
         </div>
-
+        
         {# SIDEPANEL #}
         <div class="col-lg-4">
             <div class="sticky-top sticky-resource-panel">

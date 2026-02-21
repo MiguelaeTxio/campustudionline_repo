@@ -1827,3 +1827,10 @@ Carga de contexto obligatoria: Documentación técnica V06DOC y modelos de `asse
 *  **Session:** Implementación del Patrón Skeleton-First en el Orquestador de Exámenes
 *  **Description:** Refactorización del orquestador (tasks.py) para separar la creación estructural (ExamSection) del llenado de contenido (ExamItem) mediante bucles iterativos y llamadas atómicas a la IA. Implementación de inyección de metadatos pedagógicos y sistema de reintentos para clasificación.
 
+
+# 2026-02-21
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+## NRA
+*  **Session:** Rectificación Estructural del Orquestador y UI de Evaluaciones (Hito 06)
+*  **Description:** Inicio de la fase de rectificación crítica para alinear el código con la arquitectura Skeleton-First definida en la constelación V06. La sesión se centra en la refactorización del bucle de generación en 'orchestrator/tasks.py' para transmutarlo de un modelo monolítico a uno atómico por secciones, la implementación del sistema de reintentos en la clasificación de asignaturas y la dinamización de la interfaz de exámenes 'exam_take.html' mediante la carga de widgets bajo demanda según el contrato JSON. Se busca erradicar la desalineación sistémica y asegurar la inmersión lingüística normativa.

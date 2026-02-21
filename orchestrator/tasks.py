@@ -332,43 +332,60 @@ def generate_exam_task(self, exam_uuid, context_text=None, topic=None):
         exam.grading_params = strategy._get_grading_params()
         exam.save()
 
-        # FASE ESTRUCTURAL
-        base_structure = strategy.generate_structure(exam_uuid=exam.uuid)
+        # FASE ESTRUCTURAL (Skeleton-First)
+        section_plan = strategy.get_section_plan()
         with transaction.atomic():
             exam.sections.all().delete()
             sections_map = {}
-            for idx, s_data in enumerate(base_structure.get('subdivision_sequence', [])):
+            for idx, s_data in enumerate(section_plan):
                 section = ExamSection.objects.create(
-                    exam=exam, subdivision_id=s_data['subdivision_id'], title=s_data['title'],
-                    instructions=s_data.get('instructions', ''), time_limit=s_data.get('time_limit', 0), order=idx
+                    exam=exam, 
+                    subdivision_id=s_data['subdivision_id'], 
+                    title=s_data['title'],
+                    instructions=s_data.get('instructions', ''), 
+                    time_limit=s_data.get('time_limit', 0), 
+                    order=idx
                 )
                 sections_map[s_data['subdivision_id']] = section
         
-        # FASE DE LLENADO ATÓMICO
+        # FASE DE LLENADO ATÓMICO (Bucle Iterativo por Sección)
         generated_titles = []
         usage_total = {"in": 0, "out": 0}
         
-        for s_info in base_structure.get('subdivision_sequence', []):
+        for s_info in section_plan:
             db_sec = sections_map.get(s_info['subdivision_id'])
             if not db_sec: continue
             
-            s_prompt = strategy.get_system_prompt()
+            # Inyección de immersion_mode y pedagogical_level en el prompt atómico
+            s_prompt = strategy.get_system_prompt(
+                immersion_mode=exam.immersion_mode, 
+                pedagogical_level=exam.pedagogical_level
+            )
             u_prompt = strategy.get_user_prompt(
                 context_text=context_text, topic=topic or subject.name,
                 subdivision_id=s_info['subdivision_id'], generated_item_titles=generated_titles,
                 immersion_mode=exam.immersion_mode, pedagogical_level=exam.pedagogical_level
             )
             
-            success, resp, key_name, usage = generate_text_content(u_prompt, system_instruction=s_prompt, api_key=AutomationSettings.load().active_api_key)
+            success, resp, key_name, usage = generate_text_content(
+                u_prompt, 
+                system_instruction=s_prompt, 
+                api_key=AutomationSettings.load().active_api_key, 
+                response_schema=strategy.get_output_schema()
+            )
             if success:
                 usage_total["in"] += usage.get("input_tokens", 0)
                 usage_total["out"] += usage.get("output_tokens", 0)
                 items = dirtyjson.loads(clean_json_response(resp)).get("items", [])
                 for i_idx, i_data in enumerate(items):
                     ExamItem.objects.create(
-                        section=db_sec, block_type=i_data.get('block_type', 'UNKNOWN'),
-                        widget_id=i_data.get('widget_id', 'UNKNOWN'), content=i_data.get('content', {}),
-                        grading_logic=i_data.get('grading_logic', {}), metadata=i_data.get('metadata', {}), order=i_idx
+                        section=db_sec, 
+                        block_type=i_data.get('block_type', 'UNKNOWN'),
+                        widget_id=i_data.get('widget_id', 'UNKNOWN'), 
+                        content=i_data.get('content', {}),
+                        grading_logic=i_data.get('grading_logic', {}), 
+                        metadata=i_data.get('metadata', {}), 
+                        order=i_idx
                     )
                     generated_titles.append(str(i_data.get('content', {}).get('stem', ''))[:30])
 
@@ -381,7 +398,12 @@ def generate_exam_task(self, exam_uuid, context_text=None, topic=None):
         if exam:
             exam.status = 'ERROR'
             exam.save()
-            send_unified_notification(exam.user, "Error de Clasificación", "Servicio no disponible.", reverse('assessment_v2:dashboard'))
+            send_unified_notification(
+                exam.user, 
+                "Servicio de Clasificación no disponible", 
+                "Servicio de Clasificación no disponible temporalmente. Por favor, inténtelo de nuevo más tarde.", 
+                reverse('assessment_v2:dashboard')
+            )
     except Exception as e:
         if isinstance(e, Retry): raise e
         if exam:
