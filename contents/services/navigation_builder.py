@@ -112,6 +112,8 @@ class NavigationTreeBuilder:
             Q(status='COMPLETED') & (Q(expiration_date__lte=now) | Q(expiration_date__isnull=True))
         ).exclude(
             Q(status='RESULTS_AVAILABLE') & Q(results_expiration_date__lte=now)
+        ).exclude(
+            Q(status='READY') & Q(expiration_date__lte=now)
         ).order_by('-created_at')
 
         copies_qs = ContentCopy.objects.filter(user=self.user).prefetch_related(
@@ -135,6 +137,7 @@ class NavigationTreeBuilder:
                 "assessment_status": copy._active_assessments[0].status if getattr(copy, '_active_assessments', []) else None,
                 "assessment_viewed": copy._active_assessments[0].was_viewed if getattr(copy, '_active_assessments', []) else None,
                 "exam_url": reverse("assessment_v2:take_exam", args=[copy._active_assessments[0].uuid]) if getattr(copy, "_active_assessments", []) and copy._active_assessments[0].status == "READY" else None,
+                "expiration_date": copy._active_assessments[0].expiration_date.isoformat() if getattr(copy, "_active_assessments", []) and getattr(copy._active_assessments[0], 'expiration_date', None) else None,
             }
 
             if copy.subject_context:

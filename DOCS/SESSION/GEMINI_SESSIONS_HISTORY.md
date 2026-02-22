@@ -1857,3 +1857,10 @@ Carga de contexto obligatoria: Documentación técnica V06DOC y modelos de `asse
 *  **Session:** AUDITORIA_ARQUETIPOS_Y_TEST_ATOMIC_LOOP
 *  **Description:** Auditoría de correspondencia entre estrategias Health y Technical con V06DOC_SUBARCHETYPES. Ejecución de test real de generación atómica en Celery verificando la vinculación de ítems a secciones. Pruebas del Rigor Engine inyectando respuestas para validar la evaluación y el resumen 'Voz del Catedrático'.
 
+# 2026-02-22
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+## CYC
+*  **Session:** Implementación de Sistema Anti-Abuso (Caducidad 24h)
+*  **Description:** Implementación de la regla de caducidad de 24 horas para exámenes generados. Adición del campo expiration_date en el modelo Exam, lógica de cálculo tras estado READY en Celery, y ajuste en navigation_builder.py para filtrar evaluaciones caducadas.
+

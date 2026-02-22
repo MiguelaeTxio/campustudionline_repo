@@ -58,6 +58,18 @@ class QuotaService:
         daily_count = Exam.objects.filter(user=user, created_at__gte=day_start).count()
         if daily_count >= plan.daily_exam_limit:
             return False, f"Límite diario alcanzado ({daily_count}/{plan.daily_exam_limit})."
+        # CRITICAL RULE: Zero Tolerance Penalty for Free Plan (Anti-Abuse)
+        # REGLA CRÍTICA: Penalización de Tolerancia Cero para Plan Gratuito (Anti-Abuso)
+        if plan.name == SubscriptionPlan.CODE_FREE:
+            has_expired_untaken = Exam.objects.filter(
+                user=user, 
+                created_at__gte=week_start, 
+                status='EXPIRED_UNTAKEN'
+            ).exists()
+            
+            if has_expired_untaken:
+                return False, "PENALIZACIÓN TOTAL: Has dejado caducar una evaluación sin realizarla. Has perdido toda tu cuota semanal."
+
 
         # Count exams created in the last 7 days
         weekly_count = Exam.objects.filter(user=user, created_at__gte=week_start).count()

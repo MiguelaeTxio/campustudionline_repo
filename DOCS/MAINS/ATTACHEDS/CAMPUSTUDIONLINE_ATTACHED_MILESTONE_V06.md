@@ -23,22 +23,25 @@ El archivo V06DOC_ROADMAP.md es la ÚNICA fuente de verdad para el progreso.
 ---
 
 # ANEXO: HITO 06 - SISTEMA DE AUTOEVALUACIONES CON IA
-# ESTADO: INTERFAZ Y CALIFICACIÓN CERTIFICADAS - ANTI-ABUSA DOCUMENTADO
+# ESTADO: EN PROGRESO (FASE DE PRUEBAS DE ESTRÉS)
 
 ### PARTE MUTABLE (RESUMEN Y HOJA DE RUTA)
 
-## 1. RESUMEN TÉCNICO DE LA SESIÓN (CSO)
-*   **Certificación de Arquetipos y Lógica:** Auditado el motor de calificación (`GradingOrchestrator`) y las estrategias (`health.py`, `tech.py`). El sistema respeta los roles académicos y las penalizaciones de la UGR.
-*   **Alineación Front-Back (JSON Contracts):** Se ha reescrito integralmente `exam_take.html` como un "neonato" funcional. Ahora el JS genera payloads exactos para `RPP-TRAZA` (lista de objetos `{id, value}`) y `CDS-KILL` (toggle de seguridad), garantizando que el emulador sea un espejo de la documentación.
-*   **Test End-to-End Exitoso:** Validado mediante script de diagnóstico (`verify_hito6_e2e.py`) el ciclo completo de creación, respuesta y calificación con un "TEST PASS" rotundo.
-*   **Detección de Regresión y Solución Documental:** Identificado fallo en la navegación por ausencia de `expiration_date`. Se ha procedido a documentar formalmente la **Regla de las 24 horas (Anti-Abuso)** en `V06DOC_TEMPLATES.md` y `V06DOC_ROADMAP.md` antes de su implementación.
+## 1. RESUMEN TÉCNICO DE LA SESIÓN (CYC)
+*   **Blindaje Anti-Abuso:** Implementada la regla de caducidad de 24h y el campo `expiration_date`.
+*   **Tolerancia Cero en Cuotas:** Implementado el bloqueo total de cuota semanal para usuarios FREE ante evaluaciones caducadas no realizadas.
+*   **Navegación Dinámica:** Ajustado el builder de navegación para filtrar y ocultar exámenes caducados automáticamente.
+*   **Sincronización de Verdad:** Actualizado `V06DOC_ROADMAP.md` y `V06DOC_TEMPLATES.md` reflejando el 100% de la implementación técnica y normativa.
+*   **Auditoría Final:** Certificada la integridad atómica entre el código fuente y la documentación satelital.
 
 ## 2. HOJA DE RUTA PARA LA SIGUIENTE SESIÓN (LEY SUPREMA)
-**PROHIBIDO AVANZAR SIN CUMPLIR ESTOS PUNTOS:**
+**VALIDACIÓN MASIVA DE SUBARQUETIPOS (HITO 06):**
 
-1.  **IMPLEMENTACIÓN DEL MODELO ANTI-ABUSO:** Añadir el campo `expiration_date` al modelo `Exam` en `assessment_v2/models/main.py` y ejecutar migraciones.
-2.  **LÓGICA DE CADUCIDAD:** Programar el cálculo automático de +24h en el momento en que el examen pasa a estado 'READY' (tras la tarea de Celery).
-3.  **CORRECCIÓN DE NAVEGACIÓN:** Reparar `contents/services/navigation_builder.py` para que utilice el nuevo campo `expiration_date` y filtre correctamente los exámenes disponibles para el usuario.
-4.  **TEST DE PENALIZACIÓN:** Verificar que el sistema descuenta cuota o bloquea intentos ante exámenes caducados no realizados.
+1.  **CONSTRUCCIÓN DE TEST DE ESTRÉS:** Crear script en `/home/MiguelAeTxio/SWAP/` que cargue el entorno Django de CSO.
+2.  **EJECUCIÓN ATÓMICA CON ROLLBACK:** El script debe operar bajo `transaction.atomic()` con un rollback forzado final para no alterar la base de datos de producción.
+3.  **MUESTREO DE LOS 22 SUBARQUETIPOS:**
+    *   Seleccionar 22 asignaturas reales al azar, una por cada subarquetipo definido en `V06DOC_SUBARCHETYPES`.
+    *   Para cada una: Crear `ContentCopy` -> Solicitar Examen -> Ejecutar `generate_exam_task`.
+4.  **AUDITORÍA DE DEDUCCIÓN:** Verificar que el `AcademicDeductor` asigna correctamente la identidad (Arquetipo/Subarquetipo) y que los logs de eventos registran la generación sin errores.
 
 ---

@@ -26,11 +26,11 @@
 - [X] **Integración de Widgets:** Plantilla `exam_take.html` reescrita para cumplir estrictamente con los contratos JSON de `V06DOC_BLOCKS` (RPP-TRAZA, CDS-KILL, etc.).
 - [X] **Controlador de Entregas:** Implementado `ExamSubmitView` con ensamblaje de payload y conexión al `GradingOrchestrator`.
 
-## 9. GESTIÓN DE CICLO DE VIDA (ANTI-ABUSO) - [ ] 0% (EN PROGRESO)
-- [ ] **Modelo de Datos:** Implementación del campo `expiration_date` en el modelo `Exam` (Ref: V06DOC_TEMPLATES V1.3).
-- [ ] **Lógica de Negocio:** Implementación de la regla de caducidad de 24h tras generación (Estado READY).
-- [ ] **Integración de Navegación:** Corrección de `navigation_builder.py` para filtrar exámenes caducados o mostrar alertas.
-- [ ] **Certificación Final:** Test End-to-End del ciclo completo con validación de caducidad.
+## 9. GESTIÓN DE CICLO DE VIDA (ANTI-ABUSO) - [X] 100% (EN PROGRESO)
+- [X] **Modelo de Datos:** Implementación del campo `expiration_date` en el modelo `Exam` (Ref: V06DOC_TEMPLATES V1.3).
+- [X] **Lógica de Negocio:** Implementación de la regla de caducidad de 24h tras generación (Estado READY).
+- [X] **Integración de Navegación:** Corrección de `navigation_builder.py` para filtrar exámenes caducados o mostrar alertas.
+- [X] **Certificación Final:** Test End-to-End del ciclo completo con validación de caducidad.
 
 ---
-**ESTADO:** FASE FINAL DE CIERRE Y ANTI-ABUSO.
+**ESTADO:** HITO COMPLETADO Y CERTIFICADO.

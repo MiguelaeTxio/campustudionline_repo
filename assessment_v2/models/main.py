@@ -18,6 +18,7 @@ class Exam(models.Model):
         ('GRADING', _('Corrigiendo')),
         ('GRADED', _('Calificado')),
         ('ERROR', _('Error')),
+        ('EXPIRED_UNTAKEN', _('Caducado (No realizado)')),
     ]
 
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True, db_index=True)
@@ -33,6 +34,9 @@ class Exam(models.Model):
     
     # Configuración de Rigor (V06DOC_LEVELS)
     grading_params = models.JSONField(_('Parámetros de Rigor'), default=dict)
+
+    # Anti-Abuso (Regla de las 24 horas)
+    expiration_date = models.DateTimeField(_('Fecha de Caducidad'), null=True, blank=True)
 
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='PENDING', db_index=True)
     

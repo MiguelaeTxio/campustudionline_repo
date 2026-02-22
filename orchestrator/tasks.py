@@ -391,7 +391,8 @@ def generate_exam_task(self, exam_uuid, context_text=None, topic=None):
 
         TrackingService.record_usage(exam.user, exam, "gemini-2.5-flash-lite", usage_total["in"], usage_total["out"], "Restored-Key")
         exam.status = 'READY'
-        exam.event_log.append({"ts": timezone.now().isoformat(), "msg": "Generación Completada."})
+        exam.expiration_date = timezone.now() + timedelta(hours=24)
+        exam.event_log.append({"ts": timezone.now().isoformat(), "msg": "Generación Completada. Caduca en 24h."})
         exam.save()
 
     except MaxRetriesExceededError:

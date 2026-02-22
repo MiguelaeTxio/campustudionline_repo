@@ -14,7 +14,7 @@ Este documento define la estructura JSON obligatoria para la comunicación entre
 *   grading_params: Objeto con pesos relativos por subdivisión.
 *   **expiration_date**: [DATETIME] Fecha límite de realización.
     *   **Regla de Negocio (Anti-Abuso):** Se establece automáticamente en **24 horas** tras la finalización de la generación (Estado 'READY').
-    *   **Penalización:** Si el examen no se completa antes de esta fecha, el usuario pierde la convocatoria y se registra un incidente de uso (reducción de cuota semanal).
+    *   **Penalización (Política de Tolerancia Cero):** Si el examen no se completa antes de esta fecha, se aplica una **PENALIZACIÓN TOTAL**. El usuario pierde **toda la cuota semanal restante** de forma inmediata, quedando inhabilitado para solicitar nuevas evaluaciones hasta el siguiente ciclo de reseteo.
 
 ## 2. ESTRUCTURA DE FASES (SUBDIVISION_SEQUENCE - Orquestado por Python)
 Definida por . Array de objetos de fase:

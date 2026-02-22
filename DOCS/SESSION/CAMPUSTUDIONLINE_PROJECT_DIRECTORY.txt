@@ -437,6 +437,7 @@
 ./assessment_v2/migrations/0005_exam_event_log.py
 ./assessment_v2/migrations/0004_remove_exam_structure_exam_grading_params_and_more.py
 ./assessment_v2/migrations/0003_exam_content_copy.py
+./assessment_v2/migrations/0007_exam_expiration_date_alter_exam_status.py
 ./assessment_v2/migrations/__init__.py
 ./assessment_v2/migrations/0006_costlog_api_key_name_exam_immersion_mode.py
 ./assessment_v2/migrations/0002_alter_subscriptionplan_can_access_c_level_and_more.py
