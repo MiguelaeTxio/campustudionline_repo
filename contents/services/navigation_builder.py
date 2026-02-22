@@ -111,7 +111,7 @@ class NavigationTreeBuilder:
         ).exclude(
             Q(status='COMPLETED') & (Q(expiration_date__lte=now) | Q(expiration_date__isnull=True))
         ).exclude(
-            Q(status='RESULTS_AVAILABLE') & Q(results_expiration_date__lte=now)
+            Q(status='RESULTS_AVAILABLE') & Q(expiration_date__lte=now)
         ).exclude(
             Q(status='READY') & Q(expiration_date__lte=now)
         ).order_by('-created_at')

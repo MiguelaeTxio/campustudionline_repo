@@ -23,25 +23,22 @@ El archivo V06DOC_ROADMAP.md es la ÚNICA fuente de verdad para el progreso.
 ---
 
 # ANEXO: HITO 06 - SISTEMA DE AUTOEVALUACIONES CON IA
-# ESTADO: EN PROGRESO (FASE DE PRUEBAS DE ESTRÉS)
+# ESTADO: EN PROGRESO (AUDITORÍA DE RESILIENCIA)
 
 ### PARTE MUTABLE (RESUMEN Y HOJA DE RUTA)
 
-## 1. RESUMEN TÉCNICO DE LA SESIÓN (CYC)
-*   **Blindaje Anti-Abuso:** Implementada la regla de caducidad de 24h y el campo `expiration_date`.
-*   **Tolerancia Cero en Cuotas:** Implementado el bloqueo total de cuota semanal para usuarios FREE ante evaluaciones caducadas no realizadas.
-*   **Navegación Dinámica:** Ajustado el builder de navegación para filtrar y ocultar exámenes caducados automáticamente.
-*   **Sincronización de Verdad:** Actualizado `V06DOC_ROADMAP.md` y `V06DOC_TEMPLATES.md` reflejando el 100% de la implementación técnica y normativa.
-*   **Auditoría Final:** Certificada la integridad atómica entre el código fuente y la documentación satelital.
+## 1. RESUMEN TÉCNICO DE LA SESIÓN (EPI)
+*   **Validación de Motores:** Se ejecutó el comando de gestión `validate_v06_engines` logrando validar 19 de los 22 motores académicos sobre asignaturas reales de la UGR.
+*   **Reparación de Navegación:** Corregido error de regresión en `navigation_builder.py` donde se intentaba filtrar por un campo inexistente (`results_expiration_date` -> `expiration_date`).
+*   **Blindaje RPM:** Inyectado un retraso de seguridad (`time.sleep(5)`) en `orchestrator/tasks.py` para mitigar el bloqueo por frecuencia (RPM) en la generación de ítems.
+*   **Hallazgo Crítico:** Se identificó una asimetría en la gestión de resiliencia; la tarea de exámenes no activa automáticamente la cuarentena (`is_quarantined`) de las API Keys tras un error 429, a diferencia del generador de cursos.
 
 ## 2. HOJA DE RUTA PARA LA SIGUIENTE SESIÓN (LEY SUPREMA)
-**VALIDACIÓN MASIVA DE SUBARQUETIPOS (HITO 06):**
+**AUDITORÍA INTEGRAL DE CUARENTENA Y ROTACIÓN:**
 
-1.  **CONSTRUCCIÓN DE TEST DE ESTRÉS:** Crear script en `/home/MiguelAeTxio/SWAP/` que cargue el entorno Django de CSO.
-2.  **EJECUCIÓN ATÓMICA CON ROLLBACK:** El script debe operar bajo `transaction.atomic()` con un rollback forzado final para no alterar la base de datos de producción.
-3.  **MUESTREO DE LOS 22 SUBARQUETIPOS:**
-    *   Seleccionar 22 asignaturas reales al azar, una por cada subarquetipo definido en `V06DOC_SUBARCHETYPES`.
-    *   Para cada una: Crear `ContentCopy` -> Solicitar Examen -> Ejecutar `generate_exam_task`.
-4.  **AUDITORÍA DE DEDUCCIÓN:** Verificar que el `AcademicDeductor` asigna correctamente la identidad (Arquetipo/Subarquetipo) y que los logs de eventos registran la generación sin errores.
+1.  **AUDITORÍA DE LÓGICA DE RESILIENCIA:** Analizar comparativamente `generate_full_course_task` y `generate_exam_task` para asegurar que el "castigo" a llaves agotadas sea uniforme en toda la plataforma.
+2.  **UNIFICACIÓN DE DISPARADORES:** Implementar la marcación de `is_quarantined = True` en el motor de exámenes tras detectar errores `RESOURCE_EXHAUSTED`.
+3.  **VALIDACIÓN DE PLENO (22/22):** Re-ejecutar el comando de gestión con las asignaturas afinadas (SUB-LIN-LIT, SUB-SAN-CUID, SUB-HUM-HIST) para certificar el 100% de los subarquetipos tras la auditoría de rotación.
+4.  **CONTROL DE RÁFAGAS:** Ajustar el orquestador para manejar el Throttling por minuto de Google sin quemar innecesariamente el pool de llaves.
 
 ---

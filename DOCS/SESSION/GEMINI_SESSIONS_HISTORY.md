@@ -1864,3 +1864,10 @@ Carga de contexto obligatoria: Documentación técnica V06DOC y modelos de `asse
 *  **Session:** Implementación de Sistema Anti-Abuso (Caducidad 24h)
 *  **Description:** Implementación de la regla de caducidad de 24 horas para exámenes generados. Adición del campo expiration_date en el modelo Exam, lógica de cálculo tras estado READY en Celery, y ajuste en navigation_builder.py para filtrar evaluaciones caducadas.
 
+# 2026-02-22
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+## EPI
+*  **Session:** Test de Estrés y Validación Masiva de Subarquetipos V06
+*  **Description:** Implementación y ejecución de un script de auditoría en entorno transaccional aislado (rollback) para someter a prueba de estrés al motor de evaluaciones. Se verificará la correcta deducción de identidad pedagógica (arquetipo y subarquetipo) y la generación atómica de exámenes sobre un muestreo representativo de 22 asignaturas reales, asegurando la robustez del sistema sin afectar la base de datos de producción.
+

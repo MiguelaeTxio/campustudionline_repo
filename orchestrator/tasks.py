@@ -388,6 +388,7 @@ def generate_exam_task(self, exam_uuid, context_text=None, topic=None):
                         order=i_idx
                     )
                     generated_titles.append(str(i_data.get('content', {}).get('stem', ''))[:30])
+                    time.sleep(5) # PROTECCIÓN CUOTA RPM (HITO 6)
 
         TrackingService.record_usage(exam.user, exam, "gemini-2.5-flash-lite", usage_total["in"], usage_total["out"], "Restored-Key")
         exam.status = 'READY'

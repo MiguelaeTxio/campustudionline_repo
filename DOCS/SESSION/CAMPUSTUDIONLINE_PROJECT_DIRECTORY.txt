@@ -445,6 +445,7 @@
 ./assessment_v2/admin_urls.py
 ./assessment_v2/tests.py
 ./assessment_v2/management/commands/sync_subscriptions.py
+./assessment_v2/management/commands/validate_v06_engines.py
 ./core/context_processors.py
 ./core/services/gemini_schemas.py
 ./core/services/gemini_service.py
