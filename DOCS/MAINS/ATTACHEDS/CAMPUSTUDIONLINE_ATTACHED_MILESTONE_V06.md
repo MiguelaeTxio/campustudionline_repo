@@ -1,3 +1,4 @@
+{# /home/MiguelAeTxio/PROJECTS/CampuStudiOnline/DOCS/MAINS/ATTACHEDS/CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md #}
 ### PARTE INMUTABLE (MANDATORIA EN TODOS LOS PCS)
 
 **DIRECTRIZ DE CARGA OBLIGATORIA (LEY DE CONTINUIDAD):**
@@ -22,20 +23,22 @@ El archivo V06DOC_ROADMAP.md es la ÚNICA fuente de verdad para el progreso.
 ---
 
 # ANEXO: HITO 06 - SISTEMA DE AUTOEVALUACIONES CON IA
-# ESTADO: INFRAESTRUCTURA Y ADAPTACIÓN LINGÜÍSTICA VALIDADAS (ESPEJO ABSOLUTO)
+# ESTADO: INTERFAZ Y CALIFICACIÓN CERTIFICADAS - ANTI-ABUSA DOCUMENTADO
 
 ### PARTE MUTABLE (RESUMEN Y HOJA DE RUTA)
 
 ## 1. RESUMEN TÉCNICO DE LA SESIÓN (CSO)
-*   **Sincronización Forense:** Restaurada la sección 'SD_SPEAK' en 'LanguagesStrategy'. El código es ahora un espejo exacto de 'V06DOC_ARCHETYPES'.
-*   **Integridad Absoluta UGR:** Implementado motor de inmersión dinámica vía IA. Gemini asume la autoridad de traducción académica (detección de idioma y localización de secciones), erradicando las listas estáticas.
-*   **Blindaje de Seguridad:** Recuperado del historial de Git el 'restrictedAccessModal' y los bloqueos de visibilidad Staff en la Sala de Estudio.
-*   **Persistencia Validada:** Superados tests de integridad en JSONFields de 'Submission' con estructuras complejas.
-*   **Documentación Sellada:** Actualizados 'V06DOC_LOGIC_MAPPING' (V1.4), 'V06DOC_LEVELS' (V1.2) y 'V06DOC_ROADMAP' (V1.5).
+*   **Certificación de Arquetipos y Lógica:** Auditado el motor de calificación (`GradingOrchestrator`) y las estrategias (`health.py`, `tech.py`). El sistema respeta los roles académicos y las penalizaciones de la UGR.
+*   **Alineación Front-Back (JSON Contracts):** Se ha reescrito integralmente `exam_take.html` como un "neonato" funcional. Ahora el JS genera payloads exactos para `RPP-TRAZA` (lista de objetos `{id, value}`) y `CDS-KILL` (toggle de seguridad), garantizando que el emulador sea un espejo de la documentación.
+*   **Test End-to-End Exitoso:** Validado mediante script de diagnóstico (`verify_hito6_e2e.py`) el ciclo completo de creación, respuesta y calificación con un "TEST PASS" rotundo.
+*   **Detección de Regresión y Solución Documental:** Identificado fallo en la navegación por ausencia de `expiration_date`. Se ha procedido a documentar formalmente la **Regla de las 24 horas (Anti-Abuso)** en `V06DOC_TEMPLATES.md` y `V06DOC_ROADMAP.md` antes de su implementación.
 
 ## 2. HOJA DE RUTA PARA LA SIGUIENTE SESIÓN (LEY SUPREMA)
 **PROHIBIDO AVANZAR SIN CUMPLIR ESTOS PUNTOS:**
 
-1.  **AUDITORÍA DE ARQUETIPOS TÉCNICOS:** Verificar quirúrgicamente que 'HealthStrategy' y 'TechnicalStrategy' reflejan fielmente sus respectivos documentos 'V06DOC_SUBARCHETYPES'.
-2.  **TEST DE GENERACIÓN ATÓMICA (CELERY):** Ejecutar una tarea de generación real y verificar que el bucle de 'orchestrator/tasks.py' vincula ítems a secciones de forma atómica.
-3.  **VALIDACIÓN DEL MOTOR DE CALIFICACIÓN:** Testear el 'Rigor Engine' y el resumen 'Voz del Catedrático' inyectando respuestas de prueba.
+1.  **IMPLEMENTACIÓN DEL MODELO ANTI-ABUSO:** Añadir el campo `expiration_date` al modelo `Exam` en `assessment_v2/models/main.py` y ejecutar migraciones.
+2.  **LÓGICA DE CADUCIDAD:** Programar el cálculo automático de +24h en el momento en que el examen pasa a estado 'READY' (tras la tarea de Celery).
+3.  **CORRECCIÓN DE NAVEGACIÓN:** Reparar `contents/services/navigation_builder.py` para que utilice el nuevo campo `expiration_date` y filtre correctamente los exámenes disponibles para el usuario.
+4.  **TEST DE PENALIZACIÓN:** Verificar que el sistema descuenta cuota o bloquea intentos ante exámenes caducados no realizados.
+
+---

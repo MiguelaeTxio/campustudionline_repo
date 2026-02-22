@@ -1,50 +1,66 @@
+{# /home/MiguelAeTxio/PROJECTS/CampuStudiOnline/assessment_v2/templates/assessment_v2/exam_take.html #}
 {% extends "base.html" %}
 {% load i18n static %}
 
-{# /home/MiguelAeTxio/PROJECTS/CampuStudiOnline/assessment_v2/templates/assessment_v2/exam_take.html #}
-
 {% block extra_css %}
 <style>
-    /* UI Fidelity Styles / Estilos de fidelidad de UI */
+    /* UI Fidelity Styles according to V06DOC_WIDGETS */
+    /* Estilos de fidelidad de UI según V06DOC_WIDGETS */
+    
     .striked-option { text-decoration: line-through; opacity: 0.5; }
+    
+    /* Split layout for discursive widgets / Diseño dividido para widgets discursivos */
     .split-container { display: flex; gap: 20px; }
     .source-panel { flex: 1; background: #f8f9fa; padding: 15px; border-right: 2px solid #dee2e6; max-height: 500px; overflow-y: auto; }
     .editor-panel { flex: 1; }
+    
+    /* Image scanning styles / Estilos de escaneo de imagen */
     .img-scan-viewport { max-height: 500px; width: auto; height: auto; cursor: crosshair; }
     .markers-overlay-layer { pointer-events: none; }
     .marker-dot { position: absolute; width: 12px; height: 12px; background: red; border: 2px solid white; border-radius: 50%; transform: translate(-50%, -50%); }
+    
+    /* Cloze styles / Estilos para huecos */
     .cloze-box { line-height: 2.2; }
-    .cloze-input { display: inline-block; width: auto; min-width: 100px; border-bottom: 2px solid #007bff !important; border: none; padding: 0 5px; }
+    .cloze-input { display: inline-block; width: auto; min-width: 100px; border-bottom: 2px solid #007bff !important; border: none; padding: 0 5px; background: #f8f9fa; }
+    
+    /* Chat/Dialog styles / Estilos de Chat/Diálogo */
     .chat-history-viewport { height: 150px; overflow-y: auto; }
+    .chat-viewport { height: 200px; overflow-y: auto; }
+    
+    /* Sidepanel styles / Estilos del panel lateral */
     .sticky-resource-panel { top: 20px; z-index: 1020; }
     .law-nav-body { height: 75vh; overflow-y: auto; }
+    
+    /* Drag & Drop styles / Estilos de Arrastrar y Soltar */
     .draggable-item { cursor: grab; z-index: 10; }
     .target-drop.active { border: 2px dashed #007bff; background: #e7f1ff; }
-
-    /* V06 Refactor Styles */
-    .steps-log-viewport { min-height: 50px; }
-    .scan-container-wrapper { cursor: crosshair; }
-    .img-scan-max { max-height: 500px; width: 100%; height: auto; }
-    .img-thumb-max { max-height: 200px; width: auto; height: auto; }
-    .source-panel-scroll { max-height: 60vh; overflow-y: auto; }
-    .editor-textarea { resize: none; }
-    .chat-viewport { height: 200px; overflow-y: auto; }
     .border-dashed { border-style: dashed !important; }
     .mix-match-list { min-height: 200px; }
+    
+    /* Console logs / Logs de consola */
+    .steps-log-viewport { min-height: 50px; }
+    
+    /* Image constraints to satisfy linting / Restricciones de imagen para satisfacer linting */
+    .img-scan-max { max-height: 500px; width: 100%; height: auto; object-fit: contain; }
+    .img-thumb-max { max-height: 200px; width: auto; height: auto; object-fit: contain; }
+    
+    .source-panel-scroll { max-height: 60vh; overflow-y: auto; }
+    .editor-textarea { resize: none; }
 </style>
 {% endblock %}
 
 {% block content %}
 <div class="container-fluid mt-4 px-4" id="exam-container" data-exam-uuid="{{ exam.uuid }}">
-    {# TECHNICAL HEADER / CABECERA TÉCNICA #}
+    {# TECHNICAL HEADER (V06DOC_TEMPLATES) #}
+    {# CABECERA TÉCNICA (V06DOC_TEMPLATES) #}
     <div class="card mb-4 border-primary shadow-sm">
         <div class="card-body bg-light">
             <h2 class="h4 border-bottom pb-2">{% trans "Sesión de Evaluación UniversIA" %}</h2>
             <div class="row text-muted small">
                 <div class="col-md-3"><strong>{% trans "Arquetipo" %}:</strong> {{ exam.archetype_id }}</div>
+                <div class="col-md-3"><strong>{% trans "Sub-Arquetipo" %}:</strong> {{ exam.sub_archetype_id }}</div>
                 <div class="col-md-3"><strong>{% trans "Nivel" %}:</strong> {{ exam.pedagogical_level }}</div>
                 <div class="col-md-3"><strong>{% trans "Itinerario" %}:</strong> {{ exam.itinerary_id }}</div>
-                <div class="col-md-3 text-end"><span id="exam-timer" class="badge bg-dark">00:00:00</span></div>
             </div>
         </div>
     </div>
@@ -60,6 +76,8 @@
                 <div class="alert alert-info py-2 small"><em>{{ section.instructions }}</em></div>
 
                 {% for item in section.items.all %}
+                {# Item container with data attributes for JS logic #}
+                {# Contenedor del ítem con atributos de datos para la lógica JS #}
                 <div class="card mb-4 exam-item" data-item-id="{{ item.id }}" data-block-type="{{ item.block_type }}" data-widget-id="{{ item.widget_id }}">
                     <div class="card-body">
                         <div class="d-flex justify-content-between">
@@ -67,22 +85,33 @@
                             <span class="badge bg-light text-dark border">{{ item.metadata.competency_tag }}</span>
                         </div>
 
-                        {# WIDGET RENDERERS / RENDERIZADORES DE WIDGETS #}
+                        {# WIDGET RENDERING LOGIC #}
+                        {# LÓGICA DE RENDERIZADO DE WIDGETS #}
 
-                        {# WIDGET RENDERERS / RENDERIZADORES DE WIDGETS (DINÁMICO V06) #}
-
-                        {# 1. WIDGETS TÉCNICOS Y DE CÁLCULO #}
+                        {# 1. RPP-TRAZA -> W-TECH-CALC (TechnicalStrategy) #}
                         {% if item.widget_id == 'W-TECH-CALC' %}
                         <div class="widget-container p-3 border rounded bg-dark text-success font-monospace" id="calc-{{ item.id }}">
                             <div class="steps-log mb-2 small text-secondary steps-log-viewport" id="log-{{ item.id }}"></div>
                             <div class="input-group">
                                 <span class="input-group-text bg-dark text-success border-success">>></span>
                                 <input type="text" class="form-control bg-dark text-success border-success calc-input" 
-                                       placeholder="{% trans 'Ingrese paso y presione ENTER...' %}" autocomplete="off">
+                                       placeholder="{% trans 'Ingrese paso (ej: F=m*a) y presione ENTER...' %}" autocomplete="off">
                             </div>
                         </div>
 
-                        {# 2. WIDGETS CLÍNICOS Y DE IMAGEN #}
+                        {# 2. CDS-KILL -> W-PROC-ACTION (Safety Toggle) (HealthStrategy) #}
+                        {% elif item.widget_id == 'W-PROC-ACTION' or item.block_type == 'CDS-KILL' %}
+                        <div class="widget-container p-3 border rounded border-danger bg-white shadow-sm">
+                            <h6 class="text-danger fw-bold border-bottom border-danger pb-2 mb-3">
+                                <i class="bi bi-exclamation-triangle-fill"></i> {% trans "PUNTO DE CONTROL CRÍTICO (FAIL-SAFE)" %}
+                            </h6>
+                            <div class="form-check form-switch fs-5">
+                                <input class="form-check-input response-input-kill" type="checkbox" id="kill-{{ item.id }}">
+                                <label class="form-check-label text-dark" for="kill-{{ item.id }}">{% trans "Confirmo la ejecución de este paso crítico." %}</label>
+                            </div>
+                        </div>
+
+                        {# 3. ILC-CONTEXT -> W-CLIN-SCAN (HealthStrategy) #}
                         {% elif item.widget_id == 'W-CLIN-SCAN' %}
                         <div class="widget-container p-2 border rounded text-center bg-white">
                             {% if item.content.media_assets %}
@@ -91,119 +120,88 @@
                                      alt="{% trans 'Evidencia Clínica' %}" width="800" height="600">
                                 <div class="markers-overlay position-absolute top-0 start-0 w-100 h-100 markers-overlay-layer" id="overlay-{{ item.id }}"></div>
                             </div>
-                            {% else %}
-                            <div class="alert alert-warning">{% trans "Error: Recurso de imagen no disponible." %}</div>
                             {% endif %}
-                            <input type="text" class="form-control mt-2 response-input" placeholder="{% trans 'Escriba su juicio diagnóstico...' %}">
+                            <textarea class="form-control mt-3 response-input-text" rows="3" placeholder="{% trans 'Escriba su juicio diagnóstico / interpretación...' %}"></textarea>
                         </div>
 
-                        {# 3. WIDGETS DE SELECCIÓN MÚLTIPLE #}
+                        {# 4. PRM-STRIKE / RBT-CANON -> W-OBJ-STRIKE (Selection with penalty) #}
                         {% elif item.widget_id == 'W-OBJ-STRIKE' %}
-                        <div class="widget-container p-3 bg-white border rounded">
-                            {% if item.content.media_assets %}
-                                <div class="mb-3 text-center">
-                                    <img src="{{ item.content.media_assets.0 }}" class="img-fluid rounded img-thumb-max" 
-                                         alt="{% trans 'Recurso Visual' %}" width="300" height="200">
+                            {% if item.content.options %}
+                                <div class="widget-container p-3 bg-white border rounded">
+                                    {% if item.content.media_assets %}
+                                        <div class="mb-3 text-center">
+                                            <img src="{{ item.content.media_assets.0 }}" class="img-fluid rounded img-thumb-max" 
+                                                 alt="{% trans 'Recurso Visual' %}" width="300" height="200">
+                                        </div>
+                                    {% endif %}
+                                    {% for option in item.content.options %}
+                                    <div class="form-check mb-2 d-flex align-items-center">
+                                        <input class="form-check-input response-input-radio" type="radio" name="item-{{ item.id }}" value="{{ option }}" id="opt-{{ item.id }}-{{ forloop.counter }}">
+                                        <label class="form-check-label ms-2 flex-grow-1" for="opt-{{ item.id }}-{{ forloop.counter }}">{{ option }}</label>
+                                        <button type="button" class="btn btn-sm btn-outline-secondary py-0 ms-2 btn-strike" tabindex="-1" title="{% trans 'Tachar opción' %}">
+                                            <i class="bi bi-x-lg"></i>
+                                        </button>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                {# Fallback for RBT-CANON if no options (Short Answer) #}
+                                <div class="widget-container">
+                                    <input type="text" class="form-control response-input-text fw-bold" placeholder="{% trans 'Escriba el término exacto...' %}">
                                 </div>
                             {% endif %}
-                            {% for option in item.content.options %}
-                            <div class="form-check mb-2 d-flex align-items-center">
-                                <input class="form-check-input response-input" type="radio" name="item-{{ item.id }}" value="{{ option }}" id="opt-{{ item.id }}-{{ forloop.counter }}">
-                                <label class="form-check-label ms-2 flex-grow-1" for="opt-{{ item.id }}-{{ forloop.counter }}">{{ option }}</label>
-                                <button type="button" class="btn btn-sm btn-outline-secondary py-0 ms-2 btn-strike" tabindex="-1" title="{% trans 'Tachar opción' %}">
-                                    <i class="bi bi-x-lg"></i> ×
-                                </button>
-                            </div>
-                            {% endfor %}
-                        </div>
 
-                        {# 4. WIDGETS DISCURSIVOS #}
+                        {# 5. DRA-HOLO -> W-HUM-TEXT (Essay/Dissertation) #}
                         {% elif item.widget_id == 'W-HUM-TEXT' %}
                         <div class="widget-container split-container row g-0 border rounded">
                             <div class="col-md-6 source-panel bg-light p-3 border-end source-panel-scroll">
-                                <h6 class="text-muted border-bottom pb-2">{% trans "Fuente / Referencia" %}</h6>
+                                <h6 class="text-muted border-bottom pb-2">{% trans "Fuente Primaria" %}</h6>
                                 {% if item.content.media_assets %}
                                     <img src="{{ item.content.media_assets.0 }}" class="img-fluid mb-2" alt="{% trans 'Fuente Visual' %}" width="400" height="300">
                                 {% endif %}
-                                <div class="source-text text-justify small">{{ item.content.stem|linebreaks }}</div>
+                                <div class="source-text text-justify small">{{ item.content.options.0|default:""|linebreaks }}</div>
                             </div>
                             <div class="col-md-6 editor-panel p-3">
                                 <h6 class="text-muted border-bottom pb-2">{% trans "Ensayo Crítico" %}</h6>
-                                <textarea class="form-control response-input border-0 h-100 font-serif editor-textarea" rows="15" 
-                                          placeholder="{% trans 'Comience su disertación aquí...' %}"></textarea>
+                                <textarea class="form-control response-input-text border-0 h-100 font-serif editor-textarea" rows="15" placeholder="{% trans 'Desarrolle su argumento...' %}"></textarea>
                             </div>
                         </div>
 
-                        {# 5. WIDGETS DE CHECKLIST #}
-                        {% elif item.widget_id == 'W-PROC-ACTION' or item.widget_id == 'CDS-KILL' %}
-                        <div class="widget-container p-3 border rounded border-danger bg-white shadow-sm">
-                            <h6 class="text-danger fw-bold border-bottom border-danger pb-2 mb-3">
-                                <i class="bi bi-exclamation-triangle-fill"></i> {% trans "PUNTOS DE CONTROL CRÍTICO (FAIL-SAFE)" %}
-                            </h6>
-                            {% for step in item.content.options %} 
-                            <div class="form-check mb-2">
-                                <input class="form-check-input response-input-check" type="checkbox" value="{{ step }}" id="step-{{ item.id }}-{{ forloop.counter }}">
-                                <label class="form-check-label" for="step-{{ item.id }}-{{ forloop.counter }}">{{ step }}</label>
-                            </div>
-                            {% endfor %}
-                        </div>
-
-                        {# 6. WIDGETS LINGÜÍSTICOS #}
+                        {# 6. CLO-OPEN / CLO-MULTI -> W-TXT-CLOZE #}
                         {% elif item.widget_id == 'W-TXT-CLOZE' %}
                         <div class="widget-container border p-4 rounded bg-white shadow-sm cloze-box font-serif fs-5">
                              {{ item.content.text_with_gaps|safe }}
                         </div>
 
-                        {# 7. WIDGETS DE VINCULACIÓN #}
+                        {# 7. MAT-LINK -> W-MIX-MATCH #}
                         {% elif item.widget_id == 'W-MIX-MATCH' %}
                         <div class="widget-container p-3 border rounded bg-light" id="mix-{{ item.id }}">
-                            <div class="alert alert-secondary small py-1 mb-2">
-                                <i class="bi bi-info-circle"></i> {% trans "Arrastre los elementos de la izquierda a sus objetivos a la derecha." %}
-                            </div>
                             <div class="row">
                                 <div class="col-6">
                                     <h6 class="text-muted text-center">{% trans "Elementos" %}</h6>
                                     <div class="list-group mix-match-list">
                                         {% for source in item.content.options %}
-                                        <div class="list-group-item draggable-item bg-white shadow-sm mb-1" draggable="true" data-source="{{ source }}">
-                                            {{ source }}
-                                        </div>
+                                        <div class="list-group-item draggable-item bg-white shadow-sm mb-1" draggable="true" data-source="{{ source }}">{{ source }}</div>
                                         {% endfor %}
                                     </div>
                                 </div>
                                 <div class="col-6">
-                                    <h6 class="text-muted text-center">{% trans "Categorías / Destinos" %}</h6>
+                                    <h6 class="text-muted text-center">{% trans "Destinos" %}</h6>
                                     <div class="list-group">
                                         {% for target in item.content.targets %}
-                                        <div class="list-group-item target-drop p-3 border-dashed mb-1 text-center text-muted bg-white" 
-                                             data-target="{{ target }}" data-item-id="{{ item.id }}">
-                                            {{ target }}
-                                        </div>
+                                        <div class="list-group-item target-drop p-3 border-dashed mb-1 text-center text-muted bg-white" data-target="{{ target }}" data-item-id="{{ item.id }}">{{ target }}</div>
                                         {% endfor %}
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        {# 8. WIDGET DIALÓGICO #}
-                        {% elif item.widget_id == 'W-COMM-DIALOG' %}
-                        <div class="widget-container p-3 border rounded bg-primary bg-opacity-10">
-                            <div class="chat-history-viewport mb-3 p-2 bg-white rounded border chat-viewport" id="chat-{{ item.id }}">
-                                <div class="text-secondary small italic text-center mt-5">{% trans "Presione GRABAR para iniciar la interacción..." %}</div>
-                            </div>
-                            <div class="d-flex gap-2 justify-content-center">
-                                <button type="button" class="btn btn-danger rounded-pill px-4 btn-record">
-                                    <i class="bi bi-mic-fill"></i> {% trans "Grabar Respuesta" %}
-                                </button>
-                            </div>
-                        </div>
-                        
+                        {# GENERIC FALLBACK #}
                         {# FALLBACK GENÉRICO #}
                         {% else %}
                         <div class="widget-container p-3 border rounded bg-warning bg-opacity-25">
-                            <p class="text-danger fw-bold">{% trans "Widget no reconocido:" %} {{ item.widget_id }}</p>
-                            <pre class="small">{{ item.content|pprint }}</pre>
-                            <textarea class="form-control response-input" placeholder="{% trans 'Escriba su respuesta aquí...' %}"></textarea>
+                            <p class="text-danger fw-bold">{% trans "Widget Genérico:" %} {{ item.widget_id }} / {{ item.block_type }}</p>
+                            <textarea class="form-control response-input-text" placeholder="{% trans 'Respuesta general...' %}"></textarea>
                         </div>
                         {% endif %}
                     </div>
@@ -213,14 +211,15 @@
             {% endfor %}
         </div>
         
-        {# SIDEPANEL #}
+        {# SIDEPANEL: RESOURCES / DIALOGS #}
+        {# PANEL LATERAL: RECURSOS / DIÁLOGOS #}
         <div class="col-lg-4">
             <div class="sticky-top sticky-resource-panel">
                 <div class="card border-dark shadow">
-                    <div class="card-header bg-dark text-white"><span class="small fw-bold">{% trans "W-LAW-NAV / RECURSOS" %}</span></div>
+                    <div class="card-header bg-dark text-white"><span class="small fw-bold">{% trans "REPOSITORIO ACADÉMICO" %}</span></div>
                     <div class="card-body p-0 law-nav-body">
-                        <div id="normative-results" class="p-3 small text-center text-muted mt-5">
-                            <p>{% trans "Seleccione un bloque para cargar el marco normativo." %}</p>
+                        <div id="normative-results" class="p-3 small text-muted">
+                            <p>{% trans "Este panel permite la consulta de material complementario y normativas técnicas sin abandonar la vista del examen." %}</p>
                         </div>
                     </div>
                 </div>
@@ -234,38 +233,47 @@
 </div>
 
 <script>
-    // In-memory state for complex widgets / Estado en memoria para widgets complejos
+    // IN-MEMORY STATE FOR COMPLEX WIDGETS
+    // ESTADO EN MEMORIA PARA WIDGETS COMPLEJOS
     const widgetState = {
-        calcSteps: {},
-        scanMarkers: {},
-        mixLinks: {}
+        calcSteps: {}, // Map for RPP-TRAZA: itemId -> [{id: 1, value: "x"}]
+        scanMarkers: {}, // Metadata for ILC-CONTEXT
+        mixLinks: {}   // Map for MAT-LINK: itemId -> {source: target}
     };
 
-    // 1. W-TECH-CALC: Multi-step log logic / Lógica de log multietapa
+    // 1. RPP-TRAZA LOGIC (W-TECH-CALC)
+    // Generates {id, value} dicts required by TechnicalStrategy
     document.querySelectorAll('.calc-input').forEach(input => {
         input.addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
                 const itemId = this.closest('.exam-item').dataset.itemId;
                 const val = this.value.trim();
                 if (!val) return;
+                
                 if (!widgetState.calcSteps[itemId]) widgetState.calcSteps[itemId] = [];
-                widgetState.calcSteps[itemId].push(val);
+                // tech.py expects a sequential ID to match the step matrix
+                const stepId = widgetState.calcSteps[itemId].length + 1; 
+                widgetState.calcSteps[itemId].push({ id: stepId, value: val });
+                
                 const log = document.getElementById(`log-${itemId}`);
-                log.innerHTML += `<div>Step ${widgetState.calcSteps[itemId].length}: ${val}</div>`;
+                log.innerHTML += `<div>[Paso ${stepId}]: ${val}</div>`;
                 this.value = '';
             }
         });
     });
 
-    // 2. W-CLIN-SCAN: Marker logic / Lógica de marcadores
+    // 2. ILC-CONTEXT LOGIC (W-CLIN-SCAN)
+    // Visual markers logic
     document.querySelectorAll('.scan-container').forEach(container => {
         container.addEventListener('click', function(e) {
             const rect = this.getBoundingClientRect();
             const x = ((e.clientX - rect.left) / rect.width * 100).toFixed(2);
             const y = ((e.clientY - rect.top) / rect.height * 100).toFixed(2);
             const itemId = this.dataset.itemId;
+            
             if (!widgetState.scanMarkers[itemId]) widgetState.scanMarkers[itemId] = [];
             widgetState.scanMarkers[itemId].push({x, y});
+            
             const overlay = document.getElementById(`overlay-${itemId}`);
             const dot = document.createElement('div');
             dot.className = 'marker-dot';
@@ -275,7 +283,8 @@
         });
     });
 
-    // 3. W-MIX-MATCH: Drag & Drop logic / Lógica de arrastrar y soltar
+    // 3. MAT-LINK LOGIC (W-MIX-MATCH)
+    // Drag and drop implementation
     document.querySelectorAll('.draggable-item').forEach(item => {
         item.addEventListener('dragstart', e => e.dataTransfer.setData('text/plain', e.target.dataset.source));
     });
@@ -287,21 +296,26 @@
             target.classList.remove('active');
             const source = e.dataTransfer.getData('text/plain');
             const targetId = target.dataset.target;
-            const itemId = target.closest('.exam-item').dataset.itemId;
+            const itemId = target.dataset.itemId;
+            
             if (!widgetState.mixLinks[itemId]) widgetState.mixLinks[itemId] = {};
             widgetState.mixLinks[itemId][source] = targetId;
+            
             target.innerHTML = `<span class="badge bg-success">${source}</span> <i class="bi bi-arrow-right"></i> ${targetId}`;
         });
     });
 
-    // Strikethrough Logic / Lógica de tachado
+    // PRM-STRIKE LOGIC: Visual strikethrough (UI only)
     document.querySelectorAll('.btn-strike').forEach(btn => {
         btn.addEventListener('click', function() {
             this.previousElementSibling.classList.toggle('striked-option');
         });
     });
 
-    // Global Submission / Entrega Global
+    // =========================================================================
+    // SUBMISSION CONTROLLER (STRICT JSON CONTRACT ASSEMBLY)
+    // CONTROLADOR DE ENTREGA (ENSAMBLAJE ESTRICTO DEL CONTRATO JSON)
+    // =========================================================================
     document.getElementById('submit-exam').addEventListener('click', async function() {
         const btn = this;
         btn.disabled = true;
@@ -311,26 +325,38 @@
 
         items.forEach(item => {
             const itemId = item.dataset.itemId;
-            const widgetId = item.dataset.widgetId;
-            
-            if (widgetId === 'W-TECH-CALC') {
+            const blockType = item.dataset.blockType;
+
+            // 1. RPP-TRAZA (TechnicalStrategy): Requires { steps: [ {id, value} ] }
+            if (blockType === 'RPP-TRAZA') {
                 responses[itemId] = { steps: widgetState.calcSteps[itemId] || [] };
-            } else if (widgetId === 'W-CLIN-SCAN') {
-                responses[itemId] = { 
-                    markers: widgetState.scanMarkers[itemId] || [], 
-                    diagnosis: item.querySelector('.response-input').value 
-                };
-            } else if (widgetId === 'W-MIX-MATCH') {
-                responses[itemId] = widgetState.mixLinks[itemId] || {};
-            } else if (widgetId === 'W-OBJ-STRIKE') {
-                const sel = item.querySelector('input:checked');
+            } 
+            // 2. CDS-KILL (HealthStrategy): Requires boolean or { checked: bool }
+            else if (blockType === 'CDS-KILL') {
+                const checkbox = item.querySelector('.response-input-kill');
+                responses[itemId] = { checked: checkbox ? checkbox.checked : false };
+            } 
+            // 3. ILC-CONTEXT / DRA-HOLO / RBT-CANON (Simple text)
+            else if (blockType === 'ILC-CONTEXT' || blockType === 'DRA-HOLO' || blockType === 'RBT-CANON') {
+                const input = item.querySelector('.response-input-text');
+                responses[itemId] = input ? input.value : '';
+            } 
+            // 4. PRM-STRIKE (Options)
+            else if (blockType === 'PRM-STRIKE') {
+                const sel = item.querySelector('.response-input-radio:checked');
                 responses[itemId] = sel ? sel.value : '';
-            } else if (widgetId === 'W-PROC-ACTION') {
-                responses[itemId] = Array.from(item.querySelectorAll('.response-input-check:checked')).map(el => el.value);
-            } else if (widgetId === 'W-TXT-CLOZE') {
+            } 
+            // 5. MAT-LINK (Key-Value pairs)
+            else if (blockType === 'MAT-LINK') {
+                responses[itemId] = widgetState.mixLinks[itemId] || {};
+            } 
+            // 6. CLO-OPEN / CLO-MULTI (Multiple gaps)
+            else if (blockType === 'CLO-OPEN' || blockType === 'CLO-MULTI') {
                 responses[itemId] = Array.from(item.querySelectorAll('.cloze-input')).map(el => el.value);
-            } else {
-                const input = item.querySelector('.response-input');
+            } 
+            // FALLBACK
+            else {
+                const input = item.querySelector('.response-input-text');
                 responses[itemId] = input ? input.value : '';
             }
         });
@@ -342,9 +368,16 @@
                 body: JSON.stringify({responses: responses})
             });
             const result = await response.json();
-            if (result.status === 'SUCCESS') window.location.href = result.url;
-            else { alert('Error: ' + result.message); btn.disabled = false; }
-        } catch (err) { alert('Error de conexión.'); btn.disabled = false; }
+            if (result.status === 'SUCCESS') {
+                window.location.href = result.url;
+            } else { 
+                alert('{% trans "Error durante la corrección:" %} ' + result.message); 
+                btn.disabled = false; 
+            }
+        } catch (err) { 
+            alert('{% trans "Error crítico de conexión al procesar la entrega." %}'); 
+            btn.disabled = false; 
+        }
     });
 </script>
 {% endblock %}

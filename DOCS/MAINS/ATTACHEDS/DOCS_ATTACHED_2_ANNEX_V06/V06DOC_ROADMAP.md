@@ -1,5 +1,5 @@
 <!-- /home/MiguelAeTxio/PROJECTS/CampuStudiOnline/DOCS/MAINS/ATTACHEDS/DOCS_ATTACHED_2_ANNEX_V06/V06DOC_ROADMAP.md -->
-# V06DOC_ROADMAP - MANIFIESTO DE CUMPLIMIENTO TÉCNICO (V1.5)
+# V06DOC_ROADMAP - MANIFIESTO DE CUMPLIMIENTO TÉCNICO (V1.6)
 
 ## 5. REGLAS DE NEGOCIO Y FEEDBACK - [X] 100%
 - [X] Aplicación de Rigor Engine (x0.8, x1.3, x1.6).
@@ -22,5 +22,15 @@
 - [X] Validación de Persistencia: Verificado soporte JSON para widgets V2 complejos.
 - [X] Blindaje de Seguridad: Restauración del sistema de bloqueo Staff y Modal Académico.
 
+## 8. INTERFAZ DE EVALUACIÓN (UI/UX) - [X] 100%
+- [X] **Integración de Widgets:** Plantilla `exam_take.html` reescrita para cumplir estrictamente con los contratos JSON de `V06DOC_BLOCKS` (RPP-TRAZA, CDS-KILL, etc.).
+- [X] **Controlador de Entregas:** Implementado `ExamSubmitView` con ensamblaje de payload y conexión al `GradingOrchestrator`.
+
+## 9. GESTIÓN DE CICLO DE VIDA (ANTI-ABUSO) - [ ] 0% (EN PROGRESO)
+- [ ] **Modelo de Datos:** Implementación del campo `expiration_date` en el modelo `Exam` (Ref: V06DOC_TEMPLATES V1.3).
+- [ ] **Lógica de Negocio:** Implementación de la regla de caducidad de 24h tras generación (Estado READY).
+- [ ] **Integración de Navegación:** Corrección de `navigation_builder.py` para filtrar exámenes caducados o mostrar alertas.
+- [ ] **Certificación Final:** Test End-to-End del ciclo completo con validación de caducidad.
+
 ---
-**ESTADO:** FASE DE ESTABILIZACIÓN Y PRUEBAS. BLOQUEO LEVANTADO.
+**ESTADO:** FASE FINAL DE CIERRE Y ANTI-ABUSO.

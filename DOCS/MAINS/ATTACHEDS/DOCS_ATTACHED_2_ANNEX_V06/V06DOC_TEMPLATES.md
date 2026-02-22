@@ -1,5 +1,5 @@
 # /home/MiguelAeTxio/PROJECTS/CampuStudiOnline/DOCS/MAINS/ATTACHEDS/DOCS_ATTACHED_2_ANNEX_V06/V06DOC_TEMPLATES.md
-# V06DOC_TEMPLATES - ESQUEMA DE DATOS "UGR-LEVEL EXAM CONTRACT" (V1.2 - SKELETON-FIRST)
+# V06DOC_TEMPLATES - ESQUEMA DE DATOS "UGR-LEVEL EXAM CONTRACT" (V1.3 - ANTI-ABUSE UPDATE)
 
 Este documento define la estructura JSON obligatoria para la comunicación entre el motor de IA y el emulador. 
 
@@ -12,6 +12,9 @@ Este documento define la estructura JSON obligatoria para la comunicación entre
 *   itinerary_id: [ID] Referencia a V06DOC_SUBDIVISIONS (ITIN).
 *   pedagogical_level: [LVL_A | LVL_B | LVL_C].
 *   grading_params: Objeto con pesos relativos por subdivisión.
+*   **expiration_date**: [DATETIME] Fecha límite de realización.
+    *   **Regla de Negocio (Anti-Abuso):** Se establece automáticamente en **24 horas** tras la finalización de la generación (Estado 'READY').
+    *   **Penalización:** Si el examen no se completa antes de esta fecha, el usuario pierde la convocatoria y se registra un incidente de uso (reducción de cuota semanal).
 
 ## 2. ESTRUCTURA DE FASES (SUBDIVISION_SEQUENCE - Orquestado por Python)
 Definida por . Array de objetos de fase:
