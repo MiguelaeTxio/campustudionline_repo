@@ -243,6 +243,7 @@
 ./contents/forms.py
 ./contents/models.py
 ./contents/migrations/0012_remove_contentmaterial_content_hierarchy_is_exclusive_and_more.py
+./contents/migrations/0020_alter_userstudynavigation_user.py
 ./contents/migrations/0002_initial.py
 ./contents/migrations/0016_populate_sub_categories.py
 ./contents/migrations/0010_freecontentmastercategory_and_more.py
@@ -251,6 +252,7 @@
 ./contents/migrations/0003_alter_favoritefolder_unique_together.py
 ./contents/migrations/0009_populate_free_content_hierarchy.py
 ./contents/migrations/__init__.py
+./contents/migrations/0021_fix_user_nav_cascade.py
 ./contents/migrations/0014_alter_freecontentmastercategory_options_and_more.py
 ./contents/migrations/0011_populate_master_categories.py
 ./contents/migrations/0004_remove_contentmaterial_subject_and_more.py

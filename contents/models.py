@@ -187,7 +187,8 @@ class UserStudyNavigation(models.Model):
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         related_name='study_navigation',
-        verbose_name="Usuario"
+        verbose_name="Usuario",
+        help_text="Usuario propietario de este árbol de navegación. Se elimina en cascada."
     )
     navigation_tree = models.JSONField(
         default=dict,

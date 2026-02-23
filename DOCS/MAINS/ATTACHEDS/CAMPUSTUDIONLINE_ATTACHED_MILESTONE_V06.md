@@ -22,21 +22,20 @@ El archivo V06DOC_ROADMAP.md es la ÚNICA fuente de verdad para el progreso.
 ---
 
 # ANEXO: HITO 06 - SISTEMA DE AUTOEVALUACIONES CON IA
-# ESTADO: EN PROGRESO (AUDITORÍA DE RESILIENCIA Y VALIDACIÓN FINAL)
+# ESTADO: EN PROGRESO (RESOLUCIÓN DE ERRORES DE IMPLEMENTACIÓN)
 
 ### PARTE MUTABLE (RESUMEN Y HOJA DE RUTA)
 
-## 1. RESUMEN TÉCNICO DE LA SESIÓN (EPI)
-*   **Restauración Crítica (Hotfix):** Se recuperó quirúrgicamente la función `_safe_generate_content` y la infraestructura de buzón de cuarentena en `orchestrator/tasks.py`, perdidas en una refactorización anterior.
-*   **Blindaje de Cuota:** Implementada la detección de error 429 (`ResourceExhausted`) y la activación automática de `is_quarantined=True` en tiempo real, forzando la rotación de API Keys sin abortar la tarea.
-*   **Cobertura Total:** El blindaje se ha aplicado tanto a la generación de cursos (`generate_full_course_task`) como a la de exámenes (`generate_exam_task`).
+## 1. RESUMEN TÉCNICO DE LA SESIÓN (MAMC)
+*   **Certificación de Motores:** Éxito total en la validación de los 22 subarquetipos académicos tras corregir los nominales de las asignaturas.
+*   **Saneamiento de Base de Datos:** Se ha detectado y corregido un error de integridad (1451) en MySQL. Se aplicó una reparación física de la restricción `FOREIGN KEY` en la tabla `contents_userstudynavigation` para habilitar el `ON DELETE CASCADE` real.
+*   **Verificación:** Borrado de usuarios de prueba realizado con éxito desde el panel de administración.
 
 ## 2. HOJA DE RUTA PARA LA SIGUIENTE SESIÓN (LEY SUPREMA)
-**VALIDACIÓN FINAL DE MOTORES (22/22):**
+**DEPURACIÓN DE ERRORES DE GENERACIÓN:**
 
-1.  **CORRECCIÓN DE NOMINALES:** Editar `assessment_v2/management/commands/validate_v06_engines.py` para corregir los nombres de las 3 asignaturas que fallaron en la prueba anterior (`SUB-LIN-LIT`, `SUB-SAN-CUID`, `SUB-HUM-HIST`).
-2.  **EJECUCIÓN DE VALIDACIÓN:** Ejecutar `python manage.py validate_v06_engines` hasta certificar el éxito en los 22 subarquetipos.
-3.  **AUDITORÍA DE LOGS:** Verificar en `tasks.log` o `event_log` que la rotación de claves funciona correctamente bajo carga.
-4.  **CIERRE DE HITO:** Finalizar la auditoría y marcar el Hito 06 como completado.
+1.  **CORRECCIÓN DE TYPEERROR:** Investigar y corregir el fallo en `orchestrator/tasks.py` (línea 441) donde `LanguagesStrategy.get_system_prompt()` falla por argumentos inesperados.
+2.  **AUDITORÍA DE FIRMAS:** Revisar el contrato de métodos entre la `BaseStrategy` y sus implementaciones concretas en `assessment_v2/services/engine/strategies/`.
+3.  **TEST DE GENERACIÓN REAL:** Realizar una prueba de generación de examen completa desde la interfaz de usuario para confirmar la estabilidad del flujo Skeleton-First.
+4.  **REVISIÓN DE LOGS DE BLEACH:** Atender el aviso `NoCssSanitizerWarning` en el procesamiento de HTML con la librería `bleach`.
 
----

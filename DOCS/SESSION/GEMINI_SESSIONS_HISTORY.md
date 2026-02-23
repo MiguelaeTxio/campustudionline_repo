@@ -1885,3 +1885,10 @@ Carga de contexto obligatoria: Documentación técnica V06DOC y modelos de `asse
 *  **Session:** AUDITORÍA DE CUARENTENA Y ROTACIÓN EN MOTORES DE IA
 *  **Description:** Análisis de asimetría en resiliencia entre tareas de generación de exámenes y cursos, implementación de cuarentena unificada para API Keys tras errores 429, ajuste de delays en orquestador para mitigación de Throttling RPM, y certificación final de subarquetipos (22/22) bajo ráfaga controlada.
 
+# 2026-02-23
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+## MAMC
+*  **Session:** Validación Final de Motores V06 y Corrección de Nominales
+*  **Description:** Sesión enfocada en la validación final de los 22 motores del sistema de autoevaluación V06. Se procederá a corregir los nombres nominales de las asignaturas fallidas (SUB-LIN-LIT, SUB-SAN-CUID, SUB-HUM-HIST) en el comando de validación. Posteriormente, se ejecutará la prueba de carga para certificar el éxito bajo ráfaga controlada, auditar los logs para comprobar la resiliencia y rotación de claves API, y finalizar el Hito 06.
+

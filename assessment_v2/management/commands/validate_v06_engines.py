@@ -22,9 +22,9 @@ class Command(BaseCommand):
     TARGETS = {
         'SUB-LIN-CERT': 'Lengua Francesa V',
         'SUB-LIN-PROF': 'Traducción Especializada',
-        'SUB-LIN-LIT':  'Literatura española del Siglo de Oro',
+        'SUB-LIN-LIT':  'Literatura Española del Siglo de Oro',
         'SUB-SAN-MED':  'Bases de la Medicina Interna II',
-        'SUB-SAN-CUID': 'Enfermería del Adulto',
+        'SUB-SAN-CUID': 'Enfermería del Adulto III',
         'SUB-SAN-BIO':  'Farmacología aplicada',
         'SUB-SAN-PSY':  'Psicometría',
         'SUB-SAN-VET':  'Zoología',
