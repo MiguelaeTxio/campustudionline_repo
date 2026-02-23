@@ -15,6 +15,7 @@ from django.core.paginator import Paginator
 from django.db.models import Q, Exists, OuterRef # Importado para consultas complejas
 import markdown
 import bleach
+from bleach.css_sanitizer import CSSSanitizer
 
 from academic_structure.models import Subject # Importación necesaria
 from .utils import generate_share_image_bytes, annotate_is_favorite
@@ -48,9 +49,31 @@ ALLOWED_ATTRIBUTES = {
 }
 
 def markdown_to_html_internal(markdown_text):
-    if not markdown_text: return ""
-    html_output = markdown.markdown(markdown_text, extensions=MARKDOWN_EXTENSIONS, extension_configs=MARKDOWN_EXTENSION_CONFIGS)
-    return bleach.clean(html_output, tags=ALLOWED_TAGS, attributes=ALLOWED_ATTRIBUTES)
+    """
+    Converts Markdown text to clean and safe HTML for internal application use.
+    ---
+    Convierte texto Markdown a HTML limpio y seguro para uso interno de la aplicación.
+    """
+    if not markdown_text: 
+        return ""
+        
+    # Generate HTML from Markdown / Generar HTML desde Markdown
+    html_output = markdown.markdown(
+        markdown_text, 
+        extensions=MARKDOWN_EXTENSIONS, 
+        extension_configs=MARKDOWN_EXTENSION_CONFIGS
+    )
+    
+    # Initialize CSS Sanitizer to handle the 'style' attribute and avoid warnings
+    # Inicializar el Sanitizador de CSS para manejar el atributo 'style' y evitar avisos
+    css_sanitizer = CSSSanitizer()
+    
+    return bleach.clean(
+        html_output, 
+        tags=ALLOWED_TAGS, 
+        attributes=ALLOWED_ATTRIBUTES,
+        css_sanitizer=css_sanitizer
+    )
 
 def parse_yaml_front_matter(content_string):
     if not content_string:

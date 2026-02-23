@@ -112,6 +112,7 @@ class SocialStrategy(BaseExamStrategy):
     def get_output_schema(self):
         """
         Atomic JSON Schema for ARCH_SOC.
+        Uses anyOf for Union Types (Gemini 2.5 Safe).
         """
         return {
             "type": "object",
@@ -135,7 +136,12 @@ class SocialStrategy(BaseExamStrategy):
                             "grading_logic": {
                                 "type": "object",
                                 "properties": {
-                                    "correct_answer": {"type": ["string", "number"]},
+                                    "correct_answer": {
+                                        "anyOf": [
+                                            {"type": "string"},
+                                            {"type": "number"}
+                                        ]
+                                    },
                                     "required_norms": {"type": "array", "items": {"type": "string"}}
                                 }
                             },

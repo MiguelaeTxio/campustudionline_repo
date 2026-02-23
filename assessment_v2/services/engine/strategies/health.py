@@ -142,6 +142,7 @@ class HealthStrategy(BaseExamStrategy):
     def get_output_schema(self):
         """
         Atomic JSON Schema for ARCH_HEALTH.
+        Uses anyOf for Union Types (Gemini 2.5 Safe).
         """
         return {
             "type": "object",
@@ -165,7 +166,12 @@ class HealthStrategy(BaseExamStrategy):
                             "grading_logic": {
                                 "type": "object",
                                 "properties": {
-                                    "correct_answer": {"type": ["string", "boolean"]},
+                                    "correct_answer": {
+                                        "anyOf": [
+                                            {"type": "string"},
+                                            {"type": "boolean"}
+                                        ]
+                                    },
                                     "kill_switch": {"type": "boolean"},
                                     "penalty_factor": {"type": "number"},
                                     "keywords": {"type": "array", "items": {"type": "string"}}

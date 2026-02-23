@@ -437,15 +437,12 @@ def generate_exam_task(self, exam_uuid, context_text=None, topic=None):
             db_sec = sections_map.get(s_info['subdivision_id'])
             if not db_sec: continue
             
-            # Inyección de immersion_mode y pedagogical_level en el prompt atómico
-            s_prompt = strategy.get_system_prompt(
-                immersion_mode=exam.immersion_mode, 
-                pedagogical_level=exam.pedagogical_level
-            )
+            # Inyección de immersion_mode y pedagogical_level ELIMINADA (Bugfix: TypeError)
+            s_prompt = strategy.get_system_prompt()
+            
             u_prompt = strategy.get_user_prompt(
                 context_text=context_text, topic=topic or subject.name,
-                subdivision_id=s_info['subdivision_id'], generated_item_titles=generated_titles,
-                immersion_mode=exam.immersion_mode, pedagogical_level=exam.pedagogical_level
+                subdivision_id=s_info['subdivision_id'], generated_item_titles=generated_titles
             )
             
             success, resp, key_name, usage = _safe_generate_content(

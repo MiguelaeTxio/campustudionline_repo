@@ -217,8 +217,7 @@ class TechnicalStrategy(BaseExamStrategy):
     def get_output_schema(self):
         """
         Defines the expected JSON schema for the AI model response (ATOMIC).
-        ---
-        Define el esquema JSON esperado para la respuesta del modelo de IA (ATÓMICO).
+        Uses anyOf for Union Types (Gemini 2.5 Safe).
         """
         return {
             "type": "object",
@@ -242,7 +241,13 @@ class TechnicalStrategy(BaseExamStrategy):
                             "grading_logic": {
                                 "type": "object",
                                 "properties": {
-                                    "correct_answer": {"type": ["string", "number", "boolean"]},
+                                    "correct_answer": {
+                                        "anyOf": [
+                                            {"type": "string"},
+                                            {"type": "number"},
+                                            {"type": "boolean"}
+                                        ]
+                                    },
                                     "step_matrix": {
                                         "type": "array",
                                         "items": {
