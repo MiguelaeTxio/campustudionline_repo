@@ -1871,3 +1871,17 @@ Carga de contexto obligatoria: Documentación técnica V06DOC y modelos de `asse
 *  **Session:** Test de Estrés y Validación Masiva de Subarquetipos V06
 *  **Description:** Implementación y ejecución de un script de auditoría en entorno transaccional aislado (rollback) para someter a prueba de estrés al motor de evaluaciones. Se verificará la correcta deducción de identidad pedagógica (arquetipo y subarquetipo) y la generación atómica de exámenes sobre un muestreo representativo de 22 asignaturas reales, asegurando la robustez del sistema sin afectar la base de datos de producción.
 
+# 2026-02-23
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+## PLUTO !<-- SE PONE EL ACRÓNIMO QUE ENTREGA EL USUARIO, JAMÁS SE PONE UNO INVENTADO POR EL MODELO # --SYSTEM -->!
+*  **Session:** AUDITORÍA DE CUARENTENA Y ROTACIÓN EN MOTORES DE IA
+*  **Description:** Análisis de asimetría en resiliencia entre tareas de generación de exámenes y cursos, implementación de cuarentena unificada para API Keys tras errores 429, ajuste de delays en orquestador para mitigación de Throttling RPM, y certificación final de subarquetipos (22/22) bajo ráfaga controlada.
+
+# 2026-02-23
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+## PLUTO
+*  **Session:** AUDITORÍA DE CUARENTENA Y ROTACIÓN EN MOTORES DE IA
+*  **Description:** Análisis de asimetría en resiliencia entre tareas de generación de exámenes y cursos, implementación de cuarentena unificada para API Keys tras errores 429, ajuste de delays en orquestador para mitigación de Throttling RPM, y certificación final de subarquetipos (22/22) bajo ráfaga controlada.
+

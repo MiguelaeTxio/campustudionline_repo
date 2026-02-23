@@ -99,6 +99,15 @@ def _process_quarantine_requests():
     except Exception as e:
         logger.error(f"Error procesando buzón: {e}")
 
+
+def _request_quarantine_via_mailbox(api_key):
+    """Solicita cuarentena persistente escribiendo en el buzón (thread-safe)."""
+    try:
+        with open(QUARANTINE_MAILBOX_FILE, "a") as f:
+            f.write(f"{api_key.id}\n")
+    except Exception as e:
+        logger.error(f"Error solicitando cuarentena: {e}")
+
 def _check_and_perform_daily_reset():
     try:
         automation_settings = AutomationSettings.load()
@@ -123,6 +132,78 @@ def _purge_zombie_tasks():
 # ==============================================================================
 # SECCIÓN 2: GENERACIÓN DE CONTENIDO (RESTAURADO V24.13)
 # ==============================================================================
+
+
+def _safe_generate_content(prompt, system_instruction=None, response_schema=None, logger_callback=None):
+    """
+    [HITO 37 RESTORED] Wrapper de Rotación en Caliente (Hot-Swap).
+    Gestiona Errores 429/Cuota, Strikes y Rotación de Keys transparente.
+    """
+    while True:
+        # 1. Sincronización
+        automation_settings = AutomationSettings.load()
+        api_key = automation_settings.active_api_key
+        
+        # 2. Validación de Clave Activa
+        if not api_key or not api_key.is_enabled or api_key.is_quarantined:
+                api_key = ApiKey.objects.filter(is_enabled=True, is_quarantined=False).order_by('id').first()
+                if api_key:
+                    automation_settings.active_api_key = api_key
+                    automation_settings.save(update_fields=['active_api_key'])
+                else:
+                    if logger_callback: logger_callback("SIN CLAVES DISPONIBLES. Esperando 5m...", level="ERROR")
+                    time.sleep(300)
+                    continue
+
+        if logger_callback: logger_callback(f"Llamando a API... (Clave: {api_key.name})")
+        
+        try:
+            # Llamada original
+            success, text, key_name, usage = generate_text_content(
+                prompt, 
+                system_instruction=system_instruction,
+                api_key=api_key,
+                response_schema=response_schema
+            )
+        except Exception as e:
+            success = False
+            text = str(e)
+            usage = {}
+        
+        if success:
+            # Limpiar strikes si hubo éxito
+            if api_key.consecutive_failures > 0:
+                api_key.consecutive_failures = 0
+                api_key.save(update_fields=['consecutive_failures'])
+            return True, text, api_key.name, usage
+        
+        else:
+            # 3. Gestión de Errores Estándar
+            error_str = str(text)
+            is_quota = "429" in error_str or "Resource" in error_str or "Quota" in error_str
+            
+            if is_quota:
+                api_key.refresh_from_db()
+                api_key.consecutive_failures += 1
+                api_key.save(update_fields=["consecutive_failures"])
+                
+                if api_key.consecutive_failures >= 4:
+                    api_key.is_quarantined = True
+                    api_key.save(update_fields=["is_quarantined"])
+                    _request_quarantine_via_mailbox(api_key)
+                    if logger_callback: logger_callback(f"ROTACIÓN FORZADA: Clave {api_key.name} a Cuarentena.")
+                    
+                    # Intentar rotar inmediatamente para el siguiente loop
+                    next_k = ApiKey.objects.filter(is_enabled=True, is_quarantined=False).exclude(id=api_key.id).first()
+                    if next_k:
+                        automation_settings.active_api_key = next_k
+                        automation_settings.save(update_fields=['active_api_key'])
+                else:
+                    if logger_callback: logger_callback(f"STRIKE {api_key.consecutive_failures}/4 ({api_key.name}).", level="WARNING")
+                continue 
+            else:
+                # Error no relacionado con cuota (ej: 500, overload), devolvemos el error.
+                return False, text, api_key.name, {}
 
 def log_task_event(task_id: str, message: str, is_error: bool = False, payload: dict = None):
     try:
@@ -256,12 +337,12 @@ def generate_full_course_task(self, task_id):
             log_task_event(task_id, "Generando Plan de Trabajo...")
             topic_description = task.subject.name if task.subject else task.prompt_text
             metadata_prompt = generate_course_metadata_prompt(topic_description, "") + "\n\nJSON Only."
-            success, response_text, _, usage = generate_text_content(metadata_prompt, api_key=api_key)
+            success, response_text, _, usage = _safe_generate_content(metadata_prompt, logger_callback=lambda m, level="INFO": log_task_event(task_id, m))
             if not success: raise self.retry(countdown=60)
             
             metadata = json.loads(clean_json_response(response_text))
             schema_prompt = generate_master_schema_prompt(topic_description, "", "", "")
-            success, schema_text, _, _ = generate_text_content(schema_prompt, api_key=api_key)
+            success, schema_text, _, _ = _safe_generate_content(schema_prompt, logger_callback=lambda m, level="INFO": log_task_event(task_id, m))
             if not success: raise self.retry(countdown=60)
             
             task.section_count = len(_parse_master_schema(schema_text))
@@ -272,7 +353,7 @@ def generate_full_course_task(self, task_id):
         for index, (_, title) in enumerate(parsed_schema, 1):
             if GeneratedContentChunk.objects.filter(task=task, order=index).exists(): continue
             prompt = generate_atomic_content_prompt(task.subject.name if task.subject else task.course_title, title, task.structured_content["master_schema"], "")
-            success, content, _, _ = generate_text_content(prompt, api_key=api_key)
+            success, content, _, _ = _safe_generate_content(prompt, logger_callback=lambda m, level="INFO": log_task_event(task_id, m))
             if success:
                 c, s = _parse_markdown_with_separator(content)
                 GeneratedContentChunk.objects.create(task=task, order=index, content=c, ai_sources=s)
@@ -367,11 +448,11 @@ def generate_exam_task(self, exam_uuid, context_text=None, topic=None):
                 immersion_mode=exam.immersion_mode, pedagogical_level=exam.pedagogical_level
             )
             
-            success, resp, key_name, usage = generate_text_content(
-                u_prompt, 
-                system_instruction=s_prompt, 
-                api_key=AutomationSettings.load().active_api_key, 
-                response_schema=strategy.get_output_schema()
+            success, resp, key_name, usage = _safe_generate_content(
+                u_prompt,
+                system_instruction=s_prompt,
+                response_schema=strategy.get_output_schema(),
+                logger_callback=lambda m, level="INFO": exam.event_log.append({"ts": timezone.now().isoformat(), "msg": m}) or exam.save(update_fields=['event_log'])
             )
             if success:
                 usage_total["in"] += usage.get("input_tokens", 0)
