@@ -1,7 +1,10 @@
 # /home/MiguelAeTxio/PROJECTS/CampuStudiOnline/DOCS/MAINS/ATTACHEDS/DOCS_ATTACHED_2_ANNEX_V06/V06DOC_SUBARCHETYPES.md
-# V06DOC_SUBARCHETYPES - MATRIZ DE ESPECIALIZACIÓN ACADÉMICA (V1.0)
+# V06DOC_SUBARCHETYPES - MATRIZ DE ESPECIALIZACIÓN ACADÉMICA (V2.0 - DETERMINISTA)
 
-Este documento define la lógica de corrección y el sesgo académico de cada subarquetipo.
+Este documento define la **Configuración Estructural Fija** (Receta) que cada Estrategia de Python debe implementar.
+**PRINCIPIO:** Python define los Secciones y los Ítems (Widgets). La IA solo rellena el contenido solicitado.
+
+**NOTA DE IMPLEMENTACIÓN:** Cada subarquetipo listado aquí se traduce en una clase `Strategy` que devuelve un esqueleto inmutable.
 
 ## 1. GRUPO: LENGUAS EXTRANJERAS
 *   **SUB-LIN-CERT:** Foco en estandarización (MCER). Penalización por error en Test. Rúbrica de producción rígida.

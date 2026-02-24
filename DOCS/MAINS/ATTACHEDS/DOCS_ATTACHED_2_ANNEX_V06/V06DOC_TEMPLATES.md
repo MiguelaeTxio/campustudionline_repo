@@ -1,9 +1,9 @@
 # /home/MiguelAeTxio/PROJECTS/CampuStudiOnline/DOCS/MAINS/ATTACHEDS/DOCS_ATTACHED_2_ANNEX_V06/V06DOC_TEMPLATES.md
-# V06DOC_TEMPLATES - ESQUEMA DE DATOS "UGR-LEVEL EXAM CONTRACT" (V1.3 - ANTI-ABUSE UPDATE)
+# V06DOC_TEMPLATES - CONTRATO DE INYECCIÓN DE CONTENIDO (V2.0 - PYTHON DICTATOR)
 
-Este documento define la estructura JSON obligatoria para la comunicación entre el motor de IA y el emulador. 
+Este documento define el contrato de datos entre el orquestador y la IA. 
 
-**ACTUALIZACIÓN SKELETON-FIRST:** El esqueleto del examen (Cabecera y Fases) es generado por Python mediante el método  de la estrategia. La IA genera el contenido de los ítems de forma atómica para cada sección.
+**ESTÁNDAR DE PLANTILLA RÍGIDA:** La estructura del examen (Secciones e Ítems) es generada por Python antes de la llamada. La IA actúa como motor de renderizado de contenido, rellenando los campos de texto del esqueleto sin poder alterar los widgets ni la jerarquía definida.
 
 ## 1. CABECERA DEL EXAMEN (EXAM_HEADER - Orquestado por Python)
 *   exam_id: [UUID] Identificador único de la sesión.
@@ -29,24 +29,25 @@ Definida por . Array de objetos de fase:
     *   `SPLIT_TEXT`: Panel lateral de texto (Reading/Caso).
     *   `SPLIT_VISUAL`: Panel lateral de imagen/media (Anatomía/Arte).
 
-## 3. DEFINICIÓN DE ÍTEMS (ITEM_PAYLOAD - Generado por IA)
-Estructura obligatoria para cada ejercicio. La IA debe responder con un array  de estos objetos:
-*   block_type: [ID] (ej: PRM_STRIKE, RPP_TRAZA, CLO-OPEN, CLO-MULTI, MAT-LINK, DRA-HOLO).
-*   widget_id: [ID] (ej: W_OBJ_STRIKE, W_TECH_CALC, W_TXT_CLOZE, W_MIX_MATCH, W_HUM_TEXT).
-*   content:
-    *   stem: Enunciado técnico.
-    *   media_assets: [Array] URLs de recursos (imágenes, audios).
-    *   options: [Array] (Solo para Test) Lista de distractores.
-    *   text_with_gaps: [String] (Solo para Cloze) Texto con marcadores de huecos.
-*   grading_logic:
-    *   correct_answer: Valor canónico esperado.
-    *   penalty_factor: Float (Resta por error).
-    *   kill_switch: Boolean (Error fatal - Ref: CDS-KILL).
-    *   step_matrix: [JSON] (Solo para RPP) Mapa de pasos lógicos.
-    *   pairs: [Dict] (Solo para MAT-LINK) Mapa de vinculación Drag & Drop.
-*   metadata:
-    *   competency_tag: [ID] (Referencia V06DOC_METADATA).
-    *   cognitive_tag: [ID] (Referencia V06DOC_METADATA).
+## 3. DEFINICIÓN DE ÍTEMS (ITEM_PAYLOAD - Rellenado de Plantilla)
+La IA recibe los ítems vacíos (definidos por la Estrategia) y devuelve **exclusivamente** el contenido.
+
+**Input (Desde Python):** "El Ítem {uuid} es un {widget_id}. Genera contenido."
+
+**Output (Desde IA):** Array `filled_items`.
+*   **item_id**: [UUID] Debe coincidir con el solicitado.
+*   **content**:
+    *   stem: Enunciado técnico (Traducido según nivel).
+    *   media_assets: [Array] (Opcional).
+    *   options: [Array] (Solo si el widget lo requiere).
+    *   text_with_gaps: [String] (Solo si el widget lo requiere).
+*   **grading_logic**:
+    *   correct_answer / gap_solutions / pairs: Soluciones según el widget.
+    *   feedback_justification: Explicación académica.
+*   **metadata**:
+    *   competency_tag: [ID].
+
+**NOTA:** La IA tiene PROHIBIDO devolver `widget_id` o `block_type`. Si lo hace, se descarta por error de formato.
 
 ## 4. CONTRATO DE RESPUESTA (STUDENT_SUBMISSION)
 *   item_id: ID del bloque resuelto.

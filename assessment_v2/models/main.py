@@ -66,6 +66,10 @@ class ExamSection(models.Model):
     instructions = models.TextField()
     order = models.PositiveSmallIntegerField(default=0)
     time_limit = models.PositiveIntegerField(default=0, help_text=_("Límite en segundos."))
+    
+    # [HITO 06] Soporte para Readings, Casos Clínicos o Gráficos (V06DOC_TEMPLATES)
+    section_stimulus = models.TextField(_("Estímulo de Sección"), blank=True, null=True, help_text=_("Texto, HTML o URL base. Usado en lectura (Reading), casos prácticos, o datos compartidos."))
+    layout_mode = models.CharField(_("Modo de Layout"), max_length=20, default='STANDARD', help_text=_("Define si la sección necesita panel lateral (SPLIT_TEXT, SPLIT_VISUAL) o pantalla completa (STANDARD)."))
 
     class Meta:
         ordering = ['order']
@@ -105,3 +109,4 @@ class Submission(models.Model):
     class Meta:
         verbose_name = _('Entrega de Examen')
         verbose_name_plural = _('Entregas de Exámenes')
+

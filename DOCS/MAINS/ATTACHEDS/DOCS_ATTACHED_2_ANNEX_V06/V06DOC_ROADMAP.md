@@ -17,10 +17,15 @@
 
 ---
 
-## 13. DEPURACIÓN DEL CORE Y VALIDACIÓN - [ ] 0%
-- [ ] Refactor `core/services/gemini_service.py`: Añadir soporte para `response_schema`.
-- [ ] Test de Integración: Generación exitosa de ítems con `section_stimulus`.
-- [ ] Validación UI: Verificación del panel lateral dinámico en el frontend.
+## 13. DEPURACIÓN DEL CORE Y RE-ARQUITECTURA DOCUMENTAL - [X] 100%
+- [X] Refactor `core/services/gemini_service.py`: Soporte para `response_schema` implementado.
+- [X] Re-arquitectura "Python-Dictator": Documentación maestra reescrita para forzar el uso de Estrategias como Plantillas (Skeleton-First Real).
+- [X] Auditoría de Integridad: Eliminación de ambigüedades en los 22 subarquetipos.
+
+## 14. IMPLEMENTACIÓN DEL MOTOR DE PLANTILLAS - [ ] 0%
+- [ ] Refactor `orchestrator/tasks.py`: Adaptar el bucle para inyectar contenido en `ExamItems` pre-existentes.
+- [ ] Refactor `strategies/languages.py`: Implementar el método `get_exam_skeleton()` con widgets fijos.
+- [ ] Fix Frontend: Renderizado del `section_stimulus` en el panel lateral persistente.
 
 --- 
-**ESTADO:** EN PROGRESO (PENDIENTE REFACTOR DE FIRMA EN CORE).
+**ESTADO:** LISTO PARA IMPLEMENTACIÓN TÉCNICA (DOCUMENTACIÓN BLINDADA).

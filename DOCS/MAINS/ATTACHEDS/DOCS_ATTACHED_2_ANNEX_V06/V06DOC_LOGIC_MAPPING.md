@@ -17,6 +17,9 @@ La IA solo debe proporcionar la identidad técnica:
 *   `target_language_code`: Código ISO 639-1 detectado (ej: 'pl', 'ja', 'fr').
 *   `localized_sections`: Objeto con títulos e instrucciones traducidos al idioma objetivo para las 5 secciones estándar (Reading, Listening, Writing, Speaking, Mediation).
 
+### 2.0. REGLA SUPREMA DE INTEGRIDAD (BARRERA DE FUEGO)
+Las directrices de **V06DOC_LEVELS.md** (Idioma y Rigor) prevalecen sobre cualquier dato generado por la IA en la Fase 1. Si `V06DOC_LEVELS` exige Castellano para las instrucciones, se ignorarán los campos `localized_sections` generados por la IA.
+
 ## 2. FASE PYTHON: DEDUCCIÓN DE PARÁMETROS (DETERMINISTA)
 
 El servidor aplica las reglas de negocio de la plataforma para garantizar la consistencia pedagógica y legal.

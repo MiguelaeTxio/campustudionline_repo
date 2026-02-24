@@ -85,7 +85,7 @@ def clean_json_response(raw_text: str) -> str:
 
 # --- Public Functions ---
 
-def generate_text_content(prompt: str, api_key: ApiKey, task_id: str = None, system_instruction: str = None) -> Tuple[bool, str, str, dict]:
+def generate_text_content(prompt: str, api_key: ApiKey, task_id: str = None, system_instruction: str = None, response_schema: dict = None) -> Tuple[bool, str, str, dict]:
     usage_metadata = {"input_tokens": 0, "output_tokens": 0}
     """
     [V7-Stateless-SDKv1] Genera texto usando Gemini 3 Flash Preview.
@@ -95,6 +95,10 @@ def generate_text_content(prompt: str, api_key: ApiKey, task_id: str = None, sys
     # Configuración base (Sin temperatura forzada para Gemini 3)
     generation_config = {"max_output_tokens": 8192}
     
+    if response_schema:
+        generation_config["response_mime_type"] = "application/json"
+        generation_config["response_schema"] = response_schema
+        
     # Safety Settings (SDK v1 Format)
     safety_settings = [
         types.SafetySetting(

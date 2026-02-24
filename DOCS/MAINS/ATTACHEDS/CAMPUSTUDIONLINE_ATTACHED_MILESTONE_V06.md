@@ -1,4 +1,3 @@
-# /home/MiguelAeTxio/PROJECTS/CampuStudiOnline/DOCS/MAINS/ATTACHEDS/CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
 ### PARTE INMUTABLE (MANDATORIA EN TODOS LOS PCS)
 
 **DIRECTRIZ DE CARGA OBLIGATORIA (LEY DE CONTINUIDAD):**
@@ -23,22 +22,26 @@ El archivo V06DOC_ROADMAP.md es la ÚNICA fuente de verdad para el progreso.
 ---
 
 # ANEXO: HITO 06 - SISTEMA DE AUTOEVALUACIONES CON IA
-# ESTADO: RECONSTRUCCIÓN ESTRUCTURAL COMPLETADA - FALLO EN CORE DETECTADO
+# ESTADO: DOCUMENTACIÓN RE-ARQUITECTURADA Y CORE REPARADO
 
 ### PARTE MUTABLE (RESUMEN TÉCNICO Y HOJA DE RUTA)
 
 ## 1. RESUMEN TÉCNICO DE LA SESIÓN (NRA)
-*   **Sincronización Doc-Impl:** Se ha resuelto la desalineación entre la documentación V06 y el código. Los documentos satélites ahora definen `section_stimulus` y `layout_mode` para gestionar estímulos inéditos (Readings) en lugar de apuntes.
-*   **Fix Orquestador y Estrategias:** Reparado el orden de parámetros en `tasks.py`, el crash por atributo inexistente en `TechnicalStrategy` y el silenciamiento de errores en la generación asíncrona.
-*   **Controlador UI Secuencial:** Implementado motor de estaciones en `exam_take.html` con aislamiento de secciones y temporizadores dinámicos.
-*   **Diagnóstico de Bloqueo:** El sistema falla por una incompatibilidad de firma en `core/services/gemini_service.py` al no aceptar el argumento `response_schema`.
+*   **Reparación del Core:** Se ha refactorizado `core/services/gemini_service.py` para soportar `response_schema`, eliminando el bloqueo técnico de la generación.
+*   **Evolución del Modelo:** Actualizado `assessment_v2/models/main.py` con `section_stimulus` y `layout_mode` para soportar paneles laterales dinámicos.
+*   **Re-arquitectura "Python-Dictator":** Tras detectar una desalineación pedagógica grave (instrucciones en inglés, destrezas inapropiadas para niveles básicos), se ha reescrito la constelación documental del Hito 6. Se establece que Python define el esqueleto inmutable (Widgets y Estructura) y la IA solo rellena el contenido.
 
 ## 2. HOJA DE RUTA PARA LA SIGUIENTE SESIÓN (LEY SUPREMA)
-**OBJETIVO: DEPURACIÓN DEL CORE GEMINI Y VALIDACIÓN DE FLUJO ATÓMICO**
+**OBJETIVO: IMPLEMENTACIÓN DEL MOTOR DE PLANTILLAS DETERMINISTA**
 
-### I. FASE DE REPARACIÓN DEL CORE
-1.  **Auditoría del Servicio Core:** Analizar y modificar `core/services/gemini_service.py` para añadir soporte al argumento `response_schema` en la función `generate_text_content`.
+### I. FASE DE REFACTORIZACIÓN DEL ORQUESTRADOR
+1.  Modificar `orchestrator/tasks.py` para que el bucle de generación inyecte contenido en `ExamItems` ya creados en BBDD.
+2.  Eliminar la capacidad de la IA para proponer `widget_id` o `block_type`.
 
-### II. FASE DE PRUEBA DE CARGA (END-TO-END)
-1.  Lanzar la generación de un examen de Lenguas y verificar que Gemini genera el `section_stimulus` (Reading) integrándolo en el JSON.
-2.  Validar en el frontend que el panel lateral dinámico muestra correctamente el texto generado por la IA.
+### II. FASE DE ESTRATEGIAS (SUBARCHETYPES)
+1.  Implementar en `strategies/languages.py` el método `get_exam_skeleton()` que devuelva la receta fija según nivel e itinerario.
+2.  Garantizar que para `LVL_A` + `MINOR`, las instrucciones se fuercen en Castellano y el contenido sea Chino Básico.
+
+### III. FASE FRONTEND
+1.  Modificar `exam_take.html` para renderizar el `section_stimulus` en un panel lateral persistente (`SPLIT_TEXT`).
+
