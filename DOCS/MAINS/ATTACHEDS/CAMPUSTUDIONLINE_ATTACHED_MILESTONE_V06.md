@@ -23,31 +23,22 @@ El archivo V06DOC_ROADMAP.md es la ÚNICA fuente de verdad para el progreso.
 ---
 
 # ANEXO: HITO 06 - SISTEMA DE AUTOEVALUACIONES CON IA
-# ESTADO: FALLO SISTÉMICO - AUDITORÍA INTEGRAL REQUERIDA
+# ESTADO: RECONSTRUCCIÓN ESTRUCTURAL COMPLETADA - FALLO EN CORE DETECTADO
 
-### PARTE MUTABLE (RESUMEN Y HOJA DE RUTA DE AUDITORÍA)
+### PARTE MUTABLE (RESUMEN TÉCNICO Y HOJA DE RUTA)
 
-## 1. RESUMEN TÉCNICO DE LA SESIÓN (EDC)
-*   **Ajustes de Infraestructura:** Corregidas las firmas de métodos en `tasks.py` para eliminar el `TypeError` y actualizados los esquemas de respuesta de la IA con `anyOf` para soportar tipos de datos mixtos en `correct_answer`.
-*   **Saneamiento de Logs:** Silenciados los avisos de `bleach` mediante la implementación de `CSSSanitizer`.
-*   **Identificación del Desastre:** Se ha constatado una ruptura total entre la especificación documental (`V06DOC_*`) y el resultado de la implementación, resultando en un examen genérico, vacío y con una UI que ignora la mecánica de estaciones secuenciales.
+## 1. RESUMEN TÉCNICO DE LA SESIÓN (NRA)
+*   **Sincronización Doc-Impl:** Se ha resuelto la desalineación entre la documentación V06 y el código. Los documentos satélites ahora definen `section_stimulus` y `layout_mode` para gestionar estímulos inéditos (Readings) en lugar de apuntes.
+*   **Fix Orquestador y Estrategias:** Reparado el orden de parámetros en `tasks.py`, el crash por atributo inexistente en `TechnicalStrategy` y el silenciamiento de errores en la generación asíncrona.
+*   **Controlador UI Secuencial:** Implementado motor de estaciones en `exam_take.html` con aislamiento de secciones y temporizadores dinámicos.
+*   **Diagnóstico de Bloqueo:** El sistema falla por una incompatibilidad de firma en `core/services/gemini_service.py` al no aceptar el argumento `response_schema`.
 
 ## 2. HOJA DE RUTA PARA LA SIGUIENTE SESIÓN (LEY SUPREMA)
-**OBJETIVO: AUDITORÍA INTEGRAL DE DESALINEACIÓN (DOCUMENTACIÓN VS IMPLEMENTACIÓN)**
+**OBJETIVO: DEPURACIÓN DEL CORE GEMINI Y VALIDACIÓN DE FLUJO ATÓMICO**
 
-### I. FASE DE DIAGNÓSTICO DE CAUSA RAÍZ
-1.  **Auditoría de Lógica de Negocio:** Analizar por qué el motor ignora los parámetros `itinerary_id` y `pedagogical_level` al construir el plan de secciones en `get_section_plan`.
-2.  **Rastreo de Persistencia Atómica:** Investigar el proceso de guardado de `ExamItem`. Determinar si la IA no está generando los ítems (fallo de prompt) o si el orquestador no los está persistiendo en la BBDD (fallo de código).
-3.  **Análisis de la UI "Plana":** Identificar por qué `exam_take.html` ignora el arquetipo `ARCH_LANG` (Estaciones secuenciales bloqueantes) y presenta un formulario lineal prohibitivo.
+### I. FASE DE REPARACIÓN DEL CORE
+1.  **Auditoría del Servicio Core:** Analizar y modificar `core/services/gemini_service.py` para añadir soporte al argumento `response_schema` en la función `generate_text_content`.
 
-### II. MAPEO DE DISCREPANCIAS
-1.  Comparar punto por punto `V06DOC_ARCHETYPES` contra las clases en `assessment_v2/services/engine/strategies/`.
-2.  Comparar `V06DOC_TEMPLATES` contra el contenido real de los `JSONField` en la tabla `assessment_v2_examitem`.
-3.  Evaluar la inyección de contexto: ¿Por qué el Repositorio Académico lateral no recibe el material de estudio original?
-
-### III. PLAN DE DEMOLICIÓN Y RECONSTRUCCIÓN
-1.  Definir los cambios necesarios para que la documentación satélite actúe como **Única Fuente de Verdad** durante la ejecución del código.
-2.  Establecer los puntos críticos de control para que el examen no pase a estado 'READY' si no cumple con la estructura de la constelación V06.
-
----
-**ESTADO TÉCNICO:** Auditoría integral obligatoria antes de cualquier intento de reparación de código.
+### II. FASE DE PRUEBA DE CARGA (END-TO-END)
+1.  Lanzar la generación de un examen de Lenguas y verificar que Gemini genera el `section_stimulus` (Reading) integrándolo en el JSON.
+2.  Validar en el frontend que el panel lateral dinámico muestra correctamente el texto generado por la IA.

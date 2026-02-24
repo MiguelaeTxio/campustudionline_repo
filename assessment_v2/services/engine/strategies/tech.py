@@ -208,7 +208,7 @@ class TechnicalStrategy(BaseExamStrategy):
             f"GENERA 3 ÍTEMS para la sección: {subdivision_id}.\n"
             f"TEMA: {topic}. {memory}\n"
             f"CONTEXTO: {context_text[:50000]}\n"
-            f"CONFIG: Archetype={self.archetype_id}, Sub={self.sub_archetype_id}, Itin={self.itinerary_id}, Level={self.pedagogical_level}.\n"
+            f"CONFIG: Sub={self.sub_archetype_id}, Itin={self.itinerary_id}, Level={self.pedagogical_level}.\n"
             f"REQUISITOS:\n"
             f"1. Para la fase {subdivision_id}, utiliza el bloque más adecuado (RPP-TRAZA para cálculo o PRM-STRIKE para teoría).\n"
             f"2. Salida estrictamente JSON (Array 'items')."

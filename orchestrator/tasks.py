@@ -409,7 +409,12 @@ def generate_exam_task(self, exam_uuid, context_text=None, topic=None):
         exam.pedagogical_level = metadata['pedagogical_level']
         exam.immersion_mode = metadata['immersion_mode']
         
-        strategy = ExamFactory.get_strategy(exam.archetype_id, exam.pedagogical_level, exam.itinerary_id)
+        strategy = ExamFactory.get_strategy(
+            archetype_id=exam.archetype_id,
+            sub_archetype_id=exam.sub_archetype_id,
+            pedagogical_level=exam.pedagogical_level,
+            itinerary_id=exam.itinerary_id
+        )
         exam.grading_params = strategy._get_grading_params()
         exam.save()
 
@@ -467,6 +472,9 @@ def generate_exam_task(self, exam_uuid, context_text=None, topic=None):
                     )
                     generated_titles.append(str(i_data.get('content', {}).get('stem', ''))[:30])
                     time.sleep(5) # PROTECCIÓN CUOTA RPM (HITO 6)
+            else:
+                # [FIX HITO 6] Fail-fast: Si la IA falla, abortamos para no crear exámenes vacíos.
+                raise AIServiceCriticalError(f"Fallo en generación atómica sección {s_info['subdivision_id']}. Respuesta: {resp}")
 
         TrackingService.record_usage(exam.user, exam, "gemini-2.5-flash-lite", usage_total["in"], usage_total["out"], "Restored-Key")
         exam.status = 'READY'

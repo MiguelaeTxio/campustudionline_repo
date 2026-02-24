@@ -35,3 +35,10 @@
 *   W-MIX-MATCH (Matriz de Vinculación):
     *   Uso: Lenguas (Reading Headlines) y Ciencias (Concepto-Definición).
     *   Funciones: Arrastrar y soltar (Drag & Drop) o conectores visuales entre dos columnas.
+
+## 4. ESTRATEGIA DE LAYOUT Y PANELES (NUEVO V1.2 - UX OPTIMIZATION)
+
+*   **W-LAYOUT-SIDE (Panel Lateral Persistente):**
+    *   **Función:** Muestra el "Estímulo de Sección" (Texto de lectura, Supuesto de hecho, Datos clínicos) de forma estática (Sticky) mientras el alumno hace scroll en las preguntas.
+    *   **Justificación UX:** Evita el scroll vertical repetitivo ("Yo-Yo effect").
+    *   **Contenido:** Estrictamente el material generado para el examen (Reading/Caso). NUNCA los apuntes del alumno.

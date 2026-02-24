@@ -23,6 +23,11 @@ Definida por . Array de objetos de fase:
 *   instructions: Guía de cumplimiento para el alumno.
 *   time_limit: Segundos de bloqueo (0 para ilimitado).
 *   items: Lista de bloques de evaluación (Poblados atómicamente por la IA).
+*   **section_stimulus**: [NUEVO V1.4] (Opcional) Texto, HTML o URL de imagen que sirve de contexto compartido (Reading, Caso, Gráfico). Se renderiza en el Panel Lateral Persistente.
+*   **layout_mode**: [NUEVO V1.4] Define la distribución visual:
+    *   `STANDARD`: Ancho completo (sin panel lateral). Ideal para Matemáticas/Tests rápidos.
+    *   `SPLIT_TEXT`: Panel lateral de texto (Reading/Caso).
+    *   `SPLIT_VISUAL`: Panel lateral de imagen/media (Anatomía/Arte).
 
 ## 3. DEFINICIÓN DE ÍTEMS (ITEM_PAYLOAD - Generado por IA)
 Estructura obligatoria para cada ejercicio. La IA debe responder con un array  de estos objetos:
