@@ -104,38 +104,106 @@ class HealthStrategy(BaseExamStrategy):
             }
         ]
 
+    def get_exam_skeleton(self):
+        """
+        Returns the structural skeleton for the 10 Health models.
+        Ref: V06DOC_SUBARCHETYPES V5.0.
+        """
+        sid = self.sub_archetype_id
+        skeleton = []
+
+        # 1. SUB-SAN-MED-CLIN: Medicina Clínica
+        if sid == 'SUB-SAN-MED-CLIN':
+            skeleton = [
+                {"subdivision_id": "SD_FACT", "title": "Anamnesis y Hechos", "instructions": "Identifique signos y síntomas clave.", "layout_mode": "STANDARD", "items": [{"block_type": "PRM-STRIKE", "widget_id": "W-OBJ-STRIKE"}]},
+                {"subdivision_id": "SD_DIAG", "title": "Diagnóstico por Imagen", "instructions": "Interprete la prueba diagnóstica.", "layout_mode": "SPLIT_TEXT", "items": [{"block_type": "ILC-CONTEXT", "widget_id": "W-CLIN-SCAN"}]},
+                {"subdivision_id": "SD_THERA", "title": "Plan Terapéutico", "instructions": "Establezca el tratamiento adecuado.", "layout_mode": "STANDARD", "items": [{"block_type": "PRM-STRIKE", "widget_id": "W-OBJ-STRIKE"}]}
+            ]
+        # 2. SUB-SAN-MED-BASIC: Básicas Médicas (Anatomía/Fisio)
+        elif sid == 'SUB-SAN-MED-BASIC':
+            skeleton = [
+                {"subdivision_id": "SD_IDENT", "title": "Identificación Anatómica", "instructions": "Señale la estructura o tejido en la imagen.", "layout_mode": "SPLIT_TEXT", "items": [{"block_type": "ILC-CONTEXT", "widget_id": "W-CLIN-SCAN"}]},
+                {"subdivision_id": "SD_FUNC", "title": "Fisiología y Función", "instructions": "Explique el mecanismo fisiológico.", "layout_mode": "STANDARD", "items": [{"block_type": "PRM-STRIKE", "widget_id": "W-OBJ-STRIKE"}]}
+            ]
+        # 3. SUB-SAN-ODON: Odontología
+        elif sid == 'SUB-SAN-ODON':
+            skeleton = [
+                {"subdivision_id": "SD_IMAG", "title": "Radiología Dental", "instructions": "Identifique hallazgos en la ortopantomografía.", "layout_mode": "SPLIT_TEXT", "items": [{"block_type": "ILC-CONTEXT", "widget_id": "W-CLIN-SCAN"}]},
+                {"subdivision_id": "SD_PROC", "title": "Procedimiento Técnico", "instructions": "Ejecute el protocolo de intervención dental.", "layout_mode": "STANDARD", "items": [{"block_type": "CDS-KILL", "widget_id": "W-PROC-ACTION"}]}
+            ]
+        # 4. SUB-SAN-FISIO: Fisioterapia
+        elif sid == 'SUB-SAN-FISIO':
+            skeleton = [
+                {"subdivision_id": "SD_VALORATION", "title": "Valoración Funcional", "instructions": "Determine el grado de afectación funcional.", "layout_mode": "STANDARD", "items": [{"block_type": "PRM-STRIKE", "widget_id": "W-OBJ-STRIKE"}]},
+                {"subdivision_id": "SD_ANAT_PALP", "title": "Anatomía Palpatoria", "instructions": "Localice el punto gatillo o estructura.", "layout_mode": "SPLIT_TEXT", "items": [{"block_type": "ILC-CONTEXT", "widget_id": "W-CLIN-SCAN"}]}
+            ]
+        # 5. SUB-SAN-CUID: Enfermería (NANDA)
+        elif sid == 'SUB-SAN-CUID':
+            skeleton = [
+                {"subdivision_id": "SD_NANDA", "title": "Planificación (NANDA)", "instructions": "Priorice los diagnósticos de enfermería.", "layout_mode": "STANDARD", "items": [{"block_type": "PRM-STRIKE", "widget_id": "W-OBJ-STRIKE"}]},
+                {"subdivision_id": "SD_SAFE", "title": "Protocolo de Seguridad", "instructions": "Asegure los pasos críticos de la técnica.", "layout_mode": "STANDARD", "items": [{"block_type": "CDS-KILL", "widget_id": "W-PROC-ACTION"}]}
+            ]
+        # 6. SUB-SAN-LAB: Bioquímica/Farmacia
+        elif sid == 'SUB-SAN-LAB':
+            skeleton = [
+                {"subdivision_id": "SD_ANALYTIC", "title": "Cálculo y Analítica", "instructions": "Determine los niveles o dosis requeridas.", "layout_mode": "STANDARD", "items": [{"block_type": "PRM-STRIKE", "widget_id": "W-OBJ-STRIKE"}]},
+                {"subdivision_id": "SD_LAB_PROC", "title": "Procedimiento de Laboratorio", "instructions": "Ejecute el protocolo de seguridad en lab.", "layout_mode": "STANDARD", "items": [{"block_type": "CDS-KILL", "widget_id": "W-PROC-ACTION"}]}
+            ]
+        # 7. SUB-SAN-PSY-CLIN: Psicología Clínica
+        elif sid == 'SUB-SAN-PSY-CLIN':
+            skeleton = [
+                {"subdivision_id": "SD_DSM", "title": "Diagnóstico DSM/CIE", "instructions": "Categorice el trastorno según criterios.", "layout_mode": "STANDARD", "items": [{"block_type": "PRM-STRIKE", "widget_id": "W-OBJ-STRIKE"}]},
+                {"subdivision_id": "SD_BEHAV", "title": "Análisis Conductual", "instructions": "Identifique los refuerzos y conductas.", "layout_mode": "SPLIT_TEXT", "items": [{"block_type": "ILC-CONTEXT", "widget_id": "W-CLIN-SCAN"}]}
+            ]
+        # 8. SUB-SAN-PSY-EXP: Psicología Experimental
+        elif sid == 'SUB-SAN-PSY-EXP':
+            skeleton = [
+                {"subdivision_id": "SD_STATS", "title": "Análisis de Datos", "instructions": "Interprete los resultados estadísticos.", "layout_mode": "STANDARD", "items": [{"block_type": "PRM-STRIKE", "widget_id": "W-OBJ-STRIKE"}]},
+                {"subdivision_id": "SD_DESIGN", "title": "Diseño Experimental", "instructions": "Identifique variables y sesgos.", "layout_mode": "STANDARD", "items": [{"block_type": "PRM-STRIKE", "widget_id": "W-OBJ-STRIKE"}]}
+            ]
+        # 9. SUB-SAN-VET: Veterinaria
+        elif sid == 'SUB-SAN-VET':
+            skeleton = [
+                {"subdivision_id": "SD_CLINIC", "title": "Clínica Animal", "instructions": "Identifique la patología en el animal.", "layout_mode": "SPLIT_TEXT", "items": [{"block_type": "ILC-CONTEXT", "widget_id": "W-CLIN-SCAN"}]},
+                {"subdivision_id": "SD_SURGERY", "title": "Cirugía y Anestesia", "instructions": "Verifique los puntos críticos pre-quirúrgicos.", "layout_mode": "STANDARD", "items": [{"block_type": "CDS-KILL", "widget_id": "W-PROC-ACTION"}]}
+            ]
+        # 10. SUB-SAN-NUT: Nutrición
+        elif sid == 'SUB-SAN-NUT':
+            skeleton = [
+                {"subdivision_id": "SD_DIET", "title": "Cálculo Dietético", "instructions": "Calcule el balance nutricional del caso.", "layout_mode": "STANDARD", "items": [{"block_type": "PRM-STRIKE", "widget_id": "W-OBJ-STRIKE"}]},
+                {"subdivision_id": "SD_BROM", "title": "Bromatología", "instructions": "Identifique componentes o contaminantes.", "layout_mode": "STANDARD", "items": [{"block_type": "PRM-STRIKE", "widget_id": "W-OBJ-STRIKE"}]}
+            ]
+        else:
+            skeleton = [
+                {"subdivision_id": "SD_GEN", "title": "Evaluación de Salud General", "instructions": "Resuelva el caso clínico.", "layout_mode": "STANDARD", "items": [{"block_type": "PRM-STRIKE", "widget_id": "W-OBJ-STRIKE"}]}
+            ]
+
+        return skeleton
+
+
     def get_system_prompt(self):
         """
-        Generates clinical role based on Sub-Archetype (V06DOC_SUBARCHETYPES).
+        Generates clinical role based on the 10 Health Sub-Archetypes (V5.0).
         """
         roles = {
-            'SUB-SAN-MED': "Rol: Facultativo Especialista (UGR). Foco: Diagnóstico Diferencial, Fisiopatología.",
-            'SUB-SAN-CUID': "Rol: Enfermero/a Clínico (NANDA). Foco: Planes de cuidados, Seguridad, Técnica.",
-            'SUB-SAN-BIO': "Rol: Especialista en Laboratorio/Bioquímica. Foco: Farmacología, Analítica, Método.",
-            'SUB-SAN-PSY': "Rol: Psicólogo/a Clínico (DSM-5). Foco: Evaluación conductual, Psicometría.",
-            'SUB-SAN-VET': "Rol: Cirujano Veterinario. Foco: Patología comparada, Zoonosis, Clínica animal."
+            'SUB-SAN-MED-CLIN': "Rol: Facultativo Especialista (UGR). Foco: Diagnóstico Diferencial, Razonamiento Clínico.",
+            'SUB-SAN-MED-BASIC': "Rol: Catedrático de Ciencias Básicas (UGR). Foco: Anatomía, Fisiología e Identificación.",
+            'SUB-SAN-ODON': "Rol: Odontólogo Especialista. Foco: Técnica Dental, Materiales y Radiología.",
+            'SUB-SAN-FISIO': "Rol: Fisioterapeuta Clínico. Foco: Valoración Funcional y Anatomía Palpatoria.",
+            'SUB-SAN-CUID': "Rol: Enfermero/a Clínico (NANDA). Foco: Planes de cuidados, Seguridad y Protocolos.",
+            'SUB-SAN-LAB': "Rol: Especialista en Laboratorio/Bioquímica. Foco: Farmacología, Analítica y Balances.",
+            'SUB-SAN-PSY-CLIN': "Rol: Psicólogo Clínico. Foco: Diagnóstico DSM/CIE y Evaluación Conductual.",
+            'SUB-SAN-PSY-EXP': "Rol: Investigador Experimental. Foco: Estadística, Metodología y Diseño.",
+            'SUB-SAN-VET': "Rol: Cirujano Veterinario. Foco: Clínica animal, Cirugía y Zoonosis.",
+            'SUB-SAN-NUT': "Rol: Dietista-Nutricionista. Foco: Bromatología, Dietética y Salud Pública."
         }
-        base_role = roles.get(self.sub_archetype_id, "Rol: Evaluador Clínico ECOE.")
+        base_role = roles.get(self.sub_archetype_id, "Rol: Evaluador de Ciencias de la Salud.")
+        itin_ctx = "CONTEXTO ROTATORIO/SEGURIDAD: Tolerancia CERO. Activa KILL_SWITCH en pasos críticos." if self.itinerary_id == 'ITIN_ROT' else ""
 
-        itin_ctx = ""
-        if self.itinerary_id == 'ITIN_ROT':
-            itin_ctx = "CONTEXTO ROTATORIO: Tolerancia CERO a errores de seguridad. Activa KILL_SWITCH en pasos críticos."
+        return f"{base_role}
+{itin_ctx}
+REGLA: Usa W-CLIN-SCAN para imágenes y W-PROC-ACTION para pasos de seguridad vital."
 
-        return f"{base_role}\n{itin_ctx}\nUsa bloques CDS-KILL para protocolos obligatorios y ILC-CONTEXT para interpretación de pruebas (Analíticas/Rayos X)."
-
-    def get_user_prompt(self, context_text, topic, subdivision_id, generated_item_titles=None):
-        """
-        Atomic generation prompt for a specific subdivision (V06DOC_TEMPLATES).
-        """
-        memory = f"\nÍtems ya generados: {', '.join(generated_item_titles)}" if generated_item_titles else ""
-        return (
-            f"GENERA 3 ÍTEMS para la sección: {subdivision_id}.\n"
-            f"TEMA: {topic}. {memory}\n"
-            f"REF: {context_text[:50000]}\n"
-            f"CONFIG: Arquetipo={self.sub_archetype_id}, Itinerario={self.itinerary_id}, Nivel={self.pedagogical_level}.\n"
-            f"REQUISITOS:\n"
-            f"1. Si es SD_PROC, incluye al menos un bloque CDS-KILL con kill_switch: True para un paso vital.\n"
-            f"2. Usa W-CLIN-SCAN para ítems que requieran interpretación de imágenes (Rayo X, ECG).\n"
             f"3. Salida estrictamente JSON (Array 'items')."
         )
 
@@ -147,16 +215,22 @@ class HealthStrategy(BaseExamStrategy):
         return {
             "type": "object",
             "properties": {
+                "section_stimulus": {"type": "string"},
+                "items": {
                 "items": {
                     "type": "array",
                     "items": {
                         "type": "object",
                         "properties": {
+                "section_stimulus": {"type": "string"},
+                "items": {
                             "block_type": {"type": "string", "enum": ["CDS-KILL", "PRM-STRIKE", "ILC-CONTEXT"]},
                             "widget_id": {"type": "string", "enum": ["W-PROC-ACTION", "W-OBJ-STRIKE", "W-CLIN-SCAN"]},
                             "content": {
                                 "type": "object",
                                 "properties": {
+                "section_stimulus": {"type": "string"},
+                "items": {
                                     "stem": {"type": "string"},
                                     "options": {"type": "array", "items": {"type": "string"}},
                                     "media_assets": {"type": "array", "items": {"type": "string"}}
@@ -166,6 +240,8 @@ class HealthStrategy(BaseExamStrategy):
                             "grading_logic": {
                                 "type": "object",
                                 "properties": {
+                "section_stimulus": {"type": "string"},
+                "items": {
                                     "correct_answer": {
                                         "anyOf": [
                                             {"type": "string"},
@@ -180,6 +256,8 @@ class HealthStrategy(BaseExamStrategy):
                             "metadata": {
                                 "type": "object",
                                 "properties": {
+                "section_stimulus": {"type": "string"},
+                "items": {
                                     "competency_tag": {"type": "string"},
                                     "cognitive_tag": {"type": "string"}
                                 },

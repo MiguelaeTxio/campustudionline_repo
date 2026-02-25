@@ -1913,3 +1913,11 @@ Carga de contexto obligatoria: Documentación técnica V06DOC y modelos de `asse
 *  **Session:** Refactorización de Gemini Service y Validación End-to-End
 *  **Description:** Depuración del core de IA añadiendo soporte para el argumento response_schema en core/services/gemini_service.py. Prueba de carga con generación atómica y validación de renderizado del section_stimulus en el panel lateral dinámico del frontend.
 
+
+# 2026-02-25
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+## CAMA
+*  **Session:** IMPLEMENTACIÓN DEL MOTOR DE PLANTILLAS DETERMINISTA
+*  **Description:** Refactorización del orquestador y estrategias para inyectar contenido en un esqueleto de examen pregenerado por Python. Implementación del renderizado de estímulos en paneles laterales persistentes (layout_mode).
+

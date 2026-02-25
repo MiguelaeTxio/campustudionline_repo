@@ -73,25 +73,105 @@ class SocialStrategy(BaseExamStrategy):
             }
         ]
 
+    def get_exam_skeleton(self):
+        """
+        Returns the structural skeleton for the 10 Social/Legal models.
+        Ref: V06DOC_SUBARCHETYPES V5.0.
+        """
+        sid = self.sub_archetype_id
+        skeleton = []
+
+        # 1. SUB-SOC-LAW-PROC: Derecho Procesal
+        if sid == 'SUB-SOC-LAW-PROC':
+            skeleton = [
+                {"subdivision_id": "SD_DEADLINES", "title": "Plazos y Recursos", "instructions": "Determine los plazos procesales aplicables.", "layout_mode": "STANDARD", "items": [{"block_type": "PRM-STRIKE", "widget_id": "W-OBJ-STRIKE"}]},
+                {"subdivision_id": "SD_PROC_STEP", "title": "Trámite Procesal", "instructions": "Identifique el siguiente paso en el procedimiento.", "layout_mode": "SPLIT_TEXT", "items": [{"block_type": "CASO-PRACTICO", "widget_id": "W-LAW-NAV"}]}
+            ]
+        # 2. SUB-SOC-LAW-DICT: Dictamen Jurídico
+        elif sid == 'SUB-SOC-LAW-DICT':
+            skeleton = [
+                {"subdivision_id": "SD_FACTS", "title": "Hechos Relevantes", "instructions": "Jerarquice los hechos del supuesto.", "layout_mode": "STANDARD", "items": [{"block_type": "PRM-STRIKE", "widget_id": "W-OBJ-STRIKE"}]},
+                {"subdivision_id": "SD_DICTAMEN", "title": "Dictamen Fundamentado", "instructions": "Redacte el dictamen citando jurisprudencia.", "layout_mode": "SPLIT_TEXT", "items": [{"block_type": "CASO-PRACTICO", "widget_id": "W-HUM-TEXT"}]}
+            ]
+        # 3. SUB-SOC-ECON-QUAN: Economía Cuantitativa
+        elif sid == 'SUB-SOC-ECON-QUAN':
+            skeleton = [
+                {"subdivision_id": "SD_DATA", "title": "Análisis de Datos", "instructions": "Interprete los indicadores económicos.", "layout_mode": "STANDARD", "items": [{"block_type": "PRM-STRIKE", "widget_id": "W-OBJ-STRIKE"}]},
+                {"subdivision_id": "SD_MODEL", "title": "Modelización", "instructions": "Resuelva el supuesto contable o econométrico.", "layout_mode": "STANDARD", "items": [{"block_type": "CASO-PRACTICO", "widget_id": "W-HUM-TEXT"}]}
+            ]
+        # 4. SUB-SOC-ECON-MGMT: Empresa / ADE
+        elif sid == 'SUB-SOC-ECON-MGMT':
+            skeleton = [
+                {"subdivision_id": "SD_STRATEGY", "title": "Análisis Estratégico", "instructions": "Proponga una estrategia de mercado.", "layout_mode": "STANDARD", "items": [{"block_type": "CASO-PRACTICO", "widget_id": "W-HUM-TEXT"}]},
+                {"subdivision_id": "SD_ORGANIZATION", "title": "Estructura Organizativa", "instructions": "Valore la eficiencia del modelo propuesto.", "layout_mode": "STANDARD", "items": [{"block_type": "PRM-STRIKE", "widget_id": "W-OBJ-STRIKE"}]}
+            ]
+        # 5. SUB-SOC-EDU-KIDS: Magisterio (Infantil/Primaria)
+        elif sid == 'SUB-SOC-EDU-KIDS':
+            skeleton = [
+                {"subdivision_id": "SD_DUA", "title": "Diseño Inclusivo (DUA)", "instructions": "Adapte la actividad para la diversidad.", "layout_mode": "STANDARD", "items": [{"block_type": "PRM-STRIKE", "widget_id": "W-OBJ-STRIKE"}]},
+                {"subdivision_id": "SD_SITUATION", "title": "Situación de Aprendizaje", "instructions": "Diseñe una secuencia didáctica original.", "layout_mode": "STANDARD", "items": [{"block_type": "CASO-PRACTICO", "widget_id": "W-HUM-TEXT"}]}
+            ]
+        # 6. SUB-SOC-EDU-SEC: Profesorado Secundaria
+        elif sid == 'SUB-SOC-EDU-SEC':
+            skeleton = [
+                {"subdivision_id": "SD_NORMATIVE", "title": "Marco Legal Educativo", "instructions": "Justifique según la LOMLOE.", "layout_mode": "STANDARD", "items": [{"block_type": "PRM-STRIKE", "widget_id": "W-OBJ-STRIKE"}]},
+                {"subdivision_id": "SD_DIDACTIC", "title": "Transposición Didáctica", "instructions": "Planifique el desarrollo de la unidad.", "layout_mode": "STANDARD", "items": [{"block_type": "CASO-PRACTICO", "widget_id": "W-HUM-TEXT"}]}
+            ]
+        # 7. SUB-SOC-COMM-JOUR: Periodismo
+        elif sid == 'SUB-SOC-COMM-JOUR':
+            skeleton = [
+                {"subdivision_id": "SD_ETHICS", "title": "Ética y Deontología", "instructions": "Valore el tratamiento informativo del caso.", "layout_mode": "STANDARD", "items": [{"block_type": "PRM-STRIKE", "widget_id": "W-OBJ-STRIKE"}]},
+                {"subdivision_id": "SD_WRITING", "title": "Redacción Periodística", "instructions": "Redacte la noticia o reportaje solicitado.", "layout_mode": "SPLIT_TEXT", "items": [{"block_type": "CASO-PRACTICO", "widget_id": "W-HUM-TEXT"}]}
+            ]
+        # 8. SUB-SOC-COMM-AV: Audiovisual
+        elif sid == 'SUB-SOC-COMM-AV':
+            skeleton = [
+                {"subdivision_id": "SD_SCRIPT", "title": "Narrativa y Guion", "instructions": "Desarrolle la escaleta o guion literario.", "layout_mode": "STANDARD", "items": [{"block_type": "CASO-PRACTICO", "widget_id": "W-HUM-TEXT"}]},
+                {"subdivision_id": "SD_TECH_PROD", "title": "Técnica de Producción", "instructions": "Resuelva problemas de iluminación o sonido.", "layout_mode": "STANDARD", "items": [{"block_type": "PRM-STRIKE", "widget_id": "W-OBJ-STRIKE"}]}
+            ]
+        # 9. SUB-SOC-GEOG: Geografía
+        elif sid == 'SUB-SOC-GEOG':
+            skeleton = [
+                {"subdivision_id": "SD_TERRITORY", "title": "Análisis Territorial", "instructions": "Interprete los datos del SIG o cartografía.", "layout_mode": "SPLIT_TEXT", "items": [{"block_type": "CASO-PRACTICO", "widget_id": "W-HUM-TEXT"}]},
+                {"subdivision_id": "SD_CLIMATE", "title": "Climatología y Medio", "instructions": "Explique los fenómenos geográficos.", "layout_mode": "STANDARD", "items": [{"block_type": "PRM-STRIKE", "widget_id": "W-OBJ-STRIKE"}]}
+            ]
+        # 10. SUB-SOC-WORK: Trabajo Social
+        elif sid == 'SUB-SOC-WORK':
+            skeleton = [
+                {"subdivision_id": "SD_DIAGNOSIS", "title": "Diagnóstico Social", "instructions": "Identifique los indicadores de exclusión.", "layout_mode": "STANDARD", "items": [{"block_type": "PRM-STRIKE", "widget_id": "W-OBJ-STRIKE"}]},
+                {"subdivision_id": "SD_PLAN", "title": "Plan de Intervención", "instructions": "Diseñe la estrategia de mediación.", "layout_mode": "STANDARD", "items": [{"block_type": "CASO-PRACTICO", "widget_id": "W-HUM-TEXT"}]}
+            ]
+        else:
+            skeleton = [
+                {"subdivision_id": "SD_GEN", "title": "Análisis Social General", "instructions": "Resuelva el supuesto práctico.", "layout_mode": "STANDARD", "items": [{"block_type": "CASO-PRACTICO", "widget_id": "W-HUM-TEXT"}]}
+            ]
+
+        return skeleton
+
+
     def get_system_prompt(self):
         """
-        Dynamic Role for Social/Legal (V06DOC_SUBARCHETYPES).
+        Generates roles based on the 10 Social/Legal Sub-Archetypes (V5.0).
         """
         roles = {
-            'SUB-SOC-JUR': "Rol: Magistrado/Abogado Senior. Foco: Exégesis legal, Jurisprudencia, Técnica procesal.",
-            'SUB-SOC-ECON': "Rol: Auditor/Economista. Foco: Análisis cuantitativo, Contabilidad, Modelos econométricos.",
-            'SUB-SOC-BEHAV': "Rol: Sociólogo/Analista Político. Foco: Teoría del estado, Análisis de datos sociales.",
-            'SUB-SOC-COMM': "Rol: Consultor de Comunicación/SEO. Foco: Estrategia de medios, Gestión de información."
+            'SUB-SOC-LAW-PROC': "Rol: Letrado de la Adm. de Justicia. Foco: Técnica Procesal, Plazos y Recursos.",
+            'SUB-SOC-LAW-DICT': "Rol: Magistrado / Consultor Jurídico. Foco: Dictamen, Jurisprudencia y Ley.",
+            'SUB-SOC-ECON-QUAN': "Rol: Econometrista / Analista Financiero. Foco: Contabilidad y Modelos Cuantitativos.",
+            'SUB-SOC-ECON-MGMT': "Rol: Consultor de Estrategia (ADE). Foco: Organización, Marketing y Management.",
+            'SUB-SOC-EDU-KIDS': "Rol: Maestro/a (Infantil/Primaria). Foco: DUA, Situaciones de Aprendizaje y Didáctica.",
+            'SUB-SOC-EDU-SEC': "Rol: Catedrático de Secundaria. Foco: Didáctica Específica y Normativa Educativa.",
+            'SUB-SOC-COMM-JOUR': "Rol: Redactor Jefe / Periodista. Foco: Ética Informativa, Géneros y Redacción.",
+            'SUB-SOC-COMM-AV': "Rol: Realizador / Guionista AV. Foco: Narrativa visual y Técnica de Producción.",
+            'SUB-SOC-GEOG': "Rol: Geógrafo / Analista SIG. Foco: Análisis Territorial y Climatología.",
+            'SUB-SOC-WORK': "Rol: Trabajador Social. Foco: Intervención Social y Mediación Comunitaria."
         }
-        base_role = roles.get(self.sub_archetype_id, "Rol: Académico de Ciencias Sociales.")
+        base_role = roles.get(self.sub_archetype_id, "Rol: Especialista en Ciencias Sociales.")
+        itin_ctx = "CONTEXTO PROFESIONAL: Exige rigor en la cita normativa y viabilidad técnica." if self.itinerary_id == 'ITIN_PROF' else ""
 
-        # ITINERARY (V06DOC_SUBDIVISIONS)
-        if self.itinerary_id == 'ITIN_PROF':
-            context = "OBJETIVO: Dictamen Profesional. Exige rigor en la cita de la norma (BOE/Jurisprudencia) o viabilidad económica."
-        else:
-            context = "OBJETIVO: Especialización Académica. Foco en fundamentos teóricos y análisis crítico."
+        return f"{base_role}
+{itin_ctx}
+REGLA: Usa CASO-PRACTICO para supuestos de hecho con W-LAW-NAV o W-HUM-TEXT."
 
-        return f"{base_role}\n{context}\nESTRUCTURA: Usa subdivisiones SD_FACT, SD_NORM y SD_PROC."
 
     def get_user_prompt(self, context_text, topic, subdivision_id, generated_item_titles=None):
         """
@@ -117,16 +197,22 @@ class SocialStrategy(BaseExamStrategy):
         return {
             "type": "object",
             "properties": {
+                "section_stimulus": {"type": "string"},
+                "items": {
                 "items": {
                     "type": "array",
                     "items": {
                         "type": "object",
                         "properties": {
+                "section_stimulus": {"type": "string"},
+                "items": {
                             "block_type": {"type": "string", "enum": ["CASO-PRACTICO", "PRM-STRIKE"]},
                             "widget_id": {"type": "string", "enum": ["W-LAW-NAV", "W-OBJ-STRIKE", "W-HUM-TEXT"]},
                             "content": {
                                 "type": "object",
                                 "properties": {
+                "section_stimulus": {"type": "string"},
+                "items": {
                                     "stem": {"type": "string"},
                                     "case_data": {"type": "object"},
                                     "options": {"type": "array", "items": {"type": "string"}}
@@ -136,6 +222,8 @@ class SocialStrategy(BaseExamStrategy):
                             "grading_logic": {
                                 "type": "object",
                                 "properties": {
+                "section_stimulus": {"type": "string"},
+                "items": {
                                     "correct_answer": {
                                         "anyOf": [
                                             {"type": "string"},
@@ -148,6 +236,8 @@ class SocialStrategy(BaseExamStrategy):
                             "metadata": {
                                 "type": "object",
                                 "properties": {
+                "section_stimulus": {"type": "string"},
+                "items": {
                                     "competency_tag": {"type": "string"},
                                     "cognitive_tag": {"type": "string"}
                                 },

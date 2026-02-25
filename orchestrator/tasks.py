@@ -418,27 +418,40 @@ def generate_exam_task(self, exam_uuid, context_text=None, topic=None):
         exam.grading_params = strategy._get_grading_params()
         exam.save()
 
-        # FASE ESTRUCTURAL (Skeleton-First)
-        section_plan = strategy.get_section_plan()
+        # FASE ESTRUCTURAL (Skeleton-First Fijo)
+        skeleton = strategy.get_exam_skeleton()
         with transaction.atomic():
             exam.sections.all().delete()
             sections_map = {}
-            for idx, s_data in enumerate(section_plan):
+            for idx, s_data in enumerate(skeleton):
                 section = ExamSection.objects.create(
                     exam=exam, 
                     subdivision_id=s_data['subdivision_id'], 
                     title=s_data['title'],
                     instructions=s_data.get('instructions', ''), 
-                    time_limit=s_data.get('time_limit', 0), 
+                    time_limit=s_data.get('time_limit', 0),
+                    layout_mode=s_data.get('layout_mode', 'STANDARD'),
                     order=idx
                 )
                 sections_map[s_data['subdivision_id']] = section
+                
+                # Crear ítems vacíos con el esqueleto predefinido
+                for i_idx, i_data in enumerate(s_data.get('items', [])):
+                    ExamItem.objects.create(
+                        section=section,
+                        block_type=i_data.get('block_type', 'UNKNOWN'),
+                        widget_id=i_data.get('widget_id', 'UNKNOWN'),
+                        content={},
+                        grading_logic={},
+                        metadata={},
+                        order=i_idx
+                    )
         
         # FASE DE LLENADO ATÓMICO (Bucle Iterativo por Sección)
         generated_titles = []
         usage_total = {"in": 0, "out": 0}
         
-        for s_info in section_plan:
+        for s_info in skeleton:
             db_sec = sections_map.get(s_info['subdivision_id'])
             if not db_sec: continue
             
@@ -450,31 +463,46 @@ def generate_exam_task(self, exam_uuid, context_text=None, topic=None):
                 subdivision_id=s_info['subdivision_id'], generated_item_titles=generated_titles
             )
             
+            db_items = list(db_sec.items.all().order_by('order'))
+            if not db_items: continue
+            
+            widgets_info = ", ".join([f"Item {i+1}: {item.widget_id} ({item.block_type})" for i, item in enumerate(db_items)])
+            # CORRECCIÓN DE ESCAPE: Usamos \n para evitar salto de línea real
+            u_prompt_augmented = f"{u_prompt}\n\nDEBES RELLENAR ESTOS ÍTEMS EXACTOS EN ORDEN:\n{widgets_info}"
+
             success, resp, key_name, usage = _safe_generate_content(
-                u_prompt,
+                u_prompt_augmented,
                 system_instruction=s_prompt,
                 response_schema=strategy.get_output_schema(),
                 logger_callback=lambda m, level="INFO": exam.event_log.append({"ts": timezone.now().isoformat(), "msg": m}) or exam.save(update_fields=['event_log'])
             )
+            
             if success:
                 usage_total["in"] += usage.get("input_tokens", 0)
                 usage_total["out"] += usage.get("output_tokens", 0)
-                items = dirtyjson.loads(clean_json_response(resp)).get("items", [])
+                parsed_resp = dirtyjson.loads(clean_json_response(resp))
+                items = parsed_resp.get("items", [])
+                
+                if "section_stimulus" in parsed_resp:
+                    db_sec.section_stimulus = parsed_resp.get("section_stimulus", "")
+                    db_sec.save(update_fields=["section_stimulus"])
+                
                 for i_idx, i_data in enumerate(items):
-                    ExamItem.objects.create(
-                        section=db_sec, 
-                        block_type=i_data.get('block_type', 'UNKNOWN'),
-                        widget_id=i_data.get('widget_id', 'UNKNOWN'), 
-                        content=i_data.get('content', {}),
-                        grading_logic=i_data.get('grading_logic', {}), 
-                        metadata=i_data.get('metadata', {}), 
-                        order=i_idx
-                    )
-                    generated_titles.append(str(i_data.get('content', {}).get('stem', ''))[:30])
-                    time.sleep(5) # PROTECCIÓN CUOTA RPM (HITO 6)
+                    if i_idx < len(db_items):
+                        db_item = db_items[i_idx]
+                        db_item.content = i_data.get('content', {})
+                        db_item.grading_logic = i_data.get('grading_logic', {})
+                        db_item.metadata = i_data.get('metadata', {})
+                        db_item.save(update_fields=["content", "grading_logic", "metadata"])
+                        generated_titles.append(str(i_data.get('content', {}).get('stem', ''))[:30])
+                time.sleep(5)
             else:
-                # [FIX HITO 6] Fail-fast: Si la IA falla, abortamos para no crear exámenes vacíos.
-                raise AIServiceCriticalError(f"Fallo en generación atómica sección {s_info['subdivision_id']}. Respuesta: {resp}")
+                # [CORRECCIÓN CRÍTICA] NO ENTREGAR BASURA. REINTENTAR.
+                error_msg = f"Fallo Generación Sección {s_info['subdivision_id']}. Reintentando..."
+                exam.event_log.append({"ts": timezone.now().isoformat(), "msg": error_msg})
+                exam.save(update_fields=['event_log'])
+                # Lanzamos Retry de Celery explícitamente
+                raise self.retry(exc=AIServiceCriticalError(f"Error AI: {resp}"), countdown=30)
 
         TrackingService.record_usage(exam.user, exam, "gemini-2.5-flash-lite", usage_total["in"], usage_total["out"], "Restored-Key")
         exam.status = 'READY'
@@ -485,7 +513,15 @@ def generate_exam_task(self, exam_uuid, context_text=None, topic=None):
     except MaxRetriesExceededError:
         if exam:
             exam.status = 'ERROR'
-            exam.save()
+            exam.error_log = "MaxRetriesExceeded: La IA falló repetidamente."
+            exam.save(update_fields=['status', 'error_log'])
+            
+            # Notificación al Administrador (OBLIGATORIO)
+            try:
+                _send_admin_notification(f"FALLO CRÍTICO EXAMEN {exam.uuid}", f"El examen ha fallado tras agotar los reintentos de IA. Usuario: {exam.user.email}")
+            except: pass
+
+            # Notificación al Usuario
             send_unified_notification(
                 exam.user, 
                 "Servicio de Clasificación no disponible", 

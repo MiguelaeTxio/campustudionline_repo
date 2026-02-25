@@ -15,33 +15,36 @@ La próxima sesión debe cargarse OBLIGATORIAMENTE con la siguiente constelació
 *   V06DOC_ROADMAP.md
 
 **PROTOCOLO DEL MANIFIESTO (FUENTE DE LA VERDAD):**
-El archivo V06DOC_ROADMAP.md es la ÚNICA fuente de verdad para el progreso. 
+El archivo V06DOC_ROADMAP.md es la ÚNICA fuente de verdad para el progreso.
 1. Es OBLIGATORIO auditar este archivo al inicio de cada sesión.
 2. Es MANDATORIO actualizar su estado atómico (Checklist) al cierre de cada sesión.
 
 ---
 
 # ANEXO: HITO 06 - SISTEMA DE AUTOEVALUACIONES CON IA
-# ESTADO: DOCUMENTACIÓN RE-ARQUITECTURADA Y CORE REPARADO
+# ESTADO: MOTOR DE PLANTILLAS "PYTHON-DICTATOR" IMPLEMENTADO AL 70%
 
 ### PARTE MUTABLE (RESUMEN TÉCNICO Y HOJA DE RUTA)
 
-## 1. RESUMEN TÉCNICO DE LA SESIÓN (NRA)
-*   **Reparación del Core:** Se ha refactorizado `core/services/gemini_service.py` para soportar `response_schema`, eliminando el bloqueo técnico de la generación.
-*   **Evolución del Modelo:** Actualizado `assessment_v2/models/main.py` con `section_stimulus` y `layout_mode` para soportar paneles laterales dinámicos.
-*   **Re-arquitectura "Python-Dictator":** Tras detectar una desalineación pedagógica grave (instrucciones en inglés, destrezas inapropiadas para niveles básicos), se ha reescrito la constelación documental del Hito 6. Se establece que Python define el esqueleto inmutable (Widgets y Estructura) y la IA solo rellena el contenido.
+## 1. RESUMEN TÉCNICO DE LA SESIÓN (CAMA)
+*   **Re-arquitectura del Orquestador:** Se ha modificado `orchestrator/tasks.py` para cumplir el estándar "Skeleton-First". El servidor ahora crea el esqueleto completo de Secciones e Ítems vacíos en la BBDD antes de invocar a la IA. La generación es atómica por sección para evitar errores de truncamiento.
+*   **Blindaje de Calidad:** Implementada lógica de reintento (`self.retry`) en el orquestador. Si la IA falla, no se entregan "ítems vacíos"; se reintenta la generación y, tras agotar intentos, se notifica al administrador y al usuario.
+*   **Mapa Maestro UGR V5.0:** Actualizado `V06DOC_SUBARCHETYPES.md` con 45 modelos de examen reales tras auditar las guías docentes de la UGR.
+*   **Implementación de Estrategias:**
+    *   `languages.py`: Implementados 6 modelos (Instrumental, Filológico, Literario, Minor, Traducción T/L).
+    *   `health.py`: Implementados 10 modelos (Medicina C/B, Odonto, Fisio, Cuidados, Lab, Psy C/E, VET, NUT).
+    *   `social.py`: Implementados 10 modelos (Derecho P/D, Econ Q/M, Edu K/S, Jour, AV, Geog, Work).
 
 ## 2. HOJA DE RUTA PARA LA SIGUIENTE SESIÓN (LEY SUPREMA)
-**OBJETIVO: IMPLEMENTACIÓN DEL MOTOR DE PLANTILLAS DETERMINISTA**
+**OBJETIVO: CIERRE DE LA FASE DE ESTRATEGIAS Y FRONTEND**
 
-### I. FASE DE REFACTORIZACIÓN DEL ORQUESTRADOR
-1.  Modificar `orchestrator/tasks.py` para que el bucle de generación inyecte contenido en `ExamItems` ya creados en BBDD.
-2.  Eliminar la capacidad de la IA para proponer `widget_id` o `block_type`.
+### I. FINALIZACIÓN DE ESTRATEGIAS (LOS 45 MODELOS)
+1.  **Humanidades:** Consolidar `humanities.py` con sus 6 modelos (HIST, PHIL, ART-HIST, ART-CREA, MUS, ANTH) usando un bloque de escritura limpio.
+2.  **Ciencias:** Crear `science.py` e implementar los 6 modelos restantes (BIO, CHEM, PHYS, GEOL, ENV, DATA).
+3.  **Clasificador:** Revisar `AcademicDeductor` para asegurar que el mapeo de asignaturas apunta correctamente a los nuevos subarquetipos inmutables.
 
-### II. FASE DE ESTRATEGIAS (SUBARCHETYPES)
-1.  Implementar en `strategies/languages.py` el método `get_exam_skeleton()` que devuelva la receta fija según nivel e itinerario.
-2.  Garantizar que para `LVL_A` + `MINOR`, las instrucciones se fuercen en Castellano y el contenido sea Chino Básico.
+### II. FASE FRONTEND
+1.  Aplicar parche en `assessment_v2/templates/assessment_v2/exam_take.html` para habilitar el panel lateral (`SPLIT_TEXT`) y decodificar el `section_stimulus` para lecturas y casos prácticos.
 
-### III. FASE FRONTEND
-1.  Modificar `exam_take.html` para renderizar el `section_stimulus` en un panel lateral persistente (`SPLIT_TEXT`).
-
+### III. VALIDACIÓN TÉCNICA
+1.  Generar un examen de "Chino Minor" y un "Derecho Procesal" para verificar que los esqueletos son distintos y la inyección de contenido es correcta.

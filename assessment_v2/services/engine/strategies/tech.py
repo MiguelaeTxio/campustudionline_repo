@@ -161,41 +161,87 @@ class TechnicalStrategy(BaseExamStrategy):
             {"subdivision_id": "SD_VERIF", "title": "Verificación y Normativa", "instructions": "Comprueba la coherencia de los resultados y su adecuación a la norma.", "time_limit": 600}
         ]
 
+    def get_exam_skeleton(self):
+        """
+        Returns the structural skeleton for the 7 Technical models.
+        Ref: V06DOC_SUBARCHETYPES V5.0.
+        """
+        sid = self.sub_archetype_id
+        skeleton = []
+
+        # 1. SUB-TEC-SOFT: Informática (Modelo Algorítmico)
+        if sid == 'SUB-TEC-SOFT':
+            skeleton = [
+                {"subdivision_id": "SD_ALGO", "title": "Algoritmia y Lógica", "instructions": "Implemente o analice la complejidad del algoritmo.", "layout_mode": "STANDARD", "items": [{"block_type": "RPP-TRAZA", "widget_id": "W-TECH-CALC"}]},
+                {"subdivision_id": "SD_DEBUG", "title": "Depuración y Optimización", "instructions": "Identifique el error lógico o mejore el rendimiento.", "layout_mode": "STANDARD", "items": [{"block_type": "RPP-TRAZA", "widget_id": "W-TECH-CALC"}]}
+            ]
+        # 2. SUB-TEC-CIVIL: Caminos (Modelo Normativo)
+        elif sid == 'SUB-TEC-CIVIL':
+            skeleton = [
+                {"subdivision_id": "SD_STRUCT", "title": "Cálculo de Estructuras", "instructions": "Calcule las reacciones y esfuerzos.", "layout_mode": "SPLIT_TEXT", "items": [{"block_type": "RPP-TRAZA", "widget_id": "W-TECH-CALC"}]},
+                {"subdivision_id": "SD_NORM", "title": "Cumplimiento Normativo", "instructions": "Verifique la adecuación al CTE/EHE.", "layout_mode": "STANDARD", "items": [{"block_type": "PRM-STRIKE", "widget_id": "W-OBJ-STRIKE"}]}
+            ]
+        # 3. SUB-TEC-INDUS: Industrial (Termo-Mecánico)
+        elif sid == 'SUB-TEC-INDUS':
+            skeleton = [
+                {"subdivision_id": "SD_THERMO", "title": "Termodinámica y Fluidos", "instructions": "Realice el balance energético del ciclo.", "layout_mode": "STANDARD", "items": [{"block_type": "RPP-TRAZA", "widget_id": "W-TECH-CALC"}]},
+                {"subdivision_id": "SD_MECH", "title": "Mecanismos y Máquinas", "instructions": "Analice la cinemática o eficiencia del sistema.", "layout_mode": "STANDARD", "items": [{"block_type": "RPP-TRAZA", "widget_id": "W-TECH-CALC"}]}
+            ]
+        # 4. SUB-TEC-CHEM: Ing. Química (Reactores)
+        elif sid == 'SUB-TEC-CHEM':
+            skeleton = [
+                {"subdivision_id": "SD_REACT", "title": "Diseño de Reactores", "instructions": "Determine el volumen o conversión del reactor.", "layout_mode": "STANDARD", "items": [{"block_type": "RPP-TRAZA", "widget_id": "W-TECH-CALC"}]},
+                {"subdivision_id": "SD_MASS_BAL", "title": "Balances de Materia", "instructions": "Calcule los flujos de entrada y salida.", "layout_mode": "STANDARD", "items": [{"block_type": "RPP-TRAZA", "widget_id": "W-TECH-CALC"}]}
+            ]
+        # 5. SUB-TEC-PROJ: Arquitectura (Modelo Proyectual)
+        elif sid == 'SUB-TEC-PROJ':
+            skeleton = [
+                {"subdivision_id": "SD_SITE", "title": "Análisis de Sitio y Contexto", "instructions": "Analice las condicionantes urbanas e históricas.", "layout_mode": "SPLIT_TEXT", "items": [{"block_type": "RBT-CANON", "widget_id": "W-OBJ-STRIKE"}]},
+                {"subdivision_id": "SD_COMP", "title": "Composición y Diseño", "instructions": "Justifique la solución formal y funcional.", "layout_mode": "STANDARD", "items": [{"block_type": "DRA-HOLO", "widget_id": "W-HUM-TEXT"}]}
+            ]
+        # 6. SUB-TEC-CONS: Edificación (Modelo Constructivo)
+        elif sid == 'SUB-TEC-CONS':
+            skeleton = [
+                {"subdivision_id": "SD_TECH", "title": "Detalle Constructivo", "instructions": "Identifique los elementos del sistema constructivo.", "layout_mode": "SPLIT_TEXT", "items": [{"block_type": "PRM-STRIKE", "widget_id": "W-OBJ-STRIKE"}]},
+                {"subdivision_id": "SD_MGMT", "title": "Gestión y Seguridad de Obra", "instructions": "Valore los riesgos y la ejecución técnica.", "layout_mode": "STANDARD", "items": [{"block_type": "PRM-STRIKE", "widget_id": "W-OBJ-STRIKE"}]}
+            ]
+        # 7. SUB-TEC-PURE: Ciencias Puras (Modelo Demostrativo)
+        elif sid == 'SUB-TEC-PURE':
+            skeleton = [
+                {"subdivision_id": "SD_AXIOM", "title": "Axiomas y Definiciones", "instructions": "Enuncie los principios fundamentales.", "layout_mode": "STANDARD", "items": [{"block_type": "RBT-CANON", "widget_id": "W-OBJ-STRIKE"}]},
+                {"subdivision_id": "SD_PROOF", "title": "Demostración Formal", "instructions": "Desarrolle la derivación lógica completa.", "layout_mode": "STANDARD", "items": [{"block_type": "RPP-TRAZA", "widget_id": "W-TECH-CALC"}]}
+            ]
+        else:
+            skeleton = [
+                {"subdivision_id": "SD_GEN", "title": "Problema Técnico General", "instructions": "Resuelva el supuesto planteado.", "layout_mode": "STANDARD", "items": [{"block_type": "RPP-TRAZA", "widget_id": "W-TECH-CALC"}]}
+            ]
+
+        return skeleton
+
+
     def get_system_prompt(self):
         """
-        Dynamic Role Generation based on Sub-Archetypes (V06DOC_SUBARCHETYPES).
+        Generates technical role based on the 7 Technical Sub-Archetypes (V5.0).
         """
-        # 1. Base Role Definition
         roles = {
-            'SUB-TEC-SOFT': "Rol: Arquitecto de Software Senior. Foco: Algoritmia (O-notation), Patrones de Diseño, Seguridad.",
-            'SUB-TEC-CIVIL': "Rol: Ingeniero de Caminos (ICC). Foco: CTE/EHE, Resistencia de Materiales, Geotecnia.",
-            'SUB-TEC-INDUS': "Rol: Ingeniero Industrial. Foco: Termodinámica, Procesos Fabriles, Máquinas Eléctricas.",
-            'SUB-TEC-PURE': "Rol: Doctor en Física/Matemáticas. Foco: Demostración formal, rigor axiomático, derivación.",
-            'SUB-TEC-CHEM': "Rol: Ingeniero Químico. Foco: Balances de materia y energía, Reactores, Cinética."
+            'SUB-TEC-SOFT': "Rol: Arquitecto de Software Senior. Foco: Algoritmia, Estructuras de Datos y Arquitectura.",
+            'SUB-TEC-CIVIL': "Rol: Ingeniero de Caminos (ICC). Foco: Cálculo de Estructuras y Normativa Técnica (CTE).",
+            'SUB-TEC-INDUS': "Rol: Ingeniero Industrial. Foco: Termodinámica, Máquinas y Procesos Industriales.",
+            'SUB-TEC-CHEM': "Rol: Ingeniero Químico. Foco: Reactores y Balances de Materia/Energía.",
+            'SUB-TEC-PROJ': "Rol: Arquitecto Proyectista. Foco: Composición, Proyecto y Análisis Urbano.",
+            'SUB-TEC-CONS': "Rol: Arquitecto Técnico / Ing. Edificación. Foco: Técnica Constructiva y Gestión de Obra.",
+            'SUB-TEC-PURE': "Rol: Doctor en Ciencias Puras (Física/Mates). Foco: Rigor Deductivo y Demostración."
         }
+        base_role = roles.get(self.sub_archetype_id, "Rol: Catedrático de Ingeniería.")
         
-        # Default fallback
-        base_role = roles.get(self.sub_archetype_id, "Rol: Catedrático de Ingeniería Genérico.")
+        itin_prompt = ""
+        if self.itinerary_id == 'ITIN_PROF':
+            itin_prompt = "CONTEXTO PROFESIONAL: Exige cumplimiento estricto de reglamentación técnica."
+        
+        return f"{base_role}
+{itin_prompt}
+REGLA: Usa RPP-TRAZA para cálculos y RBT-CANON para definiciones técnicas."
 
-        # 2. Itinerary Nuance (V06DOC_SUBDIVISIONS)
-        itin_instructions = {
-            'ITIN_MAI': "Rigor Académico: Nivel Catedrático. Penaliza imprecisión terminológica.",
-            'ITIN_MIN': "Rigor Funcional: Valora la aplicación práctica sobre la teoría pura.",
-            'ITIN_ROT': "Rigor Seguridad: Cualquier error en cálculo de cargas o seguridad es FATAL.",
-            'ITIN_PROF': "Rigor Normativo: EXIGE cumplimiento de normativa vigente (ISO, UNE, CTE).",
-            'ITIN_INV': "Rigor Metodológico: Foco en estado del arte y cita bibliográfica.",
-            'ITIN_DOC': "Rigor Didáctico: Explica los pasos como para un alumno de grado."
-        }
-        itin_prompt = itin_instructions.get(self.itinerary_id, "")
-
-        # 3. Level Density (V06DOC_LEVELS)
-        level_prompt = ""
-        if self.pedagogical_level == 'LVL_C':
-            level_prompt = "Nivel C (Maestro): Usa terminología densa, casos límite y alta complejidad."
-        elif self.pedagogical_level == 'LVL_A':
-            level_prompt = "Nivel A (Acceso): Fundamentos básicos, definiciones claras."
-
-        return f"{base_role}\n{itin_prompt}\n{level_prompt}\nBLOQUES: Usa RPP-TRAZA para cálculos, RBT-CANON para definiciones."
 
     def get_user_prompt(self, context_text, topic, subdivision_id, generated_item_titles=None):
         """
@@ -222,16 +268,22 @@ class TechnicalStrategy(BaseExamStrategy):
         return {
             "type": "object",
             "properties": {
+                "section_stimulus": {"type": "string"},
+                "items": {
                 "items": {
                     "type": "array",
                     "items": {
                         "type": "object",
                         "properties": {
+                "section_stimulus": {"type": "string"},
+                "items": {
                             "block_type": {"type": "string", "enum": ["RPP-TRAZA", "PRM-STRIKE", "RBT-CANON"]},
                             "widget_id": {"type": "string", "enum": ["W-TECH-CALC", "W-OBJ-STRIKE"]},
                             "content": {
                                 "type": "object",
                                 "properties": {
+                "section_stimulus": {"type": "string"},
+                "items": {
                                     "stem": {"type": "string"},
                                     "options": {"type": "array", "items": {"type": "string"}},
                                     "media_assets": {"type": "array", "items": {"type": "string"}}
@@ -241,6 +293,8 @@ class TechnicalStrategy(BaseExamStrategy):
                             "grading_logic": {
                                 "type": "object",
                                 "properties": {
+                "section_stimulus": {"type": "string"},
+                "items": {
                                     "correct_answer": {
                                         "anyOf": [
                                             {"type": "string"},
@@ -253,6 +307,8 @@ class TechnicalStrategy(BaseExamStrategy):
                                         "items": {
                                             "type": "object",
                                             "properties": {
+                "section_stimulus": {"type": "string"},
+                "items": {
                                                 "id": {"type": "integer"},
                                                 "value": {"type": "string"},
                                                 "weight": {"type": "number"},
@@ -266,6 +322,8 @@ class TechnicalStrategy(BaseExamStrategy):
                             "metadata": {
                                 "type": "object",
                                 "properties": {
+                "section_stimulus": {"type": "string"},
+                "items": {
                                     "competency_tag": {"type": "string"},
                                     "cognitive_tag": {"type": "string"}
                                 },

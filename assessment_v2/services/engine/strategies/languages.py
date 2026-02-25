@@ -134,6 +134,69 @@ class LanguagesStrategy(BaseExamStrategy):
             })
         return plan
 
+
+    def get_exam_skeleton(self):
+        """
+        Returns the structural skeleton for the 6 UGR Language models.
+        Ref: V06DOC_SUBARCHETYPES V5.0.
+        """
+        sid = self.sub_archetype_id
+        skeleton = []
+
+        # 1. SUB-LIN-INSTR: Modelo Instrumental (B1/C1 - 5 Destrezas)
+        if sid == "SUB-LIN-INSTR":
+            plan = self.get_section_plan()
+            for sec in plan:
+                sec["layout_mode"] = "SPLIT_TEXT" if sec["subdivision_id"] == "SD_READ" else "STANDARD"
+                if sec["subdivision_id"] == "SD_READ":
+                    sec["items"] = [{"block_type": "CLO-MULTI", "widget_id": "W-TXT-CLOZE"}]
+                elif sec["subdivision_id"] == "SD_LIST":
+                    sec["items"] = [{"block_type": "PRM-STRIKE", "widget_id": "W-OBJ-STRIKE"}]
+                elif sec["subdivision_id"] == "SD_WRIT":
+                    sec["layout_mode"] = "SPLIT_TEXT"
+                    sec["items"] = [{"block_type": "DRA-HOLO", "widget_id": "W-HUM-TEXT"}]
+                else:
+                    sec["items"] = [{"block_type": "CLO-OPEN", "widget_id": "W-TXT-CLOZE"}]
+                skeleton.append(sec)
+
+        # 2. SUB-LIN-MINOR: Modelo Iniciación (Chino/Ruso Minor)
+        elif sid == "SUB-LIN-MINOR":
+            skeleton = [
+                {"subdivision_id": "SD_SCRIPT", "title": "Grafía y Dictado", "instructions": "Escriba los caracteres/términos dictados.", "layout_mode": "STANDARD", "items": [{"block_type": "RBT-CANON", "widget_id": "W-OBJ-STRIKE"}]},
+                {"subdivision_id": "SD_GRAMMAR", "title": "Estructuras Básicas", "instructions": "Complete las oraciones gramaticales.", "layout_mode": "STANDARD", "items": [{"block_type": "CLO-MULTI", "widget_id": "W-TXT-CLOZE"}]},
+                {"subdivision_id": "SD_CULTURE", "title": "Cultura y Civilización", "instructions": "Responda sobre el contexto socio-cultural.", "layout_mode": "STANDARD", "items": [{"block_type": "PRM-STRIKE", "widget_id": "W-OBJ-STRIKE"}]}
+            ]
+
+        # 3. SUB-LIN-PHILO: Modelo Filológico (Historia de la Lengua)
+        elif sid == "SUB-LIN-PHILO":
+            skeleton = [
+                {"subdivision_id": "SD_HIST_GRAM", "title": "Gramática Histórica", "instructions": "Analice la evolución fonética de los étimos.", "layout_mode": "STANDARD", "items": [{"block_type": "DRA-HOLO", "widget_id": "W-HUM-TEXT"}]},
+                {"subdivision_id": "SD_PHONETICS", "title": "Análisis Fonético", "instructions": "Transcriba y analice los rasgos fonológicos.", "layout_mode": "SPLIT_TEXT", "items": [{"block_type": "CLO-OPEN", "widget_id": "W-TXT-CLOZE"}]}
+            ]
+
+        # 4. SUB-LIN-NORM: Modelo Norma y Uso (Español Actual)
+        elif sid == "SUB-LIN-NORM":
+            skeleton = [
+                {"subdivision_id": "SD_DEVIATIONS", "title": "Análisis de Desviaciones", "instructions": "Identifique y corrija errores de norma.", "layout_mode": "SPLIT_TEXT", "items": [{"block_type": "CLO-MULTI", "widget_id": "W-TXT-CLOZE"}]},
+                {"subdivision_id": "SD_EXEGESIS", "title": "Exégesis Normativa", "instructions": "Justifique el uso según la normativa académica.", "layout_mode": "SPLIT_TEXT", "items": [{"block_type": "DRA-HOLO", "widget_id": "W-HUM-TEXT"}]}
+            ]
+
+        # 5. SUB-LIN-TRA-TECH: Traducción Técnica
+        elif sid == "SUB-LIN-TRA-TECH":
+            skeleton = [
+                {"subdivision_id": "SD_GLOSSARY", "title": "Glosario Terminológico", "instructions": "Vincule los términos técnicos con su equivalente.", "layout_mode": "STANDARD", "items": [{"block_type": "MAT-LINK", "widget_id": "W-MIX-MATCH"}]},
+                {"subdivision_id": "SD_TRANS_TECH", "title": "Traducción Técnica", "instructions": "Traduzca el texto manteniendo la precisión.", "layout_mode": "SPLIT_TEXT", "items": [{"block_type": "DRA-HOLO", "widget_id": "W-HUM-TEXT"}]}
+            ]
+
+        # 6. SUB-LIN-TRA-LIT: Traducción Literaria
+        elif sid == "SUB-LIN-TRA-LIT":
+            skeleton = [
+                {"subdivision_id": "SD_STYLE", "title": "Análisis Estilístico", "instructions": "Identifique los rasgos de estilo del autor.", "layout_mode": "SPLIT_TEXT", "items": [{"block_type": "CLO-MULTI", "widget_id": "W-TXT-CLOZE"}]},
+                {"subdivision_id": "SD_TRANS_LIT", "title": "Traducción Literaria", "instructions": "Traduzca preservando la carga estética.", "layout_mode": "SPLIT_TEXT", "items": [{"block_type": "DRA-HOLO", "widget_id": "W-HUM-TEXT"}]}
+            ]
+
+        return skeleton
+
     def get_system_prompt(self):
         """
         Returns the specific system prompt for the academic archetype.
@@ -180,6 +243,7 @@ class LanguagesStrategy(BaseExamStrategy):
         return {
             "type": "object",
             "properties": {
+                "section_stimulus": {"type": "string"},
                 "items": {
                     "type": "array",
                     "items": {
