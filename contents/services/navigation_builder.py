@@ -117,7 +117,7 @@ class NavigationTreeBuilder:
         ).order_by('-created_at')
 
         copies_qs = ContentCopy.objects.filter(user=self.user).prefetch_related(
-            Prefetch('assessments', queryset=assessments_qs, to_attr='_active_assessments')
+            Prefetch('exams', queryset=assessments_qs, to_attr='_active_assessments')
         ).select_related(
             'original_content', 'subject_context'
         ).order_by('-updated_at')

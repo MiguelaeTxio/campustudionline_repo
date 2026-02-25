@@ -216,6 +216,8 @@ def generate_multimodal_correction(prompt: str, audio_path: str, api_key: ApiKey
 
 def classify_subject_identity(subject_name: str, branch_name: str, degree_name: str, api_key: ApiKey) -> Tuple[bool, dict, str]:
     """
+    [HITO 6] Classifies a subject using AI to resolve semantic ambiguity (Hybrid Protocol).
+    ---
     [HITO 6] Clasifica una asignatura usando la IA para resolver ambigüedad semántica (Protocolo Híbrido).
     """
     from .gemini_schemas import ACADEMIC_CLASSIFICATION_SCHEMA
@@ -229,15 +231,24 @@ def classify_subject_identity(subject_name: str, branch_name: str, degree_name: 
         f"- Grado: {degree_name}\n"
     )
     
-    system_instruction = (
-        "Eres un experto en taxonomía académica universitaria. Clasifica la asignatura "
-        "enviada en uno de los arquetipos permitidos y detecta su sub-arquetipo técnico. "
-        "Si el arquetipo es ARCH_LANG, detecta el idioma objetivo (ej: Polaco, Japonés) "
-        "y genera obligatoriamente el campo 'localized_sections' con los títulos e "
-        "instrucciones traducidos fielmente a dicho idioma para las 5 secciones estándar "
-        "(SD_READ, SD_LIST, SD_WRIT, SD_SPEAK, SD_MEDI). Para otros arquetipos, devuelve "
-        "estas secciones en Castellano."
-    )
+    # [BLINDAJE HITO 6] Instrucción dictatorial con reglas de decisión de V06DOC_SUBARCHETYPES
+    system_instruction = """Eres un experto en taxonomía académica universitaria. Tu misión es clasificar la asignatura 
+en el sub_archetype_id exacto siguiendo estas reglas de decisión:
+
+1. ARCH_LANG (Lenguas):
+   - SUB-LIN-MINOR: Si es un idioma de iniciación, nivel básico o explícitamente indica 'Minor'.
+   - SUB-LIN-INSTR: Si es formación lingüística general (B1, B2, C1, C2) sin especialización técnica.
+   - SUB-LIN-TRA-TECH / SUB-LIN-PROF: Solo si el curso trata sobre la técnica de traducción profesional.
+   - SUB-LIN-PHILO: Si el enfoque es gramática histórica, fonética o evolución lingüística.
+
+2. ARCH_SCI (Ciencias Puras):
+   - Clasifica aquí Biología (BIO), Química (CHEM), Física (PHYS), Geología (GEOL), Ambientales (ENV) y Datos (DATA).
+
+3. ARCH_HEALTH (Salud):
+   - Usa los prefijos SUB-SAN-* para Medicina, Enfermería, Vet, etc.
+
+Para ARCH_LANG, detecta el idioma objetivo y genera 'localized_sections' traducido fielmente. 
+Para el resto, devuelve las secciones en Castellano."""
 
     generation_config = {
         "response_mime_type": "application/json",

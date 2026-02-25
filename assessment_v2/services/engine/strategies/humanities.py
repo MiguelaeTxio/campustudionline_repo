@@ -9,7 +9,7 @@ class HumanitiesStrategy(BaseExamStrategy):
     Fully compliant with Hermeneutic model and V06DOC_SUBARCHETYPES.
     
     COVERS:
-    - 5 Sub-archetypes (HIST, PHIL, EDU, CREA, MUS).
+    - 6 Sub-archetypes (HIST, PHIL, ART-HIST, ART-CREA, MUS, ANTH).
     - Blocks: DRA-HOLO (Holistic Rubric), EV-PALE (Exegesis).
     - Itineraries: DOC (Didactic - DUA), INV (Methodological), MAI, MIN.
     - Widgets: W-HUM-TEXT (Split-screen), W-OBJ-STRIKE.
@@ -35,7 +35,7 @@ class HumanitiesStrategy(BaseExamStrategy):
 
             return Decimal('0.0'), {
                 "status": "PENDING_AI_RUBRIC",
-                "axes": ["Rigor", "Estructura", "Terminología", "Forma"],
+                "axes":["Rigor", "Estructura", "Terminología", "Forma"],
                 "formal_penalty_risk": float(formal_penalty)
             }
 
@@ -54,18 +54,20 @@ class HumanitiesStrategy(BaseExamStrategy):
         Returns the mandatory section list for the orchestrator (SKELETON-FIRST).
         Ref: V06DOC_ARCHETYPES.
         """
-        return [
+        return[
             {
                 "subdivision_id": "SD_SOURCE",
                 "title": "Análisis y Crítica de Fuentes",
                 "instructions": "Analiza la fuente primaria proporcionada, verificando su autenticidad y contexto histórico o estético.",
-                "time_limit": 900
+                "time_limit": 900,
+                "layout_mode": "SPLIT_TEXT"
             },
             {
                 "subdivision_id": "SD_DISC",
                 "title": "Discurso e Interpretación Crítica",
                 "instructions": "Desarrolla un discurso crítico argumentado sobre las tesis o conceptos planteados.",
-                "time_limit": 1500
+                "time_limit": 1500,
+                "layout_mode": "STANDARD"
             }
         ]
 
@@ -76,9 +78,10 @@ class HumanitiesStrategy(BaseExamStrategy):
         roles = {
             'SUB-HUM-HIST': "Rol: Historiador/Arqueólogo (UGR). Foco: Análisis de fuentes, Cronología, Crítica de autenticidad.",
             'SUB-HUM-PHIL': "Rol: Filósofo/Lógico. Foco: Dialéctica, Coherencia argumental, Rigor formal.",
-            'SUB-HUM-EDU': "Rol: Especialista en Didáctica (LOMLOE). Foco: Diseño DUA, Situaciones de Aprendizaje.",
-            'SUB-ART-CREA': "Rol: Crítico/Teórico del Arte. Foco: Técnica matérica, Discurso estético, Composición.",
-            'SUB-ART-MUS': "Rol: Musicólogo. Foco: Análisis armónico, Historia musical, Transcripción."
+            'SUB-HUM-ART-HIST': "Rol: Historiador del Arte (Iconográfico). Foco: Análisis formal, Iconografía, Contexto.",
+            'SUB-HUM-ART-CREA': "Rol: Crítico/Teórico del Arte. Foco: Técnica matérica, Discurso estético, Composición.",
+            'SUB-HUM-MUS': "Rol: Musicólogo. Foco: Análisis armónico, Historia musical, Transcripción.",
+            'SUB-HUM-ANTH': "Rol: Antropólogo. Foco: Etnografía, Estructuras culturales, Evolución."
         }
         base_role = roles.get(self.sub_archetype_id, "Rol: Humanista Senior.")
 
@@ -104,8 +107,7 @@ class HumanitiesStrategy(BaseExamStrategy):
             f"REQUISITOS:\n"
             f"1. Foco en crítica de fuentes (SD_SOURCE) y discurso crítico (SD_DISC).\n"
             f"2. Usa DRA-HOLO para ensayos largos o EV-PALE para transcripciones.\n"
-            f"3. Si el sub-arquetipo es EDU, asegura que el ítem se centre en estrategias de enseñanza.\n"
-            f"4. Salida estrictamente JSON (Array 'items')."
+            f"3. Salida estrictamente JSON (Array 'items')."
         )
 
     def get_output_schema(self):
@@ -120,7 +122,7 @@ class HumanitiesStrategy(BaseExamStrategy):
                     "items": {
                         "type": "object",
                         "properties": {
-                            "block_type": {"type": "string", "enum": ["DRA-HOLO", "EV-PALE", "PRM-STRIKE"]},
+                            "block_type": {"type": "string", "enum":["DRA-HOLO", "EV-PALE", "PRM-STRIKE"]},
                             "widget_id": {"type": "string", "enum": ["W-HUM-TEXT", "W-OBJ-STRIKE"]},
                             "content": {
                                 "type": "object",
@@ -147,7 +149,7 @@ class HumanitiesStrategy(BaseExamStrategy):
                                 "required": ["competency_tag", "cognitive_tag"]
                             }
                         },
-                        "required": ["block_type", "widget_id", "content", "grading_logic", "metadata"]
+                        "required":["block_type", "widget_id", "content", "grading_logic", "metadata"]
                     }
                 }
             },

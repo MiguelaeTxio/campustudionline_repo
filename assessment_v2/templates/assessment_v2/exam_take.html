@@ -47,6 +47,7 @@
     .source-panel-scroll { max-height: 60vh; overflow-y: auto; }
     .editor-textarea { resize: none; }
     .stimulus-panel-scroll { max-height: 80vh; overflow-y: auto; }
+    .transition-width { transition: width 0.3s ease; }
 </style>
 {% endblock %}
 
@@ -67,9 +68,10 @@
     </div>
 
     <div class="row justify-content-center">
-        <div class="col-lg-8">
+        <div class="col-lg-12 transition-width" id="main-exam-column">
             {% for section in exam.sections.all %}
-            <section class="exam-section mb-5" data-section-id="{{ section.subdivision_id }}">
+            <section class="exam-section mb-5" data-section-id="{{ section.subdivision_id }}" data-layout-mode="{{ section.layout_mode|default:'STANDARD' }}">
+                <div class="d-none section-stimulus-content">{{ section.section_stimulus|default:''|safe }}</div>
                 <div class="d-flex justify-content-between align-items-center bg-secondary text-white p-2 rounded mb-3">
                     <h3 class="h5 mb-0">{{ section.title }}</h3>
                     {% if section.time_limit %}<span class="badge bg-warning text-dark">{% trans "Tiempo Límite" %}: {{ section.time_limit }}s</span>{% endif %}
@@ -279,6 +281,24 @@
 
             if (currentSectionIndex === sections.length - 1 && submitBtn) {
                 submitBtn.style.display = 'block';
+            }
+
+            // Layout Mode Logic (HITO 06 - SKELETON FIRST)
+            const layoutMode = currentSec.dataset.layoutMode;
+            const stimulusDiv = currentSec.querySelector('.section-stimulus-content');
+            const sidePanel = document.getElementById('side-stimulus-panel');
+            const mainColumn = document.getElementById('main-exam-column');
+            
+            if ((layoutMode === 'SPLIT_TEXT' || layoutMode === 'SPLIT_VISUAL') && stimulusDiv && stimulusDiv.innerHTML.trim() !== '') {
+                sidePanel.classList.remove('d-none');
+                mainColumn.classList.replace('col-lg-12', 'col-lg-8');
+                document.getElementById('stimulus-content').innerHTML = stimulusDiv.innerHTML;
+            } else {
+                sidePanel.classList.add('d-none');
+                if (mainColumn.classList.contains('col-lg-8')) {
+                    mainColumn.classList.replace('col-lg-8', 'col-lg-12');
+                }
+                document.getElementById('stimulus-content').innerHTML = '';
             }
 
             // Timer Logic

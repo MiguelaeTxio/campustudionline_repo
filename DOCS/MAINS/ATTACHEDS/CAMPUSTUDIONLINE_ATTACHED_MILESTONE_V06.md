@@ -22,29 +22,26 @@ El archivo V06DOC_ROADMAP.md es la ÚNICA fuente de verdad para el progreso.
 ---
 
 # ANEXO: HITO 06 - SISTEMA DE AUTOEVALUACIONES CON IA
-# ESTADO: MOTOR DE PLANTILLAS "PYTHON-DICTATOR" IMPLEMENTADO AL 70%
+# ESTADO: BLOQUEO CRÍTICO POR CORRUPCIÓN DE CÓDIGO (0% OPERATIVO)
 
 ### PARTE MUTABLE (RESUMEN TÉCNICO Y HOJA DE RUTA)
 
-## 1. RESUMEN TÉCNICO DE LA SESIÓN (CAMA)
-*   **Re-arquitectura del Orquestador:** Se ha modificado `orchestrator/tasks.py` para cumplir el estándar "Skeleton-First". El servidor ahora crea el esqueleto completo de Secciones e Ítems vacíos en la BBDD antes de invocar a la IA. La generación es atómica por sección para evitar errores de truncamiento.
-*   **Blindaje de Calidad:** Implementada lógica de reintento (`self.retry`) en el orquestador. Si la IA falla, no se entregan "ítems vacíos"; se reintenta la generación y, tras agotar intentos, se notifica al administrador y al usuario.
-*   **Mapa Maestro UGR V5.0:** Actualizado `V06DOC_SUBARCHETYPES.md` con 45 modelos de examen reales tras auditar las guías docentes de la UGR.
-*   **Implementación de Estrategias:**
-    *   `languages.py`: Implementados 6 modelos (Instrumental, Filológico, Literario, Minor, Traducción T/L).
-    *   `health.py`: Implementados 10 modelos (Medicina C/B, Odonto, Fisio, Cuidados, Lab, Psy C/E, VET, NUT).
-    *   `social.py`: Implementados 10 modelos (Derecho P/D, Econ Q/M, Edu K/S, Jour, AV, Geog, Work).
+## 1. RESUMEN TÉCNICO DE LA SESIÓN (INFORME DE DAÑOS)
+*   **Saneamiento de Relaciones:** Se corrigió el `AttributeError` en `navigation_builder.py` cambiando 'assessments' por 'exams'. Se alinearon nombres en `prompt_generators.py` y `badges.py`.
+*   **Saneamiento de Estrategias:** Se repararon los errores de sintaxis y se normalizó el bilingüismo en `health.py`, `tech.py`, `social.py` y `languages.py`.
+*   **Registro de Arquetipos:** Los 45 modelos de `V06DOC_SUBARCHETYPES.md` ya están registrados en las estrategias y en `gemini_schemas.py`.
+*   **FALLO CRÍTICO (INCAPACIDAD DEL MODELO):** El sistema se encuentra CAÍDO (Error WSGI). El modelo actual fue incapaz, tras 7 intentos fallidos, de reparar un `IndentationError` en `core/services/gemini_service.py` debido a una gestión negligente de los protocolos PMA y una pérdida total del enfoque atómico. El archivo queda corrupto en la función `classify_subject_identity`.
 
 ## 2. HOJA DE RUTA PARA LA SIGUIENTE SESIÓN (LEY SUPREMA)
-**OBJETIVO: CIERRE DE LA FASE DE ESTRATEGIAS Y FRONTEND**
+**ADVERTENCIA SUPREMA:** El usuario Miguel Ángel anulará SISTEMÁTICAMENTE cualquier propuesta que no cumpla estrictamente con las Instrucciones del Sistema (Protocolo PMA, intervenciones quirúrgicas, docstrings bilingües y cabeceras).
 
-### I. FINALIZACIÓN DE ESTRATEGIAS (LOS 45 MODELOS)
-1.  **Humanidades:** Consolidar `humanities.py` con sus 6 modelos (HIST, PHIL, ART-HIST, ART-CREA, MUS, ANTH) usando un bloque de escritura limpio.
-2.  **Ciencias:** Crear `science.py` e implementar los 6 modelos restantes (BIO, CHEM, PHYS, GEOL, ENV, DATA).
-3.  **Clasificador:** Revisar `AcademicDeductor` para asegurar que el mapeo de asignaturas apunta correctamente a los nuevos subarquetipos inmutables.
+### I. REPARACIÓN DE EMERGENCIA (PRIORIDAD ABSOLUTA)
+1.  **Restaurar `gemini_service.py`:** Reparar la función `classify_subject_identity` eliminando el error de indentación y cerrando correctamente los literales de cadena del f-string y la `system_instruction`.
+2.  **Validar Carga de Aplicación:** Reiniciar el servidor para confirmar que el error WSGI ha desaparecido.
 
-### II. FASE FRONTEND
-1.  Aplicar parche en `assessment_v2/templates/assessment_v2/exam_take.html` para habilitar el panel lateral (`SPLIT_TEXT`) y decodificar el `section_stimulus` para lecturas y casos prácticos.
+### II. VALIDACIÓN DE CLASIFICACIÓN
+1.  Verificar que el blindaje de la instrucción dictatorial en `gemini_service.py` clasifica correctamente un "Chino Minor" como `SUB-LIN-MINOR` y no como "Traducción Profesional".
 
-### III. VALIDACIÓN TÉCNICA
-1.  Generar un examen de "Chino Minor" y un "Derecho Procesal" para verificar que los esqueletos son distintos y la inyección de contenido es correcta.
+### III. FINALIZACIÓN DE FRONTEND
+1.  Probar el layout `SPLIT_TEXT` en `exam_take.html` con una generación real de Humanidades o Ciencias para validar el panel lateral.
+

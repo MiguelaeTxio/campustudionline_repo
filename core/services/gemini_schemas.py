@@ -148,23 +148,32 @@ ACADEMIC_CLASSIFICATION_SCHEMA = {
     "properties": {
         "archetype_id": {
             "type": "string",
-            "enum": ["ARCH_LANG", "ARCH_HEALTH", "ARCH_TECH", "ARCH_SOC", "ARCH_HUM"],
+            "enum": ["ARCH_LANG", "ARCH_HEALTH", "ARCH_TECH", "ARCH_SOC", "ARCH_HUM", "ARCH_SCI"],
             "description": "El arquetipo principal de la asignatura."
         },
         "sub_archetype_id": {
             "type": "string",
             "enum": [
-                "SUB-LIN-CERT", "SUB-LIN-PROF", "SUB-LIN-LIT",
-                "SUB-SAN-MED", "SUB-SAN-CUID", "SUB-SAN-BIO", "SUB-SAN-PSY", "SUB-SAN-VET",
-                "SUB-TEC-SOFT", "SUB-TEC-CIVIL", "SUB-TEC-INDUS", "SUB-TEC-PURE", "SUB-TEC-CHEM",
-                "SUB-SOC-JUR", "SUB-SOC-ECON", "SUB-SOC-BEHAV", "SUB-SOC-COMM",
-                "SUB-HUM-HIST", "SUB-HUM-PHIL", "SUB-HUM-EDU", "SUB-ART-CREA", "SUB-ART-MUS"
+                # LENGUAS
+                "SUB-LIN-INSTR", "SUB-LIN-MINOR", "SUB-LIN-PHILO", "SUB-LIN-NORM", "SUB-LIN-TRA-TECH", "SUB-LIN-TRA-LIT",
+                # SALUD
+                "SUB-SAN-MED-CLIN", "SUB-SAN-MED-BASIC", "SUB-SAN-ODON", "SUB-SAN-FISIO", "SUB-SAN-CUID", 
+                "SUB-SAN-LAB", "SUB-SAN-PSY-CLIN", "SUB-SAN-PSY-EXP", "SUB-SAN-VET", "SUB-SAN-NUT",
+                # SOCIALES
+                "SUB-SOC-LAW-PROC", "SUB-SOC-LAW-DICT", "SUB-SOC-ECON-QUAN", "SUB-SOC-ECON-MGMT", "SUB-SOC-EDU-KIDS", 
+                "SUB-SOC-EDU-SEC", "SUB-SOC-COMM-JOUR", "SUB-SOC-COMM-AV", "SUB-SOC-GEOG", "SUB-SOC-WORK",
+                # TÉCNICAS
+                "SUB-TEC-SOFT", "SUB-TEC-CIVIL", "SUB-TEC-INDUS", "SUB-TEC-CHEM", "SUB-TEC-PROJ", "SUB-TEC-CONS", "SUB-TEC-PURE",
+                # HUMANIDADES
+                "SUB-HUM-HIST", "SUB-HUM-PHIL", "SUB-HUM-ART-HIST", "SUB-HUM-ART-CREA", "SUB-HUM-MUS", "SUB-HUM-ANTH",
+                # CIENCIAS PURAS
+                "SUB-SCI-BIO", "SUB-SCI-CHEM", "SUB-SCI-PHYS", "SUB-SCI-GEOL", "SUB-SCI-ENV", "SUB-SCI-DATA"
             ],
             "description": "El ID técnico de especialidad (Ref: V06DOC_SUBARCHETYPES)."
         },
         "target_language_code": {
             "type": "string",
-            "description": "Código ISO 639-1 del idioma objetivo si es ARCH_LANG (ej: 'en', 'fr', 'de'). 'es' para el resto."
+            "description": "Código ISO 639-1 del idioma objetivo si es ARCH_LANG (ej: 'en', 'fr', 'ja'). 'es' para el resto."
         },
         "localized_sections": {
             "type": "object",
@@ -174,10 +183,11 @@ ACADEMIC_CLASSIFICATION_SCHEMA = {
                 "SD_LIST": {"type": "array", "items": {"type": "string"}, "description": "[Título, Instrucción]"},
                 "SD_WRIT": {"type": "array", "items": {"type": "string"}, "description": "[Título, Instrucción]"},
                 "SD_SPEAK": {"type": "array", "items": {"type": "string"}, "description": "[Título, Instrucción]"},
-                "SD_MEDI": {"type": "array", "items": {"type": "string"}, "description": "[Título, Instrucción]"}
+                "SD_MEDI": {"type": "array", "items": {"type": "string"}, "description": "[Título, Instrucción]"},
+                "SD_THEO": {"type": "array", "items": {"type": "string"}},
+                "SD_CALC": {"type": "array", "items": {"type": "string"}}
             }
-        },
-
+        }
     },
     "required": ["archetype_id", "sub_archetype_id", "target_language_code", "localized_sections"]
 }

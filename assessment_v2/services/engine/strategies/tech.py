@@ -222,6 +222,8 @@ class TechnicalStrategy(BaseExamStrategy):
     def get_system_prompt(self):
         """
         Generates technical role based on the 7 Technical Sub-Archetypes (V5.0).
+        ---
+        Genera el rol técnico basado en los 7 Sub-Arquetipos Técnicos (V5.0).
         """
         roles = {
             'SUB-TEC-SOFT': "Rol: Arquitecto de Software Senior. Foco: Algoritmia, Estructuras de Datos y Arquitectura.",
@@ -238,11 +240,9 @@ class TechnicalStrategy(BaseExamStrategy):
         if self.itinerary_id == 'ITIN_PROF':
             itin_prompt = "CONTEXTO PROFESIONAL: Exige cumplimiento estricto de reglamentación técnica."
         
-        return f"{base_role}
+        return f"""{base_role}
 {itin_prompt}
-REGLA: Usa RPP-TRAZA para cálculos y RBT-CANON para definiciones técnicas."
-
-
+REGLA: Usa RPP-TRAZA para cálculos y RBT-CANON para definiciones técnicas."""
     def get_user_prompt(self, context_text, topic, subdivision_id, generated_item_titles=None):
         """
         Generates the user prompt injecting the study material context (ATOMIC).
@@ -263,27 +263,23 @@ REGLA: Usa RPP-TRAZA para cálculos y RBT-CANON para definiciones técnicas."
     def get_output_schema(self):
         """
         Defines the expected JSON schema for the AI model response (ATOMIC).
-        Uses anyOf for Union Types (Gemini 2.5 Safe).
+        ---
+        Define el esquema JSON esperado para la respuesta del modelo de IA (ATÓMICO).
         """
         return {
             "type": "object",
             "properties": {
                 "section_stimulus": {"type": "string"},
                 "items": {
-                "items": {
                     "type": "array",
                     "items": {
                         "type": "object",
                         "properties": {
-                "section_stimulus": {"type": "string"},
-                "items": {
                             "block_type": {"type": "string", "enum": ["RPP-TRAZA", "PRM-STRIKE", "RBT-CANON"]},
                             "widget_id": {"type": "string", "enum": ["W-TECH-CALC", "W-OBJ-STRIKE"]},
                             "content": {
                                 "type": "object",
                                 "properties": {
-                "section_stimulus": {"type": "string"},
-                "items": {
                                     "stem": {"type": "string"},
                                     "options": {"type": "array", "items": {"type": "string"}},
                                     "media_assets": {"type": "array", "items": {"type": "string"}}
@@ -293,22 +289,14 @@ REGLA: Usa RPP-TRAZA para cálculos y RBT-CANON para definiciones técnicas."
                             "grading_logic": {
                                 "type": "object",
                                 "properties": {
-                "section_stimulus": {"type": "string"},
-                "items": {
                                     "correct_answer": {
-                                        "anyOf": [
-                                            {"type": "string"},
-                                            {"type": "number"},
-                                            {"type": "boolean"}
-                                        ]
+                                        "anyOf": [{"type": "string"}, {"type": "number"}, {"type": "boolean"}]
                                     },
                                     "step_matrix": {
                                         "type": "array",
                                         "items": {
                                             "type": "object",
                                             "properties": {
-                "section_stimulus": {"type": "string"},
-                "items": {
                                                 "id": {"type": "integer"},
                                                 "value": {"type": "string"},
                                                 "weight": {"type": "number"},
@@ -322,8 +310,6 @@ REGLA: Usa RPP-TRAZA para cálculos y RBT-CANON para definiciones técnicas."
                             "metadata": {
                                 "type": "object",
                                 "properties": {
-                "section_stimulus": {"type": "string"},
-                "items": {
                                     "competency_tag": {"type": "string"},
                                     "cognitive_tag": {"type": "string"}
                                 },

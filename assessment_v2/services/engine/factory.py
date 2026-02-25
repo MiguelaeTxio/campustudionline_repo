@@ -4,6 +4,7 @@ from .strategies.health import HealthStrategy
 from .strategies.tech import TechnicalStrategy
 from .strategies.social import SocialStrategy
 from .strategies.humanities import HumanitiesStrategy
+from .strategies.science import ScienceStrategy
 from .logic import AcademicDeductor
 
 class ExamFactory:
@@ -16,6 +17,7 @@ class ExamFactory:
     ARCH_TECH = 'ARCH_TECH'
     ARCH_SOC = 'ARCH_SOC'
     ARCH_HUM = 'ARCH_HUM'
+    ARCH_SCI = 'ARCH_SCI'
 
     @staticmethod
     def get_strategy_for_subject(subject, context_title=None, **kwargs):
@@ -59,6 +61,7 @@ class ExamFactory:
             ExamFactory.ARCH_TECH: TechnicalStrategy,
             ExamFactory.ARCH_SOC: SocialStrategy,
             ExamFactory.ARCH_HUM: HumanitiesStrategy,
+            ExamFactory.ARCH_SCI: ScienceStrategy,
         }
 
         strategy_class = mapping.get(archetype_id, LanguagesStrategy)

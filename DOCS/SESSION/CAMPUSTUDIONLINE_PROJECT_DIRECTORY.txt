@@ -408,8 +408,10 @@
 ./assessment_v2/services/engine/factory.py
 ./assessment_v2/services/engine/logic.py
 ./assessment_v2/services/engine/__init__.py
+./assessment_v2/services/engine/badges.py
 ./assessment_v2/services/engine/strategies/base.py
 ./assessment_v2/services/engine/strategies/__init__.py
+./assessment_v2/services/engine/strategies/science.py
 ./assessment_v2/services/engine/strategies/languages.py
 ./assessment_v2/services/engine/strategies/health.py
 ./assessment_v2/services/engine/strategies/humanities.py

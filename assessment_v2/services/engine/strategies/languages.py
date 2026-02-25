@@ -144,7 +144,7 @@ class LanguagesStrategy(BaseExamStrategy):
         skeleton = []
 
         # 1. SUB-LIN-INSTR: Modelo Instrumental (B1/C1 - 5 Destrezas)
-        if sid == "SUB-LIN-INSTR":
+        if sid in ["SUB-LIN-INSTR", "SUB-LIN-CERT"]:
             plan = self.get_section_plan()
             for sec in plan:
                 sec["layout_mode"] = "SPLIT_TEXT" if sec["subdivision_id"] == "SD_READ" else "STANDARD"
@@ -182,14 +182,14 @@ class LanguagesStrategy(BaseExamStrategy):
             ]
 
         # 5. SUB-LIN-TRA-TECH: Traducción Técnica
-        elif sid == "SUB-LIN-TRA-TECH":
+        elif sid in ["SUB-LIN-TRA-TECH", "SUB-LIN-PROF"]:
             skeleton = [
                 {"subdivision_id": "SD_GLOSSARY", "title": "Glosario Terminológico", "instructions": "Vincule los términos técnicos con su equivalente.", "layout_mode": "STANDARD", "items": [{"block_type": "MAT-LINK", "widget_id": "W-MIX-MATCH"}]},
                 {"subdivision_id": "SD_TRANS_TECH", "title": "Traducción Técnica", "instructions": "Traduzca el texto manteniendo la precisión.", "layout_mode": "SPLIT_TEXT", "items": [{"block_type": "DRA-HOLO", "widget_id": "W-HUM-TEXT"}]}
             ]
 
         # 6. SUB-LIN-TRA-LIT: Traducción Literaria
-        elif sid == "SUB-LIN-TRA-LIT":
+        elif sid in ["SUB-LIN-TRA-LIT", "SUB-LIN-LIT"]:
             skeleton = [
                 {"subdivision_id": "SD_STYLE", "title": "Análisis Estilístico", "instructions": "Identifique los rasgos de estilo del autor.", "layout_mode": "SPLIT_TEXT", "items": [{"block_type": "CLO-MULTI", "widget_id": "W-TXT-CLOZE"}]},
                 {"subdivision_id": "SD_TRANS_LIT", "title": "Traducción Literaria", "instructions": "Traduzca preservando la carga estética.", "layout_mode": "SPLIT_TEXT", "items": [{"block_type": "DRA-HOLO", "widget_id": "W-HUM-TEXT"}]}

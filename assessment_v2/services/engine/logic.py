@@ -124,6 +124,11 @@ class AcademicDeductor:
         target_language_code = identity.get('target_language_code', 'es')
         localized_sections = identity.get('localized_sections', {})
 
+        # Validación estricta para asegurar que mapea a los nuevos arquetipos (HITO 6)
+        VALID_ARCHETYPES = ['ARCH_LANG', 'ARCH_HEALTH', 'ARCH_TECH', 'ARCH_SOC', 'ARCH_HUM', 'ARCH_SCI']
+        if archetype_id not in VALID_ARCHETYPES:
+            archetype_id = 'ARCH_SOC'
+
         # FASE 2: Parámetros Deterministas (Python)
         # Ref: V06DOC_LOGIC_MAPPING V1.3 Section 2
         itinerary_id = cls.deduce_itinerary(subject, context_title)

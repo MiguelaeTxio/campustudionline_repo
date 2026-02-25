@@ -168,9 +168,9 @@ class SocialStrategy(BaseExamStrategy):
         base_role = roles.get(self.sub_archetype_id, "Rol: Especialista en Ciencias Sociales.")
         itin_ctx = "CONTEXTO PROFESIONAL: Exige rigor en la cita normativa y viabilidad técnica." if self.itinerary_id == 'ITIN_PROF' else ""
 
-        return f"{base_role}
+        return f"""{base_role}
 {itin_ctx}
-REGLA: Usa CASO-PRACTICO para supuestos de hecho con W-LAW-NAV o W-HUM-TEXT."
+REGLA: Usa CASO-PRACTICO para supuestos de hecho con W-LAW-NAV o W-HUM-TEXT."""
 
 
     def get_user_prompt(self, context_text, topic, subdivision_id, generated_item_titles=None):
@@ -199,20 +199,15 @@ REGLA: Usa CASO-PRACTICO para supuestos de hecho con W-LAW-NAV o W-HUM-TEXT."
             "properties": {
                 "section_stimulus": {"type": "string"},
                 "items": {
-                "items": {
                     "type": "array",
                     "items": {
                         "type": "object",
                         "properties": {
-                "section_stimulus": {"type": "string"},
-                "items": {
                             "block_type": {"type": "string", "enum": ["CASO-PRACTICO", "PRM-STRIKE"]},
                             "widget_id": {"type": "string", "enum": ["W-LAW-NAV", "W-OBJ-STRIKE", "W-HUM-TEXT"]},
                             "content": {
                                 "type": "object",
                                 "properties": {
-                "section_stimulus": {"type": "string"},
-                "items": {
                                     "stem": {"type": "string"},
                                     "case_data": {"type": "object"},
                                     "options": {"type": "array", "items": {"type": "string"}}
@@ -222,22 +217,13 @@ REGLA: Usa CASO-PRACTICO para supuestos de hecho con W-LAW-NAV o W-HUM-TEXT."
                             "grading_logic": {
                                 "type": "object",
                                 "properties": {
-                "section_stimulus": {"type": "string"},
-                "items": {
-                                    "correct_answer": {
-                                        "anyOf": [
-                                            {"type": "string"},
-                                            {"type": "number"}
-                                        ]
-                                    },
+                                    "correct_answer": {"anyOf": [{"type": "string"}, {"type": "number"}]},
                                     "required_norms": {"type": "array", "items": {"type": "string"}}
                                 }
                             },
                             "metadata": {
                                 "type": "object",
                                 "properties": {
-                "section_stimulus": {"type": "string"},
-                "items": {
                                     "competency_tag": {"type": "string"},
                                     "cognitive_tag": {"type": "string"}
                                 },

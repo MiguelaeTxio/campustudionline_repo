@@ -1921,3 +1921,11 @@ Carga de contexto obligatoria: Documentación técnica V06DOC y modelos de `asse
 *  **Session:** IMPLEMENTACIÓN DEL MOTOR DE PLANTILLAS DETERMINISTA
 *  **Description:** Refactorización del orquestador y estrategias para inyectar contenido en un esqueleto de examen pregenerado por Python. Implementación del renderizado de estímulos en paneles laterales persistentes (layout_mode).
 
+
+# 2026-02-25
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+## AAAA
+*  **Session:** Cierre de Estrategias y Frontend de Evaluación
+*  **Description:** Consolidación de las estrategias de generación de esqueletos (humanities.py y science.py) completando los 45 modelos del subarquetipo UGR. Revisión del AcademicDeductor para asegurar un mapeo correcto de las asignaturas. Implementación del parche en el template exam_take.html para habilitar el layout SPLIT_TEXT, el panel lateral persistente y la decodificación del section_stimulus. Finalización con validaciones técnicas.
+

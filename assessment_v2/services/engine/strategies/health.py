@@ -200,12 +200,9 @@ class HealthStrategy(BaseExamStrategy):
         base_role = roles.get(self.sub_archetype_id, "Rol: Evaluador de Ciencias de la Salud.")
         itin_ctx = "CONTEXTO ROTATORIO/SEGURIDAD: Tolerancia CERO. Activa KILL_SWITCH en pasos críticos." if self.itinerary_id == 'ITIN_ROT' else ""
 
-        return f"{base_role}
+        return f"""{base_role}
 {itin_ctx}
-REGLA: Usa W-CLIN-SCAN para imágenes y W-PROC-ACTION para pasos de seguridad vital."
-
-            f"3. Salida estrictamente JSON (Array 'items')."
-        )
+REGLA: Usa W-CLIN-SCAN para imágenes y W-PROC-ACTION para pasos de seguridad vital."""
 
     def get_output_schema(self):
         """
@@ -217,20 +214,15 @@ REGLA: Usa W-CLIN-SCAN para imágenes y W-PROC-ACTION para pasos de seguridad vi
             "properties": {
                 "section_stimulus": {"type": "string"},
                 "items": {
-                "items": {
                     "type": "array",
                     "items": {
                         "type": "object",
                         "properties": {
-                "section_stimulus": {"type": "string"},
-                "items": {
                             "block_type": {"type": "string", "enum": ["CDS-KILL", "PRM-STRIKE", "ILC-CONTEXT"]},
                             "widget_id": {"type": "string", "enum": ["W-PROC-ACTION", "W-OBJ-STRIKE", "W-CLIN-SCAN"]},
                             "content": {
                                 "type": "object",
                                 "properties": {
-                "section_stimulus": {"type": "string"},
-                "items": {
                                     "stem": {"type": "string"},
                                     "options": {"type": "array", "items": {"type": "string"}},
                                     "media_assets": {"type": "array", "items": {"type": "string"}}
@@ -240,8 +232,6 @@ REGLA: Usa W-CLIN-SCAN para imágenes y W-PROC-ACTION para pasos de seguridad vi
                             "grading_logic": {
                                 "type": "object",
                                 "properties": {
-                "section_stimulus": {"type": "string"},
-                "items": {
                                     "correct_answer": {
                                         "anyOf": [
                                             {"type": "string"},
@@ -256,8 +246,6 @@ REGLA: Usa W-CLIN-SCAN para imágenes y W-PROC-ACTION para pasos de seguridad vi
                             "metadata": {
                                 "type": "object",
                                 "properties": {
-                "section_stimulus": {"type": "string"},
-                "items": {
                                     "competency_tag": {"type": "string"},
                                     "cognitive_tag": {"type": "string"}
                                 },
