@@ -232,23 +232,21 @@ def classify_subject_identity(subject_name: str, branch_name: str, degree_name: 
     )
     
     # [BLINDAJE HITO 6] Instrucción dictatorial con reglas de decisión de V06DOC_SUBARCHETYPES
-    system_instruction = """Eres un experto en taxonomía académica universitaria. Tu misión es clasificar la asignatura 
-en el sub_archetype_id exacto siguiendo estas reglas de decisión:
-
-1. ARCH_LANG (Lenguas):
-   - SUB-LIN-MINOR: Si es un idioma de iniciación, nivel básico o explícitamente indica 'Minor'.
-   - SUB-LIN-INSTR: Si es formación lingüística general (B1, B2, C1, C2) sin especialización técnica.
-   - SUB-LIN-TRA-TECH / SUB-LIN-PROF: Solo si el curso trata sobre la técnica de traducción profesional.
-   - SUB-LIN-PHILO: Si el enfoque es gramática histórica, fonética o evolución lingüística.
-
-2. ARCH_SCI (Ciencias Puras):
-   - Clasifica aquí Biología (BIO), Química (CHEM), Física (PHYS), Geología (GEOL), Ambientales (ENV) y Datos (DATA).
-
-3. ARCH_HEALTH (Salud):
-   - Usa los prefijos SUB-SAN-* para Medicina, Enfermería, Vet, etc.
-
-Para ARCH_LANG, detecta el idioma objetivo y genera 'localized_sections' traducido fielmente. 
-Para el resto, devuelve las secciones en Castellano."""
+    system_instruction = (
+        "Eres un experto en taxonomía académica universitaria. Tu misión es clasificar la asignatura \n"
+        "en el sub_archetype_id exacto siguiendo estas reglas de decisión:\n\n"
+        "1. ARCH_LANG (Lenguas):\n"
+        "   - SUB-LIN-MINOR: Si es un idioma de iniciación, nivel básico o explícitamente indica 'Minor'.\n"
+        "   - SUB-LIN-INSTR: Si es formación lingüística general (B1, B2, C1, C2) sin especialización técnica.\n"
+        "   - SUB-LIN-TRA-TECH / SUB-LIN-PROF: Solo si el curso trata sobre la técnica de traducción profesional.\n"
+        "   - SUB-LIN-PHILO: Si el enfoque es gramática histórica, fonética o evolución lingüística.\n\n"
+        "2. ARCH_SCI (Ciencias Puras):\n"
+        "   - Clasifica aquí Biología (BIO), Química (CHEM), Física (PHYS), Geología (GEOL), Ambientales (ENV) y Datos (DATA).\n\n"
+        "3. ARCH_HEALTH (Salud):\n"
+        "   - Usa los prefijos SUB-SAN-* para Medicina, Enfermería, Vet, etc.\n\n"
+        "Para ARCH_LANG, detecta el idioma objetivo y genera 'localized_sections' traducido fielmente.\n"
+        "Para el resto, devuelve las secciones en Castellano."
+    )
 
     generation_config = {
         "response_mime_type": "application/json",

@@ -1929,3 +1929,10 @@ Carga de contexto obligatoria: Documentación técnica V06DOC y modelos de `asse
 *  **Session:** Cierre de Estrategias y Frontend de Evaluación
 *  **Description:** Consolidación de las estrategias de generación de esqueletos (humanities.py y science.py) completando los 45 modelos del subarquetipo UGR. Revisión del AcademicDeductor para asegurar un mapeo correcto de las asignaturas. Implementación del parche en el template exam_take.html para habilitar el layout SPLIT_TEXT, el panel lateral persistente y la decodificación del section_stimulus. Finalización con validaciones técnicas.
 
+# 2026-02-25
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+## CYC
+*  **Session:** Reparación Crítica WSGI y Validación de Layout Split Text
+*  **Description:** Sesión dedicada a la resolución prioritaria del bloqueo crítico (Error WSGI) causado por la corrupción del archivo core/services/gemini_service.py. Se aplicará una reparación quirúrgica en la función classify_subject_identity para corregir errores de indentación y literales de cadena no cerrados. Tras restablecer el servicio, se validará la eficacia del blindaje dictatorial en la clasificación de asignaturas (ej. 'Chino Minor') garantizando su adherencia estricta a las normativas de V06DOC_LEVELS.md. Finalmente, la sesión abordará la implementación y pruebas del layout SPLIT_TEXT en exam_take.html, asegurando la correcta visualización del panel lateral persistente requerido para las evaluaciones de Humanidades y Ciencias.
+

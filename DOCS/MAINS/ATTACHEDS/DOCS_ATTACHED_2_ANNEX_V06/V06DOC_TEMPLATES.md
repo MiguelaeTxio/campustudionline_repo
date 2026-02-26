@@ -1,5 +1,5 @@
-# /home/MiguelAeTxio/PROJECTS/CampuStudiOnline/DOCS/MAINS/ATTACHEDS/DOCS_ATTACHED_2_ANNEX_V06/V06DOC_TEMPLATES.md
-# V06DOC_TEMPLATES - CONTRATO DE INYECCIÓN DE CONTENIDO (V2.0 - PYTHON DICTATOR)
+<!-- /home/MiguelAeTxio/PROJECTS/CampuStudiOnline/DOCS/MAINS/ATTACHEDS/DOCS_ATTACHED_2_ANNEX_V06/V06DOC_TEMPLATES.md -->
+# V06DOC_TEMPLATES - CONTRATO DE INYECCIÓN DE CONTENIDO (V2.1 - DATA PROVIDER MODEL)
 
 Este documento define el contrato de datos entre el orquestador y la IA. 
 
@@ -32,18 +32,18 @@ Definida por . Array de objetos de fase:
 ## 3. DEFINICIÓN DE ÍTEMS (ITEM_PAYLOAD - Rellenado de Plantilla)
 La IA recibe los ítems vacíos (definidos por la Estrategia) y devuelve **exclusivamente** el contenido.
 
-**Input (Desde Python):** "El Ítem {uuid} es un {widget_id}. Genera contenido."
+**Input (Desde Python):** "El Ítem {uuid} es un {widget_id}. Instrucción de llenado: {TaskInstruction}."
 
 **Output (Desde IA):** Array `filled_items`.
 *   **item_id**: [UUID] Debe coincidir con el solicitado.
 *   **content**:
-    *   stem: Enunciado técnico (Traducido según nivel).
+    *   stem: Enunciado técnico. **OBLIGATORIO:** Solo la pregunta/ejercicio. Prohibido incluir teoría o introducciones pedagógicas.
     *   media_assets: [Array] (Opcional).
-    *   options: [Array] (Solo si el widget lo requiere).
-    *   text_with_gaps: [String] (Solo si el widget lo requiere).
+    *   options: [Array] (Obligatorio para W-OBJ-STRIKE. Mínimo 4 opciones).
+    *   text_with_gaps: [String] (Obligatorio para W-TXT-CLOZE).
 *   **grading_logic**:
     *   correct_answer / gap_solutions / pairs: Soluciones según el widget.
-    *   feedback_justification: Explicación académica.
+    *   feedback_justification: **OBLIGATORIO:** Explicación académica y teórica de la respuesta. Único lugar permitido para el rol docente.
 *   **metadata**:
     *   competency_tag: [ID].
 
@@ -58,3 +58,5 @@ La IA recibe los ítems vacíos (definidos por la Estrategia) y devuelve **exclu
 *   item_score: Nota del ítem.
 *   feedback_category: [ID] (Referencia V06DOC_METADATA - FB_CONCEPT, FB_FORMAL, etc.).
 *   justification: Texto explicativo (Rol Catedrático).
+
+--- SEPARATOR ---
