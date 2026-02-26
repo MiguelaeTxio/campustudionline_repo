@@ -49,52 +49,27 @@ class HumanitiesStrategy(BaseExamStrategy):
 
         return Decimal('0.0'), {"status": "PENDING_MANUAL_REVIEW"}
 
-    def get_exam_skeleton(self):
+    def get_section_plan(self):
         """
-        Returns the structural skeleton for the 6 Humanities models.
-        Ref: V06DOC_SUBARCHETYPES V5.0.
-        Refactor: DRY & Prompt Binding implemented. (Replaces legacy get_section_plan)
+        Returns the mandatory section list for the orchestrator (SKELETON-FIRST).
+        Ref: V06DOC_ARCHETYPES.
         """
-        sid = self.sub_archetype_id
-        skeleton = []
-
-        # 1. INSTRUCCIONES BASE (DRY)
-        I_SOURCE = "Analiza la fuente primaria proporcionada (texto, imagen o partitura) identificando su contexto, autoría y estructura."
-        I_DISC = "Desarrolla un ensayo crítico argumentado sobre las tesis planteadas, citando autores relevantes."
-        I_TRANS = "Transcribe el fragmento paleográfico o musical con exactitud."
-        I_THEORY = "Responde a la cuestión teórica fundamental."
-
-        # 2. OVERRIDES ESPECÍFICOS
-        if sid == "SUB-HUM-HIST":
-            I_SOURCE = "Realiza el comentario de texto histórico o epigráfico. Determina datación y fiabilidad."
-        elif sid == "SUB-HUM-ART-HIST":
-            I_SOURCE = "Realiza el análisis iconográfico y formal de la obra de arte descrita."
-        elif sid == "SUB-HUM-PHIL":
-            I_SOURCE = "Analiza la estructura lógica y argumentativa del fragmento filosófico."
-            I_DISC = "Desarrolla una disertación dialéctica confrontando las posturas del autor."
-        elif sid == "SUB-HUM-MUS":
-            I_SOURCE = "Analiza la estructura armónica y formal de la partitura."
-            I_TRANS = "Realiza la transcripción o dictado musical."
-
-        # 3. CONSTRUCCIÓN DEL ESQUELETO
-        # Estructura común para la mayoría: Fuente (Split) + Discurso (Standard)
-        if sid in ["SUB-HUM-HIST", "SUB-HUM-ART-HIST", "SUB-HUM-PHIL", "SUB-HUM-ANTH", "SUB-HUM-ART-CREA"]:
-            skeleton = [
-                {"subdivision_id": "SD_SOURCE", "title": "Análisis de Fuentes", "instructions": "Analice la fuente primaria.", "layout_mode": "SPLIT_TEXT", "items": [{"block_type": "EV-PALE", "widget_id": "W-HUM-TEXT", "task_instruction": I_SOURCE}]},
-                {"subdivision_id": "SD_DISC", "title": "Discurso Crítico", "instructions": "Desarrolle el tema propuesto.", "layout_mode": "STANDARD", "items": [{"block_type": "DRA-HOLO", "widget_id": "W-HUM-TEXT", "task_instruction": I_DISC}]}
-            ]
-        elif sid == "SUB-HUM-MUS":
-            skeleton = [
-                {"subdivision_id": "SD_SOURCE", "title": "Análisis Musical", "instructions": "Analice la obra.", "layout_mode": "SPLIT_TEXT", "items": [{"block_type": "EV-PALE", "widget_id": "W-HUM-TEXT", "task_instruction": I_SOURCE}]},
-                {"subdivision_id": "SD_TRANS", "title": "Transcripción/Dictado", "instructions": "Transcriba el fragmento.", "layout_mode": "SPLIT_TEXT", "items": [{"block_type": "EV-PALE", "widget_id": "W-HUM-TEXT", "task_instruction": I_TRANS}]}
-            ]
-        else:
-            # Fallback genérico
-            skeleton = [
-                {"subdivision_id": "SD_GEN", "title": "Ensayo Humanístico", "instructions": "Desarrolle el tema.", "layout_mode": "STANDARD", "items": [{"block_type": "DRA-HOLO", "widget_id": "W-HUM-TEXT", "task_instruction": I_DISC}]}
-            ]
-
-        return skeleton
+        return[
+            {
+                "subdivision_id": "SD_SOURCE",
+                "title": "Análisis y Crítica de Fuentes",
+                "instructions": "Analiza la fuente primaria proporcionada, verificando su autenticidad y contexto histórico o estético.",
+                "time_limit": 900,
+                "layout_mode": "SPLIT_TEXT"
+            },
+            {
+                "subdivision_id": "SD_DISC",
+                "title": "Discurso e Interpretación Crítica",
+                "instructions": "Desarrolla un discurso crítico argumentado sobre las tesis o conceptos planteados.",
+                "time_limit": 1500,
+                "layout_mode": "STANDARD"
+            }
+        ]
 
     def get_system_prompt(self):
         """

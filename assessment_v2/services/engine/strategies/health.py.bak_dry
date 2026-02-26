@@ -108,86 +108,78 @@ class HealthStrategy(BaseExamStrategy):
         """
         Returns the structural skeleton for the 10 Health models.
         Ref: V06DOC_SUBARCHETYPES V5.0.
-        Refactor: DRY & Prompt Binding implemented.
         """
         sid = self.sub_archetype_id
         skeleton = []
 
-        # 1. INSTRUCCIONES CENTRALIZADAS (DRY)
-        I_CLINIC_Q = "Genera una pregunta clínica de opción múltiple (4 opciones) basada en el caso o patología."
-        I_IMAGE = "Describe detalladamente una prueba de imagen (RX/CT/Resonancia) o hallazgo visual en el stem para su interpretación."
-        I_SAFETY = "Genera un checklist de seguridad crítico. El usuario debe marcar los pasos obligatorios para evitar riesgos."
-        I_TREATMENT = "Establezca el plan terapéutico o farmacológico adecuado (4 opciones)."
-
-        # 2. CONSTRUCCIÓN DEL ESQUELETO
-
         # 1. SUB-SAN-MED-CLIN: Medicina Clínica
-        if sid == "SUB-SAN-MED-CLIN":
+        if sid == 'SUB-SAN-MED-CLIN':
             skeleton = [
-                {"subdivision_id": "SD_FACT", "title": "Anamnesis y Hechos", "instructions": "Identifique signos y síntomas clave.", "layout_mode": "STANDARD", "items": [{"block_type": "PRM-STRIKE", "widget_id": "W-OBJ-STRIKE", "task_instruction": I_CLINIC_Q}]},
-                {"subdivision_id": "SD_DIAG", "title": "Diagnóstico por Imagen", "instructions": "Interprete la prueba diagnóstica.", "layout_mode": "SPLIT_TEXT", "items": [{"block_type": "ILC-CONTEXT", "widget_id": "W-CLIN-SCAN", "task_instruction": I_IMAGE}]},
-                {"subdivision_id": "SD_THERA", "title": "Plan Terapéutico", "instructions": "Establezca el tratamiento adecuado.", "layout_mode": "STANDARD", "items": [{"block_type": "PRM-STRIKE", "widget_id": "W-OBJ-STRIKE", "task_instruction": I_TREATMENT}]}
+                {"subdivision_id": "SD_FACT", "title": "Anamnesis y Hechos", "instructions": "Identifique signos y síntomas clave.", "layout_mode": "STANDARD", "items": [{"block_type": "PRM-STRIKE", "widget_id": "W-OBJ-STRIKE", "task_instruction": "Genera pregunta clínica (4 opciones) sobre el caso."}]},
+                {"subdivision_id": "SD_DIAG", "title": "Diagnóstico por Imagen", "instructions": "Interprete la prueba diagnóstica.", "layout_mode": "SPLIT_TEXT", "items": [{"block_type": "ILC-CONTEXT", "widget_id": "W-CLIN-SCAN", "task_instruction": "Describe detalladamente una prueba de imagen (RX/CT) en el stem para interpretación."}]},
+                {"subdivision_id": "SD_THERA", "title": "Plan Terapéutico", "instructions": "Establezca el tratamiento adecuado.", "layout_mode": "STANDARD", "items": [{"block_type": "PRM-STRIKE", "widget_id": "W-OBJ-STRIKE", "task_instruction": "Genera pregunta clínica (4 opciones) sobre el caso."}]}
             ]
         # 2. SUB-SAN-MED-BASIC: Básicas Médicas (Anatomía/Fisio)
-        elif sid == "SUB-SAN-MED-BASIC":
+        elif sid == 'SUB-SAN-MED-BASIC':
             skeleton = [
-                {"subdivision_id": "SD_IDENT", "title": "Identificación Anatómica", "instructions": "Señale la estructura o tejido en la imagen.", "layout_mode": "SPLIT_TEXT", "items": [{"block_type": "ILC-CONTEXT", "widget_id": "W-CLIN-SCAN", "task_instruction": "Describe una imagen anatómica o histológica para que el alumno identifique la estructura señalada."}]},
-                {"subdivision_id": "SD_FUNC", "title": "Fisiología y Función", "instructions": "Explique el mecanismo fisiológico.", "layout_mode": "STANDARD", "items": [{"block_type": "PRM-STRIKE", "widget_id": "W-OBJ-STRIKE", "task_instruction": "Genera una pregunta sobre mecanismos fisiológicos o función celular."}]}
+                {"subdivision_id": "SD_IDENT", "title": "Identificación Anatómica", "instructions": "Señale la estructura o tejido en la imagen.", "layout_mode": "SPLIT_TEXT", "items": [{"block_type": "ILC-CONTEXT", "widget_id": "W-CLIN-SCAN", "task_instruction": "Describe detalladamente una prueba de imagen (RX/CT) en el stem para interpretación."}]},
+                {"subdivision_id": "SD_FUNC", "title": "Fisiología y Función", "instructions": "Explique el mecanismo fisiológico.", "layout_mode": "STANDARD", "items": [{"block_type": "PRM-STRIKE", "widget_id": "W-OBJ-STRIKE", "task_instruction": "Genera pregunta clínica (4 opciones) sobre el caso."}]}
             ]
         # 3. SUB-SAN-ODON: Odontología
-        elif sid == "SUB-SAN-ODON":
+        elif sid == 'SUB-SAN-ODON':
             skeleton = [
-                {"subdivision_id": "SD_IMAG", "title": "Radiología Dental", "instructions": "Identifique hallazgos en la ortopantomografía.", "layout_mode": "SPLIT_TEXT", "items": [{"block_type": "ILC-CONTEXT", "widget_id": "W-CLIN-SCAN", "task_instruction": "Describe una ortopantomografía o radiografía periapical con una patología dental visible."}]},
-                {"subdivision_id": "SD_PROC", "title": "Procedimiento Técnico", "instructions": "Ejecute el protocolo de intervención dental.", "layout_mode": "STANDARD", "items": [{"block_type": "CDS-KILL", "widget_id": "W-PROC-ACTION", "task_instruction": I_SAFETY}]}
+                {"subdivision_id": "SD_IMAG", "title": "Radiología Dental", "instructions": "Identifique hallazgos en la ortopantomografía.", "layout_mode": "SPLIT_TEXT", "items": [{"block_type": "ILC-CONTEXT", "widget_id": "W-CLIN-SCAN", "task_instruction": "Describe detalladamente una prueba de imagen (RX/CT) en el stem para interpretación."}]},
+                {"subdivision_id": "SD_PROC", "title": "Procedimiento Técnico", "instructions": "Ejecute el protocolo de intervención dental.", "layout_mode": "STANDARD", "items": [{"block_type": "CDS-KILL", "widget_id": "W-PROC-ACTION", "task_instruction": "Genera un checklist de seguridad crítico. El usuario debe marcar los pasos obligatorios."}]}
             ]
         # 4. SUB-SAN-FISIO: Fisioterapia
-        elif sid == "SUB-SAN-FISIO":
+        elif sid == 'SUB-SAN-FISIO':
             skeleton = [
-                {"subdivision_id": "SD_VALORATION", "title": "Valoración Funcional", "instructions": "Determine el grado de afectación funcional.", "layout_mode": "STANDARD", "items": [{"block_type": "PRM-STRIKE", "widget_id": "W-OBJ-STRIKE", "task_instruction": I_CLINIC_Q}]},
-                {"subdivision_id": "SD_ANAT_PALP", "title": "Anatomía Palpatoria", "instructions": "Localice el punto gatillo o estructura.", "layout_mode": "SPLIT_TEXT", "items": [{"block_type": "ILC-CONTEXT", "widget_id": "W-CLIN-SCAN", "task_instruction": "Describe una zona anatómica para palpación o identificación de puntos gatillo."}]}
+                {"subdivision_id": "SD_VALORATION", "title": "Valoración Funcional", "instructions": "Determine el grado de afectación funcional.", "layout_mode": "STANDARD", "items": [{"block_type": "PRM-STRIKE", "widget_id": "W-OBJ-STRIKE", "task_instruction": "Genera pregunta clínica (4 opciones) sobre el caso."}]},
+                {"subdivision_id": "SD_ANAT_PALP", "title": "Anatomía Palpatoria", "instructions": "Localice el punto gatillo o estructura.", "layout_mode": "SPLIT_TEXT", "items": [{"block_type": "ILC-CONTEXT", "widget_id": "W-CLIN-SCAN", "task_instruction": "Describe detalladamente una prueba de imagen (RX/CT) en el stem para interpretación."}]}
             ]
         # 5. SUB-SAN-CUID: Enfermería (NANDA)
-        elif sid == "SUB-SAN-CUID":
+        elif sid == 'SUB-SAN-CUID':
             skeleton = [
-                {"subdivision_id": "SD_NANDA", "title": "Planificación (NANDA)", "instructions": "Priorice los diagnósticos de enfermería.", "layout_mode": "STANDARD", "items": [{"block_type": "PRM-STRIKE", "widget_id": "W-OBJ-STRIKE", "task_instruction": "Genera una pregunta sobre diagnósticos NANDA/NIC/NOC o priorización de cuidados."}]},
-                {"subdivision_id": "SD_SAFE", "title": "Protocolo de Seguridad", "instructions": "Asegure los pasos críticos de la técnica.", "layout_mode": "STANDARD", "items": [{"block_type": "CDS-KILL", "widget_id": "W-PROC-ACTION", "task_instruction": I_SAFETY}]}
+                {"subdivision_id": "SD_NANDA", "title": "Planificación (NANDA)", "instructions": "Priorice los diagnósticos de enfermería.", "layout_mode": "STANDARD", "items": [{"block_type": "PRM-STRIKE", "widget_id": "W-OBJ-STRIKE", "task_instruction": "Genera pregunta clínica (4 opciones) sobre el caso."}]},
+                {"subdivision_id": "SD_SAFE", "title": "Protocolo de Seguridad", "instructions": "Asegure los pasos críticos de la técnica.", "layout_mode": "STANDARD", "items": [{"block_type": "CDS-KILL", "widget_id": "W-PROC-ACTION", "task_instruction": "Genera un checklist de seguridad crítico. El usuario debe marcar los pasos obligatorios."}]}
             ]
         # 6. SUB-SAN-LAB: Bioquímica/Farmacia
-        elif sid == "SUB-SAN-LAB":
+        elif sid == 'SUB-SAN-LAB':
             skeleton = [
-                {"subdivision_id": "SD_ANALYTIC", "title": "Cálculo y Analítica", "instructions": "Determine los niveles o dosis requeridas.", "layout_mode": "STANDARD", "items": [{"block_type": "PRM-STRIKE", "widget_id": "W-OBJ-STRIKE", "task_instruction": "Genera un problema de cálculo de dosis, concentraciones o interpretación de valores analíticos."}]},
-                {"subdivision_id": "SD_LAB_PROC", "title": "Procedimiento de Laboratorio", "instructions": "Ejecute el protocolo de seguridad en lab.", "layout_mode": "STANDARD", "items": [{"block_type": "CDS-KILL", "widget_id": "W-PROC-ACTION", "task_instruction": I_SAFETY}]}
+                {"subdivision_id": "SD_ANALYTIC", "title": "Cálculo y Analítica", "instructions": "Determine los niveles o dosis requeridas.", "layout_mode": "STANDARD", "items": [{"block_type": "PRM-STRIKE", "widget_id": "W-OBJ-STRIKE", "task_instruction": "Genera pregunta clínica (4 opciones) sobre el caso."}]},
+                {"subdivision_id": "SD_LAB_PROC", "title": "Procedimiento de Laboratorio", "instructions": "Ejecute el protocolo de seguridad en lab.", "layout_mode": "STANDARD", "items": [{"block_type": "CDS-KILL", "widget_id": "W-PROC-ACTION", "task_instruction": "Genera un checklist de seguridad crítico. El usuario debe marcar los pasos obligatorios."}]}
             ]
         # 7. SUB-SAN-PSY-CLIN: Psicología Clínica
-        elif sid == "SUB-SAN-PSY-CLIN":
+        elif sid == 'SUB-SAN-PSY-CLIN':
             skeleton = [
-                {"subdivision_id": "SD_DSM", "title": "Diagnóstico DSM/CIE", "instructions": "Categorice el trastorno según criterios.", "layout_mode": "STANDARD", "items": [{"block_type": "PRM-STRIKE", "widget_id": "W-OBJ-STRIKE", "task_instruction": "Genera una pregunta de diagnóstico diferencial basada en criterios DSM-5/CIE-11."}]},
-                {"subdivision_id": "SD_BEHAV", "title": "Análisis Conductual", "instructions": "Identifique los refuerzos y conductas.", "layout_mode": "SPLIT_TEXT", "items": [{"block_type": "ILC-CONTEXT", "widget_id": "W-CLIN-SCAN", "task_instruction": "Describe un registro conductual o transcripción de sesión para análisis funcional."}]}
+                {"subdivision_id": "SD_DSM", "title": "Diagnóstico DSM/CIE", "instructions": "Categorice el trastorno según criterios.", "layout_mode": "STANDARD", "items": [{"block_type": "PRM-STRIKE", "widget_id": "W-OBJ-STRIKE", "task_instruction": "Genera pregunta clínica (4 opciones) sobre el caso."}]},
+                {"subdivision_id": "SD_BEHAV", "title": "Análisis Conductual", "instructions": "Identifique los refuerzos y conductas.", "layout_mode": "SPLIT_TEXT", "items": [{"block_type": "ILC-CONTEXT", "widget_id": "W-CLIN-SCAN", "task_instruction": "Describe detalladamente una prueba de imagen (RX/CT) en el stem para interpretación."}]}
             ]
         # 8. SUB-SAN-PSY-EXP: Psicología Experimental
-        elif sid == "SUB-SAN-PSY-EXP":
+        elif sid == 'SUB-SAN-PSY-EXP':
             skeleton = [
-                {"subdivision_id": "SD_STATS", "title": "Análisis de Datos", "instructions": "Interprete los resultados estadísticos.", "layout_mode": "STANDARD", "items": [{"block_type": "PRM-STRIKE", "widget_id": "W-OBJ-STRIKE", "task_instruction": "Genera una pregunta sobre interpretación de gráficas, p-valores o diseño estadístico."}]},
-                {"subdivision_id": "SD_DESIGN", "title": "Diseño Experimental", "instructions": "Identifique variables y sesgos.", "layout_mode": "STANDARD", "items": [{"block_type": "PRM-STRIKE", "widget_id": "W-OBJ-STRIKE", "task_instruction": "Genera una pregunta sobre control de variables, validez interna/externa o sesgos."}]}
+                {"subdivision_id": "SD_STATS", "title": "Análisis de Datos", "instructions": "Interprete los resultados estadísticos.", "layout_mode": "STANDARD", "items": [{"block_type": "PRM-STRIKE", "widget_id": "W-OBJ-STRIKE", "task_instruction": "Genera pregunta clínica (4 opciones) sobre el caso."}]},
+                {"subdivision_id": "SD_DESIGN", "title": "Diseño Experimental", "instructions": "Identifique variables y sesgos.", "layout_mode": "STANDARD", "items": [{"block_type": "PRM-STRIKE", "widget_id": "W-OBJ-STRIKE", "task_instruction": "Genera pregunta clínica (4 opciones) sobre el caso."}]}
             ]
         # 9. SUB-SAN-VET: Veterinaria
-        elif sid == "SUB-SAN-VET":
+        elif sid == 'SUB-SAN-VET':
             skeleton = [
-                {"subdivision_id": "SD_CLINIC", "title": "Clínica Animal", "instructions": "Identifique la patología en el animal.", "layout_mode": "SPLIT_TEXT", "items": [{"block_type": "ILC-CONTEXT", "widget_id": "W-CLIN-SCAN", "task_instruction": "Describe una imagen clínica de un animal (ej: lesión dérmica, postura) para diagnóstico."}]},
-                {"subdivision_id": "SD_SURGERY", "title": "Cirugía y Anestesia", "instructions": "Verifique los puntos críticos pre-quirúrgicos.", "layout_mode": "STANDARD", "items": [{"block_type": "CDS-KILL", "widget_id": "W-PROC-ACTION", "task_instruction": I_SAFETY}]}
+                {"subdivision_id": "SD_CLINIC", "title": "Clínica Animal", "instructions": "Identifique la patología en el animal.", "layout_mode": "SPLIT_TEXT", "items": [{"block_type": "ILC-CONTEXT", "widget_id": "W-CLIN-SCAN", "task_instruction": "Describe detalladamente una prueba de imagen (RX/CT) en el stem para interpretación."}]},
+                {"subdivision_id": "SD_SURGERY", "title": "Cirugía y Anestesia", "instructions": "Verifique los puntos críticos pre-quirúrgicos.", "layout_mode": "STANDARD", "items": [{"block_type": "CDS-KILL", "widget_id": "W-PROC-ACTION", "task_instruction": "Genera un checklist de seguridad crítico. El usuario debe marcar los pasos obligatorios."}]}
             ]
         # 10. SUB-SAN-NUT: Nutrición
-        elif sid == "SUB-SAN-NUT":
+        elif sid == 'SUB-SAN-NUT':
             skeleton = [
-                {"subdivision_id": "SD_DIET", "title": "Cálculo Dietético", "instructions": "Calcule el balance nutricional del caso.", "layout_mode": "STANDARD", "items": [{"block_type": "PRM-STRIKE", "widget_id": "W-OBJ-STRIKE", "task_instruction": "Genera un problema de cálculo de aportes calóricos, macronutrientes o balance hídrico."}]},
-                {"subdivision_id": "SD_BROM", "title": "Bromatología", "instructions": "Identifique componentes o contaminantes.", "layout_mode": "STANDARD", "items": [{"block_type": "PRM-STRIKE", "widget_id": "W-OBJ-STRIKE", "task_instruction": "Genera una pregunta sobre seguridad alimentaria, etiquetado o química de alimentos."}]}
+                {"subdivision_id": "SD_DIET", "title": "Cálculo Dietético", "instructions": "Calcule el balance nutricional del caso.", "layout_mode": "STANDARD", "items": [{"block_type": "PRM-STRIKE", "widget_id": "W-OBJ-STRIKE", "task_instruction": "Genera pregunta clínica (4 opciones) sobre el caso."}]},
+                {"subdivision_id": "SD_BROM", "title": "Bromatología", "instructions": "Identifique componentes o contaminantes.", "layout_mode": "STANDARD", "items": [{"block_type": "PRM-STRIKE", "widget_id": "W-OBJ-STRIKE", "task_instruction": "Genera pregunta clínica (4 opciones) sobre el caso."}]}
             ]
         else:
             skeleton = [
-                {"subdivision_id": "SD_GEN", "title": "Evaluación de Salud General", "instructions": "Resuelva el caso clínico.", "layout_mode": "STANDARD", "items": [{"block_type": "PRM-STRIKE", "widget_id": "W-OBJ-STRIKE", "task_instruction": I_CLINIC_Q}]}
+                {"subdivision_id": "SD_GEN", "title": "Evaluación de Salud General", "instructions": "Resuelva el caso clínico.", "layout_mode": "STANDARD", "items": [{"block_type": "PRM-STRIKE", "widget_id": "W-OBJ-STRIKE", "task_instruction": "Genera pregunta clínica (4 opciones) sobre el caso."}]}
             ]
 
         return skeleton
+
 
     def get_system_prompt(self):
         """

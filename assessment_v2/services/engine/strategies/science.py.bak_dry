@@ -41,78 +41,27 @@ class ScienceStrategy(BaseExamStrategy):
 
         return Decimal('0.0'), {"status": "PENDING_MANUAL_REVIEW"}
 
-    def get_exam_skeleton(self):
+    def get_section_plan(self):
         """
-        Returns the structural skeleton for the 6 Science models.
-        Ref: V06DOC_SUBARCHETYPES V5.0.
-        Refactor: DRY & Prompt Binding implemented. (Replaces legacy get_section_plan)
+        Returns the mandatory section list for the orchestrator (SKELETON-FIRST).
+        Ref: V06DOC_ARCHETYPES.
         """
-        sid = self.sub_archetype_id
-        skeleton = []
-
-        # 1. INSTRUCCIONES BASE (DRY)
-        I_THEORY = "Genera una pregunta teórica de opción múltiple (4 opciones) sobre fundamentos."
-        I_CALC = "Genera un problema de cálculo procedimental paso a paso. OBLIGATORIO: Define `step_matrix`."
-        I_DATA = "Genera un ejercicio de interpretación de datos, gráficas o tablas experimentales."
-
-        # 2. OVERRIDES ESPECÍFICOS
-        if sid == "SUB-SCI-BIO":
-            I_THEORY = "Genera una pregunta sobre taxonomía, genética, biología celular o ecología."
-        elif sid == "SUB-SCI-CHEM":
-            I_CALC = "Genera un problema de estequiometría, equilibrio químico o síntesis orgánica."
-        elif sid == "SUB-SCI-PHYS":
-            I_CALC = "Genera un problema de mecánica, electromagnetismo o termodinámica."
-        elif sid == "SUB-SCI-GEOL":
-            I_DATA = "Genera un ejercicio de interpretación de cortes geológicos, mapas estratigráficos o mineralogía."
-        elif sid == "SUB-SCI-DATA":
-            I_CALC = "Genera un problema de probabilidad, inferencia estadística o algoritmo de ML."
-
-        # 3. CONSTRUCCIÓN DEL ESQUELETO
-        # Estructura genérica para Ciencias: Teoría (Standard) + Resolución (Split)
-        
-        # 1. SUB-SCI-BIO
-        if sid == "SUB-SCI-BIO":
-            skeleton = [
-                {"subdivision_id": "SD_THEO", "title": "Fundamentos Biológicos", "instructions": "Responda a las cuestiones teóricas.", "layout_mode": "STANDARD", "items": [{"block_type": "PRM-STRIKE", "widget_id": "W-OBJ-STRIKE", "task_instruction": I_THEORY}]},
-                {"subdivision_id": "SD_CALC", "title": "Genética y Evolución", "instructions": "Resuelva los problemas de herencia o población.", "layout_mode": "SPLIT_TEXT", "items": [{"block_type": "RPP-TRAZA", "widget_id": "W-TECH-CALC", "task_instruction": "Resuelve un problema de genética mendeliana o poblacional."}]}
-            ]
-        # 2. SUB-SCI-CHEM
-        elif sid == "SUB-SCI-CHEM":
-            skeleton = [
-                {"subdivision_id": "SD_THEO", "title": "Química Fundamental", "instructions": "Justifique las propiedades periódicas o enlace.", "layout_mode": "STANDARD", "items": [{"block_type": "PRM-STRIKE", "widget_id": "W-OBJ-STRIKE", "task_instruction": I_THEORY}]},
-                {"subdivision_id": "SD_CALC", "title": "Reactividad y Cálculo", "instructions": "Ajuste la reacción y calcule rendimientos.", "layout_mode": "STANDARD", "items": [{"block_type": "RPP-TRAZA", "widget_id": "W-TECH-CALC", "task_instruction": I_CALC}]}
-            ]
-        # 3. SUB-SCI-PHYS
-        elif sid == "SUB-SCI-PHYS":
-            skeleton = [
-                {"subdivision_id": "SD_THEO", "title": "Principios Físicos", "instructions": "Aplique las leyes de conservación.", "layout_mode": "STANDARD", "items": [{"block_type": "PRM-STRIKE", "widget_id": "W-OBJ-STRIKE", "task_instruction": I_THEORY}]},
-                {"subdivision_id": "SD_CALC", "title": "Resolución de Problemas", "instructions": "Desarrolle la solución analítica.", "layout_mode": "STANDARD", "items": [{"block_type": "RPP-TRAZA", "widget_id": "W-TECH-CALC", "task_instruction": I_CALC}]}
-            ]
-        # 4. SUB-SCI-GEOL
-        elif sid == "SUB-SCI-GEOL":
-            skeleton = [
-                {"subdivision_id": "SD_THEO", "title": "Procesos Geológicos", "instructions": "Identifique los agentes y procesos.", "layout_mode": "STANDARD", "items": [{"block_type": "PRM-STRIKE", "widget_id": "W-OBJ-STRIKE", "task_instruction": I_THEORY}]},
-                {"subdivision_id": "SD_CALC", "title": "Interpretación y Cartografía", "instructions": "Analice el corte o mapa.", "layout_mode": "SPLIT_TEXT", "items": [{"block_type": "ILC-CONTEXT", "widget_id": "W-CLIN-SCAN", "task_instruction": I_DATA}]}
-            ]
-        # 5. SUB-SCI-ENV
-        elif sid == "SUB-SCI-ENV":
-            skeleton = [
-                {"subdivision_id": "SD_THEO", "title": "Sistemas Ambientales", "instructions": "Evalúe el impacto o ciclo.", "layout_mode": "STANDARD", "items": [{"block_type": "PRM-STRIKE", "widget_id": "W-OBJ-STRIKE", "task_instruction": I_THEORY}]},
-                {"subdivision_id": "SD_CALC", "title": "Gestión y Análisis", "instructions": "Interprete los datos de contaminación o recursos.", "layout_mode": "SPLIT_TEXT", "items": [{"block_type": "ILC-CONTEXT", "widget_id": "W-CLIN-SCAN", "task_instruction": I_DATA}]}
-            ]
-        # 6. SUB-SCI-DATA
-        elif sid == "SUB-SCI-DATA":
-            skeleton = [
-                {"subdivision_id": "SD_THEO", "title": "Teoría Estadística/IA", "instructions": "Seleccione el modelo o test adecuado.", "layout_mode": "STANDARD", "items": [{"block_type": "PRM-STRIKE", "widget_id": "W-OBJ-STRIKE", "task_instruction": I_THEORY}]},
-                {"subdivision_id": "SD_CALC", "title": "Análisis de Datos", "instructions": "Calcule probabilidades o métricas de error.", "layout_mode": "STANDARD", "items": [{"block_type": "RPP-TRAZA", "widget_id": "W-TECH-CALC", "task_instruction": I_CALC}]}
-            ]
-        else:
-            # Fallback
-            skeleton = [
-                {"subdivision_id": "SD_GEN", "title": "Ciencia General", "instructions": "Resuelva el problema científico.", "layout_mode": "STANDARD", "items": [{"block_type": "RPP-TRAZA", "widget_id": "W-TECH-CALC", "task_instruction": I_CALC}]}
-            ]
-
-        return skeleton
+        return[
+            {
+                "subdivision_id": "SD_THEO",
+                "title": "Fundamentos y Validación Teórica",
+                "instructions": "Responda a las cuestiones teóricas y justifique los principios fundamentales de la disciplina.",
+                "time_limit": 1200,
+                "layout_mode": "STANDARD"
+            },
+            {
+                "subdivision_id": "SD_CALC",
+                "title": "Resolución de Problemas y Modelado",
+                "instructions": "Desarrolle el cálculo paso a paso o interprete los datos del caso práctico. Se evaluará el planteamiento lógico.",
+                "time_limit": 2400,
+                "layout_mode": "SPLIT_TEXT"
+            }
+        ]
 
     def get_system_prompt(self):
         """

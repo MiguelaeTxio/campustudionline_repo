@@ -443,8 +443,7 @@ def generate_exam_task(self, exam_uuid, context_text=None, topic=None):
                         widget_id=i_data.get('widget_id', 'UNKNOWN'),
                         content={},
                         grading_logic={},
-                        # [HITO 6] SKELETON-PROMPT BINDING: Persistir la instrucción de llenado
-                        metadata={'task_instruction': i_data.get('task_instruction', '')},
+                        metadata={},
                         order=i_idx
                     )
         
@@ -467,14 +466,9 @@ def generate_exam_task(self, exam_uuid, context_text=None, topic=None):
             db_items = list(db_sec.items.all().order_by('order'))
             if not db_items: continue
             
-            # [HITO 6] SKELETON-PROMPT BINDING: Inyectar la instrucción específica por ítem
-            widgets_info_list = []
-            for i, item in enumerate(db_items):
-                instruction = item.metadata.get('task_instruction', 'Generar contenido académico estándar para este widget.')
-                widgets_info_list.append(f"Item {i+1} [{item.widget_id}]: {instruction}")
-            
-            widgets_info = "\n".join(widgets_info_list)
-            u_prompt_augmented = f"{u_prompt}\n\nINSTRUCCIONES DE LLENADO POR ÍTEM (OBLIGATORIO):\n{widgets_info}"
+            widgets_info = ", ".join([f"Item {i+1}: {item.widget_id} ({item.block_type})" for i, item in enumerate(db_items)])
+            # CORRECCIÓN DE ESCAPE: Usamos \n para evitar salto de línea real
+            u_prompt_augmented = f"{u_prompt}\n\nDEBES RELLENAR ESTOS ÍTEMS EXACTOS EN ORDEN:\n{widgets_info}"
 
             # [HITO 6 BLINDAJE] Bucle de reintentos local (Atómico) para evitar consumir max_retries de Celery
             section_success = False

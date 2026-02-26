@@ -1936,3 +1936,10 @@ Carga de contexto obligatoria: Documentación técnica V06DOC y modelos de `asse
 *  **Session:** Reparación Crítica WSGI y Validación de Layout Split Text
 *  **Description:** Sesión dedicada a la resolución prioritaria del bloqueo crítico (Error WSGI) causado por la corrupción del archivo core/services/gemini_service.py. Se aplicará una reparación quirúrgica en la función classify_subject_identity para corregir errores de indentación y literales de cadena no cerrados. Tras restablecer el servicio, se validará la eficacia del blindaje dictatorial en la clasificación de asignaturas (ej. 'Chino Minor') garantizando su adherencia estricta a las normativas de V06DOC_LEVELS.md. Finalmente, la sesión abordará la implementación y pruebas del layout SPLIT_TEXT en exam_take.html, asegurando la correcta visualización del panel lateral persistente requerido para las evaluaciones de Humanidades y Ciencias.
 
+# 2026-02-26
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+## EPI
+*  **Session:** Refactorización Resiliencia Celery y Prompt Binding de Estrategias
+*  **Description:** Corrección de vulnerabilidad crítica en la tarea Celery generate_exam_task (orchestrator/tasks.py). Se detectó una colisión en el contador global max_retries=3 que compartía la fase de clasificación semántica (reintentos de 10m) con la fase de llenado atómico iterativo (reintentos de 30s), causando abortos prematuros del examen. Se implementará un bucle de reintentos aislado y local para el renderizado de las secciones, preservando el contador global exclusivo para la fase de clasificación. Además, se auditarán y ajustarán las clases Strategy del assessment_v2 para asegurar la inyección estricta de la TaskInstruction, garantizando el cumplimiento del protocolo SKELETON-FIRST y el blindaje del Prompt Binding frente a la IA.
+
