@@ -1943,3 +1943,11 @@ Carga de contexto obligatoria: Documentación técnica V06DOC y modelos de `asse
 *  **Session:** Refactorización Resiliencia Celery y Prompt Binding de Estrategias
 *  **Description:** Corrección de vulnerabilidad crítica en la tarea Celery generate_exam_task (orchestrator/tasks.py). Se detectó una colisión en el contador global max_retries=3 que compartía la fase de clasificación semántica (reintentos de 10m) con la fase de llenado atómico iterativo (reintentos de 30s), causando abortos prematuros del examen. Se implementará un bucle de reintentos aislado y local para el renderizado de las secciones, preservando el contador global exclusivo para la fase de clasificación. Además, se auditarán y ajustarán las clases Strategy del assessment_v2 para asegurar la inyección estricta de la TaskInstruction, garantizando el cumplimiento del protocolo SKELETON-FIRST y el blindaje del Prompt Binding frente a la IA.
 
+
+# 2026-02-26
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+## PLUTO # --SYSTEM -->!
+*  **Session:** Auditoría e Implementación de Estructura Segregada de Autoevaluaciones (Hito 6)
+*  **Description:** Sesión dedicada a la auditoría técnica exhaustiva y alineación inmutable del código con la FASE I documental del Hito 6 (Sistema de Autoevaluaciones con IA). Se verificará el cumplimiento del contrato de inyección de contenido (Data Provider Model), la orquestación SKELETON-PROMPT BINDING, y el catálogo de widgets y subdivisiones académicas para garantizar una base determinista.
+

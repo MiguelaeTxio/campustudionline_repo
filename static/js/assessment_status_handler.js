@@ -1,9 +1,17 @@
+// /home/MiguelAeTxio/PROJECTS/CampuStudiOnline/static/js/assessment_status_handler.js
+/**
+ * Assessment Status Handler v2.1 (HITO 6)
+ * Gestión de paneles pasivos (Dashboards, Listas de espera).
+ * NO interfiere con la lógica activa de 'exam_take.html'.
+ */
+
 document.addEventListener('DOMContentLoaded', function() {
+    // Guard Clause: Solo se ejecuta si existe el contenedor del panel (Dashboard)
     const panelContainer = document.getElementById('assessment-panel-container');
     if (!panelContainer) return;
 
     let pollingInterval = null;
-    let countdownIntervals = []; // From a variable to an array for multiple timers
+    let countdownIntervals = [];
 
     function stopPolling() {
         if (pollingInterval) {
@@ -12,15 +20,14 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // Modified to clear all stored intervals
-    function stopCountdown() {
+    function stopCountdowns() {
         countdownIntervals.forEach(intervalId => clearInterval(intervalId));
         countdownIntervals = [];
     }
 
     function updatePanel(html) {
         stopPolling();
-        stopCountdown();
+        stopCountdowns();
         panelContainer.innerHTML = html;
         initializePanel();
     }
@@ -29,15 +36,12 @@ document.addEventListener('DOMContentLoaded', function() {
         const panel = document.getElementById('assessment-panel');
         if (!panel) return;
 
-        // --- START OF TIMER REFACTORING ---
+        // Limpiar temporizadores previos para evitar fugas de memoria
+        stopCountdowns();
 
-        // We stop any previous timer to prevent memory leaks.
-        stopCountdown();
-
-        // We search for all timer elements by their class.
+        // Buscar temporizadores pasivos (ej: tiempo restante para desbloqueo de cuota)
         const timerElements = document.querySelectorAll('.assessment-timer');
 
-        // We iterate over each found timer element.
         timerElements.forEach(timerElement => {
             if (timerElement.dataset.endTime) {
                 const endTime = new Date(timerElement.dataset.endTime);
@@ -52,29 +56,28 @@ document.addEventListener('DOMContentLoaded', function() {
                         const seconds = (remainingSeconds % 60).toString().padStart(2, '0');
                         timerElement.textContent = `${hours}:${minutes}:${seconds}`;
                     } else {
-                        // If a timer reaches zero, we stop all and update the entire panel.
-                        stopCountdown();
+                        // Si un contador llega a cero, refrescamos el panel para actualizar estados
+                        stopCountdowns();
                         fetchPanelUpdate();
                     }
                 };
 
-                // We create an interval for this specific timer and save its ID.
                 const intervalId = setInterval(updateCountdown, 1000);
                 countdownIntervals.push(intervalId);
-                updateCountdown(); // Initial call so there is no one-second delay.
+                updateCountdown(); 
             }
         });
-        // --- END OF TIMER REFACTORING ---
 
-
-        // Start polling if the state requires it (existing logic unchanged)
+        // Configuración de Polling para actualizaciones de estado asíncronas
         const config = window.assessmentPollingConfig;
         if (config && config.statusUrl) {
             const checkStatus = () => {
                 fetch(config.statusUrl)
                     .then(response => response.json())
                     .then(data => {
-                        const finalStates = ['COMPLETED', 'FAILED', 'TIMEOUT_FAILURE', 'USER_CANCELLED', 'CORRECTION_COMPLETED', 'RESULTS_AVAILABLE'];
+                        const finalStates = ['COMPLETED', 'FAILED', 'TIMEOUT_FAILURE', 'USER_CANCELLED', 'CORRECTION_COMPLETED', 'RESULTS_AVAILABLE', 'READY'];
+                        
+                        // Si el estado cambia a uno final o listo, actualizamos la UI
                         if (finalStates.includes(data.status)) {
                             stopPolling();
                             fetchPanelUpdate();
@@ -82,10 +85,13 @@ document.addEventListener('DOMContentLoaded', function() {
                     })
                     .catch(error => {
                         console.error('Error durante el polling de estado:', error);
+                        // En caso de error persistente, detenemos para no saturar
                         stopPolling();
                     });
             };
+            
             stopPolling();
+            // Intervalo de 5 segundos para no sobrecargar el servidor
             pollingInterval = setInterval(checkStatus, 5000);
             checkStatus();
         }
@@ -105,6 +111,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     
-    // Initialization on page load
+    // Inicialización
     initializePanel();
 });

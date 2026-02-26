@@ -21,4 +21,4 @@ Es de ESTRICTO CUMPLIMIENTO cargar la constelación satélite completa al inicio
 Auditoría técnica exhaustiva de todo el código implicado frente a la documentación cargada:
 1.  **Identificación de Archivos:** Localizar todos los archivos del sistema que deban reflejar las directrices de la documentación (Estrategias, Orquestador, Servicios, Modelos, etc.).
 2.  **Verificación Atómica:** Auditar cada archivo para asegurar que la implementación es un reflejo absoluto, integral y exacto de la documentación.
-3.  **Detección de Desviaciones:** Cualquier discrepancia entre lo que dicta la documentación y lo que ejecuta el código debe ser identificada para su corrección inmediata.
+3.  **Detección de Desviaciones:** Cualquier discrepancia entre lo que dicta la documentación y lo que ejecuta el código debe ser identificada para su corrección inmediata. El nivel de granularidad de las discrepancias debe ser atómico.

@@ -1,14 +1,16 @@
-# ---- Core de Django y Servidor ----
+# /home/MiguelAeTxio/PROJECTS/CampuStudiOnline/requirements.in
+
+# ---- Django Core and Server / Core de Django y Servidor ----
 Django==5.0.7
 uvicorn[standard]==0.29.0
 gunicorn==22.0.0
 
-# ---- Base de Datos y Entorno ----
+# ---- Database and Environment / Base de Datos y Entorno ----
 mysqlclient==2.2.4
 python-dotenv==1.0.1
 django-dotenv==1.4.2
 
-# ---- Utilidades de Django ----
+# ---- Django Utilities / Utilidades de Django ----
 crispy-bootstrap5==2024.2
 django-anymail[sendgrid]==10.2
 django-cleanup==7.0.0
@@ -21,45 +23,45 @@ pymdown-extensions==10.8.1
 beautifulsoup4==4.12.3
 lxml==5.2.2
 
-# ---- Canales y Tiempo Real ----
+# ---- Channels and Real Time / Canales y Tiempo Real ----
 redis==4.6.0
 
-# ---- Manipulación de Imágenes y Documentos ----
+# ---- Image and Document Manipulation / Manipulación de Imágenes y Documentos ----
 Pillow==10.4.0
 weasyprint==65.1
 pdf2image==1.17.0
 
-# ---- Soporte de Fechas y Zonas Horarias ----
+# ---- Dates and Timezones / Soporte de Fechas y Zonas Horarias ----
 pytz==2024.1
 tzdata==2024.1
 
-# ---- APIs y Servicios Externos ----
+# ---- APIs and External Services / APIs y Servicios Externos ----
 google-genai>=1.51.0 # SDK Unificado Gemini v1
 google-cloud-vision # Para OCR de alta fidelidad en albaranes
 celery==5.4.0
 django-webpush
 django-user-agents==0.4.0
 
-# ---- Dependencias de Procesamiento Markdown ----
+# ---- Markdown Processing Dependencies / Dependencias de Procesamiento Markdown ----
 Markdown
 Pygments
 httpx
 asgiref
 black
 google-api-core
-# ---- Estructuras de Datos Jerárquicas ----
+
+# ---- Hierarchical Data Structures / Estructuras de Datos Jerárquicas ----
 django-treebeard
 django-celery-beat
 
-# ---- Marketing & Analytics ----
+# ---- Marketing & Analytics / Marketing y Analítica ----
 facebook-business>=20.0.0
-# ---- Procesamiento de Documentos (Sala de Traducción) ----
-pypdf
-python-docx
 
-# ---- Procesamiento de Documentos (Sala de Traducción) ----
+# ---- Document Processing (Translation Room) / Procesamiento de Documentos (Sala de Traducción) ----
 pypdf
 python-docx
 dirtyjson
-# ---- Herramientas de Desarrollo y Calidad (HITO 6 - djlint) ----
-djlint==1.36.0
+
+# ---- Development and Quality Tools / Herramientas de Desarrollo y Calidad ----
+djlint==1.36.2
+esprima  # JS Syntax Audit Tool / Herramienta de Auditoría de Sintaxis JS

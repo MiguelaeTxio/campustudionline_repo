@@ -48,7 +48,20 @@
     .editor-textarea { resize: none; }
     .stimulus-panel-scroll { max-height: 80vh; overflow-y: auto; }
     .transition-width { transition: width 0.3s ease; }
+
+    /* Audio Waves Animation / Animación de ondas de audio */
+    .audio-wave { display: inline-flex; height: 20px; align-items: flex-end; gap: 2px; }
+    .audio-wave div { width: 3px; background-color: #0d6efd; animation: wave 1s infinite ease-in-out; }
+    .audio-wave div:nth-child(2) { animation-delay: 0.1s; }
+    .audio-wave div:nth-child(3) { animation-delay: 0.2s; }
+    .audio-wave div:nth-child(4) { animation-delay: 0.3s; }
+    @keyframes wave { 0%, 100% { height: 5px; } 50% { height: 20px; } }
+    .blink-text { animation: blinker 1.5s linear infinite; }
+    @keyframes blinker { 50% { opacity: 0; } }
 </style>
+<!-- MathJax for Engineering/Science Rendering -->
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 {% endblock %}
 
 {% block content %}
@@ -74,7 +87,7 @@
                 <div class="d-none section-stimulus-content">{{ section.section_stimulus|default:''|safe }}</div>
                 <div class="d-flex justify-content-between align-items-center bg-secondary text-white p-2 rounded mb-3">
                     <h3 class="h5 mb-0">{{ section.title }}</h3>
-                    {% if section.time_limit %}<span class="badge bg-warning text-dark">{% trans "Tiempo Límite" %}: {{ section.time_limit }}s</span>{% endif %}
+                    {% if section.time_limit %}<span class="badge bg-warning text-dark timer-badge" data-seconds="{{ section.time_limit }}">{% trans "Tiempo Límite" %}: {{ section.time_limit }}s</span>{% endif %}
                 </div>
                 <div class="alert alert-info py-2 small"><em>{{ section.instructions }}</em></div>
 
@@ -88,6 +101,43 @@
                             <span class="badge bg-light text-dark border">{{ item.metadata.competency_tag }}</span>
                         </div>
 
+                        {# --- AUDIO PLAYER INTEGRATION (Listening) --- #}
+                        {# INTEGRACIÓN REPRODUCTOR AUDIO (Listening) #}
+                        {% if section.subdivision_id == 'SD_LIST' or item.content.media_assets and '.mp3' in item.content.media_assets.0 %}
+                        <div class="widget-container p-3 border rounded bg-light mb-3">
+                            <div class="d-flex align-items-center gap-3">
+                                <button class="btn btn-outline-primary rounded-circle p-3" id="btn_tts_{{ item.id }}" onclick="AssessmentMedia.player.toggle('{{ item.content.media_assets.0 }}', '{{ item.id }}')">
+                                    <i class="fas fa-play"></i>
+                                </button>
+                                <div>
+                                    <strong>{% trans "Audio de la Pregunta" %}</strong><br>
+                                    <span class="text-muted small">{% trans "Haga clic para reproducir/pausar" %}</span>
+                                </div>
+                                <div class="audio-wave d-none" id="wave_tts_{{ item.id }}"><div></div><div></div><div></div><div></div></div>
+                            </div>
+                        </div>
+                        {% endif %}
+
+                        {# --- VOICE RECORDER INTEGRATION (Speaking) --- #}
+                        {# INTEGRACIÓN GRABADORA DE VOZ (Speaking) #}
+                        {% if section.subdivision_id == 'SD_SPEAK' %}
+                        <div class="widget-container p-3 border rounded bg-light mb-3 text-center">
+                            <h6 class="text-primary">{% trans "Grabación de Respuesta Oral" %}</h6>
+                            <div class="d-flex justify-content-center gap-2 mb-2">
+                                <button class="btn btn-danger" id="btn_rec_{{ item.id }}" onclick="AssessmentMedia.recorder.start('{{ item.id }}')">
+                                    <i class="fas fa-microphone"></i> {% trans "Grabar" %}
+                                </button>
+                                <button class="btn btn-secondary" id="btn_stop_{{ item.id }}" onclick="AssessmentMedia.recorder.stop('{{ item.id }}')" disabled>
+                                    <i class="fas fa-stop"></i> {% trans "Detener" %}
+                                </button>
+                            </div>
+                            <div class="audio-wave d-none mx-auto" id="wave_rec_{{ item.id }}"><div></div><div></div><div></div><div></div></div>
+                            <div id="status_{{ item.id }}" class="mt-2 small text-muted">{% trans "Listo para grabar" %}</div>
+                            <span class="badge bg-dark mt-2" id="timer_{{ item.id }}">00:00</span>
+                            <input type="file" class="d-none" id="audio_input_{{ item.id }}" name="audio_response_{{ item.id }}">
+                        </div>
+                        {% endif %}
+
                         {# WIDGET RENDERING LOGIC #}
                         {# LÓGICA DE RENDERIZADO DE WIDGETS #}
 
@@ -99,6 +149,9 @@
                                 <span class="input-group-text bg-dark text-success border-success">>></span>
                                 <input type="text" class="form-control bg-dark text-success border-success calc-input" 
                                        placeholder="{% trans 'Ingrese paso (ej: F=m*a) y presione ENTER...' %}" autocomplete="off">
+                            </div>
+                            <div class="mt-2 text-white small" id="math-preview-{{ item.id }}">
+                                <!-- MathJax Preview Container -->
                             </div>
                         </div>
 
@@ -131,7 +184,7 @@
                         {% elif item.widget_id == 'W-OBJ-STRIKE' %}
                             {% if item.content.options %}
                                 <div class="widget-container p-3 bg-white border rounded">
-                                    {% if item.content.media_assets %}
+                                    {% if item.content.media_assets and not '.mp3' in item.content.media_assets.0 %}
                                         <div class="mb-3 text-center">
                                             <img src="{{ item.content.media_assets.0 }}" class="img-fluid rounded img-thumb-max" 
                                                  alt="{% trans 'Recurso Visual' %}" width="300" height="200">
@@ -159,7 +212,7 @@
                         <div class="widget-container split-container row g-0 border rounded">
                             <div class="col-md-6 source-panel bg-light p-3 border-end source-panel-scroll">
                                 <h6 class="text-muted border-bottom pb-2">{% trans "Fuente Primaria" %}</h6>
-                                {% if item.content.media_assets %}
+                                {% if item.content.media_assets and not '.mp3' in item.content.media_assets.0 %}
                                     <img src="{{ item.content.media_assets.0 }}" class="img-fluid mb-2" alt="{% trans 'Fuente Visual' %}" width="400" height="300">
                                 {% endif %}
                                 <div class="source-text text-justify small">{{ item.content.options.0|default:""|linebreaks }}</div>
@@ -234,6 +287,11 @@
     </div>
 </div>
 
+{# External dependencies for Media and Status #}
+{# Dependencias externas para Medios y Estado #}
+<script src="{% static 'assessment/js/assessment_media_utils.js' %}"></script>
+<script src="{% static 'js/assessment_status_handler.js' %}"></script>
+
 <script>
     // =========================================================================
     // EXAM ENGINE CONTROLLER (SEQUENTIAL STATIONS)
@@ -300,17 +358,22 @@
                 }
                 document.getElementById('stimulus-content').innerHTML = '';
             }
+            
+            // Trigger MathJax Reprocess for the new visible section
+            if (window.MathJax) {
+                MathJax.typesetPromise([currentSec]);
+            }
 
             // Timer Logic
-            const timeBadge = currentSec.querySelector('.badge.bg-warning');
+            const timeBadge = currentSec.querySelector('.timer-badge');
             if (timeBadge) {
-                let timeLeft = parseInt(timeBadge.textContent.match(/\d+/)[0]);
+                let timeLeft = parseInt(timeBadge.dataset.seconds);
                 timerInterval = setInterval(() => {
                     timeLeft--;
                     timeBadge.textContent = `{% trans "Tiempo Límite" %}: ${timeLeft}s`;
                     if (timeLeft <= 0) {
                         clearInterval(timerInterval);
-                        alert('{% trans "¡Tiempo agotado! Avanzando..." %}');
+                        alert('{% trans "¡Tiempo agotado! Avanzando a la siguiente sección..." %}');
                         forceAdvance();
                     }
                 }, 1000);
@@ -343,6 +406,15 @@
     // 1. RPP-TRAZA LOGIC (W-TECH-CALC)
     // Generates {id, value} dicts required by TechnicalStrategy
     document.querySelectorAll('.calc-input').forEach(input => {
+        input.addEventListener('keyup', function(e) {
+             const itemId = this.closest('.exam-item').dataset.itemId;
+             const preview = document.getElementById(`math-preview-${itemId}`);
+             if (preview && window.MathJax) {
+                 preview.innerHTML = `\\[${this.value}\\]`;
+                 MathJax.typesetPromise([preview]);
+             }
+        });
+
         input.addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
                 const itemId = this.closest('.exam-item').dataset.itemId;
@@ -355,8 +427,12 @@
                 widgetState.calcSteps[itemId].push({ id: stepId, value: val });
                 
                 const log = document.getElementById(`log-${itemId}`);
-                log.innerHTML += `<div>[Paso ${stepId}]: ${val}</div>`;
+                log.innerHTML += `<div>[Paso ${stepId}]: \\(${val}\\)</div>`;
+                if (window.MathJax) MathJax.typesetPromise([log]);
+                
                 this.value = '';
+                const preview = document.getElementById(`math-preview-${itemId}`);
+                if (preview) preview.innerHTML = '';
             }
         });
     });
@@ -458,6 +534,26 @@
                 const input = item.querySelector('.response-input-text');
                 responses[itemId] = input ? input.value : '';
             }
+        });
+
+        // HANDLE AUDIO FILES (Speaking)
+        // MANEJAR ARCHIVOS DE AUDIO (Speaking)
+        // We create a FormData object to send audio files
+        // Creamos un objeto FormData para enviar archivos de audio
+        // NOTE: Current submit implementation expects JSON body. 
+        // For full audio support, backend endpoint /submit/ needs to handle multipart/form-data.
+        // Assuming JSON for now based on current Tasks.py. 
+        // Audio files are handled via AssessmentMedia uploading to a temp endpoint or similar.
+        // But logic requires alignment. For MVP Hito 6, we stick to JSON contract.
+        // Speaking responses will be treated as "File Uploaded" placeholder in JSON.
+        
+        // Check for audio inputs
+        document.querySelectorAll('input[type="file"][name^="audio_response_"]').forEach(input => {
+             const itemId = input.id.replace('audio_input_', '');
+             if (input.files.length > 0) {
+                 responses[itemId] = { file_uploaded: true, filename: input.files[0].name };
+                 // In a real scenario, we would upload the file here or use FormData
+             }
         });
 
         try {

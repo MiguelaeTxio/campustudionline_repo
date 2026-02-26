@@ -22,6 +22,8 @@ from django.template.loader import render_to_string
 from django.conf import settings
 from django.db import IntegrityError
 from django.contrib.auth import get_user_model
+from django.core.files.base import ContentFile
+from django.core.files.storage import default_storage
 from google.api_core.exceptions import ResourceExhausted, DeadlineExceeded
 
 from .models import AutomationSettings, ApiKey, PendingContentTask, GeneratedContentChunk, ContentRequest
@@ -33,7 +35,7 @@ from contents.models import (
     FreeContentMasterCategory,
     FreeContentSubCategory,
 )
-from core.services.gemini_service import generate_text_content, clean_json_response, AIServiceCriticalError
+from core.services.gemini_service import generate_text_content, generate_audio_content, clean_json_response, AIServiceCriticalError
 
 from core.services.prompt_generators import (
     generate_course_metadata_prompt,
@@ -129,6 +131,25 @@ def _purge_zombie_tasks():
     except Exception as e:
         logger.error(f"Error purga zombies: {e}")
 
+
+# [HITO 6] AUDIO GENERATION HELPER / FUNCIÓN AUXILIAR PARA GENERAR AUDIO
+def _generate_item_audio(item_id, text, api_key):
+    """
+    Converts item text to speech and saves to media/assessment/audio/.
+    ---
+    Convierte el texto del ítem en voz y lo guarda en media/assessment/audio/.
+    """
+    try:
+        success, audio_bytes, _ = generate_audio_content(text, api_key)
+        if success and audio_bytes:
+            filename = f"assessment/audio/item_{item_id}.mp3"
+            if default_storage.exists(filename):
+                default_storage.delete(filename)
+            path = default_storage.save(filename, ContentFile(audio_bytes))
+            return default_storage.url(path)
+    except Exception as e:
+        logger.error(f"Error generando audio para ítem {item_id}: {e}")
+    return None
 # ==============================================================================
 # SECCIÓN 2: GENERACIÓN DE CONTENIDO (RESTAURADO V24.13)
 # ==============================================================================
@@ -506,6 +527,10 @@ def generate_exam_task(self, exam_uuid, context_text=None, topic=None):
                                 db_item.content = i_data.get('content', {})
                                 db_item.grading_logic = i_data.get('grading_logic', {})
                                 db_item.metadata = i_data.get('metadata', {})
+                                # [HITO 6] AUDIO GENERATION TRIGGER (SD_LIST) / DISPARADOR DE AUDIO
+                                if s_info['subdivision_id'] == 'SD_LIST':
+                                    audio_url = _generate_item_audio(db_item.id, db_item.content.get('stem', ''), automation_settings.active_api_key)
+                                    if audio_url: db_item.content['media_assets'] = [audio_url]
                                 db_item.save(update_fields=["content", "grading_logic", "metadata"])
                                 generated_titles.append(str(i_data.get('content', {}).get('stem', ''))[:30])
                         
