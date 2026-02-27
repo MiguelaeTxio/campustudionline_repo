@@ -428,7 +428,7 @@ def generate_exam_task(self, exam_uuid, context_text=None, topic=None):
         exam.sub_archetype_id = metadata['sub_archetype_id']
         exam.itinerary_id = metadata['itinerary_id']
         exam.pedagogical_level = metadata['pedagogical_level']
-        exam.immersion_mode = metadata['immersion_mode']
+        # [Strategy Delegation] Immersion mode logic moved to strategy
         exam.target_language_code = metadata.get('target_language_code', 'es')
         exam.localized_sections = metadata.get('localized_sections', {})
         
@@ -440,6 +440,7 @@ def generate_exam_task(self, exam_uuid, context_text=None, topic=None):
             target_language_code=exam.target_language_code,
             localized_sections=exam.localized_sections
         )
+        exam.immersion_mode = strategy.get_immersion_mode()
         exam.grading_params = strategy._get_grading_params()
         exam.save()
 
@@ -496,7 +497,7 @@ def generate_exam_task(self, exam_uuid, context_text=None, topic=None):
             widgets_info_list = []
             for i, item in enumerate(db_items):
                 instruction = item.metadata.get('task_instruction', 'Generar contenido académico estándar para este widget.')
-                widgets_info_list.append(f"Item {i+1} [{item.widget_id}]: {instruction}")
+                widgets_info_list.append(f"Item {item.uuid} [{item.widget_id}]: {instruction}")
             
             widgets_info = "\n".join(widgets_info_list)
             u_prompt_augmented = f"{u_prompt}\n\nINSTRUCCIONES DE LLENADO POR ÍTEM (OBLIGATORIO):\n{widgets_info}"

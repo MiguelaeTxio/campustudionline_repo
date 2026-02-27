@@ -75,25 +75,6 @@ class AcademicDeductor:
         
         return 'LVL_C'
 
-    @staticmethod
-    def deduce_immersion_mode(archetype_id, itinerary_id, pedagogical_level):
-        """
-        Deduces the immersion mode based on the UGR Matrix (V06DOC_LEVELS V1.2).
-        ---
-        Deduce el modo de inmersión basado en la Matriz UGR (V06DOC_LEVELS V1.2).
-        """
-        if archetype_id != 'ARCH_LANG':
-            return 'VEHICULAR'
-        
-        if pedagogical_level == 'LVL_C':
-            return 'TOTAL'
-        
-        if itinerary_id == 'ITIN_MAI':
-            return 'TOTAL' if pedagogical_level == 'LVL_B' else 'BILINGUAL'
-        
-        # ITIN_MIN
-        return 'BILINGUAL' if pedagogical_level == 'LVL_B' else 'VEHICULAR'
-
     @classmethod
     def get_context_metadata(cls, subject, context_title=None):
         """
@@ -141,7 +122,6 @@ class AcademicDeductor:
             'pedagogical_level': level_id,
             'target_language_code': target_language_code,
             'localized_sections': localized_sections,
-            'immersion_mode': cls.deduce_immersion_mode(archetype_id, itinerary_id, level_id),
         }
 
 class GradingOrchestrator:

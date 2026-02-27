@@ -1972,3 +1972,19 @@ Carga de contexto obligatoria: Documentación técnica V06DOC y modelos de `asse
 *  **Session:** Auditoría Integral Hito 06 (Motor AI, Vistas y UI)
 *  **Description:** Ejecutada auditoría atómica del código de generación, vistas y plantillas contra la documentación V06DOC. Se han detectado fallos críticos que degradan la calidad en producción: 1) Ruptura del patrón Skeleton-First en languages.py (Prompt alucinatorio sin TaskInstruction y Schema sin item_id). 2) Inoperancia de la caducidad de 24h en views.py. 3) Fragilidad del widget W-TXT-CLOZE en exam_take.html por delegar la renderización HTML a la IA. Se planifica la corrección quirúrgica de estos módulos.
 
+
+# 2026-02-27
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+## NRA # --SYSTEM -->
+*  **Session:** Hito 6: Blindaje Estructural del Motor Multilingüe y Auditoría V06
+*  **Description:** Ejecución de auditoría integral (Doc vs Impl) detectando bloqueos en la persistencia de traducciones IA y la normativa de inmersión. Corrección atómica de V06DOC_LEVELS.md, assessment_v2/models/main.py (nuevo JSONField localized_sections), orchestrator/tasks.py y strategies/languages.py. Implementación de Skeleton-Prompt Binding y aplicación de migración 0014. Sistema estabilizado y alineado con la documentación.
+
+
+# 2026-02-27
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+## CSO
+*  **Session:** Corrección Arquitectónica Hito 6: Descentralización y Blindaje
+*  **Description:** Auditoría integral del Hito 6 frente a la documentación satélite. Se aplica la directriz arquitectónica de Miguel Ángel: descentralización absoluta de la lógica de dominio (como la inmersión lingüística) hacia las estrategias específicas, eliminándola del deductor genérico. Se establece el plan de acción para corregir las firmas de métodos (get_exam_skeleton), blindar el mapeo de respuestas por UUID en tasks.py y ajustar el esquema de salida JSON para cumplir estrictamente con V06DOC_TEMPLATES.
+

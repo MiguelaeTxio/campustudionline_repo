@@ -67,7 +67,7 @@ class LanguagesStrategy(BaseExamStrategy):
 
         return Decimal("0.0"), {"status": "PENDING"}
 
-    def _get_immersion_mode(self):
+    def get_immersion_mode(self):
         """
         Heuristic to determine the interface language based on V06DOC_LEVELS V1.2 (UGR Normative).
         Deduce el modo de inmersión según la normativa de la UGR.
@@ -86,7 +86,7 @@ class LanguagesStrategy(BaseExamStrategy):
         Devuelve la lista mandatoria de secciones para que el orquestador construya el esqueleto en la BBDD.
         Ref: V06DOC_ARCHETYPES (Secuencia de Lenguas).
         """
-        mode = self._get_immersion_mode()
+        mode = self.get_immersion_mode()
         loc_secs = self.config.get('localized_sections', {})
         
         # Estructura de mapeo para inmersión UGR
@@ -210,7 +210,7 @@ class LanguagesStrategy(BaseExamStrategy):
             "SUB-LIN-LIT": "Filólogo/Crítico Literario. Foco: Exégesis, Retórica, Análisis métrico."
         }
         base_role = roles.get(self.sub_archetype_id, "Profesor de Lenguas.")
-        mode = self._get_immersion_mode()
+        mode = self.get_immersion_mode()
         
         return (
             f"IDENTIDAD: {base_role}\n"
@@ -233,7 +233,7 @@ class LanguagesStrategy(BaseExamStrategy):
             f"TEMA: {topic}. NIVEL: {self.pedagogical_level}.{memory}\n"
             f"CONTEXTO DOCENTE:\n{context_text[:15000]}\n"
             f"{skeleton_instruction}"
-            f"CONFIG: Arquetipo={self.sub_archetype_id}, Itinerario={self.itinerary_id}, Modo={self._get_immersion_mode()}.\n"
+            f"CONFIG: Arquetipo={self.sub_archetype_id}, Itinerario={self.itinerary_id}, Modo={self.get_immersion_mode()}.\n"
             f"SALIDA: JSON estricto (Array 'items'). NO inventes ítems nuevos, rellena solo los solicitados."
         )
 
@@ -254,8 +254,7 @@ class LanguagesStrategy(BaseExamStrategy):
                     "items": {
                         "type": "object",
                         "properties": {
-                            "block_type": {"type": "string", "enum": ["CLO-OPEN", "CLO-MULTI", "MAT-LINK", "DRA-HOLO"]},
-                            "widget_id": {"type": "string", "enum": ["W-TXT-CLOZE", "W-MIX-MATCH", "W-HUM-TEXT"]},
+                            "item_id": {"type": "string", "description": "UUID provided in the prompt."},
                             "content": {
                                 "type": "object",
                                 "properties": {
@@ -281,7 +280,7 @@ class LanguagesStrategy(BaseExamStrategy):
                                 "required": ["competency_tag", "cognitive_tag"]
                             }
                         },
-                        "required": ["block_type", "widget_id", "content", "grading_logic", "metadata"]
+                        "required": ["item_id", "content", "grading_logic", "metadata"]
                     }
                 }
             },

@@ -147,27 +147,12 @@ class BaseExamStrategy(ABC):
         """
         pass
 
-    def get_exam_skeleton(self, exam_uuid):
+    def get_exam_skeleton(self):
         """
-        Generates the complete JSON skeleton for pre-persistence (SKELETON-FIRST).
-        Assembles sections from get_section_plan().
-        Ref: V06DOC_STRUCTURE (Section 2.2) & V06DOC_TEMPLATES.
+        Returns the mandatory section list for the orchestrator to build the DB skeleton.
+        Ref: V06DOC_STRUCTURE (Section 2.2).
         ---
-        Genera el esqueleto JSON completo del 'Exam Contract'.
-        Ensambla las secciones desde get_section_plan().
-        Ref: V06DOC_STRUCTURE & V06DOC_TEMPLATES.
+        Devuelve la lista obligatoria de secciones para que el orquestador construya el esqueleto en BD.
+        Ref: V06DOC_STRUCTURE (Sección 2.2).
         """
-        archetype_id = getattr(self, 'archetype_id', 'UNKNOWN')
-        return {
-            "exam_header": {
-                "exam_id": str(exam_uuid),
-                "archetype_id": archetype_id,
-                "sub_archetype_id": self.sub_archetype_id,
-                "itinerary_id": self.itinerary_id,
-                "pedagogical_level": self.pedagogical_level,
-                "grading_params": self.rigor_params
-            },
-            "subdivision_sequence": self.get_section_plan(),
-            "student_submission": {},
-            "grading_report": {}
-        }
+        return self.get_section_plan()
