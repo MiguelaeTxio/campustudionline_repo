@@ -429,12 +429,14 @@ def generate_exam_task(self, exam_uuid, context_text=None, topic=None):
         exam.itinerary_id = metadata['itinerary_id']
         exam.pedagogical_level = metadata['pedagogical_level']
         exam.immersion_mode = metadata['immersion_mode']
+        exam.target_language_code = metadata.get('target_language_code', 'es')
         
         strategy = ExamFactory.get_strategy(
             archetype_id=exam.archetype_id,
             sub_archetype_id=exam.sub_archetype_id,
             pedagogical_level=exam.pedagogical_level,
-            itinerary_id=exam.itinerary_id
+            itinerary_id=exam.itinerary_id,
+            target_language_code=exam.target_language_code
         )
         exam.grading_params = strategy._get_grading_params()
         exam.save()

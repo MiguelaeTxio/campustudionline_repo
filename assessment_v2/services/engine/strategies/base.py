@@ -147,11 +147,11 @@ class BaseExamStrategy(ABC):
         """
         pass
 
-    def generate_structure(self, exam_uuid):
+    def get_exam_skeleton(self, exam_uuid):
         """
-        Generates the complete JSON skeleton of the 'Exam Contract'.
+        Generates the complete JSON skeleton for pre-persistence (SKELETON-FIRST).
         Assembles sections from get_section_plan().
-        Ref: V06DOC_STRUCTURE & V06DOC_TEMPLATES.
+        Ref: V06DOC_STRUCTURE (Section 2.2) & V06DOC_TEMPLATES.
         ---
         Genera el esqueleto JSON completo del 'Exam Contract'.
         Ensambla las secciones desde get_section_plan().

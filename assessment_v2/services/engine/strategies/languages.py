@@ -213,7 +213,8 @@ class LanguagesStrategy(BaseExamStrategy):
         
         return (
             f"IDENTIDAD: {base_role}\n"
-            f"MODO DE INMERSIÓN: {mode}. Si es TOTAL, genera TODA la salida en el idioma objetivo.\n"
+            f"IDIOMA OBJETIVO (ISO): {self.target_language_code}\n"
+            f"MODO DE INMERSIÓN: {mode}. Si es TOTAL, genera TODA la salida en el idioma '{self.target_language_code}'.\n"
             f"REGLA CRÍTICA: Sin explicaciones. Solo el JSON atómico."
         )
 

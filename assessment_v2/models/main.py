@@ -56,6 +56,7 @@ class Exam(models.Model):
     itinerary_id = models.CharField(_('ID Itinerario'), max_length=50, choices=Itinerary.choices)
     pedagogical_level = models.CharField(_('Nivel Pedagógico'), max_length=20, choices=PedagogicalLevel.choices)
     immersion_mode = models.CharField(_('Modo de Inmersión'), max_length=20, choices=ImmersionMode.choices, default=ImmersionMode.VEHICULAR)
+    target_language_code = models.CharField(_('Código de Idioma'), max_length=10, default='es', help_text=_('ISO 639-1 (ej: en, fr, ja)'))
     
     # Configuración de Rigor (V06DOC_LEVELS)
     grading_params = models.JSONField(_('Parámetros de Rigor'), default=dict)
@@ -109,6 +110,7 @@ class ExamItem(models.Model):
     Atomic evaluation block.
     Bloque de evaluación atómico. Cumple V06DOC_BLOCKS y V06DOC_TEMPLATES (Item).
     """
+    uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True, db_index=True)
     section = models.ForeignKey(ExamSection, on_delete=models.CASCADE, related_name='items')
     block_type = models.CharField(max_length=50) # PRM-STRIKE, CLO-MULTI...
     widget_id = models.CharField(max_length=50) # W-OBJ-STRIKE...

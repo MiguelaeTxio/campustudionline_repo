@@ -153,7 +153,8 @@ class ExamSubmitView(LoginRequiredMixin, View):
                 archetype_id=exam.archetype_id, 
                 sub_archetype_id=exam.sub_archetype_id,
                 pedagogical_level=exam.pedagogical_level, 
-                itinerary_id=exam.itinerary_id
+                itinerary_id=exam.itinerary_id,
+                target_language_code=exam.target_language_code
             )
             
             with transaction.atomic():
