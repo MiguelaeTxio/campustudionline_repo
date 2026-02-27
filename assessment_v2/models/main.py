@@ -116,9 +116,9 @@ class ExamItem(models.Model):
     widget_id = models.CharField(max_length=50) # W-OBJ-STRIKE...
     
     # Contrato JSON segregado
-    content = models.JSONField(_('Contenido del Ítem'))
-    grading_logic = models.JSONField(_('Lógica de Calificación'))
-    metadata = models.JSONField(_('Metadatos Pedagógicos')) # Tags de competencia/cognitivos
+    content = models.JSONField(_('Contenido del Ítem'), default=dict, blank=True)
+    grading_logic = models.JSONField(_('Lógica de Calificación'), default=dict, blank=True)
+    metadata = models.JSONField(_('Metadatos Pedagógicos'), default=dict, blank=True) # Tags de competencia/cognitivos
 
     order = models.PositiveSmallIntegerField(default=0)
 

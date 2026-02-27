@@ -446,6 +446,7 @@
 ./assessment_v2/migrations/0003_exam_content_copy.py
 ./assessment_v2/migrations/0007_exam_expiration_date_alter_exam_status.py
 ./assessment_v2/migrations/__init__.py
+./assessment_v2/migrations/0013_alter_examitem_content_alter_examitem_grading_logic_and_more.py
 ./assessment_v2/migrations/0011_populate_uuids.py
 ./assessment_v2/migrations/0008_examsection_layout_mode_examsection_section_stimulus.py
 ./assessment_v2/migrations/0006_costlog_api_key_name_exam_immersion_mode.py

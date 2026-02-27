@@ -113,7 +113,7 @@
                                     <strong>{% trans "Audio de la Pregunta" %}</strong><br>
                                     <span class="text-muted small">{% trans "Haga clic para reproducir/pausar" %}</span>
                                 </div>
-                                <div class="audio-wave d-none" id="wave_tts_{{ item.id }}"><div></div><div></div><div></div><div></div></div>
+                                <div class="audio-wave d-none" id="wave_tts_{{ item.id }}"><div><!-- --></div><div><!-- --></div><div><!-- --></div><div><!-- --></div></div>
                             </div>
                         </div>
                         {% endif %}
@@ -131,7 +131,7 @@
                                     <i class="fas fa-stop"></i> {% trans "Detener" %}
                                 </button>
                             </div>
-                            <div class="audio-wave d-none mx-auto" id="wave_rec_{{ item.id }}"><div></div><div></div><div></div><div></div></div>
+                            <div class="audio-wave d-none mx-auto" id="wave_rec_{{ item.id }}"><div><!-- --></div><div><!-- --></div><div><!-- --></div><div><!-- --></div></div>
                             <div id="status_{{ item.id }}" class="mt-2 small text-muted">{% trans "Listo para grabar" %}</div>
                             <span class="badge bg-dark mt-2" id="timer_{{ item.id }}">00:00</span>
                             <input type="file" class="d-none" id="audio_input_{{ item.id }}" name="audio_response_{{ item.id }}">
@@ -225,8 +225,10 @@
 
                         {# 6. CLO-OPEN / CLO-MULTI -> W-TXT-CLOZE #}
                         {% elif item.widget_id == 'W-TXT-CLOZE' %}
-                        <div class="widget-container border p-4 rounded bg-white shadow-sm cloze-box font-serif fs-5">
-                             {{ item.content.text_with_gaps|safe }}
+                        <div class="widget-container border p-4 rounded bg-white shadow-sm cloze-box font-serif fs-5 cloze-render-target" data-item-id="{{ item.id }}">
+                             {# PMA 3: Eliminado safe. Hidratación segura via JS #}
+                             <div class="d-none cloze-source">{{ item.content.text_with_gaps }}</div>
+                             <div class="cloze-output"></div>
                         </div>
 
                         {# 7. MAT-LINK -> W-MIX-MATCH #}
@@ -393,6 +395,20 @@
                 activateSection(currentSectionIndex + 1);
             }
         });
+    });
+
+    // PMA 3: CLOZE WIDGET HYDRATION (Secure Render)
+    document.querySelectorAll('.cloze-render-target').forEach(el => {
+        const source = el.querySelector('.cloze-source').textContent;
+        const output = el.querySelector('.cloze-output');
+        
+        // Detecta patrones [...] o ______ (3+ guiones bajos)
+        // Reemplaza por inputs HTML estandarizados
+        const renderedHTML = source.replace(/(\[.*?\]|_{3,})/g, () => {
+            return `<input type="text" class="cloze-input form-control d-inline-block text-center mx-1 border-bottom border-primary rounded-0 px-2" style="width: 120px; background: #f8f9fa;" placeholder="?" autocomplete="off">`;
+        });
+        
+        output.innerHTML = renderedHTML;
     });
 
     // IN-MEMORY STATE FOR COMPLEX WIDGETS

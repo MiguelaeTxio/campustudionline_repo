@@ -134,7 +134,12 @@ class ExamTakeView(LoginRequiredMixin, DetailView):
     slug_url_kwarg = 'uuid'
 
     def get_queryset(self):
-        return Exam.objects.filter(user=self.request.user, status='READY').prefetch_related('sections__items')
+        # [HITO 06] Enforce 24h expiration rule (Tolerance Zero)
+        return Exam.objects.filter(
+            user=self.request.user, 
+            status='READY',
+            expiration_date__gt=timezone.now()
+        ).prefetch_related('sections__items')
 
 class ExamSubmitView(LoginRequiredMixin, View):
     """
@@ -144,6 +149,11 @@ class ExamSubmitView(LoginRequiredMixin, View):
     """
     def post(self, request, uuid):
         exam = get_object_or_404(Exam, uuid=uuid, user=request.user, status='READY')
+        
+        # [HITO 06] Security Check: Expiration
+        if exam.expiration_date and exam.expiration_date < timezone.now():
+            return JsonResponse({'status': 'ERROR', 'message': 'EXPIRED: El examen ha caducado (Regla 24h).'}, status=403)
+
         try:
             data = json.loads(request.body)
             

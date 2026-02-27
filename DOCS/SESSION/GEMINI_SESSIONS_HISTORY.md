@@ -1958,3 +1958,17 @@ Carga de contexto obligatoria: Documentación técnica V06DOC y modelos de `asse
 *  **Session:** Auditoría Integral de Implementación vs Documentación V06
 *  **Description:** Ejecución de la Fase II del Hito 6. Se procede a realizar una auditoría técnica exhaustiva y atómica del código base del motor de autoevaluaciones (Assessment V2) frente a la constelación de documentos maestros (Widgets, Structure, Templates, Metadata, Subarchetypes, Blocks, Subdivisions, Logic Mapping, Levels, Archetypes). El objetivo es detectar y subsanar cualquier desviación estructural o lógica entre la documentación y la implementación física en modelos y orquestador.
 
+# 2026-02-27
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+## EDC
+*  **Session:** Auditoría Hito 06 y Corrección Skeleton-First ExamItem
+*  **Description:** Fase de auditoría documental (V06) contra la implementación actual en assessment_v2. Se verificó un alineamiento casi total de la arquitectura (Arquetipos, Subdivisiones, Layouts). Sin embargo, se detectó una desviación crítica en el modelo ExamItem: los campos JSON (content, grading_logic, metadata) carecen de default=dict, lo que impide la persistencia del esqueleto vacío antes de la inyección de IA (Skeleton-First). Se procede a proponer la corrección y preparar el motor de generación.
+
+# 2026-02-27
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+## EDC
+*  **Session:** Auditoría Integral Hito 06 (Motor AI, Vistas y UI)
+*  **Description:** Ejecutada auditoría atómica del código de generación, vistas y plantillas contra la documentación V06DOC. Se han detectado fallos críticos que degradan la calidad en producción: 1) Ruptura del patrón Skeleton-First en languages.py (Prompt alucinatorio sin TaskInstruction y Schema sin item_id). 2) Inoperancia de la caducidad de 24h en views.py. 3) Fragilidad del widget W-TXT-CLOZE en exam_take.html por delegar la renderización HTML a la IA. Se planifica la corrección quirúrgica de estos módulos.
+

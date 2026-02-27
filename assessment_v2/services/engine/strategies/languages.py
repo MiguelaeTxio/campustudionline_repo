@@ -218,19 +218,22 @@ class LanguagesStrategy(BaseExamStrategy):
             f"REGLA CRÍTICA: Sin explicaciones. Solo el JSON atómico."
         )
 
-    def get_user_prompt(self, context_text, topic, subdivision_id, generated_item_titles=None):
+    def get_user_prompt(self, context_text, topic, subdivision_id, generated_item_titles=None, skeleton_json=None):
         """
         Atomic generation prompt for a specific subdivision with context memory.
 
         Prompt de generación atómica para una subdivisión específica con memoria de contexto.
         """
         memory = "\nEVITA REPETICIÓN: " + ", ".join(generated_item_titles) if generated_item_titles else ""
+        skeleton_instruction = f"\nESQUELETO A RELLENAR:\n{skeleton_json}\n(Debes devolver EXACTAMENTE estos ítems conservando intacto su 'item_id').\n" if skeleton_json else "\n(Asegúrate de incluir el 'item_id' proporcionado para cada ítem).\n"
         return (
-            f"GENERA 3 ÍTEMS para la sección: {subdivision_id}.\n"
+            f"ACTÚA COMO MOTOR DE RENDERIZADO DE CONTENIDO (Patrón Skeleton-First).\n"
+            f"Tu ÚNICA función es rellenar el contenido de los ítems solicitados en la sección: {subdivision_id}.\n"
             f"TEMA: {topic}. NIVEL: {self.pedagogical_level}.{memory}\n"
-            f"CONTEXTO DOCENTE:\n{context_text[:15000]}\n\n"
+            f"CONTEXTO DOCENTE:\n{context_text[:15000]}\n"
+            f"{skeleton_instruction}"
             f"CONFIG: Arquetipo={self.sub_archetype_id}, Itinerario={self.itinerary_id}, Modo={self._get_immersion_mode()}.\n"
-            f"SALIDA: JSON estricto (Array 'items')."
+            f"SALIDA: JSON estricto (Array 'items'). NO inventes ítems nuevos, rellena solo los solicitados."
         )
 
     def get_output_schema(self):
