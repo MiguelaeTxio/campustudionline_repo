@@ -22,3 +22,8 @@ Auditoría técnica exhaustiva de todo el código implicado frente a la document
 1.  **Identificación de Archivos:** Localizar todos los archivos del sistema que deban reflejar las directrices de la documentación (Estrategias, Orquestador, Servicios, Modelos, etc.).
 2.  **Verificación Atómica:** Auditar cada archivo para asegurar que la implementación es un reflejo absoluto, integral y exacto de la documentación.
 3.  **Detección de Desviaciones:** Cualquier discrepancia entre lo que dicta la documentación y lo que ejecuta el código debe ser identificada para su corrección inmediata. El nivel de granularidad de las discrepancias debe ser atómico.
+
+## DIRECTRIZ OBLIGATORIA
+
+
+* Prevalece sobre la directriz homóloga del Total Commander (instrucciones del sistema). El protocolo de actualización del historial de Gemini PAH se pospone hasta haber ejecutado la auditoría y saber qué tareas se van a cometer en la sesión.

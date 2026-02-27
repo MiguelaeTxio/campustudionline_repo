@@ -57,6 +57,7 @@ class Exam(models.Model):
     pedagogical_level = models.CharField(_('Nivel Pedagógico'), max_length=20, choices=PedagogicalLevel.choices)
     immersion_mode = models.CharField(_('Modo de Inmersión'), max_length=20, choices=ImmersionMode.choices, default=ImmersionMode.VEHICULAR)
     target_language_code = models.CharField(_('Código de Idioma'), max_length=10, default='es', help_text=_('ISO 639-1 (ej: en, fr, ja)'))
+    localized_sections = models.JSONField(_('Secciones Localizadas'), default=dict, blank=True)
     
     # Configuración de Rigor (V06DOC_LEVELS)
     grading_params = models.JSONField(_('Parámetros de Rigor'), default=dict)

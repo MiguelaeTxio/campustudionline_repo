@@ -44,8 +44,11 @@ La determinación del idioma en las instrucciones y títulos de sección (interf
 *   **Nivel A (A1/A2):**
     *   **Itinerario MINOR:** Castellano (Para garantizar la comprensión de la tarea).
     *   **Itinerario MAIOR:** Bilingüe (Inmersión progresiva).
-*   **Nivel B / C (B1 a C2):**
-    *   **Todos los Itinerarios:** Inmersión Total (Idioma Objetivo Dinámico). La IA genera títulos e instrucciones en el idioma detectado para garantizar integridad absoluta (ej: Polaco, Japonés, Rumano).
+*   **Nivel B (B1/B2):**
+    *   **Itinerario MINOR:** Bilingüe (Instrucciones en castellano para garantizar comprensión de la tarea, ej. pruebas de mediación).
+    *   **Itinerario MAIOR:** Inmersión Total (Idioma Objetivo Dinámico).
+*   **Nivel C (C1/C2):**
+    *   **Todos los Itinerarios:** Inmersión Total (Idioma Objetivo Dinámico). La IA genera títulos e instrucciones en el idioma detectado para garantizar integridad absoluta.
 
 ### 4.2. Resto de Arquetipos (TECH, HEALTH, SOC, HUM)
 *   **Idioma Vehicular:** Castellano obligatorio por seguridad jurídica, salvo excepciones internacionales documentadas.

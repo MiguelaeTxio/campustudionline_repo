@@ -87,33 +87,34 @@ class LanguagesStrategy(BaseExamStrategy):
         Ref: V06DOC_ARCHETYPES (Secuencia de Lenguas).
         """
         mode = self._get_immersion_mode()
+        loc_secs = self.config.get('localized_sections', {})
         
         # Estructura de mapeo para inmersión UGR
         sections_data = [
             {
                 "id": "SD_READ", 
-                "veh": "Comprensión Lectora", "tar": "Reading Comprehension",
-                "i_veh": "Lee el texto y resuelve los desafíos lingüísticos.", "i_tar": "Read the text and solve the linguistic challenges."
+                "veh": "Comprensión Lectora", "tar": loc_secs.get("SD_READ", {}).get("title", "Reading Comprehension"),
+                "i_veh": "Lee el texto y resuelve los desafíos lingüísticos.", "i_tar": loc_secs.get("SD_READ", {}).get("instructions", "Read the text and solve the linguistic challenges.")
             },
             {
                 "id": "SD_LIST", 
-                "veh": "Comprensión Auditiva", "tar": "Listening Comprehension",
-                "i_veh": "Analiza las transcripciones de audio e identifica matices semánticos.", "i_tar": "Analyze the audio transcripts and identify semantic nuances."
+                "veh": "Comprensión Auditiva", "tar": loc_secs.get("SD_LIST", {}).get("title", "Listening Comprehension"),
+                "i_veh": "Analiza las transcripciones de audio e identifica matices semánticos.", "i_tar": loc_secs.get("SD_LIST", {}).get("instructions", "Analyze the audio transcripts and identify semantic nuances.")
             },
             {
                 "id": "SD_WRIT", 
-                "veh": "Producción Escrita", "tar": "Written Production",
-                "i_veh": "Produce un texto académico respetando el registro formal.", "i_tar": "Produce an academic text respecting formal register."
+                "veh": "Producción Escrita", "tar": loc_secs.get("SD_WRIT", {}).get("title", "Written Production"),
+                "i_veh": "Produce un texto académico respetando el registro formal.", "i_tar": loc_secs.get("SD_WRIT", {}).get("instructions", "Produce an academic text respecting formal register.")
             },            {
                 "id": "SD_SPEAK", 
-                "veh": "Expresión Oral", "tar": "Speaking",
-                "i_veh": "Interacción fluida evaluada mediante el módulo UniversIA.", "i_tar": "Fluent interaction evaluated via the UniversIA module."
+                "veh": "Expresión Oral", "tar": loc_secs.get("SD_SPEAK", {}).get("title", "Speaking"),
+                "i_veh": "Interacción fluida evaluada mediante el módulo UniversIA.", "i_tar": loc_secs.get("SD_SPEAK", {}).get("instructions", "Fluent interaction evaluated via the UniversIA module.")
             },
 
             {
                 "id": "SD_MEDI", 
-                "veh": "Mediación Lingüística", "tar": "Linguistic Mediation",
-                "i_veh": "Sintetiza y adapta información entre diferentes registros.", "i_tar": "Synthesize and adapt information between different registers."
+                "veh": "Mediación Lingüística", "tar": loc_secs.get("SD_MEDI", {}).get("title", "Linguistic Mediation"),
+                "i_veh": "Sintetiza y adapta información entre diferentes registros.", "i_tar": loc_secs.get("SD_MEDI", {}).get("instructions", "Synthesize and adapt information between different registers.")
             }
         ]
 
@@ -149,50 +150,50 @@ class LanguagesStrategy(BaseExamStrategy):
             for sec in plan:
                 sec["layout_mode"] = "SPLIT_TEXT" if sec["subdivision_id"] == "SD_READ" else "STANDARD"
                 if sec["subdivision_id"] == "SD_READ":
-                    sec["items"] = [{"block_type": "CLO-MULTI", "widget_id": "W-TXT-CLOZE"}]
+                    sec["items"] = [{"block_type": "CLO-MULTI", "widget_id": "W-TXT-CLOZE", "task_instruction": "Genera un texto con huecos a rellenar (CLO-MULTI) evaluando comprensión lectora y léxico."}]
                 elif sec["subdivision_id"] == "SD_LIST":
-                    sec["items"] = [{"block_type": "PRM-STRIKE", "widget_id": "W-OBJ-STRIKE"}]
+                    sec["items"] = [{"block_type": "PRM-STRIKE", "widget_id": "W-OBJ-STRIKE", "task_instruction": "Genera preguntas de opción múltiple basadas en la transcripción de audio (PRM-STRIKE)."}]
                 elif sec["subdivision_id"] == "SD_WRIT":
                     sec["layout_mode"] = "SPLIT_TEXT"
-                    sec["items"] = [{"block_type": "DRA-HOLO", "widget_id": "W-HUM-TEXT"}]
+                    sec["items"] = [{"block_type": "DRA-HOLO", "widget_id": "W-HUM-TEXT", "task_instruction": "Plantea un tema de redacción académica (ensayo/artículo) que requiera registro formal (DRA-HOLO)."}]
                 else:
-                    sec["items"] = [{"block_type": "CLO-OPEN", "widget_id": "W-TXT-CLOZE"}]
+                    sec["items"] = [{"block_type": "CLO-OPEN", "widget_id": "W-TXT-CLOZE", "task_instruction": "Genera un texto con huecos abiertos sin opciones (CLO-OPEN) para evaluar precisión léxico-gramatical."}]
                 skeleton.append(sec)
 
         # 2. SUB-LIN-MINOR: Modelo Iniciación (Chino/Ruso Minor)
         elif sid == "SUB-LIN-MINOR":
             skeleton = [
-                {"subdivision_id": "SD_SCRIPT", "title": "Grafía y Dictado", "instructions": "Escriba los caracteres/términos dictados.", "layout_mode": "STANDARD", "items": [{"block_type": "RBT-CANON", "widget_id": "W-OBJ-STRIKE"}]},
-                {"subdivision_id": "SD_GRAMMAR", "title": "Estructuras Básicas", "instructions": "Complete las oraciones gramaticales.", "layout_mode": "STANDARD", "items": [{"block_type": "CLO-MULTI", "widget_id": "W-TXT-CLOZE"}]},
-                {"subdivision_id": "SD_CULTURE", "title": "Cultura y Civilización", "instructions": "Responda sobre el contexto socio-cultural.", "layout_mode": "STANDARD", "items": [{"block_type": "PRM-STRIKE", "widget_id": "W-OBJ-STRIKE"}]}
+                {"subdivision_id": "SD_SCRIPT", "title": "Grafía y Dictado", "instructions": "Escriba los caracteres/términos dictados.", "layout_mode": "STANDARD", "items": [{"block_type": "RBT-CANON", "widget_id": "W-OBJ-STRIKE", "task_instruction": "Genera un ejercicio de reconocimiento de grafías o caracteres (RBT-CANON)."}]},
+                {"subdivision_id": "SD_GRAMMAR", "title": "Estructuras Básicas", "instructions": "Complete las oraciones gramaticales.", "layout_mode": "STANDARD", "items": [{"block_type": "CLO-MULTI", "widget_id": "W-TXT-CLOZE", "task_instruction": "Genera oraciones con huecos a rellenar evaluando gramática básica (CLO-MULTI)."}]},
+                {"subdivision_id": "SD_CULTURE", "title": "Cultura y Civilización", "instructions": "Responda sobre el contexto socio-cultural.", "layout_mode": "STANDARD", "items": [{"block_type": "PRM-STRIKE", "widget_id": "W-OBJ-STRIKE", "task_instruction": "Genera preguntas de opción múltiple sobre cultura y civilización del idioma (PRM-STRIKE)."}]}
             ]
 
         # 3. SUB-LIN-PHILO: Modelo Filológico (Historia de la Lengua)
         elif sid == "SUB-LIN-PHILO":
             skeleton = [
-                {"subdivision_id": "SD_HIST_GRAM", "title": "Gramática Histórica", "instructions": "Analice la evolución fonética de los étimos.", "layout_mode": "STANDARD", "items": [{"block_type": "DRA-HOLO", "widget_id": "W-HUM-TEXT"}]},
-                {"subdivision_id": "SD_PHONETICS", "title": "Análisis Fonético", "instructions": "Transcriba y analice los rasgos fonológicos.", "layout_mode": "SPLIT_TEXT", "items": [{"block_type": "CLO-OPEN", "widget_id": "W-TXT-CLOZE"}]}
+                {"subdivision_id": "SD_HIST_GRAM", "title": "Gramática Histórica", "instructions": "Analice la evolución fonética de los étimos.", "layout_mode": "STANDARD", "items": [{"block_type": "DRA-HOLO", "widget_id": "W-HUM-TEXT", "task_instruction": "Genera un ejercicio de análisis de evolución fonética de étimos."}]},
+                {"subdivision_id": "SD_PHONETICS", "title": "Análisis Fonético", "instructions": "Transcriba y analice los rasgos fonológicos.", "layout_mode": "SPLIT_TEXT", "items": [{"block_type": "CLO-OPEN", "widget_id": "W-TXT-CLOZE", "task_instruction": "Genera un texto para transcripción y análisis de rasgos fonológicos."}]}
             ]
 
         # 4. SUB-LIN-NORM: Modelo Norma y Uso (Español Actual)
         elif sid == "SUB-LIN-NORM":
             skeleton = [
-                {"subdivision_id": "SD_DEVIATIONS", "title": "Análisis de Desviaciones", "instructions": "Identifique y corrija errores de norma.", "layout_mode": "SPLIT_TEXT", "items": [{"block_type": "CLO-MULTI", "widget_id": "W-TXT-CLOZE"}]},
-                {"subdivision_id": "SD_EXEGESIS", "title": "Exégesis Normativa", "instructions": "Justifique el uso según la normativa académica.", "layout_mode": "SPLIT_TEXT", "items": [{"block_type": "DRA-HOLO", "widget_id": "W-HUM-TEXT"}]}
+                {"subdivision_id": "SD_DEVIATIONS", "title": "Análisis de Desviaciones", "instructions": "Identifique y corrija errores de norma.", "layout_mode": "SPLIT_TEXT", "items": [{"block_type": "CLO-MULTI", "widget_id": "W-TXT-CLOZE", "task_instruction": "Genera un texto con errores normativos para identificar y corregir."}]},
+                {"subdivision_id": "SD_EXEGESIS", "title": "Exégesis Normativa", "instructions": "Justifique el uso según la normativa académica.", "layout_mode": "SPLIT_TEXT", "items": [{"block_type": "DRA-HOLO", "widget_id": "W-HUM-TEXT", "task_instruction": "Genera un caso de exégesis normativa para justificar el uso académico."}]}
             ]
 
         # 5. SUB-LIN-TRA-TECH: Traducción Técnica
         elif sid in ["SUB-LIN-TRA-TECH", "SUB-LIN-PROF"]:
             skeleton = [
-                {"subdivision_id": "SD_GLOSSARY", "title": "Glosario Terminológico", "instructions": "Vincule los términos técnicos con su equivalente.", "layout_mode": "STANDARD", "items": [{"block_type": "MAT-LINK", "widget_id": "W-MIX-MATCH"}]},
-                {"subdivision_id": "SD_TRANS_TECH", "title": "Traducción Técnica", "instructions": "Traduzca el texto manteniendo la precisión.", "layout_mode": "SPLIT_TEXT", "items": [{"block_type": "DRA-HOLO", "widget_id": "W-HUM-TEXT"}]}
+                {"subdivision_id": "SD_GLOSSARY", "title": "Glosario Terminológico", "instructions": "Vincule los términos técnicos con su equivalente.", "layout_mode": "STANDARD", "items": [{"block_type": "MAT-LINK", "widget_id": "W-MIX-MATCH", "task_instruction": "Genera un glosario de términos técnicos para vincular con su equivalente."}]},
+                {"subdivision_id": "SD_TRANS_TECH", "title": "Traducción Técnica", "instructions": "Traduzca el texto manteniendo la precisión.", "layout_mode": "SPLIT_TEXT", "items": [{"block_type": "DRA-HOLO", "widget_id": "W-HUM-TEXT", "task_instruction": "Proporciona un texto técnico complejo para su traducción precisa."}]}
             ]
 
         # 6. SUB-LIN-TRA-LIT: Traducción Literaria
         elif sid in ["SUB-LIN-TRA-LIT", "SUB-LIN-LIT"]:
             skeleton = [
-                {"subdivision_id": "SD_STYLE", "title": "Análisis Estilístico", "instructions": "Identifique los rasgos de estilo del autor.", "layout_mode": "SPLIT_TEXT", "items": [{"block_type": "CLO-MULTI", "widget_id": "W-TXT-CLOZE"}]},
-                {"subdivision_id": "SD_TRANS_LIT", "title": "Traducción Literaria", "instructions": "Traduzca preservando la carga estética.", "layout_mode": "SPLIT_TEXT", "items": [{"block_type": "DRA-HOLO", "widget_id": "W-HUM-TEXT"}]}
+                {"subdivision_id": "SD_STYLE", "title": "Análisis Estilístico", "instructions": "Identifique los rasgos de estilo del autor.", "layout_mode": "SPLIT_TEXT", "items": [{"block_type": "CLO-MULTI", "widget_id": "W-TXT-CLOZE", "task_instruction": "Genera un texto literario con huecos para identificar rasgos de estilo."}]},
+                {"subdivision_id": "SD_TRANS_LIT", "title": "Traducción Literaria", "instructions": "Traduzca preservando la carga estética.", "layout_mode": "SPLIT_TEXT", "items": [{"block_type": "DRA-HOLO", "widget_id": "W-HUM-TEXT", "task_instruction": "Proporciona un texto literario para traducir preservando su carga estética."}]}
             ]
 
         return skeleton
