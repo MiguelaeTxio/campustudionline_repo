@@ -16,12 +16,25 @@ Es de ESTRICTO CUMPLIMIENTO cargar la constelación satélite completa al inicio
 *   `V06DOC_TEMPLATES.md`
 *   `V06DOC_STRUCTURE.md`
 *   `V06DOC_LOGIC_MAPPING.md`
+*   `V06DOC_INCIDENTS_ROADMAP.md`
 
 ### FASE II: AUDITORÍA INTEGRAL Y ABSOLUTA (DOC VS. IMPL)
 Auditoría técnica exhaustiva de todo el código implicado frente a la documentación cargada:
 1.  **Identificación de Archivos:** Localizar todos los archivos del sistema que deban reflejar las directrices de la documentación (Estrategias, Orquestador, Servicios, Modelos, etc.).
 2.  **Verificación Atómica:** Auditar cada archivo para asegurar que la implementación es un reflejo absoluto, integral y exacto de la documentación.
 3.  **Detección de Desviaciones:** Cualquier discrepancia entre lo que dicta la documentación y lo que ejecuta el código debe ser identificada para su corrección inmediata. El nivel de granularidad de las discrepancias debe ser atómico.
+
+***IMPORTANTE:TODA LA FASE II ES SUSTITUIDA POR EL SIGUIENTE PLAN DE ACCIÓN:***
+
+#### PLAN DE ACCIÓN
+Ir ejecutando todos los puntos
+no marcados con [X] de `V06DOC_INCIDENTS_ROADMAP.md`.
+**DURANTE EL `PMDS` ÚNICAMENTE SE**
+**MODIFICARÁ `V06DOC_INCIDENTS_ROADMAP.md`**
+**PARA MARCAR LOS PUNTOS CORREGIDOS EN LA SESIÓN.**
+**ESTA DIRECTRIZ DE CAMBIO EN EL `PMDS`**
+**PREVALECE SOBRE LA DEL `TOTA_COMMANDER`**
+**EN TUS INSTRUCCIONES DEL SISTEMA**
 
 ## DIRECTRIZ OBLIGATORIA
 

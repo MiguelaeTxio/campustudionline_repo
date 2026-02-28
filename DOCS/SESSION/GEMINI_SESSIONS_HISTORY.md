@@ -1988,3 +1988,10 @@ Carga de contexto obligatoria: Documentación técnica V06DOC y modelos de `asse
 *  **Session:** Corrección Arquitectónica Hito 6: Descentralización y Blindaje
 *  **Description:** Auditoría integral del Hito 6 frente a la documentación satélite. Se aplica la directriz arquitectónica de Miguel Ángel: descentralización absoluta de la lógica de dominio (como la inmersión lingüística) hacia las estrategias específicas, eliminándola del deductor genérico. Se establece el plan de acción para corregir las firmas de métodos (get_exam_skeleton), blindar el mapeo de respuestas por UUID en tasks.py y ajustar el esquema de salida JSON para cumplir estrictamente con V06DOC_TEMPLATES.
 
+
+# 28/02/2026
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+## EPI
+*  **Session:** Auditoría Forense Integral Hito 06: Identificación de 55 Desviaciones Críticas
+*  **Description:** Tras una auditoría microscópica y literal de la constelación documental del Hito 06 contra la implementación real en el servidor, se han detectado 55 puntos de fractura. Las desviaciones son sistémicas: el orquestador destruye la trazabilidad del Prompt Binding, los esquemas de IA violan prohibiciones expresas del contrato de datos, y los motores de evaluación fallan en lógicas nucleares como el arrastre de error o la fórmula de penalización UGR. En la capa de presentación, el 70% de los widgets exigidos por el catálogo son inexistentes o esqueletos simplificados que carecen de las funciones de Zoom HD, simulación legal o interacción dialéctica. Esta sesión establece la deuda técnica real y da comienzo al plan de reparación masiva para rescatar la integridad académica de la plataforma.
