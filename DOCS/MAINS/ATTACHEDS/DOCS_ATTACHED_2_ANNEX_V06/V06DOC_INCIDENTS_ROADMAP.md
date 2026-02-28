@@ -1,22 +1,22 @@
 <!-- /home/MiguelAeTxio/PROJECTS/CampuStudiOnline/DOCS/MAINS/ATTACHEDS/DOCS_ATTACHED_2_ANNEX_V06/V06DOC_INCIDENTS_ROADMAP.md -->
 # HOJA DE RUTA DE REPARACIÓN: 55 INCIDENCIAS HITO 06
 
-1. [ ] Sobrescritura de metadata en Orquestador (Destrucción de TaskInstruction).
-2. [ ] Schema IA: Inclusión prohibida de widget_id en la salida de la IA.
-3. [ ] Schema IA: Inclusión prohibida de block_type en la salida de la IA.
-4. [ ] Schema IA: Omisión del campo obligatorio feedback_justification.
-5. [ ] Schema IA: Falta de validación minItems: 4 para opciones de respuesta.
-6. [ ] Schema IA: Etiquetas de competencia/cognitivas abiertas (Faltan Enums).
-7. [ ] Schema IA: Omisión de parámetros técnicos (Density, Quality, Bias).
+1. [X] Sobrescritura de metadata en Orquestador (Destrucción de TaskInstruction).
+2. [X] Schema IA: Inclusión prohibida de widget_id en la salida de la IA.
+3. [X] Schema IA: Inclusión prohibida de block_type en la salida de la IA.
+4. [X] Schema IA: Omisión del campo obligatorio feedback_justification.
+5. [X] Schema IA: Falta de validación minItems: 4 para opciones de respuesta.
+6. [X] Schema IA: Etiquetas de competencia/cognitivas abiertas (Faltan Enums).
+7. [X] Schema IA: Omisión de parámetros técnicos (Density, Quality, Bias).
 8. [ ] Orquestador: Audio de Listening generado desde Stem (Pregunta) en lugar de Estímulo.
-9. [ ] Cuotas: Mecanismo de penalización EXPIRED_UNTAKEN inoperante (Sin cambio de estado).
-10. [ ] Motor PRM-STRIKE: Penalización hardcodeada a -0.33 en Ciencias.
-11. [ ] Motor PRM-STRIKE: Penalización hardcodeada a -0.25 en Sociales.
-12. [ ] Motor CLOZE: Bug de evaluación por comparación de Array vs String.
-13. [ ] Motor RBT-CANON: Falta de rigor estricto contra paráfrasis en niveles superiores.
-14. [ ] Motor RPP-TRAZA: Ausencia de lógica de Arrastre de Error (Inferencia).
-15. [ ] Motor DRA-HOLO: Valor de penalización incorrecto (-2.0 vs -2.5 documental).
-16. [ ] Motor DRA-HOLO: Lógica de calificación inexistente (Simulada).
+9. [X] Cuotas: Mecanismo de penalización EXPIRED_UNTAKEN inoperante (Sin cambio de estado).
+10. [X] Motor PRM-STRIKE: Penalización hardcodeada a -0.33 en Ciencias.
+11. [X] Motor PRM-STRIKE: Penalización hardcodeada a -0.25 en Sociales.
+12. [X] Motor CLOZE: Bug de evaluación por comparación de Array vs String.
+13. [X] Motor RBT-CANON: Falta de rigor estricto contra paráfrasis en niveles superiores.
+14. [X] Motor RPP-TRAZA: Ausencia de lógica de Arrastre de Error (Inferencia).
+15. [X] Motor DRA-HOLO: Valor de penalización incorrecto (-2.0 vs -2.5 documental).
+16. [X] Motor DRA-HOLO: Lógica de calificación inexistente (Simulada).
 17. [ ] Bloque BMT-SHIFT: Ausencia total de motor de calificación (Bloque Fantasma).
 18. [ ] Itinerario ITIN_DOC: Ausencia total de lógica de detección y rigor.
 19. [ ] Itinerario ITIN_INV: Rigor insuficiente (No es FATAL como exige el doc).
