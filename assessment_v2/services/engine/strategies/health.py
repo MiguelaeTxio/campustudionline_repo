@@ -76,6 +76,30 @@ class HealthStrategy(BaseExamStrategy):
             score = Decimal(str(hits / len(keywords)))
             return score, {"status": "GRADED", "hits": hits}
 
+        # --- MOTOR 4: LIKERT-SCALE (Escala de Desempeño ECOE) ---
+        # Ref: V06DOC_BLOCKS Section 2 (Incidencia 38)
+        elif block_type == 'LIKERT-SCALE':
+            # Input esperado: Valor entero 1-5 o 0-10
+            try:
+                val = float(student_input)
+                max_val = float(logic.get('max_scale', 5))
+                min_threshold = float(logic.get('min_threshold', 3))
+                
+                # Normalización a 0.0 - 1.0
+                normalized_score = Decimal(str(val / max_val))
+                normalized_score = min(max(normalized_score, Decimal('0.0')), Decimal('1.0'))
+                
+                status = "COMPETENT" if val >= min_threshold else "NEEDS_IMPROVEMENT"
+                
+                return normalized_score, {
+                    "status": status, 
+                    "raw_value": val, 
+                    "max_value": max_val,
+                    "feedback_category": "FB_PROCEDURAL"
+                }
+            except (ValueError, TypeError):
+                return Decimal('0.0'), {"status": "FORMAT_ERROR", "detail": "Valor de escala Likert inválido."}
+
         return Decimal('0.0'), {"status": "PENDING"}
 
     def get_section_plan(self):
@@ -83,23 +107,59 @@ class HealthStrategy(BaseExamStrategy):
         Returns the mandatory section list for the orchestrator (SKELETON-FIRST).
         Ref: V06DOC_ARCHETYPES.
         """
+        # Lógica de ECOE Completa para Itinerario Rotatorio (Incidencia 37)
+        if self.itinerary_id == 'ITIN_ROT':
+            return [
+                {
+                    "subdivision_id": "SD_ANAMNESIS",
+                    "title": "Estación 1: Anamnesis y Entrevista",
+                    "instructions": "Realice la entrevista clínica completa. Indague en antecedentes y sintomatología.",
+                    "time_limit": 420 # 7 minutos estándar ECOE
+                },
+                {
+                    "subdivision_id": "SD_EXPLORATION",
+                    "title": "Estación 2: Exploración Física",
+                    "instructions": "Ejecute las maniobras de exploración física pertinentes por sistemas.",
+                    "time_limit": 420
+                },
+                {
+                    "subdivision_id": "SD_TESTS",
+                    "title": "Estación 3: Pruebas Complementarias",
+                    "instructions": "Solicite e interprete las pruebas diagnósticas (Imagen/Lab) necesarias.",
+                    "time_limit": 300 # 5 minutos
+                },
+                {
+                    "subdivision_id": "SD_DIAG_PLAN",
+                    "title": "Estación 4: Juicio Clínico y Plan",
+                    "instructions": "Establezca el diagnóstico diferencial y el plan terapéutico.",
+                    "time_limit": 420
+                },
+                {
+                    "subdivision_id": "SD_COMM_ETHICS",
+                    "title": "Estación 5: Comunicación y Ética",
+                    "instructions": "Informe al paciente/familia y gestione aspectos bioéticos o legales.",
+                    "time_limit": 300
+                }
+            ]
+        
+        # Plan estándar para Grado/Teoría (3 Fases)
         return [
             {
                 "subdivision_id": "SD_FACT",
-                "title": "Estación 1: Anamnesis y Hechos",
-                "instructions": "Recopila los datos clínicos relevantes y antecedentes del paciente.",
+                "title": "Fase 1: Recopilación de Datos",
+                "instructions": "Identifique los datos clínicos relevantes del caso.",
                 "time_limit": 300
             },
             {
-                "subdivision_id": "SD_PROC",
-                "title": "Estación 2: Procedimiento Clínico",
-                "instructions": "Ejecuta la técnica o exploración requerida. Atención a la seguridad.",
+                "subdivision_id": "SD_CLINICAL",
+                "title": "Fase 2: Razonamiento Clínico",
+                "instructions": "Elabore el diagnóstico y tratamiento.",
                 "time_limit": 600
             },
             {
-                "subdivision_id": "SD_ETHI",
-                "title": "Estación 3: Juicio Ético y Seguridad",
-                "instructions": "Valora las implicaciones deontológicas y riesgos del caso.",
+                "subdivision_id": "SD_SAFETY",
+                "title": "Fase 3: Seguridad y Normativa",
+                "instructions": "Valore riesgos y cumplimiento de protocolos.",
                 "time_limit": 300
             }
         ]

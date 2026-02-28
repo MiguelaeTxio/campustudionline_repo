@@ -143,6 +143,75 @@ class TechnicalStrategy(BaseExamStrategy):
             else:
                 return Decimal(str(ratio)), {"status": "PARTIAL", "missing_lexemes": True}
 
+        # --- MOTOR 4: DEMO-PROOF (Demostración Formal) ---
+        # Used in SUB-TEC-PURE. Requires logical axiom validation.
+        # Usado en SUB-TEC-PURE. Requiere validación de axiomas lógicos.
+        elif block_type == 'DEMO-PROOF':
+            required_axioms = logic.get('required_axioms', [])
+            forbidden_fallacies = logic.get('forbidden_fallacies', [])
+            student_text = str(student_input).lower()
+            
+            # Check for logical fallacies first
+            for fallacy in forbidden_fallacies:
+                if fallacy.lower() in student_text:
+                    return Decimal('0.0'), {
+                        "status": "LOGICAL_FALLACY", 
+                        "detail": f"Falacia detectada: {fallacy}",
+                        "feedback_category": "FB_CONCEPT"
+                    }
+
+            # Check coverage of axioms
+            hits = sum(1 for ax in required_axioms if ax.lower() in student_text)
+            
+            if not required_axioms:
+                return Decimal('1.0'), {"status": "MANUAL_REVIEW"}
+            
+            # Rigor: Demostrations require 100% coherence in Pure Sciences
+            if self.sub_archetype_id == 'SUB-TEC-PURE' and hits < len(required_axioms):
+                 return Decimal('0.4'), {
+                     "status": "INCOMPLETE_PROOF", 
+                     "detail": "La demostración carece de pasos intermedios obligatorios.",
+                     "missing_axioms": len(required_axioms) - hits
+                 }
+            
+            score = Decimal(str(hits / len(required_axioms)))
+            return score, {"status": "GRADED", "axioms_verified": hits}
+
+        # --- MOTOR 5: BLUEPRINT-DESIGN (Diseño de Planos/Esquemas) ---
+        # Used in SUB-TEC-PROJ / CONS.
+        elif block_type == 'BLUEPRINT-DESIGN':
+            # Input expected: JSON with specific technical elements
+            if not isinstance(student_input, dict):
+                 return Decimal('0.0'), {"status": "FORMAT_ERROR"}
+            
+            required_elements = logic.get('required_elements', [])
+            safety_constraints = logic.get('safety_constraints', []) # e.g., "min_pillar_width"
+            
+            student_elements = student_input.get('elements', [])
+            
+            # 1. Safety Check (Critical for Architecture/Engineering)
+            for constraint in safety_constraints:
+                param = constraint.get('param')
+                min_val = float(constraint.get('min_value', 0))
+                # Check if any element violates this
+                for elem in student_elements:
+                    if elem.get('type') == param and float(elem.get('value', 0)) < min_val:
+                        return Decimal('0.0'), {
+                            "status": "SAFETY_VIOLATION",
+                            "detail": f"Elemento {param} incumple normativa de seguridad (Valor < {min_val}).",
+                            "feedback_category": "FB_SAFETY"
+                        }
+
+            # 2. Element Presence Check
+            found_count = 0
+            student_elem_types = [e.get('type') for e in student_elements]
+            for req in required_elements:
+                if req in student_elem_types:
+                    found_count += 1
+            
+            score = Decimal(str(found_count / len(required_elements))) if required_elements else Decimal('1.0')
+            return score, {"status": "GRADED", "elements_found": found_count}
+
         return Decimal('0.0'), {"status": "PENDING"}
 
     def _validate_technical_value(self, input_val, expected_val):

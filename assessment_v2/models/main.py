@@ -27,6 +27,7 @@ class Exam(models.Model):
         ARCH_TECH = 'ARCH_TECH', _('Ciencias Técnicas e Ingeniería')
         ARCH_SOC = 'ARCH_SOC', _('Ciencias Sociales y Jurídicas')
         ARCH_HUM = 'ARCH_HUM', _('Artes y Humanidades')
+        ARCH_SCI = 'ARCH_SCI', _('Ciencias Puras y Experimentales')
 
     class Itinerary(models.TextChoices):
         ITIN_MAI = 'ITIN_MAI', _('Maior / Especialización')
@@ -115,6 +116,12 @@ class ExamItem(models.Model):
     section = models.ForeignKey(ExamSection, on_delete=models.CASCADE, related_name='items')
     block_type = models.CharField(max_length=50) # PRM-STRIKE, CLO-MULTI...
     widget_id = models.CharField(max_length=50) # W-OBJ-STRIKE...
+    
+    # Item Technical Attributes (V06DOC_METADATA)
+    # Atributos Técnicos del Ítem (V06DOC_METADATA)
+    level_requisite = models.CharField(_('Requisito de Nivel'), max_length=20, default='Mandatory', help_text=_('[Mandatory | Optional | Advanced]'))
+    weight = models.DecimalField(_('Peso Relativo'), max_digits=3, decimal_places=2, default=1.00)
+    estimated_time = models.PositiveIntegerField(_('Tiempo Estimado (s)'), default=0)
     
     # Contrato JSON segregado
     content = models.JSONField(_('Contenido del Ítem'), default=dict, blank=True)

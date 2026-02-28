@@ -453,6 +453,7 @@
 ./assessment_v2/migrations/0006_costlog_api_key_name_exam_immersion_mode.py
 ./assessment_v2/migrations/0002_alter_subscriptionplan_can_access_c_level_and_more.py
 ./assessment_v2/migrations/0001_initial.py
+./assessment_v2/migrations/0015_examitem_estimated_time_examitem_level_requisite_and_more.py
 ./assessment_v2/admin_urls.py
 ./assessment_v2/tests.py
 ./assessment_v2/management/commands/sync_subscriptions.py

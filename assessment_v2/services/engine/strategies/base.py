@@ -104,12 +104,30 @@ class BaseExamStrategy(ABC):
         Calcula los pesos y umbrales basados en la matriz de intersección pedagógica.
         """
         # Rigor mapping according to V06DOC_LEVELS / Mapeo de rigor según V06DOC_LEVELS
-        rigor_map = {'LVL_A': 0.8, 'LVL_B': 1.0, 'LVL_C': 1.6}
-        rigor_factor = rigor_map.get(self.pedagogical_level, 1.0)
+        # Ref: V06DOC_LEVELS.md Sección 2 (Incidencia 30)
         
-        # Penalty: Zero tolerance in LVL_C or Major itinerary (Ref: V06DOC_LEVELS)
-        # Penalización: Tolerancia cero en LVL_C o itinerario Maior.
-        penalty_threshold = 0.0 if (self.pedagogical_level == 'LVL_C' or self.itinerary_id == 'ITIN_MAI') else 0.5
+        # Base por Nivel
+        matrix = {
+            'LVL_A': {
+                'ITIN_MIN': 0.8,
+                'DEFAULT': 1.0
+            },
+            'LVL_B': {
+                'ITIN_MAI': 1.3,
+                'ITIN_PROF': 1.3,
+                'DEFAULT': 1.0
+            },
+            'LVL_C': {
+                'DEFAULT': 1.6
+            }
+        }
+        
+        lvl_data = matrix.get(self.pedagogical_level, {'DEFAULT': 1.0})
+        rigor_factor = lvl_data.get(self.itinerary_id, lvl_data.get('DEFAULT'))
+        
+        # Penalty: Zero tolerance in LVL_C or Major/Investigator itinerary (Ref: V06DOC_LEVELS)
+        # Penalización: Tolerancia cero en LVL_C o itinerarios Maior/Investigador.
+        penalty_threshold = 0.0 if (self.pedagogical_level == 'LVL_C' or self.itinerary_id in['ITIN_MAI', 'ITIN_INV']) else 0.5
         
         return {
             "rigor_factor": float(rigor_factor), 
@@ -146,6 +164,13 @@ class BaseExamStrategy(ABC):
         Ref: V06DOC_ARCHETYPES.
         """
         pass
+
+    def get_immersion_mode(self):
+        """
+        Default immersion mode (Vehicular language). Overridden by LanguagesStrategy.
+        Modo de inmersión por defecto (Idioma Vehicular). Sobrescrito por LanguagesStrategy.
+        """
+        return 'VEHICULAR'
 
     def get_exam_skeleton(self):
         """

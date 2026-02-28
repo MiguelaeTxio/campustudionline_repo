@@ -2010,3 +2010,17 @@ Carga de contexto obligatoria: Documentación técnica V06DOC y modelos de `asse
 *  **Session:** Hito 06: Orquestación, Rigor y Estructuras Base
 *  **Description:** Resolución de incidencias 8, 18 a 24. Corrección de la fuente de audio en Listening (usando section_stimulus en vez de stem). Implementación de la lógica de detección ITIN_DOC y rigor FATAL para ITIN_INV. Inclusión de las fases estructurales obligatorias (SD_MODEL, SD_VERIF, SD_NORM, SD_ETHI, SD_ARTE) en los esqueletos de Sciences, Health, Social y Humanities.
 
+
+# 2026-02-28
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+## EDC
+*  **Session:** Reparación de incidencias del motor de autoevaluación
+*  **Description:** Sesión dedicada a solventar las incidencias documentadas en la hoja de ruta del Hito 06 (Sistema de Autoevaluaciones con IA). El trabajo se centrará en revisar y corregir los problemas técnicos no marcados como resueltos en el documento V06DOC_INCIDENTS_ROADMAP.md, abordando aspectos críticos de la arquitectura, reglas de negocio, y el mapeo de lógica de los motores de evaluación, asegurando el cumplimiento de la estructura segregada y los requisitos pedagógicos establecidos.
+# 2026-02-28
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+## EDC
+*  **Session:** Reparación de Incidencias Fase II del Hito 06
+*  **Description:** Sesión dedicada a solventar las incidencias documentadas en la hoja de ruta del Hito 06 (Sistema de Autoevaluaciones con IA). El trabajo se centrará en revisar y corregir los problemas técnicos no marcados como resueltos en el documento V06DOC_INCIDENTS_ROADMAP.md. Se realizarán intervenciones atómicas y quirúrgicas en los modelos, lógica de clasificación y estrategias base, archivo por archivo, asegurando el cumplimiento de la estructura segregada y los requisitos pedagógicos establecidos, y manteniendo estrictamente las normas de la plataforma.
+

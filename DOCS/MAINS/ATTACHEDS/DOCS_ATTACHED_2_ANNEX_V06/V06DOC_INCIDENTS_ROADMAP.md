@@ -25,22 +25,22 @@
 22. [X] Estructura Salud: Omisión de fase obligatoria SD_NORM.
 23. [X] Estructura Sociales: Omisión de fase obligatoria SD_ETHI.
 24. [X] Estructura Artes: Omisión de fase obligatoria SD_ARTE.
-25. [ ] Mapeo: Violación de la Barrera de Fuego (localized_sections en arquetipos no-LANG).
-26. [ ] Mapeo: Clasificación por defecto a ARCH_SOC (Violación de prohibición).
-27. [ ] Notificación: Falta de aviso por Email en fallo fatal de generación de examen.
-28. [ ] Taxonomía: Desfase documental entre ARCH_SCI y LOGIC_MAPPING.
-29. [ ] Rigor: Factor multiplicador x1.3 para MAIOR+LVL_B inexistente en código.
-30. [ ] Rigor: La matriz de rigor ignora el Itinerario (Solo usa el Nivel).
-31. [ ] Arquitectura: Crash sistémico (AttributeError) - 83% de estrategias sin get_immersion_mode.
-32. [ ] Modelo: Falta campo level_requisite en ExamItem.
-33. [ ] Modelo: Falta campo weight en ExamItem.
-34. [ ] Modelo: Falta campo estimated_time en ExamItem.
-35. [ ] Reporte: Ruta de acceso al feedback errónea en HTML (Busca en metadata).
-36. [ ] Acreditación: Violación de Gating (CERTACCLES exige 50% por destreza, no media).
-37. [ ] Acreditación: Mutilación de estaciones ECOE (De 5 obligatorias a 3).
-38. [ ] Acreditación: Ausencia total de Escala Likert para Salud.
-39. [ ] Acreditación: Falta motor para bloques especializados (Planos/Demostración).
-40. [ ] Acreditación: Falta motor para simulación judicial en Derecho.
+25. [X] Mapeo: Violación de la Barrera de Fuego (localized_sections en arquetipos no-LANG).
+26. [X] Mapeo: Clasificación por defecto a ARCH_SOC (Violación de prohibición).
+27. [X] Notificación: Falta de aviso por Email en fallo fatal de generación de examen.
+28. [X] Taxonomía: Desfase documental entre ARCH_SCI y LOGIC_MAPPING.
+29. [X] Rigor: Factor multiplicador x1.3 para MAIOR+LVL_B inexistente en código.
+30. [X] Rigor: La matriz de rigor ignora el Itinerario (Solo usa el Nivel).
+31. [X] Arquitectura: Crash sistémico (AttributeError) - 83% de estrategias sin get_immersion_mode.
+32. [X] Modelo: Falta campo level_requisite en ExamItem.
+33. [X] Modelo: Falta campo weight en ExamItem.
+34. [X] Modelo: Falta campo estimated_time en ExamItem.
+35. [X] Reporte: Ruta de acceso al feedback errónea en HTML (Busca en metadata).
+36. [X] Acreditación: Violación de Gating (CERTACCLES exige 50% por destreza, no media).
+37. [X] Acreditación: Mutilación de estaciones ECOE (De 5 obligatorias a 3).
+38. [X] Acreditación: Ausencia total de Escala Likert para Salud.
+39. [X] Acreditación: Falta motor para bloques especializados (Planos/Demostración).
+40. [X] Acreditación: Falta motor para simulación judicial en Derecho.
 41. [ ] Frontend: W-TECH-CALC carece de bloqueo de traza lógica.
 42. [ ] Frontend: W-CLIN-SCAN carece de Zoom HD.
 43. [ ] Frontend: W-CLIN-SCAN carece de herramientas de medida.

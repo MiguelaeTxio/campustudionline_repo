@@ -20,30 +20,60 @@
 
     <h3 class="h5 border-bottom mb-3">{% trans "Desglose por Bloques (Informe del Catedrático)" %}</h3>
     
-    {% for section in exam.sections.all %}
-    <div class="mb-4">
-        <h4 class="h6 text-uppercase fw-bold text-secondary">{{ section.title }}</h4>
-        {% for item in section.items.all %}
-        {% with report=submission.grading_report|dictsort:"0" %}
-        {# Lógica para extraer el reporte específico del item desde el JSON #}
-        {% endwith %}
-        
-        <div class="card mb-2 border-start border-4 {% if item.id|slugify in submission.grading_report and submission.grading_report|dictsort:item.id|first > 0 %}border-success{% else %}border-danger{% endif %}">
-            <div class="card-body p-3">
-                <p class="mb-1 small"><strong>Item {{ forloop.counter }}:</strong> {{ item.content.stem }}</p>
-                
-                {# ACCESO DINÁMICO AL REPORTE (Basado en V06DOC_METADATA) #}
-                <div class="bg-light p-2 rounded small mt-2">
-                    <span class="badge {% if "FB_SAFETY" in submission.grading_report|stringformat:"s" %}bg-danger{% else %}bg-info{% endif %} mb-2">
-                        {% trans "Análisis de UniversIA" %}
-                    </span>
-                    <p class="mb-0"><em>"{{ item.metadata.justification|default:"Análisis terminológico y conceptual completado satisfactoriamente." }}"</em></p>
+    {# FIX INCIDENCIA 35: Iteración robusta sobre el reporte JSON dinámico #}
+    {% if submission.grading_report.sections %}
+        {% for section_report in submission.grading_report.sections %}
+        <div class="mb-4">
+            <h4 class="h6 text-uppercase fw-bold text-secondary">{{ section_report.title }}</h4>
+            
+            {% for item_report in section_report.items %}
+            <div class="card mb-2 border-start border-4 {% if item_report.score >= 0.5 %}border-success{% else %}border-danger{% endif %}">
+                <div class="card-body p-3">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="badge bg-secondary">Item ID: {{ item_report.id }}</span>
+                        <span class="fw-bold {% if item_report.score >= 0.5 %}text-success{% else %}text-danger{% endif %}">
+                            Nota: {{ item_report.score|floatformat:2 }}
+                        </span>
+                    </div>
+
+                    <div class="bg-light p-3 rounded small">
+                        <span class="badge {% if item_report.feedback_category == 'FB_SAFETY' %}bg-danger{% elif item_report.feedback_category == 'FB_FORMAL' %}bg-warning text-dark{% else %}bg-info{% endif %} mb-2">
+                            {{ item_report.feedback_category }}
+                        </span>
+                        
+                        <p class="mb-0">
+                            <strong>{% trans "Análisis de UniversIA:" %}</strong>
+                            <em>"{{ item_report.feedback.justification|default:item_report.feedback.detail|default:"Evaluación completada." }}"</em>
+                        </p>
+                        
+                        {% if item_report.feedback.kill_switch_activated %}
+                        <div class="alert alert-danger mt-2 py-1 mb-0">
+                            <strong>{% trans "KILL SWITCH ACTIVADO:" %}</strong> {% trans "Fallo crítico de seguridad anula esta sección." %}
+                        </div>
+                        {% endif %}
+                        
+                        {# FIX H021: Uso de clase 'small' en lugar de estilo en línea #}
+                        {% if item_report.feedback.trace %}
+                        <div class="mt-2 font-monospace text-muted small">
+                            <strong>{% trans "Traza de Ejecución:" %}</strong>
+                            <ul class="mb-0 ps-3">
+                            {% for trace_step in item_report.feedback.trace %}
+                                <li>{{ trace_step }}</li>
+                            {% endfor %}
+                            </ul>
+                        </div>
+                        {% endif %}
+                    </div>
                 </div>
             </div>
+            {% endfor %}
         </div>
         {% endfor %}
-    </div>
-    {% endfor %}
+    {% else %}
+        <div class="alert alert-warning">
+            {% trans "El informe detallado no está disponible." %}
+        </div>
+    {% endif %}
 
     <div class="d-grid gap-2 mb-5">
         <a href="{% url 'contents:personal_workspace' %}" class="btn btn-outline-primary">{% trans "Volver a la Sala de Estudio" %}</a>

@@ -47,6 +47,49 @@ class SocialStrategy(BaseExamStrategy):
             penalty = logic.get('penalty', Decimal('-0.25'))
             return Decimal(str(penalty)), {"status": "INCORRECT", "penalty_applied": True}
 
+        # --- MOTOR: JUDICIAL-SIM (Simulación de Juicio/Procedimiento) ---
+        # Ref: V06DOC_BLOCKS (Incidencia 40)
+        elif block_type == 'JUDICIAL-SIM':
+            # Input esperado: { "procedural_stage": "...", "admitted_evidence": [...], "verdict": "..." }
+            if not isinstance(student_input, dict):
+                 return Decimal('0.0'), {"status": "FORMAT_ERROR"}
+            
+            # 1. Validación de Fase Procesal (20%)
+            correct_stage = logic.get('correct_stage')
+            student_stage = student_input.get('procedural_stage')
+            score_stage = Decimal('0.2') if str(student_stage).lower() == str(correct_stage).lower() else Decimal('0.0')
+
+            # 2. Admisibilidad de Prueba (40%)
+            required_evidence = logic.get('admissible_evidence', [])
+            student_evidence = student_input.get('admitted_evidence', [])
+            matches = sum(1 for ev in required_evidence if ev in student_evidence)
+            score_evidence = (Decimal(matches) / Decimal(len(required_evidence))) * Decimal('0.4') if required_evidence else Decimal('0.4')
+
+            # 3. Veredicto/Fallo (40%)
+            correct_verdict = logic.get('correct_verdict')
+            student_verdict = student_input.get('verdict')
+            is_verdict_correct = str(student_verdict).lower() == str(correct_verdict).lower()
+            
+            if is_verdict_correct:
+                score_verdict = Decimal('0.4')
+            else:
+                score_verdict = Decimal('0.0')
+                # Penalización crítica en Itinerario Profesional
+                if self.itinerary_id == 'ITIN_PROF':
+                    return Decimal('0.0'), {
+                        "status": "WRONG_VERDICT",
+                        "feedback_category": "FB_CONCEPT",
+                        "detail": "Fallo judicial erróneo. Error fatal en simulación profesional."
+                    }
+
+            total_score = score_stage + score_evidence + score_verdict
+            return total_score, {
+                "status": "GRADED",
+                "stage_ok": score_stage > 0,
+                "evidence_ratio": f"{matches}/{len(required_evidence)}",
+                "verdict_ok": is_verdict_correct
+            }
+
         return Decimal('0.0'), {"status": "PENDING_MANUAL_REVIEW"}
 
     def get_section_plan(self):

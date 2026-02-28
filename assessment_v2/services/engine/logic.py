@@ -113,6 +113,12 @@ class AcademicDeductor:
         if archetype_id not in VALID_ARCHETYPES:
             archetype_id = 'ARCH_SOC'
 
+        # FIREWALL: Clear localized_sections if not ARCH_LANG
+        # BARRERA DE FUEGO: Limpiar localized_sections si no es ARCH_LANG
+        if archetype_id != 'ARCH_LANG':
+            localized_sections = {}
+            target_language_code = 'es'
+
         # FASE 2: Parámetros Deterministas (Python)
         # Ref: V06DOC_LOGIC_MAPPING V1.3 Section 2
         itinerary_id = cls.deduce_itinerary(subject, context_title)
@@ -220,6 +226,16 @@ class GradingOrchestrator:
         # Final Exam Score (Average of sections)
         final_score = (total_exam_score / sections.count()) if sections.count() > 0 else Decimal('0.0')
         
+        # GATING LOGIC (Incidencia 36)
+        # CERTACCLES exige un mínimo del 50% en cada destreza (sección)
+        passed = final_score >= Decimal('0.5')
+        if exam.archetype_id == 'ARCH_LANG':
+            for sec_rep in report['sections']:
+                if float(sec_rep.get('section_score', 0.0)) < 0.5:
+                    passed = False
+                    report['global_flags'].append(f"GATING_FAILED in {sec_rep.get('subdivision_id')}")
+                    break
+        
         # Generate Qualitative Summary (Professor Role)
         report['qualitative_summary'] = GradingOrchestrator._generate_qualitative_feedback(
             final_score, exam.pedagogical_level, exam.itinerary_id, report['feedback_stats']
@@ -227,7 +243,7 @@ class GradingOrchestrator:
         
         submission.grading_report = report
         submission.final_score = final_score
-        submission.passed = final_score >= Decimal('0.5')
+        submission.passed = passed
         submission.graded_at = timezone.now()
         submission.save()
 

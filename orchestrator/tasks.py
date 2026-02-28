@@ -288,6 +288,40 @@ def _send_completion_notifications(new_content: ContentMaterial):
     except Exception as e:
         logger.error(f"Error notifications: {e}")
 
+def _send_exam_failure_notification(exam):
+    """
+    Notifies the user via Email and Push about a fatal generation error.
+    Notifica al usuario vía Email y Push sobre un error fatal de generación.
+    Ref: V06DOC_LOGIC_MAPPING Section 3 (Incidencia 27).
+    """
+    try:
+        from django.utils.translation import gettext as _
+        subject = _("[CampuStudiOnline] Error en la generación de tu evaluación")
+        body_text = _(
+            f"Hola,\n\nLamentamos informarte que el servicio de generación de exámenes no está disponible temporalmente "
+            f"para la asignatura '{exam.content_copy.original_content.title}'.\n\n"
+            "Por favor, inténtalo de nuevo más tarde. No se ha realizado ningún cargo en tu cuota semanal.\n\n"
+            "Disculpa las molestias.\nEl equipo de CampuStudiOnline"
+        )
+        
+        send_mail(
+            subject=subject,
+            message=body_text,
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            recipient_list=[exam.user.email],
+            fail_silently=True
+        )
+        
+        send_unified_notification(
+            exam.user, 
+            _("Servicio no disponible"), 
+            _("No se pudo generar el examen. Por favor, inténtelo de nuevo más tarde."), 
+            reverse('assessment_v2:dashboard')
+        )
+    except Exception as e:
+        logger.error(f"Error en _send_exam_failure_notification: {e}")
+
+
 def _get_next_subject_queryset(settings_obj):
     base_queryset = Subject.objects.filter(content_materials__isnull=True)
     active_task_subject_names = PendingContentTask.objects.exclude(status__in=[PendingContentTask.StatusChoices.COMPLETED, PendingContentTask.StatusChoices.FAILED_FATAL]).values_list('subject__name', flat=True).distinct()
@@ -583,16 +617,13 @@ def generate_exam_task(self, exam_uuid, context_text=None, topic=None):
                 _send_admin_notification(f"FALLO CRÍTICO EXAMEN {exam.uuid}", f"El examen ha fallado tras agotar los reintentos de IA. Usuario: {exam.user.email}")
             except: pass
 
-            # Notificación al Usuario
-            send_unified_notification(
-                exam.user, 
-                "Servicio de Clasificación no disponible", 
-                "Servicio de Clasificación no disponible temporalmente. Por favor, inténtelo de nuevo más tarde.", 
-                reverse('assessment_v2:dashboard')
-            )
+            # Notificación al Usuario (Incidencia 27)
+            _send_exam_failure_notification(exam)
     except Exception as e:
         if isinstance(e, Retry): raise e
         if exam:
             exam.status = 'ERROR'
             exam.error_log = traceback.format_exc()
             exam.save()
+            # Notificación al Usuario (Incidencia 27)
+            _send_exam_failure_notification(exam)
