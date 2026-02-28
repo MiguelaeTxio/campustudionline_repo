@@ -184,7 +184,8 @@ class HealthStrategy(BaseExamStrategy):
             ]
         else:
             skeleton = [
-                {"subdivision_id": "SD_GEN", "title": "Evaluación de Salud General", "instructions": "Resuelva el caso clínico.", "layout_mode": "STANDARD", "items": [{"block_type": "PRM-STRIKE", "widget_id": "W-OBJ-STRIKE", "task_instruction": I_CLINIC_Q}]}
+                {"subdivision_id": "SD_GEN", "title": "Evaluación de Salud General", "instructions": "Resuelva el caso clínico.", "layout_mode": "STANDARD", "items":[{"block_type": "PRM-STRIKE", "widget_id": "W-OBJ-STRIKE", "task_instruction": I_CLINIC_Q}]},
+                {"subdivision_id": "SD_NORM", "title": "Protocolo y Normativa", "instructions": "Encuadre en protocolo oficial.", "layout_mode": "STANDARD", "items":[{"block_type": "PRM-STRIKE", "widget_id": "W-OBJ-STRIKE", "task_instruction": "Valore la actuación clínica según el protocolo médico oficial."}]}
             ]
 
         return skeleton

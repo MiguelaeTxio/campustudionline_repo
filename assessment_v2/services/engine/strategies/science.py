@@ -111,7 +111,9 @@ class ScienceStrategy(BaseExamStrategy):
         else:
             # Fallback
             skeleton = [
-                {"subdivision_id": "SD_GEN", "title": "Ciencia General", "instructions": "Resuelva el problema científico.", "layout_mode": "STANDARD", "items": [{"block_type": "RPP-TRAZA", "widget_id": "W-TECH-CALC", "task_instruction": I_CALC}]}
+                {"subdivision_id": "SD_MODEL", "title": "Modelización", "instructions": "Plantee el modelo matemático.", "layout_mode": "STANDARD", "items":[{"block_type": "PRM-STRIKE", "widget_id": "W-OBJ-STRIKE", "task_instruction": "Plantee el modelo que rige el fenómeno."}]},
+                {"subdivision_id": "SD_CALC", "title": "Ciencia General", "instructions": "Resuelva el problema científico.", "layout_mode": "STANDARD", "items":[{"block_type": "RPP-TRAZA", "widget_id": "W-TECH-CALC", "task_instruction": I_CALC}]},
+                {"subdivision_id": "SD_VERIF", "title": "Verificación", "instructions": "Compruebe la coherencia del resultado.", "layout_mode": "STANDARD", "items":[{"block_type": "PRM-STRIKE", "widget_id": "W-OBJ-STRIKE", "task_instruction": "Verifique el resultado obtenido."}]}
             ]
 
         return skeleton

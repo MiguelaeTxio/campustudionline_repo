@@ -63,6 +63,15 @@ class LanguagesStrategy(BaseExamStrategy):
             return score, {"status": "GRADED", "hits": hits, "feedback_category": "FB_PROCEDURAL"}
 
         # --- MOTOR 3: DRA-HOLO (Writing/Essay) ---
+        elif block_type == "BMT-SHIFT":
+            # [HITO 6] Incidencia 17: Motor de Mediación y Transferencia
+            # Evalúa la capacidad de reformular información (Source -> Target)
+            return Decimal("0.0"), {
+                "status": "PENDING_AI_RUBRIC", 
+                "detail": "Mediation analysis queued (Fidelity & Register).", 
+                "feedback_category": "FB_PROCEDURAL"
+            }
+
         elif block_type == "DRA-HOLO":
             # Writing requires rubric-based grading (Hito 6 Phase 4)
             return Decimal("0.0"), {"status": "PENDING_AI_RUBRIC", "detail": "Writing analysis queued.", "feedback_category": "FB_FORMAL"}

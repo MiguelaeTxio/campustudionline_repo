@@ -30,7 +30,7 @@ Auditoría técnica exhaustiva de todo el código implicado frente a la document
 Ir ejecutando todos los puntos
 no marcados con [X] de `V06DOC_INCIDENTS_ROADMAP.md`.
 **DURANTE EL `PMDS` ÚNICAMENTE SE**
-**MODIFICARÁ `V06DOC_INCIDENTS_ROADMAP.md`**
+**MODIFICARÁ `V06DOC_INCIDENTS_ROADMAP.md` *MEDIANTE`PMA`***
 **PARA MARCAR LOS PUNTOS CORREGIDOS EN LA SESIÓN.**
 **ESTA DIRECTRIZ DE CAMBIO EN EL `PMDS`**
 **PREVALECE SOBRE LA DEL `TOTA_COMMANDER`**

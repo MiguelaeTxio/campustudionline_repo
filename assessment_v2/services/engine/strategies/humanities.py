@@ -94,6 +94,11 @@ class HumanitiesStrategy(BaseExamStrategy):
                 {"subdivision_id": "SD_SOURCE", "title": "Análisis Musical", "instructions": "Analice la obra.", "layout_mode": "SPLIT_TEXT", "items": [{"block_type": "EV-PALE", "widget_id": "W-HUM-TEXT", "task_instruction": I_SOURCE}]},
                 {"subdivision_id": "SD_TRANS", "title": "Transcripción/Dictado", "instructions": "Transcriba el fragmento.", "layout_mode": "SPLIT_TEXT", "items": [{"block_type": "EV-PALE", "widget_id": "W-HUM-TEXT", "task_instruction": I_TRANS}]}
             ]
+        elif sid == "SUB-HUM-ART-CREA":
+            skeleton = [
+                {"subdivision_id": "SD_SOURCE", "title": "Análisis Visual", "instructions": "Analice la fuente visual.", "layout_mode": "SPLIT_TEXT", "items": [{"block_type": "EV-PALE", "widget_id": "W-HUM-TEXT", "task_instruction": I_SOURCE}]},
+                {"subdivision_id": "SD_ARTE", "title": "Técnica Matérica", "instructions": "Valore la técnica constructiva y compositiva.", "layout_mode": "STANDARD", "items": [{"block_type": "DRA-HOLO", "widget_id": "W-HUM-TEXT", "task_instruction": "Evalúa el proceso matérico, la técnica y la composición de la obra."}]}
+            ]
         else:
             # Fallback genérico
             skeleton = [

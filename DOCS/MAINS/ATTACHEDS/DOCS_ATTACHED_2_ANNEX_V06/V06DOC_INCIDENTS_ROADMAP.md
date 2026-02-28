@@ -8,7 +8,7 @@
 5. [X] Schema IA: Falta de validación minItems: 4 para opciones de respuesta.
 6. [X] Schema IA: Etiquetas de competencia/cognitivas abiertas (Faltan Enums).
 7. [X] Schema IA: Omisión de parámetros técnicos (Density, Quality, Bias).
-8. [ ] Orquestador: Audio de Listening generado desde Stem (Pregunta) en lugar de Estímulo.
+8. [X] Orquestador: Audio de Listening generado desde Stem (Pregunta) en lugar de Estímulo.
 9. [X] Cuotas: Mecanismo de penalización EXPIRED_UNTAKEN inoperante (Sin cambio de estado).
 10. [X] Motor PRM-STRIKE: Penalización hardcodeada a -0.33 en Ciencias.
 11. [X] Motor PRM-STRIKE: Penalización hardcodeada a -0.25 en Sociales.
@@ -17,14 +17,14 @@
 14. [X] Motor RPP-TRAZA: Ausencia de lógica de Arrastre de Error (Inferencia).
 15. [X] Motor DRA-HOLO: Valor de penalización incorrecto (-2.0 vs -2.5 documental).
 16. [X] Motor DRA-HOLO: Lógica de calificación inexistente (Simulada).
-17. [ ] Bloque BMT-SHIFT: Ausencia total de motor de calificación (Bloque Fantasma).
-18. [ ] Itinerario ITIN_DOC: Ausencia total de lógica de detección y rigor.
-19. [ ] Itinerario ITIN_INV: Rigor insuficiente (No es FATAL como exige el doc).
-20. [ ] Estructura Ciencias: Omisión de fase obligatoria SD_MODEL.
-21. [ ] Estructura Ciencias: Omisión de fase obligatoria SD_VERIF.
-22. [ ] Estructura Salud: Omisión de fase obligatoria SD_NORM.
-23. [ ] Estructura Sociales: Omisión de fase obligatoria SD_ETHI.
-24. [ ] Estructura Artes: Omisión de fase obligatoria SD_ARTE.
+17. [X] Bloque BMT-SHIFT: Ausencia total de motor de calificación (Bloque Fantasma).
+18. [X] Itinerario ITIN_DOC: Ausencia total de lógica de detección y rigor.
+19. [X] Itinerario ITIN_INV: Rigor insuficiente (No es FATAL como exige el doc).
+20. [X] Estructura Ciencias: Omisión de fase obligatoria SD_MODEL.
+21. [X] Estructura Ciencias: Omisión de fase obligatoria SD_VERIF.
+22. [X] Estructura Salud: Omisión de fase obligatoria SD_NORM.
+23. [X] Estructura Sociales: Omisión de fase obligatoria SD_ETHI.
+24. [X] Estructura Artes: Omisión de fase obligatoria SD_ARTE.
 25. [ ] Mapeo: Violación de la Barrera de Fuego (localized_sections en arquetipos no-LANG).
 26. [ ] Mapeo: Clasificación por defecto a ARCH_SOC (Violación de prohibición).
 27. [ ] Notificación: Falta de aviso por Email en fallo fatal de generación de examen.

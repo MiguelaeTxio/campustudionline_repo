@@ -40,8 +40,11 @@ class AcademicDeductor:
             return 'ITIN_ROT'
         if any(k in branch_name for k in ['ingeniería', 'técnica', 'arquitectura']):
             return 'ITIN_PROF'
+        # Docencia (Didáctico)
+        if any(k in branch_name for k in['educación', 'magisterio', 'didáctica', 'pedagogía', 'docent']):
+            return 'ITIN_DOC'
         # Investigación (Investigador)
-        if any(k in branch_name for k in ['investigac', 'doctoral']):
+        if any(k in branch_name for k in['investigac', 'doctoral']):
             return 'ITIN_INV'
         
         # 3. Fallback por tipo oficial de asignatura
@@ -185,6 +188,11 @@ class GradingOrchestrator:
                 
                 # Check for Section-Level Kill Switch (Ref: V06DOC_BLOCKS)
                 # Comprobar Interruptor de Anulación de Sección
+                # [HITO 6] ITIN_INV: Rigor FATAL
+                if exam.itinerary_id == 'ITIN_INV' and fb_category in['FB_PROCEDURAL', 'FB_CONCEPT'] and item_final_score < 0.5:
+                    item_feedback['kill_switch_activated'] = True
+                    item_feedback['justification'] = 'ERROR FATAL METODOLÓGICO: ' + item_feedback.get('justification', '')
+
                 if item_feedback.get('kill_switch_activated', False):
                     section_kill_activated = True
                     section_report['status'] = "ANNULLED_BY_SAFETY_BREACH"

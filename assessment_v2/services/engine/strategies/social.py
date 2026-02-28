@@ -169,7 +169,8 @@ class SocialStrategy(BaseExamStrategy):
             ]
         else:
             skeleton = [
-                {"subdivision_id": "SD_GEN", "title": "Análisis Social General", "instructions": "Resuelva el supuesto práctico.", "layout_mode": "STANDARD", "items": [{"block_type": "CASO-PRACTICO", "widget_id": "W-HUM-TEXT", "task_instruction": I_CASO}]}
+                {"subdivision_id": "SD_GEN", "title": "Análisis Social General", "instructions": "Resuelva el supuesto práctico.", "layout_mode": "STANDARD", "items": [{"block_type": "CASO-PRACTICO", "widget_id": "W-HUM-TEXT", "task_instruction": I_CASO}]},
+                {"subdivision_id": "SD_ETHI", "title": "Deontología y Ética", "instructions": "Valore las implicaciones éticas.", "layout_mode": "STANDARD", "items": [{"block_type": "PRM-STRIKE", "widget_id": "W-OBJ-STRIKE", "task_instruction": "Genera una pregunta sobre ética profesional o código deontológico."}]}
             ]
 
         return skeleton

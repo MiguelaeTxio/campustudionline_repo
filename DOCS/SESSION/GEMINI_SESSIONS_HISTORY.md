@@ -2003,3 +2003,10 @@ Carga de contexto obligatoria: Documentación técnica V06DOC y modelos de `asse
 *  **Session:** Reparacion de incidencias del motor de autoevaluaciones Hito 06
 *  **Description:** Sesión enfocada en la resolución secuencial de las 55 incidencias críticas identificadas en el sistema de autoevaluaciones con IA correspondientes al Hito 06. El objetivo principal de la jornada es subsanar la sobrescritura de metadatos en el orquestador (TaskInstruction), corregir los esquemas de validación de Gemini y asegurar el cumplimiento íntegro de la arquitectura segregada definida en la matriz de arquetipos, garantizando la perfecta estructura de los exámenes generados.
 
+# 2026-02-28
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+## MAMC
+*  **Session:** Hito 06: Orquestación, Rigor y Estructuras Base
+*  **Description:** Resolución de incidencias 8, 18 a 24. Corrección de la fuente de audio en Listening (usando section_stimulus en vez de stem). Implementación de la lógica de detección ITIN_DOC y rigor FATAL para ITIN_INV. Inclusión de las fases estructurales obligatorias (SD_MODEL, SD_VERIF, SD_NORM, SD_ETHI, SD_ARTE) en los esqueletos de Sciences, Health, Social y Humanities.
+
