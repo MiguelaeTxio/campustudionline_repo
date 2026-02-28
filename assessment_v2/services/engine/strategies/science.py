@@ -33,7 +33,9 @@ class ScienceStrategy(BaseExamStrategy):
             correct = logic.get('correct_answer')
             if str(student_input).strip() == str(correct).strip():
                 return Decimal('1.0'), {"status": "CORRECT"}
-            return Decimal('-0.33'), {"status": "INCORRECT", "penalty_applied": True}
+            # [HITO 6 FIX] Penalización dinámica según V06DOC_LEVELS
+            penalty = logic.get('penalty', Decimal('-0.33'))
+            return Decimal(str(penalty)), {"status": "INCORRECT", "penalty_applied": True}
 
         # --- MOTOR 3: ILC-CONTEXT (Interpretación de Datos) ---
         elif block_type == 'ILC-CONTEXT':

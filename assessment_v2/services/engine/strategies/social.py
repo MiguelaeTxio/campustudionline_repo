@@ -43,7 +43,9 @@ class SocialStrategy(BaseExamStrategy):
             correct_answer = logic.get('correct_answer')
             if str(student_input).strip() == str(correct_answer).strip():
                 return Decimal('1.0'), {"status": "CORRECT"}
-            return Decimal('-0.25'), {"status": "INCORRECT"}
+            # [HITO 6 FIX] Penalización dinámica según V06DOC_LEVELS
+            penalty = logic.get('penalty', Decimal('-0.25'))
+            return Decimal(str(penalty)), {"status": "INCORRECT", "penalty_applied": True}
 
         return Decimal('0.0'), {"status": "PENDING_MANUAL_REVIEW"}
 

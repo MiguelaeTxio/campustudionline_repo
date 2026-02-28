@@ -1995,3 +1995,11 @@ Carga de contexto obligatoria: Documentación técnica V06DOC y modelos de `asse
 ## EPI
 *  **Session:** Auditoría Forense Integral Hito 06: Identificación de 55 Desviaciones Críticas
 *  **Description:** Tras una auditoría microscópica y literal de la constelación documental del Hito 06 contra la implementación real en el servidor, se han detectado 55 puntos de fractura. Las desviaciones son sistémicas: el orquestador destruye la trazabilidad del Prompt Binding, los esquemas de IA violan prohibiciones expresas del contrato de datos, y los motores de evaluación fallan en lógicas nucleares como el arrastre de error o la fórmula de penalización UGR. En la capa de presentación, el 70% de los widgets exigidos por el catálogo son inexistentes o esqueletos simplificados que carecen de las funciones de Zoom HD, simulación legal o interacción dialéctica. Esta sesión establece la deuda técnica real y da comienzo al plan de reparación masiva para rescatar la integridad académica de la plataforma.
+
+# 2026-02-28
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+## PLUTO
+*  **Session:** Reparacion de incidencias del motor de autoevaluaciones Hito 06
+*  **Description:** Sesión enfocada en la resolución secuencial de las 55 incidencias críticas identificadas en el sistema de autoevaluaciones con IA correspondientes al Hito 06. El objetivo principal de la jornada es subsanar la sobrescritura de metadatos en el orquestador (TaskInstruction), corregir los esquemas de validación de Gemini y asegurar el cumplimiento íntegro de la arquitectura segregada definida en la matriz de arquetipos, garantizando la perfecta estructura de los exámenes generados.
+

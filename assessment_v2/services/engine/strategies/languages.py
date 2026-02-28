@@ -38,10 +38,12 @@ class LanguagesStrategy(BaseExamStrategy):
         
         # --- MOTOR 1: CLO-OPEN / CLO-MULTI (Gap Filling) ---
         if block_type in ["CLO-OPEN", "CLO-MULTI"]:
-            correct_answer = str(logic.get("correct_answer", "")).lower().strip()
+            # [HITO 6 FIX] Soporte para multirrespuesta Array vs String (Incidencia 12)
+            raw_correct = logic.get("correct_answer", "")
+            valid_answers = [str(a).lower().strip() for a in raw_correct] if isinstance(raw_correct, list) else [str(raw_correct).lower().strip()]
             student_answer = str(student_input).lower().strip()
             
-            if student_answer == correct_answer:
+            if student_answer in valid_answers:
                 return Decimal("1.0"), {"status": "CORRECT", "feedback_category": "FB_CONCEPT"}
             
             # MAIOR Itinerary: Zero tolerance for spelling/grammar in gaps

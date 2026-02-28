@@ -31,12 +31,18 @@ class HumanitiesStrategy(BaseExamStrategy):
             if self.itinerary_id in ['ITIN_MAI', 'ITIN_INV']:
                 # Strict formal checking (simplified for MVP logic)
                 if len(str(student_input)) < 200: # Example constraint
-                    formal_penalty = Decimal('2.0') # V06DOC_BLOCKS: "Penalización formal hasta -2.5"
+                    formal_penalty = Decimal('2.5') # [HITO 6 FIX] Penalización formal ajustada: "Penalización formal hasta -2.5"
 
             return Decimal('0.0'), {
                 "status": "PENDING_AI_RUBRIC",
-                "axes":["Rigor", "Estructura", "Terminología", "Forma"],
-                "formal_penalty_risk": float(formal_penalty)
+                "axes": {
+                    "rigor": {"weight": 0.4, "score": None},
+                    "structure": {"weight": 0.2, "score": None},
+                    "terminology": {"weight": 0.2, "score": None},
+                    "form": {"weight": 0.2, "score": None}
+                },
+                "formal_penalty": float(formal_penalty),
+                "detail": "Enviado a motor de rúbrica holística Gemini."
             }
 
         # --- MOTOR 2: EV-PALE (Transcripción/Exégesis) ---

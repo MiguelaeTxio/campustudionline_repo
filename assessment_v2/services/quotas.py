@@ -61,10 +61,14 @@ class QuotaService:
         # CRITICAL RULE: Zero Tolerance Penalty for Free Plan (Anti-Abuse)
         # REGLA CRÍTICA: Penalización de Tolerancia Cero para Plan Gratuito (Anti-Abuso)
         if plan.name == SubscriptionPlan.CODE_FREE:
+            # [HITO 6 FIX] Lazy Check de caducidad (Detecta READY + Expired)
+            from django.db.models import Q
             has_expired_untaken = Exam.objects.filter(
                 user=user, 
-                created_at__gte=week_start, 
-                status='EXPIRED_UNTAKEN'
+                created_at__gte=week_start
+            ).filter(
+                Q(status='EXPIRED_UNTAKEN') | 
+                (Q(status='READY') & Q(expiration_date__lt=timezone.now()))
             ).exists()
             
             if has_expired_untaken:

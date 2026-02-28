@@ -69,7 +69,13 @@ class TechnicalStrategy(BaseExamStrategy):
                             fatal_error_triggered = True
                             trace_log.append(f"Paso {expected_step['id']}: FATAL (Incumplimiento Normativo)")
                         else:
-                            trace_log.append(f"Paso {expected_step['id']}: FALLO")
+                            # [HITO 6 FIX] Lógica de Arrastre de Error / Inferencia (Incidencia 14)
+                            trace_log.append(f"Paso {expected_step['id']}: DISCREPANCIA (Posible Arrastre de Error)")
+                            return Decimal('0.0'), {
+                                "status": "PENDING_AI_INFERENCE",
+                                "detail": f"Fallo en paso {expected_step['id']}. Se requiere IA para validar inferencia lógica.",
+                                "trace": trace_log
+                            }
                 else:
                     trace_log.append(f"Paso {expected_step['id']}: OMITIDO")
 
@@ -125,7 +131,11 @@ class TechnicalStrategy(BaseExamStrategy):
                 return Decimal('1.0'), {"status": "MANUAL_REVIEW"}
 
             # Strictness based on Itinerary
-            threshold = 1.0 if self.itinerary_id in ['ITIN_MAI', 'ITIN_INV'] else 0.7
+            # [HITO 6 FIX] Rigor estricto para Nivel C y Especializados (Incidencia 13)
+            if self.pedagogical_level == 'LVL_C' or self.itinerary_id in ['ITIN_MAI', 'ITIN_INV']:
+                threshold = 1.0
+            else:
+                threshold = 0.7
             ratio = hit_count / len(required_lexemes)
             
             if ratio >= threshold:

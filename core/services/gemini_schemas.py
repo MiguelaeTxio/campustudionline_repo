@@ -1,5 +1,5 @@
 # /home/MiguelAeTxio/PROJECTS/CampuStudiOnline/core/services/gemini_schemas.py
-# [V4 - CLEANUP HITO 6] Eliminación de esquemas de evaluación obsoletos. Preservación de esquemas de automatización.
+# [V5 - HITO 6 REPAIR] Inclusión de esquemas estrictos de evaluación (Incidencias 2-7)
 
 # --- Schema for Content Automation ---
 
@@ -190,4 +190,108 @@ ACADEMIC_CLASSIFICATION_SCHEMA = {
         }
     },
     "required": ["archetype_id", "sub_archetype_id", "target_language_code", "localized_sections"]
+}
+
+# [HITO 6] Esquema Universal de Ítem de Evaluación
+# Resuelve incidencias 2 (widget_id prohibido), 3 (block_type prohibido), 
+# 4 (feedback obligatorio), 5 (minItems 4), 6 (Enums etiquetas) y 7 (Parámetros).
+
+EXAM_ITEM_CONTENT_SCHEMA = {
+    "type": "object",
+    "properties": {
+        "items": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "content": {
+                        "type": "object",
+                        "properties": {
+                            "stem": {
+                                "type": "string", 
+                                "description": "El enunciado, pregunta o estímulo principal del ítem."
+                            },
+                            "options": {
+                                "type": "array",
+                                "items": {
+                                    "type": "object",
+                                    "properties": {
+                                        "id": {"type": "string"},
+                                        "text": {"type": "string"},
+                                        "is_correct": {"type": "boolean"},
+                                        "feedback": {"type": "string", "description": "Explicación específica para esta opción."}
+                                    },
+                                    "required": ["id", "text", "is_correct", "feedback"]
+                                },
+                                "minItems": 4, # [INCIDENCIA 5] Validación mínima de opciones
+                                "description": "Lista de opciones de respuesta (Mínimo 4)."
+                            },
+                            # Soporte para otros widgets (Cloze, Matching, etc.)
+                            "text_fragments": {"type": "array", "items": {"type": "string"}},
+                            "gaps": {"type": "array", "items": {"type": "string"}},
+                            "pairs_left": {"type": "array", "items": {"type": "string"}},
+                            "pairs_right": {"type": "array", "items": {"type": "string"}},
+                            "rubric": {"type": "string", "description": "Rúbrica de corrección (Solo para Open-Ended)."},
+                            "sample_answer": {"type": "string", "description": "Respuesta modelo (Solo para Open-Ended)."}
+                        },
+                        "required": ["stem"] 
+                    },
+                    "grading_logic": {
+                        "type": "object",
+                        "properties": {
+                            "feedback_justification": {
+                                "type": "string",
+                                "description": "[INCIDENCIA 4] Explicación pedagógica detallada de la solución correcta."
+                            },
+                            "correct_answer_id": {"type": "string"}
+                        },
+                        "required": ["feedback_justification"]
+                    },
+                    "metadata": {
+                        "type": "object",
+                        "properties": {
+                            "competency_tag": {
+                                "type": "string",
+                                "enum": ["COMP_SEMANTIC", "COMP_GRAMMAR", "COMP_PRAGMATIC", "COMP_CLINICAL", "COMP_LEGAL", "COMP_CALC", "COMP_CRITICAL"],
+                                "description": "[INCIDENCIA 6] Etiqueta de competencia evaluada (Enum cerrado)."
+                            },
+                            "cognitive_level": {
+                                "type": "string",
+                                "enum": ["REMEMBER", "UNDERSTAND", "APPLY", "ANALYZE", "EVALUATE", "CREATE"],
+                                "description": "[INCIDENCIA 6] Nivel de la taxonomía de Bloom (Enum cerrado)."
+                            },
+                            "difficulty_index": {
+                                "type": "number",
+                                "description": "Índice de dificultad estimado (0.0 a 1.0)."
+                            },
+                            # [INCIDENCIA 7] Parámetros Técnicos
+                            "technical_density": {
+                                "type": "string",
+                                "enum": ["LOW", "MEDIUM", "HIGH"],
+                                "description": "Densidad de conceptos técnicos en el ítem."
+                            },
+                            "linguistic_quality": {
+                                "type": "string",
+                                "enum": ["STANDARD", "ACADEMIC", "NATIVE_PROFESSIONAL"],
+                                "description": "Registro lingüístico utilizado."
+                            },
+                            "bias_check": {
+                                "type": "boolean",
+                                "description": "Confirmación de que el ítem ha sido revisado contra sesgos."
+                            }
+                        },
+                        "required": ["competency_tag", "cognitive_level", "difficulty_index", "technical_density", "linguistic_quality", "bias_check"]
+                    }
+                },
+                "required": ["content", "grading_logic", "metadata"]
+            }
+        },
+        # [INCIDENCIA 2 y 3] Bloqueo explícito: No pedimos widget_id ni block_type aquí.
+        # [HITO 6] Soporte para estímulo de sección compartido (Reading/Case Study)
+        "section_stimulus": {
+            "type": "string",
+            "description": "Texto, caso clínico o lectura compartida para toda la sección (opcional)."
+        }
+    },
+    "required": ["items"]
 }

@@ -531,7 +531,11 @@ def generate_exam_task(self, exam_uuid, context_text=None, topic=None):
                                 db_item = db_items[i_idx]
                                 db_item.content = i_data.get('content', {})
                                 db_item.grading_logic = i_data.get('grading_logic', {})
-                                db_item.metadata = i_data.get('metadata', {})
+                                # [HITO 6 BLINDAJE] Preservar metadata original (TaskInstruction)
+                                ai_metadata = i_data.get('metadata', {})
+                                if 'task_instruction' in db_item.metadata:
+                                    ai_metadata['task_instruction'] = db_item.metadata['task_instruction']
+                                db_item.metadata = ai_metadata
                                 # [HITO 6] AUDIO GENERATION TRIGGER (SD_LIST) / DISPARADOR DE AUDIO
                                 if s_info['subdivision_id'] == 'SD_LIST':
                                     audio_url = _generate_item_audio(db_item.id, db_item.content.get('stem', ''), automation_settings.active_api_key)
