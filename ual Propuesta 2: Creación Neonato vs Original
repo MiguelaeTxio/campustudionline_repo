@@ -1,0 +1,47 @@
+[1mdiff --git a/home/MiguelAeTxio/SYSTEM_DOCS/TOTAL_COMMANDER_PC.md b/home/MiguelAeTxio/SWAP/TOTAL_COMMANDER_PC.md.prop[m
+[1mindex 275aa2b..820d910 100644[m
+[1m--- a/home/MiguelAeTxio/SYSTEM_DOCS/TOTAL_COMMANDER_PC.md[m
+[1m+++ b/home/MiguelAeTxio/SWAP/TOTAL_COMMANDER_PC.md.prop[m
+[36m@@ -112,42 +112,6 @@[m [mEsta directriz busca equilibrar el estándar de la industria (Inglés) con la op[m
+
+---[m
+
+[31m## 3. Protocolos de Adquisición de Datos (Web Scraping)[m
+
+[31m### 3.1. Filosofía "Edge Processing" (Procesamiento en el Borde)[m
+[31mPara optimizar los recursos del servidor y minimizar los costes de almacenamiento, se establece como **norma vinculante** que todo proceso de web scraping y recolección de datos masivos debe realizarse en dispositivos locales (Termux/PC Local).[m
+
+[31m### 3.2. Estándar de Datos "Ready-to-Deploy"[m
+[31mEl resultado generado por los scripts locales debe ser un archivo JSON (u otro formato estructurado) que cumpla estrictamente con el esquema de la base de datos de destino.[m
+[31m*   **Prohibido:** Subir datos "crudos" (raw text, HTML dumps) al servidor para su procesamiento posterior.[m
+[31m*   **Obligatorio:** Realizar la limpieza, segmentación (parsing) y estructuración (listas, diccionarios) en local. El servidor solo debe ejecutar comandos de importación (`Management Commands`) que validen y guarden los datos, sin aplicar lógica de transformación pesada.[m
+
+[31m### 3.3. Gestión de Dependencias Locales[m
+[31mLos scripts generados para ejecución local deben incluir verificaciones de dependencias (ej: `pdfplumber`, `beautifulsoup4`) y gestionar sus propios mecanismos de reanudación y retardo para evitar bloqueos.[m
+
+[31m### 3.4. Persistencia y Control de Versiones de Herramientas (Directriz de Higiene)[m
+[31mTodo script de web scraping destinado a ejecutarse en entorno local (Termux/PC) que tenga utilidad recurrente (no sea de "usar y tirar") debe generarse y almacenarse obligatoriamente en la estructura de directorios del proyecto en el servidor (ej: `/web_scrapping/`).[m
+[31m*   **Prohibido:** Crear scripts complejos directamente en local sin respaldo en el repositorio.[m
+[31m*   **Flujo Obligatorio:** Creación en Servidor (`PEA`) -> Descarga a Local (`sftp`) -> Ejecución.[m
+
+[31m### 3.5. Directorios y flujo de trabajo[m
+[31m*   **Creación de Scripts:** En `/webscrapping` en el servidor.[m
+[31m*   **Descarga de Scripts:** Por`sftp` al Directorio de Intercambio Local.[m
+[31m*   **Salidas de Scripts:** Al Directorio de Intercambio Local.[m
+[31m*   **[m
+[31m### 🛑 PROTOCOLO DE RUTAS (REGLA DE BLOQUEO) 🛑[m
+[31m> **PROHIBICIÓN ABSOLUTA:** Queda terminantemente prohibido usar rutas relativas como `SWAP/` o `./SWAP/`.[m
+[31m> **OBLIGACIÓN:** Debes expandir `{SERVER_SWAP}` SIEMPRE a su valor literal: `/home/MiguelAeTxio/SWAP/`.[m
+[31m>[m
+[31m> **TABLA DE CORRECTITUD:**[m
+[31m> ❌ `cp archivo.txt SWAP/archivo.txt` -> **ERROR GRAVE**[m
+[31m> ✅ `cp archivo.txt /home/MiguelAeTxio/SWAP/archivo.txt` -> **CORRECTO**[m
+[31m:** Todo comando que involucre el `{SERVER_SWAP}` debe usar rutas absolutas de forma obligatoria.[m
+[31m*   **Ejecución de Scripts:** Desde consola `bash` local y usando rutas absolutas.[m
+[31m*   **Directriz técnica vinculante:** Se asume que la apertura y cierre de las consolas locales corren por cuenta del usuario.**JAMÁS** se entregan comandos de apertura/cierre fuera del `PICTA`.[m
+
+[31m---[m
+
+# SYSTEM BIOS[m
+
+Este archivo constituye el sistema[m
