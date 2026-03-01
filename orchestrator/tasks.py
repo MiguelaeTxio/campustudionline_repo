@@ -527,6 +527,12 @@ def generate_exam_task(self, exam_uuid, context_text=None, topic=None):
             db_items = list(db_sec.items.all().order_by('order'))
             if not db_items: continue
             
+            # [HITO 6 BLINDAJE] Resiliencia Celery: Si el primer item ya tiene contenido, la sección está lista
+            if db_items[0].content:
+                for item in db_items:
+                    generated_titles.append(str(item.content.get('stem', ''))[:30])
+                continue
+            
             # [HITO 6] SKELETON-PROMPT BINDING: Inyectar la instrucción específica por ítem
             widgets_info_list = []
             for i, item in enumerate(db_items):

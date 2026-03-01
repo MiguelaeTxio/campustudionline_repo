@@ -21,27 +21,31 @@ class Command(BaseCommand):
 
     TARGETS = {
         'SUB-LIN-CERT': 'Lengua Francesa V',
-        'SUB-LIN-PROF': 'Traducción Especializada',
-        'SUB-LIN-LIT':  'Literatura Española del Siglo de Oro',
-        'SUB-SAN-MED':  'Bases de la Medicina Interna II',
+        'SUB-LIN-TRA-TECH': 'Traducción Especializada',
+        'SUB-LIN-TRA-LIT':  'Literatura Española del Siglo de Oro',
+        'SUB-SAN-MED-CLIN': 'Bases de la Medicina Interna II',
         'SUB-SAN-CUID': 'Enfermería del Adulto III',
-        'SUB-SAN-BIO':  'Farmacología aplicada',
-        'SUB-SAN-PSY':  'Psicometría',
+        'SUB-SAN-LAB':  'Farmacología aplicada',
+        'SUB-SAN-PSY-CLIN': 'Psicometría',
         'SUB-SAN-VET':  'Zoología',
         'SUB-TEC-SOFT': 'Algorítmica',
         'SUB-TEC-CIVIL':'Ingeniería Marítima',
         'SUB-TEC-INDUS':'Transmisión de Calor',
         'SUB-TEC-PURE': 'Métodos Numéricos',
         'SUB-TEC-CHEM': 'Operaciones de Separación',
-        'SUB-SOC-JUR':  'Derecho del Trabajo y Seguridad Social',
-        'SUB-SOC-ECON': 'Contabilidad Financiera',
-        'SUB-SOC-BEHAV':'Sistema Político Español',
-        'SUB-SOC-COMM': 'Teoría de la Comunicación',
+        'SUB-SOC-LAW-PROC': 'Derecho del Trabajo y Seguridad Social',
+        'SUB-SOC-ECON-QUAN': 'Contabilidad Financiera',
+        'SUB-SOC-WORK': 'Sistema Político Español',
+        'SUB-SOC-COMM-JOUR': 'Teoría de la Comunicación',
         'SUB-HUM-HIST': 'Historia Universal Contemporánea I',
         'SUB-HUM-PHIL': 'La lógica y su filosofía',
-        'SUB-HUM-EDU':  'Atención a la diversidad en el aula',
-        'SUB-ART-CREA': 'Metodologías del dibujo',
-        'SUB-ART-MUS':  'Historia de la música'
+        'SUB-SOC-EDU-KIDS': 'Atención a la diversidad en el aula',
+        'SUB-HUM-ART-CREA': 'Metodologías del dibujo',
+        'SUB-HUM-MUS':  'Historia de la música',
+        'SUB-SCI-BIO': 'Biología Marina',
+        'SUB-SCI-CHEM': 'Química Orgánica',
+        'SUB-SCI-PHYS': 'Mecánica Cuántica',
+        'SUB-SCI-GEOL': 'Cristalografía'
     }
 
     def rotate_api_key(self):
@@ -109,8 +113,16 @@ class Command(BaseCommand):
                     ContentCopy.objects.filter(user=temp_user, subject_context=subject).delete()
                     copy = ContentCopy.objects.create(original_content=material, user=temp_user, subject_context=subject, html_content="Validated")
                     
-                    m_map = {'SUB-LIN': 'ARCH_LANG', 'SUB-SAN': 'ARCH_HEALTH', 'SUB-TEC': 'ARCH_TECH', 'SUB-SOC': 'ARCH_SOC', 'SUB-HUM': 'ARCH_HUM', 'SUB-ART': 'ARCH_HUM'}
-                    arch = m_map.get(sub_arch[:7], 'ARCH_LANG')
+                    m_map = {
+                        'SUB-LIN': 'ARCH_LANG',
+                        'SUB-SAN': 'ARCH_HEALTH',
+                        'SUB-TEC': 'ARCH_TECH',
+                        'SUB-SOC': 'ARCH_SOC',
+                        'SUB-HUM': 'ARCH_HUM',
+                        'SUB-SCI': 'ARCH_SCI'
+                    }
+                    # Validación estricta sin fallback (KeyError esperado si falla IA)
+                    arch = m_map[sub_arch[:7]]
                     
                     strategy = ExamFactory.get_strategy(archetype_id=arch, sub_archetype_id=sub_arch)
                     exam = Exam.objects.create(user=temp_user, content_copy=copy, archetype_id=arch, sub_archetype_id=sub_arch, status='READY')

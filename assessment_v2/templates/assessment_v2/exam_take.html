@@ -58,6 +58,8 @@
     @keyframes wave { 0%, 100% { height: 5px; } 50% { height: 20px; } }
     .blink-text { animation: blinker 1.5s linear infinite; }
     @keyframes blinker { 50% { opacity: 0; } }
+    .hd-zoom-active { transform: scale(1.8); cursor: zoom-out !important; transition: transform 0.3s; z-index: 1050; position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+    .img-scan-max { cursor: zoom-in; }
 </style>
 <!-- MathJax for Engineering/Science Rendering -->
 <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
@@ -98,7 +100,12 @@
                     <div class="card-body">
                         <div class="d-flex justify-content-between">
                             <p class="fw-bold mb-3">{{ forloop.counter }}. {{ item.content.stem }}</p>
-                            <span class="badge bg-light text-dark border">{{ item.metadata.competency_tag }}</span>
+                            <div>
+                                {% if item.widget_id == 'W-OBJ-STRIKE' %}
+                                <span class="badge bg-danger ms-2" title="Riesgo de Penalización"><i class="bi bi-exclamation-triangle"></i> Riesgo: {{ item.grading_logic.penalty|default:"-0.33" }}</span>
+                                {% endif %}
+                                <span class="badge bg-light text-dark border">{{ item.metadata.competency_tag }}</span>
+                            </div>
                         </div>
 
                         {# --- AUDIO PLAYER INTEGRATION (Listening) --- #}
@@ -157,7 +164,8 @@
 
                         {# 2. CDS-KILL -> W-PROC-ACTION (Safety Toggle) (HealthStrategy) #}
                         {% elif item.widget_id == 'W-PROC-ACTION' or item.block_type == 'CDS-KILL' %}
-                        <div class="widget-container p-3 border rounded border-danger bg-white shadow-sm">
+                        <div class="widget-container p-3 border rounded border-danger bg-white shadow-sm position-relative">
+                            <div class="position-absolute top-0 end-0 m-2"><span class="badge bg-dark fs-6 font-monospace ecoe-timer-val" data-time="0">00:00</span></div>
                             <h6 class="text-danger fw-bold border-bottom border-danger pb-2 mb-3">
                                 <i class="bi bi-exclamation-triangle-fill"></i> {% trans "PUNTO DE CONTROL CRÍTICO (FAIL-SAFE)" %}
                             </h6>
@@ -215,11 +223,12 @@
                                 {% if item.content.media_assets and not '.mp3' in item.content.media_assets.0 %}
                                     <img src="{{ item.content.media_assets.0 }}" class="img-fluid mb-2" alt="{% trans 'Fuente Visual' %}" width="400" height="300">
                                 {% endif %}
-                                <div class="source-text text-justify small">{{ item.content.options.0|default:""|linebreaks }}</div>
+                                <div class="source-text text-justify small" draggable="true">{{ item.content.options.0|default:""|linebreaks }}</div>
                             </div>
-                            <div class="col-md-6 editor-panel p-3">
+                            <div class="col-md-6 editor-panel p-3 position-relative">
                                 <h6 class="text-muted border-bottom pb-2">{% trans "Ensayo Crítico" %}</h6>
-                                <textarea class="form-control response-input-text border-0 h-100 font-serif editor-textarea" rows="15" placeholder="{% trans 'Desarrolle su argumento...' %}"></textarea>
+                                <span class="position-absolute top-0 end-0 mt-3 me-3 badge bg-secondary" id="quality-metric-{{ item.id }}">Formalidad: N/A</span>
+                                <textarea class="form-control response-input-text border-0 h-100 font-serif editor-textarea" rows="15" placeholder="{% trans 'Desarrolle su argumento. Arrastre aquí fragmentos de la fuente...' %}"></textarea>
                             </div>
                         </div>
 
@@ -251,6 +260,43 @@
                                         {% endfor %}
                                     </div>
                                 </div>
+                            </div>
+                        </div>
+
+                        {# 7. W-LAW-NAV -> Repositorio Legal #}
+                        {% elif item.widget_id == 'W-LAW-NAV' %}
+                        <div class="widget-container border rounded bg-light p-3">
+                            <div class="row">
+                                <div class="col-md-5">
+                                    <h6 class="text-muted border-bottom pb-2"><i class="bi bi-bank"></i> {% trans "Repositorio Legal" %}</h6>
+                                    <div class="law-nav-body bg-white border p-2 mb-2">
+                                        <input type="text" class="form-control form-control-sm mb-2" placeholder="{% trans 'Buscar jurisprudencia...' %}">
+                                        <div class="list-group small">
+                                            {% for doc in item.content.options %}
+                                            <a href="#" class="list-group-item list-group-item-action text-truncate" title="{{ doc }}">{{ doc }}</a>
+                                            {% empty %}
+                                            <a href="#" class="list-group-item list-group-item-action">{% trans "Normativa General" %}</a>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-7">
+                                    <h6 class="text-muted border-bottom pb-2">{% trans "Dictamen Jurídico" %}</h6>
+                                    <textarea class="form-control response-input-text h-100" placeholder="{% trans 'Redacte su dictamen citando la normativa pertinente...' %}"></textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                        {# 8. W-COMM-DIALOG -> Mediación / Chat #}
+                        {% elif item.widget_id == 'W-COMM-DIALOG' %}
+                        <div class="widget-container border rounded bg-light p-3">
+                            <h6 class="text-muted border-bottom pb-2"><i class="bi bi-chat-dots"></i> {% trans "Interacción Dialéctica (UniversIA)" %}</h6>
+                            <div class="chat-viewport bg-white border p-2 mb-2 rounded" id="chat-vp-{{ item.id }}">
+                                <div class="text-muted small text-center mt-2">{% trans "Inicie la mediación o interrogatorio." %}</div>
+                            </div>
+                            <div class="input-group">
+                                <input type="text" class="form-control chat-input response-input-text" placeholder="{% trans 'Escriba su intervención...' %}">
+                                <button class="btn btn-primary" type="button"><i class="bi bi-send"></i></button>
                             </div>
                         </div>
 
@@ -404,9 +450,17 @@
         
         // Detecta patrones [...] o ______ (3+ guiones bajos)
         // Reemplaza por inputs HTML estandarizados
-        const renderedHTML = source.replace(/(\[.*?\]|_{3,})/g, () => {
+        const blockType = el.closest('.exam-item').dataset.blockType;
+        let renderedHTML = source;
+        if (blockType === 'CLO-MULTI') {
+            renderedHTML = source.replace(/(\[.*?\]|_{3,})/g, () => {
+                return `<select class="cloze-input form-select d-inline-block text-center mx-1 border-primary rounded" style="width: auto; background: #f8f9fa;"><option value="">---</option><option value="A">Opción A</option><option value="B">Opción B</option><option value="C">Opción C</option><option value="D">Opción D</option></select>`;
+            });
+        } else {
+            renderedHTML = source.replace(/(\[.*?\]|_{3,})/g, () => {
             return `<input type="text" class="cloze-input form-control d-inline-block text-center mx-1 border-bottom border-primary rounded-0 px-2" style="width: 120px; background: #f8f9fa;" placeholder="?" autocomplete="off">`;
         });
+        }
         
         output.innerHTML = renderedHTML;
     });
@@ -443,7 +497,7 @@
                 widgetState.calcSteps[itemId].push({ id: stepId, value: val });
                 
                 const log = document.getElementById(`log-${itemId}`);
-                log.innerHTML += `<div>[Paso ${stepId}]: \\(${val}\\)</div>`;
+                log.innerHTML += `<div class="input-group input-group-sm mb-1"><span class="input-group-text bg-dark text-success border-success">Paso ${stepId}</span><input type="text" class="form-control bg-dark text-success border-success" value="${val}" readonly></div>`;
                 if (window.MathJax) MathJax.typesetPromise([log]);
                 
                 this.value = '';
@@ -495,6 +549,48 @@
             target.innerHTML = `<span class="badge bg-success">${source}</span> <i class="bi bi-arrow-right"></i> ${targetId}`;
         });
     });
+
+    // W-CLIN-SCAN LOGIC: Zoom HD
+    document.querySelectorAll('.img-scan-max').forEach(img => {
+        img.addEventListener('click', function() { this.classList.toggle('hd-zoom-active'); });
+    });
+
+    // W-HUM-TEXT LOGIC: Drag & Drop Quotes
+    document.querySelectorAll('.source-text').forEach(st => {
+        st.addEventListener('dragstart', e => {
+            const selection = window.getSelection().toString();
+            if(selection) e.dataTransfer.setData('text/plain', `«${selection}» `);
+        });
+    });
+
+    // W-HUM-TEXT LOGIC: Formal Quality Metrics
+    document.querySelectorAll('.editor-textarea').forEach(ta => {
+        ta.addEventListener('input', function() {
+            const val = this.value;
+            const metric = document.getElementById(`quality-metric-${this.closest('.exam-item').dataset.itemId}`);
+            if(!metric) return;
+            if(val.length > 50 && val.includes('«') && val.includes('»')) {
+                metric.className = 'position-absolute top-0 end-0 mt-3 me-3 badge bg-success'; metric.innerText = 'Formalidad: ALTA (Citas OK)';
+            } else if(val.length > 20) {
+                metric.className = 'position-absolute top-0 end-0 mt-3 me-3 badge bg-warning text-dark'; metric.innerText = 'Formalidad: MEDIA';
+            } else {
+                metric.className = 'position-absolute top-0 end-0 mt-3 me-3 badge bg-danger'; metric.innerText = 'Formalidad: BAJA';
+            }
+        });
+    });
+
+    // W-PROC-ACTION LOGIC: ECOE Timer
+    setInterval(() => {
+        document.querySelectorAll('.ecoe-timer-val').forEach(el => {
+            if (el.closest('.exam-section').style.display !== 'none') {
+                let time = parseInt(el.dataset.time || '0') + 1;
+                el.dataset.time = time;
+                const m = String(Math.floor(time / 60)).padStart(2, '0');
+                const s = String(time % 60).padStart(2, '0');
+                el.innerText = `${m}:${s}`;
+            }
+        });
+    }, 1000);
 
     // PRM-STRIKE LOGIC: Visual strikethrough (UI only)
     document.querySelectorAll('.btn-strike').forEach(btn => {

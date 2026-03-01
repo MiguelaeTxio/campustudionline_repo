@@ -24,9 +24,9 @@ Auditoría técnica exhaustiva de todo el código implicado frente a la document
 2.  **Verificación Atómica:** Auditar cada archivo para asegurar que la implementación es un reflejo absoluto, integral y exacto de la documentación.
 3.  **Detección de Desviaciones:** Cualquier discrepancia entre lo que dicta la documentación y lo que ejecuta el código debe ser identificada para su corrección inmediata. El nivel de granularidad de las discrepancias debe ser atómico.
 
-***IMPORTANTE:TODA LA FASE II ES SUSTITUIDA POR EL SIGUIENTE PLAN DE ACCIÓN:***
+***PLAN DE ACCIÓN:COMPLETO NO EJECUTAR***
 
-#### PLAN DE ACCIÓN
+#### PLAN DE ACCIÓN **COMPLETO NO EJECUTAR**
 Ir ejecutando todos los puntos
 no marcados con [X] de `V06DOC_INCIDENTS_ROADMAP.md`.
 **DURANTE EL `PMDS` ÚNICAMENTE SE**
@@ -36,7 +36,12 @@ no marcados con [X] de `V06DOC_INCIDENTS_ROADMAP.md`.
 **PREVALECE SOBRE LA DEL `TOTA_COMMANDER`**
 **EN TUS INSTRUCCIONES DEL SISTEMA**
 
-## DIRECTRIZ OBLIGATORIA
+## DIRECTRICES OBLIGATORIAS QUE PREVALECEN SOBRE HOMÓLOGAS DEL TOTAL_COMMANDER (INSTRUCCIONES DEL SISTEMA)
 
 
-* Prevalece sobre la directriz homóloga del Total Commander (instrucciones del sistema). El protocolo de actualización del historial de Gemini PAH se pospone hasta haber ejecutado la auditoría y saber qué tareas se van a cometer en la sesión.
+* El protocolo de actualización del historial de Gemini PAH se pospone hasta haber ejecutado la auditoría y saber qué tareas se van a cometer en la sesión.
+* No se ejecuta `PMDS` durante el `PCS`
+
+
+
+

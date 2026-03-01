@@ -2024,3 +2024,11 @@ Carga de contexto obligatoria: Documentación técnica V06DOC y modelos de `asse
 *  **Session:** Reparación de Incidencias Fase II del Hito 06
 *  **Description:** Sesión dedicada a solventar las incidencias documentadas en la hoja de ruta del Hito 06 (Sistema de Autoevaluaciones con IA). El trabajo se centrará en revisar y corregir los problemas técnicos no marcados como resueltos en el documento V06DOC_INCIDENTS_ROADMAP.md. Se realizarán intervenciones atómicas y quirúrgicas en los modelos, lógica de clasificación y estrategias base, archivo por archivo, asegurando el cumplimiento de la estructura segregada y los requisitos pedagógicos establecidos, y manteniendo estrictamente las normas de la plataforma.
 
+
+# 2026-02-28
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+## NRA
+*  **Session:** Hito 06: Reparación de Frontend de Evaluación, Celery y Validación
+*  **Description:** Sesión dedicada a solventar las 15 incidencias restantes (41 a 55) del Hito 6 (Sistema de Autoevaluaciones con IA). Las tareas principales abarcan la implementación de funcionalidades complejas en los widgets del frontend (Zoom HD, cronómetros ECOE, métricas de calidad, comparación de fuentes), la corrección de los falsos positivos y la inclusión de Ciencias Puras en los scripts de validación masiva, así como la sincronización de IDs de sub-arquetipos y la reparación del conteo de MaxRetries en el orquestador Celery.
+

@@ -41,18 +41,18 @@
 38. [X] Acreditación: Ausencia total de Escala Likert para Salud.
 39. [X] Acreditación: Falta motor para bloques especializados (Planos/Demostración).
 40. [X] Acreditación: Falta motor para simulación judicial en Derecho.
-41. [ ] Frontend: W-TECH-CALC carece de bloqueo de traza lógica.
-42. [ ] Frontend: W-CLIN-SCAN carece de Zoom HD.
-43. [ ] Frontend: W-CLIN-SCAN carece de herramientas de medida.
-44. [ ] Frontend: W-OBJ-STRIKE carece de indicador visual de riesgo de penalización.
-45. [ ] Frontend: W-HUM-TEXT carece de gestor de citas por arrastre.
-46. [ ] Frontend: W-HUM-TEXT carece de métricas de calidad formal en tiempo real.
-47. [ ] Frontend: W-PROC-ACTION carece de cronómetro específico ECOE.
-48. [ ] Frontend: W-COMM-DIALOG carece de interfaz de chat/UniversIA.
-49. [ ] Frontend: W-LAW-NAV inexistente (0% código implementado).
-50. [ ] Frontend: W-TXT-CLOZE incompleto (Falta modo Dropdown/Select).
-51. [ ] Validación: Falsos positivos en script de test por uso de fallbacks.
-52. [ ] Validación: Rama de Ciencias Puras totalmente excluida de las pruebas masivas.
-53. [ ] Validación: IDs de sub-arquetipos desincronizados entre script y estrategias.
-54. [ ] Celery: Bucle de reintentos locales falsea el conteo de MaxRetries.
-55. [ ] UI: Imposibilidad de comparar dos fuentes simultáneamente en bloque hermenéutico.
+41.[X] Frontend: W-TECH-CALC carece de bloqueo de traza lógica.
+42.[X] Frontend: W-CLIN-SCAN carece de Zoom HD.
+43.[X] Frontend: W-CLIN-SCAN carece de herramientas de medida.
+44.[X] Frontend: W-OBJ-STRIKE carece de indicador visual de riesgo de penalización.
+45.[X] Frontend: W-HUM-TEXT carece de gestor de citas por arrastre.
+46.[X] Frontend: W-HUM-TEXT carece de métricas de calidad formal en tiempo real.
+47.[X] Frontend: W-PROC-ACTION carece de cronómetro específico ECOE.
+48.[X] Frontend: W-COMM-DIALOG carece de interfaz de chat/UniversIA.
+49.[X] Frontend: W-LAW-NAV inexistente (0% código implementado).
+50.[X] Frontend: W-TXT-CLOZE incompleto (Falta modo Dropdown/Select).
+51.[X] Validación: Falsos positivos en script de test por uso de fallbacks.
+52.[X] Validación: Rama de Ciencias Puras totalmente excluida de las pruebas masivas.
+53.[X] Validación: IDs de sub-arquetipos desincronizados entre script y estrategias.
+54.[X] Celery: Bucle de reintentos locales falsea el conteo de MaxRetries.
+55.[X] UI: Imposibilidad de comparar dos fuentes simultáneamente en bloque hermenéutico.
