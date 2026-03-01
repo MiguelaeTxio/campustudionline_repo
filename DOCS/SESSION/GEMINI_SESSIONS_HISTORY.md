@@ -2032,3 +2032,17 @@ Carga de contexto obligatoria: Documentación técnica V06DOC y modelos de `asse
 *  **Session:** Hito 06: Reparación de Frontend de Evaluación, Celery y Validación
 *  **Description:** Sesión dedicada a solventar las 15 incidencias restantes (41 a 55) del Hito 6 (Sistema de Autoevaluaciones con IA). Las tareas principales abarcan la implementación de funcionalidades complejas en los widgets del frontend (Zoom HD, cronómetros ECOE, métricas de calidad, comparación de fuentes), la corrección de los falsos positivos y la inclusión de Ciencias Puras en los scripts de validación masiva, así como la sincronización de IDs de sub-arquetipos y la reparación del conteo de MaxRetries en el orquestador Celery.
 
+# 2026-03-01
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+## CSO
+*  **Session:** Auditoría atómica y registro de nueva incidencia crítica 56 en Hito 06
+*  **Description:** Sesión dedicada a realizar una auditoría atómica, integral y absoluta del documento V06DOC_TEMPLATES.md frente al código implementado. Se ha descubierto una violación crítica de la regla SKELETON-FIRST: las estrategias individuales están forzando a la IA a devolver block_type y widget_id, ignorando el esquema unificado global. Se ha procedido a abrir y registrar la incidencia número 56 en el documento V06DOC_INCIDENTS_ROADMAP.md mediante PMA especial por adición.
+
+# 2026-03-01
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+## CSO
+*  **Session:** Auditoría Integral Hito 06: Detección y Registro de Incidencias 56-60
+*  **Description:** Sesión dedicada a la auditoría atómica y exhaustiva de la constelación documental del Hito 06 (Templates, Metadata, Widgets, Subdivisions, Blocks, Archetypes, Logic) frente al código implementado. Se han detectado y registrado 5 nuevas desviaciones críticas en V06DOC_INCIDENTS_ROADMAP.md: Violación de SKELETON-FIRST en esquemas (56), Metadatos inventados (57), Omisión de Speaking (58), Bloques fantasma (59) y Discrepancias de puntuación (60). No se ha realizado ninguna corrección de código, solo diagnóstico.
+

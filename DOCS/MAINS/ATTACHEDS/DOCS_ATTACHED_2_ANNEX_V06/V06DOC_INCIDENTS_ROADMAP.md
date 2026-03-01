@@ -56,3 +56,12 @@
 53.[X] Validación: IDs de sub-arquetipos desincronizados entre script y estrategias.
 54.[X] Celery: Bucle de reintentos locales falsea el conteo de MaxRetries.
 55.[X] UI: Imposibilidad de comparar dos fuentes simultáneamente en bloque hermenéutico.
+
+56. [ ] Schema IA: Las estrategias individuales (health.py, science.py, tech.py, social.py, humanities.py, languages.py) anulan el esquema global y exigen `block_type` y `widget_id`, violando la regla SKELETON-FIRST.
+57. [ ] Metadata IA: Los enums de `competency_tag` y `cognitive_level` en `gemini_schemas.py` son inventados y no respetan la taxonomía oficial de V06DOC_METADATA.
+58. [ ] Estructura Lenguas: Omisión deliberada de la fase `SD_SPEAK` y el widget `W-COMM-DIALOG` en el esqueleto de `SUB-LIN-INSTR`, mutilando el modelo CERTACCLES.
+59. [ ] Falsos Positivos de Corrección: Motores críticos (BMT-SHIFT, DRA-HOLO, RPP-TRAZA) NO están implementados. Son bloques fantasma que devuelven siempre 0.0 y un estado `PENDING_AI_RUBRIC/EVALUATION`.
+60. [ ] Lógica de Calificación (Scoring Mismatch): Discrepancias numéricas en V06DOC_ARCHETYPES vs Código.
+    - Sociales: Falta el "Multiplicador de Fuentes Reales".
+    - Humanidades: Penalización formal incoherente (-2.5 implementado vs -2.0 documentado).
+    - Técnicas: La regla "Lógica prima al 50%" no está forzada en código (depende de la IA).
