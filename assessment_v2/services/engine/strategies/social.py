@@ -30,13 +30,17 @@ class SocialStrategy(BaseExamStrategy):
             # Count valid citations (Rigor Factor)
             citations_found = sum(1 for norm in required_citations if norm.lower() in student_text)
             
+            # [HITO 6 FIX] Incidencia 60: Multiplicador de Fuentes Reales
+            real_sources_multiplier = Decimal('1.2') if citations_found > 0 else Decimal('1.0')
+
             if self.itinerary_id == 'ITIN_PROF':
                 # Professional level demands 100% citation accuracy
                 if citations_found < len(required_citations):
                     return Decimal('0.3'), {"status": "INSUFFICIENT_FUNDAMENTATION", "detail": "Faltan citas legales o normativas obligatorias."}
 
-            score = Decimal(str(citations_found / len(required_citations))) if required_citations else Decimal('1.0')
-            return score, {"status": "GRADED", "citations": citations_found}
+            score = (Decimal(str(citations_found / len(required_citations))) * real_sources_multiplier) if required_citations else Decimal('1.0')
+            score = min(score, Decimal('1.0'))
+            return score, {"status": "GRADED", "citations": citations_found, "real_sources_multiplier": float(real_sources_multiplier)}
 
         # --- MOTOR: PRM-STRIKE (Standard) ---
         elif block_type == 'PRM-STRIKE':

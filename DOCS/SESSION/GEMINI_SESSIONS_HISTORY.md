@@ -2046,3 +2046,10 @@ Carga de contexto obligatoria: Documentación técnica V06DOC y modelos de `asse
 *  **Session:** Auditoría Integral Hito 06: Detección y Registro de Incidencias 56-60
 *  **Description:** Sesión dedicada a la auditoría atómica y exhaustiva de la constelación documental del Hito 06 (Templates, Metadata, Widgets, Subdivisions, Blocks, Archetypes, Logic) frente al código implementado. Se han detectado y registrado 5 nuevas desviaciones críticas en V06DOC_INCIDENTS_ROADMAP.md: Violación de SKELETON-FIRST en esquemas (56), Metadatos inventados (57), Omisión de Speaking (58), Bloques fantasma (59) y Discrepancias de puntuación (60). No se ha realizado ninguna corrección de código, solo diagnóstico.
 
+
+# 2026-03-02
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+## EPI
+*  **Session:** Resolución de Incidencias 56-60: Esquemas IA, Motores de Corrección y Lógica de Calificación
+*  **Description:** Abordaje de las incidencias finales del Hito 6. Se corregirá la violación de la regla SKELETON-FIRST en estrategias individuales (incidencia 56) y se ajustarán los enums de metadatos en gemini_schemas.py (incidencia 57). Se restituirá la fase SD_SPEAK en el arquetipo de lenguas (incidencia 58). Además, se implementarán los motores de corrección BMT-SHIFT, DRA-HOLO y RPP-TRAZA (incidencia 59) y se alineará la lógica de calificación (Sociales, Humanidades, Técnicas) con la documentación V06DOC_ARCHETYPES (incidencia 60).

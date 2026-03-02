@@ -204,6 +204,7 @@ EXAM_ITEM_CONTENT_SCHEMA = {
             "items": {
                 "type": "object",
                 "properties": {
+                    "item_id": {"type": "string", "description": "El UUID del ítem proporcionado en el esqueleto."},
                     "content": {
                         "type": "object",
                         "properties": {
@@ -253,12 +254,12 @@ EXAM_ITEM_CONTENT_SCHEMA = {
                             "competency_tag": {
                                 "type": "string",
                                 "enum": ["COMP_SEMANTIC", "COMP_GRAMMAR", "COMP_PRAGMATIC", "COMP_CLINICAL", "COMP_LEGAL", "COMP_CALC", "COMP_CRITICAL"],
-                                "description": "[INCIDENCIA 6] Etiqueta de competencia evaluada (Enum cerrado)."
+                                "description": "[INCIDENCIA 57] Etiqueta de competencia evaluada (Enum cerrado)."
                             },
                             "cognitive_level": {
                                 "type": "string",
                                 "enum": ["REMEMBER", "UNDERSTAND", "APPLY", "ANALYZE", "EVALUATE", "CREATE"],
-                                "description": "[INCIDENCIA 6] Nivel de la taxonomía de Bloom (Enum cerrado)."
+                                "description": "[INCIDENCIA 57] Nivel de la taxonomía de Bloom (Enum cerrado)."
                             },
                             "difficulty_index": {
                                 "type": "number",

@@ -69,13 +69,8 @@ class TechnicalStrategy(BaseExamStrategy):
                             fatal_error_triggered = True
                             trace_log.append(f"Paso {expected_step['id']}: FATAL (Incumplimiento Normativo)")
                         else:
-                            # [HITO 6 FIX] Lógica de Arrastre de Error / Inferencia (Incidencia 14)
-                            trace_log.append(f"Paso {expected_step['id']}: DISCREPANCIA (Posible Arrastre de Error)")
-                            return Decimal('0.0'), {
-                                "status": "PENDING_AI_INFERENCE",
-                                "detail": f"Fallo en paso {expected_step['id']}. Se requiere IA para validar inferencia lógica.",
-                                "trace": trace_log
-                            }
+                            trace_log.append(f"Paso {expected_step['id']}: DISCREPANCIA (Arrastre de Error asimilado)")
+                            # Continuamos para asimilar arrastre lógicamente
                 else:
                     trace_log.append(f"Paso {expected_step['id']}: OMITIDO")
 
@@ -84,6 +79,10 @@ class TechnicalStrategy(BaseExamStrategy):
 
             # Normalize Score
             final_score = (earned_score / total_weight) if total_weight > 0 else Decimal('0.0')
+            
+            # [HITO 6 FIX] Incidencia 60: La lógica prima al 50%
+            if len(student_input['steps']) > 0 and final_score < Decimal('0.5') and not fatal_error_triggered:
+                final_score = Decimal('0.5')
             
             # Apply Level Rigor (V06DOC_LEVELS)
             if self.pedagogical_level == 'LVL_C': 

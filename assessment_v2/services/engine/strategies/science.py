@@ -23,10 +23,23 @@ class ScienceStrategy(BaseExamStrategy):
 
         # --- MOTOR 1: RPP-TRAZA (Cálculo Multietapa) ---
         if block_type == 'RPP-TRAZA':
-            steps = student_input.get('steps', []) if isinstance(student_input, dict) else[]
+            steps = student_input.get('steps',[]) if isinstance(student_input, dict) else[]
             if not steps:
                 return Decimal('0.0'), {"status": "NO_STEPS_PROVIDED"}
-            return Decimal('0.0'), {"status": "PENDING_AI_EVALUATION", "detail": "Requiere IA para validar el arrastre de error lógico."}
+            # [HITO 6 FIX] Incidencia 59: Implementación de Motor RPP-TRAZA
+            step_matrix = logic.get('step_matrix',[])
+            if not step_matrix:
+                return Decimal('1.0'), {"status": "GRADED", "detail": "Sin pasos esperados."}
+            earned_score = Decimal('0.0')
+            total_weight = Decimal('0.0')
+            for expected_step in step_matrix:
+                step_weight = Decimal(str(expected_step.get('weight', 0.1)))
+                total_weight += step_weight
+                student_step = next((s for s in steps if str(s.get('id')) == str(expected_step.get('id'))), None)
+                if student_step and str(student_step.get('value', '')).strip() == str(expected_step.get('value', '')).strip():
+                    earned_score += step_weight
+            final_score = (earned_score / total_weight) if total_weight > 0 else Decimal('0.0')
+            return final_score, {"status": "GRADED"}
         
         # --- MOTOR 2: PRM-STRIKE (Test Objetivo) ---
         elif block_type == 'PRM-STRIKE':

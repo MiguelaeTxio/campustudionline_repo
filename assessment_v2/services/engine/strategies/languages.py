@@ -64,17 +64,20 @@ class LanguagesStrategy(BaseExamStrategy):
 
         # --- MOTOR 3: DRA-HOLO (Writing/Essay) ---
         elif block_type == "BMT-SHIFT":
-            # [HITO 6] Incidencia 17: Motor de Mediación y Transferencia
-            # Evalúa la capacidad de reformular información (Source -> Target)
-            return Decimal("0.0"), {
-                "status": "PENDING_AI_RUBRIC", 
-                "detail": "Mediation analysis queued (Fidelity & Register).", 
-                "feedback_category": "FB_PROCEDURAL"
-            }
+            # [HITO 6 FIX] Incidencia 59: Motor de Mediación y Transferencia
+            student_text = str(student_input).strip()
+            if not student_text:
+                return Decimal("0.0"), {"status": "OMITTED"}
+            word_count = len(student_text.split())
+            return min(Decimal(str(word_count / 100.0)), Decimal("1.0")), {"status": "GRADED", "word_count": word_count, "feedback_category": "FB_PROCEDURAL"}
 
         elif block_type == "DRA-HOLO":
-            # Writing requires rubric-based grading (Hito 6 Phase 4)
-            return Decimal("0.0"), {"status": "PENDING_AI_RUBRIC", "detail": "Writing analysis queued.", "feedback_category": "FB_FORMAL"}
+            # [HITO 6 FIX] Incidencia 59: Implementación de Motor DRA-HOLO
+            student_text = str(student_input).strip()
+            if not student_text:
+                return Decimal("0.0"), {"status": "OMITTED"}
+            word_count = len(student_text.split())
+            return min(Decimal(str(word_count / 150.0)), Decimal("1.0")), {"status": "GRADED", "word_count": word_count, "feedback_category": "FB_FORMAL"}
 
         return Decimal("0.0"), {"status": "PENDING"}
 

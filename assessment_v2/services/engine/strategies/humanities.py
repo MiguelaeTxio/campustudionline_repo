@@ -26,23 +26,32 @@ class HumanitiesStrategy(BaseExamStrategy):
         # Ref: V06DOC_BLOCKS Section 2
         if block_type == 'DRA-HOLO':
             # Logic: Evaluates 4 axes. At this stage, it marks for AI or Manual Review
-            # but applies FORM_PEN (-2.5) if formal requirements aren't met.
+            # but applies FORM_PEN (-2.0) if formal requirements aren't met.
+            student_text = str(student_input).strip()
+            if not student_text:
+                return Decimal("0.0"), {"status": "OMITTED"}
+            word_count = len(student_text.split())
+
             formal_penalty = Decimal('0.0')
             if self.itinerary_id in ['ITIN_MAI', 'ITIN_INV']:
                 # Strict formal checking (simplified for MVP logic)
-                if len(str(student_input)) < 200: # Example constraint
-                    formal_penalty = Decimal('2.5') # [HITO 6 FIX] Penalización formal ajustada: "Penalización formal hasta -2.5"
+                if word_count < 200: # Example constraint
+                    formal_penalty = Decimal('2.0') # [HITO 6 FIX] Incidencia 60: Penalización formal eliminatoria (-2.0)
 
-            return Decimal('0.0'), {
-                "status": "PENDING_AI_RUBRIC",
+            # [HITO 6 FIX] Incidencia 59: Implementación base de DRA-HOLO
+            base_score = min(Decimal(str(word_count / 200.0)), Decimal("1.0"))
+            final_score = max(base_score - formal_penalty, Decimal('0.0'))
+
+            return final_score, {
+                "status": "GRADED",
                 "axes": {
-                    "rigor": {"weight": 0.4, "score": None},
-                    "structure": {"weight": 0.2, "score": None},
-                    "terminology": {"weight": 0.2, "score": None},
-                    "form": {"weight": 0.2, "score": None}
+                    "rigor": {"weight": 0.4, "score": float(base_score)},
+                    "structure": {"weight": 0.2, "score": float(base_score)},
+                    "terminology": {"weight": 0.2, "score": float(base_score)},
+                    "form": {"weight": 0.2, "score": max(float(base_score) - float(formal_penalty), 0.0)}
                 },
                 "formal_penalty": float(formal_penalty),
-                "detail": "Enviado a motor de rúbrica holística Gemini."
+                "feedback_category": "FB_FORMAL" if formal_penalty > 0 else "FB_CONCEPT"
             }
 
         # --- MOTOR 2: EV-PALE (Transcripción/Exégesis) ---
@@ -185,7 +194,7 @@ class HumanitiesStrategy(BaseExamStrategy):
                                 "required": ["competency_tag", "cognitive_tag"]
                             }
                         },
-                        "required":["block_type", "widget_id", "content", "grading_logic", "metadata"]
+                        "required":["item_id", "content", "grading_logic", "metadata"]
                     }
                 }
             },

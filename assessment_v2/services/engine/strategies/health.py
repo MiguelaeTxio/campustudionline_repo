@@ -321,7 +321,7 @@ REGLA: Usa W-CLIN-SCAN para imágenes y W-PROC-ACTION para pasos de seguridad vi
                                 "required": ["competency_tag", "cognitive_tag"]
                             }
                         },
-                        "required": ["block_type", "widget_id", "content", "grading_logic", "metadata"]
+                        "required": ["item_id", "content", "grading_logic", "metadata"]
                     }
                 }
             },
