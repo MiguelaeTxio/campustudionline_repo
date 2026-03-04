@@ -2053,3 +2053,37 @@ Carga de contexto obligatoria: Documentación técnica V06DOC y modelos de `asse
 ## EPI
 *  **Session:** Resolución de Incidencias 56-60: Esquemas IA, Motores de Corrección y Lógica de Calificación
 *  **Description:** Abordaje de las incidencias finales del Hito 6. Se corregirá la violación de la regla SKELETON-FIRST en estrategias individuales (incidencia 56) y se ajustarán los enums de metadatos en gemini_schemas.py (incidencia 57). Se restituirá la fase SD_SPEAK en el arquetipo de lenguas (incidencia 58). Además, se implementarán los motores de corrección BMT-SHIFT, DRA-HOLO y RPP-TRAZA (incidencia 59) y se alineará la lógica de calificación (Sociales, Humanidades, Técnicas) con la documentación V06DOC_ARCHETYPES (incidencia 60).
+
+# 2026-03-02
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V24.md
+## BRIDGE_REPAIR
+*  **Session:** Reparación del Puente de Solicitudes y Generación
+*  **Description:** Diagnóstico y resolución de la desconexión crítica entre las solicitudes de contenido aprobadas y el motor de generación. Se ha identificado que la tarea global_orchestrator_task realiza mantenimiento pero carece de la lógica de despacho necesaria para instanciar PendingContentTask. El objetivo es restaurar el puente lógico para que las solicitudes aprobadas se transformen automáticamente en tareas de generación, reactivando el flujo de automatización.
+
+# 2026-03-02
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V24.md
+## PLUTO
+*  **Session:** Diagnóstico y reparación del motor de generación masiva en Orchestrator.
+*  **Description:** Sesión dedicada exclusivamente a investigar y resolver el fallo crítico en el sistema de generación de contenido masivo (orchestrator). Se realizará una auditoría histórica de intervenciones recientes, revisión de los modelos AutomationSettings y PendingContentTask, y análisis de la lógica de asignación en Celery para identificar por qué las solicitudes de los usuarios no se están procesando. El objetivo final es aplicar los parches necesarios y restaurar el flujo de automatización completo.
+# 2026-03-02
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V24.md
+## MAMC
+*  **Session:** Diagnóstico y Resolución del Motor de Generación Masiva
+*  **Description:** Sesión dedicada a investigar y reparar la interrupción crítica en el flujo de automatización del módulo orchestrator. Se auditará el historial de cambios recientes, los modelos AutomationSettings y PendingContentTask, y la lógica de Celery en tasks.py para reactivar la generación de ContentMaterial a partir de solicitudes aprobadas.
+
+# 2026-03-02
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V24.md
+## MAMC
+*  **Session:** Reparacion Flujo Generacion Contenidos
+*  **Description:** Diagnostico y reparacion del motor de generacion masiva en orchestrator. Se audita el historial de git para recuperar la version operativa de tasks.py anterior al 15 de enero de 2026 a las 08:00 AM para establecer una linea base funcional e identificar las regresiones.
+
+# 2026-03-03
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V24.md
+## MAMC <!-- --SYSTEM -->
+*  **Session:** Restauración Quirúrgica Generación Contenidos
+*  **Description:** Análisis y corrección de regresión crítica en la generación automática de contenido académico en orchestrator, originada colateralmente durante la refactorización de assessment_v2. Se procede a extraer el histórico de Git al 14 de enero para recuperar la lógica atómicamente, garantizando la preservación total de la nueva arquitectura de evaluaciones.
