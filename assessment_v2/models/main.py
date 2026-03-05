@@ -29,6 +29,58 @@ class Exam(models.Model):
         ARCH_HUM = 'ARCH_HUM', _('Artes y Humanidades')
         ARCH_SCI = 'ARCH_SCI', _('Ciencias Puras y Experimentales')
 
+    class SubArchetype(models.TextChoices):
+        # Arts and Humanities (12)
+        SUB_LIN_INSTR = 'SUB-LIN-INSTR', _('Modelo Instrumental')
+        SUB_LIN_MINOR = 'SUB-LIN-MINOR', _('Modelo Minor/Iniciación')
+        SUB_LIN_PHILO = 'SUB-LIN-PHILO', _('Modelo Filológico')
+        SUB_LIN_NORM = 'SUB-LIN-NORM', _('Modelo Norma y Uso')
+        SUB_LIN_TRA_TECH = 'SUB-LIN-TRA-TECH', _('Traducción Profesional')
+        SUB_LIN_TRA_LIT = 'SUB-LIN-TRA-LIT', _('Traducción Literaria')
+        SUB_HUM_HIST = 'SUB-HUM-HIST', _('Modelo Historiográfico')
+        SUB_HUM_PHIL = 'SUB-HUM-PHIL', _('Modelo Dialéctico')
+        SUB_HUM_ART_HIST = 'SUB-HUM-ART-HIST', _('Modelo Iconográfico')
+        SUB_HUM_ART_CREA = 'SUB-HUM-ART-CREA', _('Modelo Bellas Artes')
+        SUB_HUM_MUS = 'SUB-HUM-MUS', _('Modelo Musicología')
+        SUB_HUM_ANTH = 'SUB-HUM-ANTH', _('Modelo Antropológico')
+        # Health Sciences (10)
+        SUB_SAN_MED_CLIN = 'SUB-SAN-MED-CLIN', _('Diagnóstico Diferencial y Clínica')
+        SUB_SAN_MED_BASIC = 'SUB-SAN-MED-BASIC', _('Básicas Médicas')
+        SUB_SAN_ODON = 'SUB-SAN-ODON', _('Odontología')
+        SUB_SAN_FISIO = 'SUB-SAN-FISIO', _('Fisioterapia')
+        SUB_SAN_CUID = 'SUB-SAN-CUID', _('Enfermería y Cuidados')
+        SUB_SAN_LAB = 'SUB-SAN-LAB', _('Bioquímica y Farmacia')
+        SUB_SAN_PSY_CLIN = 'SUB-SAN-PSY-CLIN', _('Psicología Clínica')
+        SUB_SAN_PSY_EXP = 'SUB-SAN-PSY-EXP', _('Psicología Experimental')
+        SUB_SAN_VET = 'SUB-SAN-VET', _('Veterinaria')
+        SUB_SAN_NUT = 'SUB-SAN-NUT', _('Nutrición y Dietética')
+        # Social and Legal Sciences (10)
+        SUB_SOC_LAW_PROC = 'SUB-SOC-LAW-PROC', _('Derecho Procesal')
+        SUB_SOC_LAW_DICT = 'SUB-SOC-LAW-DICT', _('Derecho Civil/Penal (Dictamen)')
+        SUB_SOC_ECON_QUAN = 'SUB-SOC-ECON_QUAN', _('Economía Cuantitativa')
+        SUB_SOC_ECON_MGMT = 'SUB-SOC-ECON_MGMT', _('Organización de Empresas')
+        SUB_SOC_EDU_KIDS = 'SUB-SOC-EDU-KIDS', _('Magisterio (Infantil/Primaria)')
+        SUB_SOC_EDU_SEC = 'SUB-SOC-EDU-SEC', _('Profesorado (Secundaria)')
+        SUB_SOC_COMM_JOUR = 'SUB-SOC-COMM-JOUR', _('Periodismo')
+        SUB_SOC_COMM_AV = 'SUB-SOC-COMM-AV', _('Comunicación Audiovisual')
+        SUB_SOC_GEOG = 'SUB-SOC-GEOG', _('Geografía')
+        SUB_SOC_WORK = 'SUB-SOC-WORK', _('Trabajo Social')
+        # Engineering and Architecture (7)
+        SUB_TEC_SOFT = 'SUB-TEC-SOFT', _('Ingeniería Informática/Software')
+        SUB_TEC_CIVIL = 'SUB-TEC-CIVIL', _('Ingeniería Civil/Caminos')
+        SUB_TEC_INDUS = 'SUB-TEC-INDUS', _('Ingeniería Industrial')
+        SUB_TEC_CHEM = 'SUB-TEC-CHEM', _('Ingeniería Química')
+        SUB_TEC_PROJ = 'SUB-TEC-PROJ', _('Arquitectura (Proyecto)')
+        SUB_TEC_CONS = 'SUB-TEC-CONS', _('Edificación y Construcción')
+        SUB_TEC_PURE = 'SUB-TEC-PURE', _('Física y Matemáticas Puras')
+        # Pure Sciences (6)
+        SUB_SCI_BIO = 'SUB-SCI-BIO', _('Biología')
+        SUB_SCI_CHEM = 'SUB-SCI-CHEM', _('Química')
+        SUB_SCI_PHYS = 'SUB-SCI-PHYS', _('Física Aplicada')
+        SUB_SCI_GEOL = 'SUB-SCI-GEOL', _('Geología')
+        SUB_SCI_ENV = 'SUB-SCI-ENV', _('Ciencias Ambientales')
+        SUB_SCI_DATA = 'SUB-SCI-DATA', _('Ciencia de Datos')
+
     class Itinerary(models.TextChoices):
         ITIN_MAI = 'ITIN_MAI', _('Maior / Especialización')
         ITIN_MIN = 'ITIN_MIN', _('Minor / Transversal')
@@ -53,7 +105,7 @@ class Exam(models.Model):
 
     # Metadatos Académicos (Deducidos por Logic Mapping)
     archetype_id = models.CharField(_('ID Arquetipo'), max_length=50, choices=Archetype.choices)
-    sub_archetype_id = models.CharField(_('ID Sub-Arquetipo'), max_length=50)
+    sub_archetype_id = models.CharField(_('ID Sub-Arquetipo'), max_length=50, choices=SubArchetype.choices)
     itinerary_id = models.CharField(_('ID Itinerario'), max_length=50, choices=Itinerary.choices)
     pedagogical_level = models.CharField(_('Nivel Pedagógico'), max_length=20, choices=PedagogicalLevel.choices)
     immersion_mode = models.CharField(_('Modo de Inmersión'), max_length=20, choices=ImmersionMode.choices, default=ImmersionMode.VEHICULAR)
@@ -93,8 +145,30 @@ class ExamSection(models.Model):
         SPLIT_TEXT = 'SPLIT_TEXT', _('Panel Lateral de Texto')
         SPLIT_VISUAL = 'SPLIT_VISUAL', _('Panel Lateral Visual')
 
+    class Subdivision(models.TextChoices):
+        # Communicative Block
+        SD_READ = 'SD_READ', _('Comprensión Lectora')
+        SD_WRIT = 'SD_WRIT', _('Expresión Escrita')
+        SD_LIST = 'SD_LIST', _('Comprensión Auditiva')
+        SD_SPEAK = 'SD_SPEAK', _('Expresión Oral')
+        SD_MEDI = 'SD_MEDI', _('Mediación')
+        # Resolutive Block
+        SD_THEO = 'SD_THEO', _('Validación Teórica')
+        SD_MODEL = 'SD_MODEL', _('Modelado Formal')
+        SD_CALC = 'SD_CALC', _('Precisión Algorítmica')
+        SD_VERIF = 'SD_VERIF', _('Verificación Normativa')
+        # Assistential / Legal Block
+        SD_FACT = 'SD_FACT', _('Extracción de Hechos')
+        SD_NORM = 'SD_NORM', _('Encuadre Normativo')
+        SD_PROC = 'SD_PROC', _('Derecho Procesal')
+        SD_ETHI = 'SD_ETHI', _('Evaluación Deontológica')
+        # Critical / Artistic Block
+        SD_SOURCE = 'SD_SOURCE', _('Crítica de Fuentes')
+        SD_DISC = 'SD_DISC', _('Construcción Discursiva')
+        SD_ARTE = 'SD_ARTE', _('Validación Artística')
+
     exam = models.ForeignKey(Exam, on_delete=models.CASCADE, related_name='sections')
-    subdivision_id = models.CharField(max_length=50) # SD_READ, SD_LIST...
+    subdivision_id = models.CharField(max_length=50, choices=Subdivision.choices) # SD_READ, SD_LIST...
     title = models.CharField(max_length=255)
     instructions = models.TextField()
     order = models.PositiveSmallIntegerField(default=0)
@@ -109,17 +183,98 @@ class ExamSection(models.Model):
 
 class ExamItem(models.Model):
     """
+    class Widget(models.TextChoices):
+        # Technical
+        W_TECH_CALC = 'W-TECH-CALC', _('Consola de Cálculo Procedimental')
+        W_CLIN_SCAN = 'W-CLIN-SCAN', _('Visor de Evidencia Diagnóstica')
+        W_OBJ_STRIKE = 'W-OBJ-STRIKE', _('Selector de Respuesta con Riesgo')
+        # Discursive & Action
+        W_HUM_TEXT = 'W-HUM-TEXT', _('Editor de Exégesis Crítica')
+        W_PROC_ACTION = 'W-PROC-ACTION', _('Panel de Acción Crítica')
+        W_COMM_DIALOG = 'W-COMM-DIALOG', _('Interfaz de Mediación Dialéctica')
+        W_LAW_NAV = 'W-LAW-NAV', _('Navegador de Marco Normativo')
+        # Linguistic & Structural
+        W_TXT_CLOZE = 'W-TXT-CLOZE', _('Integrador de Huecos en Texto')
+        W_MIX_MATCH = 'W-MIX-MATCH', _('Matriz de Vinculación')
+
+    class BlockType(models.TextChoices):
+        # Objective & Technical
+        PRM_STRIKE = 'PRM-STRIKE', _('Respuesta Múltiple (Penalización Progresiva)')
+        RBT_CANON = 'RBT-CANON', _('Respuesta Breve (Precisión Terminológica)')
+        RPP_TRAZA = 'RPP-TRAZA', _('Resolución Procedimental (Arrastre Error)')
+        # Security & Critical Analysis
+        CDS_KILL = 'CDS-KILL', _('Checklist Dicotómico Crítico')
+        DRA_HOLO = 'DRA-HOLO', _('Disertación (Rúbrica Holística)')
+        BMT_SHIFT = 'BMT-SHIFT', _('Mediación y Transferencia de Registro')
+        ILC_CONTEXT = 'ILC-CONTEXT', _('Interpretación de Contexto y Datos Brutos')
+        EV_PALE = 'EV-PALE', _('Transcripción y Exégesis de Fuentes Primarias')
+        # Linguistic & Structural
+        CLO_OPEN = 'CLO-OPEN', _('Open Cloze / Rellenado Abierto')
+        CLO_MULTI = 'CLO-MULTI', _('Multiple Choice Cloze / Rellenado Selectivo')
+        MAT_LINK = 'MAT-LINK', _('Matching / Emparejamiento')
+
+    class LevelRequisite(models.TextChoices):
+        MANDATORY = 'Mandatory', _('Obligatorio')
+        OPTIONAL = 'Optional', _('Opcional')
+        ADVANCED = 'Advanced', _('Avanzado')
+
+    class FeedbackTaxonomy(models.TextChoices):
+        FB_CONCEPT = 'FB_CONCEPT', _('Error Conceptual')
+        FB_FORMAL = 'FB_FORMAL', _('Error Formal o de Registro')
+        FB_PROCEDURAL = 'FB_PROCEDURAL', _('Error Procedimental o Metodológico')
+        FB_SAFETY = 'FB_SAFETY', _('Violación de Seguridad Crítica')
     Atomic evaluation block.
     Bloque de evaluación atómico. Cumple V06DOC_BLOCKS y V06DOC_TEMPLATES (Item).
     """
+    class Widget(models.TextChoices):
+        # Technical
+        W_TECH_CALC = 'W-TECH-CALC', 'Consola de Cálculo Procedimental'
+        W_CLIN_SCAN = 'W-CLIN-SCAN', 'Visor de Evidencia Diagnóstica'
+        W_OBJ_STRIKE = 'W-OBJ-STRIKE', 'Selector de Respuesta con Riesgo'
+        # Discursive & Action
+        W_HUM_TEXT = 'W-HUM-TEXT', 'Editor de Exégesis Crítica'
+        W_PROC_ACTION = 'W-PROC-ACTION', 'Panel de Acción Crítica'
+        W_COMM_DIALOG = 'W-COMM-DIALOG', 'Interfaz de Mediación Dialéctica'
+        W_LAW_NAV = 'W-LAW-NAV', 'Navegador de Marco Normativo'
+        # Linguistic & Structural
+        W_TXT_CLOZE = 'W-TXT-CLOZE', 'Integrador de Huecos en Texto'
+        W_MIX_MATCH = 'W-MIX-MATCH', 'Matriz de Vinculación'
+
+    class BlockType(models.TextChoices):
+        # Objective & Technical
+        PRM_STRIKE = 'PRM-STRIKE', 'Respuesta Múltiple (Penalización Progresiva)'
+        RBT_CANON = 'RBT-CANON', 'Respuesta Breve (Precisión Terminológica)'
+        RPP_TRAZA = 'RPP-TRAZA', 'Resolución Procedimental (Arrastre Error)'
+        # Security & Critical Analysis
+        CDS_KILL = 'CDS-KILL', 'Checklist Dicotómico Crítico'
+        DRA_HOLO = 'DRA-HOLO', 'Disertación (Rúbrica Holística)'
+        BMT_SHIFT = 'BMT-SHIFT', 'Mediación y Transferencia de Registro'
+        ILC_CONTEXT = 'ILC-CONTEXT', 'Interpretación de Contexto y Datos Brutos'
+        EV_PALE = 'EV-PALE', 'Transcripción y Exégesis de Fuentes Primarias'
+        # Linguistic & Structural
+        CLO_OPEN = 'CLO-OPEN', 'Open Cloze / Rellenado Abierto'
+        CLO_MULTI = 'CLO-MULTI', 'Multiple Choice Cloze / Rellenado Selectivo'
+        MAT_LINK = 'MAT-LINK', 'Matching / Emparejamiento'
+
+    class LevelRequisite(models.TextChoices):
+        MANDATORY = 'Mandatory', 'Obligatorio'
+        OPTIONAL = 'Optional', 'Opcional'
+        ADVANCED = 'Advanced', 'Avanzado'
+
+    class FeedbackTaxonomy(models.TextChoices):
+        FB_CONCEPT = 'FB_CONCEPT', 'Error Conceptual'
+        FB_FORMAL = 'FB_FORMAL', 'Error Formal o de Registro'
+        FB_PROCEDURAL = 'FB_PROCEDURAL', 'Error Procedimental o Metodológico'
+        FB_SAFETY = 'FB_SAFETY', 'Violación de Seguridad Crítica'
+
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True, db_index=True)
     section = models.ForeignKey(ExamSection, on_delete=models.CASCADE, related_name='items')
-    block_type = models.CharField(max_length=50) # PRM-STRIKE, CLO-MULTI...
-    widget_id = models.CharField(max_length=50) # W-OBJ-STRIKE...
+    block_type = models.CharField(max_length=50, choices=BlockType.choices) # PRM-STRIKE, CLO-MULTI...
+    widget_id = models.CharField(max_length=50, choices=Widget.choices) # W-OBJ-STRIKE...
     
     # Item Technical Attributes (V06DOC_METADATA)
     # Atributos Técnicos del Ítem (V06DOC_METADATA)
-    level_requisite = models.CharField(_('Requisito de Nivel'), max_length=20, default='Mandatory', help_text=_('[Mandatory | Optional | Advanced]'))
+    level_requisite = models.CharField(_('Requisito de Nivel'), max_length=20, choices=LevelRequisite.choices, default=LevelRequisite.MANDATORY)
     weight = models.DecimalField(_('Peso Relativo'), max_digits=3, decimal_places=2, default=1.00)
     estimated_time = models.PositiveIntegerField(_('Tiempo Estimado (s)'), default=0)
     
