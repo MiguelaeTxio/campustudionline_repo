@@ -38,7 +38,7 @@ class ContentMaterialAdmin(admin.ModelAdmin):
     search_fields = ("title", "creator__username", "master_category__name", "sub_category__name", "subject__name")
     actions = [generate_public_previews_action_for_admin]
     readonly_fields = ("created_at", "updated_at")
-    autocomplete_fields = ["creator", "subject", "master_category", "sub_category"]
+    autocomplete_fields =["creator", "subject", "master_category", "sub_category"]
     fieldsets = (
         (None, {"fields": ("title", "is_free_content", "short_description", "creator", "is_public")}),
         ("Categorización Académica (Rellenar solo si NO es Contenido Libre)", {"fields": ("subject",), "classes": ("collapse",)}),
@@ -51,12 +51,17 @@ class ContentMaterialAdmin(admin.ModelAdmin):
         js = ('contents/js/admin_custom.js',)
 
     def get_queryset(self, request):
-        # [OPTIMIZACIÓN DE RENDIMIENTO] Evita cargar el masivo texto del curso en la lista
-        return super().get_queryset(request).defer('markdown_content')
+        # [OPTIMIZACIÓN DE RENDIMIENTO] Evita cargar el masivo texto del curso en la lista y optimiza consultas relacionadas
+        return super().get_queryset(request).select_related(
+            "creator", "master_category", "sub_category"
+        ).prefetch_related(
+            "subject"
+        ).defer(
+            "markdown_content", "short_description"
+        )
 
     def delete_queryset(self, request, queryset):
-        """
-        [ROBUSTEZ] Sobrescribe la acción de borrado masivo.
+        """[ROBUSTEZ] Sobrescribe la acción de borrado masivo.
         
         En lugar de llamar a queryset.delete() directamente, que no dispara
         las señales post_delete, este método itera sobre el queryset y llama

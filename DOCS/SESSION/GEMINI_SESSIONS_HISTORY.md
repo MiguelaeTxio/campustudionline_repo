@@ -2101,3 +2101,10 @@ Carga de contexto obligatoria: Documentación técnica V06DOC y modelos de `asse
 *  **Session:** Diagnóstico y Corrección de Enrutamiento Celery para Exámenes
 *  **Description:** Sesión centrada en diagnosticar y corregir la incidencia bloqueante del Hito 24 (exámenes en estado PENDING indefinido). Se confirmó mediante trace síncrono la integridad del código del motor de evaluaciones y se identificó la causa raíz: el diccionario CELERY_TASK_ROUTES vacío en la configuración central. Se aplicó un parche para enrutar explícitamente las tareas de exámenes a la cola high_priority y la generación de cursos a content_automation, restableciendo así el flujo asíncrono y la jerarquía de prioridades del orquestador de Celery.
 
+
+# 2026-03-05
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V24.md
+## CSO
+*  **Session:** Optimización de Rendimiento en Django Admin
+*  **Description:** Auditoría y optimización integral del administrador de Django para eliminar latencias en la carga de vistas. Se aplicarán técnicas de select_related, prefetch_related y defer en los modelos ChatRoom, ChatMessage y ContentMaterial según la hoja de ruta del Hito 24.

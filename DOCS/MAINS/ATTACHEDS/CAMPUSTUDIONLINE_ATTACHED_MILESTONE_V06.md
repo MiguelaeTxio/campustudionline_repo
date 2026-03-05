@@ -16,7 +16,7 @@ Es de ESTRICTO CUMPLIMIENTO cargar la constelación satélite completa al inicio
 *   `V06DOC_TEMPLATES.md`
 *   `V06DOC_STRUCTURE.md`
 *   `V06DOC_LOGIC_MAPPING.md`
-*   `V06DOC_INCIDENTS_ROADMAP.md`
+
 
 ### FASE II: AUDITORÍA INTEGRAL Y ABSOLUTA (DOC VS. IMPL)
 Auditoría técnica exhaustiva de todo el código implicado frente a la documentación cargada:
