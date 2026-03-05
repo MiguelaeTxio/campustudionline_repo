@@ -183,6 +183,7 @@ class ChatMessage(models.Model):
     sender_username_display = models.CharField(
         max_length=150,
         verbose_name="Nombre de Usuario del Remitente (para mostrar)",
+        db_index=True,
     )
     content = models.TextField(verbose_name="Contenido del Mensaje")
     timestamp = models.DateTimeField(auto_now_add=True, verbose_name="Marca de Tiempo")

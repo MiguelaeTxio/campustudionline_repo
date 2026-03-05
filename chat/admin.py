@@ -76,7 +76,8 @@ class ChatMessageAdmin(admin.ModelAdmin):
         "room",
         "content",
     )
-    date_hierarchy = "timestamp"
+    # [OPTIMIZACIÓN] date_hierarchy eliminado para evitar queries GROUP BY costosas
+    list_filter = ("room", "timestamp") # Simplificado para velocidad
 
     def get_short_content(self, obj):
         return obj.content[:50] + "..." if len(obj.content) > 50 else obj.content

@@ -345,12 +345,19 @@ def _send_exam_failure_notification(exam):
             "Disculpa las molestias.\nEl equipo de CampuStudiOnline"
         )
         
+        context = {
+            'course_title': exam.content_copy.original_content.title,
+            'dashboard_url': f"https://{settings.ALLOWED_HOSTS[0]}/"
+        }
+        html_message = render_to_string('orchestrator/email/exam_failure.html', context)
+
         send_mail(
             subject=subject,
             message=body_text,
             from_email=settings.DEFAULT_FROM_EMAIL,
             recipient_list=[exam.user.email],
-            fail_silently=True
+            fail_silently=True,
+            html_message=html_message
         )
         
         send_unified_notification(

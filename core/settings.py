@@ -149,7 +149,10 @@ CELERY_TASK_QUEUES = (
 CELERY_TASK_DEFAULT_QUEUE = 'default'
 CELERY_TASK_DEFAULT_ROUTING_KEY = 'task.default'
 
-CELERY_TASK_ROUTES = {    
+CELERY_TASK_ROUTES = {
+    'orchestrator.tasks.generate_exam_task': {'queue': 'high_priority'},
+    'orchestrator.tasks.generate_full_course_task': {'queue': 'content_automation'},
+    'orchestrator.tasks.global_orchestrator_task': {'queue': 'default'},
 }
 
 # --- reCAPTCHA Configuration ---

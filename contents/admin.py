@@ -50,6 +50,10 @@ class ContentMaterialAdmin(admin.ModelAdmin):
     class Media:
         js = ('contents/js/admin_custom.js',)
 
+    def get_queryset(self, request):
+        # [OPTIMIZACIÓN DE RENDIMIENTO] Evita cargar el masivo texto del curso en la lista
+        return super().get_queryset(request).defer('markdown_content')
+
     def delete_queryset(self, request, queryset):
         """
         [ROBUSTEZ] Sobrescribe la acción de borrado masivo.
@@ -71,6 +75,10 @@ class ContentCopyAdmin(admin.ModelAdmin):
     list_filter = ("is_public",)
     search_fields = ("original_content__title", "user__username")
     autocomplete_fields = ["original_content", "user"]
+
+    def get_queryset(self, request):
+        # [OPTIMIZACIÓN DE RENDIMIENTO] Evita cargar el masivo HTML en la lista
+        return super().get_queryset(request).defer('html_content')
 
 @admin.register(Annotation)
 class AnnotationAdmin(admin.ModelAdmin):

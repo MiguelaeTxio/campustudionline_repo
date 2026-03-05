@@ -39,7 +39,10 @@ def task_dashboard_view(request: HttpRequest) -> HttpResponse:
     active_task_in_progress = PendingContentTask.objects.filter(status=PendingContentTask.StatusChoices.PROCESSING).first()
     current_api_key_in_use = active_task_in_progress.api_key_used if active_task_in_progress else "Ninguna tarea en proceso"
     total_subjects_count = Subject.objects.count()
-    subjects_with_content_count = Subject.objects.filter(Q(content_hash_family__content_material__isnull=False) | Q(content_materials__isnull=False)).distinct().count()
+    # [OPTIMIZACIÓN DE RENDIMIENTO] Uso de UNION para evitar Cartesian JOINs del OR
+    qs_family = Subject.objects.filter(content_hash_family__content_material__isnull=False).values('pk')
+    qs_direct = Subject.objects.filter(content_materials__isnull=False).values('pk')
+    subjects_with_content_count = qs_family.union(qs_direct).count()
     coverage_percentage = (subjects_with_content_count / total_subjects_count) * 100 if total_subjects_count > 0 else 0
     free_content_count = ContentMaterial.objects.filter(is_free_content=True).count()
     pending_academic_requests_count = ContentRequest.objects.filter(status=ContentRequest.StatusChoices.PENDING).count()

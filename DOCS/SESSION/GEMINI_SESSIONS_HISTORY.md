@@ -2087,3 +2087,17 @@ Carga de contexto obligatoria: Documentación técnica V06DOC y modelos de `asse
 ## MAMC <!-- --SYSTEM -->
 *  **Session:** Restauración Quirúrgica Generación Contenidos
 *  **Description:** Análisis y corrección de regresión crítica en la generación automática de contenido académico en orchestrator, originada colateralmente durante la refactorización de assessment_v2. Se procede a extraer el histórico de Git al 14 de enero para recuperar la lógica atómicamente, garantizando la preservación total de la nueva arquitectura de evaluaciones.
+# 2026-03-04
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V24.md
+## EDC
+*  **Session:** Diagnóstico de Celery y Priorización de Exámenes
+*  **Description:** Sesión enfocada en la resolución de una incidencia bloqueante donde los exámenes se quedan atascados en estado PENDING. Se auditará la infraestructura de colas de Celery, se revisará el enrutamiento de tareas en core/settings.py y se realizará un test síncrono para identificar el fallo en la instanciación de la tarea de generación. Posteriormente se validará el flujo de prioridades del orquestador global.
+
+# 2026-03-05
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V24.md
+## NRA
+*  **Session:** Diagnóstico y Corrección de Enrutamiento Celery para Exámenes
+*  **Description:** Sesión centrada en diagnosticar y corregir la incidencia bloqueante del Hito 24 (exámenes en estado PENDING indefinido). Se confirmó mediante trace síncrono la integridad del código del motor de evaluaciones y se identificó la causa raíz: el diccionario CELERY_TASK_ROUTES vacío en la configuración central. Se aplicó un parche para enrutar explícitamente las tareas de exámenes a la cola high_priority y la generación de cursos a content_automation, restableciendo así el flujo asíncrono y la jerarquía de prioridades del orquestador de Celery.
+

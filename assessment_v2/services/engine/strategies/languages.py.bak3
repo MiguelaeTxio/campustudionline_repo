@@ -246,7 +246,7 @@ class LanguagesStrategy(BaseExamStrategy):
             f"ACTÚA COMO MOTOR DE RENDERIZADO DE CONTENIDO (Patrón Skeleton-First).\n"
             f"Tu ÚNICA función es rellenar el contenido de los ítems solicitados en la sección: {subdivision_id}.\n"
             f"TEMA: {topic}. NIVEL: {self.pedagogical_level}.{memory}\n"
-            f"CONTEXTO DOCENTE:\n{(context_text or '')[:15000]}\n"
+            f"CONTEXTO DOCENTE:\n{context_text[:15000]}\n"
             f"{skeleton_instruction}"
             f"CONFIG: Arquetipo={self.sub_archetype_id}, Itinerario={self.itinerary_id}, Modo={self.get_immersion_mode()}.\n"
             f"SALIDA: JSON estricto (Array 'items'). NO inventes ítems nuevos, rellena solo los solicitados."

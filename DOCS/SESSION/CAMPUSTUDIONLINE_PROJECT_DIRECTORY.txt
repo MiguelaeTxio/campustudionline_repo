@@ -59,6 +59,7 @@
 ./TRASH_BIN/prove_blindness.py
 ./TRASH_BIN/check_redis_env.py
 ./orchestrator/templates/orchestrator/email/content_completion.html
+./orchestrator/templates/orchestrator/email/exam_failure.html
 ./orchestrator/templates/orchestrator/email/admin_notification.html
 ./orchestrator/templates/admin/orchestrator/manage_logs.html
 ./orchestrator/templates/admin/orchestrator/revise_task_form.html
@@ -129,6 +130,7 @@
 ./chat/migrations/0003_chatroom_target_master_category_and_more.py
 ./chat/migrations/0002_initial.py
 ./chat/migrations/__init__.py
+./chat/migrations/0004_alter_chatmessage_sender_username_display.py
 ./chat/migrations/0001_initial.py
 ./chat/tests.py
 ./chat/management/commands/ensure_default_chat_room.py

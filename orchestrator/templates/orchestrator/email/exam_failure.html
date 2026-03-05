@@ -1,0 +1,16 @@
+{% extends "emails/base_email.html" %}
+
+{% block content %}
+<h2 style="color: #333333;">Error en la Evaluación</h2>
+<p>Hola,</p>
+<p>Lamentamos informarte que el servicio de generación de exámenes ha experimentado un fallo técnico y no está disponible temporalmente para la asignatura <strong>"{{ course_title }}"</strong>.</p>
+<p>Nuestro equipo técnico ya ha sido notificado automáticamente y está trabajando para resolverlo. Por favor, inténtalo de nuevo más tarde.</p>
+<p><strong>Nota importante:</strong> No se ha realizado ningún cargo en tu cuota semanal por este intento fallido.</p>
+<br>
+<div style="text-align: center; margin-top: 20px; margin-bottom: 20px;">
+    <a href="{{ dashboard_url }}" style="display: inline-block; padding: 12px 24px; background-color: #0056b3; color: #ffffff; text-decoration: none; border-radius: 6px; font-weight: bold;">Ir a mi Dashboard</a>
+</div>
+<br>
+<p>Disculpa las molestias ocasionadas.</p>
+<p>El equipo de CampuStudiOnline</p>
+{% endblock %}
