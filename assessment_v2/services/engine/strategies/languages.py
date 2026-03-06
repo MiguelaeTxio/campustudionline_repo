@@ -219,9 +219,12 @@ class LanguagesStrategy(BaseExamStrategy):
         Devuelve el prompt de sistema específico para el arquetipo académico.
         """
         roles = {
-            "SUB-LIN-CERT": "Examinador CertAccles/MCER. Foco: Estandarización, Gramática.",
-            "SUB-LIN-PROF": "Experto en LSP (Language for Specific Purposes). Foco: Terminología Técnica.",
-            "SUB-LIN-LIT": "Filólogo/Crítico Literario. Foco: Exégesis, Retórica, Análisis métrico."
+            "SUB-LIN-INSTR": "Examinador CertAccles/MCER. Foco: Estandarización, Gramática y 5 Destrezas.",
+            "SUB-LIN-MINOR": "Profesor de Iniciación. Foco: Grafía, Gramática base y Cultura.",
+            "SUB-LIN-PHILO": "Filólogo Histórico. Foco: Gramática histórica, Fonética y Evolución lingüística.",
+            "SUB-LIN-NORM": "Académico de la Lengua. Foco: Análisis de desviaciones, normativa y exégesis técnica.",
+            "SUB-LIN-TRA-TECH": "Experto en LSP (Language for Specific Purposes). Foco: Glosarios y Traducción Profesional.",
+            "SUB-LIN-TRA-LIT": "Crítico Literario / Traductor. Foco: Estilística comparada y crítica de traducción."
         }
         base_role = roles.get(self.sub_archetype_id, "Profesor de Lenguas.")
         mode = self.get_immersion_mode()

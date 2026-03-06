@@ -91,7 +91,8 @@ class ExamCreateView(LoginRequiredMixin, View):
             archetype_id=metadata['archetype_id'],
             sub_archetype_id=metadata['sub_archetype_id'], # IDENTITY PERSISTENCE / PERSISTENCIA DE IDENTIDAD
             itinerary_id=metadata['itinerary_id'],
-            pedagogical_level=metadata['pedagogical_level']
+            pedagogical_level=metadata['pedagogical_level'],
+            immersion_mode=metadata['immersion_mode']
         )
         
         # Launch asynchronous generation task with scoped context

@@ -54,6 +54,17 @@ class AcademicDeductor:
         return 'ITIN_MIN'
 
     @staticmethod
+    def deduce_immersion_mode(archetype_id, itinerary_id, pedagogical_level):
+        # Ref: V06DOC_LEVELS (Normativa UGR)
+        if archetype_id == 'ARCH_LANG':
+            if pedagogical_level == 'LVL_C':
+                return 'TOTAL'
+            if itinerary_id == 'ITIN_MAI':
+                return 'TOTAL' if pedagogical_level == 'LVL_B' else 'BILINGUAL'
+            return 'BILINGUAL' if pedagogical_level == 'LVL_B' else 'VEHICULAR'
+        return 'VEHICULAR'
+
+    @staticmethod
     def deduce_level(subject, context_title=None):
         """
         Deduces the LVL_ID (Pedagogical Level).
@@ -124,11 +135,15 @@ class AcademicDeductor:
         itinerary_id = cls.deduce_itinerary(subject, context_title)
         level_id = cls.deduce_level(subject, context_title)
         
+        
+        immersion_mode = cls.deduce_immersion_mode(archetype_id, itinerary_id, level_id)
+
         return {
             'archetype_id': archetype_id,
             'sub_archetype_id': sub_archetype_id,
             'itinerary_id': itinerary_id,
             'pedagogical_level': level_id,
+            'immersion_mode': immersion_mode,
             'target_language_code': target_language_code,
             'localized_sections': localized_sections,
         }
@@ -198,6 +213,28 @@ class GradingOrchestrator:
                 if exam.itinerary_id == 'ITIN_INV' and fb_category in['FB_PROCEDURAL', 'FB_CONCEPT'] and item_final_score < 0.5:
                     item_feedback['kill_switch_activated'] = True
                     item_feedback['justification'] = 'ERROR FATAL METODOLÓGICO: ' + item_feedback.get('justification', '')
+
+                # [V06DOC_ARCHETYPES] HEALTH: Errores fatales invalidantes
+                if exam.archetype_id == 'ARCH_HEALTH' and fb_category == 'FB_SAFETY' and item_final_score < 0.5:
+                    item_feedback['kill_switch_activated'] = True
+                    item_feedback['justification'] = 'ERROR FATAL CLÍNICO (SEGURIDAD): ' + item_feedback.get('justification', '')
+
+                #[V06DOC_ARCHETYPES] TECH: El planteamiento lógico prima (50%)
+                if exam.archetype_id == 'ARCH_TECH' and fb_category != 'FB_PROCEDURAL' and item_final_score < 0.5:
+                    item_final_score = max(item_final_score, Decimal('0.5'))
+                    item_feedback['justification'] = '[PLANTEAMIENTO LÓGICO +50%] ' + item_feedback.get('justification', '')
+
+                #[V06DOC_ARCHETYPES] SOC: Uso de fuentes reales como multiplicador
+                if exam.archetype_id == 'ARCH_SOC' and 'fuentes_reales' in item_feedback.get('justification', '').lower():
+                    item_final_score = min(Decimal('1.0'), item_final_score * Decimal('1.2'))
+                    item_feedback['justification'] = '[MULTIPLICADOR FUENTES +20%] ' + item_feedback.get('justification', '')
+
+                # [V06DOC_ARCHETYPES] HUM: La corrección formal es eliminatoria (-2 puntos sobre 10 -> -0.2 sobre 1.0)
+                if exam.archetype_id == 'ARCH_HUM' and fb_category == 'FB_FORMAL':
+                    item_final_score = max(Decimal('0.0'), item_final_score - Decimal('0.2'))
+                    item_feedback['justification'] = 'PENALIZACIÓN FORMAL (-0.2): ' + item_feedback.get('justification', '')
+                    if item_final_score <= 0.0:
+                        item_feedback['kill_switch_activated'] = True
 
                 if item_feedback.get('kill_switch_activated', False):
                     section_kill_activated = True

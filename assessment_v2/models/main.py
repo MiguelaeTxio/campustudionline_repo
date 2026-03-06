@@ -218,6 +218,7 @@ class ExamItem(models.Model):
         CLO_OPEN = 'CLO-OPEN', _('Open Cloze / Rellenado Abierto')
         CLO_MULTI = 'CLO-MULTI', _('Multiple Choice Cloze / Rellenado Selectivo')
         MAT_LINK = 'MAT-LINK', _('Matching / Emparejamiento')
+        DIA_INTERACT = 'DIA-INTERACT', _('Interacción Dialéctica (UniversIA)')
 
     class LevelRequisite(models.TextChoices):
         # V06DOC_METADATA Sec 3

@@ -21,8 +21,8 @@ class SocialStrategy(BaseExamStrategy):
         logic = item.grading_logic
         block_type = item.block_type
 
-        # --- MOTOR: CASO-PRÁCTICO (Exégesis Legal/Económica) ---
-        if block_type == 'CASO-PRACTICO':
+        # --- MOTOR: DRA-HOLO (Exégesis Legal/Económica) ---
+        if block_type == 'DRA-HOLO':
             # Requires citation of norms or data sources
             required_citations = logic.get('required_norms', [])
             student_text = str(student_input).lower()
@@ -158,65 +158,65 @@ class SocialStrategy(BaseExamStrategy):
         if sid == "SUB-SOC-LAW-PROC":
             skeleton = [
                 {"subdivision_id": "SD_DEADLINES", "title": "Plazos y Recursos", "instructions": "Determine los plazos procesales aplicables.", "layout_mode": "STANDARD", "items": [{"block_type": "PRM-STRIKE", "widget_id": "W-OBJ-STRIKE", "task_instruction": I_PRM}]},
-                {"subdivision_id": "SD_PROC_STEP", "title": "Trámite Procesal", "instructions": "Identifique el siguiente paso en el procedimiento.", "layout_mode": "SPLIT_TEXT", "items": [{"block_type": "CASO-PRACTICO", "widget_id": "W-LAW-NAV", "task_instruction": I_LAW_NAV}]}
+                {"subdivision_id": "SD_PROC_STEP", "title": "Trámite Procesal", "instructions": "Identifique el siguiente paso en el procedimiento.", "layout_mode": "SPLIT_TEXT", "items": [{"block_type": "DRA-HOLO", "widget_id": "W-LAW-NAV", "task_instruction": I_LAW_NAV}]}
             ]
         # 2. SUB-SOC-LAW-DICT
         elif sid == "SUB-SOC-LAW-DICT":
             skeleton = [
                 {"subdivision_id": "SD_FACTS", "title": "Hechos Relevantes", "instructions": "Jerarquice los hechos del supuesto.", "layout_mode": "STANDARD", "items": [{"block_type": "PRM-STRIKE", "widget_id": "W-OBJ-STRIKE", "task_instruction": I_PRM}]},
-                {"subdivision_id": "SD_DICTAMEN", "title": "Dictamen Fundamentado", "instructions": "Redacte el dictamen citando jurisprudencia.", "layout_mode": "SPLIT_TEXT", "items": [{"block_type": "CASO-PRACTICO", "widget_id": "W-HUM-TEXT", "task_instruction": I_CASO}]}
+                {"subdivision_id": "SD_DICTAMEN", "title": "Dictamen Fundamentado", "instructions": "Redacte el dictamen citando jurisprudencia.", "layout_mode": "SPLIT_TEXT", "items": [{"block_type": "DRA-HOLO", "widget_id": "W-HUM-TEXT", "task_instruction": I_CASO}]}
             ]
         # 3. SUB-SOC-ECON-QUAN
         elif sid == "SUB-SOC-ECON-QUAN":
             skeleton = [
                 {"subdivision_id": "SD_DATA", "title": "Análisis de Datos", "instructions": "Interprete los indicadores económicos.", "layout_mode": "STANDARD", "items": [{"block_type": "PRM-STRIKE", "widget_id": "W-OBJ-STRIKE", "task_instruction": I_PRM}]},
-                {"subdivision_id": "SD_MODEL", "title": "Modelización", "instructions": "Resuelva el supuesto contable o econométrico.", "layout_mode": "STANDARD", "items": [{"block_type": "CASO-PRACTICO", "widget_id": "W-HUM-TEXT", "task_instruction": I_CASO}]}
+                {"subdivision_id": "SD_MODEL", "title": "Modelización", "instructions": "Resuelva el supuesto contable o econométrico.", "layout_mode": "STANDARD", "items": [{"block_type": "DRA-HOLO", "widget_id": "W-HUM-TEXT", "task_instruction": I_CASO}]}
             ]
         # 4. SUB-SOC-ECON-MGMT
         elif sid == "SUB-SOC-ECON-MGMT":
             skeleton = [
-                {"subdivision_id": "SD_STRATEGY", "title": "Análisis Estratégico", "instructions": "Proponga una estrategia de mercado.", "layout_mode": "STANDARD", "items": [{"block_type": "CASO-PRACTICO", "widget_id": "W-HUM-TEXT", "task_instruction": I_CASO}]},
+                {"subdivision_id": "SD_STRATEGY", "title": "Análisis Estratégico", "instructions": "Proponga una estrategia de mercado.", "layout_mode": "STANDARD", "items": [{"block_type": "DRA-HOLO", "widget_id": "W-HUM-TEXT", "task_instruction": I_CASO}]},
                 {"subdivision_id": "SD_ORGANIZATION", "title": "Estructura Organizativa", "instructions": "Valore la eficiencia del modelo propuesto.", "layout_mode": "STANDARD", "items": [{"block_type": "PRM-STRIKE", "widget_id": "W-OBJ-STRIKE", "task_instruction": I_PRM}]}
             ]
         # 5. SUB-SOC-EDU-KIDS
         elif sid == "SUB-SOC-EDU-KIDS":
             skeleton = [
                 {"subdivision_id": "SD_DUA", "title": "Diseño Inclusivo (DUA)", "instructions": "Adapte la actividad para la diversidad.", "layout_mode": "STANDARD", "items": [{"block_type": "PRM-STRIKE", "widget_id": "W-OBJ-STRIKE", "task_instruction": I_PRM}]},
-                {"subdivision_id": "SD_SITUATION", "title": "Situación de Aprendizaje", "instructions": "Diseñe una secuencia didáctica original.", "layout_mode": "STANDARD", "items": [{"block_type": "CASO-PRACTICO", "widget_id": "W-HUM-TEXT", "task_instruction": I_CASO}]}
+                {"subdivision_id": "SD_SITUATION", "title": "Situación de Aprendizaje", "instructions": "Diseñe una secuencia didáctica original.", "layout_mode": "STANDARD", "items": [{"block_type": "DRA-HOLO", "widget_id": "W-HUM-TEXT", "task_instruction": I_CASO}]}
             ]
         # 6. SUB-SOC-EDU-SEC
         elif sid == "SUB-SOC-EDU-SEC":
             skeleton = [
                 {"subdivision_id": "SD_NORMATIVE", "title": "Marco Legal Educativo", "instructions": "Justifique según la LOMLOE.", "layout_mode": "STANDARD", "items": [{"block_type": "PRM-STRIKE", "widget_id": "W-OBJ-STRIKE", "task_instruction": I_PRM}]},
-                {"subdivision_id": "SD_DIDACTIC", "title": "Transposición Didáctica", "instructions": "Planifique el desarrollo de la unidad.", "layout_mode": "STANDARD", "items": [{"block_type": "CASO-PRACTICO", "widget_id": "W-HUM-TEXT", "task_instruction": I_CASO}]}
+                {"subdivision_id": "SD_DIDACTIC", "title": "Transposición Didáctica", "instructions": "Planifique el desarrollo de la unidad.", "layout_mode": "STANDARD", "items": [{"block_type": "DRA-HOLO", "widget_id": "W-HUM-TEXT", "task_instruction": I_CASO}]}
             ]
         # 7. SUB-SOC-COMM-JOUR
         elif sid == "SUB-SOC-COMM-JOUR":
             skeleton = [
                 {"subdivision_id": "SD_ETHICS", "title": "Ética y Deontología", "instructions": "Valore el tratamiento informativo del caso.", "layout_mode": "STANDARD", "items": [{"block_type": "PRM-STRIKE", "widget_id": "W-OBJ-STRIKE", "task_instruction": "Genera una pregunta sobre ética periodística o verificación de fuentes."}]},
-                {"subdivision_id": "SD_WRITING", "title": "Redacción Periodística", "instructions": "Redacte la noticia o reportaje solicitado.", "layout_mode": "SPLIT_TEXT", "items": [{"block_type": "CASO-PRACTICO", "widget_id": "W-HUM-TEXT", "task_instruction": I_CASO}]}
+                {"subdivision_id": "SD_WRITING", "title": "Redacción Periodística", "instructions": "Redacte la noticia o reportaje solicitado.", "layout_mode": "SPLIT_TEXT", "items": [{"block_type": "DRA-HOLO", "widget_id": "W-HUM-TEXT", "task_instruction": I_CASO}]}
             ]
         # 8. SUB-SOC-COMM-AV
         elif sid == "SUB-SOC-COMM-AV":
             skeleton = [
-                {"subdivision_id": "SD_SCRIPT", "title": "Narrativa y Guion", "instructions": "Desarrolle la escaleta o guion literario.", "layout_mode": "STANDARD", "items": [{"block_type": "CASO-PRACTICO", "widget_id": "W-HUM-TEXT", "task_instruction": "Genera un ejercicio de redacción de guion (literario o técnico) o escaleta."}]},
+                {"subdivision_id": "SD_SCRIPT", "title": "Narrativa y Guion", "instructions": "Desarrolle la escaleta o guion literario.", "layout_mode": "STANDARD", "items": [{"block_type": "DRA-HOLO", "widget_id": "W-HUM-TEXT", "task_instruction": "Genera un ejercicio de redacción de guion (literario o técnico) o escaleta."}]},
                 {"subdivision_id": "SD_TECH_PROD", "title": "Técnica de Producción", "instructions": "Resuelva problemas de iluminación o sonido.", "layout_mode": "STANDARD", "items": [{"block_type": "PRM-STRIKE", "widget_id": "W-OBJ-STRIKE", "task_instruction": "Genera una pregunta técnica sobre equipos, formatos, iluminación o sonido."}]}
             ]
         # 9. SUB-SOC-GEOG
         elif sid == "SUB-SOC-GEOG":
             skeleton = [
-                {"subdivision_id": "SD_TERRITORY", "title": "Análisis Territorial", "instructions": "Interprete los datos del SIG o cartografía.", "layout_mode": "SPLIT_TEXT", "items": [{"block_type": "CASO-PRACTICO", "widget_id": "W-HUM-TEXT", "task_instruction": "Genera un ejercicio de interpretación de mapa, pirámide poblacional o datos SIG."}]},
+                {"subdivision_id": "SD_TERRITORY", "title": "Análisis Territorial", "instructions": "Interprete los datos del SIG o cartografía.", "layout_mode": "SPLIT_TEXT", "items": [{"block_type": "DRA-HOLO", "widget_id": "W-HUM-TEXT", "task_instruction": "Genera un ejercicio de interpretación de mapa, pirámide poblacional o datos SIG."}]},
                 {"subdivision_id": "SD_CLIMATE", "title": "Climatología y Medio", "instructions": "Explique los fenómenos geográficos.", "layout_mode": "STANDARD", "items": [{"block_type": "PRM-STRIKE", "widget_id": "W-OBJ-STRIKE", "task_instruction": "Genera una pregunta sobre procesos climáticos, geomorfología o demografía."}]}
             ]
         # 10. SUB-SOC-WORK
         elif sid == "SUB-SOC-WORK":
             skeleton = [
                 {"subdivision_id": "SD_DIAGNOSIS", "title": "Diagnóstico Social", "instructions": "Identifique los indicadores de exclusión.", "layout_mode": "STANDARD", "items": [{"block_type": "PRM-STRIKE", "widget_id": "W-OBJ-STRIKE", "task_instruction": "Genera una pregunta sobre indicadores de riesgo social, leyes de dependencia o recursos comunitarios."}]},
-                {"subdivision_id": "SD_PLAN", "title": "Plan de Intervención", "instructions": "Diseñe la estrategia de mediación.", "layout_mode": "STANDARD", "items": [{"block_type": "CASO-PRACTICO", "widget_id": "W-HUM-TEXT", "task_instruction": "Genera un supuesto de intervención social familiar o comunitario. El alumno debe proponer el plan de acción."}]}
+                {"subdivision_id": "SD_PLAN", "title": "Plan de Intervención", "instructions": "Diseñe la estrategia de mediación.", "layout_mode": "STANDARD", "items": [{"block_type": "DRA-HOLO", "widget_id": "W-HUM-TEXT", "task_instruction": "Genera un supuesto de intervención social familiar o comunitario. El alumno debe proponer el plan de acción."}]}
             ]
         else:
             skeleton = [
-                {"subdivision_id": "SD_GEN", "title": "Análisis Social General", "instructions": "Resuelva el supuesto práctico.", "layout_mode": "STANDARD", "items": [{"block_type": "CASO-PRACTICO", "widget_id": "W-HUM-TEXT", "task_instruction": I_CASO}]},
+                {"subdivision_id": "SD_GEN", "title": "Análisis Social General", "instructions": "Resuelva el supuesto práctico.", "layout_mode": "STANDARD", "items": [{"block_type": "DRA-HOLO", "widget_id": "W-HUM-TEXT", "task_instruction": I_CASO}]},
                 {"subdivision_id": "SD_ETHI", "title": "Deontología y Ética", "instructions": "Valore las implicaciones éticas.", "layout_mode": "STANDARD", "items": [{"block_type": "PRM-STRIKE", "widget_id": "W-OBJ-STRIKE", "task_instruction": "Genera una pregunta sobre ética profesional o código deontológico."}]}
             ]
 
