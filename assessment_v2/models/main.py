@@ -7,9 +7,10 @@ from django.utils.translation import gettext_lazy as _
 class Exam(models.Model):
     """
     Model for the exam technical header.
+    ---
     Modelo para la cabecera técnica del examen. Cumple V06DOC_TEMPLATES (Header).
     """
-    STATUS_CHOICES =[
+    STATUS_CHOICES = [
         ('PENDING', _('Pendiente')),
         ('GENERATING', _('Generando')),
         ('READY', _('Listo')),
@@ -103,7 +104,7 @@ class Exam(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='exams_v2')
     content_copy = models.ForeignKey('contents.ContentCopy', on_delete=models.CASCADE, related_name='exams', null=True)
 
-    # Metadatos Académicos (Deducidos por Logic Mapping)
+    # Academic Metadata (Deduced by Logic Mapping) / Metadatos Académicos (Deducidos por Logic Mapping)
     archetype_id = models.CharField(_('ID Arquetipo'), max_length=50, choices=Archetype.choices)
     sub_archetype_id = models.CharField(_('ID Sub-Arquetipo'), max_length=50, choices=SubArchetype.choices)
     itinerary_id = models.CharField(_('ID Itinerario'), max_length=50, choices=Itinerary.choices)
@@ -112,15 +113,15 @@ class Exam(models.Model):
     target_language_code = models.CharField(_('Código de Idioma'), max_length=10, default='es', help_text=_('ISO 639-1 (ej: en, fr, ja)'))
     localized_sections = models.JSONField(_('Secciones Localizadas'), default=dict, blank=True)
     
-    # Configuración de Rigor (V06DOC_LEVELS)
+    # Rigor Configuration (V06DOC_LEVELS) / Configuración de Rigor (V06DOC_LEVELS)
     grading_params = models.JSONField(_('Parámetros de Rigor'), default=dict)
 
-    # Anti-Abuso (Regla de las 24 horas)
+    # Anti-Abuse (24h Rule) / Anti-Abuso (Regla de las 24 horas)
     expiration_date = models.DateTimeField(_('Fecha de Caducidad'), null=True, blank=True)
 
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='PENDING', db_index=True)
     
-    # Trazabilidad y Logs
+    # Traceability and Logs / Trazabilidad y Logs
     event_log = models.JSONField(_('Log de Eventos'), default=list, blank=True)
     error_log = models.TextField(_('Log de Error'), blank=True, null=True)
     
@@ -138,6 +139,7 @@ class Exam(models.Model):
 class ExamSection(models.Model):
     """
     Represents an exam phase (subdivision).
+    ---
     Representa una fase o subdivisión del examen. Cumple V06DOC_SUBDIVISIONS.
     """
     class LayoutMode(models.TextChoices):
@@ -183,17 +185,21 @@ class ExamSection(models.Model):
 
 class ExamItem(models.Model):
     """
+    Atomic evaluation block.
+    ---
+    Bloque de evaluación atómico. Cumple V06DOC_BLOCKS, V06DOC_TEMPLATES y V06DOC_METADATA.
+    """
     class Widget(models.TextChoices):
-        # Technical
+        # Technical (V06DOC_WIDGETS Sec 1)
         W_TECH_CALC = 'W-TECH-CALC', _('Consola de Cálculo Procedimental')
         W_CLIN_SCAN = 'W-CLIN-SCAN', _('Visor de Evidencia Diagnóstica')
         W_OBJ_STRIKE = 'W-OBJ-STRIKE', _('Selector de Respuesta con Riesgo')
-        # Discursive & Action
+        # Discursive & Action (V06DOC_WIDGETS Sec 2)
         W_HUM_TEXT = 'W-HUM-TEXT', _('Editor de Exégesis Crítica')
         W_PROC_ACTION = 'W-PROC-ACTION', _('Panel de Acción Crítica')
         W_COMM_DIALOG = 'W-COMM-DIALOG', _('Interfaz de Mediación Dialéctica')
         W_LAW_NAV = 'W-LAW-NAV', _('Navegador de Marco Normativo')
-        # Linguistic & Structural
+        # Linguistic & Structural (V06DOC_WIDGETS Sec 3)
         W_TXT_CLOZE = 'W-TXT-CLOZE', _('Integrador de Huecos en Texto')
         W_MIX_MATCH = 'W-MIX-MATCH', _('Matriz de Vinculación')
 
@@ -214,74 +220,57 @@ class ExamItem(models.Model):
         MAT_LINK = 'MAT-LINK', _('Matching / Emparejamiento')
 
     class LevelRequisite(models.TextChoices):
-        MANDATORY = 'Mandatory', _('Obligatorio')
-        OPTIONAL = 'Optional', _('Opcional')
-        ADVANCED = 'Advanced', _('Avanzado')
+        # V06DOC_METADATA Sec 3
+        MANDATORY = 'MANDATORY', _('Obligatorio')
+        OPTIONAL = 'OPTIONAL', _('Opcional')
+        ADVANCED = 'ADVANCED', _('Avanzado')
 
     class FeedbackTaxonomy(models.TextChoices):
+        # V06DOC_METADATA Sec 4
         FB_CONCEPT = 'FB_CONCEPT', _('Error Conceptual')
         FB_FORMAL = 'FB_FORMAL', _('Error Formal o de Registro')
         FB_PROCEDURAL = 'FB_PROCEDURAL', _('Error Procedimental o Metodológico')
         FB_SAFETY = 'FB_SAFETY', _('Violación de Seguridad Crítica')
-    Atomic evaluation block.
-    Bloque de evaluación atómico. Cumple V06DOC_BLOCKS y V06DOC_TEMPLATES (Item).
-    """
-    class Widget(models.TextChoices):
-        # Technical
-        W_TECH_CALC = 'W-TECH-CALC', 'Consola de Cálculo Procedimental'
-        W_CLIN_SCAN = 'W-CLIN-SCAN', 'Visor de Evidencia Diagnóstica'
-        W_OBJ_STRIKE = 'W-OBJ-STRIKE', 'Selector de Respuesta con Riesgo'
-        # Discursive & Action
-        W_HUM_TEXT = 'W-HUM-TEXT', 'Editor de Exégesis Crítica'
-        W_PROC_ACTION = 'W-PROC-ACTION', 'Panel de Acción Crítica'
-        W_COMM_DIALOG = 'W-COMM-DIALOG', 'Interfaz de Mediación Dialéctica'
-        W_LAW_NAV = 'W-LAW-NAV', 'Navegador de Marco Normativo'
-        # Linguistic & Structural
-        W_TXT_CLOZE = 'W-TXT-CLOZE', 'Integrador de Huecos en Texto'
-        W_MIX_MATCH = 'W-MIX-MATCH', 'Matriz de Vinculación'
 
-    class BlockType(models.TextChoices):
-        # Objective & Technical
-        PRM_STRIKE = 'PRM-STRIKE', 'Respuesta Múltiple (Penalización Progresiva)'
-        RBT_CANON = 'RBT-CANON', 'Respuesta Breve (Precisión Terminológica)'
-        RPP_TRAZA = 'RPP-TRAZA', 'Resolución Procedimental (Arrastre Error)'
-        # Security & Critical Analysis
-        CDS_KILL = 'CDS-KILL', 'Checklist Dicotómico Crítico'
-        DRA_HOLO = 'DRA-HOLO', 'Disertación (Rúbrica Holística)'
-        BMT_SHIFT = 'BMT-SHIFT', 'Mediación y Transferencia de Registro'
-        ILC_CONTEXT = 'ILC-CONTEXT', 'Interpretación de Contexto y Datos Brutos'
-        EV_PALE = 'EV-PALE', 'Transcripción y Exégesis de Fuentes Primarias'
-        # Linguistic & Structural
-        CLO_OPEN = 'CLO-OPEN', 'Open Cloze / Rellenado Abierto'
-        CLO_MULTI = 'CLO-MULTI', 'Multiple Choice Cloze / Rellenado Selectivo'
-        MAT_LINK = 'MAT-LINK', 'Matching / Emparejamiento'
+    # [NUEVO] V06DOC_METADATA Sec 1: Competency Domains / Dominios de Competencia
+    class CompetencyDomain(models.TextChoices):
+        COMP_GEN = 'COMP_GEN', _('Competencias Genéricas')
+        COMP_TRA = 'COMP_TRA', _('Competencias Transversales')
+        COMP_ESP = 'COMP_ESP', _('Competencias Específicas')
+        COMP_PROF = 'COMP_PROF', _('Competencias Profesionales')
 
-    class LevelRequisite(models.TextChoices):
-        MANDATORY = 'Mandatory', 'Obligatorio'
-        OPTIONAL = 'Optional', 'Opcional'
-        ADVANCED = 'Advanced', 'Avanzado'
+    # [NUEVO] V06DOC_METADATA Sec 2: Cognitive Taxonomy / Taxonomía Cognitiva
+    class CognitiveTaxonomy(models.TextChoices):
+        COG_REM = 'COG_REM', _('Recordar (Identificación)')
+        COG_UND = 'COG_UND', _('Comprender (Explicación)')
+        COG_APP = 'COG_APP', _('Aplicar (Uso Práctico)')
+        COG_ANA = 'COG_ANA', _('Analizar (Relación Lógica)')
+        COG_EVAL = 'COG_EVAL', _('Evaluar (Juicio Crítico)')
+        COG_CREA = 'COG_CREA', _('Crear (Generación Original)')
 
-    class FeedbackTaxonomy(models.TextChoices):
-        FB_CONCEPT = 'FB_CONCEPT', 'Error Conceptual'
-        FB_FORMAL = 'FB_FORMAL', 'Error Formal o de Registro'
-        FB_PROCEDURAL = 'FB_PROCEDURAL', 'Error Procedimental o Metodológico'
-        FB_SAFETY = 'FB_SAFETY', 'Violación de Seguridad Crítica'
+    # [NUEVO] V06DOC_METADATA Sec 3: Fail Logic / Lógica de Fallo
+    class FailLogic(models.TextChoices):
+        PENALTY = 'PENALTY', _('Penalización Estándar')
+        FATAL = 'FATAL', _('Error Fatal (Muerte Súbita)')
+        PARTIAL = 'PARTIAL', _('Crédito Parcial')
 
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True, db_index=True)
     section = models.ForeignKey(ExamSection, on_delete=models.CASCADE, related_name='items')
     block_type = models.CharField(max_length=50, choices=BlockType.choices) # PRM-STRIKE, CLO-MULTI...
     widget_id = models.CharField(max_length=50, choices=Widget.choices) # W-OBJ-STRIKE...
     
-    # Item Technical Attributes (V06DOC_METADATA)
-    # Atributos Técnicos del Ítem (V06DOC_METADATA)
+    # Item Technical Attributes (V06DOC_METADATA) / Atributos Técnicos del Ítem
     level_requisite = models.CharField(_('Requisito de Nivel'), max_length=20, choices=LevelRequisite.choices, default=LevelRequisite.MANDATORY)
     weight = models.DecimalField(_('Peso Relativo'), max_digits=3, decimal_places=2, default=1.00)
     estimated_time = models.PositiveIntegerField(_('Tiempo Estimado (s)'), default=0)
     
-    # Contrato JSON segregado
+    # [NUEVO] V06DOC_METADATA Sec 3: Fail Logic explícito
+    fail_logic = models.CharField(_('Lógica de Fallo'), max_length=20, choices=FailLogic.choices, default=FailLogic.PENALTY)
+    
+    # Segregated JSON Contract / Contrato JSON Segregado
     content = models.JSONField(_('Contenido del Ítem'), default=dict, blank=True)
     grading_logic = models.JSONField(_('Lógica de Calificación'), default=dict, blank=True)
-    metadata = models.JSONField(_('Metadatos Pedagógicos'), default=dict, blank=True) # Tags de competencia/cognitivos
+    metadata = models.JSONField(_('Metadatos Pedagógicos'), default=dict, blank=True) # Tags adicionales
 
     order = models.PositiveSmallIntegerField(default=0)
 
@@ -291,6 +280,7 @@ class ExamItem(models.Model):
 class Submission(models.Model):
     """
     Exam delivery and grading report.
+    ---
     Entrega del examen e informe de calificación. Cumple V06DOC_TEMPLATES (Report).
     """
     exam = models.OneToOneField(Exam, on_delete=models.CASCADE, related_name='submission')
@@ -304,4 +294,3 @@ class Submission(models.Model):
     class Meta:
         verbose_name = _('Entrega de Examen')
         verbose_name_plural = _('Entregas de Exámenes')
-

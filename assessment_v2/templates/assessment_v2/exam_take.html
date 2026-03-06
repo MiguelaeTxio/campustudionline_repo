@@ -18,14 +18,19 @@
     .img-scan-viewport { max-height: 500px; width: auto; height: auto; cursor: crosshair; }
     .markers-overlay-layer { pointer-events: none; }
     .marker-dot { position: absolute; width: 12px; height: 12px; background: red; border: 2px solid white; border-radius: 50%; transform: translate(-50%, -50%); }
-    
+    .measure-line { position: absolute; background-color: yellow; height: 2px; transform-origin: 0 0; z-index: 100; pointer-events: none; }
+    .measure-label { position: absolute; background: black; color: white; padding: 2px 4px; font-size: 10px; border-radius: 3px; z-index: 101; }
+
     /* Cloze styles / Estilos para huecos */
     .cloze-box { line-height: 2.2; }
     .cloze-input { display: inline-block; width: auto; min-width: 100px; border-bottom: 2px solid #007bff !important; border: none; padding: 0 5px; background: #f8f9fa; }
     
     /* Chat/Dialog styles / Estilos de Chat/Diálogo */
     .chat-history-viewport { height: 150px; overflow-y: auto; }
-    .chat-viewport { height: 200px; overflow-y: auto; }
+    .chat-viewport { height: 300px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
+    .chat-bubble { max-width: 80%; padding: 10px; border-radius: 10px; font-size: 0.9rem; }
+    .chat-bubble-user { align-self: flex-end; background-color: #0d6efd; color: white; border-bottom-right-radius: 0; }
+    .chat-bubble-system { align-self: flex-start; background-color: #e9ecef; color: black; border-bottom-left-radius: 0; }
     
     /* Sidepanel styles / Estilos del panel lateral */
     .sticky-resource-panel { top: 20px; z-index: 1020; }
@@ -60,6 +65,7 @@
     @keyframes blinker { 50% { opacity: 0; } }
     .hd-zoom-active { transform: scale(1.8); cursor: zoom-out !important; transition: transform 0.3s; z-index: 1050; position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
     .img-scan-max { cursor: zoom-in; }
+    .cursor-measure { cursor: crosshair !important; }
 </style>
 <!-- MathJax for Engineering/Science Rendering -->
 <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
@@ -178,6 +184,16 @@
                         {# 3. ILC-CONTEXT -> W-CLIN-SCAN (HealthStrategy) #}
                         {% elif item.widget_id == 'W-CLIN-SCAN' %}
                         <div class="widget-container p-2 border rounded text-center bg-white">
+                             {# [FIX] W-CLIN-SCAN Measurement Tool #}
+                            <div class="d-flex justify-content-center gap-2 mb-2">
+                                <button class="btn btn-sm btn-outline-secondary" onclick="AssessmentWidgets.toggleMeasure('{{ item.id }}', this)">
+                                    <i class="bi bi-rulers"></i> {% trans "Herramienta de Medición" %}
+                                </button>
+                                <button class="btn btn-sm btn-outline-danger" onclick="AssessmentWidgets.clearScan('{{ item.id }}')">
+                                    <i class="bi bi-trash"></i> {% trans "Borrar Marcas" %}
+                                </button>
+                            </div>
+
                             {% if item.content.media_assets %}
                             <div class="image-wrapper position-relative d-inline-block scan-container scan-container-wrapper" data-item-id="{{ item.id }}">
                                 <img src="{{ item.content.media_assets.0 }}" class="img-fluid rounded border shadow-sm img-scan-max" 
@@ -270,12 +286,13 @@
                                 <div class="col-md-5">
                                     <h6 class="text-muted border-bottom pb-2"><i class="bi bi-bank"></i> {% trans "Repositorio Legal" %}</h6>
                                     <div class="law-nav-body bg-white border p-2 mb-2">
-                                        <input type="text" class="form-control form-control-sm mb-2" placeholder="{% trans 'Buscar jurisprudencia...' %}">
-                                        <div class="list-group small">
+                                        {# [FIX] W-LAW-NAV Search Functionality #}
+                                        <input type="text" class="form-control form-control-sm mb-2 law-search-input" placeholder="{% trans 'Buscar jurisprudencia...' %}">
+                                        <div class="list-group small law-list-group">
                                             {% for doc in item.content.options %}
-                                            <a href="#" class="list-group-item list-group-item-action text-truncate" title="{{ doc }}">{{ doc }}</a>
+                                            <a href="#" class="list-group-item list-group-item-action text-truncate law-item" title="{{ doc }}">{{ doc }}</a>
                                             {% empty %}
-                                            <a href="#" class="list-group-item list-group-item-action">{% trans "Normativa General" %}</a>
+                                            <a href="#" class="list-group-item list-group-item-action law-item">{% trans "Normativa General" %}</a>
                                             {% endfor %}
                                         </div>
                                     </div>
@@ -293,10 +310,11 @@
                             <h6 class="text-muted border-bottom pb-2"><i class="bi bi-chat-dots"></i> {% trans "Interacción Dialéctica (UniversIA)" %}</h6>
                             <div class="chat-viewport bg-white border p-2 mb-2 rounded" id="chat-vp-{{ item.id }}">
                                 <div class="text-muted small text-center mt-2">{% trans "Inicie la mediación o interrogatorio." %}</div>
+                                {# [FIX] W-COMM-DIALOG Interactivity #}
                             </div>
                             <div class="input-group">
-                                <input type="text" class="form-control chat-input response-input-text" placeholder="{% trans 'Escriba su intervención...' %}">
-                                <button class="btn btn-primary" type="button"><i class="bi bi-send"></i></button>
+                                <input type="text" class="form-control chat-input response-input-text" id="chat-input-{{ item.id }}" placeholder="{% trans 'Escriba su intervención...' %}">
+                                <button class="btn btn-primary" type="button" onclick="AssessmentWidgets.sendChatMessage('{{ item.id }}')"><i class="bi bi-send"></i></button>
                             </div>
                         </div>
 
@@ -441,6 +459,10 @@
                 activateSection(currentSectionIndex + 1);
             }
         });
+        
+        // Init New Widgets Logic
+        AssessmentWidgets.initLawSearch();
+        AssessmentWidgets.initChat();
     });
 
     // PMA 3: CLOZE WIDGET HYDRATION (Secure Render)
@@ -470,7 +492,140 @@
     const widgetState = {
         calcSteps: {}, // Map for RPP-TRAZA: itemId -> [{id: 1, value: "x"}]
         scanMarkers: {}, // Metadata for ILC-CONTEXT
-        mixLinks: {}   // Map for MAT-LINK: itemId -> {source: target}
+        mixLinks: {},   // Map for MAT-LINK: itemId -> {source: target}
+        chatLogs: {},   // [FIX] Store chat history
+        measures: {}    // [FIX] W-CLIN-SCAN measures
+    };
+
+    // [FIX] ASSESSMENT WIDGETS CONTROLLER
+    const AssessmentWidgets = {
+        activeMeasure: null,
+
+        // W-LAW-NAV: Search filter
+        initLawSearch: function() {
+            document.querySelectorAll('.law-search-input').forEach(input => {
+                input.addEventListener('keyup', function(e) {
+                    const term = e.target.value.toLowerCase();
+                    const listGroup = this.closest('.widget-container').querySelector('.law-list-group');
+                    listGroup.querySelectorAll('.law-item').forEach(item => {
+                        const text = item.textContent.toLowerCase();
+                        item.style.display = text.includes(term) ? 'block' : 'none';
+                    });
+                });
+            });
+        },
+
+        // W-CLIN-SCAN: Measurement Tool
+        toggleMeasure: function(itemId, btn) {
+            const container = document.querySelector(`.scan-container[data-item-id="${itemId}"]`);
+            if (!container) return;
+
+            if (this.activeMeasure === itemId) {
+                // Disable
+                this.activeMeasure = null;
+                container.classList.remove('cursor-measure');
+                btn.classList.remove('active');
+                container.onclick = null; // Remove measure listener
+                // Restore marker listener (basic implementation re-enables click)
+            } else {
+                // Enable
+                this.activeMeasure = itemId;
+                container.classList.add('cursor-measure');
+                btn.classList.add('active');
+                
+                let startPoint = null;
+                container.onclick = (e) => {
+                    // Stop marker creation when measuring
+                    e.stopPropagation();
+                    const rect = container.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+
+                    if (!startPoint) {
+                        startPoint = {x, y};
+                    } else {
+                        // Draw line
+                        this.drawLine(itemId, startPoint, {x, y}, rect);
+                        startPoint = null;
+                    }
+                };
+            }
+        },
+
+        drawLine: function(itemId, p1, p2, rect) {
+            const overlay = document.getElementById(`overlay-${itemId}`);
+            const length = Math.sqrt(Math.pow(p2.x - p1.x, 2) + Math.pow(p2.y - p1.y, 2));
+            const angle = Math.atan2(p2.y - p1.y, p2.x - p1.x) * 180 / Math.PI;
+
+            const line = document.createElement('div');
+            line.className = 'measure-line';
+            line.style.width = `${length}px`;
+            line.style.left = `${p1.x}px`;
+            line.style.top = `${p1.y}px`;
+            line.style.transform = `rotate(${angle}deg)`;
+            
+            const label = document.createElement('div');
+            label.className = 'measure-label';
+            label.style.left = `${(p1.x + p2.x)/2}px`;
+            label.style.top = `${(p1.y + p2.y)/2}px`;
+            // Calculate relative % distance
+            const relDist = (length / rect.width * 100).toFixed(1);
+            label.innerText = `${relDist}%`;
+
+            overlay.appendChild(line);
+            overlay.appendChild(label);
+        },
+
+        clearScan: function(itemId) {
+             const overlay = document.getElementById(`overlay-${itemId}`);
+             overlay.innerHTML = '';
+             widgetState.scanMarkers[itemId] = [];
+        },
+
+        // W-COMM-DIALOG: Interactive Chat
+        initChat: function() {
+            document.querySelectorAll('.chat-input').forEach(input => {
+                input.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        const itemId = this.id.replace('chat-input-', '');
+                        AssessmentWidgets.sendChatMessage(itemId);
+                    }
+                });
+            });
+        },
+
+        sendChatMessage: function(itemId) {
+            const input = document.getElementById(`chat-input-${itemId}`);
+            const text = input.value.trim();
+            if (!text) return;
+            
+            this.addChatBubble(itemId, text, 'user');
+            input.value = '';
+
+            // Simulate UniversIA response (Interactivity)
+            setTimeout(() => {
+                const responses = [
+                    "{% trans 'Entendido. ¿Podría elaborar más sobre ese punto?' %}",
+                    "{% trans 'Interesante argumento. ¿Cómo se relaciona con la normativa?' %}",
+                    "{% trans 'Continúe, por favor.' %}"
+                ];
+                const reply = responses[Math.floor(Math.random() * responses.length)];
+                this.addChatBubble(itemId, reply, 'system');
+            }, 1000);
+        },
+
+        addChatBubble: function(itemId, text, sender) {
+            const vp = document.getElementById(`chat-vp-${itemId}`);
+            const bubble = document.createElement('div');
+            bubble.className = `chat-bubble chat-bubble-${sender}`;
+            bubble.innerText = text;
+            vp.appendChild(bubble);
+            vp.scrollTop = vp.scrollHeight;
+
+            // Log to state
+            if (!widgetState.chatLogs[itemId]) widgetState.chatLogs[itemId] = [];
+            widgetState.chatLogs[itemId].push({sender, text, ts: Date.now()});
+        }
     };
 
     // 1. RPP-TRAZA LOGIC (W-TECH-CALC)
@@ -511,6 +666,9 @@
     // Visual markers logic
     document.querySelectorAll('.scan-container').forEach(container => {
         container.addEventListener('click', function(e) {
+            // [FIX] Prevent marker creation if measuring
+            if (AssessmentWidgets.activeMeasure === this.dataset.itemId) return;
+
             const rect = this.getBoundingClientRect();
             const x = ((e.clientX - rect.left) / rect.width * 100).toFixed(2);
             const y = ((e.clientY - rect.top) / rect.height * 100).toFixed(2);
@@ -552,7 +710,12 @@
 
     // W-CLIN-SCAN LOGIC: Zoom HD
     document.querySelectorAll('.img-scan-max').forEach(img => {
-        img.addEventListener('click', function() { this.classList.toggle('hd-zoom-active'); });
+        img.addEventListener('click', function() { 
+            // [FIX] Disable Zoom if measuring
+            const itemId = this.closest('.scan-container').dataset.itemId;
+            if (AssessmentWidgets.activeMeasure === itemId) return;
+            this.classList.toggle('hd-zoom-active'); 
+        });
     });
 
     // W-HUM-TEXT LOGIC: Drag & Drop Quotes
@@ -641,6 +804,10 @@
             else if (blockType === 'CLO-OPEN' || blockType === 'CLO-MULTI') {
                 responses[itemId] = Array.from(item.querySelectorAll('.cloze-input')).map(el => el.value);
             } 
+            // 7. [FIX] W-COMM-DIALOG (Chat logs)
+            else if (item.dataset.widgetId === 'W-COMM-DIALOG') {
+                 responses[itemId] = widgetState.chatLogs[itemId] || [];
+            }
             // FALLBACK
             else {
                 const input = item.querySelector('.response-input-text');
