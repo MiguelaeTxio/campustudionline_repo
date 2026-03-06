@@ -2108,3 +2108,11 @@ Carga de contexto obligatoria: Documentación técnica V06DOC y modelos de `asse
 ## CSO
 *  **Session:** Optimización de Rendimiento en Django Admin
 *  **Description:** Auditoría y optimización integral del administrador de Django para eliminar latencias en la carga de vistas. Se aplicarán técnicas de select_related, prefetch_related y defer en los modelos ChatRoom, ChatMessage y ContentMaterial según la hoja de ruta del Hito 24.
+
+# 2026-03-06
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+## CYC !<-- --SYSTEM -->!
+*  **Session:** Auditoría Integral V06: Doc vs Impl
+*  **Description:** Auditoría atómica y absoluta de la implementación del Hito 6 frente a la documentación satélite. Verificación exhaustiva de cumplimiento del principio Skeleton-Prompt Mirroring en modelos, backend, servicios y plantillas frontend. Identificación de discrepancias y actualización del roadmap de incidencias.
+

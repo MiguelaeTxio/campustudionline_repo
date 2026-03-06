@@ -253,12 +253,12 @@ EXAM_ITEM_CONTENT_SCHEMA = {
                         "properties": {
                             "competency_tag": {
                                 "type": "string",
-                                "enum": ["COMP_SEMANTIC", "COMP_GRAMMAR", "COMP_PRAGMATIC", "COMP_CLINICAL", "COMP_LEGAL", "COMP_CALC", "COMP_CRITICAL"],
+                                "enum": ["COMP_GEN", "COMP_TRA", "COMP_ESP", "COMP_PROF"],
                                 "description": "[INCIDENCIA 57] Etiqueta de competencia evaluada (Enum cerrado)."
                             },
                             "cognitive_level": {
                                 "type": "string",
-                                "enum": ["REMEMBER", "UNDERSTAND", "APPLY", "ANALYZE", "EVALUATE", "CREATE"],
+                                "enum": ["COG_REM", "COG_UND", "COG_APP", "COG_ANA", "COG_EVAL", "COG_CREA"],
                                 "description": "[INCIDENCIA 57] Nivel de la taxonomía de Bloom (Enum cerrado)."
                             },
                             "difficulty_index": {

@@ -48,14 +48,14 @@ class BaseExamStrategy(ABC):
         """
         pass
 
-    @abstractmethod
     def get_output_schema(self):
         """
         Defines the expected JSON schema for the AI model response.
-        ---
-        Define el esquema JSON esperado para la respuesta del modelo de IA.
+        Centralizado para cumplir con V06DOC_METADATA y evitar sobrescrituras.
         """
-        pass
+        from core.services.gemini_schemas import EXAM_ITEM_CONTENT_SCHEMA
+        return EXAM_ITEM_CONTENT_SCHEMA
+
     
     @abstractmethod
     def grade_item(self, item, student_input):
