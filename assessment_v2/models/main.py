@@ -1,6 +1,7 @@
 # /home/MiguelAeTxio/PROJECTS/CampuStudiOnline/assessment_v2/models/main.py
 import uuid
 from django.db import models
+from django.core.validators import MinValueValidator, MaxValueValidator
 from django.conf import settings
 from django.utils.translation import gettext_lazy as _
 
@@ -262,7 +263,8 @@ class ExamItem(models.Model):
     
     # Item Technical Attributes (V06DOC_METADATA) / Atributos Técnicos del Ítem
     level_requisite = models.CharField(_('Requisito de Nivel'), max_length=20, choices=LevelRequisite.choices, default=LevelRequisite.MANDATORY)
-    weight = models.DecimalField(_('Peso Relativo'), max_digits=3, decimal_places=2, default=1.00)
+    # [FIX] V06DOC_METADATA Sec 3: Rango estricto 0.1 - 1.0
+    weight = models.DecimalField(_('Peso Relativo'), max_digits=3, decimal_places=2, default=1.00, validators=[MinValueValidator(0.1), MaxValueValidator(1.0)])
     estimated_time = models.PositiveIntegerField(_('Tiempo Estimado (s)'), default=0)
     
     # [NUEVO] V06DOC_METADATA Sec 3: Fail Logic explícito

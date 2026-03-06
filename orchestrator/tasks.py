@@ -1058,9 +1058,13 @@ def generate_exam_task(self, exam_uuid, context_text=None, topic=None):
                             db_sec.section_stimulus = parsed_resp.get("section_stimulus", "")
                             db_sec.save(update_fields=["section_stimulus"])
                         
-                        for i_idx, i_data in enumerate(items):
-                            if i_idx < len(db_items):
-                                db_item = db_items[i_idx]
+                        # [FIX] SKELETON-PROMPT BINDING: Mapeo estricto por UUID devuelto por la IA
+                        db_items_map = {str(item.uuid): item for item in db_items}
+                        for i_data in items:
+                            ai_item_id = i_data.get('item_id')
+                            db_item = db_items_map.get(str(ai_item_id))
+                            
+                            if db_item:
                                 db_item.content = i_data.get('content', {})
                                 db_item.grading_logic = i_data.get('grading_logic', {})
                                 # [HITO 6 BLINDAJE] Preservar metadata original (TaskInstruction)

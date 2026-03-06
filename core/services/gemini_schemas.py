@@ -228,12 +228,8 @@ EXAM_ITEM_CONTENT_SCHEMA = {
                                 "description": "Lista de opciones de respuesta (Mínimo 4)."
                             },
                             # Soporte para otros widgets (Cloze, Matching, etc.)
-                            "text_fragments": {"type": "array", "items": {"type": "string"}},
-                            "gaps": {"type": "array", "items": {"type": "string"}},
-                            "pairs_left": {"type": "array", "items": {"type": "string"}},
-                            "pairs_right": {"type": "array", "items": {"type": "string"}},
-                            "rubric": {"type": "string", "description": "Rúbrica de corrección (Solo para Open-Ended)."},
-                            "sample_answer": {"type": "string", "description": "Respuesta modelo (Solo para Open-Ended)."}
+                            "media_assets": {"type": "array", "items": {"type": "string"}, "description": "URLs de recursos multimedia opcionales."},
+                            "text_with_gaps": {"type": "string", "description": "Texto continuo con huecos (Obligatorio para W-TXT-CLOZE)."}
                         },
                         "required": ["stem"] 
                     },
@@ -244,7 +240,9 @@ EXAM_ITEM_CONTENT_SCHEMA = {
                                 "type": "string",
                                 "description": "[INCIDENCIA 4] Explicación pedagógica detallada de la solución correcta."
                             },
-                            "correct_answer_id": {"type": "string"}
+                            "correct_answer": {"type":["string", "array", "object"], "description": "Solución correcta genérica."},
+                            "gap_solutions": {"type": "array", "items": {"type": "string"}, "description": "Soluciones en orden para los huecos de W-TXT-CLOZE."},
+                            "pairs": {"type": "object", "description": "Pares de vinculación para W-MIX-MATCH."}
                         },
                         "required": ["feedback_justification"]
                     },
@@ -261,27 +259,8 @@ EXAM_ITEM_CONTENT_SCHEMA = {
                                 "enum": ["COG_REM", "COG_UND", "COG_APP", "COG_ANA", "COG_EVAL", "COG_CREA"],
                                 "description": "[INCIDENCIA 57] Nivel de la taxonomía de Bloom (Enum cerrado)."
                             },
-                            "difficulty_index": {
-                                "type": "number",
-                                "description": "Índice de dificultad estimado (0.0 a 1.0)."
-                            },
-                            # [INCIDENCIA 7] Parámetros Técnicos
-                            "technical_density": {
-                                "type": "string",
-                                "enum": ["LOW", "MEDIUM", "HIGH"],
-                                "description": "Densidad de conceptos técnicos en el ítem."
-                            },
-                            "linguistic_quality": {
-                                "type": "string",
-                                "enum": ["STANDARD", "ACADEMIC", "NATIVE_PROFESSIONAL"],
-                                "description": "Registro lingüístico utilizado."
-                            },
-                            "bias_check": {
-                                "type": "boolean",
-                                "description": "Confirmación de que el ítem ha sido revisado contra sesgos."
-                            }
                         },
-                        "required": ["competency_tag", "cognitive_level", "difficulty_index", "technical_density", "linguistic_quality", "bias_check"]
+                        "required": ["competency_tag", "cognitive_level"]
                     }
                 },
                 "required": ["content", "grading_logic", "metadata"]

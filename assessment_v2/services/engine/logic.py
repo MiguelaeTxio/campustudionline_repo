@@ -195,7 +195,9 @@ class GradingOrchestrator:
             }
 
             for item in section.items.all():
-                student_input = responses.get(str(item.id))
+                student_payload = responses.get(str(item.id), {})
+                # [FIX] V06DOC_TEMPLATES Sec 4: Extraer raw_input respetando el contrato
+                student_input = student_payload.get('raw_input') if isinstance(student_payload, dict) and 'raw_input' in student_payload else student_payload
                 item_raw_score, item_feedback = strategy.grade_item(item, student_input)
                 
                 # Apply Rigor Adjustment (Ref: V06DOC_LEVELS)
@@ -243,11 +245,12 @@ class GradingOrchestrator:
                     # Safety Feedback Priority
                     report['feedback_stats']['FB_SAFETY'] += 1
 
+                # [FIX] V06DOC_TEMPLATES Sec 5: Contrato estricto GRADING_REPORT
                 section_report['items'].append({
-                    "id": item.id,
-                    "score": float(item_final_score),
-                    "feedback": item_feedback,
-                    "feedback_category": fb_category
+                    "item_id": str(item.id),
+                    "item_score": float(item_final_score),
+                    "feedback_category": fb_category,
+                    "justification": item_feedback.get('justification', item_feedback.get('feedback_justification', ''))
                 })
                 section_score += item_final_score
 

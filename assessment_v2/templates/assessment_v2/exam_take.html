@@ -133,7 +133,7 @@
 
                         {# --- VOICE RECORDER INTEGRATION (Speaking) --- #}
                         {# INTEGRACIÓN GRABADORA DE VOZ (Speaking) #}
-                        {% if section.subdivision_id == 'SD_SPEAK' %}
+                        {% if section.subdivision_id == 'SD_SPEAK' or item.widget_id == 'W-COMM-DIALOG' %}
                         <div class="widget-container p-3 border rounded bg-light mb-3 text-center">
                             <h6 class="text-primary">{% trans "Grabación de Respuesta Oral" %}</h6>
                             <div class="d-flex justify-content-center gap-2 mb-2">
@@ -307,7 +307,10 @@
                         {# 8. W-COMM-DIALOG -> Mediación / Chat #}
                         {% elif item.widget_id == 'W-COMM-DIALOG' %}
                         <div class="widget-container border rounded bg-light p-3">
-                            <h6 class="text-muted border-bottom pb-2"><i class="bi bi-chat-dots"></i> {% trans "Interacción Dialéctica (UniversIA)" %}</h6>
+                            <h6 class="text-muted border-bottom pb-2 d-flex justify-content-between align-items-center">
+    <span><i class="bi bi-chat-dots"></i> {% trans "Interacción Dialéctica (UniversIA)" %}</span>
+    <span class="badge bg-secondary" id="chat-quality-{{ item.id }}">Registro: N/A</span>
+</h6>
                             <div class="chat-viewport bg-white border p-2 mb-2 rounded" id="chat-vp-{{ item.id }}">
                                 <div class="text-muted small text-center mt-2">{% trans "Inicie la mediación o interrogatorio." %}</div>
                                 {# [FIX] W-COMM-DIALOG Interactivity #}
@@ -513,6 +516,20 @@
                     });
                 });
             });
+            // [FIX] W-LAW-NAV Cita rápida
+            document.querySelectorAll('.law-item').forEach(item => {
+                item.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const container = this.closest('.widget-container');
+                    const textarea = container.querySelector('textarea.response-input-text');
+                    if (textarea) {
+                        const citation = this.textContent.trim();
+                        textarea.value += (textarea.value ? '
+' : '') + `[Ref: ${citation}] `;
+                        textarea.focus();
+                    }
+                });
+            });
         },
 
         // W-CLIN-SCAN: Measurement Tool
@@ -589,6 +606,20 @@
                     if (e.key === 'Enter') {
                         const itemId = this.id.replace('chat-input-', '');
                         AssessmentWidgets.sendChatMessage(itemId);
+                    }
+                });
+                // [FIX] W-COMM-DIALOG Análisis de registro
+                input.addEventListener('input', function() {
+                    const val = this.value.trim().toLowerCase();
+                    const itemId = this.id.replace('chat-input-', '');
+                    const metric = document.getElementById(`chat-quality-${itemId}`);
+                    if(!metric) return;
+                    if(val.length > 20 && (val.includes('usted') || val.includes('podría') || val.includes('considero') || val.includes('sin embargo'))) {
+                        metric.className = 'badge bg-success'; metric.innerText = 'Registro: FORMAL';
+                    } else if(val.length > 5) {
+                        metric.className = 'badge bg-warning text-dark'; metric.innerText = 'Registro: COLOQUIAL';
+                    } else {
+                        metric.className = 'badge bg-secondary'; metric.innerText = 'Registro: N/A';
                     }
                 });
             });
