@@ -848,10 +848,17 @@
             if (blockType === 'RPP-TRAZA') {
                 responses[itemId] = { steps: widgetState.calcSteps[itemId] || [] };
             } 
-            // 2. CDS-KILL (HealthStrategy): Requires boolean or { checked: bool }
+            // 2. CDS-KILL (HealthStrategy): Checklist capture
             else if (blockType === 'CDS-KILL') {
-                const checkbox = item.querySelector('.response-input-kill');
-                responses[itemId] = { checked: checkbox ? checkbox.checked : false };
+                const checkboxes = item.querySelectorAll('.response-input-kill');
+                if (checkboxes.length > 1) {
+                    const checkedOptions = Array.from(checkboxes).filter(cb => cb.checked).map(cb => cb.value);
+                    responses[itemId] = { checked: checkedOptions.length > 0, selected_options: checkedOptions };
+                } else if (checkboxes.length === 1) {
+                    responses[itemId] = { checked: checkboxes[0].checked };
+                } else {
+                    responses[itemId] = { checked: false };
+                }
             } 
             // 3. ILC-CONTEXT / DRA-HOLO / RBT-CANON (Simple text)
             else if (blockType === 'ILC-CONTEXT' || blockType === 'DRA-HOLO' || blockType === 'RBT-CANON') {
@@ -860,6 +867,11 @@
                     responses[itemId] = {
                         text: input ? input.value : '',
                         formal_penalty: parseFloat(item.dataset.formalPenalty || 0)
+                    };
+                } else if (blockType === 'ILC-CONTEXT') {
+                    responses[itemId] = {
+                        text: input ? input.value : '',
+                        markers: widgetState.scanMarkers[itemId] || []
                     };
                 } else {
                     responses[itemId] = input ? input.value : '';
