@@ -120,6 +120,9 @@ class Exam(models.Model):
     # Anti-Abuse (24h Rule) / Anti-Abuso (Regla de las 24 horas)
     expiration_date = models.DateTimeField(_('Fecha de Caducidad'), null=True, blank=True)
 
+    # [HITO 06] Requisito V06DOC_ARCHETYPES (Lenguas)
+    is_sequential = models.BooleanField(_('Secuencial Obligatorio'), default=False, help_text=_('Impide el retroceso a secciones anteriores una vez completadas.'))
+
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='PENDING', db_index=True)
     
     # Traceability and Logs / Trazabilidad y Logs
@@ -289,6 +292,10 @@ class Submission(models.Model):
     exam = models.OneToOneField(Exam, on_delete=models.CASCADE, related_name='submission')
     student_responses = models.JSONField(_('Respuestas del Estudiante'), null=True)
     grading_report = models.JSONField(_('Informe de Calificación'), null=True)
+    
+    # [HITO 06] Requisito V06DOC_ARCHETYPES (Criterio Éxito por Destreza)
+    section_scores = models.JSONField(_('Calificaciones por Sección'), null=True, blank=True)
+    
     final_score = models.DecimalField(max_digits=4, decimal_places=2, null=True)
     passed = models.BooleanField(default=False)
     submitted_at = models.DateTimeField(auto_now_add=True)

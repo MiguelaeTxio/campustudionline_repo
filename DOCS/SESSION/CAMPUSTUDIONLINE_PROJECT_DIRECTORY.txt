@@ -448,10 +448,12 @@
 ./assessment_v2/migrations/0017_examitem_fail_logic_alter_exam_sub_archetype_id_and_more.py
 ./assessment_v2/migrations/0004_remove_exam_structure_exam_grading_params_and_more.py
 ./assessment_v2/migrations/0003_exam_content_copy.py
+./assessment_v2/migrations/0018_exam_is_sequential_submission_section_scores_and_more.py
 ./assessment_v2/migrations/0007_exam_expiration_date_alter_exam_status.py
 ./assessment_v2/migrations/__init__.py
 ./assessment_v2/migrations/0013_alter_examitem_content_alter_examitem_grading_logic_and_more.py
 ./assessment_v2/migrations/0011_populate_uuids.py
+./assessment_v2/migrations/0019_alter_exam_is_sequential_alter_examitem_block_type_and_more.py
 ./assessment_v2/migrations/0008_examsection_layout_mode_examsection_section_stimulus.py
 ./assessment_v2/migrations/0006_costlog_api_key_name_exam_immersion_mode.py
 ./assessment_v2/migrations/0002_alter_subscriptionplan_can_access_c_level_and_more.py
