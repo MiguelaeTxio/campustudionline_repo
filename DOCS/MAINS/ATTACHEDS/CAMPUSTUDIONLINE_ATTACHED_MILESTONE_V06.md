@@ -19,29 +19,34 @@ Es de ESTRICTO CUMPLIMIENTO cargar la constelación satélite completa al inicio
 
 
 ### FASE II: AUDITORÍA INTEGRAL Y ABSOLUTA (DOC VS. IMPL)
-Auditoría técnica exhaustiva de todo el código implicado frente a la documentación cargada:
-1.  **Identificación de Archivos:** Localizar todos los archivos del sistema que deban reflejar las directrices de la documentación (Estrategias, Orquestador, Servicios, Modelos, etc.).
-2.  **Verificación Atómica:** Auditar cada archivo para asegurar que la implementación es un reflejo absoluto, integral y exacto de la documentación.
-3.  **Detección de Desviaciones:** Cualquier discrepancia entre lo que dicta la documentación y lo que ejecuta el código debe ser identificada para su corrección inmediata. El nivel de granularidad de las discrepancias debe ser atómico.
 
-***PLAN DE ACCIÓN: EN PROGRESO (Incidencias 56-60)***
+Para realizar la auditoría, debes
+escoger el primer archivo de la
+constelación documental del hito 6
+y realizar una auditoría a nivel
+subatómico, línea por líneav de su
+implementación en el código.
+Debes solicitar todos los archivos
+donde debe estar reflejado dicho
+documento y compararlo y anotar
+todas las discrepancias.
+Si no existe ninguna discrepancia,
+deberás pasar al siguiente archivo
+hasta completar toda la constelación
+documental.
 
-#### PLAN DE ACCIÓN **EN PROGRESO**
-Ir ejecutando todos los puntos
-no marcados con [X] de `V06DOC_INCIDENTS_ROADMAP.md`.
-**DURANTE EL `PMDS` ÚNICAMENTE SE**
-**MODIFICARÁ `V06DOC_INCIDENTS_ROADMAP.md` *MEDIANTE`PMA`***
-**PARA MARCAR LOS PUNTOS CORREGIDOS EN LA SESIÓN.**
-**ESTA DIRECTRIZ DE CAMBIO EN EL `PMDS`**
-**PREVALECE SOBRE LA DEL `TOTA_COMMANDER`**
-**EN TUS INSTRUCCIONES DEL SISTEMA**
+### FASE III:
+
+*   Solucionar incidencias.
+
+### FASE IV:
+
+*   `PCS`
 
 ## DIRECTRICES OBLIGATORIAS QUE PREVALECEN SOBRE HOMÓLOGAS DEL TOTAL_COMMANDER (INSTRUCCIONES DEL SISTEMA)
 
-
-* El protocolo de actualización del historial de Gemini PAH se pospone hasta haber ejecutado la auditoría y saber qué tareas se van a cometer en la sesión.
-* Ejecuta `PMDS` **SOLO** si el `PLAN DE ACCIÓN` está en progreso.
-
+*   NO SE EJECUTA `PMDS`
+*   EL`PAH`SE EJECUTA TRAS LA `FASE II`
 
 
 

@@ -101,7 +101,7 @@ class HumanitiesStrategy(BaseExamStrategy):
         elif sid == "SUB-HUM-MUS":
             skeleton = [
                 {"subdivision_id": "SD_SOURCE", "title": "Análisis Musical", "instructions": "Analice la obra.", "layout_mode": "SPLIT_TEXT", "items": [{"block_type": "EV-PALE", "widget_id": "W-HUM-TEXT", "task_instruction": I_SOURCE}]},
-                {"subdivision_id": "SD_TRANS", "title": "Transcripción/Dictado", "instructions": "Transcriba el fragmento.", "layout_mode": "SPLIT_TEXT", "items": [{"block_type": "EV-PALE", "widget_id": "W-HUM-TEXT", "task_instruction": I_TRANS}]}
+                {"subdivision_id": "SD_SOURCE", "title": "Transcripción/Dictado", "instructions": "Transcriba el fragmento.", "layout_mode": "SPLIT_TEXT", "items": [{"block_type": "EV-PALE", "widget_id": "W-HUM-TEXT", "task_instruction": I_TRANS}]}
             ]
         elif sid == "SUB-HUM-ART-CREA":
             skeleton = [

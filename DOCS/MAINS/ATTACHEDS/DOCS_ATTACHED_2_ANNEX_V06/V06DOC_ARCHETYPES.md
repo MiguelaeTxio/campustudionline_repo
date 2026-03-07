@@ -55,3 +55,12 @@
 *   **Destrezas:** Crítica de Fuentes, Contextualización, Calidad Discursiva, Paleografía.
 *   **Bloques:** Comentario de Texto, Comparativa de Fuentes, Ensayo, Diseño Didáctico.
 *   **Criterio de Éxito:** Rúbrica Holística. La corrección formal es eliminatoria (-2 puntos).
+
+## 6. ARQUETIPO: CIENCIAS PURAS Y EXPERIMENTALES (METODOLÓGICO/EMPÍRICO)
+*   **Mecánica:** Rigor deductivo formal, validación de hipótesis y experimentación analítica.
+*   **Fin:** Acreditación de capacidad analítica, formulación de modelos y trabajo de campo/laboratorio.
+*   **Itinerarios:** Biología, Química, Física, Geología, Ambientales, Ciencia de Datos.
+*   **Niveles:** Introductorio, Aplicado, Investigador.
+*   **Destrezas:** Modelado formal, Precisión algorítmica, Análisis de datos, Método científico.
+*   **Bloques Típicos:** Resolución algorítmica, Demostración matemática, Análisis de laboratorio.
+*   **Criterio de Éxito:** Exactitud analítica y rigor absoluto en el método científico.

@@ -177,37 +177,37 @@ class LanguagesStrategy(BaseExamStrategy):
         # 2. SUB-LIN-MINOR: Modelo Iniciación (Chino/Ruso Minor)
         elif sid == "SUB-LIN-MINOR":
             skeleton = [
-                {"subdivision_id": "SD_SCRIPT", "title": "Grafía y Dictado", "instructions": "Escriba los caracteres/términos dictados.", "layout_mode": "STANDARD", "items": [{"block_type": "RBT-CANON", "widget_id": "W-OBJ-STRIKE", "task_instruction": "Genera un ejercicio de reconocimiento de grafías o caracteres (RBT-CANON)."}]},
-                {"subdivision_id": "SD_GRAMMAR", "title": "Estructuras Básicas", "instructions": "Complete las oraciones gramaticales.", "layout_mode": "STANDARD", "items": [{"block_type": "CLO-MULTI", "widget_id": "W-TXT-CLOZE", "task_instruction": "Genera oraciones con huecos a rellenar evaluando gramática básica (CLO-MULTI)."}]},
-                {"subdivision_id": "SD_CULTURE", "title": "Cultura y Civilización", "instructions": "Responda sobre el contexto socio-cultural.", "layout_mode": "STANDARD", "items": [{"block_type": "PRM-STRIKE", "widget_id": "W-OBJ-STRIKE", "task_instruction": "Genera preguntas de opción múltiple sobre cultura y civilización del idioma (PRM-STRIKE)."}]}
+                {"subdivision_id": "SD_WRIT", "title": "Grafía y Dictado", "instructions": "Escriba los caracteres/términos dictados.", "layout_mode": "STANDARD", "items": [{"block_type": "RBT-CANON", "widget_id": "W-OBJ-STRIKE", "task_instruction": "Genera un ejercicio de reconocimiento de grafías o caracteres (RBT-CANON)."}]},
+                {"subdivision_id": "SD_READ", "title": "Estructuras Básicas", "instructions": "Complete las oraciones gramaticales.", "layout_mode": "STANDARD", "items": [{"block_type": "CLO-MULTI", "widget_id": "W-TXT-CLOZE", "task_instruction": "Genera oraciones con huecos a rellenar evaluando gramática básica (CLO-MULTI)."}]},
+                {"subdivision_id": "SD_MEDI", "title": "Cultura y Civilización", "instructions": "Responda sobre el contexto socio-cultural.", "layout_mode": "STANDARD", "items": [{"block_type": "PRM-STRIKE", "widget_id": "W-OBJ-STRIKE", "task_instruction": "Genera preguntas de opción múltiple sobre cultura y civilización del idioma (PRM-STRIKE)."}]}
             ]
 
         # 3. SUB-LIN-PHILO: Modelo Filológico (Historia de la Lengua)
         elif sid == "SUB-LIN-PHILO":
             skeleton = [
-                {"subdivision_id": "SD_HIST_GRAM", "title": "Gramática Histórica", "instructions": "Analice la evolución fonética de los étimos.", "layout_mode": "STANDARD", "items": [{"block_type": "DRA-HOLO", "widget_id": "W-HUM-TEXT", "task_instruction": "Genera un ejercicio de análisis de evolución fonética de étimos."}]},
-                {"subdivision_id": "SD_PHONETICS", "title": "Análisis Fonético", "instructions": "Transcriba y analice los rasgos fonológicos.", "layout_mode": "SPLIT_TEXT", "items": [{"block_type": "CLO-OPEN", "widget_id": "W-TXT-CLOZE", "task_instruction": "Genera un texto para transcripción y análisis de rasgos fonológicos."}]}
+                {"subdivision_id": "SD_SOURCE", "title": "Gramática Histórica", "instructions": "Analice la evolución fonética de los étimos.", "layout_mode": "STANDARD", "items": [{"block_type": "DRA-HOLO", "widget_id": "W-HUM-TEXT", "task_instruction": "Genera un ejercicio de análisis de evolución fonética de étimos."}]},
+                {"subdivision_id": "SD_LIST", "title": "Análisis Fonético", "instructions": "Transcriba y analice los rasgos fonológicos.", "layout_mode": "SPLIT_TEXT", "items": [{"block_type": "CLO-OPEN", "widget_id": "W-TXT-CLOZE", "task_instruction": "Genera un texto para transcripción y análisis de rasgos fonológicos."}]}
             ]
 
         # 4. SUB-LIN-NORM: Modelo Norma y Uso (Español Actual)
         elif sid == "SUB-LIN-NORM":
             skeleton = [
-                {"subdivision_id": "SD_DEVIATIONS", "title": "Análisis de Desviaciones", "instructions": "Identifique y corrija errores de norma.", "layout_mode": "SPLIT_TEXT", "items": [{"block_type": "CLO-MULTI", "widget_id": "W-TXT-CLOZE", "task_instruction": "Genera un texto con errores normativos para identificar y corregir."}]},
-                {"subdivision_id": "SD_EXEGESIS", "title": "Exégesis Normativa", "instructions": "Justifique el uso según la normativa académica.", "layout_mode": "SPLIT_TEXT", "items": [{"block_type": "DRA-HOLO", "widget_id": "W-HUM-TEXT", "task_instruction": "Genera un caso de exégesis normativa para justificar el uso académico."}]}
+                {"subdivision_id": "SD_READ", "title": "Análisis de Desviaciones", "instructions": "Identifique y corrija errores de norma.", "layout_mode": "SPLIT_TEXT", "items": [{"block_type": "CLO-MULTI", "widget_id": "W-TXT-CLOZE", "task_instruction": "Genera un texto con errores normativos para identificar y corregir."}]},
+                {"subdivision_id": "SD_DISC", "title": "Exégesis Normativa", "instructions": "Justifique el uso según la normativa académica.", "layout_mode": "SPLIT_TEXT", "items": [{"block_type": "DRA-HOLO", "widget_id": "W-HUM-TEXT", "task_instruction": "Genera un caso de exégesis normativa para justificar el uso académico."}]}
             ]
 
         # 5. SUB-LIN-TRA-TECH: Traducción Técnica
         elif sid in ["SUB-LIN-TRA-TECH", "SUB-LIN-PROF"]:
             skeleton = [
-                {"subdivision_id": "SD_GLOSSARY", "title": "Glosario Terminológico", "instructions": "Vincule los términos técnicos con su equivalente.", "layout_mode": "STANDARD", "items": [{"block_type": "MAT-LINK", "widget_id": "W-MIX-MATCH", "task_instruction": "Genera un glosario de términos técnicos para vincular con su equivalente."}]},
-                {"subdivision_id": "SD_TRANS_TECH", "title": "Traducción Técnica", "instructions": "Traduzca el texto manteniendo la precisión.", "layout_mode": "SPLIT_TEXT", "items": [{"block_type": "DRA-HOLO", "widget_id": "W-HUM-TEXT", "task_instruction": "Proporciona un texto técnico complejo para su traducción precisa."}]}
+                {"subdivision_id": "SD_READ", "title": "Glosario Terminológico", "instructions": "Vincule los términos técnicos con su equivalente.", "layout_mode": "STANDARD", "items": [{"block_type": "MAT-LINK", "widget_id": "W-MIX-MATCH", "task_instruction": "Genera un glosario de términos técnicos para vincular con su equivalente."}]},
+                {"subdivision_id": "SD_MEDI", "title": "Traducción Técnica", "instructions": "Traduzca el texto manteniendo la precisión.", "layout_mode": "SPLIT_TEXT", "items": [{"block_type": "DRA-HOLO", "widget_id": "W-HUM-TEXT", "task_instruction": "Proporciona un texto técnico complejo para su traducción precisa."}]}
             ]
 
         # 6. SUB-LIN-TRA-LIT: Traducción Literaria
         elif sid in ["SUB-LIN-TRA-LIT", "SUB-LIN-LIT"]:
             skeleton = [
-                {"subdivision_id": "SD_STYLE", "title": "Análisis Estilístico", "instructions": "Identifique los rasgos de estilo del autor.", "layout_mode": "SPLIT_TEXT", "items": [{"block_type": "CLO-MULTI", "widget_id": "W-TXT-CLOZE", "task_instruction": "Genera un texto literario con huecos para identificar rasgos de estilo."}]},
-                {"subdivision_id": "SD_TRANS_LIT", "title": "Traducción Literaria", "instructions": "Traduzca preservando la carga estética.", "layout_mode": "SPLIT_TEXT", "items": [{"block_type": "DRA-HOLO", "widget_id": "W-HUM-TEXT", "task_instruction": "Proporciona un texto literario para traducir preservando su carga estética."}]}
+                {"subdivision_id": "SD_READ", "title": "Análisis Estilístico", "instructions": "Identifique los rasgos de estilo del autor.", "layout_mode": "SPLIT_TEXT", "items": [{"block_type": "CLO-MULTI", "widget_id": "W-TXT-CLOZE", "task_instruction": "Genera un texto literario con huecos para identificar rasgos de estilo."}]},
+                {"subdivision_id": "SD_MEDI", "title": "Traducción Literaria", "instructions": "Traduzca preservando la carga estética.", "layout_mode": "SPLIT_TEXT", "items": [{"block_type": "DRA-HOLO", "widget_id": "W-HUM-TEXT", "task_instruction": "Proporciona un texto literario para traducir preservando su carga estética."}]}
             ]
 
         return skeleton

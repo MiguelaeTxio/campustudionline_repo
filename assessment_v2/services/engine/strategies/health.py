@@ -76,30 +76,6 @@ class HealthStrategy(BaseExamStrategy):
             score = Decimal(str(hits / len(keywords)))
             return score, {"status": "GRADED", "hits": hits}
 
-        # --- MOTOR 4: LIKERT-SCALE (Escala de Desempeño ECOE) ---
-        # Ref: V06DOC_BLOCKS Section 2 (Incidencia 38)
-        elif block_type == 'LIKERT-SCALE':
-            # Input esperado: Valor entero 1-5 o 0-10
-            try:
-                val = float(student_input)
-                max_val = float(logic.get('max_scale', 5))
-                min_threshold = float(logic.get('min_threshold', 3))
-                
-                # Normalización a 0.0 - 1.0
-                normalized_score = Decimal(str(val / max_val))
-                normalized_score = min(max(normalized_score, Decimal('0.0')), Decimal('1.0'))
-                
-                status = "COMPETENT" if val >= min_threshold else "NEEDS_IMPROVEMENT"
-                
-                return normalized_score, {
-                    "status": status, 
-                    "raw_value": val, 
-                    "max_value": max_val,
-                    "feedback_category": "FB_PROCEDURAL"
-                }
-            except (ValueError, TypeError):
-                return Decimal('0.0'), {"status": "FORMAT_ERROR", "detail": "Valor de escala Likert inválido."}
-
         return Decimal('0.0'), {"status": "PENDING"}
 
     def get_section_plan(self):
@@ -111,31 +87,31 @@ class HealthStrategy(BaseExamStrategy):
         if self.itinerary_id == 'ITIN_ROT':
             return [
                 {
-                    "subdivision_id": "SD_ANAMNESIS",
+                    "subdivision_id": "SD_FACT",
                     "title": "Estación 1: Anamnesis y Entrevista",
                     "instructions": "Realice la entrevista clínica completa. Indague en antecedentes y sintomatología.",
                     "time_limit": 420 # 7 minutos estándar ECOE
                 },
                 {
-                    "subdivision_id": "SD_EXPLORATION",
+                    "subdivision_id": "SD_PROC",
                     "title": "Estación 2: Exploración Física",
                     "instructions": "Ejecute las maniobras de exploración física pertinentes por sistemas.",
                     "time_limit": 420
                 },
                 {
-                    "subdivision_id": "SD_TESTS",
+                    "subdivision_id": "SD_VERIF",
                     "title": "Estación 3: Pruebas Complementarias",
                     "instructions": "Solicite e interprete las pruebas diagnósticas (Imagen/Lab) necesarias.",
                     "time_limit": 300 # 5 minutos
                 },
                 {
-                    "subdivision_id": "SD_DIAG_PLAN",
+                    "subdivision_id": "SD_NORM",
                     "title": "Estación 4: Juicio Clínico y Plan",
                     "instructions": "Establezca el diagnóstico diferencial y el plan terapéutico.",
                     "time_limit": 420
                 },
                 {
-                    "subdivision_id": "SD_COMM_ETHICS",
+                    "subdivision_id": "SD_ETHI",
                     "title": "Estación 5: Comunicación y Ética",
                     "instructions": "Informe al paciente/familia y gestione aspectos bioéticos o legales.",
                     "time_limit": 300
@@ -151,13 +127,13 @@ class HealthStrategy(BaseExamStrategy):
                 "time_limit": 300
             },
             {
-                "subdivision_id": "SD_CLINICAL",
+                "subdivision_id": "SD_THEO",
                 "title": "Fase 2: Razonamiento Clínico",
                 "instructions": "Elabore el diagnóstico y tratamiento.",
                 "time_limit": 600
             },
             {
-                "subdivision_id": "SD_SAFETY",
+                "subdivision_id": "SD_ETHI",
                 "title": "Fase 3: Seguridad y Normativa",
                 "instructions": "Valore riesgos y cumplimiento de protocolos.",
                 "time_limit": 300
@@ -185,66 +161,66 @@ class HealthStrategy(BaseExamStrategy):
         if sid == "SUB-SAN-MED-CLIN":
             skeleton = [
                 {"subdivision_id": "SD_FACT", "title": "Anamnesis y Hechos", "instructions": "Identifique signos y síntomas clave.", "layout_mode": "STANDARD", "items": [{"block_type": "PRM-STRIKE", "widget_id": "W-OBJ-STRIKE", "task_instruction": I_CLINIC_Q}]},
-                {"subdivision_id": "SD_DIAG", "title": "Diagnóstico por Imagen", "instructions": "Interprete la prueba diagnóstica.", "layout_mode": "SPLIT_TEXT", "items": [{"block_type": "ILC-CONTEXT", "widget_id": "W-CLIN-SCAN", "task_instruction": I_IMAGE}]},
-                {"subdivision_id": "SD_THERA", "title": "Plan Terapéutico", "instructions": "Establezca el tratamiento adecuado.", "layout_mode": "STANDARD", "items": [{"block_type": "PRM-STRIKE", "widget_id": "W-OBJ-STRIKE", "task_instruction": I_TREATMENT}]}
+                {"subdivision_id": "SD_VERIF", "title": "Diagnóstico por Imagen", "instructions": "Interprete la prueba diagnóstica.", "layout_mode": "SPLIT_TEXT", "items": [{"block_type": "ILC-CONTEXT", "widget_id": "W-CLIN-SCAN", "task_instruction": I_IMAGE}]},
+                {"subdivision_id": "SD_NORM", "title": "Plan Terapéutico", "instructions": "Establezca el tratamiento adecuado.", "layout_mode": "STANDARD", "items": [{"block_type": "PRM-STRIKE", "widget_id": "W-OBJ-STRIKE", "task_instruction": I_TREATMENT}]}
             ]
         # 2. SUB-SAN-MED-BASIC: Básicas Médicas (Anatomía/Fisio)
         elif sid == "SUB-SAN-MED-BASIC":
             skeleton = [
-                {"subdivision_id": "SD_IDENT", "title": "Identificación Anatómica", "instructions": "Señale la estructura o tejido en la imagen.", "layout_mode": "SPLIT_TEXT", "items": [{"block_type": "ILC-CONTEXT", "widget_id": "W-CLIN-SCAN", "task_instruction": "Describe una imagen anatómica o histológica para que el alumno identifique la estructura señalada."}]},
-                {"subdivision_id": "SD_FUNC", "title": "Fisiología y Función", "instructions": "Explique el mecanismo fisiológico.", "layout_mode": "STANDARD", "items": [{"block_type": "PRM-STRIKE", "widget_id": "W-OBJ-STRIKE", "task_instruction": "Genera una pregunta sobre mecanismos fisiológicos o función celular."}]}
+                {"subdivision_id": "SD_FACT", "title": "Identificación Anatómica", "instructions": "Señale la estructura o tejido en la imagen.", "layout_mode": "SPLIT_TEXT", "items": [{"block_type": "ILC-CONTEXT", "widget_id": "W-CLIN-SCAN", "task_instruction": "Describe una imagen anatómica o histológica para que el alumno identifique la estructura señalada."}]},
+                {"subdivision_id": "SD_THEO", "title": "Fisiología y Función", "instructions": "Explique el mecanismo fisiológico.", "layout_mode": "STANDARD", "items": [{"block_type": "PRM-STRIKE", "widget_id": "W-OBJ-STRIKE", "task_instruction": "Genera una pregunta sobre mecanismos fisiológicos o función celular."}]}
             ]
         # 3. SUB-SAN-ODON: Odontología
         elif sid == "SUB-SAN-ODON":
             skeleton = [
-                {"subdivision_id": "SD_IMAG", "title": "Radiología Dental", "instructions": "Identifique hallazgos en la ortopantomografía.", "layout_mode": "SPLIT_TEXT", "items": [{"block_type": "ILC-CONTEXT", "widget_id": "W-CLIN-SCAN", "task_instruction": "Describe una ortopantomografía o radiografía periapical con una patología dental visible."}]},
+                {"subdivision_id": "SD_FACT", "title": "Radiología Dental", "instructions": "Identifique hallazgos en la ortopantomografía.", "layout_mode": "SPLIT_TEXT", "items": [{"block_type": "ILC-CONTEXT", "widget_id": "W-CLIN-SCAN", "task_instruction": "Describe una ortopantomografía o radiografía periapical con una patología dental visible."}]},
                 {"subdivision_id": "SD_PROC", "title": "Procedimiento Técnico", "instructions": "Ejecute el protocolo de intervención dental.", "layout_mode": "STANDARD", "items": [{"block_type": "CDS-KILL", "widget_id": "W-PROC-ACTION", "task_instruction": I_SAFETY}]}
             ]
         # 4. SUB-SAN-FISIO: Fisioterapia
         elif sid == "SUB-SAN-FISIO":
             skeleton = [
-                {"subdivision_id": "SD_VALORATION", "title": "Valoración Funcional", "instructions": "Determine el grado de afectación funcional.", "layout_mode": "STANDARD", "items": [{"block_type": "PRM-STRIKE", "widget_id": "W-OBJ-STRIKE", "task_instruction": I_CLINIC_Q}]},
-                {"subdivision_id": "SD_ANAT_PALP", "title": "Anatomía Palpatoria", "instructions": "Localice el punto gatillo o estructura.", "layout_mode": "SPLIT_TEXT", "items": [{"block_type": "ILC-CONTEXT", "widget_id": "W-CLIN-SCAN", "task_instruction": "Describe una zona anatómica para palpación o identificación de puntos gatillo."}]}
+                {"subdivision_id": "SD_FACT", "title": "Valoración Funcional", "instructions": "Determine el grado de afectación funcional.", "layout_mode": "STANDARD", "items": [{"block_type": "PRM-STRIKE", "widget_id": "W-OBJ-STRIKE", "task_instruction": I_CLINIC_Q}]},
+                {"subdivision_id": "SD_PROC", "title": "Anatomía Palpatoria", "instructions": "Localice el punto gatillo o estructura.", "layout_mode": "SPLIT_TEXT", "items": [{"block_type": "ILC-CONTEXT", "widget_id": "W-CLIN-SCAN", "task_instruction": "Describe una zona anatómica para palpación o identificación de puntos gatillo."}]}
             ]
         # 5. SUB-SAN-CUID: Enfermería (NANDA)
         elif sid == "SUB-SAN-CUID":
             skeleton = [
-                {"subdivision_id": "SD_NANDA", "title": "Planificación (NANDA)", "instructions": "Priorice los diagnósticos de enfermería.", "layout_mode": "STANDARD", "items": [{"block_type": "PRM-STRIKE", "widget_id": "W-OBJ-STRIKE", "task_instruction": "Genera una pregunta sobre diagnósticos NANDA/NIC/NOC o priorización de cuidados."}]},
-                {"subdivision_id": "SD_SAFE", "title": "Protocolo de Seguridad", "instructions": "Asegure los pasos críticos de la técnica.", "layout_mode": "STANDARD", "items": [{"block_type": "CDS-KILL", "widget_id": "W-PROC-ACTION", "task_instruction": I_SAFETY}]}
+                {"subdivision_id": "SD_NORM", "title": "Planificación (NANDA)", "instructions": "Priorice los diagnósticos de enfermería.", "layout_mode": "STANDARD", "items": [{"block_type": "PRM-STRIKE", "widget_id": "W-OBJ-STRIKE", "task_instruction": "Genera una pregunta sobre diagnósticos NANDA/NIC/NOC o priorización de cuidados."}]},
+                {"subdivision_id": "SD_ETHI", "title": "Protocolo de Seguridad", "instructions": "Asegure los pasos críticos de la técnica.", "layout_mode": "STANDARD", "items": [{"block_type": "CDS-KILL", "widget_id": "W-PROC-ACTION", "task_instruction": I_SAFETY}]}
             ]
         # 6. SUB-SAN-LAB: Bioquímica/Farmacia
         elif sid == "SUB-SAN-LAB":
             skeleton = [
-                {"subdivision_id": "SD_ANALYTIC", "title": "Cálculo y Analítica", "instructions": "Determine los niveles o dosis requeridas.", "layout_mode": "STANDARD", "items": [{"block_type": "PRM-STRIKE", "widget_id": "W-OBJ-STRIKE", "task_instruction": "Genera un problema de cálculo de dosis, concentraciones o interpretación de valores analíticos."}]},
-                {"subdivision_id": "SD_LAB_PROC", "title": "Procedimiento de Laboratorio", "instructions": "Ejecute el protocolo de seguridad en lab.", "layout_mode": "STANDARD", "items": [{"block_type": "CDS-KILL", "widget_id": "W-PROC-ACTION", "task_instruction": I_SAFETY}]}
+                {"subdivision_id": "SD_CALC", "title": "Cálculo y Analítica", "instructions": "Determine los niveles o dosis requeridas.", "layout_mode": "STANDARD", "items": [{"block_type": "PRM-STRIKE", "widget_id": "W-OBJ-STRIKE", "task_instruction": "Genera un problema de cálculo de dosis, concentraciones o interpretación de valores analíticos."}]},
+                {"subdivision_id": "SD_PROC", "title": "Procedimiento de Laboratorio", "instructions": "Ejecute el protocolo de seguridad en lab.", "layout_mode": "STANDARD", "items": [{"block_type": "CDS-KILL", "widget_id": "W-PROC-ACTION", "task_instruction": I_SAFETY}]}
             ]
         # 7. SUB-SAN-PSY-CLIN: Psicología Clínica
         elif sid == "SUB-SAN-PSY-CLIN":
             skeleton = [
-                {"subdivision_id": "SD_DSM", "title": "Diagnóstico DSM/CIE", "instructions": "Categorice el trastorno según criterios.", "layout_mode": "STANDARD", "items": [{"block_type": "PRM-STRIKE", "widget_id": "W-OBJ-STRIKE", "task_instruction": "Genera una pregunta de diagnóstico diferencial basada en criterios DSM-5/CIE-11."}]},
-                {"subdivision_id": "SD_BEHAV", "title": "Análisis Conductual", "instructions": "Identifique los refuerzos y conductas.", "layout_mode": "SPLIT_TEXT", "items": [{"block_type": "ILC-CONTEXT", "widget_id": "W-CLIN-SCAN", "task_instruction": "Describe un registro conductual o transcripción de sesión para análisis funcional."}]}
+                {"subdivision_id": "SD_NORM", "title": "Diagnóstico DSM/CIE", "instructions": "Categorice el trastorno según criterios.", "layout_mode": "STANDARD", "items": [{"block_type": "PRM-STRIKE", "widget_id": "W-OBJ-STRIKE", "task_instruction": "Genera una pregunta de diagnóstico diferencial basada en criterios DSM-5/CIE-11."}]},
+                {"subdivision_id": "SD_FACT", "title": "Análisis Conductual", "instructions": "Identifique los refuerzos y conductas.", "layout_mode": "SPLIT_TEXT", "items": [{"block_type": "ILC-CONTEXT", "widget_id": "W-CLIN-SCAN", "task_instruction": "Describe un registro conductual o transcripción de sesión para análisis funcional."}]}
             ]
         # 8. SUB-SAN-PSY-EXP: Psicología Experimental
         elif sid == "SUB-SAN-PSY-EXP":
             skeleton = [
-                {"subdivision_id": "SD_STATS", "title": "Análisis de Datos", "instructions": "Interprete los resultados estadísticos.", "layout_mode": "STANDARD", "items": [{"block_type": "PRM-STRIKE", "widget_id": "W-OBJ-STRIKE", "task_instruction": "Genera una pregunta sobre interpretación de gráficas, p-valores o diseño estadístico."}]},
-                {"subdivision_id": "SD_DESIGN", "title": "Diseño Experimental", "instructions": "Identifique variables y sesgos.", "layout_mode": "STANDARD", "items": [{"block_type": "PRM-STRIKE", "widget_id": "W-OBJ-STRIKE", "task_instruction": "Genera una pregunta sobre control de variables, validez interna/externa o sesgos."}]}
+                {"subdivision_id": "SD_CALC", "title": "Análisis de Datos", "instructions": "Interprete los resultados estadísticos.", "layout_mode": "STANDARD", "items": [{"block_type": "PRM-STRIKE", "widget_id": "W-OBJ-STRIKE", "task_instruction": "Genera una pregunta sobre interpretación de gráficas, p-valores o diseño estadístico."}]},
+                {"subdivision_id": "SD_MODEL", "title": "Diseño Experimental", "instructions": "Identifique variables y sesgos.", "layout_mode": "STANDARD", "items": [{"block_type": "PRM-STRIKE", "widget_id": "W-OBJ-STRIKE", "task_instruction": "Genera una pregunta sobre control de variables, validez interna/externa o sesgos."}]}
             ]
         # 9. SUB-SAN-VET: Veterinaria
         elif sid == "SUB-SAN-VET":
             skeleton = [
-                {"subdivision_id": "SD_CLINIC", "title": "Clínica Animal", "instructions": "Identifique la patología en el animal.", "layout_mode": "SPLIT_TEXT", "items": [{"block_type": "ILC-CONTEXT", "widget_id": "W-CLIN-SCAN", "task_instruction": "Describe una imagen clínica de un animal (ej: lesión dérmica, postura) para diagnóstico."}]},
-                {"subdivision_id": "SD_SURGERY", "title": "Cirugía y Anestesia", "instructions": "Verifique los puntos críticos pre-quirúrgicos.", "layout_mode": "STANDARD", "items": [{"block_type": "CDS-KILL", "widget_id": "W-PROC-ACTION", "task_instruction": I_SAFETY}]}
+                {"subdivision_id": "SD_FACT", "title": "Clínica Animal", "instructions": "Identifique la patología en el animal.", "layout_mode": "SPLIT_TEXT", "items": [{"block_type": "ILC-CONTEXT", "widget_id": "W-CLIN-SCAN", "task_instruction": "Describe una imagen clínica de un animal (ej: lesión dérmica, postura) para diagnóstico."}]},
+                {"subdivision_id": "SD_PROC", "title": "Cirugía y Anestesia", "instructions": "Verifique los puntos críticos pre-quirúrgicos.", "layout_mode": "STANDARD", "items": [{"block_type": "CDS-KILL", "widget_id": "W-PROC-ACTION", "task_instruction": I_SAFETY}]}
             ]
         # 10. SUB-SAN-NUT: Nutrición
         elif sid == "SUB-SAN-NUT":
             skeleton = [
-                {"subdivision_id": "SD_DIET", "title": "Cálculo Dietético", "instructions": "Calcule el balance nutricional del caso.", "layout_mode": "STANDARD", "items": [{"block_type": "PRM-STRIKE", "widget_id": "W-OBJ-STRIKE", "task_instruction": "Genera un problema de cálculo de aportes calóricos, macronutrientes o balance hídrico."}]},
-                {"subdivision_id": "SD_BROM", "title": "Bromatología", "instructions": "Identifique componentes o contaminantes.", "layout_mode": "STANDARD", "items": [{"block_type": "PRM-STRIKE", "widget_id": "W-OBJ-STRIKE", "task_instruction": "Genera una pregunta sobre seguridad alimentaria, etiquetado o química de alimentos."}]}
+                {"subdivision_id": "SD_CALC", "title": "Cálculo Dietético", "instructions": "Calcule el balance nutricional del caso.", "layout_mode": "STANDARD", "items": [{"block_type": "PRM-STRIKE", "widget_id": "W-OBJ-STRIKE", "task_instruction": "Genera un problema de cálculo de aportes calóricos, macronutrientes o balance hídrico."}]},
+                {"subdivision_id": "SD_FACT", "title": "Bromatología", "instructions": "Identifique componentes o contaminantes.", "layout_mode": "STANDARD", "items": [{"block_type": "PRM-STRIKE", "widget_id": "W-OBJ-STRIKE", "task_instruction": "Genera una pregunta sobre seguridad alimentaria, etiquetado o química de alimentos."}]}
             ]
         else:
             skeleton = [
-                {"subdivision_id": "SD_GEN", "title": "Evaluación de Salud General", "instructions": "Resuelva el caso clínico.", "layout_mode": "STANDARD", "items":[{"block_type": "PRM-STRIKE", "widget_id": "W-OBJ-STRIKE", "task_instruction": I_CLINIC_Q}]},
+                {"subdivision_id": "SD_FACT", "title": "Evaluación de Salud General", "instructions": "Resuelva el caso clínico.", "layout_mode": "STANDARD", "items":[{"block_type": "PRM-STRIKE", "widget_id": "W-OBJ-STRIKE", "task_instruction": I_CLINIC_Q}]},
                 {"subdivision_id": "SD_NORM", "title": "Protocolo y Normativa", "instructions": "Encuadre en protocolo oficial.", "layout_mode": "STANDARD", "items":[{"block_type": "PRM-STRIKE", "widget_id": "W-OBJ-STRIKE", "task_instruction": "Valore la actuación clínica según el protocolo médico oficial."}]}
             ]
 

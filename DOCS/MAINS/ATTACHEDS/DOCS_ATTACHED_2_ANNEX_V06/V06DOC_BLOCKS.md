@@ -56,3 +56,8 @@
 *   MAT-LINK (Matching / Emparejamiento):
     *   Mecánica: Vincular párrafos con títulos (Reading) o hablantes con ideas (Listening).
     *   Widget: W-MIX-MATCH.
+
+*   DIA-INTERACT (Interacción Dialéctica Asistida por UniversIA):
+    *   Mecánica: Simulación de conversación, entrevista oral o mediación evaluada en tiempo real.
+    *   Calidad: Evaluación de fluidez, registro léxico, adecuación pragmática y capacidad de reacción.
+    *   Widget: W-COMM-DIALOG.

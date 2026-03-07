@@ -142,75 +142,6 @@ class TechnicalStrategy(BaseExamStrategy):
             else:
                 return Decimal(str(ratio)), {"status": "PARTIAL", "missing_lexemes": True}
 
-        # --- MOTOR 4: DEMO-PROOF (Demostración Formal) ---
-        # Used in SUB-TEC-PURE. Requires logical axiom validation.
-        # Usado en SUB-TEC-PURE. Requiere validación de axiomas lógicos.
-        elif block_type == 'DEMO-PROOF':
-            required_axioms = logic.get('required_axioms', [])
-            forbidden_fallacies = logic.get('forbidden_fallacies', [])
-            student_text = str(student_input).lower()
-            
-            # Check for logical fallacies first
-            for fallacy in forbidden_fallacies:
-                if fallacy.lower() in student_text:
-                    return Decimal('0.0'), {
-                        "status": "LOGICAL_FALLACY", 
-                        "detail": f"Falacia detectada: {fallacy}",
-                        "feedback_category": "FB_CONCEPT"
-                    }
-
-            # Check coverage of axioms
-            hits = sum(1 for ax in required_axioms if ax.lower() in student_text)
-            
-            if not required_axioms:
-                return Decimal('1.0'), {"status": "MANUAL_REVIEW"}
-            
-            # Rigor: Demostrations require 100% coherence in Pure Sciences
-            if self.sub_archetype_id == 'SUB-TEC-PURE' and hits < len(required_axioms):
-                 return Decimal('0.4'), {
-                     "status": "INCOMPLETE_PROOF", 
-                     "detail": "La demostración carece de pasos intermedios obligatorios.",
-                     "missing_axioms": len(required_axioms) - hits
-                 }
-            
-            score = Decimal(str(hits / len(required_axioms)))
-            return score, {"status": "GRADED", "axioms_verified": hits}
-
-        # --- MOTOR 5: BLUEPRINT-DESIGN (Diseño de Planos/Esquemas) ---
-        # Used in SUB-TEC-PROJ / CONS.
-        elif block_type == 'BLUEPRINT-DESIGN':
-            # Input expected: JSON with specific technical elements
-            if not isinstance(student_input, dict):
-                 return Decimal('0.0'), {"status": "FORMAT_ERROR"}
-            
-            required_elements = logic.get('required_elements', [])
-            safety_constraints = logic.get('safety_constraints', []) # e.g., "min_pillar_width"
-            
-            student_elements = student_input.get('elements', [])
-            
-            # 1. Safety Check (Critical for Architecture/Engineering)
-            for constraint in safety_constraints:
-                param = constraint.get('param')
-                min_val = float(constraint.get('min_value', 0))
-                # Check if any element violates this
-                for elem in student_elements:
-                    if elem.get('type') == param and float(elem.get('value', 0)) < min_val:
-                        return Decimal('0.0'), {
-                            "status": "SAFETY_VIOLATION",
-                            "detail": f"Elemento {param} incumple normativa de seguridad (Valor < {min_val}).",
-                            "feedback_category": "FB_SAFETY"
-                        }
-
-            # 2. Element Presence Check
-            found_count = 0
-            student_elem_types = [e.get('type') for e in student_elements]
-            for req in required_elements:
-                if req in student_elem_types:
-                    found_count += 1
-            
-            score = Decimal(str(found_count / len(required_elements))) if required_elements else Decimal('1.0')
-            return score, {"status": "GRADED", "elements_found": found_count}
-
         return Decimal('0.0'), {"status": "PENDING"}
 
     def _validate_technical_value(self, input_val, expected_val):
@@ -250,44 +181,44 @@ class TechnicalStrategy(BaseExamStrategy):
         # 1. SUB-TEC-SOFT: Informática (Modelo Algorítmico)
         if sid == 'SUB-TEC-SOFT':
             skeleton = [
-                {"subdivision_id": "SD_ALGO", "title": "Algoritmia y Lógica", "instructions": "Implemente o analice la complejidad del algoritmo.", "layout_mode": "STANDARD", "items": [{"block_type": "RPP-TRAZA", "widget_id": "W-TECH-CALC"}]},
-                {"subdivision_id": "SD_DEBUG", "title": "Depuración y Optimización", "instructions": "Identifique el error lógico o mejore el rendimiento.", "layout_mode": "STANDARD", "items": [{"block_type": "RPP-TRAZA", "widget_id": "W-TECH-CALC"}]}
+                {"subdivision_id": "SD_MODEL", "title": "Algoritmia y Lógica", "instructions": "Implemente o analice la complejidad del algoritmo.", "layout_mode": "STANDARD", "items": [{"block_type": "RPP-TRAZA", "widget_id": "W-TECH-CALC"}]},
+                {"subdivision_id": "SD_VERIF", "title": "Depuración y Optimización", "instructions": "Identifique el error lógico o mejore el rendimiento.", "layout_mode": "STANDARD", "items": [{"block_type": "RPP-TRAZA", "widget_id": "W-TECH-CALC"}]}
             ]
         # 2. SUB-TEC-CIVIL: Caminos (Modelo Normativo)
         elif sid == 'SUB-TEC-CIVIL':
             skeleton = [
-                {"subdivision_id": "SD_STRUCT", "title": "Cálculo de Estructuras", "instructions": "Calcule las reacciones y esfuerzos.", "layout_mode": "SPLIT_TEXT", "items": [{"block_type": "RPP-TRAZA", "widget_id": "W-TECH-CALC"}]},
-                {"subdivision_id": "SD_NORM", "title": "Cumplimiento Normativo", "instructions": "Verifique la adecuación al CTE/EHE.", "layout_mode": "STANDARD", "items": [{"block_type": "PRM-STRIKE", "widget_id": "W-OBJ-STRIKE"}]}
+                {"subdivision_id": "SD_CALC", "title": "Cálculo de Estructuras", "instructions": "Calcule las reacciones y esfuerzos.", "layout_mode": "SPLIT_TEXT", "items": [{"block_type": "RPP-TRAZA", "widget_id": "W-TECH-CALC"}]},
+                {"subdivision_id": "SD_VERIF", "title": "Cumplimiento Normativo", "instructions": "Verifique la adecuación al CTE/EHE.", "layout_mode": "STANDARD", "items": [{"block_type": "PRM-STRIKE", "widget_id": "W-OBJ-STRIKE"}]}
             ]
         # 3. SUB-TEC-INDUS: Industrial (Termo-Mecánico)
         elif sid == 'SUB-TEC-INDUS':
             skeleton = [
-                {"subdivision_id": "SD_THERMO", "title": "Termodinámica y Fluidos", "instructions": "Realice el balance energético del ciclo.", "layout_mode": "STANDARD", "items": [{"block_type": "RPP-TRAZA", "widget_id": "W-TECH-CALC"}]},
-                {"subdivision_id": "SD_MECH", "title": "Mecanismos y Máquinas", "instructions": "Analice la cinemática o eficiencia del sistema.", "layout_mode": "STANDARD", "items": [{"block_type": "RPP-TRAZA", "widget_id": "W-TECH-CALC"}]}
+                {"subdivision_id": "SD_CALC", "title": "Termodinámica y Fluidos", "instructions": "Realice el balance energético del ciclo.", "layout_mode": "STANDARD", "items": [{"block_type": "RPP-TRAZA", "widget_id": "W-TECH-CALC"}]},
+                {"subdivision_id": "SD_MODEL", "title": "Mecanismos y Máquinas", "instructions": "Analice la cinemática o eficiencia del sistema.", "layout_mode": "STANDARD", "items": [{"block_type": "RPP-TRAZA", "widget_id": "W-TECH-CALC"}]}
             ]
         # 4. SUB-TEC-CHEM: Ing. Química (Reactores)
         elif sid == 'SUB-TEC-CHEM':
             skeleton = [
-                {"subdivision_id": "SD_REACT", "title": "Diseño de Reactores", "instructions": "Determine el volumen o conversión del reactor.", "layout_mode": "STANDARD", "items": [{"block_type": "RPP-TRAZA", "widget_id": "W-TECH-CALC"}]},
-                {"subdivision_id": "SD_MASS_BAL", "title": "Balances de Materia", "instructions": "Calcule los flujos de entrada y salida.", "layout_mode": "STANDARD", "items": [{"block_type": "RPP-TRAZA", "widget_id": "W-TECH-CALC"}]}
+                {"subdivision_id": "SD_MODEL", "title": "Diseño de Reactores", "instructions": "Determine el volumen o conversión del reactor.", "layout_mode": "STANDARD", "items": [{"block_type": "RPP-TRAZA", "widget_id": "W-TECH-CALC"}]},
+                {"subdivision_id": "SD_CALC", "title": "Balances de Materia", "instructions": "Calcule los flujos de entrada y salida.", "layout_mode": "STANDARD", "items": [{"block_type": "RPP-TRAZA", "widget_id": "W-TECH-CALC"}]}
             ]
         # 5. SUB-TEC-PROJ: Arquitectura (Modelo Proyectual)
         elif sid == 'SUB-TEC-PROJ':
             skeleton = [
-                {"subdivision_id": "SD_SITE", "title": "Análisis de Sitio y Contexto", "instructions": "Analice las condicionantes urbanas e históricas.", "layout_mode": "SPLIT_TEXT", "items": [{"block_type": "RBT-CANON", "widget_id": "W-OBJ-STRIKE"}]},
-                {"subdivision_id": "SD_COMP", "title": "Composición y Diseño", "instructions": "Justifique la solución formal y funcional.", "layout_mode": "STANDARD", "items": [{"block_type": "DRA-HOLO", "widget_id": "W-HUM-TEXT"}]}
+                {"subdivision_id": "SD_MODEL", "title": "Análisis de Sitio y Contexto", "instructions": "Analice las condicionantes urbanas e históricas.", "layout_mode": "SPLIT_TEXT", "items": [{"block_type": "RBT-CANON", "widget_id": "W-OBJ-STRIKE"}]},
+                {"subdivision_id": "SD_THEO", "title": "Composición y Diseño", "instructions": "Justifique la solución formal y funcional.", "layout_mode": "STANDARD", "items": [{"block_type": "DRA-HOLO", "widget_id": "W-HUM-TEXT"}]}
             ]
         # 6. SUB-TEC-CONS: Edificación (Modelo Constructivo)
         elif sid == 'SUB-TEC-CONS':
             skeleton = [
-                {"subdivision_id": "SD_TECH", "title": "Detalle Constructivo", "instructions": "Identifique los elementos del sistema constructivo.", "layout_mode": "SPLIT_TEXT", "items": [{"block_type": "PRM-STRIKE", "widget_id": "W-OBJ-STRIKE"}]},
-                {"subdivision_id": "SD_MGMT", "title": "Gestión y Seguridad de Obra", "instructions": "Valore los riesgos y la ejecución técnica.", "layout_mode": "STANDARD", "items": [{"block_type": "PRM-STRIKE", "widget_id": "W-OBJ-STRIKE"}]}
+                {"subdivision_id": "SD_VERIF", "title": "Detalle Constructivo", "instructions": "Identifique los elementos del sistema constructivo.", "layout_mode": "SPLIT_TEXT", "items": [{"block_type": "PRM-STRIKE", "widget_id": "W-OBJ-STRIKE"}]},
+                {"subdivision_id": "SD_VERIF", "title": "Gestión y Seguridad de Obra", "instructions": "Valore los riesgos y la ejecución técnica.", "layout_mode": "STANDARD", "items": [{"block_type": "PRM-STRIKE", "widget_id": "W-OBJ-STRIKE"}]}
             ]
         # 7. SUB-TEC-PURE: Ciencias Puras (Modelo Demostrativo)
         elif sid == 'SUB-TEC-PURE':
             skeleton = [
-                {"subdivision_id": "SD_AXIOM", "title": "Axiomas y Definiciones", "instructions": "Enuncie los principios fundamentales.", "layout_mode": "STANDARD", "items": [{"block_type": "RBT-CANON", "widget_id": "W-OBJ-STRIKE"}]},
-                {"subdivision_id": "SD_PROOF", "title": "Demostración Formal", "instructions": "Desarrolle la derivación lógica completa.", "layout_mode": "STANDARD", "items": [{"block_type": "RPP-TRAZA", "widget_id": "W-TECH-CALC"}]}
+                {"subdivision_id": "SD_THEO", "title": "Axiomas y Definiciones", "instructions": "Enuncie los principios fundamentales.", "layout_mode": "STANDARD", "items": [{"block_type": "RBT-CANON", "widget_id": "W-OBJ-STRIKE"}]},
+                {"subdivision_id": "SD_MODEL", "title": "Demostración Formal", "instructions": "Desarrolle la derivación lógica completa.", "layout_mode": "STANDARD", "items": [{"block_type": "RPP-TRAZA", "widget_id": "W-TECH-CALC"}]}
             ]
         else:
             skeleton = [
