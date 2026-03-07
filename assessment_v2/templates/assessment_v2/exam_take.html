@@ -116,19 +116,23 @@
 
                         {# --- AUDIO PLAYER INTEGRATION (Listening) --- #}
                         {# INTEGRACIÓN REPRODUCTOR AUDIO (Listening) #}
-                        {% if section.subdivision_id == 'SD_LIST' or item.content.media_assets and '.mp3' in item.content.media_assets.0 %}
-                        <div class="widget-container p-3 border rounded bg-light mb-3">
-                            <div class="d-flex align-items-center gap-3">
-                                <button class="btn btn-outline-primary rounded-circle p-3" id="btn_tts_{{ item.id }}" onclick="AssessmentMedia.player.toggle('{{ item.content.media_assets.0 }}', '{{ item.id }}')">
-                                    <i class="fas fa-play"></i>
-                                </button>
-                                <div>
-                                    <strong>{% trans "Audio de la Pregunta" %}</strong><br>
-                                    <span class="text-muted small">{% trans "Haga clic para reproducir/pausar" %}</span>
+                        {% if item.content.media_assets %}
+                            {% for asset in item.content.media_assets %}
+                                {% if '.mp3' in asset %}
+                                <div class="widget-container p-3 border rounded bg-light mb-3">
+                                    <div class="d-flex align-items-center gap-3">
+                                        <button class="btn btn-outline-primary rounded-circle p-3" id="btn_tts_{{ item.id }}_{{ forloop.counter }}" onclick="AssessmentMedia.player.toggle('{{ asset }}', '{{ item.id }}_{{ forloop.counter }}')">
+                                            <i class="fas fa-play"></i>
+                                        </button>
+                                        <div>
+                                            <strong>{% trans "Audio de la Pregunta" %}</strong><br>
+                                            <span class="text-muted small">{% trans "Haga clic para reproducir/pausar" %}</span>
+                                        </div>
+                                        <div class="audio-wave d-none" id="wave_tts_{{ item.id }}_{{ forloop.counter }}"><div><!-- --></div><div><!-- --></div><div><!-- --></div><div><!-- --></div></div>
+                                    </div>
                                 </div>
-                                <div class="audio-wave d-none" id="wave_tts_{{ item.id }}"><div><!-- --></div><div><!-- --></div><div><!-- --></div><div><!-- --></div></div>
-                            </div>
-                        </div>
+                                {% endif %}
+                            {% endfor %}
                         {% endif %}
 
                         {# --- VOICE RECORDER INTEGRATION (Speaking) --- #}
@@ -175,10 +179,19 @@
                             <h6 class="text-danger fw-bold border-bottom border-danger pb-2 mb-3">
                                 <i class="bi bi-exclamation-triangle-fill"></i> {% trans "PUNTO DE CONTROL CRÍTICO (FAIL-SAFE)" %}
                             </h6>
-                            <div class="form-check form-switch fs-5">
-                                <input class="form-check-input response-input-kill" type="checkbox" id="kill-{{ item.id }}">
-                                <label class="form-check-label text-dark" for="kill-{{ item.id }}">{% trans "Confirmo la ejecución de este paso crítico." %}</label>
-                            </div>
+                            {% if item.content.options %}
+                                {% for option in item.content.options %}
+                                <div class="form-check form-switch fs-5 mb-2">
+                                    <input class="form-check-input response-input-kill" type="checkbox" id="kill-{{ item.id }}-{{ forloop.counter }}" value="{{ option }}">
+                                    <label class="form-check-label text-dark" for="kill-{{ item.id }}-{{ forloop.counter }}">{{ option }}</label>
+                                </div>
+                                {% endfor %}
+                            {% else %}
+                                <div class="form-check form-switch fs-5">
+                                    <input class="form-check-input response-input-kill" type="checkbox" id="kill-{{ item.id }}" value="default">
+                                    <label class="form-check-label text-dark" for="kill-{{ item.id }}">{% trans "Confirmo la ejecución de este paso crítico." %}</label>
+                                </div>
+                            {% endif %}
                         </div>
 
                         {# 3. ILC-CONTEXT -> W-CLIN-SCAN (HealthStrategy) #}
@@ -195,11 +208,15 @@
                             </div>
 
                             {% if item.content.media_assets %}
-                            <div class="image-wrapper position-relative d-inline-block scan-container scan-container-wrapper" data-item-id="{{ item.id }}">
-                                <img src="{{ item.content.media_assets.0 }}" class="img-fluid rounded border shadow-sm img-scan-max" 
-                                     alt="{% trans 'Evidencia Clínica' %}" width="800" height="600">
-                                <div class="markers-overlay position-absolute top-0 start-0 w-100 h-100 markers-overlay-layer" id="overlay-{{ item.id }}"></div>
-                            </div>
+                                {% for asset in item.content.media_assets %}
+                                    {% if not '.mp3' in asset %}
+                                    <div class="image-wrapper position-relative d-inline-block scan-container scan-container-wrapper mb-2" data-item-id="{{ item.id }}">
+                                        <img src="{{ asset }}" class="img-fluid rounded border shadow-sm img-scan-max" 
+                                             alt="{% trans 'Evidencia Clínica' %}" width="800" height="600">
+                                        <div class="markers-overlay position-absolute top-0 start-0 w-100 h-100 markers-overlay-layer" id="overlay-{{ item.id }}"></div>
+                                    </div>
+                                    {% endif %}
+                                {% endfor %}
                             {% endif %}
                             <textarea class="form-control mt-3 response-input-text" rows="3" placeholder="{% trans 'Escriba su juicio diagnóstico / interpretación...' %}"></textarea>
                         </div>
@@ -208,10 +225,13 @@
                         {% elif item.widget_id == 'W-OBJ-STRIKE' %}
                             {% if item.content.options %}
                                 <div class="widget-container p-3 bg-white border rounded">
-                                    {% if item.content.media_assets and not '.mp3' in item.content.media_assets.0 %}
+                                    {% if item.content.media_assets %}
                                         <div class="mb-3 text-center">
-                                            <img src="{{ item.content.media_assets.0 }}" class="img-fluid rounded img-thumb-max" 
-                                                 alt="{% trans 'Recurso Visual' %}" width="300" height="200">
+                                            {% for asset in item.content.media_assets %}
+                                                {% if not '.mp3' in asset %}
+                                                <img src="{{ asset }}" class="img-fluid rounded img-thumb-max mb-2" alt="{% trans 'Recurso Visual' %}" width="300" height="200">
+                                                {% endif %}
+                                            {% endfor %}
                                         </div>
                                     {% endif %}
                                     {% for option in item.content.options %}
@@ -236,8 +256,12 @@
                         <div class="widget-container split-container row g-0 border rounded">
                             <div class="col-md-6 source-panel bg-light p-3 border-end source-panel-scroll">
                                 <h6 class="text-muted border-bottom pb-2">{% trans "Fuente Primaria" %}</h6>
-                                {% if item.content.media_assets and not '.mp3' in item.content.media_assets.0 %}
-                                    <img src="{{ item.content.media_assets.0 }}" class="img-fluid mb-2" alt="{% trans 'Fuente Visual' %}" width="400" height="300">
+                                {% if item.content.media_assets %}
+                                    {% for asset in item.content.media_assets %}
+                                        {% if not '.mp3' in asset %}
+                                        <img src="{{ asset }}" class="img-fluid mb-2" alt="{% trans 'Fuente Visual' %}" width="400" height="300">
+                                        {% endif %}
+                                    {% endfor %}
                                 {% endif %}
                                 <div class="source-text text-justify small" draggable="true">{{ item.content.options.0|default:""|linebreaks }}</div>
                             </div>
@@ -250,7 +274,7 @@
 
                         {# 6. CLO-OPEN / CLO-MULTI -> W-TXT-CLOZE #}
                         {% elif item.widget_id == 'W-TXT-CLOZE' %}
-                        <div class="widget-container border p-4 rounded bg-white shadow-sm cloze-box font-serif fs-5 cloze-render-target" data-item-id="{{ item.id }}">
+                        <div class="widget-container border p-4 rounded bg-white shadow-sm cloze-box font-serif fs-5 cloze-render-target" data-item-id="{{ item.id }}" data-options='{{ item.content.options|default:"[]"|escapejs }}'>
                              {# PMA 3: Eliminado safe. Hidratación segura via JS #}
                              <div class="d-none cloze-source">{{ item.content.text_with_gaps }}</div>
                              <div class="cloze-output"></div>
@@ -478,8 +502,13 @@
         const blockType = el.closest('.exam-item').dataset.blockType;
         let renderedHTML = source;
         if (blockType === 'CLO-MULTI') {
+            let optionsHTML = '<option value="">---</option>';
+            try {
+                const options = JSON.parse(el.dataset.options || '[]');
+                options.forEach(opt => { optionsHTML += `<option value="${opt}">${opt}</option>`; });
+            } catch(e) {}
             renderedHTML = source.replace(/(\[.*?\]|_{3,})/g, () => {
-                return `<select class="cloze-input form-select d-inline-block text-center mx-1 border-primary rounded" style="width: auto; background: #f8f9fa;"><option value="">---</option><option value="A">Opción A</option><option value="B">Opción B</option><option value="C">Opción C</option><option value="D">Opción D</option></select>`;
+                return `<select class="cloze-input form-select d-inline-block text-center mx-1 border-primary rounded" style="width: auto; background: #f8f9fa;">${optionsHTML}</select>`;
             });
         } else {
             renderedHTML = source.replace(/(\[.*?\]|_{3,})/g, () => {
@@ -761,15 +790,22 @@
     document.querySelectorAll('.editor-textarea').forEach(ta => {
         ta.addEventListener('input', function() {
             const val = this.value;
-            const metric = document.getElementById(`quality-metric-${this.closest('.exam-item').dataset.itemId}`);
+            const itemContainer = this.closest('.exam-item');
+            const itemId = itemContainer.dataset.itemId;
+            const metric = document.getElementById(`quality-metric-${itemId}`);
             if(!metric) return;
+            let penalty = 0;
             if(val.length > 50 && val.includes('«') && val.includes('»')) {
                 metric.className = 'position-absolute top-0 end-0 mt-3 me-3 badge bg-success'; metric.innerText = 'Formalidad: ALTA (Citas OK)';
+                penalty = 0;
             } else if(val.length > 20) {
                 metric.className = 'position-absolute top-0 end-0 mt-3 me-3 badge bg-warning text-dark'; metric.innerText = 'Formalidad: MEDIA';
+                penalty = -1.0;
             } else {
                 metric.className = 'position-absolute top-0 end-0 mt-3 me-3 badge bg-danger'; metric.innerText = 'Formalidad: BAJA';
+                penalty = -2.5;
             }
+            itemContainer.dataset.formalPenalty = penalty;
         });
     });
 
@@ -820,7 +856,14 @@
             // 3. ILC-CONTEXT / DRA-HOLO / RBT-CANON (Simple text)
             else if (blockType === 'ILC-CONTEXT' || blockType === 'DRA-HOLO' || blockType === 'RBT-CANON') {
                 const input = item.querySelector('.response-input-text');
-                responses[itemId] = input ? input.value : '';
+                if (blockType === 'DRA-HOLO') {
+                    responses[itemId] = {
+                        text: input ? input.value : '',
+                        formal_penalty: parseFloat(item.dataset.formalPenalty || 0)
+                    };
+                } else {
+                    responses[itemId] = input ? input.value : '';
+                }
             } 
             // 4. PRM-STRIKE (Options)
             else if (blockType === 'PRM-STRIKE') {

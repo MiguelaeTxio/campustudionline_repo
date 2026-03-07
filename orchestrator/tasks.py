@@ -993,6 +993,11 @@ def generate_exam_task(self, exam_uuid, context_text=None, topic=None):
                         section=section,
                         block_type=i_data.get('block_type', 'UNKNOWN'),
                         widget_id=i_data.get('widget_id', 'UNKNOWN'),
+                        # [HITO 6] FIX: Inyección de parámetros técnicos de la Estrategia
+                        level_requisite=i_data.get('level_requisite', 'MANDATORY'),
+                        weight=i_data.get('weight', 1.00),
+                        estimated_time=i_data.get('estimated_time', 0),
+                        fail_logic=i_data.get('fail_logic', 'PENALTY'),
                         content={},
                         grading_logic={},
                         # [HITO 6] SKELETON-PROMPT BINDING: Persistir la instrucción de llenado
