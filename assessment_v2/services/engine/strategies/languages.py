@@ -170,6 +170,9 @@ class LanguagesStrategy(BaseExamStrategy):
                 elif sec["subdivision_id"] == "SD_WRIT":
                     sec["layout_mode"] = "SPLIT_TEXT"
                     sec["items"] = [{"block_type": "DRA-HOLO", "widget_id": "W-HUM-TEXT", "task_instruction": "Plantea un tema de redacción académica (ensayo/artículo) que requiera registro formal (DRA-HOLO)."}]
+                # [HITO 6 FIX] Discrepancia 2: Widget correcto para Speaking (DIA-INTERACT)
+                elif sec["subdivision_id"] == "SD_SPEAK":
+                    sec["items"] = [{"block_type": "DIA-INTERACT", "widget_id": "W-COMM-DIALOG", "task_instruction": "Inicia una simulación de entrevista oral interactiva (UniversIA)."}]
                 else:
                     sec["items"] = [{"block_type": "CLO-OPEN", "widget_id": "W-TXT-CLOZE", "task_instruction": "Genera un texto con huecos abiertos sin opciones (CLO-OPEN) para evaluar precisión léxico-gramatical."}]
                 skeleton.append(sec)

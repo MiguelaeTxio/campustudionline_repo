@@ -32,26 +32,26 @@ class HumanitiesStrategy(BaseExamStrategy):
                 return Decimal("0.0"), {"status": "OMITTED"}
             word_count = len(student_text.split())
 
-            formal_penalty = Decimal('0.0')
+            # [HITO 6 FIX] Discrepancia 4: Corrección de escala.
+            # No aplicamos resta numérica aquí (rompía la escala), solo marcamos el error.
+            # logic.py aplicará la penalización de -0.2 sobre 1.0.
+            is_formal_fail = False
             if self.itinerary_id in ['ITIN_MAI', 'ITIN_INV']:
-                # Strict formal checking (simplified for MVP logic)
-                if word_count < 200: # Example constraint
-                    formal_penalty = Decimal('2.0') # [HITO 6 FIX] Incidencia 60: Penalización formal eliminatoria (-2.0)
+                if word_count < 200: 
+                    is_formal_fail = True
 
-            # [HITO 6 FIX] Incidencia 59: Implementación base de DRA-HOLO
             base_score = min(Decimal(str(word_count / 200.0)), Decimal("1.0"))
-            final_score = max(base_score - formal_penalty, Decimal('0.0'))
-
-            return final_score, {
+            
+            return base_score, {
                 "status": "GRADED",
                 "axes": {
                     "rigor": {"weight": 0.4, "score": float(base_score)},
                     "structure": {"weight": 0.2, "score": float(base_score)},
                     "terminology": {"weight": 0.2, "score": float(base_score)},
-                    "form": {"weight": 0.2, "score": max(float(base_score) - float(formal_penalty), 0.0)}
+                    "form": {"weight": 0.2, "score": 0.0 if is_formal_fail else float(base_score)}
                 },
-                "formal_penalty": float(formal_penalty),
-                "feedback_category": "FB_FORMAL" if formal_penalty > 0 else "FB_CONCEPT"
+                "feedback_category": "FB_FORMAL" if is_formal_fail else "FB_CONCEPT",
+                "justification": "Deficiencia formal en extensión (Penalización aplicable)." if is_formal_fail else ""
             }
 
         # --- MOTOR 2: EV-PALE (Transcripción/Exégesis) ---

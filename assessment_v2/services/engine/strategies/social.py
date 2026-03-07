@@ -40,7 +40,18 @@ class SocialStrategy(BaseExamStrategy):
 
             score = (Decimal(str(citations_found / len(required_citations))) * real_sources_multiplier) if required_citations else Decimal('1.0')
             score = min(score, Decimal('1.0'))
-            return score, {"status": "GRADED", "citations": citations_found, "real_sources_multiplier": float(real_sources_multiplier)}
+            
+            # [HITO 6 FIX] Discrepancia 3: Inyección de señal 'fuentes_reales' para logic.py
+            justification_msg = ""
+            if real_sources_multiplier > 1.0:
+                justification_msg = "Citas validadas. fuentes_reales detectadas."
+
+            return score, {
+                "status": "GRADED", 
+                "citations": citations_found, 
+                "real_sources_multiplier": float(real_sources_multiplier),
+                "justification": justification_msg
+            }
 
         # --- MOTOR: PRM-STRIKE (Standard) ---
         elif block_type == 'PRM-STRIKE':

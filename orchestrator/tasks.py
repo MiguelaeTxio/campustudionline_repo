@@ -968,6 +968,9 @@ def generate_exam_task(self, exam_uuid, context_text=None, topic=None):
         )
         exam.immersion_mode = strategy.get_immersion_mode()
         exam.grading_params = strategy._get_grading_params()
+        # [HITO 6 FIX] Discrepancia 1: Secuencialidad obligatoria para Lenguas
+        if exam.archetype_id == 'ARCH_LANG':
+            exam.is_sequential = True
         exam.save()
 
         # FASE ESTRUCTURAL (Skeleton-First Fijo)
