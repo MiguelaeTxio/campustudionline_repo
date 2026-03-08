@@ -247,7 +247,9 @@ class LanguagesStrategy(BaseExamStrategy):
         Prompt de generación atómica para una subdivisión específica con memoria de contexto.
         """
         memory = "\nEVITA REPETICIÓN: " + ", ".join(generated_item_titles) if generated_item_titles else ""
-        skeleton_instruction = f"\nESQUELETO A RELLENAR:\n{skeleton_json}\n(Debes devolver EXACTAMENTE estos ítems conservando intacto su 'item_id').\n" if skeleton_json else "\n(Asegúrate de incluir el 'item_id' proporcionado para cada ítem).\n"
+        skeleton_instruction = f"\nESQUELETO A RELLENAR:\n{skeleton_json}\n(Debes devolver EXACTAMENTE estos ítems).\n" if skeleton_json else "\n(Asegúrate de incluir el 'item_id' proporcionado para cada ítem).\n"
+        target_lang = self.config.get('target_language_code', 'es')
+
         return (
             f"ACTÚA COMO MOTOR DE RENDERIZADO DE CONTENIDO (Patrón Skeleton-First).\n"
             f"Tu ÚNICA función es rellenar el contenido de los ítems solicitados en la sección: {subdivision_id}.\n"
@@ -255,6 +257,10 @@ class LanguagesStrategy(BaseExamStrategy):
             f"CONTEXTO DOCENTE:\n{(context_text or '')[:15000]}\n"
             f"{skeleton_instruction}"
             f"CONFIG: Arquetipo={self.sub_archetype_id}, Itinerario={self.itinerary_id}, Modo={self.get_immersion_mode()}.\n"
-            f"SALIDA: JSON estricto (Array 'items'). NO inventes ítems nuevos, rellena solo los solicitados."
+            f"REGLAS DE SALIDA OBLIGATORIAS:\n"
+            f"1.  JSON estricto (Array 'items'). Rellena SOLO los ítems del esqueleto, NO inventes nuevos.\n"
+            f"2.  NO ALTERES NUNCA los valores de 'item_id', 'widget_id' ni 'block_type'. Son sagrados.\n"
+            f"3.  Los títulos, enunciados ('stem') e instrucciones DEBEN ESTAR SIEMPRE EN ESPAÑOL.\n"
+            f"4.  El contenido del ítem (texto con huecos, opciones, etc.) DEBE ESTAR en el idioma objetivo '{target_lang}'.\n"
+            f"5.  Para los ítems de tipo CLOZE (W-TXT-CLOZE), representa cada hueco con la sintaxis '[...]' obligatoriamente."
         )
-

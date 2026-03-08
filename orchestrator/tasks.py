@@ -936,7 +936,7 @@ def generate_exam_task(self, exam_uuid, context_text=None, topic=None):
         exam = Exam.objects.select_related('user', 'content_copy').get(uuid=exam_uuid)
         if self.request.retries == 0:
             exam.status = 'GENERATING'
-            exam.event_log.append({"ts": timezone.now().isoformat(), "msg": "Iniciando Skeleton-First"})
+            exam.event_log.append({"ts": timezone.now().isoformat(), "msg": f"Iniciando Skeleton-First (Examen: {str(exam.uuid)[:8]})"})
             exam.save(update_fields=['status', 'event_log'])
 
         material = exam.content_copy.original_content
@@ -1047,12 +1047,18 @@ def generate_exam_task(self, exam_uuid, context_text=None, topic=None):
             local_retries = 0
             MAX_LOCAL_RETRIES = 3
             
+            # [FIX LOGGING] Crear un callback de logging con contexto
+            def contextual_logger(message, level="INFO"):
+                context_msg = f"{message} (Examen: {str(exam.uuid)[:8]}, Sección: {s_info['subdivision_id']})"
+                exam.event_log.append({"ts": timezone.now().isoformat(), "msg": context_msg, "level": level})
+                exam.save(update_fields=['event_log'])
+
             while not section_success and local_retries < MAX_LOCAL_RETRIES:
                 success, resp, key_name, usage = _safe_generate_content(
                     u_prompt_augmented,
                     system_instruction=s_prompt,
                     response_schema=strategy.get_output_schema(),
-                    logger_callback=lambda m, level="INFO": exam.event_log.append({"ts": timezone.now().isoformat(), "msg": m}) or exam.save(update_fields=['event_log'])
+                    logger_callback=contextual_logger
                 )
                 
                 if success:
@@ -1092,22 +1098,19 @@ def generate_exam_task(self, exam_uuid, context_text=None, topic=None):
                         time.sleep(5)
                     except Exception as parse_err:
                         local_retries += 1
-                        error_msg = f"Error Parseo JSON Sección {s_info['subdivision_id']} (Intento {local_retries}/{MAX_LOCAL_RETRIES}): {parse_err}"
-                        exam.event_log.append({"ts": timezone.now().isoformat(), "msg": error_msg})
-                        exam.save(update_fields=['event_log'])
+                        error_msg = f"Error Parseo JSON (Intento {local_retries}/{MAX_LOCAL_RETRIES}): {parse_err}"
+                        contextual_logger(error_msg, level="ERROR")
                         time.sleep(15)
                 else:
                     local_retries += 1
-                    error_msg = f"Fallo IA Sección {s_info['subdivision_id']} (Intento {local_retries}/{MAX_LOCAL_RETRIES}): {resp}"
-                    exam.event_log.append({"ts": timezone.now().isoformat(), "msg": error_msg})
-                    exam.save(update_fields=['event_log'])
+                    error_msg = f"Fallo IA (Intento {local_retries}/{MAX_LOCAL_RETRIES}): {resp}"
+                    contextual_logger(error_msg, level="ERROR")
                     time.sleep(15)
             
             # Si tras los reintentos locales falla, abortamos fatalmente el examen
             if not section_success:
-                fatal_msg = f"ABORTO FATAL: La Sección {s_info['subdivision_id']} no pudo generarse tras {MAX_LOCAL_RETRIES} intentos."
-                exam.event_log.append({"ts": timezone.now().isoformat(), "msg": fatal_msg})
-                exam.save(update_fields=['event_log'])
+                fatal_msg = f"ABORTO FATAL: La Sección no pudo generarse tras {MAX_LOCAL_RETRIES} intentos."
+                contextual_logger(fatal_msg, level="CRITICAL")
                 raise AIServiceCriticalError(fatal_msg)
 
         TrackingService.record_usage(exam.user, exam, "gemini-2.5-flash-lite", usage_total["in"], usage_total["out"], "Restored-Key")
@@ -1137,3 +1140,4 @@ def generate_exam_task(self, exam_uuid, context_text=None, topic=None):
             exam.save()
             # Notificación al Usuario (Incidencia 27)
             _send_exam_failure_notification(exam)
+
