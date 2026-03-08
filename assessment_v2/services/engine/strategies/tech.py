@@ -252,7 +252,7 @@ class TechnicalStrategy(BaseExamStrategy):
         return f"""{base_role}
 {itin_prompt}
 REGLA: Usa RPP-TRAZA para cálculos y RBT-CANON para definiciones técnicas."""
-    def get_user_prompt(self, context_text, topic, subdivision_id, generated_item_titles=None):
+    def get_user_prompt(self, context_text, topic, subdivision_id, generated_item_titles=None, skeleton_json=None):
         """
         Generates the user prompt injecting the study material context (ATOMIC).
         ---
@@ -260,7 +260,7 @@ REGLA: Usa RPP-TRAZA para cálculos y RBT-CANON para definiciones técnicas."""
         """
         memory = f"\nEvita repetir estos conceptos ya generados: {', '.join(generated_item_titles)}" if generated_item_titles else ""
         return (
-            f"GENERA 3 ÍTEMS para la sección: {subdivision_id}.\n"
+            f"RELLENA EL ESQUELETO JSON ({__import__('json').dumps(skeleton_json, ensure_ascii=False) if skeleton_json else '[]'}) para la sección: {subdivision_id}.\n"
             f"TEMA: {topic}. {memory}\n"
             f"CONTEXTO: {context_text[:50000]}\n"
             f"CONFIG: Sub={self.sub_archetype_id}, Itin={self.itinerary_id}, Level={self.pedagogical_level}.\n"

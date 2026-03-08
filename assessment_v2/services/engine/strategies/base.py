@@ -40,7 +40,7 @@ class BaseExamStrategy(ABC):
         pass
 
     @abstractmethod
-    def get_user_prompt(self, context_text, topic, generated_item_titles=None):
+    def get_user_prompt(self, context_text, topic, subdivision_id, generated_item_titles=None, skeleton_json=None):
         """
         Generates the user prompt injecting the study material context.
         ---

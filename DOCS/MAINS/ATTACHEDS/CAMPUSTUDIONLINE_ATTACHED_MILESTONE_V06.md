@@ -1,38 +1,24 @@
-<!-- /home/MiguelAeTxio/PROJECTS/CampuStudiOnline/DOCS/MAINS/ATTACHEDS/DOCS_ATTACHED_2_ANNEX_V06/V06DOC_ROADMAP.md -->
+<!-- /home/MiguelAeTxio/PROJECTS/CampuStudiOnline/DOCS/MAINS/ATTACHEDS/CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md -->
 # ANEXO: HITO 06 - SISTEMA DE AUTOEVALUACIONES CON IA
-# ESTADO: LEY DE CONTINUIDAD INMUTABLE (SKELETON-PROMPT MIRRORING)
+# ESTADO: AUDITORÍA DE ESPECTRO COMPLETO (45 SUBARQUETIPOS)
 
-## HOJA DE RUTA INMUTABLE (HASTA FINALIZACIÓN DEL HITO)
+## HOJA DE RUTA INMUTABLE
 
-### FASE I: CARGA DOCUMENTAL INTEGRAL (MANDATORIA)
-Es de ESTRICTO CUMPLIMIENTO cargar la constelación satélite completa al inicio de la sesión:
-*   `V06DOC_ARCHETYPES.md`
-*   `V06DOC_SUBARCHETYPES.md`
-*   `V06DOC_SUBDIVISIONS.md`
-*   `V06DOC_BLOCKS.md`
-*   `V06DOC_WIDGETS.md`
-*   `V06DOC_METADATA.md`
-*   `V06DOC_LEVELS.md`
-*   `V06DOC_TEMPLATES.md`
-*   `V06DOC_STRUCTURE.md`
-*   `V06DOC_LOGIC_MAPPING.md`
-*   `V06DOC_URGENCY_ROADMAP.md`
+### FASE I: CARGA DEL PLAN MAESTRO
+*   Cargar `DOCS/MAINS/AUDIT_MASTER_PLAN_V06_FULL_SPECTRUM.md`.
+*   Este documento contiene la matriz de validación de los 45 flujos.
 
-### FASE II: EJECUCIÓN DE INSTRUCCIONES SEGÚN ARCHIVO DOCUMENTAL SATÉLITE.
+### FASE II: EJECUCIÓN DE LA AUDITORÍA (SECUENCIAL)
+1.  **AUDITORÍA DOCUMENTAL:** Verificar que los 10 documentos del Hito 6 se reflejan en la estructura base (`models.py`, `base.py`).
+2.  **AUDITORÍA DE FLUJO (45 SUBARQUETIPOS):**
+    *   Recorrer la lista del 1 al 45 del Plan Maestro.
+    *   Para cada uno, validar: Python Skeleton -> Prompt -> HTML Widget.
+    *   **CORRECCIÓN INSTANTÁNEA:** Si un flujo está roto, aplicar `PMA` inmediato.
+3.  **AUDITORÍA DE WIDGETS:**
+    *   Verificar que los 7 widgets tienen su representación HTML/JS funcional.
+    *   Eliminar renderizado de JSON crudo.
 
-Ejecuta las instrucciones y hoja de
-ruta del archivo:
-`V06DOC_URGENCY_ROADMAP.md`
-
-
-### FASE III:
-
+### FASE III: VALIDACIÓN FINAL
+*   Confirmar que el sistema maneja correctamente el Bilingüismo (Español para interfaz, Objetivo para contenido en Lenguas; Español para todo lo demás).
 *   `PCS`
-
-## DIRECTRICES OBLIGATORIAS QUE PREVALECEN SOBRE HOMÓLOGAS DEL TOTAL_COMMANDER (INSTRUCCIONES DEL SISTEMA)
-
-*   NO SE EJECUTA `PMDS`
-
-
-
 

@@ -50,6 +50,8 @@ def _execute_gemini_call(contents, api_key: ApiKey, generation_config: dict, saf
         config_params["speech_config"] = generation_config["speech_config"]
     if "response_schema" in generation_config:
         config_params["response_schema"] = generation_config["response_schema"]
+    if "response_modalities" in generation_config:
+        config_params["response_modalities"] = generation_config["response_modalities"]
 
     config = types.GenerateContentConfig(**config_params)
 
@@ -163,7 +165,7 @@ def generate_audio_content(prompt: str, api_key: ApiKey) -> Tuple[bool, bytes, s
     """
     close_old_connections()
     generation_config = {
-        "response_mime_type": "audio/mpeg",
+        "response_modalities": ["AUDIO"],
     }
     
     # Reutilizamos los safety_settings definidos en generate_text_content (simplificado para el parche)

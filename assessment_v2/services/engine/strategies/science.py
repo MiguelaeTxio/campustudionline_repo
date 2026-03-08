@@ -23,6 +23,8 @@ class ScienceStrategy(BaseExamStrategy):
 
         # --- MOTOR 1: RPP-TRAZA (Cálculo Multietapa) ---
         if block_type == 'RPP-TRAZA':
+            if isinstance(student_input, dict) and 'file_url' in student_input:
+                return Decimal('0.0'), {"status": "PENDING_AI_ANALYSIS", "detail": "Archivo subido correctamente.", "file_received": True}
             steps = student_input.get('steps',[]) if isinstance(student_input, dict) else[]
             if not steps:
                 return Decimal('0.0'), {"status": "NO_STEPS_PROVIDED"}
@@ -52,6 +54,8 @@ class ScienceStrategy(BaseExamStrategy):
 
         # --- MOTOR 3: ILC-CONTEXT (Interpretación de Datos) ---
         elif block_type == 'ILC-CONTEXT':
+            if isinstance(student_input, dict) and 'file_url' in student_input:
+                return Decimal('0.0'), {"status": "PENDING_AI_ANALYSIS", "detail": "Archivo subido correctamente.", "file_received": True}
             return Decimal('0.0'), {"status": "PENDING_AI_RUBRIC", "detail": "Evaluación cualitativa de interpretación de datos/gráficos."}
 
         return Decimal('0.0'), {"status": "PENDING_MANUAL_REVIEW"}
@@ -154,13 +158,13 @@ class ScienceStrategy(BaseExamStrategy):
 
         return f"{base_role}\n{itin_ctx}\nESTRUCTURA: Usa subdivisiones SD_THEO y SD_CALC. Evalúa con PRM-STRIKE, RPP-TRAZA y ILC-CONTEXT."
 
-    def get_user_prompt(self, context_text, topic, subdivision_id, generated_item_titles=None):
+    def get_user_prompt(self, context_text, topic, subdivision_id, generated_item_titles=None, skeleton_json=None):
         """
         Atomic generation prompt for a specific subdivision (V06DOC_TEMPLATES).
         """
         memory = f"\nEvitar repetir estos conceptos: {', '.join(generated_item_titles)}" if generated_item_titles else ""
         return (
-            f"GENERA 3 ÍTEMS para la sección: {subdivision_id}.\n"
+            f"RELLENA EL ESQUELETO JSON ({__import__('json').dumps(skeleton_json, ensure_ascii=False) if skeleton_json else '[]'}) para la sección: {subdivision_id}.\n"
             f"TEMA: {topic}. {memory}\n"
             f"REF: {context_text[:50000]}\n"
             f"CONFIG: Arquetipo={self.sub_archetype_id}, Itinerario={self.itinerary_id}, Nivel={self.pedagogical_level}.\n"

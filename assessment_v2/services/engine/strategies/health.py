@@ -65,6 +65,8 @@ class HealthStrategy(BaseExamStrategy):
         # --- MOTOR 3: ILC-CONTEXT (Interpretación de Pruebas/Contexto) ---
         # Ref: V06DOC_BLOCKS Section 2
         elif block_type == 'ILC-CONTEXT':
+            if isinstance(student_input, dict) and 'file_url' in student_input:
+                return Decimal('0.0'), {"status": "PENDING_AI_ANALYSIS", "detail": "Archivo subido correctamente. En cola para análisis visual.", "file_received": True}
             # Requires semantic comparison of diagnostic inference
             # For now, we use keyword matching + pending AI refinement
             keywords = logic.get('keywords', [])

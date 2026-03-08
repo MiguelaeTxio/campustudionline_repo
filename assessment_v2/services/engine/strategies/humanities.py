@@ -25,6 +25,8 @@ class HumanitiesStrategy(BaseExamStrategy):
         # --- MOTOR 1: DRA-HOLO (Rúbrica Holística) ---
         # Ref: V06DOC_BLOCKS Section 2
         if block_type == 'DRA-HOLO':
+            if isinstance(student_input, dict) and 'file_url' in student_input:
+                return Decimal('0.0'), {"status": "PENDING_AI_ANALYSIS", "detail": "Archivo subido correctamente. En cola para análisis.", "file_received": True}
             # Logic: Evaluates 4 axes. At this stage, it marks for AI or Manual Review
             # but applies FORM_PEN (-2.0) if formal requirements aren't met.
             student_text = str(student_input).strip()
@@ -56,6 +58,8 @@ class HumanitiesStrategy(BaseExamStrategy):
 
         # --- MOTOR 2: EV-PALE (Transcripción/Exégesis) ---
         elif block_type == 'EV-PALE':
+            if isinstance(student_input, dict) and 'file_url' in student_input:
+                return Decimal('0.0'), {"status": "PENDING_AI_ANALYSIS", "detail": "Archivo subido correctamente. En cola para análisis.", "file_received": True}
             # Exact match for transcription + semantic analysis for exegesis
             correct_transcription = logic.get('correct_transcription', '')
             if str(student_input).strip() == correct_transcription.strip():
@@ -139,13 +143,13 @@ class HumanitiesStrategy(BaseExamStrategy):
 
         return f"{base_role}\n{itin_ctx}\nESTRUCTURA: Usa subdivisiones SD_SOURCE y SD_DISC. Evalúa con Rúbrica Holística DRA-HOLO."
 
-    def get_user_prompt(self, context_text, topic, subdivision_id, generated_item_titles=None):
+    def get_user_prompt(self, context_text, topic, subdivision_id, generated_item_titles=None, skeleton_json=None):
         """
         Atomic generation prompt for a specific subdivision (V06DOC_TEMPLATES).
         """
         memory = f"\nEvitar repetir estos conceptos: {', '.join(generated_item_titles)}" if generated_item_titles else ""
         return (
-            f"GENERA 3 ÍTEMS para la sección: {subdivision_id}.\n"
+            f"RELLENA EL ESQUELETO JSON ({__import__('json').dumps(skeleton_json, ensure_ascii=False) if skeleton_json else '[]'}) para la sección: {subdivision_id}.\n"
             f"TEMA: {topic}. {memory}\n"
             f"REF: {context_text[:50000]}\n"
             f"CONFIG: Arquetipo={self.sub_archetype_id}, Itinerario={self.itinerary_id}, Nivel={self.pedagogical_level}.\n"
