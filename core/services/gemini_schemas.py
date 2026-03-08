@@ -240,7 +240,7 @@ EXAM_ITEM_CONTENT_SCHEMA = {
                                 "type": "string",
                                 "description": "[INCIDENCIA 4] Explicación pedagógica detallada de la solución correcta."
                             },
-                            "correct_answer": {"type":["string", "array", "object"], "description": "Solución correcta genérica."},
+                            "correct_answer": {"anyOf":[{"type": "STRING"}, {"type": "ARRAY"}, {"type": "OBJECT"}], "description": "Solución correcta genérica."},
                             "gap_solutions": {"type": "array", "items": {"type": "string"}, "description": "Soluciones en orden para los huecos de W-TXT-CLOZE."},
                             "pairs": {"type": "object", "description": "Pares de vinculación para W-MIX-MATCH."}
                         },
