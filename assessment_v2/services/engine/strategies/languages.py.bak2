@@ -38,29 +38,21 @@ class LanguagesStrategy(BaseExamStrategy):
         
         # --- MOTOR 1: CLO-OPEN / CLO-MULTI (Gap Filling) ---
         if block_type in["CLO-OPEN", "CLO-MULTI"]:
-            gap_solutions = logic.get("gap_solutions", {})
-            if not gap_solutions or not isinstance(student_input, dict):
-                return Decimal("0.0"), {"status": "INCORRECT", "feedback_category": "FB_PROCEDURAL"}
+            # [HITO 6 FIX] Soporte para multirrespuesta Array vs String (Incidencia 12)
+            raw_correct = logic.get("correct_answer", "")
+            valid_answers = [str(a).lower().strip() for a in raw_correct] if isinstance(raw_correct, list) else [str(raw_correct).lower().strip()]
+            student_answer = str(student_input).lower().strip()
             
-            total_gaps = len(gap_solutions)
-            correct_hits = 0
+            if student_answer in valid_answers:
+                return Decimal("1.0"), {"status": "CORRECT", "feedback_category": "FB_CONCEPT"}
             
-            for gap_id, correct_val in gap_solutions.items():
-                student_val = str(student_input.get(gap_id, "")).lower().strip()
-                valid_answers =[str(a).lower().strip() for a in correct_val] if isinstance(correct_val, list) else[str(correct_val).lower().strip()]
-                
-                if student_val in valid_answers:
-                    correct_hits += 1
+            # MAIOR Itinerary: Zero tolerance for spelling/grammar in gaps
+            if self.itinerary_id == "ITIN_MAI":
+                return Decimal("-0.5"), {"status": "INCORRECT", "detail": "Strict academic precision required.", "feedback_category": "FB_FORMAL"}
             
-            if correct_hits == total_gaps:
-                return Decimal("1.0"), {"status": "CORRECT", "hits": correct_hits, "total": total_gaps, "feedback_category": "FB_CONCEPT"}
-            elif correct_hits > 0:
-                partial_score = Decimal(str(correct_hits / total_gaps))
-                return partial_score, {"status": "PARTIAL", "hits": correct_hits, "total": total_gaps, "feedback_category": "FB_CONCEPT"}
-            else:
-                if self.itinerary_id == "ITIN_MAI":
-                    return Decimal("-0.5"), {"status": "INCORRECT", "detail": "Strict academic precision required.", "feedback_category": "FB_FORMAL"}
-                return Decimal("0.0"), {"status": "INCORRECT", "hits": 0, "total": total_gaps, "feedback_category": "FB_CONCEPT"}
+            # MINOR Itinerary: Flexible (Small typos might be ignored if meaning is clear)
+            # Placeholder for future Levenshtein distance logic
+            return Decimal("0.0"), {"status": "INCORRECT", "feedback_category": "FB_CONCEPT"}
 
         # --- MOTOR 2: MAT-LINK (Matching) ---
         elif block_type == "MAT-LINK":

@@ -226,6 +226,23 @@ def _safe_generate_content(prompt, system_instruction=None, response_schema=None
                 # Error no relacionado con cuota (ej: 500, overload), devolvemos el error.
                 return False, text, api_key.name, {}
 
+def deep_validate_json_structure(expected, received, path="root"):
+    """
+    Validación estricta recursiva del esqueleto JSON frente a la salida de la IA.
+    Garantiza que la IA actúe solo como máquina de relleno, sin alterar estructura.
+    """
+    if isinstance(expected, dict):
+        if not isinstance(received, dict):
+            raise ValueError(f"[{path}] Se esperaba un objeto/diccionario, se recibió {type(received).__name__}")
+        for k, v in expected.items():
+            if k not in received:
+                raise ValueError(f"[{path}] Falta la clave obligatoria: '{k}'")
+            deep_validate_json_structure(v, received[k], f"{path}.{k}")
+    elif isinstance(expected, list):
+        if not isinstance(received, list):
+            raise ValueError(f"[{path}] Se esperaba un array/lista, se recibió {type(received).__name__}")
+        # No verificamos longitud de lista, la IA rellena los marcadores.
+
 def log_task_event(task_id: str, message: str, is_error: bool = False, payload: dict = None):
     try:
         entry = {"timestamp": datetime.utcnow().isoformat() + "Z", "level": "ERROR" if is_error else "INFO", "message": message}
@@ -1079,8 +1096,17 @@ def generate_exam_task(self, exam_uuid, context_text=None, topic=None):
                             db_item = db_items_map.get(str(ai_item_id))
                             
                             if db_item:
-                                db_item.content = i_data.get('content', {})
-                                db_item.grading_logic = i_data.get('grading_logic', {})
+                                # [HITO 6 BLINDAJE] VALIDACIÓN ESTRICTA TRY-AND-FAIL (Deep Structure)
+                                ai_content = i_data.get('content', {})
+                                ai_grading = i_data.get('grading_logic', {})
+                                
+                                if db_item.content:
+                                    deep_validate_json_structure(db_item.content, ai_content, "content")
+                                if db_item.grading_logic:
+                                    deep_validate_json_structure(db_item.grading_logic, ai_grading, "grading_logic")
+
+                                db_item.content = ai_content
+                                db_item.grading_logic = ai_grading
                                 # [HITO 6 BLINDAJE] Preservar metadata original (TaskInstruction)
                                 ai_metadata = i_data.get('metadata', {})
                                 if 'task_instruction' in db_item.metadata:

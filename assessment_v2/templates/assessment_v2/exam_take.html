@@ -263,7 +263,7 @@
                                         {% endif %}
                                     {% endfor %}
                                 {% endif %}
-                                <div class="source-text text-justify small" draggable="true">{{ item.content.options.0|default:""|linebreaks }}</div>
+                                <div class="source-text text-justify small" draggable="true">{{ item.content.source_text|default:""|linebreaks }}</div>
                             </div>
                             <div class="col-md-6 editor-panel p-3 position-relative">
                                 <h6 class="text-muted border-bottom pb-2">{% trans "Ensayo Crítico" %}</h6>
@@ -274,9 +274,9 @@
 
                         {# 6. CLO-OPEN / CLO-MULTI -> W-TXT-CLOZE #}
                         {% elif item.widget_id == 'W-TXT-CLOZE' %}
-                        <div class="widget-container border p-4 rounded bg-white shadow-sm cloze-box font-serif fs-5 cloze-render-target" data-item-id="{{ item.id }}" data-options='{{ item.content.options|default:"[]"|escapejs }}'>
-                             {# PMA 3: Eliminado safe. Hidratación segura via JS #}
+                        <div class="widget-container border p-4 rounded bg-white shadow-sm cloze-box font-serif fs-5 cloze-render-target" data-item-id="{{ item.id }}" data-uuid="{{ item.uuid }}">
                              <div class="d-none cloze-source">{{ item.content.text_with_gaps }}</div>
+                             {{ item.content.cloze_options|json_script:item.uuid }}
                              <div class="cloze-output"></div>
                         </div>
 
@@ -336,7 +336,7 @@
     <span class="badge bg-secondary" id="chat-quality-{{ item.id }}">Registro: N/A</span>
 </h6>
                             <div class="chat-viewport bg-white border p-2 mb-2 rounded" id="chat-vp-{{ item.id }}">
-                                <div class="text-muted small text-center mt-2">{% trans "Inicie la mediación o interrogatorio." %}</div>
+                                <div class="text-muted small text-center mt-2">{% if item.content.initial_scenario %}{{ item.content.initial_scenario }}{% else %}{% trans "Inicie la mediación o interrogatorio." %}{% endif %}</div>
                                 {# [FIX] W-COMM-DIALOG Interactivity #}
                             </div>
                             <div class="input-group">
@@ -497,24 +497,26 @@
         const source = el.querySelector('.cloze-source').textContent;
         const output = el.querySelector('.cloze-output');
         
-        // Detecta patrones [...] o ______ (3+ guiones bajos)
-        // Reemplaza por inputs HTML estandarizados
         const blockType = el.closest('.exam-item').dataset.blockType;
-        let renderedHTML = source;
-        if (blockType === 'CLO-MULTI') {
-            let optionsHTML = '<option value="">---</option>';
-            try {
-                const options = JSON.parse(el.dataset.options || '[]');
-                options.forEach(opt => { optionsHTML += `<option value="${opt}">${opt}</option>`; });
-            } catch(e) {}
-            renderedHTML = source.replace(/(\[.*?\]|_{3,})/g, () => {
-                return `<select class="cloze-input form-select d-inline-block text-center mx-1 border-primary rounded" style="width: auto; background: #f8f9fa;">${optionsHTML}</select>`;
-            });
-        } else {
-            renderedHTML = source.replace(/(\[.*?\]|_{3,})/g, () => {
-            return `<input type="text" class="cloze-input form-control d-inline-block text-center mx-1 border-bottom border-primary rounded-0 px-2" style="width: 120px; background: #f8f9fa;" placeholder="?" autocomplete="off">`;
+        let optionsDict = {};
+        try {
+            const scriptTag = document.getElementById(el.dataset.uuid);
+            if (scriptTag) {
+                optionsDict = JSON.parse(scriptTag.textContent);
+            }
+        } catch(e) { console.error("Error parsing cloze options:", e); }
+
+        // [HITO 6 FIX] Detección explícita de marcadores [HUECO_ID_X] dictados por la Estrategia
+        let renderedHTML = source.replace(/\[HUECO_ID_\d+\]/g, (match) => {
+            if (blockType === 'CLO-MULTI') {
+                let optionsHTML = '<option value="">---</option>';
+                const opts = optionsDict[match] ||[];
+                opts.forEach(opt => { optionsHTML += `<option value="${opt}">${opt}</option>`; });
+                return `<select class="cloze-input form-select d-inline-block text-center mx-1 border-primary rounded" data-gap-id="${match}" style="width: auto; background: #f8f9fa;">${optionsHTML}</select>`;
+            } else {
+                return `<input type="text" class="cloze-input form-control d-inline-block text-center mx-1 border-bottom border-primary rounded-0 px-2" data-gap-id="${match}" style="width: 120px; background: #f8f9fa;" placeholder="?" autocomplete="off">`;
+            }
         });
-        }
         
         output.innerHTML = renderedHTML;
     });
@@ -888,7 +890,12 @@
             } 
             // 6. CLO-OPEN / CLO-MULTI (Multiple gaps)
             else if (blockType === 'CLO-OPEN' || blockType === 'CLO-MULTI') {
-                responses[itemId] = Array.from(item.querySelectorAll('.cloze-input')).map(el => el.value);
+                const gapAnswers = {};
+                item.querySelectorAll('.cloze-input').forEach(el => {
+                    const gapId = el.dataset.gapId;
+                    if (gapId) gapAnswers[gapId] = el.value;
+                });
+                responses[itemId] = gapAnswers;
             } 
             // 7. [FIX] W-COMM-DIALOG (Chat logs)
             else if (item.dataset.widgetId === 'W-COMM-DIALOG') {

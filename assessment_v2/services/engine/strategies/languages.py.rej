@@ -1,0 +1,45 @@
+--- languages.py
++++ languages.py
+@@ -107,29 +107,29 @@
+         sid = self.sub_archetype_id
+         skeleton =[]
+ 
+-        # Plantillas de Marcadores JSON Inmutables
++        # Plantillas de Marcadores JSON Inmutables (Skeleton-Prompt Binding estricto)
+         TPL_CLO_MULTI = {
+-            "content": {"stem": "[INSTRUCCION_PREGUNTA]", "text_with_gaps": "Texto con[HUECO_ID_1] y[HUECO_ID_2]", "cloze_options": {"[HUECO_ID_1]": ["[OPCION_A]", "[OPCION_B]", "[OPCION_C]"], "[HUECO_ID_2]": ["[OPCION_A]", "[OPCION_B]", "[OPCION_C]"]}},
+-            "grading_logic": {"gap_solutions": {"[HUECO_ID_1]": "[RESPUESTA_1]", "[HUECO_ID_2]": "[RESPUESTA_2]"}, "feedback_justification": "[FEEDBACK_GENERAL]"}
++            "content": {"stem": "[INSTRUCCION_PREGUNTA]", "text_with_gaps": "[TEXTO_CON_HUECOS_USANDO_HUECO_ID_1_Y_HUECO_ID_2]", "cloze_options": {"[HUECO_ID_1]": ["[OPCION_1_TEXTO]", "[OPCION_2_TEXTO]", "[OPCION_3_TEXTO]", "[OPCION_4_TEXTO]"], "[HUECO_ID_2]": ["[OPCION_1_TEXTO]", "[OPCION_2_TEXTO]", "[OPCION_3_TEXTO]", "[OPCION_4_TEXTO]"]}},
++            "grading_logic": {"gap_solutions": {"[HUECO_ID_1]": "[RESPUESTA_ESPERADA_1]", "[HUECO_ID_2]": "[RESPUESTA_ESPERADA_2]"}, "feedback_justification": "[FEEDBACK_1]"}
+         }
+         TPL_CLO_OPEN = {
+-            "content": {"stem": "[INSTRUCCION_PREGUNTA]", "text_with_gaps": "Texto con[HUECO_ID_1] y[HUECO_ID_2]"},
+-            "grading_logic": {"gap_solutions": {"[HUECO_ID_1]": "[RESPUESTA_1]", "[HUECO_ID_2]": "[RESPUESTA_2]"}, "feedback_justification": "[FEEDBACK_GENERAL]"}
++            "content": {"stem": "[INSTRUCCION_PREGUNTA]", "text_with_gaps": "[TEXTO_CON_HUECOS_USANDO_HUECO_ID_1_Y_HUECO_ID_2]"},
++            "grading_logic": {"gap_solutions": {"[HUECO_ID_1]": "[RESPUESTA_ESPERADA_1]", "[HUECO_ID_2]": "[RESPUESTA_ESPERADA_2]"}, "feedback_justification": "[FEEDBACK_1]"}
+         }
+         TPL_PRM_STRIKE = {
+-            "content": {"stem": "[CONTENIDO_PREGUNTA]", "options": ["[OPCION_1]", "[OPCION_2]", "[OPCION_3]", "[OPCION_4]"]},
+-            "grading_logic": {"correct_answer": "[OPCION_CORRECTA]", "feedback_justification": "[FEEDBACK_JUSTIFICACION]"}
++            "content": {"stem": "[CONTENIDO_PREGUNTA]", "options": ["[OPCION_1_TEXTO]", "[OPCION_2_TEXTO]", "[OPCION_3_TEXTO]", "[OPCION_4_TEXTO]"]},
++            "grading_logic": {"correct_answer": "[RESPUESTA_ESPERADA_1]", "feedback_justification": "[FEEDBACK_1]"}
+         }
+         TPL_DRA_HOLO = {
+-            "content": {"stem": "[INSTRUCCION_ENSAYO]", "source_text": "[TEXTO_FUENTE_ANALISIS]"},
+-            "grading_logic": {"feedback_justification": "[RUBRICA_EVALUACION]"}
++            "content": {"stem": "[INSTRUCCION_PREGUNTA]", "source_text": "[TEXTO_FUENTE]"},
++            "grading_logic": {"feedback_justification": "[FEEDBACK_1]"}
+         }
+         TPL_DIA_INTERACT = {
+-            "content": {"stem": "[INSTRUCCION_ORAL]", "initial_scenario": "[ESCENARIO_INICIAL_O_ROL]"},
+-            "grading_logic": {"feedback_justification": "[CRITERIOS_ORALES]"}
++            "content": {"stem": "[INSTRUCCION_PREGUNTA]", "initial_scenario": "[ESCENARIO_INICIAL]"},
++            "grading_logic": {"feedback_justification": "[FEEDBACK_1]"}
+         }
+         TPL_RBT_CANON = {
+-            "content": {"stem": "[PREGUNTA_CORTA_O_DICTADO]"},
+-            "grading_logic": {"correct_answer": "[TERMINO_EXACTO]", "feedback_justification": "[FEEDBACK_JUSTIFICACION]"}
++            "content": {"stem": "[CONTENIDO_PREGUNTA]"},
++            "grading_logic": {"correct_answer": "[RESPUESTA_ESPERADA_1]", "feedback_justification": "[FEEDBACK_1]"}
+         }
+         TPL_MAT_LINK = {
