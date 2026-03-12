@@ -56,3 +56,10 @@
 *  **Session:** Blindaje JSON y Refactorización de Arquetipo de Lenguas
 *  **Description:** Verificación documental del bug de salidas estructuradas JSON en Gemini 2.5 Flash Lite y ejecución del Hito 6 para el sistema de autoevaluaciones. Se aplicará el patrón 'Skeleton-Prompt Binding' y 'Máquina de Relleno' mediante refactorizaciones atómicas y quirúrgicas en 'languages.py' (estrategias), 'orchestrator/tasks.py' (validación estricta post-IA) y 'exam_take.html' (adaptación del frontend para widgets W-TXT-CLOZE, W-OBJ-STRIKE y W-HUM-TEXT).
 
+
+# 2026-03-12
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+## PLUTO !<-- # --SYSTEM -->!
+*  **Session:** Refactorización IA a Gemini 3.1 Flash y Outputs Estructurados
+*  **Description:** Actualización de los documentos de directrices TOTAL_COMMANDER_*.md para usar gemini-3.1-flash y esprima. Modificación de la documentación satélite del Hito 6 para reflejar la transición a Structured Outputs (JSON nativo) abandonando el relleno de marcadores. Posteriormente, refactorización de gemini_service.py y servicios de IA dependientes para integrar los nuevos esquemas estructurados de Gemini.

@@ -1,3 +1,6 @@
+from pydantic import BaseModel, Field
+from typing import List, Optional
+
 # /home/MiguelAeTxio/PROJECTS/CampuStudiOnline/core/services/gemini_schemas.py
 # [V5 - HITO 6 REPAIR] Inclusión de esquemas estrictos de evaluación (Incidencias 2-7)
 
@@ -143,135 +146,56 @@ METADATA_SCHEMA = {
 
 # --- Schema for Academic Assessment (Milestone 6) ---
 
-ACADEMIC_CLASSIFICATION_SCHEMA = {
-    "type": "object",
-    "properties": {
-        "archetype_id": {
-            "type": "string",
-            "enum": ["ARCH_LANG", "ARCH_HEALTH", "ARCH_TECH", "ARCH_SOC", "ARCH_HUM", "ARCH_SCI"],
-            "description": "El arquetipo principal de la asignatura."
-        },
-        "sub_archetype_id": {
-            "type": "string",
-            "enum": [
-                # LENGUAS
-                "SUB-LIN-INSTR", "SUB-LIN-MINOR", "SUB-LIN-PHILO", "SUB-LIN-NORM", "SUB-LIN-TRA-TECH", "SUB-LIN-TRA-LIT",
-                # SALUD
-                "SUB-SAN-MED-CLIN", "SUB-SAN-MED-BASIC", "SUB-SAN-ODON", "SUB-SAN-FISIO", "SUB-SAN-CUID", 
-                "SUB-SAN-LAB", "SUB-SAN-PSY-CLIN", "SUB-SAN-PSY-EXP", "SUB-SAN-VET", "SUB-SAN-NUT",
-                # SOCIALES
-                "SUB-SOC-LAW-PROC", "SUB-SOC-LAW-DICT", "SUB-SOC-ECON-QUAN", "SUB-SOC-ECON-MGMT", "SUB-SOC-EDU-KIDS", 
-                "SUB-SOC-EDU-SEC", "SUB-SOC-COMM-JOUR", "SUB-SOC-COMM-AV", "SUB-SOC-GEOG", "SUB-SOC-WORK",
-                # TÉCNICAS
-                "SUB-TEC-SOFT", "SUB-TEC-CIVIL", "SUB-TEC-INDUS", "SUB-TEC-CHEM", "SUB-TEC-PROJ", "SUB-TEC-CONS", "SUB-TEC-PURE",
-                # HUMANIDADES
-                "SUB-HUM-HIST", "SUB-HUM-PHIL", "SUB-HUM-ART-HIST", "SUB-HUM-ART-CREA", "SUB-HUM-MUS", "SUB-HUM-ANTH",
-                # CIENCIAS PURAS
-                "SUB-SCI-BIO", "SUB-SCI-CHEM", "SUB-SCI-PHYS", "SUB-SCI-GEOL", "SUB-SCI-ENV", "SUB-SCI-DATA"
-            ],
-            "description": "El ID técnico de especialidad (Ref: V06DOC_SUBARCHETYPES)."
-        },
-        "target_language_code": {
-            "type": "string",
-            "description": "Código ISO 639-1 del idioma objetivo si es ARCH_LANG (ej: 'en', 'fr', 'ja'). 'es' para el resto."
-        },
-        "localized_sections": {
-            "type": "object",
-            "description": "Traducción de títulos e instrucciones al idioma objetivo (solo para ARCH_LANG).",
-            "properties": {
-                "SD_READ": {"type": "array", "items": {"type": "string"}, "description": "[Título, Instrucción]"},
-                "SD_LIST": {"type": "array", "items": {"type": "string"}, "description": "[Título, Instrucción]"},
-                "SD_WRIT": {"type": "array", "items": {"type": "string"}, "description": "[Título, Instrucción]"},
-                "SD_SPEAK": {"type": "array", "items": {"type": "string"}, "description": "[Título, Instrucción]"},
-                "SD_MEDI": {"type": "array", "items": {"type": "string"}, "description": "[Título, Instrucción]"},
-                "SD_THEO": {"type": "array", "items": {"type": "string"}},
-                "SD_CALC": {"type": "array", "items": {"type": "string"}}
-            }
-        }
-    },
-    "required": ["archetype_id", "sub_archetype_id", "target_language_code", "localized_sections"]
-}
+# --- Pydantic Schemas for Academic Assessment (Milestone 6) ---
+# Sustituyen a los antiguos diccionarios para habilitar Structured Outputs nativos
 
-# [HITO 6] Esquema Universal de Ítem de Evaluación
-# Resuelve incidencias 2 (widget_id prohibido), 3 (block_type prohibido), 
-# 4 (feedback obligatorio), 5 (minItems 4), 6 (Enums etiquetas) y 7 (Parámetros).
+class LocalizedSectionsSchema(BaseModel):
+    SD_READ: Optional[List[str]] = Field(default=None, description="[Título, Instrucción]")
+    SD_LIST: Optional[List[str]] = Field(default=None, description="[Título, Instrucción]")
+    SD_WRIT: Optional[List[str]] = Field(default=None, description="[Título, Instrucción]")
+    SD_SPEAK: Optional[List[str]] = Field(default=None, description="[Título, Instrucción]")
+    SD_MEDI: Optional[List[str]] = Field(default=None, description="[Título, Instrucción]")
+    SD_THEO: Optional[List[str]] = Field(default=None)
+    SD_CALC: Optional[List[str]] = Field(default=None)
 
-EXAM_ITEM_CONTENT_SCHEMA = {
-    "type": "object",
-    "properties": {
-        "items": {
-            "type": "array",
-            "items": {
-                "type": "object",
-                "properties": {
-                    "item_id": {"type": "string", "description": "El UUID del ítem proporcionado en el esqueleto."},
-                    "content": {
-                        "type": "object",
-                        "properties": {
-                            "stem": {
-                                "type": "string", 
-                                "description": "El enunciado, pregunta o estímulo principal del ítem."
-                            },
-                            "options": {
-                                "type": "array",
-                                "items": {
-                                    "type": "object",
-                                    "properties": {
-                                        "id": {"type": "string"},
-                                        "text": {"type": "string"},
-                                        "is_correct": {"type": "boolean"},
-                                        "feedback": {"type": "string", "description": "Explicación específica para esta opción."}
-                                    },
-                                    "required": ["id", "text", "is_correct", "feedback"]
-                                },
-                                "minItems": 4, # [INCIDENCIA 5] Validación mínima de opciones
-                                "description": "Lista de opciones de respuesta (Mínimo 4)."
-                            },
-                            # Soporte para otros widgets (Cloze, Matching, etc.)
-                            "media_assets": {"type": "array", "items": {"type": "string"}, "description": "URLs de recursos multimedia opcionales."},
-                            "text_with_gaps": {"type": "string", "description": "Texto continuo con huecos (Obligatorio para W-TXT-CLOZE)."}
-                        },
-                        "required": ["stem"] 
-                    },
-                    "grading_logic": {
-                        "type": "object",
-                        "properties": {
-                            "feedback_justification": {
-                                "type": "string",
-                                "description": "[INCIDENCIA 4] Explicación pedagógica detallada de la solución correcta."
-                            },
-                            "correct_answer": {"type": "string", "description": "Solución correcta genérica (si es número o booleano, devuélvelo como texto)."},
-                            "gap_solutions": {"type": "array", "items": {"type": "string"}, "description": "Soluciones en orden para los huecos de W-TXT-CLOZE."},
-                            "pairs": {"type": "array", "items": {"type": "object", "properties": {"izquierdo": {"type": "string"}, "derecho": {"type": "string"}}, "required":["izquierdo", "derecho"]}, "description": "Pares de vinculación para W-MIX-MATCH."}
-                        },
-                        "required": ["feedback_justification"]
-                    },
-                    "metadata": {
-                        "type": "object",
-                        "properties": {
-                            "competency_tag": {
-                                "type": "string",
-                                "enum": ["COMP_GEN", "COMP_TRA", "COMP_ESP", "COMP_PROF"],
-                                "description": "[INCIDENCIA 57] Etiqueta de competencia evaluada (Enum cerrado)."
-                            },
-                            "cognitive_level": {
-                                "type": "string",
-                                "enum": ["COG_REM", "COG_UND", "COG_APP", "COG_ANA", "COG_EVAL", "COG_CREA"],
-                                "description": "[INCIDENCIA 57] Nivel de la taxonomía de Bloom (Enum cerrado)."
-                            },
-                        },
-                        "required": ["competency_tag", "cognitive_level"]
-                    }
-                },
-                "required": ["content", "grading_logic", "metadata"]
-            }
-        },
-        # [INCIDENCIA 2 y 3] Bloqueo explícito: No pedimos widget_id ni block_type aquí.
-        # [HITO 6] Soporte para estímulo de sección compartido (Reading/Case Study)
-        "section_stimulus": {
-            "type": "string",
-            "description": "Texto, caso clínico o lectura compartida para toda la sección (opcional)."
-        }
-    },
-    "required": ["items"]
-}
+class AcademicClassificationSchema(BaseModel):
+    archetype_id: str = Field(description="El arquetipo principal de la asignatura.")
+    sub_archetype_id: str = Field(description="El ID técnico de especialidad (Ref: V06DOC_SUBARCHETYPES).")
+    target_language_code: str = Field(description="Código ISO 639-1 del idioma objetivo si es ARCH_LANG (ej: 'en', 'fr', 'ja'). 'es' para el resto.")
+    localized_sections: LocalizedSectionsSchema = Field(description="Traducción de títulos e instrucciones al idioma objetivo (solo para ARCH_LANG).")
+
+class OptionSchema(BaseModel):
+    id: str = Field(description="Identificador de la opción (ej: 'A', 'B', 'C', 'D').")
+    text: str = Field(description="Texto de la opción.")
+    is_correct: bool = Field(description="Indica si esta es la opción correcta.")
+    feedback: str = Field(description="Explicación específica para esta opción.")
+
+class ContentSchema(BaseModel):
+    stem: str = Field(description="El enunciado, pregunta o estímulo principal del ítem.")
+    options: Optional[List[OptionSchema]] = Field(default=None, description="Lista de opciones de respuesta (Mínimo 4 para W-OBJ-STRIKE).")
+    media_assets: Optional[List[str]] = Field(default=None, description="URLs de recursos multimedia opcionales.")
+    text_with_gaps: Optional[str] = Field(default=None, description="Texto continuo con huecos (Obligatorio para W-TXT-CLOZE).")
+
+class PairSchema(BaseModel):
+    izquierdo: str = Field(description="Elemento izquierdo del par.")
+    derecho: str = Field(description="Elemento derecho del par vinculado.")
+
+class GradingLogicSchema(BaseModel):
+    feedback_justification: str = Field(description="Explicación pedagógica detallada de la solución correcta.")
+    correct_answer: Optional[str] = Field(default=None, description="Solución correcta genérica (texto).")
+    gap_solutions: Optional[List[str]] = Field(default=None, description="Soluciones en orden para los huecos de W-TXT-CLOZE.")
+    pairs: Optional[List[PairSchema]] = Field(default=None, description="Pares de vinculación para W-MIX-MATCH.")
+
+class MetadataSchema(BaseModel):
+    competency_tag: str = Field(description="Etiqueta de competencia evaluada (ej: COMP_GEN, COMP_TRA, COMP_ESP, COMP_PROF).")
+    cognitive_level: str = Field(description="Nivel de la taxonomía de Bloom (ej: COG_REM, COG_UND, COG_APP, COG_ANA, COG_EVAL, COG_CREA).")
+
+class ExamItemSchema(BaseModel):
+    item_id: str = Field(description="El UUID del ítem proporcionado en el esqueleto.")
+    content: ContentSchema
+    grading_logic: GradingLogicSchema
+    metadata: MetadataSchema
+
+class ExamSectionSchema(BaseModel):
+    items: List[ExamItemSchema]
+    section_stimulus: Optional[str] = Field(default=None, description="Texto, caso clínico o lectura compartida para toda la sección (opcional).")

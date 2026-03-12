@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 
 # --- Configuration Constants ---
 # ID Oficial Preview para API
-GEMINI_MODEL_NAME = "gemini-2.5-flash-lite"
+GEMINI_MODEL_NAME = "gemini-3.1-flash"
 PROACTIVE_DELAY_SECONDS = 2
 
 # --- Custom Exceptions ---
@@ -222,7 +222,7 @@ def classify_subject_identity(subject_name: str, branch_name: str, degree_name: 
     ---
     [HITO 6] Clasifica una asignatura usando la IA para resolver ambigüedad semántica (Protocolo Híbrido).
     """
-    from .gemini_schemas import ACADEMIC_CLASSIFICATION_SCHEMA
+    from .gemini_schemas import AcademicClassificationSchema
     
     close_old_connections()
     
@@ -252,7 +252,7 @@ def classify_subject_identity(subject_name: str, branch_name: str, degree_name: 
 
     generation_config = {
         "response_mime_type": "application/json",
-        "response_schema": ACADEMIC_CLASSIFICATION_SCHEMA,
+        "response_schema": AcademicClassificationSchema,
     }
     
     safety_settings = [types.SafetySetting(category=c, threshold="BLOCK_NONE") 
