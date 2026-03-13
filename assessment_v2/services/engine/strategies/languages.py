@@ -158,95 +158,61 @@ class LanguagesStrategy(BaseExamStrategy):
         sid = self.sub_archetype_id
         skeleton =[]
 
-        # Plantillas de Marcadores JSON Inmutables (Skeleton-Prompt Binding estricto)
-        TPL_CLO_MULTI = {
-            "content": {"stem": "[INSTRUCCION_PREGUNTA]", "text_with_gaps": "[TEXTO_CON_HUECOS_USANDO_HUECO_ID_1_Y_HUECO_ID_2]", "cloze_options": {"[HUECO_ID_1]": ["[OPCION_1_TEXTO]", "[OPCION_2_TEXTO]", "[OPCION_3_TEXTO]", "[OPCION_4_TEXTO]"], "[HUECO_ID_2]": ["[OPCION_1_TEXTO]", "[OPCION_2_TEXTO]", "[OPCION_3_TEXTO]", "[OPCION_4_TEXTO]"]}},
-            "grading_logic": {"gap_solutions": {"[HUECO_ID_1]": "[RESPUESTA_ESPERADA_1]", "[HUECO_ID_2]": "[RESPUESTA_ESPERADA_2]"}, "feedback_justification": "[FEEDBACK_1]"}
-        }
-        TPL_CLO_OPEN = {
-            "content": {"stem": "[INSTRUCCION_PREGUNTA]", "text_with_gaps": "[TEXTO_CON_HUECOS_USANDO_HUECO_ID_1_Y_HUECO_ID_2]"},
-            "grading_logic": {"gap_solutions": {"[HUECO_ID_1]": "[RESPUESTA_ESPERADA_1]", "[HUECO_ID_2]": "[RESPUESTA_ESPERADA_2]"}, "feedback_justification": "[FEEDBACK_1]"}
-        }
-        TPL_PRM_STRIKE = {
-            "content": {"stem": "[CONTENIDO_PREGUNTA]", "options": ["[OPCION_1_TEXTO]", "[OPCION_2_TEXTO]", "[OPCION_3_TEXTO]", "[OPCION_4_TEXTO]"]},
-            "grading_logic": {"correct_answer": "[RESPUESTA_ESPERADA_1]", "feedback_justification": "[FEEDBACK_1]"}
-        }
-        TPL_DRA_HOLO = {
-            "content": {"stem": "[INSTRUCCION_PREGUNTA]", "source_text": "[TEXTO_FUENTE]"},
-            "grading_logic": {"feedback_justification": "[FEEDBACK_1]"}
-        }
-        TPL_DIA_INTERACT = {
-            "content": {"stem": "[INSTRUCCION_PREGUNTA]", "initial_scenario": "[ESCENARIO_INICIAL]"},
-            "grading_logic": {"feedback_justification": "[FEEDBACK_1]"}
-        }
-        TPL_RBT_CANON = {
-            "content": {"stem": "[CONTENIDO_PREGUNTA]"},
-            "grading_logic": {"correct_answer": "[RESPUESTA_ESPERADA_1]", "feedback_justification": "[FEEDBACK_1]"}
-        }
-        TPL_MAT_LINK = {
-            "content": {"stem": "[INSTRUCCION_PREGUNTA]", "options": ["[OPCION_1_TEXTO]", "[OPCION_2_TEXTO]"], "targets": ["[RESPUESTA_ESPERADA_1]", "[RESPUESTA_ESPERADA_2]"]},
-            "grading_logic": {"pairs": {"[OPCION_1_TEXTO]": "[RESPUESTA_ESPERADA_1]", "[OPCION_2_TEXTO]": "[RESPUESTA_ESPERADA_2]"}, "feedback_justification": "[FEEDBACK_1]"}
-        }
-
         # 1. SUB-LIN-INSTR: Modelo Instrumental (B1/C1 - 5 Destrezas)
         if sid in["SUB-LIN-INSTR", "SUB-LIN-CERT"]:
             plan = self.get_section_plan()
             for sec in plan:
                 sec["layout_mode"] = "SPLIT_TEXT" if sec["subdivision_id"] == "SD_READ" else "STANDARD"
                 if sec["subdivision_id"] == "SD_READ":
-                    sec["items"] =[{"block_type": "CLO-MULTI", "widget_id": "W-TXT-CLOZE", "task_instruction": "Genera un texto con huecos a rellenar (CLO-MULTI) evaluando comprensión lectora y léxico.", **TPL_CLO_MULTI}]
+                    sec["items"] =[{"block_type": "CLO-MULTI", "widget_id": "W-TXT-CLOZE", "task_instruction": "Genera un texto con huecos a rellenar (CLO-MULTI) evaluando comprensión lectora y léxico."}]
                 elif sec["subdivision_id"] == "SD_LIST":
-                    sec["items"] =[{"block_type": "PRM-STRIKE", "widget_id": "W-OBJ-STRIKE", "task_instruction": "Genera preguntas de opción múltiple basadas en la transcripción de audio (PRM-STRIKE).", **TPL_PRM_STRIKE}]
+                    sec["items"] =[{"block_type": "PRM-STRIKE", "widget_id": "W-OBJ-STRIKE", "task_instruction": "Genera preguntas de opción múltiple basadas en la transcripción de audio (PRM-STRIKE)."}]
                 elif sec["subdivision_id"] == "SD_WRIT":
                     sec["layout_mode"] = "SPLIT_TEXT"
-                    sec["items"] =[{"block_type": "DRA-HOLO", "widget_id": "W-HUM-TEXT", "task_instruction": "Plantea un tema de redacción académica (ensayo/artículo) que requiera registro formal (DRA-HOLO).", **TPL_DRA_HOLO}]
+                    sec["items"] =[{"block_type": "DRA-HOLO", "widget_id": "W-HUM-TEXT", "task_instruction": "Plantea un tema de redacción académica (ensayo/artículo) que requiera registro formal (DRA-HOLO)."}]
                 elif sec["subdivision_id"] == "SD_SPEAK":
-                    sec["items"] =[{"block_type": "DIA-INTERACT", "widget_id": "W-COMM-DIALOG", "task_instruction": "Inicia una simulación de entrevista oral interactiva (UniversIA).", **TPL_DIA_INTERACT}]
+                    sec["items"] =[{"block_type": "DIA-INTERACT", "widget_id": "W-COMM-DIALOG", "task_instruction": "Inicia una simulación de entrevista oral interactiva (UniversIA)."}]
                 else:
-                    sec["items"] =[{"block_type": "CLO-OPEN", "widget_id": "W-TXT-CLOZE", "task_instruction": "Genera un texto con huecos abiertos sin opciones (CLO-OPEN) para evaluar precisión léxico-gramatical.", **TPL_CLO_OPEN}]
+                    sec["items"] =[{"block_type": "CLO-OPEN", "widget_id": "W-TXT-CLOZE", "task_instruction": "Genera un texto con huecos abiertos sin opciones (CLO-OPEN) para evaluar precisión léxico-gramatical."}]
                 skeleton.append(sec)
 
         # 2. SUB-LIN-MINOR: Modelo Iniciación (Chino/Ruso Minor)
         elif sid == "SUB-LIN-MINOR":
             skeleton =[
-                {"subdivision_id": "SD_WRIT", "title": "Grafía y Dictado", "instructions": "Escriba los caracteres/términos dictados.", "layout_mode": "STANDARD", "items":[{"block_type": "RBT-CANON", "widget_id": "W-OBJ-STRIKE", "task_instruction": "Genera un ejercicio de reconocimiento de grafías o caracteres (RBT-CANON).", **TPL_RBT_CANON}]},
-                {"subdivision_id": "SD_READ", "title": "Estructuras Básicas", "instructions": "Complete las oraciones gramaticales.", "layout_mode": "STANDARD", "items":[{"block_type": "CLO-MULTI", "widget_id": "W-TXT-CLOZE", "task_instruction": "Genera oraciones con huecos a rellenar evaluando gramática básica (CLO-MULTI).", **TPL_CLO_MULTI}]},
-                {"subdivision_id": "SD_MEDI", "title": "Cultura y Civilización", "instructions": "Responda sobre el contexto socio-cultural.", "layout_mode": "STANDARD", "items":[{"block_type": "PRM-STRIKE", "widget_id": "W-OBJ-STRIKE", "task_instruction": "Genera preguntas de opción múltiple sobre cultura y civilización del idioma (PRM-STRIKE).", **TPL_PRM_STRIKE}]}
+                {"subdivision_id": "SD_WRIT", "title": "Grafía y Dictado", "instructions": "Escriba los caracteres/términos dictados.", "layout_mode": "STANDARD", "items":[{"block_type": "RBT-CANON", "widget_id": "W-OBJ-STRIKE", "task_instruction": "Genera un ejercicio de reconocimiento de grafías o caracteres (RBT-CANON)."}]},
+                {"subdivision_id": "SD_READ", "title": "Estructuras Básicas", "instructions": "Complete las oraciones gramaticales.", "layout_mode": "STANDARD", "items":[{"block_type": "CLO-MULTI", "widget_id": "W-TXT-CLOZE", "task_instruction": "Genera oraciones con huecos a rellenar evaluando gramática básica (CLO-MULTI)."}]},
+                {"subdivision_id": "SD_MEDI", "title": "Cultura y Civilización", "instructions": "Responda sobre el contexto socio-cultural.", "layout_mode": "STANDARD", "items":[{"block_type": "PRM-STRIKE", "widget_id": "W-OBJ-STRIKE", "task_instruction": "Genera preguntas de opción múltiple sobre cultura y civilización del idioma (PRM-STRIKE)."}]}
             ]
 
         # 3. SUB-LIN-PHILO: Modelo Filológico (Historia de la Lengua)
         elif sid == "SUB-LIN-PHILO":
             skeleton =[
-                {"subdivision_id": "SD_SOURCE", "title": "Gramática Histórica", "instructions": "Analice la evolución fonética de los étimos.", "layout_mode": "STANDARD", "items":[{"block_type": "DRA-HOLO", "widget_id": "W-HUM-TEXT", "task_instruction": "Genera un ejercicio de análisis de evolución fonética de étimos.", **TPL_DRA_HOLO}]},
-                {"subdivision_id": "SD_LIST", "title": "Análisis Fonético", "instructions": "Transcriba y analice los rasgos fonológicos.", "layout_mode": "SPLIT_TEXT", "items":[{"block_type": "CLO-OPEN", "widget_id": "W-TXT-CLOZE", "task_instruction": "Genera un texto para transcripción y análisis de rasgos fonológicos.", **TPL_CLO_OPEN}]}
+                {"subdivision_id": "SD_SOURCE", "title": "Gramática Histórica", "instructions": "Analice la evolución fonética de los étimos.", "layout_mode": "STANDARD", "items":[{"block_type": "DRA-HOLO", "widget_id": "W-HUM-TEXT", "task_instruction": "Genera un ejercicio de análisis de evolución fonética de étimos."}]},
+                {"subdivision_id": "SD_LIST", "title": "Análisis Fonético", "instructions": "Transcriba y analice los rasgos fonológicos.", "layout_mode": "SPLIT_TEXT", "items":[{"block_type": "CLO-OPEN", "widget_id": "W-TXT-CLOZE", "task_instruction": "Genera un texto para transcripción y análisis de rasgos fonológicos."}]}
             ]
 
         # 4. SUB-LIN-NORM: Modelo Norma y Uso (Español Actual)
         elif sid == "SUB-LIN-NORM":
             skeleton =[
-                {"subdivision_id": "SD_READ", "title": "Análisis de Desviaciones", "instructions": "Identifique y corrija errores de norma.", "layout_mode": "SPLIT_TEXT", "items":[{"block_type": "CLO-MULTI", "widget_id": "W-TXT-CLOZE", "task_instruction": "Genera un texto con errores normativos para identificar y corregir.", **TPL_CLO_MULTI}]},
-                {"subdivision_id": "SD_DISC", "title": "Exégesis Normativa", "instructions": "Justifique el uso según la normativa académica.", "layout_mode": "SPLIT_TEXT", "items":[{"block_type": "DRA-HOLO", "widget_id": "W-HUM-TEXT", "task_instruction": "Genera un caso de exégesis normativa para justificar el uso académico.", **TPL_DRA_HOLO}]}
+                {"subdivision_id": "SD_READ", "title": "Análisis de Desviaciones", "instructions": "Identifique y corrija errores de norma.", "layout_mode": "SPLIT_TEXT", "items":[{"block_type": "CLO-MULTI", "widget_id": "W-TXT-CLOZE", "task_instruction": "Genera un texto con errores normativos para identificar y corregir."}]},
+                {"subdivision_id": "SD_DISC", "title": "Exégesis Normativa", "instructions": "Justifique el uso según la normativa académica.", "layout_mode": "SPLIT_TEXT", "items":[{"block_type": "DRA-HOLO", "widget_id": "W-HUM-TEXT", "task_instruction": "Genera un caso de exégesis normativa para justificar el uso académico."}]}
             ]
 
         # 5. SUB-LIN-TRA-TECH: Traducción Técnica
         elif sid in["SUB-LIN-TRA-TECH", "SUB-LIN-PROF"]:
             skeleton =[
-                {"subdivision_id": "SD_READ", "title": "Glosario Terminológico", "instructions": "Vincule los términos técnicos con su equivalente.", "layout_mode": "STANDARD", "items":[{"block_type": "MAT-LINK", "widget_id": "W-MIX-MATCH", "task_instruction": "Genera un glosario de términos técnicos para vincular con su equivalente.", **TPL_MAT_LINK}]},
-                {"subdivision_id": "SD_MEDI", "title": "Traducción Técnica", "instructions": "Traduzca el texto manteniendo la precisión.", "layout_mode": "SPLIT_TEXT", "items":[{"block_type": "DRA-HOLO", "widget_id": "W-HUM-TEXT", "task_instruction": "Proporciona un texto técnico complejo para su traducción precisa.", **TPL_DRA_HOLO}]}
+                {"subdivision_id": "SD_READ", "title": "Glosario Terminológico", "instructions": "Vincule los términos técnicos con su equivalente.", "layout_mode": "STANDARD", "items":[{"block_type": "MAT-LINK", "widget_id": "W-MIX-MATCH", "task_instruction": "Genera un glosario de términos técnicos para vincular con su equivalente."}]},
+                {"subdivision_id": "SD_MEDI", "title": "Traducción Técnica", "instructions": "Traduzca el texto manteniendo la precisión.", "layout_mode": "SPLIT_TEXT", "items":[{"block_type": "DRA-HOLO", "widget_id": "W-HUM-TEXT", "task_instruction": "Proporciona un texto técnico complejo para su traducción precisa."}]}
             ]
 
         # 6. SUB-LIN-TRA-LIT: Traducción Literaria
         elif sid in["SUB-LIN-TRA-LIT", "SUB-LIN-LIT"]:
             skeleton =[
-                {"subdivision_id": "SD_READ", "title": "Análisis Estilístico", "instructions": "Identifique los rasgos de estilo del autor.", "layout_mode": "SPLIT_TEXT", "items":[{"block_type": "CLO-MULTI", "widget_id": "W-TXT-CLOZE", "task_instruction": "Genera un texto literario con huecos para identificar rasgos de estilo.", **TPL_CLO_MULTI}]},
-                {"subdivision_id": "SD_MEDI", "title": "Traducción Literaria", "instructions": "Traduzca preservando la carga estética.", "layout_mode": "SPLIT_TEXT", "items":[{"block_type": "DRA-HOLO", "widget_id": "W-HUM-TEXT", "task_instruction": "Proporciona un texto literario para traducir preservando su carga estética.", **TPL_DRA_HOLO}]}
+                {"subdivision_id": "SD_READ", "title": "Análisis Estilístico", "instructions": "Identifique los rasgos de estilo del autor.", "layout_mode": "SPLIT_TEXT", "items":[{"block_type": "CLO-MULTI", "widget_id": "W-TXT-CLOZE", "task_instruction": "Genera un texto literario con huecos para identificar rasgos de estilo."}]},
+                {"subdivision_id": "SD_MEDI", "title": "Traducción Literaria", "instructions": "Traduzca preservando la carga estética.", "layout_mode": "SPLIT_TEXT", "items":[{"block_type": "DRA-HOLO", "widget_id": "W-HUM-TEXT", "task_instruction": "Proporciona un texto literario para traducir preservando su carga estética."}]}
             ]
 
         return skeleton
-
-    def get_output_schema(self):
-        #[HITO 6 BLINDAJE] Anulamos el schema heredado
-        return None
 
     def get_system_prompt(self):
         """
@@ -276,26 +242,23 @@ class LanguagesStrategy(BaseExamStrategy):
     def get_user_prompt(self, context_text, topic, subdivision_id, generated_item_titles=None, skeleton_json=None):
         """
         Atomic generation prompt for a specific subdivision with context memory.
-
-        Prompt de generación atómica para una subdivisión específica con memoria de contexto.
         """
         memory = "\nEVITA REPETICIÓN: " + ", ".join(generated_item_titles) if generated_item_titles else ""
-        skeleton_instruction = f"\nESQUELETO A RELLENAR:\n{skeleton_json}\n(Debes devolver EXACTAMENTE estos ítems).\n" if skeleton_json else "\n(Asegúrate de incluir el 'item_id' proporcionado para cada ítem).\n"
+        skeleton_instruction = f"\nESQUELETO REQUERIDO:\n{skeleton_json}\n(Debes generar el contenido para estos ítems y devolver el JSON estructurado de la sección).\n" if skeleton_json else "\n(Asegúrate de incluir el 'item_id' proporcionado para cada ítem).\n"
         target_lang = self.config.get('target_language_code', 'es')
 
         return (
-            f"ACTÚA EXCLUSIVAMENTE COMO UNA MÁQUINA DE RELLENO DE PLANTILLAS JSON.\n"
-            f"Tu ÚNICA función es sustituir los marcadores de posición (ej. [CONTENIDO_PREGUNTA], [TEXTO_FUENTE]) por contenido real.\n"
-            f"ESTÁ TERMINANTEMENTE PROHIBIDO alterar cualquier clave, añadir nuevas o modificar la estructura de los arrays/objetos del esqueleto provisto.\n\n"
+            f"ACTÚA COMO UN GENERADOR DE EXÁMENES ACADÉMICOS EXPERTO.\n"
+            f"Tu función es generar el contenido de evaluación estructurado según el esquema de datos solicitado.\n\n"
             f"Sección objetivo: {subdivision_id}.\n"
             f"TEMA: {topic}. NIVEL: {self.pedagogical_level}.{memory}\n"
             f"CONTEXTO DOCENTE:\n{(context_text or '')[:15000]}\n"
             f"{skeleton_instruction}"
             f"CONFIG: Arquetipo={self.sub_archetype_id}, Itinerario={self.itinerary_id}, Modo={self.get_immersion_mode()}.\n"
-            f"REGLAS DE SALIDA OBLIGATORIAS:\n"
-            f"1.  JSON estricto (Array 'items'). Rellena SOLO los ítems del esqueleto respetando íntegramente sus claves.\n"
-            f"2.  NO ALTERES NUNCA los valores de 'item_id', 'widget_id' ni 'block_type'. Son sagrados.\n"
+            f"REGLAS DE SALIDA OBLIGATORIAS (STRUCTURED OUTPUTS):\n"
+            f"1.  Debes devolver un objeto JSON que cumpla estrictamente con el esquema Pydantic asociado (ExamSectionSchema).\n"
+            f"2.  Conserva EXACTAMENTE los 'item_id' proporcionados en el esqueleto para cada ítem.\n"
             f"3.  Los títulos, enunciados ('stem') e instrucciones DEBEN ESTAR SIEMPRE EN ESPAÑOL.\n"
-            f"4.  El contenido del ítem (texto con huecos, opciones, etc.) DEBE ESTAR en el idioma objetivo '{target_lang}'.\n"
-            f"5.  Para los ítems de tipo CLOZE (W-TXT-CLOZE), usa escrupulosamente los marcadores[HUECO_ID_X] tanto en el texto como en el diccionario de opciones."
+            f"4.  El contenido de evaluación (text_with_gaps, opciones, pares, etc.) DEBE ESTAR en el idioma objetivo '{target_lang}'.\n"
+            f"5.  Para los ítems de tipo CLOZE (W-TXT-CLOZE), usa marcadores genéricos (ej. '___') en el texto en lugar de corchetes."
         )

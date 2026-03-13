@@ -53,8 +53,8 @@ class BaseExamStrategy(ABC):
         Defines the expected JSON schema for the AI model response.
         Centralizado para cumplir con V06DOC_METADATA y evitar sobrescrituras.
         """
-        from core.services.gemini_schemas import EXAM_ITEM_CONTENT_SCHEMA
-        return EXAM_ITEM_CONTENT_SCHEMA
+        from core.services.gemini_schemas import ExamSectionSchema
+        return ExamSectionSchema
 
     
     @abstractmethod

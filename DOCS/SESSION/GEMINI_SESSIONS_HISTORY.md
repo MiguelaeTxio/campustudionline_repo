@@ -63,3 +63,10 @@
 ## PLUTO !<-- # --SYSTEM -->!
 *  **Session:** Refactorización IA a Gemini 3.1 Flash y Outputs Estructurados
 *  **Description:** Actualización de los documentos de directrices TOTAL_COMMANDER_*.md para usar gemini-3.1-flash y esprima. Modificación de la documentación satélite del Hito 6 para reflejar la transición a Structured Outputs (JSON nativo) abandonando el relleno de marcadores. Posteriormente, refactorización de gemini_service.py y servicios de IA dependientes para integrar los nuevos esquemas estructurados de Gemini.
+
+# 2026-03-13
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+## MAMC
+*  **Session:** Auditoría y Refactorización del Arquetipo de Lenguas
+*  **Description:** Sesión dedicada a la auditoría, refactorización y testing exhaustivo del arquetipo de lenguas (ARCH_LANG) y sus 6 sub-arquetipos. Se verificará la correcta integración con los esquemas Pydantic para asegurar que la generación de contenido se realice usando Structured Outputs de forma estricta, eliminando los marcadores de texto. Posteriormente, se realizarán pruebas completas para validar que el orquestador mapea y renderiza los JSON sin errores. Una vez estabilizado, se planificará la transición al siguiente bloque en prioridad.
