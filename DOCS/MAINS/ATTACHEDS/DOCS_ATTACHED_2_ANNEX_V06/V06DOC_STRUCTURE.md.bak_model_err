@@ -19,7 +19,7 @@
 
 ### 3. FASE DE GENERACIÓN ESTRUCTURADA (IA)
 *   El orquestador (Task) ejecuta llamadas atómicas por sección utilizando **Structured Outputs**.
-*   Pasa el `response_schema` directamente a la API (`gemini-3.1-pro-preview`) garantizando el formato JSON nativo.
+*   Pasa el `response_schema` directamente a la API (`gemini-3.0-pro`) garantizando el formato JSON nativo.
 *   **Prompt de Generación:** La IA recibe el contexto y la `TaskInstruction` para generar los datos exactos que demanda el esquema.
 *   **Persistencia:** Una vez devuelto el JSON estructurado, se instancian y guardan los objetos `ExamSection` y `ExamItem` definitivos en la base de datos.
 

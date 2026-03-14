@@ -7,19 +7,18 @@ from typing import Tuple
 
 from google import genai
 from google.genai import types
-from google.genai.errors import APIError
 from django.db import close_old_connections
 
 # [REFACTORIZADO HITO 37] SDK Unificado Google Gen AI (v1)
-# Soporte oficial para Gemini 3.1 Pro Preview.
+# Soporte oficial para Gemini 3.0 Pro.
 from orchestrator.models import ApiKey, PendingContentTask
 
 logger = logging.getLogger(__name__)
 
 # --- Configuration Constants ---
 # ID Oficial Preview para API
-GEMINI_MODEL_NAME = "gemini-3.1-pro-preview"
-PROACTIVE_DELAY_SECONDS = 10
+GEMINI_MODEL_NAME = "gemini-3.0-pro"
+PROACTIVE_DELAY_SECONDS = 2
 
 # --- Custom Exceptions ---
 class AIServiceCriticalError(Exception):
@@ -91,7 +90,7 @@ def clean_json_response(raw_text: str) -> str:
 def generate_text_content(prompt: str, api_key: ApiKey, task_id: str = None, system_instruction: str = None, response_schema: dict = None) -> Tuple[bool, str, str, dict]:
     usage_metadata = {"input_tokens": 0, "output_tokens": 0}
     """
-    [V7-Stateless-SDKv1] Genera texto usando Gemini 3.1 Pro Preview.
+    [V7-Stateless-SDKv1] Genera texto usando Gemini 3.0 Pro.
     """
     close_old_connections()
     
@@ -151,27 +150,18 @@ def generate_text_content(prompt: str, api_key: ApiKey, task_id: str = None, sys
 
         return True, response.text.strip(), api_key.name, usage_metadata
 
-    except APIError as e:
-        error_str = str(e).upper()
-        if e.code == 429 or "429" in error_str or "QUOTA" in error_str or "RESOURCE" in error_str:
-            logger.warning(f"Límite de cuota (429) detectado con la clave '{api_key.name}'. Propagando excepción.")
-            raise AIServiceCriticalError(f"QUOTA_EXCEEDED: {e}")
-        elif e.code == 503 or "503" in error_str or "OVERLOAD" in error_str:
-            raise AIServiceCriticalError(f"SERVER_OVERLOAD: {e}")
-        else:
-            raise AIServiceCriticalError(f"API_ERROR_{e.code}: {e}")
     except Exception as e:
-        error_str = str(e).upper()
-        if "429" in error_str or "RESOURCE_EXHAUSTED" in error_str or "QUOTA" in error_str:
+        error_str = str(e)
+        if "429" in error_str or "RESOURCE_EXHAUSTED" in error_str.upper():
             logger.warning(f"Límite de cuota detectado con la clave '{api_key.name}'. Propagando excepción.")
-            raise AIServiceCriticalError(f"QUOTA_EXCEEDED: {e}") 
+            raise AIServiceCriticalError(f"QUOTA_EXCEEDED: {error_str}") 
             
         logger.critical(f"Error inesperado en generate_text_content (SDK v1): {e}", exc_info=True)
         raise AIServiceCriticalError(f"Error inesperado en la capa de servicio de IA: {e}") from e
 
 def generate_audio_content(prompt: str, api_key: ApiKey) -> Tuple[bool, bytes, str]:
     """
-    [HITO 6] Genera un archivo de audio (MPEG) nativamente usando Gemini 3.1 Pro Preview.
+    [HITO 6] Genera un archivo de audio (MPEG) nativamente usando Gemini 3.0 Pro.
     """
     close_old_connections()
     generation_config = {

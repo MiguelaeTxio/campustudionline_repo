@@ -70,3 +70,34 @@
 ## MAMC
 *  **Session:** Auditoría y Refactorización del Arquetipo de Lenguas
 *  **Description:** Sesión dedicada a la auditoría, refactorización y testing exhaustivo del arquetipo de lenguas (ARCH_LANG) y sus 6 sub-arquetipos. Se verificará la correcta integración con los esquemas Pydantic para asegurar que la generación de contenido se realice usando Structured Outputs de forma estricta, eliminando los marcadores de texto. Posteriormente, se realizarán pruebas completas para validar que el orquestador mapea y renderiza los JSON sin errores. Una vez estabilizado, se planificará la transición al siguiente bloque en prioridad.
+
+# 2026-03-13
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+## EDC
+*  **Session:** Solución Error 404 Gemini API en Generación y Assessment
+*  **Description:** Resolución del error 404 'NOT_FOUND' provocado por la configuración del modelo 'gemini-3.1-flash' en los servicios de IA de la plataforma. Se procede a investigar y estandarizar el modelo a 'gemini-2.5-flash-lite', cumpliendo con la directriz técnica inmutable del sistema. Esta intervención solucionará tanto el fallo en la generación de contenido (Orchestrator) como el error 500 durante la creación de evaluaciones en Assessment v2 (AcademicDeductor).
+
+
+# 2024-05-21
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+## NRA
+*  **Session:** Desarrollo del Sistema de Autoevaluaciones con IA (Hito 6)
+*  **Description:** Reanudación del trabajo en el Hito 6, enfocado en el motor de autoevaluación inteligente. La sesión se centra en la revisión de la arquitectura del motor de evaluación v2, la integración con la API de Gemini para la generación de contenidos evaluativos y la validación de los modelos de datos de seguimiento y planes de acreditación.
+
+
+# 2026-03-13
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+## NRA # --SYSTEM -->
+*  **Session:** Implementación y Testing Funcional del Arquetipo de Lenguas (Structured Outputs)
+*  **Description:** Sesión dedicada a implementar y validar la generación atómica del arquetipo de lenguas (ARCH_LANG) utilizando Structured Outputs nativos. Se desarrollará un script temporal de prueba para la sección SD_READ que invoque la Strategy correspondiente y se verificará el cumplimiento estricto del esquema Pydantic (ExamSectionSchema). Además, se validará la correcta persistencia estructural en base de datos (ExamSection e ExamItem) a través de generate_exam_task. Si el flujo es exitoso, se auditará la interacción de UniversIA para garantizar la estabilidad general de la plataforma frente a los nuevos esquemas de respuesta.
+
+# 2026-03-14
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+## CSO
+*  **Session:** Restauracion Logica Rotacion API Keys
+*  **Description:** Análisis del repositorio (commit 8 de marzo) para extraer y restaurar la lógica de rotación de claves API, gestión de cuarentenas y control de cuotas por minuto. Adaptación de este flujo al nuevo SDK de Gemini 3.1 para asegurar la estabilidad del sistema de generación de autoevaluaciones y prevenir errores 429.
+

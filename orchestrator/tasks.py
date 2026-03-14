@@ -201,26 +201,57 @@ def _safe_generate_content(prompt, system_instruction=None, response_schema=None
         else:
             # 3. Gestión de Errores Estándar
             error_str = str(text)
-            is_quota = "429" in error_str or "Resource" in error_str or "Quota" in error_str
+            error_str_upper = error_str.upper()
+            is_quota = "429" in error_str_upper or "RESOURCE" in error_str_upper or "QUOTA" in error_str_upper
             
             if is_quota:
                 api_key.refresh_from_db()
                 api_key.consecutive_failures += 1
                 api_key.save(update_fields=["consecutive_failures"])
                 
-                if api_key.consecutive_failures >= 4:
-                    api_key.is_quarantined = True
-                    api_key.save(update_fields=["is_quarantined"])
-                    _request_quarantine_via_mailbox(api_key)
-                    if logger_callback: logger_callback(f"ROTACIÓN FORZADA: Clave {api_key.name} a Cuarentena.")
-                    
-                    # Intentar rotar inmediatamente para el siguiente loop
-                    next_k = ApiKey.objects.filter(is_enabled=True, is_quarantined=False).exclude(id=api_key.id).first()
-                    if next_k:
-                        automation_settings.active_api_key = next_k
-                        automation_settings.save(update_fields=['active_api_key'])
+                # ROTACIÓN INMEDIATA (Hot-Swap)
+
+                
+                next_k = ApiKey.objects.filter(is_enabled=True, is_quarantined=False).exclude(id=api_key.id).order_by('id').first()
+
+                
+                if next_k:
+
+                
+                    automation_settings.active_api_key = next_k
+
+                
+                    automation_settings.save(update_fields=['active_api_key'])
+
+                
+                    if logger_callback: logger_callback(f"ROTACIÓN INMEDIATA (429): Clave {next_k.name}")
+
+                
                 else:
-                    if logger_callback: logger_callback(f"STRIKE {api_key.consecutive_failures}/4 ({api_key.name}).", level="WARNING")
+
+                
+                    if logger_callback: logger_callback("POOL AGOTADO (429). Esperando 60s...", level="ERROR")
+
+                
+                    time.sleep(60)
+
+                
+                
+
+                
+                if api_key.consecutive_failures >= 4:
+
+                
+                    api_key.is_quarantined = True
+
+                
+                    api_key.save(update_fields=["is_quarantined"])
+
+                
+                    _request_quarantine_via_mailbox(api_key)
+
+                
+                    if logger_callback: logger_callback(f"CUARENTENA: Clave {api_key.name} agotó strikes.", level="ERROR")
                 continue 
             else:
                 # Error no relacionado con cuota (ej: 500, overload), devolvemos el error.
@@ -693,8 +724,9 @@ def generate_full_course_task(self, task_id):
 
                 if not success:
                     error_str = str(response_text)
-                    is_quota = "429" in error_str or "Resource" in error_str or "Quota" in error_str
-                    is_server_overload = "503" in error_str or "UNAVAILABLE" in error_str or "Overloaded" in error_str
+                    error_str_upper = error_str.upper()
+                    is_quota = "429" in error_str_upper or "RESOURCE" in error_str_upper or "QUOTA" in error_str_upper
+                    is_server_overload = "503" in error_str_upper or "UNAVAILABLE" in error_str_upper or "OVERLOAD" in error_str_upper
                     
                     if is_server_overload:
                         log_task_event(task_id, f"GOOGLE OVERLOAD (503). Esperando 45s antes de reintentar con {api_key.name}...", is_error=True)
@@ -706,21 +738,35 @@ def generate_full_course_task(self, task_id):
                         api_key.refresh_from_db()
                         api_key.consecutive_failures += 1
                         api_key.save(update_fields=["consecutive_failures"])
-                        if api_key.consecutive_failures >= 4:
-                            api_key.is_quarantined = True
-                            api_key.save(update_fields=["is_quarantined"])
-                            _request_quarantine_via_mailbox(api_key)
-                            next_k = ApiKey.objects.filter(is_enabled=True, is_quarantined=False).exclude(id=api_key.id).first()
-                            if next_k:
-                                automation_settings.active_api_key = next_k
-                                automation_settings.save(update_fields=['active_api_key'])
-                                log_task_event(task_id, f"ROTACIÓN (INIT): Nueva clave {next_k.name}.")
-                            else:
-                                log_task_event(task_id, "POOL AGOTADO TRAS ROTACIÓN. Esperando...", is_error=True)
-                                time.sleep(60)
+                        # ROTACIÓN INMEDIATA (Hot-Swap)
+
+                        next_k = ApiKey.objects.filter(is_enabled=True, is_quarantined=False).exclude(id=api_key.id).order_by('id').first()
+
+                        if next_k:
+
+                            automation_settings.active_api_key = next_k
+
+                            automation_settings.save(update_fields=['active_api_key'])
+
+                            log_task_event(task_id, f"ROTACIÓN INMEDIATA (429): Nueva clave {next_k.name}.")
+
                         else:
-                            log_task_event(task_id, f"STRIKE INIT {api_key.consecutive_failures}/4. Esperando 60s...", is_error=True)
+
+                            log_task_event(task_id, "POOL AGOTADO (429). Esperando 60s...", is_error=True)
+
                             time.sleep(60)
+
+                        
+
+                        if api_key.consecutive_failures >= 4:
+
+                            api_key.is_quarantined = True
+
+                            api_key.save(update_fields=["is_quarantined"])
+
+                            _request_quarantine_via_mailbox(api_key)
+
+                            log_task_event(task_id, f"CUARENTENA: Clave {api_key.name} agotó strikes.", is_error=True)
                         continue 
                     else:
                         log_task_event(task_id, f"ERROR INIT NO-CUOTA: {error_str}. Reintentando en 30s...", is_error=True)
@@ -740,8 +786,9 @@ def generate_full_course_task(self, task_id):
                 
                 if not success:
                     error_str = str(schema_or_error)
-                    is_quota = "429" in error_str or "Resource" in error_str or "Quota" in error_str
-                    is_server_overload = "503" in error_str or "UNAVAILABLE" in error_str or "Overloaded" in error_str
+                    error_str_upper = error_str.upper()
+                    is_quota = "429" in error_str_upper or "RESOURCE" in error_str_upper or "QUOTA" in error_str_upper
+                    is_server_overload = "503" in error_str_upper or "UNAVAILABLE" in error_str_upper or "OVERLOAD" in error_str_upper
 
                     if is_server_overload:
                         log_task_event(task_id, f"GOOGLE OVERLOAD (503) en ESQUEMA. Esperando 45s...", is_error=True)
@@ -851,8 +898,9 @@ def generate_full_course_task(self, task_id):
 
                 else:
                     error_str = str(content_or_error)
-                    is_quota = "429" in error_str or "Resource" in error_str or "Quota" in error_str
-                    is_server_overload = "503" in error_str or "UNAVAILABLE" in error_str or "Overloaded" in error_str
+                    error_str_upper = error_str.upper()
+                    is_quota = "429" in error_str_upper or "RESOURCE" in error_str_upper or "QUOTA" in error_str_upper
+                    is_server_overload = "503" in error_str_upper or "UNAVAILABLE" in error_str_upper or "OVERLOAD" in error_str_upper
 
                     if is_server_overload:
                         log_task_event(task_id, f"GOOGLE OVERLOAD (503). Esperando 45s antes de reintentar con {api_key.name}...", is_error=True)
@@ -865,22 +913,36 @@ def generate_full_course_task(self, task_id):
                         api_key.consecutive_failures += 1
                         api_key.save(update_fields=["consecutive_failures"])
                         fails = api_key.consecutive_failures
-                        if fails >= 4:
-                            log_task_event(task_id, f"CLAVE AGOTADA ({fails} fallos): {api_key.name}. Rotando...", is_error=True)
-                            api_key.is_quarantined = True
-                            api_key.save(update_fields=["is_quarantined"])
-                            _request_quarantine_via_mailbox(api_key)
-                            next_k = ApiKey.objects.filter(is_enabled=True, is_quarantined=False).exclude(id=api_key.id).first()
-                            if next_k:
-                                automation_settings.active_api_key = next_k
-                                automation_settings.save(update_fields=['active_api_key'])
-                                log_task_event(task_id, f"ROTACIÓN OK: Nueva clave {next_k.name}.")
-                            else:
-                                log_task_event(task_id, "POOL AGOTADO TRAS ROTACIÓN. Esperando...", is_error=True)
-                                time.sleep(60)
+
+                        # ROTACIÓN INMEDIATA CHUNK
+
+                        next_k = ApiKey.objects.filter(is_enabled=True, is_quarantined=False).exclude(id=api_key.id).order_by('id').first()
+
+                        if next_k:
+
+                            automation_settings.active_api_key = next_k
+
+                            automation_settings.save(update_fields=['active_api_key'])
+
+                            log_task_event(task_id, f"ROTACIÓN INMEDIATA CHUNK (429): Nueva clave {next_k.name}.")
+
                         else:
-                            log_task_event(task_id, f"STRIKE {fails}/4 ({api_key.name}). Esperando 60s...", is_error=True)
+
+                            log_task_event(task_id, "POOL AGOTADO CHUNK (429). Esperando 60s...", is_error=True)
+
                             time.sleep(60)
+
+                        
+
+                        if fails >= 4:
+
+                            api_key.is_quarantined = True
+
+                            api_key.save(update_fields=["is_quarantined"])
+
+                            _request_quarantine_via_mailbox(api_key)
+
+                            log_task_event(task_id, f"CUARENTENA CHUNK: Clave {api_key.name} agotada.", is_error=True)
                     else:
                         log_task_event(task_id, f"ERROR CHUNK NO-CUOTA: {error_str}. Reintentando en 30s.", is_error=True)
                         time.sleep(30)
