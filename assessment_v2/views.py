@@ -37,44 +37,30 @@ class ExamCreateView(LoginRequiredMixin, View):
                 copy = get_object_or_404(ContentCopy, id=content_id, user=request.user)
                 content = copy.original_content
             
-            subject = content.subject.first()
-            if subject:
-                # Automate metadata using the platform's quality standard
-                # Automatiza los metadatos usando el estándar de calidad de la plataforma
-                metadata = AcademicDeductor.get_context_metadata(subject, context_title=content.title)
-                
-                # Use the centralized utility to get a clean, filtered TOC
-                # Usa la utilidad centralizada para obtener un TOC limpio y filtrado
-                toc = extract_toc_from_markdown(content.markdown_content, filter_metadata=True)
-                
-                context.update({
-                    'content_material': content,
-                    'toc': toc,
-                    'system_deduction': {
-                        'subject_name': subject.name,
-                        'archetype': metadata['archetype_id'],
-                        'sub_archetype': metadata['sub_archetype_id'], # Fixed: Using dynamic sub_archetype / Corregido: Uso de sub_archetype dinámico
-                        'itinerary': metadata['itinerary_id'],
-                        'level': metadata['pedagogical_level']
-                    }
-                })
+            # Use the centralized utility to get a clean, filtered TOC
+            # Usa la utilidad centralizada para obtener un TOC limpio y filtrado
+            toc = extract_toc_from_markdown(content.markdown_content, filter_metadata=True)
+            
+            context.update({
+                'content_material': content,
+                'toc': toc,
+            })
         return render(request, self.template_name, context)
 
     def post(self, request):
         # Validate quotas before consuming API resources
         # Valida las cuotas antes de consumir recursos de la API
         allowed, reason = QuotaService.check_exam_eligibility(request.user)
+        content = get_object_or_404(ContentMaterial, id=request.POST.get('content_id'))
+        content_copy = get_object_or_404(ContentCopy, user=request.user, original_content=content)
+
         if not allowed:
             messages.error(request, f"Límite: {reason}")
-            return redirect('assessment_v2:exam_create')
-
-        content = get_object_or_404(ContentMaterial, id=request.POST.get('content_id'))
-        
-        # SINE QUA NON: Retrieve the mandatory study copy for this user/content
-        # SINE QUA NON: Recupera la copia de estudio obligatoria para este usuario/contenido
-        content_copy = get_object_or_404(ContentCopy, user=request.user, original_content=content)
+            return redirect('study_room:edit_copy', pk=content_copy.pk)
         
         subject = content.subject.first()
+        
+        # CLASIFICACIÓN SINCRONA: Se realiza después de que el usuario envíe el rango seleccionado
         metadata = AcademicDeductor.get_context_metadata(subject, context_title=content.title)
         
         # Use the centralized utility to correctly extract the content range
@@ -98,7 +84,10 @@ class ExamCreateView(LoginRequiredMixin, View):
         # Launch asynchronous generation task with scoped context
         # Lanza la tarea de generación asíncrona con el contexto acotado
         generate_exam_task.delay(exam.uuid, context_text=context_text[:40000], topic=content.title)
-        return redirect('assessment_v2:exam_generating', uuid=exam.uuid)
+        
+        # Redirección con mensaje para disparar el modal en la vista de edición de copia
+        messages.success(request, "Su evaluación se está generando. Ya le avisaremos cuando esté lista.", extra_tags="show_generating_modal")
+        return redirect('study_room:edit_copy', pk=content_copy.pk)
 
 class ExamGeneratingView(LoginRequiredMixin, DetailView):
     """

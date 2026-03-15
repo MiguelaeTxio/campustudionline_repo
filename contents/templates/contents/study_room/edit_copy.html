@@ -43,6 +43,10 @@
                                     Último Examen: <strong>{{ latest_exam.get_status_display }}</strong>
                                     {% if latest_exam.status == 'READY' %}
                                         <span class="ms-2 status-ready-pulse"><i class="fas fa-check-circle"></i> Disponible</span>
+                                    {% elif latest_exam.status == 'PENDING' %}
+                                        <span class="ms-2 text-warning"><i class="fas fa-sync fa-spin"></i> Procesando...</span>
+                                    {% elif latest_exam.status == 'GENERATING' %}
+                                        <span class="ms-2 text-warning"><i class="fas fa-sync fa-spin"></i> Procesando...</span>
                                     {% else %}
                                         <span class="ms-2">(Iniciado: {{ latest_exam.created_at|date:"d/m H:i" }})</span>
                                     {% endif %}
@@ -58,6 +62,14 @@
                             <a href="{% url 'assessment_v2:take_exam' latest_exam.uuid %}" class="btn btn-success btn-lg px-4">
                                 <i class="fas fa-play-circle me-2"></i> REALIZAR EVALUACIÓN
                             </a>
+                        {% elif latest_exam and latest_exam.status == 'PENDING' %}
+                            <button class="btn btn-secondary disabled" disabled>
+                                <i class="fas fa-spinner fa-spin me-2"></i> EVALUACIÓN EN PROCESO
+                            </button>
+                        {% elif latest_exam and latest_exam.status == 'GENERATING' %}
+                            <button class="btn btn-secondary disabled" disabled>
+                                <i class="fas fa-spinner fa-spin me-2"></i> EVALUACIÓN EN PROCESO
+                            </button>
                         {% elif quota_status.can_generate %}
                             <a href="{% url 'assessment_v2:exam_create' %}?content_id={{ content_copy.original_content.id }}" class="btn btn-primary">
                                 <i class="fas fa-plus-circle me-2"></i> SOLICITAR NUEVA EVALUACIÓN
@@ -161,6 +173,20 @@
     </div>
 </div>
 
+{# --- MODAL DE GENERACIÓN DE EVALUACIÓN --- #}
+<div class="modal fade" id="examGeneratingModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body text-center p-4">
+                <p class="fs-5 mb-0">Su evaluación se está generando. Ya le avisaremos cuando esté lista.</p>
+                <div class="mt-4">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div id="universia-widget-container" data-content-title="{{ content_copy.original_content.title|default:'Material de Estudio' }}"></div>
 
 {% endblock content %}
@@ -189,4 +215,18 @@
 </script>
 <script src="{% static 'js/annotation_handler.js' %}"></script>
 <script src="{% static 'universia/js/universia.js' %}"></script>
+
+{% if messages %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        {% for message in messages %}
+            {% if 'show_generating_modal' in message.tags %}
+                var genModal = new bootstrap.Modal(document.getElementById('examGeneratingModal'));
+                genModal.show();
+            {% endif %}
+        {% endfor %}
+    });
+</script>
+{% endif %}
+
 {% endblock extra_js %}

@@ -108,3 +108,18 @@
 *  **Session:** Blindaje Arquetipo Lenguas y Logs Celery Hito 06
 *  **Description:** Resolución de incidencias críticas del Hito 6. Se implementa instrumentación de logs en las tareas de Celery (orchestrator/tasks.py) para monitorizar la latencia en la clasificación inicial de IA mediante AcademicDeductor. Además, se refuerza el prompt del sistema en la estrategia de humanidades (assessment_v2/services/engine/strategies/humanities.py) con restricciones negativas explícitas para el idioma chino, bloqueando de forma absoluta la aparición de caracteres de silabarios japoneses o coreanos.
 
+
+# 2026-03-15
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+## AAAA
+*  **Session:** Refactorización asíncrona y optimización UX (Hito 6)
+*  **Description:** Análisis y planificación de la refactorización de la arquitectura de evaluaciones (Hito 6). La sesión abordará el desacoplamiento de vistas para evitar bloqueos, la implementación de generación asíncrona (Batch-Atómico) a través de Celery en el orquestador, y el blindaje de la calidad de contenido utilizando esquemas estrictos de Pydantic y directrices de inyección. Además, se ajustará el frontend para reflejar notificaciones asíncronas de estado.
+
+# 2026-03-15
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+## EPI
+*  **Session:** Refactorización Asíncrona de Generación de Evaluaciones
+*  **Description:** Optimización de UX posponiendo la clasificación del examen mediante IA hasta después de la selección del temario. Implementación de generación asíncrona con modal de aviso estricto y bloqueo condicional del botón de solicitud en la vista de edición de material.
+

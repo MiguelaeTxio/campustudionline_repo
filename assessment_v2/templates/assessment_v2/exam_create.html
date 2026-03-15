@@ -7,20 +7,6 @@
         </div>
         <div class="card-body p-4">
             
-            {% if system_deduction %}
-            <div class="alert alert-info d-flex align-items-center mb-4">
-                <i class="fas fa-magic fa-2x me-3"></i>
-                <div>
-                    <strong>Configuración Automática Detectada:</strong><br>
-                    <small class="text-muted">El sistema ha analizado la asignatura <em>{{ system_deduction.subject_name }}</em>:</small>
-                    <ul class="mb-0 small mt-1">
-                        <li>Perfil: <strong>{{ system_deduction.archetype }} - {{ system_deduction.sub_archetype }}</strong> ({{ system_deduction.itinerary }})</li>
-                        <li>Nivel: <strong>{{ system_deduction.level }}</strong></li>
-                    </ul>
-                </div>
-            </div>
-            {% endif %}
-
             <form method="post" id="examForm">
                 {% csrf_token %}
                 <input type="hidden" name="content_id" value="{{ content_material.id }}">

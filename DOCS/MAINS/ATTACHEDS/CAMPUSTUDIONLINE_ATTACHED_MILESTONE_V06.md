@@ -1,22 +1,14 @@
-# ANEXO: HITO 06 - REFACTORIZACIÓN ASÍNCRONA Y OPTIMIZACIÓN UX (HOJA DE RUTA DEFINITIVA)
+# ANEXO: HITO 06 - SISTEMA DE AUTOEVALUACIONES CON IA
 # ESTADO: EN PROGRESO
 
 ## HOJA DE RUTA PARA LA SIGUIENTE SESIÓN
 
-1. **Refactorización de Arquitectura de Evaluación (Desacoplamiento):**
-   - Modificar `assessment_v2/views.py` y `admin_views.py`: Eliminar cualquier llamada bloqueante a `AcademicDeductor` o `generate_text_content`.
-   - Modificar `ExamFactory`: Permitir inicialización de `Exam` con `archetype_id=NULL` para soportar creación inmediata en BBDD.
-   - Implementar modal de aviso asíncrono en el frontend tras la selección de temario.
+**Objetivo Principal:** Solucionar la filtración de datos crudos (diccionarios Python) y metadatos sensibles (respuestas correctas) en la vista de realización del examen (`assessment_v2/templates/assessment_v2/exam_take.html`), implementando un renderizado correcto y limpio para el componente de opciones múltiples.
 
-2. **Optimización del Pipeline de Generación (Asincronía):**
-   - Refactorizar `generate_exam_task` en `orchestrator/tasks.py`:
-     - El proceso de IA debe iniciarse exclusivamente dentro de la tarea Celery.
-     - Implementar "Batch-Atómico": Agrupar subdivisiones con mismo `layout_mode` en una única llamada API.
-     - Reducir tamaño del prompt: Pasar solo IDs de ítems en lugar de objetos JSON completos.
+**Directrices de Implementación (Fuente de la Verdad):**
+1.  **Auditoría de Renderizado:** La plantilla `exam_take.html` está volcando directamente objetos JSON generados por la IA en lugar de iterar sobre ellos. Esto expone el esquema interno (ej: `{'id': 'A', 'text': '...', 'is_correct': True, 'feedback': '...'}`).
+2.  **Iteración de Opciones:** Para el widget `W-OBJ-STRIKE` (Respuesta Múltiple), se debe iterar obligatoriamente sobre el array de opciones (`{% for opcion in item.content.options %}`) renderizando botones de tipo `radio` asociados a su `item.uuid`.
+3.  **Ocultación de Metadatos Críticos:** Queda **ESTRICTAMENTE PROHIBIDO** renderizar en el HTML las claves `is_correct` y `feedback` durante la realización del examen. Esta información solo debe estar disponible en la vista de resultados (`exam_report.html`). Su exposición actual permite al alumno ver la respuesta correcta antes de enviar el formulario.
+4.  **Consistencia UI:** Asegurar que los radio buttons y las etiquetas se renderizan con las clases de Bootstrap/UniversIA correspondientes para mantener el diseño responsivo.
 
-3. **Blindaje y Calidad de Contenido:**
-   - Refinar prompts: Ajustar parámetros de temperatura (cercana a 0.2) y *top-p* para eliminar tono pedagógico excesivo.
-   - Blindaje de Lista Blanca: En `HumanitiesStrategy`, forzar la exclusividad de caracteres según `target_language_code`.
-
-4. **Notificaciones y Estado:**
-   - Implementar polling ligero para actualizar el estado del objeto `Exam` en la UI de "Lista de copias de estudio".
+Esta hoja de ruta guiará el inicio de la próxima sesión de forma ineludible.
