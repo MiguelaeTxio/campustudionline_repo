@@ -101,3 +101,10 @@
 *  **Session:** Restauracion Logica Rotacion API Keys
 *  **Description:** Análisis del repositorio (commit 8 de marzo) para extraer y restaurar la lógica de rotación de claves API, gestión de cuarentenas y control de cuotas por minuto. Adaptación de este flujo al nuevo SDK de Gemini 3.1 para asegurar la estabilidad del sistema de generación de autoevaluaciones y prevenir errores 429.
 
+# 2026-03-15
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+## CAMA
+*  **Session:** Blindaje Arquetipo Lenguas y Logs Celery Hito 06
+*  **Description:** Resolución de incidencias críticas del Hito 6. Se implementa instrumentación de logs en las tareas de Celery (orchestrator/tasks.py) para monitorizar la latencia en la clasificación inicial de IA mediante AcademicDeductor. Además, se refuerza el prompt del sistema en la estrategia de humanidades (assessment_v2/services/engine/strategies/humanities.py) con restricciones negativas explícitas para el idioma chino, bloqueando de forma absoluta la aparición de caracteres de silabarios japoneses o coreanos.
+

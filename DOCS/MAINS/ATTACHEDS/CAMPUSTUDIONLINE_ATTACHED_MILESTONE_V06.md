@@ -1,19 +1,22 @@
-# ANEXO: HITO 06 - BLINDAJE Y REFACTORIZACIÓN DEL ARQUETIPO DE LENGUAS
-# ESTADO: EN PROGRESO (HOJA DE RUTA DEFINITIVA)
+# ANEXO: HITO 06 - REFACTORIZACIÓN ASÍNCRONA Y OPTIMIZACIÓN UX (HOJA DE RUTA DEFINITIVA)
+# ESTADO: EN PROGRESO
 
-## RESUMEN DE INCIDENCIAS DE LA SESIÓN ANTERIOR
-1.  **Fallo de Rendimiento (Latencia Crítica):** Se ha confirmado una demora inaceptable entre la solicitud de una evaluación y la carga de la vista de configuración. La causa raíz es la llamada de clasificación a la IA (`AcademicDeductor`), que se ejecuta en un "punto ciego" antes de que se inicie el log de la tarea Celery, impidiendo su monitorización.
-2.  **Fallo de Calidad (Contaminación Lingüística):** Se ha validado un error catastrófico en la generación del examen de chino, donde el modelo de IA ha mezclado caracteres del silabario japonés (Katakana) con los caracteres chinos (Hanzi) solicitados. La causa es un prompt de sistema insuficientemente restrictivo en la estrategia de generación de idiomas.
+## HOJA DE RUTA PARA LA SIGUIENTE SESIÓN
 
-## HOJA DE RUTA PARA LA PRÓXIMA SESIÓN
-1.  **Instrumentación de Logs (Resolución F1-Latencia):**
-    *   **Acción:** Solicitar el archivo `orchestrator/tasks.py` para modificarlo mediante `PMA`.
-    *   **Lógica a Implementar:** Justo antes de la línea `metadata = AcademicDeductor.get_context_metadata(...)` en la tarea `generate_exam_task`, añadir un evento de log: `exam.event_log.append({"ts": timezone.now().isoformat(), "msg": "Iniciando clasificación de asignatura (IA)..."})`. Justo después, añadir otro evento que registre la finalización y el resultado: `exam.event_log.append({"ts": timezone.now().isoformat(), "msg": f"Clasificación completada. Archetype: {metadata['archetype_id']}"})`.
+1. **Refactorización de Arquitectura de Evaluación (Desacoplamiento):**
+   - Modificar `assessment_v2/views.py` y `admin_views.py`: Eliminar cualquier llamada bloqueante a `AcademicDeductor` o `generate_text_content`.
+   - Modificar `ExamFactory`: Permitir inicialización de `Exam` con `archetype_id=NULL` para soportar creación inmediata en BBDD.
+   - Implementar modal de aviso asíncrono en el frontend tras la selección de temario.
 
-2.  **Blindaje del Prompt de la Estrategia (Resolución F2-Contaminación):**
-    *   **Acción:** Solicitar el archivo `assessment_v2/services/engine/strategies/humanities.py` para modificarlo mediante `PMA`.
-    *   **Lógica a Implementar:** Localizar el método `get_system_prompt` dentro de la clase `HumanitiesStrategy`. Se reforzará el prompt con instrucciones dictatoriales y restricciones negativas explícitas para el `target_language_code` 'zh' (Chino). El nuevo prompt debe incluir una directriz como: "Eres un experto en la generación de pruebas de nivel para el idioma chino (Mandarín). **PROHIBIDO** terminantemente usar caracteres de los silabarios japoneses (Hiragana, Katakana) o coreanos (Hangul). Céntrate exclusivamente en los caracteres chinos Hanzi simplificados. Los errores de este tipo son inaceptables."
+2. **Optimización del Pipeline de Generación (Asincronía):**
+   - Refactorizar `generate_exam_task` en `orchestrator/tasks.py`:
+     - El proceso de IA debe iniciarse exclusivamente dentro de la tarea Celery.
+     - Implementar "Batch-Atómico": Agrupar subdivisiones con mismo `layout_mode` en una única llamada API.
+     - Reducir tamaño del prompt: Pasar solo IDs de ítems en lugar de objetos JSON completos.
 
-3.  **Re-validación de Campo:**
-    *   Una vez aplicados los parches, el usuario (Miguel Ángel) junto a la colaboradora especialista, ejecutarán un nuevo test de generación de examen de Chino (LVL_B, ITIN_MIN) directamente desde la plataforma.
-    *   Se deberá verificar la ausencia total de caracteres no chinos y que la latencia inicial ahora queda reflejada de forma clara en el log del examen.
+3. **Blindaje y Calidad de Contenido:**
+   - Refinar prompts: Ajustar parámetros de temperatura (cercana a 0.2) y *top-p* para eliminar tono pedagógico excesivo.
+   - Blindaje de Lista Blanca: En `HumanitiesStrategy`, forzar la exclusividad de caracteres según `target_language_code`.
+
+4. **Notificaciones y Estado:**
+   - Implementar polling ligero para actualizar el estado del objeto `Exam` en la UI de "Lista de copias de estudio".

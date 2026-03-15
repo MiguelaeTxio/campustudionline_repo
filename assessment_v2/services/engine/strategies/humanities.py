@@ -141,7 +141,16 @@ class HumanitiesStrategy(BaseExamStrategy):
         elif self.itinerary_id == 'ITIN_INV':
             itin_ctx = "ENFOQUE INVESTIGADOR: Exige rigor absoluto en citas bibliográficas y estado del arte."
 
-        return f"{base_role}\n{itin_ctx}\nESTRUCTURA: Usa subdivisiones SD_SOURCE y SD_DISC. Evalúa con Rúbrica Holística DRA-HOLO."
+        lang_restriction = ""
+        lang_code = getattr(self, 'target_language_code', 'es')
+        if lang_code == 'zh':
+            lang_restriction = (
+                "\n\nATENCIÓN CRÍTICA: Eres un experto en la generación de pruebas de nivel para el idioma chino (Mandarín). "
+                "Usa ÚNICA Y EXCLUSIVAMENTE caracteres chinos (Hanzi simplificado) para el contenido en el idioma objetivo. "
+                "Queda TERMINANTEMENTE PROHIBIDO el uso de cualquier otro sistema de escritura, alfabeto o silabario ajeno en dicho contenido."
+            )
+
+        return f"{base_role}\n{itin_ctx}\nESTRUCTURA: Usa subdivisiones SD_SOURCE y SD_DISC. Evalúa con Rúbrica Holística DRA-HOLO.{lang_restriction}"
 
     def get_user_prompt(self, context_text, topic, subdivision_id, generated_item_titles=None, skeleton_json=None):
         """

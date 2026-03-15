@@ -1023,7 +1023,11 @@ def generate_exam_task(self, exam_uuid, context_text=None, topic=None):
         
         # PROTOCOLO DE RESILIENCIA (10 MIN RETRY)
         try:
+            exam.event_log.append({"ts": timezone.now().isoformat(), "msg": "Iniciando clasificación de asignatura (IA)..."})
+            exam.save(update_fields=['event_log'])
             metadata = AcademicDeductor.get_context_metadata(subject, context_title=material.title)
+            exam.event_log.append({"ts": timezone.now().isoformat(), "msg": f"Clasificación completada. Archetype: {metadata.get('archetype_id', 'Unknown')}"})
+            exam.save(update_fields=['event_log'])
         except AIServiceCriticalError as e:
             exam.event_log.append({"ts": timezone.now().isoformat(), "msg": "API Clasificación Fallida. Reintento 10min."})
             exam.save(update_fields=['event_log'])
