@@ -139,21 +139,14 @@ class ExamTakeView(LoginRequiredMixin, DetailView):
         # Aseguramos que la vista NUNCA entregue metadatos críticos a la plantilla HTML
         for section in exam.sections.all():
             for item in section.items.all():
-                if isinstance(item.content, dict) and item.content.get('options'):
+                if isinstance(item.content, dict) and 'options' in item.content:
                     clean_opts = []
-                    import ast
                     for opt in item.content['options']:
-                        # 1. Rescatar diccionarios convertidos a string accidentalmente
-                        if isinstance(opt, str) and opt.strip().startswith('{'):
-                            try:
-                                opt = ast.literal_eval(opt)
-                            except:
-                                pass
-                        # 2. Estandarizar salida asegurando que SIEMPRE hay un 'text' limpio
                         if isinstance(opt, dict):
-                            clean_opts.append({'id': str(opt.get('id', '')), 'text': str(opt.get('text', opt.get('value', str(opt))))})
+                            # Filtramos id y text, destruyendo en memoria is_correct y feedback
+                            clean_opts.append({'id': opt.get('id', ''), 'text': opt.get('text', '')})
                         else:
-                            clean_opts.append({'id': '', 'text': str(opt)})
+                            clean_opts.append(opt)
                     item.content['options'] = clean_opts
         
         return context

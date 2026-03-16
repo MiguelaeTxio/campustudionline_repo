@@ -76,8 +76,16 @@
 <div class="container-fluid mt-4 px-4" id="exam-container" data-exam-uuid="{{ exam.uuid }}">
     {# TECHNICAL HEADER (V06DOC_TEMPLATES) #}
     {# CABECERA TÉCNICA (V06DOC_TEMPLATES) #}
-    <div class="mb-4">
-        <h2 class="h3 text-primary border-bottom pb-2"><i class="bi bi-journal-text"></i> {% trans "Evaluación en Curso" %}</h2>
+    <div class="card mb-4 border-primary shadow-sm">
+        <div class="card-body bg-light">
+            <h2 class="h4 border-bottom pb-2">{% trans "Sesión de Evaluación UniversIA" %}</h2>
+            <div class="row text-muted small">
+                <div class="col-md-3"><strong>{% trans "Arquetipo" %}:</strong> {{ exam.archetype_id }}</div>
+                <div class="col-md-3"><strong>{% trans "Sub-Arquetipo" %}:</strong> {{ exam.sub_archetype_id }}</div>
+                <div class="col-md-3"><strong>{% trans "Nivel" %}:</strong> {{ exam.pedagogical_level }}</div>
+                <div class="col-md-3"><strong>{% trans "Itinerario" %}:</strong> {{ exam.itinerary_id }}</div>
+            </div>
+        </div>
     </div>
 
     <div class="row justify-content-center">
@@ -90,14 +98,6 @@
                     {% if section.time_limit %}<span class="badge bg-warning text-dark timer-badge" data-seconds="{{ section.time_limit }}">{% trans "Tiempo Límite" %}: {{ section.time_limit }}s</span>{% endif %}
                 </div>
                 <div class="alert alert-info py-2 small"><em>{{ section.instructions }}</em></div>
-                
-                {% if section.layout_mode == 'STANDARD' and section.section_stimulus %}
-                <div class="card mb-4 border-info shadow-sm">
-                    <div class="card-body bg-light text-dark fs-5">
-                        {{ section.section_stimulus|safe }}
-                    </div>
-                </div>
-                {% endif %}
 
                 {% for item in section.items.all %}
                 {# Item container with data attributes for JS logic #}
@@ -106,6 +106,12 @@
                     <div class="card-body">
                         <div class="d-flex justify-content-between">
                             <p class="fw-bold mb-3">{{ forloop.counter }}. {{ item.content.stem }}</p>
+                            <div>
+                                {% if item.widget_id == 'W-OBJ-STRIKE' %}
+                                <span class="badge bg-danger ms-2" title="Riesgo de Penalización"><i class="bi bi-exclamation-triangle"></i> Riesgo: {{ item.grading_logic.penalty|default:"-0.33" }}</span>
+                                {% endif %}
+                                <span class="badge bg-light text-dark border">{{ item.metadata.competency_tag }}</span>
+                            </div>
                         </div>
 
                         {# --- AUDIO PLAYER INTEGRATION (Listening) --- #}

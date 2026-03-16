@@ -123,3 +123,10 @@
 *  **Session:** Refactorización Asíncrona de Generación de Evaluaciones
 *  **Description:** Optimización de UX posponiendo la clasificación del examen mediante IA hasta después de la selección del temario. Implementación de generación asíncrona con modal de aviso estricto y bloqueo condicional del botón de solicitud en la vista de edición de material.
 
+
+# 2026-03-15
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+## PLUTO # --SYSTEM -->
+*  **Session:** Corrección de filtración de datos en exam_take.html
+*  **Description:** Resolución de la vulnerabilidad en la vista de realización de exámenes (exam_take.html) que exponía metadatos sensibles como las respuestas correctas y el feedback en el código fuente. Se implementa la iteración segura para el widget W-OBJ-STRIKE, renderizando exclusivamente las opciones necesarias mediante botones de radio con estilos de Bootstrap/UniversIA y bloqueando la exposición de información crítica en el DOM.

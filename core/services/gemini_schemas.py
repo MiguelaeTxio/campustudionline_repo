@@ -166,9 +166,7 @@ class AcademicClassificationSchema(BaseModel):
 
 class OptionSchema(BaseModel):
     id: str = Field(description="Identificador de la opción (ej: 'A', 'B', 'C', 'D').")
-    text: str = Field(description="Texto de la opción.")
-    is_correct: bool = Field(description="Indica si esta es la opción correcta.")
-    feedback: str = Field(description="Explicación específica para esta opción.")
+    text: str = Field(description="Texto de la opción (exclusivamente texto visible, PROHIBIDO incluir metadatos).")
 
 class ContentSchema(BaseModel):
     stem: str = Field(description="El enunciado, pregunta o estímulo principal del ítem.")
