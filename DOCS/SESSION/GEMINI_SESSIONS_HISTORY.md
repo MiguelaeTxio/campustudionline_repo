@@ -153,3 +153,10 @@
 *  **Session:** Refactorización Subatómica Arquetipo Lenguas (Hito 6)
 *  **Description:** Auditoría y refactorización integral de la constelación documental del Arquetipo de Lenguas (ARCH_LANG) basándose en la acreditación oficial de la UGR. Inclusión de la Directriz de Multimodalidad, niveles de inmersión y reestructuración de la taxonomía de errores, respetando la prohibición estricta de alteración de código.
 
+
+# 2025-03-18
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+## NRA
+*  **Session:** Refactorización del Subarquetipo Lingüístico SUB-LIN-MINOR (Hito 6 - V3.1)
+*  **Description:** Inicio de la refactorización integral del subarquetipo 'Minor/Iniciación' (SUB-LIN-MINOR) para alinearlo con la normativa de la Facultad de Filosofía y Letras de la UGR. La sesión se centra en la definición de la secuencia genética obligatoria (Grafía, Gramática, Lectura y Cultura), el diseño de motores de validación de trazos (RBT-GRAPH-VAL) y el forzado de entrada multimodal en widgets para lenguas no occidentales.

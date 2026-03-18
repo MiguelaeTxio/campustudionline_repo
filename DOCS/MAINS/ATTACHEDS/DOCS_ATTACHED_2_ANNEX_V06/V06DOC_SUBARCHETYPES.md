@@ -19,7 +19,16 @@ Este documento define la **Configuración Estructural Fija** (Receta) que cada E
         5. **SD_MEDI (Mediation):** 1 Tarea (Transferencia de registro técnico a divulgativo BMT-SHIFT).
     *   **Directriz de Multimodalidad (Miguel Ángel):** Los widgets de texto (W-HUM-TEXT, W-TXT-CLOZE) deben activar el selector de entrada: Teclado Nativo, Transliteración, Pad de Trazos u OCR según el idioma objetivo.
     *   **Criterio de Éxito:** 60% mínimo en CADA fase. Sin posibilidad de compensación entre destrezas. Navegación secuencial bloqueada.
-*   **SUB-LIN-MINOR:** (Modelo Minor/Iniciación). Grafía/Dictado, Gramática base y Cultura.
+*   **SUB-LIN-MINOR: Modelo Minor / Iniciación (UGR - Facultad Filosofía y Letras) [REFACTORIZADO V3.1]**
+    *   **Perfil:** Iniciación a la competencia lingüística y caligráfica (Alemán, Árabe, Checo, Chino, Griego, Hebreo, Italiano, Japonés, Polaco, Portugués, Ruso).
+    *   **Excepción B2:** Los itinerarios de Inglés y Francés Minor inician directamente en nivel B2 (MCERL).
+    *   **Secuencia Genética Obligatoria (4 Fases):**
+        1. **SD_GRAPH (Grafía y Fonética):** Dictado de signos/caracteres y transcripción. Uso OBLIGATORIO de Pad de Trazos/OCR para alfabetos no latinos (Chino, Árabe, Japonés, Ruso, Hebreo).
+        2. **SD_GRAM (Estructura Base):** Construcción morfosintáctica elemental (Módulo Inicial I y II).
+        3. **SD_READ_MIN (Lectura Adaptada):** Comprensión de textos breves y señalética real.
+        4. **SD_CULT (Contexto Sociocultural):** Validación de normas de cortesía, geografía y cultura base.
+    *   **Parámetros de Inmersión:** Inmersión VEHICULAR (Castellano) obligatoria en instrucciones para niveles LVL_A y LVL_B.
+    *   **Regla de Oro UGR (CertAcles):** Umbral del 60% por destreza obligatoria. Sin compensación.
 *   **SUB-LIN-PHILO:** (Modelo Filológico). Gramática histórica, Fonética y Evolución lingüística.
 *   **SUB-LIN-NORM:** (Modelo Norma y Uso). Análisis de desviaciones, normativa académica y exégesis técnica.
 *   **SUB-LIN-TRA-TECH:** (Traducción Profesional). Glosarios, memorias de traducción y terminología.

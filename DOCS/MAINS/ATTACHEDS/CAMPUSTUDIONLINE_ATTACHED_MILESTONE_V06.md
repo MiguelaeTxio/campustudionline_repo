@@ -1,29 +1,28 @@
-<!-- /home/MiguelAeTxio/PROJECTS/CampuStudiOnline/DOCS/MAINS/ATTACHEDS/CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md -->
 # ANEXO: HITO 06 - SISTEMA DE AUTOEVALUACIONES CON IA
-# ESTADO: EN PROGRESO - REFACTORIZACIÓN SUBATÓMICA (V3.1)
+# ESTADO: EN PROGRESO - REFACTORIZACIÓN DOCUMENTAL COMPLETADA (V3.1)
 
 ## LOGROS DE LA SESIÓN ACTUAL (FINALIZADO)
-*   Refactorización integral de la constelación documental para el arquetipo **SUB-LIN-INSTR** (Modelo Instrumental / CertAcles).
-*   Implementación de la **Directriz Miguel Ángel de Multimodalidad** (Trazos/OCR) en los catálogos de widgets.
-*   Blindaje del umbral de éxito del 60% por destreza y prohibición de compensación según normativa UGR/CLM.
+*   Refactorización íntegra de la constelación documental para el subarquetipo **SUB-LIN-MINOR** (Modelo Minor / Iniciación UGR).
+*   Inyección de los motores **RBT-GRAPH-VAL** (Validación de Trazos) y **MAT-CULT-LINK** (Asociación Cultural) en V06DOC_BLOCKS.md.
+*   Establecimiento del **Mandato de Bloqueo Caligráfico** en V06DOC_WIDGETS.md para lenguas no latinas.
+*   Actualización de la secuencia genética obligatoria (SD_GRAPH, SD_GRAM, SD_READ_MIN, SD_CULT) conforme a la Facultad de Filosofía y Letras de la UGR.
 
 ## HOJA DE RUTA PARA LA PRÓXIMA SESIÓN (LEY SUPREMA - NO INVENTAR NADA)
 
-**OBJETIVO MANDATORIO:** Refactorizar la lógica del segundo subarquetipo de lenguas: **SUB-LIN-MINOR** (Modelo Minor / Iniciación) para reflejar la realidad de la Facultad de Filosofía y Letras de la UGR.
+**OBJETIVO MANDATORIO:** Sincronización técnica de la arquitectura Django con la nueva base documental Minor.
 
-### FASE 1: REFACTORIZACIÓN DE V06DOC_SUBARCHETYPES.md (GENÉTICA MINOR)
-*   **Secuencia Obligatoria de 4 Fases para Minor:**
-    1. **SD_GRAPH (Grafía y Fonética):** Dictado de signos/caracteres y transcripción. Uso intensivo y obligatorio de Pad de Trazos para lenguas no occidentales.
-    2. **SD_GRAM (Estructura Base):** Construcción de oraciones simples y morfología elemental.
-    3. **SD_READ_MIN (Lectura Adaptada):** Comprensión de textos breves y señalética real.
-    4. **SD_CULT (Contexto Sociocultural):** Validación de normas de cortesía, geografía y cultura base de la lengua objetivo.
-*   **Parámetros:** Inmersión VEHICULAR (Castellano) obligatoria en instrucciones para niveles LVL_A y LVL_B.
+### FASE 1: ACTUALIZACIÓN DE MODELOS (assessment_v2/models/main.py)
+*   **Tarea:** Inyectar en la clase `Subdivision` del modelo `ExamSection` las nuevas constantes:
+    *   `SD_GRAPH`: 'Grafía y Fonética'
+    *   `SD_GRAM`: 'Estructura Base'
+    *   `SD_READ_MIN`: 'Lectura Adaptada'
+    *   `SD_CULT`: 'Contexto Sociocultural'
+*   **Validación:** Ejecutar `python manage.py makemigrations` y `migrate`.
 
-### FASE 2: REFACTORIZACIÓN DE V06DOC_BLOCKS.md (MOTORES MINOR)
-*   **Motor RBT-GRAPH-VAL:** Definición de la lógica de validación de secuencia de trazos y dirección de escritura.
-*   **Motor MAT-CULT-LINK:** Lógica de asociación de conceptos culturales y situaciones sociales.
+### FASE 2: VALIDACIÓN EN DJANGO ADMIN
+*   **Tarea:** Verificar que los nuevos tipos de subdivisión son seleccionables manualmente en el Admin de `ExamSection`.
 
-### FASE 3: REFACTORIZACIÓN DE V06DOC_WIDGETS.md (FORZADO MULTIMODAL)
-*   **Mandato:** El widget `W-TXT-CLOZE` en el modelo Minor debe estar bloqueado por defecto al modo **Pad de Trazos** u **OCR** cuando el `target_language_code` sea no-latino, eliminando el teclado occidental para evaluar la grafía real.
+### FASE 3: AUDITORÍA DE ESTRATEGIAS (Detección de Impacto)
+*   **Tarea:** Analizar la carpeta `assessment_v2/services/engine/strategies/` para identificar dónde se instanciarán estas nuevas subdivisiones en la próxima fase de implementación.
 
-**FUENTES DE REFERENCIA:** Únicamente la documentación satélite del hito refactorizada y las directrices de la UGR.
+**FUENTES DE REFERENCIA:** Documentación satélite refactorizada en la sesión NRA.

@@ -40,6 +40,7 @@
     *   Uso: Lenguas (Use of English) y Derecho (Completar escritos).
     *   Funciones: Renderizado de texto fluido con inputs incrustados. Soporta modo "Open" (Caja de texto) y "Select" (Dropdown en el hueco).
     *   **Directriz de Multimodalidad (Miguel Ángel):** Los inputs en modo "Open" deben heredar el selector de entrada multimodal (Teclado/Trazos/OCR) para garantizar la precisión caligráfica en lenguas Minor/Maior.
+    *   **Mandato Minor (Bloqueo Caligráfico) [NUEVO V3.1]:** En el subarquetipo SUB-LIN-MINOR, cuando el `target_language_code` sea no-latino (Chino, Japonés, Árabe, Hebreo, Ruso), los inputs en modo "Open" quedan bloqueados EXCLUSIVAMENTE a **Pad de Trazos** u **OCR**. Se deshabilita el teclado occidental para forzar la evaluación de la grafía real.
 *   W-MIX-MATCH (Matriz de Vinculación):
     *   Uso: Lenguas (Reading Headlines) y Ciencias (Concepto-Definición).
     *   Funciones: Arrastrar y soltar (Drag & Drop) o conectores visuales entre dos columnas.
