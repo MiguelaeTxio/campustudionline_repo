@@ -149,11 +149,11 @@ class ExamTakeView(LoginRequiredMixin, DetailView):
                                 opt = ast.literal_eval(opt)
                             except:
                                 pass
-                        # 2. Estandarizar salida asegurando que SIEMPRE hay un 'text' limpio
+                        # 2. Estandarizar salida asegurando que SIEMPRE hay un 'text' limpio y NADA MAS
                         if isinstance(opt, dict):
-                            clean_opts.append({'id': str(opt.get('id', '')), 'text': str(opt.get('text', opt.get('value', str(opt))))})
+                            clean_opts.append({'text': str(opt.get('text', opt.get('value', str(opt))))})
                         else:
-                            clean_opts.append({'id': '', 'text': str(opt)})
+                            clean_opts.append({'text': str(opt)})
                     item.content['options'] = clean_opts
         
         return context

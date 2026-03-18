@@ -77,7 +77,9 @@
     {# TECHNICAL HEADER (V06DOC_TEMPLATES) #}
     {# CABECERA TÉCNICA (V06DOC_TEMPLATES) #}
     <div class="mb-4">
-        <h2 class="h3 text-primary border-bottom pb-2"><i class="bi bi-journal-text"></i> {% trans "Evaluación en Curso" %}</h2>
+        <h2 class="h3 text-primary border-bottom pb-2">
+            <i class="bi bi-journal-check"></i> {% trans "Evaluación de" %} {{ exam.content_copy.original_content.title }} <span class="badge bg-secondary fs-6 ms-2">powered by UniversIA</span>
+        </h2>
     </div>
 
     <div class="row justify-content-center">
@@ -91,7 +93,7 @@
                 </div>
                 <div class="alert alert-info py-2 small"><em>{{ section.instructions }}</em></div>
                 
-                {% if section.layout_mode == 'STANDARD' and section.section_stimulus %}
+                {% if section.section_stimulus %}
                 <div class="card mb-4 border-info shadow-sm">
                     <div class="card-body bg-light text-dark fs-5">
                         {{ section.section_stimulus|safe }}
@@ -176,8 +178,8 @@
                             {% if item.content.options %}
                                 {% for option in item.content.options %}
                                 <div class="form-check form-switch fs-5 mb-2">
-                                    <input class="form-check-input response-input-kill" type="checkbox" id="kill-{{ item.uuid }}-{{ forloop.counter }}" value="{% if option.text %}{{ option.text }}{% else %}{{ option }}{% endif %}">
-                                    <label class="form-check-label text-dark" for="kill-{{ item.uuid }}-{{ forloop.counter }}">{% if option.text %}{{ option.text }}{% else %}{{ option }}{% endif %}</label>
+                                    <input class="form-check-input response-input-kill" type="checkbox" id="kill-{{ item.uuid }}-{{ forloop.counter }}" value="{{ option.text }}">
+                                    <label class="form-check-label text-dark" for="kill-{{ item.uuid }}-{{ forloop.counter }}">{{ option.text }}</label>
                                 </div>
                                 {% endfor %}
                             {% else %}
@@ -230,8 +232,8 @@
                                     {% endif %}
                                     {% for option in item.content.options %}
                                     <div class="form-check mb-2 d-flex align-items-center">
-                                        <input class="form-check-input response-input-radio" type="radio" name="item-{{ item.id }}" value="{{ option }}" id="opt-{{ item.id }}-{{ forloop.counter }}">
-                                        <label class="form-check-label ms-2 flex-grow-1" for="opt-{{ item.id }}-{{ forloop.counter }}">{{ option }}</label>
+                                        <input class="form-check-input response-input-radio" type="radio" name="item-{{ item.id }}" value="{{ option.text }}" id="opt-{{ item.id }}-{{ forloop.counter }}">
+                                        <label class="form-check-label ms-2 flex-grow-1" for="opt-{{ item.id }}-{{ forloop.counter }}">{{ option.text }}</label>
                                         <button type="button" class="btn btn-sm btn-outline-secondary py-0 ms-2 btn-strike" tabindex="-1" title="{% trans 'Tachar opción' %}">
                                             <i class="bi bi-x-lg"></i>
                                         </button>
@@ -282,7 +284,7 @@
                                     <h6 class="text-muted text-center">{% trans "Elementos" %}</h6>
                                     <div class="list-group mix-match-list">
                                         {% for source in item.content.options %}
-                                        <div class="list-group-item draggable-item bg-white shadow-sm mb-1" draggable="true" data-source="{% if source.text %}{{ source.text }}{% else %}{{ source }}{% endif %}">{% if source.text %}{{ source.text }}{% else %}{{ source }}{% endif %}</div>
+                                        <div class="list-group-item draggable-item bg-white shadow-sm mb-1" draggable="true" data-source="{{ source.text }}">{{ source.text }}</div>
                                         {% endfor %}
                                     </div>
                                 </div>
@@ -308,7 +310,7 @@
                                         <input type="text" class="form-control form-control-sm mb-2 law-search-input" placeholder="{% trans 'Buscar jurisprudencia...' %}">
                                         <div class="list-group small law-list-group">
                                             {% for doc in item.content.options %}
-                                            <a href="#" class="list-group-item list-group-item-action text-truncate law-item" title="{% if doc.text %}{{ doc.text }}{% else %}{{ doc }}{% endif %}">{% if doc.text %}{{ doc.text }}{% else %}{{ doc }}{% endif %}</a>
+                                            <a href="#" class="list-group-item list-group-item-action text-truncate law-item" title="{{ doc.text }}">{{ doc.text }}</a>
                                             {% empty %}
                                             <a href="#" class="list-group-item list-group-item-action law-item">{% trans "Normativa General" %}</a>
                                             {% endfor %}

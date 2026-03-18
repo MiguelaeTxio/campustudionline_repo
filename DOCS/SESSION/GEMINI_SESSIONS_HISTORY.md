@@ -130,3 +130,18 @@
 ## PLUTO # --SYSTEM -->
 *  **Session:** Corrección de filtración de datos en exam_take.html
 *  **Description:** Resolución de la vulnerabilidad en la vista de realización de exámenes (exam_take.html) que exponía metadatos sensibles como las respuestas correctas y el feedback en el código fuente. Se implementa la iteración segura para el widget W-OBJ-STRIKE, renderizando exclusivamente las opciones necesarias mediante botones de radio con estilos de Bootstrap/UniversIA y bloqueando la exposición de información crítica en el DOM.
+
+# 2026-03-17
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+## PLUTO # --SYSTEM -->
+*  **Session:** Refactorización de vista de examen y sanitización de widgets
+*  **Description:** Sesión enfocada en erradicar fallos de presentación en la vista de examen (exam_take.html). Se implementará lógica de sanitización robusta en ExamTakeView mediante ast.literal_eval para limpiar diccionarios stringificados en las opciones de los ítems, extrayendo únicamente la clave de texto. Además, se reestructurará la plantilla eliminando cabeceras de depuración, corrigiendo la lógica condicional del section_stimulus para asegurar su renderizado, y simplificando el bloque de opciones. Por último, se auditará LanguageInstrumentalStrategy para habilitar la generación de los widgets W-MIX-MATCH y W-TXT-CLOZE.
+
+# 2026-03-18
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+## MAMC
+*  **Session:** MAMC: Alineación Subatómica del Arquetipo de Lenguas con la Acreditación UGR
+*  **Description:** Inicio de la fase de refactorización técnica y actualización documental para el Hito 6. El objetivo central es sincronizar el motor de autoevaluaciones con los estándares de acreditación de la Universidad de Granada para el arquetipo de lenguas. Se contempla la actualización de la estrategia de inmersión y la integración de requisitos específicos para widgets de escritura (teclado multilingüe/occidentalizado, trazos en pantalla y captura de manuscritos vía OCR/Imagen). Se aplicará el protocolo PMA para la modificación de la lógica en assessment_v2, asegurando que el código sea un reflejo fiel de la documentación académica validada.
+
