@@ -1,4 +1,5 @@
-# V06DOC_BLOCKS - CATÁLOGO DE MOTORES DE EVALUACIÓN (V1.1)
+<!-- /home/MiguelAeTxio/PROJECTS/CampuStudiOnline/DOCS/MAINS/ATTACHEDS/DOCS_ATTACHED_2_ANNEX_V06/V06DOC_BLOCKS.md -->
+# V06DOC_BLOCKS - CATÁLOGO DE MOTORES DE EVALUACIÓN (V1.1 - REFACTORIZACIÓN UGR)
 
 ## 1. BLOQUES DE EVALUACIÓN OBJETIVA Y TÉCNICA
 
@@ -11,6 +12,11 @@
     *   Mecánica: Validación por lexemas nucleares y palabras clave obligatorias.
     *   Calidad: No admite paráfrasis en niveles MAIOR o PROF.
     *   Parámetro: TERM_PREC (Máximo).
+
+*   **RBT-SHORT-LANG (Respuesta Breve Lingüística - UGR/CertAcles) [NUEVO]**
+    *   **Mecánica:** Validación estricta de precisión léxica y gramatical.
+    *   **Restricción:** Longitud obligatoria de **1 a 4 palabras**. Cualquier respuesta fuera de este rango se califica como 0 automáticamente.
+    *   **Calidad:** El motor valida lemas y morfología exacta según el contexto del texto (gap-filling).
 
 *   RPP-TRAZA (Resolución Procedimental con Arrastre de Error):
     *   Mecánica: Calificación multietapa con validación de la coherencia lógica.
@@ -28,6 +34,11 @@
     *   Mecánica: Evaluación en 4 ejes: Rigor, Estructura, Terminología y Forma.
     *   Calidad: Penalización directa por deficiencias en el registro académico o faltas.
     *   Parámetro: FORM_PEN (Hasta -2.5 puntos).
+    *   **Taxonomía de Errores UGR (Inyectada):**
+        1. **ERR_TRANS (Transferencia):** Calcos de la lengua materna (L1) que afectan al significado.
+        2. **ERR_NORM (Norma):** Violaciones de la gramática, ortografía o morfología normativa.
+        3. **ERR_REG (Registro):** Uso de lenguaje inapropiado para el contexto (ej. coloquial en un ensayo).
+        4. **ERR_COH (Cohesión):** Fallos en el uso de conectores y estructuración del discurso.
 
 *   BMT-SHIFT (Mediación y Transferencia de Registro):
     *   Mecánica: Adaptación de información técnica a lenguaje divulgativo o viceversa.
@@ -45,12 +56,12 @@
 
 *   CLO-OPEN (Open Cloze / Rellenado Abierto):
     *   Mecánica: Completar huecos en un texto sin opciones visibles. Evalúa gramática y colocaciones precisas.
-    *   Calidad: Validación estricta de lema/morfología.
+    *   Calidad: Validación estricta de lema/morfología. Se apoya en el motor RBT-SHORT-LANG.
     *   Widget: W-TXT-CLOZE (Modo Input).
 
 *   CLO-MULTI (Multiple Choice Cloze / Rellenado Selectivo):
     *   Mecánica: Completar huecos eligiendo entre 4 opciones semánticas/gramaticales.
-    *   Calidad: Distractores basados en "False Friends" o errores comunes.
+    *   Calidad: Distractores basados en "False Friends" o errores comunes de hispanohablantes.
     *   Widget: W-TXT-CLOZE (Modo Dropdown).
 
 *   MAT-LINK (Matching / Emparejamiento):

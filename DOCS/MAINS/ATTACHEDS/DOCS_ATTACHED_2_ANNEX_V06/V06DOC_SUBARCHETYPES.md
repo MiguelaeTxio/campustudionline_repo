@@ -1,4 +1,4 @@
-# /home/MiguelAeTxio/PROJECTS/CampuStudiOnline/DOCS/MAINS/ATTACHEDS/DOCS_ATTACHED_2_ANNEX_V06/V06DOC_SUBARCHETYPES.md
+<!-- /home/MiguelAeTxio/PROJECTS/CampuStudiOnline/DOCS/MAINS/ATTACHEDS/DOCS_ATTACHED_2_ANNEX_V06/V06DOC_SUBARCHETYPES.md -->
 # V06DOC_SUBARCHETYPES - MATRIZ DE ESPECIALIZACIÓN ACADÉMICA (V2.0 - DETERMINISTA)
 
 Este documento define la **Configuración Estructural Fija** (Receta) que cada Estrategia de Python debe implementar.
@@ -9,7 +9,16 @@ Este documento define la **Configuración Estructural Fija** (Receta) que cada E
 
 ## 1. RAMA: ARTES Y HUMANIDADES (12 Modelos)
 ### LENGUAS (CLM / LENGUAS MODERNAS)
-*   **SUB-LIN-INSTR:** (Modelo Instrumental). 5 Destrezas comunicativas (B1/C1).
+*   **SUB-LIN-INSTR: Modelo Instrumental (Acreditación CertAcles / CLM UGR) [REFACTORIZADO SUBATÓMICO]**
+    *   **Perfil:** Evaluación de competencia operativa integral para fines generales y académicos.
+    *   **Secuencia Genética Obligatoria (5 Fases / 5 Destrezas):**
+        1. **SD_READ (Reading):** 3 Ítems (PRM-STRIKE para detalle, MAT-LINK para global, CLO-MULTI para gramática en contexto).
+        2. **SD_LIST (Listening):** 2 Ítems (PRM-STRIKE + RBT-CANON). Máximo 2 reproducciones.
+        3. **SD_WRIT (Writing):** 2 Tareas (Producción breve funcional + Ensayo académico DRA-HOLO).
+        4. **SD_SPEAK (Speaking):** 2 Bloques (Monólogo W-COMM-DIALOG + Interacción DIA-INTERACT).
+        5. **SD_MEDI (Mediation):** 1 Tarea (Transferencia de registro técnico a divulgativo BMT-SHIFT).
+    *   **Directriz de Multimodalidad (Miguel Ángel):** Los widgets de texto (W-HUM-TEXT, W-TXT-CLOZE) deben activar el selector de entrada: Teclado Nativo, Transliteración, Pad de Trazos u OCR según el idioma objetivo.
+    *   **Criterio de Éxito:** 60% mínimo en CADA fase. Sin posibilidad de compensación entre destrezas. Navegación secuencial bloqueada.
 *   **SUB-LIN-MINOR:** (Modelo Minor/Iniciación). Grafía/Dictado, Gramática base y Cultura.
 *   **SUB-LIN-PHILO:** (Modelo Filológico). Gramática histórica, Fonética y Evolución lingüística.
 *   **SUB-LIN-NORM:** (Modelo Norma y Uso). Análisis de desviaciones, normativa académica y exégesis técnica.

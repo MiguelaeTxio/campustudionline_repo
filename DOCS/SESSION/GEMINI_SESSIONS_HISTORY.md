@@ -145,3 +145,11 @@
 *  **Session:** MAMC: Alineación Subatómica del Arquetipo de Lenguas con la Acreditación UGR
 *  **Description:** Inicio de la fase de refactorización técnica y actualización documental para el Hito 6. El objetivo central es sincronizar el motor de autoevaluaciones con los estándares de acreditación de la Universidad de Granada para el arquetipo de lenguas. Se contempla la actualización de la estrategia de inmersión y la integración de requisitos específicos para widgets de escritura (teclado multilingüe/occidentalizado, trazos en pantalla y captura de manuscritos vía OCR/Imagen). Se aplicará el protocolo PMA para la modificación de la lógica en assessment_v2, asegurando que el código sea un reflejo fiel de la documentación académica validada.
 
+
+# 2026-03-18
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+## EDC
+*  **Session:** Refactorización Subatómica Arquetipo Lenguas (Hito 6)
+*  **Description:** Auditoría y refactorización integral de la constelación documental del Arquetipo de Lenguas (ARCH_LANG) basándose en la acreditación oficial de la UGR. Inclusión de la Directriz de Multimodalidad, niveles de inmersión y reestructuración de la taxonomía de errores, respetando la prohibición estricta de alteración de código.
+

@@ -1,3 +1,4 @@
+<!-- /home/MiguelAeTxio/PROJECTS/CampuStudiOnline/DOCS/MAINS/ATTACHEDS/DOCS_ATTACHED_2_ANNEX_V06/V06DOC_WIDGETS.md -->
 # V06DOC_WIDGETS - CATÁLOGO DE COMPONENTES DE INTERFAZ (V1.1)
 
 ## 1. LIBRERÍA DE COMPONENTES TÉCNICOS
@@ -17,12 +18,18 @@
 *   W-HUM-TEXT (Editor de Exégesis Crítica):
     *   Uso: Humanidades y Artes.
     *   Funciones: Pantalla dividida (Fuente vs Ensayo), gestor de citas por arrastre, contador de penalización formal.
+    *   **Directriz de Multimodalidad (Miguel Ángel):** Al interactuar con el editor, el sistema DEBE ofrecer obligatoriamente el selector de entrada:
+        1. **Teclado Nativo:** Layout del idioma objetivo (ej. Árabe, Ruso).
+        2. **Occidentalización:** Transliteración/Pinyin/Romaji para alfabetos no latinos.
+        3. **Pad Virtual/Trazos:** Escritura manual digital (Caligrafía).
+        4. **OCR/Captura:** Digitalización de manuscrito físico del alumno.
+
 *   W-PROC-ACTION (Panel de Acción Crítica):
     *   Uso: Salud y Seguridad Industrial.
     *   Funciones: Checklist dinámico de seguridad, cronómetro ECOE, validación de pasos obligatorios.
 *   W-COMM-DIALOG (Interfaz de Mediación Dialéctica):
     *   Uso: Lenguas, Derecho, Educación.
-    *   Funciones: Grabadora de audio, chat interactivo con IA UniversIA, análisis de registro formal/informal.
+    *   Funciones: Grabadora de audio, chat interactivo con IA UniversIA, análisis de registro formal/informal. Soporte para entrada multimodal en el chat.
 *   W-LAW-NAV (Navegador de Marco Normativo):
     *   Uso: Derecho y Ciencias Sociales.
     *   Funciones: Acceso a repositorio legal/normativo emulado, buscador de jurisprudencia y cita rápida.
@@ -32,6 +39,7 @@
 *   W-TXT-CLOZE (Integrador de Huecos en Texto):
     *   Uso: Lenguas (Use of English) y Derecho (Completar escritos).
     *   Funciones: Renderizado de texto fluido con inputs incrustados. Soporta modo "Open" (Caja de texto) y "Select" (Dropdown en el hueco).
+    *   **Directriz de Multimodalidad (Miguel Ángel):** Los inputs en modo "Open" deben heredar el selector de entrada multimodal (Teclado/Trazos/OCR) para garantizar la precisión caligráfica en lenguas Minor/Maior.
 *   W-MIX-MATCH (Matriz de Vinculación):
     *   Uso: Lenguas (Reading Headlines) y Ciencias (Concepto-Definición).
     *   Funciones: Arrastrar y soltar (Drag & Drop) o conectores visuales entre dos columnas.
