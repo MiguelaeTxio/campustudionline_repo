@@ -51,6 +51,12 @@ La determinación del idioma en las instrucciones y títulos de sección (interf
     *   **Todos los Itinerarios:** Inmersión Total (Idioma Objetivo Dinámico). La IA genera títulos e instrucciones en el idioma detectado para garantizar integridad absoluta. Prohibición de castellano en feedback.
 
 ### 4.2. Resto de Arquetipos (TECH, HEALTH, SOC, HUM)
+
+### 4.3. Regla Especial Norma y Uso (UGR)
+*   **ITIN_MAIOR (NORM) + LVL_C:**
+    *   **Rigor Engine:** x1.7.
+    *   **Configuración:** Exigencia de corrección absoluta. El error en la justificación normativa (DPD) o la confusión de fenómenos antinormativos anula la puntuación del ítem.
+
 *   **Idioma Vehicular:** Castellano obligatorio por seguridad jurídica, salvo excepciones internacionales documentadas.
 
 ### 2.4. Regla Especial Philo (UGR)

@@ -57,6 +57,13 @@ Define las secciones del examen que activan widgets y rúbricas específicas.
 *   SD_ETHI: Evaluación deontológica, bioética y seguridad jurídica/clínica.
 
 ### D. BLOQUE CRÍTICO/ARTÍSTICO (Modelos Bellas Artes/Letras)
+
+### E. BLOQUE NORMATIVO (Modelo SUB-LIN-NORM / UGR)
+*   SD_CORPUS_ANALYSIS: Investigación de frecuencias y validación de usos en CORPES XXI/CREA.
+*   SD_MORPH_ANTINORM: Análisis de fenómenos críticos (queísmo, leísmo, concordancias).
+*   SD_ORTHO_PRESCRIPTIVE: Aplicación de la normativa ortográfica y de puntuación (OLE 2010).
+*   SD_CRITICAL_NORM: Valoración de la adecuación del registro a la situación comunicativa formal.
+
 *   SD_SOURCE: Crítica de fuentes primarias (Paleografía, Epigrafía, Arqueología).
 *   SD_DISC: Construcción de discurso estético, histórico o filosófico coherente.
 *   SD_ARTE: Validación de técnica matérica, composición y coherencia de obra.

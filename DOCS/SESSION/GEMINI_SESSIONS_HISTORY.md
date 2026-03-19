@@ -181,3 +181,11 @@
 ## CAMA
 *  **Session:** Refactorización Genética del Subarquetipo Philo (UGR)
 *  **Description:** Regulación técnica del subarquetipo SUB-LIN-PHILO para los Grados en Filología. Se definen las fases SD_PHONO, SD_MORPH_DIAC, SD_LEX_SEM y SD_TEXT_CRIT bajo el rigor LVL_C, priorizando el blindaje documental de la lógica diacrónica y el motor de validación EV-DIAC-VAL antes de la implementación.
+
+# 19/03/2026
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+## AAAA
+*  **Session:** Hito 6: Refactorización del Subarquetipo NORM para la UGR
+*  **Description:** Inicio de la sesión enfocada en la refactorización integral del subarquetipo SUB-LIN-NORM (Modelo Norma y Uso / Corrección Lingüística) dentro del Hito 6. Se ha procesado la constelación documental completa, validando la finalización del modelo PHILO y estableciendo la hoja de ruta para el cumplimiento de la normativa académica de la UGR en toda la estructura de evaluación (Templates, Widgets y Metadata). Se aplicará el protocolo de intervención quirúrgica para asegurar la integridad de los modelos previamente inyectados, centrando el esfuerzo exclusivamente en la lógica de corrección lingüística y ortografía normativa.
+

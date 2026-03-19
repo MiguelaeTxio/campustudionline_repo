@@ -74,6 +74,11 @@
     *   Widget: W-COMM-DIALOG.
 
 ## 4. MOTORES ESPECIALIZADOS PHILO (UGR)
+
+*   **EV-NORM-ANALYSIS (Motor de Análisis de Desviaciones): [REFACTORIZADO UGR 2025/26]**
+    *   **Mecánica:** Detección de infracciones prescriptivas (RAE/ASALE) y contraste con el uso real mediante Corpus (CORPES XXI/CREA).
+    *   **Calidad:** Evalúa la identificación del fenómeno antinormativo (ej. laísmo, dequeísmo), la corrección y la justificación basada en el DPD o la Gramática Académica.
+
 *   **EV-DIAC-VAL (Motor de Validación Diacrónica):**
     *   **Mecánica:** Validación de secuencias de cambio lingüístico y leyes fonéticas históricas.
     *   **Calidad:** El motor evalúa la identificación del paso fonético intermedio (etimología) y el rigor en la transcripción.

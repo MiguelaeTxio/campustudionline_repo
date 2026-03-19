@@ -38,15 +38,15 @@ Este documento define la **Configuración Estructural Fija** (Receta) que cada E
         4. **SD_TEXT_CRIT (Crítica Textual / Ecdótica):** Colación de variantes, estema codicum y establecimiento de edición crítica.
     *   **Rigor:** Epistemológico (LVL_C). Prohibición absoluta de paráfrasis.
     *   **Motor Principal:** EV-DIAC-VAL (Validación Diacrónica).
-*   **SUB-LIN-NORM: Modelo Norma y Uso (UGR / Corrección Lingüística) [REFACTORIZADO V3.2]**
-    *   **Perfil:** Análisis de la corrección lingüística, norma académica y adecuación estilística.
+
+*   **SUB-LIN-NORM: Modelo Norma y Uso (UGR / Grado Filología) [VERIFICADO UGR 2025/26]**
+    *   **Perfil:** Análisis avanzado de la norma panhispánica y fenómenos antinormativos.
     *   **Secuencia Genética Obligatoria (4 Fases):**
-        1. **SD_MORPH_NORM (Morfosintaxis Prescriptiva):** Evaluación de concordancias, régimen preposicional y vicios de dicción (leísmo, queísmo).
-        2. **SD_ORTHO_GRAPH (Ortografía y Puntuación):** Validación de la normativa gráfica RAE (acentuación, mayúsculas, signos de puntuación).
-        3. **SD_LEX_NORM (Léxico y Semántica Normativa):** Detección de impropiedades, barbarismos y uso correcto de neologismos.
-        4. **SD_STYLE_ANALYSIS (Análisis de Registro y Estilo):** Adequación al registro académico formal y corrección de la cohesión textual.
-    *   **Rigor:** Normativo-Académico (LVL_B+ / LVL_C).
-    *   **Motor Principal:** EV-NORM-ANALYSIS (Análisis de Desviaciones).
+        1. **SD_CORPUS_ANALYSIS:** Búsqueda y análisis de frecuencias en CORPES XXI/CREA (Widget W-LAW-NAV).
+        2. **SD_MORPH_ANTINORM:** Identificación de queísmo, dequeísmo, leísmo y concordancias complejas.
+        3. **SD_ORTHO_PRESCRIPTIVE:** Ortografía técnica y puntuación según la Ortografía de la Lengua Española (2010).
+        4. **SD_CRITICAL_NORM:** Comentario crítico sobre la adecuación de un texto al registro académico vs. norma.
+    *   **Rigor:** C1/C2 (Avanzado).
 *   **SUB-LIN-TRA-TECH:** (Traducción Profesional). Glosarios, memorias de traducción y terminología.
 *   **SUB-LIN-TRA-LIT: Modelo de Traducción Literaria y Editorial (FTI UGR) [REFACTORIZADO V3.2]**
     *   **Perfil:** Traducción de textos creativos, poéticos, narrativos y humanísticos.

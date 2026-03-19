@@ -1,23 +1,22 @@
 # ANEXO: HITO 06 - SISTEMA DE AUTOEVALUACIONES CON IA
-# ESTADO: EN PROGRESO - REGULACIÓN DOCUMENTAL (V3.6)
+# ESTADO: EN PROGRESO - REGULACIÓN DOCUMENTAL (V3.7)
 
-## LOGROS DE LA SESIÓN ACTUAL (CAMA)
-*   **Higiene Técnica Global:** Refactorización de la constelación TOTAL_COMMANDER. Centralización obligatoria de basura técnica (.bak, .prop, scripts volátiles) en /home/MiguelAeTxio/SWAP/.
-*   **Cierre 100% PHILO:** El subarquetipo SUB-LIN-PHILO (Modelo Filológico) ha sido completado y validado contra la UGR en toda la constelación documental.
+## LOGROS DE LA SESIÓN ACTUAL (AAAA)
+*   **Finalización NORM (UGR):** Refactorización integral del subarquetipo **SUB-LIN-NORM** (Modelo Norma y Uso).
+*   **Fidelidad Académica:** Inyección de la lógica prescriptiva real de la UGR (Guía Docente 2731111) incluyendo el uso de Corpus (CORPES XXI/CREA) y análisis de antinormatividad (laísmo, leísmo, dequeísmo).
+*   **Cierre de Constelación:** Actualización de Metadata, Blocks, Subdivisions y Levels para el modelo de Corrección Lingüística.
 
-## ADVERTENCIA TÉCNICA (ESTADO ACTUAL)
-*   Existen inyecciones parciales (por error de secuencia previo) de los subarquetipos **NORM** y **TRA** exclusivamente en los archivos V06DOC_SUBARCHETYPES.md y V06DOC_BLOCKS.md.
+## ADVERTENCIA TÉCNICA
+*   El subarquetipo **SUB-LIN-TRA-LIT** (Traducción Literaria) cuenta con una estructura preliminar en V06DOC_SUBARCHETYPES.md que requiere refactorización quirúrgica basada en la FTI (UGR).
 
 ## HOJA DE RUTA PARA LA PRÓXIMA SESIÓN (LEY SUPREMA)
 
-**OBJETIVO ÚNICO Y MANDATORIO:** Refactorización integral y finalización del subarquetipo **SUB-LIN-NORM** (Modelo Norma y Uso / Corrección Lingüística) para la UGR.
+**OBJETIVO ÚNICO Y MANDATORIO:** Refactorización integral y finalización del subarquetipo **SUB-LIN-TRA-LIT** (Modelo de Traducción Literaria y Editorial) para la FTI (UGR).
 
 ### INSTRUCCIONES VINCULANTES E INELUDIBLES:
-1.  **Foco Exclusivo:** Debes completar el subarquetipo **NORM** al 100% en toda la constelación (Templates, Widgets, Metadata, etc.).
-2.  **Prohibición de Avance:** No puedes mirar, procesar ni documentar ningún otro subarquetipo (TRA, etc.) hasta que NORM esté cerrado.
-3.  **Ejecución de Cierre:** Al finalizar la documentación de NORM, debes ejecutar el protocolo **PCS** inmediatamente.
-4.  **Solo Documentación:** Prohibido modificar archivos .py o ejecutar lógica de servidor.
-5.  **Fuente de Verdad:** Es obligatorio contrastar la arquitectura contra los planes de estudio reales de la **UGR** (Filología Hispánica / Norma y Uso).
-6.  **Intervención Quirúrgica:** Usa exclusivamente Python patching. Prohibido sustituir otros subarquetipos por comentarios.
-7.  **Formato de Salida:** Prohibido el uso de "echo" en scripts bash para logs. Usa exclusivamente el carácter de comentario "#" para evitar ruido y duplicidad.
-8.  **Higiene:** Toda basura técnica debe residir en /home/MiguelAeTxio/SWAP/.
+1.  **Foco Exclusivo:** Completar el subarquetipo **TRA-LIT** en toda la constelación (Templates, Widgets, Metadata, Blocks).
+2.  **Fuente de Verdad:** Es obligatorio contrastar la arquitectura contra los planes de estudio de la **Facultad de Traducción e Interpretación (FTI) de la UGR** (Asignatura: Traducción Literaria).
+3.  **Lógica de Evaluación:** Definir con rigor el motor **DRA-HOLO** (Rúbrica de Calidad Literaria) y la fase **SD_TRA_CREATIVE** (Transferencia Estética).
+4.  **Higiene:** Mantener la política de basura técnica en `/home/MiguelAeTxio/SWAP/`.
+5.  **Prohibición:** No avanzar hacia otros arquetipos (SAN, TEC, etc.) hasta cerrar la rama de Traducción.
+

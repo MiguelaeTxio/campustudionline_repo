@@ -1,6 +1,13 @@
 # /home/MiguelAeTxio/PROJECTS/CampuStudiOnline/DOCS/MAINS/ATTACHEDS/DOCS_ATTACHED_2_ANNEX_V06/V06DOC_METADATA.md
 # V06DOC_METADATA - MATRIZ DE ETIQUETADO Y DIAGNÓSTICO PEDAGÓGICO (V1.0)
 
+## 6. METADATOS ESPECÍFICOS NORM (UGR - NORMA Y USO)
+*   **DOMAIN_NORM:** [MORPH_ANTINORM | LEX_ANTINORM | CORPUS_VAL | PANHISPANIC_NORM].
+*   **CORPUS_REF:** Referencia obligatoria a CORPES XXI o CREA para validación de uso.
+*   **DICT_CONSULT:** Uso de herramientas de consulta (DPD, RAE, Diccionarios de Estilo).
+*   **NORM_VS_USE:** Marcador de discrepancia entre prescripción académica y uso social.
+
+
 Este documento define el lenguaje de marcado para la generación de ítems y la corrección automatizada.
 
 ## 1. DOMINIOS DE COMPETENCIA (COMPETENCY_DOMAIN)
