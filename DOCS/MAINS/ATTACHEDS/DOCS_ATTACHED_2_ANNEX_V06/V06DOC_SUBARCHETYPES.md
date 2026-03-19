@@ -29,10 +29,33 @@ Este documento define la **Configuración Estructural Fija** (Receta) que cada E
         4. **SD_CULT (Contexto Sociocultural):** Validación de normas de cortesía, geografía y cultura base.
     *   **Parámetros de Inmersión:** Inmersión VEHICULAR (Castellano) obligatoria en instrucciones para niveles LVL_A y LVL_B.
     *   **Regla de Oro UGR (CertAcles):** Umbral del 60% por destreza obligatoria. Sin compensación.
-*   **SUB-LIN-PHILO:** (Modelo Filológico). Gramática histórica, Fonética y Evolución lingüística.
-*   **SUB-LIN-NORM:** (Modelo Norma y Uso). Análisis de desviaciones, normativa académica y exégesis técnica.
+*   **SUB-LIN-PHILO: Modelo Filológico (UGR / Filología Hispánica y Clásica) [REFACTORIZADO V3.2]**
+    *   **Perfil:** Análisis científico, histórico y ecdótico de la lengua y sus textos.
+    *   **Secuencia Genética Obligatoria (4 Fases):**
+        1. **SD_PHONO (Fonética y Fonología Histórica):** Análisis de leyes de evolución sonora (ej. Yod, lenición) y transcripción paleográfica/IPA.
+        2. **SD_MORPH_DIAC (Morfología Diacrónica):** Evolución de paradigmas nominales y verbales desde la lengua origen (Latín/Indoeuropeo/Germánico).
+        3. **SD_LEX_SEM (Lexicología y Semántica):** Etimología, cambios semánticos y análisis de préstamos (Germanismos, Arabismos).
+        4. **SD_TEXT_CRIT (Crítica Textual / Ecdótica):** Colación de variantes, estema codicum y establecimiento de edición crítica.
+    *   **Rigor:** Epistemológico (LVL_C). Prohibición absoluta de paráfrasis.
+    *   **Motor Principal:** EV-DIAC-VAL (Validación Diacrónica).
+*   **SUB-LIN-NORM: Modelo Norma y Uso (UGR / Corrección Lingüística) [REFACTORIZADO V3.2]**
+    *   **Perfil:** Análisis de la corrección lingüística, norma académica y adecuación estilística.
+    *   **Secuencia Genética Obligatoria (4 Fases):**
+        1. **SD_MORPH_NORM (Morfosintaxis Prescriptiva):** Evaluación de concordancias, régimen preposicional y vicios de dicción (leísmo, queísmo).
+        2. **SD_ORTHO_GRAPH (Ortografía y Puntuación):** Validación de la normativa gráfica RAE (acentuación, mayúsculas, signos de puntuación).
+        3. **SD_LEX_NORM (Léxico y Semántica Normativa):** Detección de impropiedades, barbarismos y uso correcto de neologismos.
+        4. **SD_STYLE_ANALYSIS (Análisis de Registro y Estilo):** Adequación al registro académico formal y corrección de la cohesión textual.
+    *   **Rigor:** Normativo-Académico (LVL_B+ / LVL_C).
+    *   **Motor Principal:** EV-NORM-ANALYSIS (Análisis de Desviaciones).
 *   **SUB-LIN-TRA-TECH:** (Traducción Profesional). Glosarios, memorias de traducción y terminología.
-*   **SUB-LIN-TRA-LIT:** (Traducción Literaria). Estilística comparada y crítica de traducción.
+*   **SUB-LIN-TRA-LIT: Modelo de Traducción Literaria y Editorial (FTI UGR) [REFACTORIZADO V3.2]**
+    *   **Perfil:** Traducción de textos creativos, poéticos, narrativos y humanísticos.
+    *   **Secuencia Genética Obligatoria (3 Fases):**
+        1. **SD_TRA_STYLE (Análisis Estilístico Comparado):** Identificación de la voz del autor y transposición de figuras retóricas y matices.
+        2. **SD_TRA_CREATIVE (Transferencia Creativa):** Recreación del efecto estético y literario en la lengua de llegada.
+        3. **SD_TRA_CRIT (Crítica de Traducción):** Análisis exegético de versiones previas y justificación de la propuesta personal.
+    *   **Rigor:** Hermenéutico (LVL_C).
+    *   **Motor Principal:** DRA-HOLO (Rúbrica de Calidad Literaria).
 ### HUMANIDADES
 *   **SUB-HUM-HIST:** (Modelo Historiográfico). Análisis de fuentes primarias y cronología.
 *   **SUB-HUM-PHIL:** (Modelo Dialéctico). Lógica formal, ética y ensayo crítico.

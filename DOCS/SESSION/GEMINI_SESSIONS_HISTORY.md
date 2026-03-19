@@ -167,3 +167,17 @@
 ## CSO
 *  **Session:** Sincronización de Constantes para Subarquetipo Minor
 *  **Description:** Implementación de las nuevas subdivisiones académicas (Grafía y Fonética, Estructura Base, Lectura Adaptada y Contexto Sociocultural) en el modelo ExamSection de assessment_v2, alineando el motor de evaluación con la normativa refactorizada de la UGR para el subarquetipo SUB-LIN-MINOR.
+
+# 19/03/2026
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+## CSO
+*  **Session:** Refactorización Documental Filológica UGR
+*  **Description:** Refactorización integral del subarquetipo SUB-LIN-PHILO para los Grados en Filología de la UGR. Definición de la secuencia genética obligatoria: Fonética y Fonología Histórica (SD_PHONO), Morfología Diacrónica (SD_MORPH_DIAC), Lexicología y Semántica (SD_LEX_SEM) y Crítica Textual (SD_TEXT_CRIT). Establecimiento del rigor LVL_C (Epistemológico) y motor de validación EV-DIAC-VAL para leyes fonéticas.
+
+# 2026-03-19
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06
+## CAMA
+*  **Session:** Refactorización Genética del Subarquetipo Philo (UGR)
+*  **Description:** Regulación técnica del subarquetipo SUB-LIN-PHILO para los Grados en Filología. Se definen las fases SD_PHONO, SD_MORPH_DIAC, SD_LEX_SEM y SD_TEXT_CRIT bajo el rigor LVL_C, priorizando el blindaje documental de la lógica diacrónica y el motor de validación EV-DIAC-VAL antes de la implementación.

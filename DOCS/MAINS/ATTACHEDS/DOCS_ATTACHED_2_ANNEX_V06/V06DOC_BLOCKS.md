@@ -72,3 +72,16 @@
     *   Mecánica: Simulación de conversación, entrevista oral o mediación evaluada en tiempo real.
     *   Calidad: Evaluación de fluidez, registro léxico, adecuación pragmática y capacidad de reacción.
     *   Widget: W-COMM-DIALOG.
+
+## 4. MOTORES ESPECIALIZADOS PHILO (UGR)
+*   **EV-DIAC-VAL (Motor de Validación Diacrónica):**
+    *   **Mecánica:** Validación de secuencias de cambio lingüístico y leyes fonéticas históricas.
+    *   **Calidad:** El motor evalúa la identificación del paso fonético intermedio (etimología) y el rigor en la transcripción.
+
+*   **EV-NORM-ANALYSIS (Motor de Análisis de Desviaciones):**
+    *   **Mecánica:** Detección y corrección de infracciones de la norma académica RAE/ASALE.
+    *   **Calidad:** El motor evalúa no solo el error, sino la capacidad de explicar la norma subyacente que ha sido vulnerada.
+
+*   **EV-TRA-PRECISION (Motor de Precisión Terminológica):**
+    *   **Mecánica:** Validación de equivalencias terminológicas en dominios especializados (Derecho, Medicina, Técnica).
+    *   **Calidad:** Evalúa la univocidad en la lengua de llegada y el uso correcto de glosarios técnicos.

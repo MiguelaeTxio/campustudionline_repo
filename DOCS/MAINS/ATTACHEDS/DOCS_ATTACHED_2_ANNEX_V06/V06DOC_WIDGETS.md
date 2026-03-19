@@ -51,3 +51,9 @@
     *   **Función:** Muestra el "Estímulo de Sección" (Texto de lectura, Supuesto de hecho, Datos clínicos) de forma estática (Sticky) mientras el alumno hace scroll en las preguntas.
     *   **Justificación UX:** Evita el scroll vertical repetitivo ("Yo-Yo effect").
     *   **Contenido:** Estrictamente el material generado para el examen (Reading/Caso). NUNCA los apuntes del alumno.
+
+
+### 1.4. Componentes Especializados PHILO (UGR)
+*   **W-PHILO-IPA (Pad de Transcripción Fonética):** Selector de caracteres IPA (International Phonetic Alphabet) para análisis diacrónico.
+*   **W-PHILO-ECDO (Editor de Crítica Textual):** Herramienta de anotación multivariante para la fijación de textos (Ecdótica).
+*   **W-PHILO-OCR-PALE (Digitalización Paleográfica):** Módulo de OCR especializado en manuscritos antiguos para transcripción directa.

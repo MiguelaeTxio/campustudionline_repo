@@ -28,3 +28,9 @@ Este documento define el lenguaje de marcado para la generación de ítems y la 
 *   FB_FORMAL: Error de registro, sintaxis o corrección formal.
 *   FB_PROCEDURAL: Error en el método o secuencia lógica.
 *   FB_SAFETY: Violación de protocolos críticos o de seguridad.
+
+
+## 5. METADATOS ESPECÍFICOS PHILO (UGR)
+*   **DOMAIN_PHILO:** [PHONO | MORPH_DIAC | LEX_DIAC | ECDO].
+*   **DIAC_PRECISION:** Nivel de exactitud en la reconstrucción de la ley fonética (0.0 a 1.0).
+*   **SOURCE_AUTHENTICITY:** Marcador para el análisis de variantes en crítica textual.

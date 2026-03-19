@@ -60,3 +60,10 @@ La IA recibe los ítems vacíos (definidos por la Estrategia) y devuelve **exclu
 *   justification: Texto explicativo (Rol Catedrático).
 
 --- SEPARATOR ---
+
+
+### 2.1. Secuencia de Fases: SUB-LIN-PHILO (UGR)
+*   **Fase 1 (SD_PHONO):** Contrato para el análisis de leyes fonéticas. Requiere estímulo de texto fuente y salida JSON con pasos evolutivos.
+*   **Fase 2 (SD_MORPH_DIAC):** Foco en paradigmas de declinación/conjugación histórica.
+*   **Fase 3 (SD_LEX_SEM):** Análisis etimológico contrastado con el DCECH.
+*   **Fase 4 (SD_TEXT_CRIT):** Interfaz SPLIT_TEXT para colación de variantes y fijación de estema.

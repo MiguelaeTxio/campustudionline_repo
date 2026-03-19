@@ -52,3 +52,8 @@ La determinación del idioma en las instrucciones y títulos de sección (interf
 
 ### 4.2. Resto de Arquetipos (TECH, HEALTH, SOC, HUM)
 *   **Idioma Vehicular:** Castellano obligatorio por seguridad jurídica, salvo excepciones internacionales documentadas.
+
+### 2.4. Regla Especial Philo (UGR)
+*   **ITIN_MAIOR (PHILO) + LVL_C:**
+    *   **Rigor Engine:** x1.8.
+    *   **Configuración:** Evaluación de la etiología del cambio lingüístico. Tolerancia cero a errores en la reconstrucción formal.
