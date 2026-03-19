@@ -160,3 +160,10 @@
 ## NRA
 *  **Session:** Refactorización del Subarquetipo Lingüístico SUB-LIN-MINOR (Hito 6 - V3.1)
 *  **Description:** Inicio de la refactorización integral del subarquetipo 'Minor/Iniciación' (SUB-LIN-MINOR) para alinearlo con la normativa de la Facultad de Filosofía y Letras de la UGR. La sesión se centra en la definición de la secuencia genética obligatoria (Grafía, Gramática, Lectura y Cultura), el diseño de motores de validación de trazos (RBT-GRAPH-VAL) y el forzado de entrada multimodal en widgets para lenguas no occidentales.
+
+# 19/03/2026
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+## CSO
+*  **Session:** Sincronización de Constantes para Subarquetipo Minor
+*  **Description:** Implementación de las nuevas subdivisiones académicas (Grafía y Fonética, Estructura Base, Lectura Adaptada y Contexto Sociocultural) en el modelo ExamSection de assessment_v2, alineando el motor de evaluación con la normativa refactorizada de la UGR para el subarquetipo SUB-LIN-MINOR.
