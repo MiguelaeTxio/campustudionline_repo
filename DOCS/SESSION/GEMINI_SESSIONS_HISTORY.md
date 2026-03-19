@@ -189,3 +189,10 @@
 *  **Session:** Hito 6: Refactorización del Subarquetipo NORM para la UGR
 *  **Description:** Inicio de la sesión enfocada en la refactorización integral del subarquetipo SUB-LIN-NORM (Modelo Norma y Uso / Corrección Lingüística) dentro del Hito 6. Se ha procesado la constelación documental completa, validando la finalización del modelo PHILO y estableciendo la hoja de ruta para el cumplimiento de la normativa académica de la UGR en toda la estructura de evaluación (Templates, Widgets y Metadata). Se aplicará el protocolo de intervención quirúrgica para asegurar la integridad de los modelos previamente inyectados, centrando el esfuerzo exclusivamente en la lógica de corrección lingüística y ortografía normativa.
 
+
+# 2026-03-19
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+## EPI
+*  **Session:** Refactorización Subarquetipo Traducción Literaria (SUB-LIN-TRA-LIT) - FTI UGR
+*  **Description:** Inicio de la fase de implementación técnica para el subarquetipo de Traducción Literaria y Editorial (SUB-LIN-TRA-LIT) basado en los planes de estudio de la FTI (UGR). El objetivo es definir la lógica de las tres fases (Estilística, Creativa y Crítica) y configurar el motor DRA-HOLO para la evaluación de calidad literaria, asegurando la integración con la arquitectura de Assessment_V2 y el cumplimiento de los estándares de excelencia académica de la Universidad de Granada.

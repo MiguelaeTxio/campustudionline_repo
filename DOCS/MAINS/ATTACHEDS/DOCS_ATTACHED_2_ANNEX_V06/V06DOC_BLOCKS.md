@@ -30,16 +30,14 @@
     *   Calidad: La omisión de un paso de seguridad anula la sección completa.
     *   Parámetro: KILL_SWITCH (Activo).
 
-*   DRA-HOLO (Disertación con Rúbrica Analítica Holística):
-    *   Mecánica: Evaluación en 4 ejes: Rigor, Estructura, Terminología y Forma.
-    *   Calidad: Penalización directa por deficiencias en el registro académico o faltas.
-    *   Parámetro: FORM_PEN (Hasta -2.5 puntos).
-    *   **Taxonomía de Errores UGR (Inyectada):**
-        1. **ERR_TRANS (Transferencia):** Calcos de la lengua materna (L1) que afectan al significado.
-        2. **ERR_NORM (Norma):** Violaciones de la gramática, ortografía o morfología normativa.
-        3. **ERR_REG (Registro):** Uso de lenguaje inapropiado para el contexto (ej. coloquial en un ensayo).
-        4. **ERR_COH (Cohesión):** Fallos en el uso de conectores y estructuración del discurso.
-
+*   DRA-HOLO (Rúbrica Analítica Holística - Especialización FTI UGR):
+    *   **Mecánica:** Evaluación en 4 ejes específicos para Traducción Literaria (0-10 pts).
+    *   **Ejes de Evaluación:**
+        1. **Fidelidad Estilística:** Captación del tono y registro del autor original.
+        2. **Transferencia Estética:** Recreación del efecto literario (metáfora, ritmo).
+        3. **Gestión de Culturemas:** Resolución de referentes culturales e ironía.
+        4. **Calidad Lingüística Meta:** Riqueza léxica y elegancia formal (RAE/ASALE).
+    *   **Parámetro:** FORM_PEN (Hasta -2.5 puntos).
 *   BMT-SHIFT (Mediación y Transferencia de Registro):
     *   Mecánica: Adaptación de información técnica a lenguaje divulgativo o viceversa.
     *   Calidad: Evaluación de la fidelidad informativa y adecuación al destinatario.

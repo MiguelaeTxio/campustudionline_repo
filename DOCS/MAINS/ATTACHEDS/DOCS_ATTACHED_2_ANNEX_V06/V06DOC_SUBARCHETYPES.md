@@ -48,14 +48,14 @@ Este documento define la **Configuración Estructural Fija** (Receta) que cada E
         4. **SD_CRITICAL_NORM:** Comentario crítico sobre la adecuación de un texto al registro académico vs. norma.
     *   **Rigor:** C1/C2 (Avanzado).
 *   **SUB-LIN-TRA-TECH:** (Traducción Profesional). Glosarios, memorias de traducción y terminología.
-*   **SUB-LIN-TRA-LIT: Modelo de Traducción Literaria y Editorial (FTI UGR) [REFACTORIZADO V3.2]**
-    *   **Perfil:** Traducción de textos creativos, poéticos, narrativos y humanísticos.
+*   **SUB-LIN-TRA-LIT: Modelo de Traducción Literaria y Editorial (FTI UGR) [REFACTORIZADO QUIRÚRGICO]**
+    *   **Perfil:** Traducción de textos creativos, poéticos y humanísticos basada en los criterios de la FTI (UGR).
     *   **Secuencia Genética Obligatoria (3 Fases):**
-        1. **SD_TRA_STYLE (Análisis Estilístico Comparado):** Identificación de la voz del autor y transposición de figuras retóricas y matices.
-        2. **SD_TRA_CREATIVE (Transferencia Creativa):** Recreación del efecto estético y literario en la lengua de llegada.
-        3. **SD_TRA_CRIT (Crítica de Traducción):** Análisis exegético de versiones previas y justificación de la propuesta personal.
-    *   **Rigor:** Hermenéutico (LVL_C).
-    *   **Motor Principal:** DRA-HOLO (Rúbrica de Calidad Literaria).
+        1. **SD_TRA_STYLE (Análisis Estilístico Comparado):** Identificación de la voz del autor, rasgos dialectales/cronoflectales y desafíos retóricos. (Widget: W-HUM-TEXT).
+        2. **SD_TRA_CREATIVE (Transferencia Estética):** Recreación del efecto estético y literario en la lengua meta (Skopos). Gestión de culturemas e intertextualidad. (Widget: W-TRA-LIT-CREA).
+        3. **SD_TRA_CRIT (Crítica y Justificación):** Comentario exegético defendiendo las opciones de traducción y compensaciones literarias. (Widget: W-HUM-TEXT).
+    *   **Rigor:** Hermenéutico / Nivel C2 (LVL_C).
+    *   **Motor Principal:** DRA-HOLO (Rúbrica de Calidad Literaria UGR).
 ### HUMANIDADES
 *   **SUB-HUM-HIST:** (Modelo Historiográfico). Análisis de fuentes primarias y cronología.
 *   **SUB-HUM-PHIL:** (Modelo Dialéctico). Lógica formal, ética y ensayo crítico.
