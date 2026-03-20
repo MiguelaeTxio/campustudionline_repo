@@ -13,10 +13,10 @@
     *   Calidad: No admite paráfrasis en niveles MAIOR o PROF.
     *   Parámetro: TERM_PREC (Máximo).
 
-*   **RBT-SHORT-LANG (Respuesta Breve Lingüística - UGR/CertAcles) [NUEVO]**
-    *   **Mecánica:** Validación estricta de precisión léxica y gramatical.
-    *   **Restricción:** Longitud obligatoria de **1 a 4 palabras**. Cualquier respuesta fuera de este rango se califica como 0 automáticamente.
-    *   **Calidad:** El motor valida lemas y morfología exacta según el contexto del texto (gap-filling).
+*   **RBT-SHORT-LANG (Respuesta Breve Lingüística - UGR/CertAcles) [REFACTORIZADO SUBATÓMICO]**
+    *   **Mecánica:** Validación estricta de precisión léxica y gramatical mediante comparación de lemas y morfología exacta.
+    *   **Restricción de Extensión:** Obligatoriamente entre 1 y 4 palabras. El sistema invalida automáticamente (puntuación 0) cualquier respuesta con 0 palabras o más de 4 palabras, sin procesar su contenido semántico.
+    *   **Calidad:** Evalúa la adecuación al contexto de la tarea exigiendo exactitud absoluta en niveles B2/C1.
 
 *   RPP-TRAZA (Resolución Procedimental con Arrastre de Error):
     *   Mecánica: Calificación multietapa con validación de la coherencia lógica.
@@ -30,14 +30,14 @@
     *   Calidad: La omisión de un paso de seguridad anula la sección completa.
     *   Parámetro: KILL_SWITCH (Activo).
 
-*   DRA-HOLO (Rúbrica Analítica Holística - Especialización FTI UGR):
-    *   **Mecánica:** Evaluación en 4 ejes específicos para Traducción Literaria (0-10 pts).
-    *   **Ejes de Evaluación:**
-        1. **Fidelidad Estilística:** Captación del tono y registro del autor original.
-        2. **Transferencia Estética:** Recreación del efecto literario (metáfora, ritmo).
-        3. **Gestión de Culturemas:** Resolución de referentes culturales e ironía.
-        4. **Calidad Lingüística Meta:** Riqueza léxica y elegancia formal (RAE/ASALE).
-    *   **Parámetro:** FORM_PEN (Hasta -2.5 puntos).
+*   DRA-HOLO (Rúbrica Analítica Holística - Acreditación UGR/CertAcles):
+    *   **Mecánica:** Evaluación criterial mediante rúbrica de 4 ejes con escala de 0 a 2.5 puntos por eje (Total: 10 pts).
+    *   **Ejes de Evaluación (Standard UGR):**
+        1. **Adecuación al encargo:** Cumplimiento de la extensión, registro formal/informal y objetivos comunicativos del input.
+        2. **Cohesión y Coherencia:** Estructura lógica del texto, uso eficaz de marcadores del discurso y puntuación.
+        3. **Riqueza y Variedad Léxica:** Precisión terminológica y uso de expresiones idiomáticas según el nivel MCERL.
+        4. **Corrección Gramatical:** Control de estructuras simples y complejas; ausencia de errores sistemáticos o fosilizados.
+    *   **Parámetro de Penalización:** FORM_PEN (Hasta -2.5 puntos por fallos en ortografía técnica).
 *   BMT-SHIFT (Mediación y Transferencia de Registro):
     *   Mecánica: Adaptación de información técnica a lenguaje divulgativo o viceversa.
     *   Calidad: Evaluación de la fidelidad informativa y adecuación al destinatario.

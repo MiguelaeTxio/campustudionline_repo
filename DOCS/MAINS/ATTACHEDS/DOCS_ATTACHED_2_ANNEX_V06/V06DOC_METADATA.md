@@ -1,3 +1,4 @@
+<!-- /home/MiguelAeTxio/PROJECTS/CampuStudiOnline/DOCS/MAINS/ATTACHEDS/DOCS_ATTACHED_2_ANNEX_V06/V06DOC_METADATA.md -->
 # /home/MiguelAeTxio/PROJECTS/CampuStudiOnline/DOCS/MAINS/ATTACHEDS/DOCS_ATTACHED_2_ANNEX_V06/V06DOC_METADATA.md
 # V06DOC_METADATA - MATRIZ DE ETIQUETADO Y DIAGNÓSTICO PEDAGÓGICO (V1.0)
 
@@ -37,7 +38,15 @@ Este documento define el lenguaje de marcado para la generación de ítems y la 
 *   FB_SAFETY: Violación de protocolos críticos o de seguridad.
 
 
-## 5. METADATOS ESPECÍFICOS PHILO (UGR)
+## 5. METADATOS ESPECÍFICOS UGR (ACREDITACIÓN CERTACLES) [REFACTORIZADO SUBATÓMICO]
+*   **THRESHOLD_SKILL:** 0.60 (Umbral del 60% exigido por la UGR por cada destreza de forma independiente).
+*   **FAIL_LOGIC:** FATAL (La caída por debajo de THRESHOLD_SKILL en cualquier sección anula la acreditación global sin compensación).
+*   **WORD_COUNT_RANGE:**
+    - `WRIT_T1`: [120, 150] (Rango para interacción funcional).
+    - `WRIT_T2`: [150, 180] (Rango para producción académica).
+*   **PENALTY_OOB:** Penalización de -0.5 puntos por cada tramo de 10 palabras de desviación del rango.
+
+## 6. METADATOS ESPECÍFICOS PHILO (UGR)
 *   **DOMAIN_PHILO:** [PHONO | MORPH_DIAC | LEX_DIAC | ECDO].
 *   **DIAC_PRECISION:** Nivel de exactitud en la reconstrucción de la ley fonética (0.0 a 1.0).
 *   **SOURCE_AUTHENTICITY:** Marcador para el análisis de variantes en crítica textual.

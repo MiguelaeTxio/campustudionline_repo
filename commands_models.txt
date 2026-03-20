@@ -1,2 +1,0 @@
-get /home/MiguelAeTxio/PROJECTS/CampuStudiOnline/contents/models.py
-get /home/MiguelAeTxio/PROJECTS/CampuStudiOnline/users/models.py

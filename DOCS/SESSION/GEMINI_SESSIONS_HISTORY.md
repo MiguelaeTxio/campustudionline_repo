@@ -196,3 +196,10 @@
 ## EPI
 *  **Session:** Refactorización Subarquetipo Traducción Literaria (SUB-LIN-TRA-LIT) - FTI UGR
 *  **Description:** Inicio de la fase de implementación técnica para el subarquetipo de Traducción Literaria y Editorial (SUB-LIN-TRA-LIT) basado en los planes de estudio de la FTI (UGR). El objetivo es definir la lógica de las tres fases (Estilística, Creativa y Crítica) y configurar el motor DRA-HOLO para la evaluación de calidad literaria, asegurando la integración con la arquitectura de Assessment_V2 y el cumplimiento de los estándares de excelencia académica de la Universidad de Granada.
+
+# 2026-03-20
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+## PLUTO
+*  **Session:** Reinicio Estructural Rama Lenguas (Fidelidad UGR 100%) - SUB-LIN-INSTR
+*  **Description:** Ejecución de la Fase 1 del Hito 6: Refactorización de la rama ARCH_LANG bajo el Mandato Supremo (WORD_OF_GOD). Se procede al mapeo subatómico del subarquetipo SUB-LIN-INSTR (CertAcles/CLM) integrando los criterios reales de la UGR: evaluación de 4-5 destrezas, límites de palabras en respuestas cortas y bloqueos de navegación secuencial.

@@ -9,16 +9,30 @@ Este documento define la **Configuración Estructural Fija** (Receta) que cada E
 
 ## 1. RAMA: ARTES Y HUMANIDADES (12 Modelos)
 ### LENGUAS (CLM / LENGUAS MODERNAS)
-*   **SUB-LIN-INSTR: Modelo Instrumental (Acreditación CertAcles / CLM UGR) [REFACTORIZADO SUBATÓMICO]**
-    *   **Perfil:** Evaluación de competencia operativa integral para fines generales y académicos.
-    *   **Secuencia Genética Obligatoria (5 Fases / 5 Destrezas):**
-        1. **SD_READ (Reading):** 3 Ítems (PRM-STRIKE para detalle, MAT-LINK para global, CLO-MULTI para gramática en contexto).
-        2. **SD_LIST (Listening):** 2 Ítems (PRM-STRIKE + RBT-CANON). Máximo 2 reproducciones.
-        3. **SD_WRIT (Writing):** 2 Tareas (Producción breve funcional + Ensayo académico DRA-HOLO).
-        4. **SD_SPEAK (Speaking):** 2 Bloques (Monólogo W-COMM-DIALOG + Interacción DIA-INTERACT).
-        5. **SD_MEDI (Mediation):** 1 Tarea (Transferencia de registro técnico a divulgativo BMT-SHIFT).
-    *   **Directriz de Multimodalidad (Miguel Ángel):** Los widgets de texto (W-HUM-TEXT, W-TXT-CLOZE) deben activar el selector de entrada: Teclado Nativo, Transliteración, Pad de Trazos u OCR según el idioma objetivo.
-    *   **Criterio de Éxito:** 60% mínimo en CADA fase. Sin posibilidad de compensación entre destrezas. Navegación secuencial bloqueada.
+*   **SUB-LIN-INSTR: Modelo Instrumental (Acreditación CertAcles / CLM UGR) [REFACTORIZADO SUBATÓMICO - FIDELIDAD 100% UGR]**
+    *   **Perfil Institucional:** Evaluación de la competencia comunicativa operativa (B1/B2) bajo el Marco Común Europeo de Referencia (MCERL) y la normativa del CLM-UGR y CertAcles.
+    *   **Secuencia Genética Obligatoria (Penta-Destreza):**
+        1. **SD_READ (Comprensión de Lectura):**
+            - Tarea 1: Comprensión Global/Ideación. Emparejar 6-8 encabezados con párrafos de un texto de 400-500 palabras. (Widget: W-MIX-MATCH / Motor: MAT-LINK).
+            - Tarea 2: Localización de Información Específica. Selección de datos concretos en 4-5 micro-textos temáticos. (Widget: W-OBJ-STRIKE / Motor: PRM-STRIKE).
+            - Tarea 3: Reconstrucción Coherente (Gapped Text). Reintegrar 5-6 fragmentos extraídos en su posición original. (Widget: W-TXT-CLOZE / Modo: Select / Motor: CLO-MULTI).
+        2. **SD_LIST (Comprensión Auditiva):**
+            - Tarea 1: Discriminación en Micro-Interacciones. Preguntas de opción múltiple sobre 6-8 diálogos situacionales. (Widget: W-OBJ-STRIKE / Motor: PRM-STRIKE).
+            - Tarea 2: Extracción de Datos / Toma de Notas. Completado de esquema basado en monólogo/entrevista. (Widget: W-TXT-CLOZE / Modo: Open). **Motor: RBT-SHORT-LANG (Restricción estricta: 1-4 palabras).**
+            - **Restricción de Acceso:** Máximo 2 reproducciones de audio por ítem.
+        3. **SD_WRIT (Expresión e Interacción Escrita):**
+            - Tarea 1: Interacción Funcional Dirigida. Email/Carta formal cubriendo 3-4 puntos obligatorios. Extensión: 120-150 palabras. (Widget: W-HUM-TEXT / Rúbrica: DRA-HOLO).
+            - Tarea 2: Discurso Académico / Ensayo. Producción argumentativa sobre tema propuesto. Extensión: 150-180 palabras. (Widget: W-HUM-TEXT / Rúbrica: DRA-HOLO).
+        4. **SD_SPEAK (Expresión e Interacción Oral):**
+            - Fase 1: Entrevista de Identidad y Entorno. (Widget: W-COMM-DIALOG).
+            - Fase 2: Monólogo Sostenido de Análisis. Descripción de situación basada en estímulo visual complejo. (Widget: W-COMM-DIALOG).
+            - Fase 3: Mediación Dialéctica / Negociación. Toma de decisiones compartida con UniversIA en tiempo real. (Widget: W-COMM-DIALOG / Motor: DIA-INTERACT).
+        5. **SD_MEDI (Mediación Lingüística):**
+            - Tarea 1: Transferencia Intralingüística/Interlingüística. Adaptación de información técnica de un gráfico o texto complejo a un destinatario no experto. (Widget: BMT-SHIFT).
+    *   **Protocolo de Superación UGR:**
+        - Umbral Crítico: Mínimo 60% de la puntuación en CADA destreza.
+        - Compensación: Prohibida (FAIL_LOGIC: FATAL).
+        - Navegación: Unidireccional Sellada (No-Backtracking entre destrezas).
 *   **SUB-LIN-MINOR: Modelo Minor / Iniciación (UGR - Facultad Filosofía y Letras) [REFACTORIZADO V3.1]**
     *   **Perfil:** Iniciación a la competencia lingüística y caligráfica (Alemán, Árabe, Checo, Chino, Griego, Hebreo, Italiano, Japonés, Polaco, Portugués, Ruso).
     *   **Excepción B2:** Los itinerarios de Inglés y Francés Minor inician directamente en nivel B2 (MCERL).

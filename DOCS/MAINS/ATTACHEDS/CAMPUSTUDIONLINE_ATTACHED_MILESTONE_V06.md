@@ -1,27 +1,27 @@
 <!-- /home/MiguelAeTxio/PROJECTS/CampuStudiOnline/DOCS/MAINS/ATTACHEDS/CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md -->
 # ANEXO: HITO 06 - SISTEMA DE AUTOEVALUACIONES CON IA
-# ESTADO: EN PROGRESO - REINICIO ESTRUCTURAL RAMA LENGUAS (V4.0)
+# ESTADO: EN PROGRESO - REFACTORIZACIÓN RAMA LENGUAS (V4.1)
 
-## 1. RESUMEN DE LA SESIÓN ACTUAL (EPI)
-*   **Creación del Mandato Supremo:** Se ha redactado e incorporado a la constelación el archivo `V06DOC_WORD_OF_GOD.md`, que establece el protocolo de fidelidad académica absoluta 100% UGR.
-*   **Auditoría de Calidad:** Se ha detectado que la documentación actual de la rama ARCH_LANG es inconsistente y no refleja fielmente los estándares de la UGR (CertAcles, FTI y Filologías).
-*   **Decisión Estratégica:** Reinicio total del proceso de redacción documental de la rama de Lenguas desde el primer subarquetipo para erradicar la "basura técnica" y las simplificaciones.
+## 1. RESUMEN DE LA SESIÓN (EPI - PLUTO)
+*   **Hito Alcanzado:** Finalización de la refactorización subatómica del subarquetipo **SUB-LIN-INSTR** (Modelo Instrumental / CertAcles / CLM UGR).
+*   **Fidelidad 100% UGR:** Se han integrado las 5 destrezas (Reading, Listening, Writing, Speaking, Mediation) con sus respectivos widgets, motores (RBT-SHORT-LANG de 1-4 palabras, DRA-HOLO de 4 ejes) y criterios de superación (60% no compensable).
+*   **Limpieza Técnica:** Se ha erradicado la simplificación documental en la configuración de este subarquetipo.
 
 ## 2. HOJA DE RUTA PARA LA PRÓXIMA SESIÓN (LEY SUPREMA - INELUDIBLE)
-**OBJETIVO:** Reinicio de la Rama de Lenguas (ARCH_LANG) para alcanzar el 100% de fidelidad UGR, comenzando por el primer subarquetipo.
+**OBJETIVO:** Refactorización Subatómica del Subarquetipo **SUB-LIN-MINOR (Modelo Minor / Iniciación)** para alcanzar el 100% de fidelidad UGR.
 
-### PROTOCOLO DE EJECUCIÓN DE LA SESIÓN (3 PARTES):
-1.  **FASE DE INVESTIGACIÓN (UGR):**
-    *   Consultar obligatoriamente la web oficial de la UGR y localizar la Guía Docente del subarquetipo **SUB-LIN-INSTR (Modelo Instrumental / CertAcles / CLM)**.
-    *   Extraer cada una de las destrezas, competencias y criterios de evaluación reales.
+### PROTOCOLO DE EJECUCIÓN (3 PARTES):
+1.  **FASE DE INVESTIGACIÓN (UGR - MINOR):**
+    *   Consultar la Guía Docente de la UGR para asignaturas "Minor" o de "Iniciación" (Alemán, Árabe, Chino, Japonés, Ruso, etc.).
+    *   Extraer los criterios específicos de evaluación de grafía/fonética (SD_GRAPH) y cultura base (SD_CULT).
 2.  **FASE DE REFACTORIZACIÓN DOCUMENTAL:**
-    *   Refactorizar los archivos `V06DOC_SUBARCHETYPES.md`, `V06DOC_BLOCKS.md` y `V06DOC_METADATA.md` para que este subarquetipo sea un espejo subatómico de la realidad académica de la UGR.
-    *   Prohibido avanzar al siguiente subarquetipo.
+    *   Refactorizar `V06DOC_SUBARCHETYPES.md` para detallar la secuencia del SUB-LIN-MINOR.
+    *   Asegurar la vinculación técnica con los widgets de trazos/OCR y el bloqueo caligráfico para alfabetos no latinos.
 3.  **FASE DE CIERRE (PCS):**
-    *   Una vez terminada la documentación de este único subarquetipo, se ejecutará el cierre de sesión sin excepciones.
+    *   Al finalizar este subarquetipo, se ejecutará el cierre de sesión.
 
-### MANDATO PARA EL MODELO EN LA PRÓXIMA SESIÓN:
-*   No supongas nada.
-*   No simplifiques.
-*   No inventes widgets o fases que no estén en la Guía Docente de la UGR.
-*   Si la Guía Docente de la UGR para CertAcles pide Mediación Lingüística, se documenta la Mediación Lingüística con todo su rigor.
+### REFERENCIA TÉCNICA:
+*   Documentación satélite: `V06DOC_WORD_OF_GOD.md` (Mandato de Fidelidad).
+*   Motor Crítico: `RBT-SHORT-LANG` y `DIA-INTERACT`.
+*   Widget Crítico: `W-TXT-CLOZE` (Modo Open con Trazos/OCR).
+

@@ -1,6 +1,0 @@
-!echo -e "\n--- SEPARATOR ---\n" >> "/sdcard/Download/file09.txt"
-!cat "/sdcard/Download/temp_g.py" >> "/sdcard/Download/file09.txt"
-!rm "/sdcard/Download/temp_t.py" "/sdcard/Download/temp_g.py" commands_fix_rotation.txt
-exitcat << 'EOF' > commands_fix_rotation.txt
-get /home/MiguelAeTxio/PROJECTS/CampuStudiOnline/orchestrator/tasks.py
-get /home/MiguelAeTxio/PROJECTS/CampuStudiOnline/core/services/gemini_service.py
