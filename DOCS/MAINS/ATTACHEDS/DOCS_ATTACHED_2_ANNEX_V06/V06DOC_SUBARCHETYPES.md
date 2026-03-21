@@ -53,15 +53,32 @@ Este documento define la **Configuración Estructural Fija** (Receta) que cada E
             - Tarea: Validación de protocolos de cortesía, geografía política y realidades culturales nucleares de la UGR.
             - **Rigor:** LVL_A. Inmersión vehicular (Castellano) obligatoria en instrucciones.
     *   **Regla de Oro UGR (CertAcles):** Umbral del 60% por destreza. Sin compensación (FAIL_LOGIC: FATAL).
-*   **SUB-LIN-PHILO: Modelo Filológico (UGR / Filología Hispánica y Clásica) [REFACTORIZADO V3.2]**
-    *   **Perfil:** Análisis científico, histórico y ecdótico de la lengua y sus textos.
-    *   **Secuencia Genética Obligatoria (4 Fases):**
-        1. **SD_PHONO (Fonética y Fonología Histórica):** Análisis de leyes de evolución sonora (ej. Yod, lenición) y transcripción paleográfica/IPA.
-        2. **SD_MORPH_DIAC (Morfología Diacrónica):** Evolución de paradigmas nominales y verbales desde la lengua origen (Latín/Indoeuropeo/Germánico).
-        3. **SD_LEX_SEM (Lexicología y Semántica):** Etimología, cambios semánticos y análisis de préstamos (Germanismos, Arabismos).
-        4. **SD_TEXT_CRIT (Crítica Textual / Ecdótica):** Colación de variantes, estema codicum y establecimiento de edición crítica.
-    *   **Rigor:** Epistemológico (LVL_C). Prohibición absoluta de paráfrasis.
-    *   **Motor Principal:** EV-DIAC-VAL (Validación Diacrónica).
+*   **SUB-LIN-PHILO: Modelo Filológico / Crítica Textual (UGR - Facultad de Filosofía y Letras) [REFACTORIZADO SUBATÓMICO - FIDELIDAD 100% UGR]**
+    *   **Perfil Institucional:** Análisis científico, histórico y ecdótico de la lengua española y sus monumentos literarios. Basado en los criterios de evaluación del Departamento de Lengua Española y el Departamento de Filologías Clásicas de la UGR.
+    *   **Secuencia Genética Obligatoria (Cuatri-Destreza Científica):**
+        1. **SD_PHONO (Fonética y Fonología Histórica):**
+            - **Objetivo:** Reconstrucción de la cadena evolutiva desde el étimo latino (u origen) hasta el romance medieval o moderno.
+            - **Tarea:** Identificación de procesos de cambio (apócope, síncopa, metátesis, lenición, palatalización) y transcripción mediante el Alfabeto Fonético Internacional.
+            - **Widget:** W-PHILO-IPA (Pad Fonético especializado).
+            - **Motor:** EV-DIAC-VAL (Validación de pasos intermedios. Cada salto fonético debe estar justificado).
+        2. **SD_MORPH_DIAC (Morfología Diacrónica):**
+            - **Objetivo:** Análisis de la evolución de los paradigmas flexivos nominales y verbales.
+            - **Tarea:** Explicación de la reestructuración del sistema de casos latinos al sistema preposicional romance, creación de tiempos compuestos y evolución de los clíticos.
+            - **Rigor:** Nivel Catedrático (UGR). Se exige identificar la ley de analogía o nivelación morfológica aplicada.
+        3. **SD_LEX_SEM (Lexicología y Semántica Histórica):**
+            - **Objetivo:** Estudio del origen y evolución del léxico (Etimología).
+            - **Tarea:** Análisis de cultismos, semicultismos y palabras patrimoniales. Identificación de cambios semánticos (metáfora, metonimia, elipsis).
+            - **Fuente de Autoridad:** Uso emulado de los criterios del DCECH (Corominas y Pascual) y el CORDE/CDH.
+        4. **SD_TEXT_CRIT (Crítica Textual / Ecdótica):**
+            - **Objetivo:** Establecimiento de la edición crítica de un texto medieval o clásico.
+            - **Tarea:** Ejecución de las fases neolachmannianas (Metodología Alberto Blecua): Recensio (inventario), Collatio (cotejo de variantes), Examinatio (juicio crítico) y Selectio/Emendatio (propuesta de fijación).
+            - **Widget:** W-PHILO-ECDO (Interfaz SPLIT_TEXT para colación de manuscritos).
+            - **Motor:** EV-PALE (Validación de normas de transcripción paleográfica vs. crítica).
+    *   **Protocolo de Superación y Rigor (V06DOC_LEVELS):**
+        - **Umbral Crítico:** 70% de precisión técnica mínima.
+        - **Política de Tolerancia Cero:** La presencia de una sola falta de ortografía técnica (tildes, grafemas medievales) en el Nivel C o la confusión de leyes fonéticas incompatibles supone la anulación inmediata del ítem (FAIL_LOGIC: FATAL).
+        - **Prohibición de Paráfrasis:** Se exige el uso estricto del metalenguaje filológico oficial de la UGR.
+    *   **Rigor Engine:** x1.8 (Nivel C1/C2 - Epistemológico).
 
 *   **SUB-LIN-NORM: Modelo Norma y Uso (UGR / Grado Filología) [VERIFICADO UGR 2025/26]**
     *   **Perfil:** Análisis avanzado de la norma panhispánica y fenómenos antinormativos.

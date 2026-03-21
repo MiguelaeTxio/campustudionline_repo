@@ -53,7 +53,29 @@
     *   **Contenido:** Estrictamente el material generado para el examen (Reading/Caso). NUNCA los apuntes del alumno.
 
 
-### 1.4. Componentes Especializados PHILO (UGR)
-*   **W-PHILO-IPA (Pad de Transcripción Fonética):** Selector de caracteres IPA (International Phonetic Alphabet) para análisis diacrónico.
-*   **W-PHILO-ECDO (Editor de Crítica Textual):** Herramienta de anotación multivariante para la fijación de textos (Ecdótica).
-*   **W-PHILO-OCR-PALE (Digitalización Paleográfica):** Módulo de OCR especializado en manuscritos antiguos para transcripción directa.
+### 1.4. Componentes Especializados PHILO (UGR) [REFACTORIZADO SUBATÓMICO - FIDELIDAD 100% UGR]
+
+*   **W-PHILO-IPA (Pad de Transcripción Fonética y Diacrónica):**
+    *   **Función:** Interfaz de entrada de caracteres especializados para el análisis de la evolución fonética y la fonología histórica.
+    *   **Especificaciones de Teclado Virtual:**
+        - **Bloque Consonántico Medieval:** Símbolos para sibilantes medievales (s sorda/sonora, ts, dz), palatales (ɲ, ʎ, ʝ) y fricativas (β, ð, ɣ, ʃ, ʒ, θ).
+        - **Bloque de Modificadores Diacrónicos:** Marcadores de cantidad vocálica latina (macrón, breve), acento prosódico y signos de evolución ( > , < , * ).
+        - **Selector de Yods (I-IV):** Botonera rápida para clasificar el tipo de Yod detectada en el estadio evolutivo.
+    *   **Multimodalidad:** Permite la entrada mediante teclado físico (mapeo de teclas rápidas) o Pad táctil para dispositivos móviles.
+
+*   **W-PHILO-ECDO (Editor de Crítica Textual y Colación):**
+    *   **Función:** Herramienta de trabajo para la fijación de textos (Ecdótica) basada en la Metodología de Alberto Blecua (UGR).
+    *   **Configuración de Pantalla (Layout):**
+        - **Modo Collatio (Split-View):** Visualización sincronizada de hasta tres fuentes simultáneas (ej. Códice A, Códice B y Manuscrito de Trabajo).
+        - **Panel de Aparato Crítico:** Zona inferior para la redacción de variantes, adiciones, omisiones y correcciones (emendatio).
+        - **Línea de Tiempo de Transmisión:** Visualización gráfica del Stemma Codicum (árbol genealógico de los textos) vinculado a las variantes seleccionadas.
+    *   **Interactividad:** Permite el arrastre de fragmentos de texto entre testimonios para realizar el cotejo visual.
+
+*   **W-PHILO-OCR-PALE (Digitalización y Resolución Paleográfica):**
+    *   **Función:** Visor de alta precisión para el análisis de fuentes primarias (manuscritos e incunables).
+    *   **Herramientas de Visión:**
+        - **Lupa Magnética HD:** Zoom dinámico con capacidad de realce de tintas (Filtros de contraste y umbralización para lectura de pergaminos).
+        - **Capa de Transcripción Flotante:** Permite escribir la transcripción literal directamente sobre la imagen del manuscrito, asegurando la correspondencia línea por línea.
+    *   **Gestor de Braquigrafía (Resolución de Abreviaturas):**
+        - Diccionario visual de abreviaturas medievales integrado. Al seleccionar un signo abreviativo (braquigrafía), el widget sugiere resoluciones basadas en la normativa de la Real Chancillería de Granada.
+    *   **Multimodalidad (Miguel Ángel):** Soporta **OCR Predictivo** entrenado en letras góticas, cortesanas y humanísticas para asistir en la primera fase de la lectura.

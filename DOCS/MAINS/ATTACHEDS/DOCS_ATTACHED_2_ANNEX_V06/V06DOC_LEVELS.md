@@ -27,18 +27,21 @@ Este documento define el cerebro pedagógico del emulador y las reglas de ajuste
     *   Rigor Engine: x1.3.
     *   Configuración: Foco en la especialidad, rigor normativo, precisión técnica absoluta y uso de metalenguaje.
 *   ITIN_MAIOR + LVL_C / ITIN_INV:
-    *   Rigor Engine: x1.6.
-    *   Configuración: Densidad técnica máxima, casos límite/ambiguos, evaluación de la crítica (Rol Catedrático).
+    *   Rigor Engine: x1.6 (General) | **x1.8 (Específico Philo UGR)**.
+    *   Configuración: Densidad técnica máxima, casos límite/ambiguos, evaluación de la crítica (Rol Catedrático). Exigencia de fundamentación bibliográfica en el feedback (DCECH, Blecua, NGLE, CORPES XXI).
 
 ## 3. PARÁMETROS DE EMULACIÓN DE "INDISTINGUIBILIDAD"
 
-*   DENSITY_INDEX: Cantidad de tecnicismos/modismos por cada 100 palabras en el enunciado (Bajo en LVL_A | Máximo en LVL_C).
-*   DISTRACTOR_QUALITY: Nivel de plausibilidad de las opciones erróneas (Lógica de error común de L1 en B2/C1).
-*   GRADING_BIAS: Sesgo punitivo (Constructivo en Minor | Punitivo/Selectivo en Maior).
+*   **DENSITY_INDEX (Índice de Densidad Epistemológica):**
+    - **LVL_A:** 2-3 tecnicismos por cada 100 palabras.
+    - **LVL_B:** 5-7 tecnicismos por cada 100 palabras.
+    - **LVL_C (Philo UGR):** >12 tecnicismos por cada 100 palabras. Uso obligatorio de metalenguaje científico (archifonema, lenición, metafonía, yod, ecdoquización).
+*   **DISTRACTOR_QUALITY:** Plausibilidad científica basada en errores de evolución fonética comunes o falsas etimologías históricas documentadas.
+*   **GRADING_BIAS (Sesgo de Calificación):**
+    - **Constructivo (Minor):** Feedback de apoyo y refuerzo positivo.
+    - **Punitivo/Selectivo (Maior Philo UGR):** Rigor eliminatorio. La imprecisión técnica o la falta de rigor formal en Nivel C supone la anulación total del ítem.
 
 ## 4. PROTOCOLO DE IDIOMA DE EVALUACIÓN (NORMATIVA UGR/CLM)
-
-La determinación del idioma en las instrucciones y títulos de sección (interfaz del examen) se rige por la normativa oficial de la UGR y el CLM:
 
 ### 4.1. Arquetipo de Lenguas (ARCH_LANG)
 *   **Nivel A (A1/A2):**
@@ -51,15 +54,20 @@ La determinación del idioma en las instrucciones y títulos de sección (interf
     *   **Todos los Itinerarios:** Inmersión Total (Idioma Objetivo Dinámico). La IA genera títulos e instrucciones en el idioma detectado para garantizar integridad absoluta. Prohibición de castellano en feedback.
 
 ### 4.2. Resto de Arquetipos (TECH, HEALTH, SOC, HUM)
+*   **Idioma Vehicular:** Castellano obligatorio por seguridad jurídica, salvo excepciones internacionales documentadas.
 
 ### 4.3. Regla Especial Norma y Uso (UGR)
 *   **ITIN_MAIOR (NORM) + LVL_C:**
     *   **Rigor Engine:** x1.7.
     *   **Configuración:** Exigencia de corrección absoluta. El error en la justificación normativa (DPD) o la confusión de fenómenos antinormativos anula la puntuación del ítem.
 
-*   **Idioma Vehicular:** Castellano obligatorio por seguridad jurídica, salvo excepciones internacionales documentadas.
+### 4.4. Política de Tolerancia Cero Ortográfica (MAIOR Philo UGR) [NUEVO V1.2]
+En cumplimiento de la normativa de los departamentos de Filología de la UGR para niveles de excelencia (LVL_C):
+1.  **Penalización Sistemática:** Descuento de **0.5 puntos** por cada falta de ortografía y **0.2 puntos** por cada error en tildes o signos de puntuación técnica.
+2.  **Barrera de Exclusión (Suspenso por Ortografía):** La presencia de **más de 4 faltas de ortografía** en una sección de producción escrita conlleva el **Suspenso Automático** de la sección con nota **0.0 (FAIL_LOGIC: FATAL)**.
+3.  **Ortografía Técnica y Paleográfica:** Se consideran faltas eliminatorias el uso incorrecto de grafemas medievales en transcripciones críticas y la mala aplicación del Alfabeto Fonético Internacional (IPA).
 
-### 2.4. Regla Especial Philo (UGR)
+### 4.5. Regla Especial Philo (UGR) [ACTUALIZADO V1.2]
 *   **ITIN_MAIOR (PHILO) + LVL_C:**
-    *   **Rigor Engine:** x1.8.
-    *   **Configuración:** Evaluación de la etiología del cambio lingüístico. Tolerancia cero a errores en la reconstrucción formal.
+    *   **Rigor Engine:** x1.8 (Máxima exigencia académica).
+    *   **Configuración:** Evaluación de la etiología del cambio lingüístico. Tolerancia cero a errores en la reconstrucción formal y en la cronología relativa (CHRONO_STRICT). El alumno debe demostrar una capacidad de razonamiento diacrónico equivalente a un egresado de Grado de la UGR.

@@ -210,3 +210,10 @@
 ## MAMC
 *  **Session:** Refactorización Subatómica del Subarquetipo SUB-LIN-MINOR y Fidelidad UGR
 *  **Description:** Inicio de la sesión MAMC centrada en la refactorización subatómica del subarquetipo SUB-LIN-MINOR (Modelo Minor / Iniciación) para alcanzar el 100% de fidelidad con los criterios de la Universidad de Granada. Tras cargar la constelación documental completa del Hito 6, el foco se sitúa en la definición de la secuencia genética de evaluación para lenguas de iniciación, integrando obligatoriamente los widgets de trazos y OCR para alfabetos no latinos (Árabe, Chino, Japonés, Ruso, Hebreo) y validando los criterios de grafía, fonética y cultura base. Se auditarán los modelos de datos de las aplicaciones críticas para asegurar la compatibilidad con el sistema de orquestación basado en Structured Outputs y la lógica de penalizaciones FATAL no compensables exigida por la UGR.
+
+# 2026-03-21
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+## EDC
+*  **Session:** Refactorización Subatómica del Subarquetipo Filológico (SUB-LIN-PHILO)
+*  **Description:** Inicio de la fase de refactorización del subarquetipo SUB-LIN-PHILO para alcanzar el 100% de fidelidad académica con los criterios de la Universidad de Granada. La sesión se centra en la investigación de las guías docentes de Filología Hispánica y Clásica (UGR) para documentar la secuencia genética de 4 fases: Fonética Histórica, Morfología Diacrónica, Lexicología y Crítica Textual. Se procederá a la actualización de la constelación documental del Hito 6 (Subarquetipos, Bloques, Widgets y Niveles) definiendo motores específicos como EV-DIAC-VAL y componentes de interfaz como el pad fonético W-PHILO-IPA, asegurando el cumplimiento del rigor epistemológico de Nivel C y el uso de layouts SPLIT_TEXT para la colación de variantes en la fase de ecdótica.

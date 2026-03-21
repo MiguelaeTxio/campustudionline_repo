@@ -71,20 +71,28 @@
     *   Calidad: Evaluación de fluidez, registro léxico, adecuación pragmática y capacidad de reacción.
     *   Widget: W-COMM-DIALOG.
 
-## 4. MOTORES ESPECIALIZADOS PHILO (UGR)
+## 4. MOTORES ESPECIALIZADOS PHILO (UGR) [REFACTORIZADO SUBATÓMICO - FIDELIDAD 100% UGR]
 
-*   **EV-NORM-ANALYSIS (Motor de Análisis de Desviaciones): [REFACTORIZADO UGR 2025/26]**
+*   **EV-DIAC-VAL (Motor de Validación Diacrónica / Evolución Fonética):**
+    *   **Mecánica de Evaluación por Estadios:** El motor no valida solo el resultado final, sino la **secuencia lógica y cronológica** de cambios. Cada estadio evolutivo intermedio (ej. latín vulgar, romance medieval, español áureo) es un punto de control obligatorio.
+    *   **Validación de Leyes Fonéticas:** El sistema exige la asignación correcta de la ley (apócope, síncopa, sonorización, vocalización) a cada cambio gráfico.
+    *   **Módulo de Yod y Wau (UGR):** Capacidad específica para identificar y validar los cuatro tipos de Yod y su efecto metafónico o palatalizador. La clasificación errónea del tipo de Yod (I, II, III o IV) penaliza el estadio evolutivo en un 100%.
+    *   **Criterio de Cronología Relativa:** Validación del orden de aplicación de las leyes. Si un estadio posterior contradice una ley fonética previa (ej: sonorización que ocurre después de una síncopa que eliminó el contexto intervocálico), el ítem se marca como fallido (FATAL).
+    *   **Parámetros Técnicos:** `CHRONO_STRICT` (Activo) | `YOD_IDENTIFICATION` (Obligatorio).
+
+*   **EV-PALE (Motor de Transcripción y Exégesis de Fuentes Primarias):**
+    *   **Mecánica de Doble Validación (UGR):**
+        1.  **Nivel Paleográfico (Literal):** Validación de grafemas históricos respetando la grafía original (u/v, i/j, s larga, cedilla, doble f inicial).
+        2.  **Nivel Crítico (Resolución Braquigráfica):** Evaluación del desarrollo de abreviaturas. El alumno debe expandir la abreviatura (ej: "p" con tilde > "por" / "q" con tilde > "que") siguiendo las normas de edición de la UGR.
+    *   **Detección de Nexos y Ligaduras:** Validación de la correcta interpretación de nexos complejos (ej: ct, st en gótica) y signos de abreviación específicos para desinencias latinas (-us, -rum).
+    *   **Exégesis Crítica:** Capacidad para comparar la transcripción con el aparato crítico y detectar "lectio difficilior" (lectura más difícil, generalmente preferida en crítica textual).
+    *   **Parámetro:** `BRAQUI_RESOLVE` (Activo).
+
+*   **EV-NORM-ANALYSIS (Motor de Análisis de Desviaciones Panhispánicas):**
     *   **Mecánica:** Detección de infracciones prescriptivas (RAE/ASALE) y contraste con el uso real mediante Corpus (CORPES XXI/CREA).
-    *   **Calidad:** Evalúa la identificación del fenómeno antinormativo (ej. laísmo, dequeísmo), la corrección y la justificación basada en el DPD o la Gramática Académica.
+    *   **Calidad:** Evalúa la identificación del fenómeno antinormativo (ej. laísmo, dequeísmo, queísmo, leísmo de cosa), la corrección y la justificación basada en el DPD o la Nueva Gramática de la Lengua Española (NGLE).
+    *   **Uso de Fuentes:** El motor debe citar la norma vulnerada para proporcionar el feedback académico exigido en la UGR.
 
-*   **EV-DIAC-VAL (Motor de Validación Diacrónica):**
-    *   **Mecánica:** Validación de secuencias de cambio lingüístico y leyes fonéticas históricas.
-    *   **Calidad:** El motor evalúa la identificación del paso fonético intermedio (etimología) y el rigor en la transcripción.
-
-*   **EV-NORM-ANALYSIS (Motor de Análisis de Desviaciones):**
-    *   **Mecánica:** Detección y corrección de infracciones de la norma académica RAE/ASALE.
-    *   **Calidad:** El motor evalúa no solo el error, sino la capacidad de explicar la norma subyacente que ha sido vulnerada.
-
-*   **EV-TRA-PRECISION (Motor de Precisión Terminológica):**
-    *   **Mecánica:** Validación de equivalencias terminológicas en dominios especializados (Derecho, Medicina, Técnica).
-    *   **Calidad:** Evalúa la univocidad en la lengua de llegada y el uso correcto de glosarios técnicos.
+*   **EV-TRA-PRECISION (Motor de Precisión Terminológica en Traducción):**
+    *   **Mecánica:** Validación de equivalencias terminológicas en dominios especializados basándose en glosarios técnicos y diccionarios de especialidad.
+    *   **Calidad:** Evalúa la univocidad en la lengua de llegada y la adecuación al registro meta.
