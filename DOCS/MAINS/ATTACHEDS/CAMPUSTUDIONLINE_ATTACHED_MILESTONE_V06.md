@@ -1,27 +1,31 @@
 <!-- /home/MiguelAeTxio/PROJECTS/CampuStudiOnline/DOCS/MAINS/ATTACHEDS/CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md -->
 # ANEXO: HITO 06 - SISTEMA DE AUTOEVALUACIONES CON IA
-# ESTADO: EN PROGRESO - REFACTORIZACIÓN RAMA LENGUAS (V4.1)
+# ESTADO: EN PROGRESO - REFACTORIZACIÓN RAMA LENGUAS (V4.2)
 
-## 1. RESUMEN DE LA SESIÓN (EPI - PLUTO)
-*   **Hito Alcanzado:** Finalización de la refactorización subatómica del subarquetipo **SUB-LIN-INSTR** (Modelo Instrumental / CertAcles / CLM UGR).
-*   **Fidelidad 100% UGR:** Se han integrado las 5 destrezas (Reading, Listening, Writing, Speaking, Mediation) con sus respectivos widgets, motores (RBT-SHORT-LANG de 1-4 palabras, DRA-HOLO de 4 ejes) y criterios de superación (60% no compensable).
-*   **Limpieza Técnica:** Se ha erradicado la simplificación documental en la configuración de este subarquetipo.
+## 1. RESUMEN DE LA SESIÓN (MAMC)
+*   **Hito Alcanzado:** Finalización de la refactorización subatómica del subarquetipo **SUB-LIN-MINOR** (Modelo Minor / Iniciación / UGR).
+*   **Fidelidad 100% UGR:** Integración de la secuencia de 5 fases (Grafía, Morfosintaxis Base, Función Comunicativa, Lectura Adaptada y Competencia Intercultural).
+*   **Innovación Técnica:** Implementación del motor de validación de ductus (orden de trazos) en `RBT-SHORT-LANG` y blindaje del idioma vehicular (Castellano) en instrucciones para Nivel A.
 
 ## 2. HOJA DE RUTA PARA LA PRÓXIMA SESIÓN (LEY SUPREMA - INELUDIBLE)
-**OBJETIVO:** Refactorización Subatómica del Subarquetipo **SUB-LIN-MINOR (Modelo Minor / Iniciación)** para alcanzar el 100% de fidelidad UGR.
+**OBJETIVO:** Refactorización Subatómica del Subarquetipo **SUB-LIN-PHILO (Modelo Filológico / UGR)** para alcanzar el 100% de fidelidad académica.
 
 ### PROTOCOLO DE EJECUCIÓN (3 PARTES):
-1.  **FASE DE INVESTIGACIÓN (UGR - MINOR):**
-    *   Consultar la Guía Docente de la UGR para asignaturas "Minor" o de "Iniciación" (Alemán, Árabe, Chino, Japonés, Ruso, etc.).
-    *   Extraer los criterios específicos de evaluación de grafía/fonética (SD_GRAPH) y cultura base (SD_CULT).
-2.  **FASE DE REFACTORIZACIÓN DOCUMENTAL:**
-    *   Refactorizar `V06DOC_SUBARCHETYPES.md` para detallar la secuencia del SUB-LIN-MINOR.
-    *   Asegurar la vinculación técnica con los widgets de trazos/OCR y el bloqueo caligráfico para alfabetos no latinos.
-3.  **FASE DE CIERRE (PCS):**
-    *   Al finalizar este subarquetipo, se ejecutará el cierre de sesión.
 
-### REFERENCIA TÉCNICA:
-*   Documentación satélite: `V06DOC_WORD_OF_GOD.md` (Mandato de Fidelidad).
-*   Motor Crítico: `RBT-SHORT-LANG` y `DIA-INTERACT`.
-*   Widget Crítico: `W-TXT-CLOZE` (Modo Open con Trazos/OCR).
+1. **FASE DE INVESTIGACIÓN (UGR - FILOLOGÍA):**
+    *   Consultar las Guías Docentes de la Facultad de Filosofía y Letras (UGR) para los Grados en Filología Hispánica y Clásica.
+    *   Extraer los criterios de evaluación para Fonética y Fonología Histórica, Morfología Diacrónica y Crítica Textual.
 
+2. **FASE DE REFACTORIZACIÓN DOCUMENTAL (CONSTELACIÓN V06):**
+    *   **V06DOC_SUBARCHETYPES.md:** Detallar la secuencia genética de 4 fases para PHILO: SD_PHONO, SD_MORPH_DIAC, SD_LEX_SEM y SD_TEXT_CRIT.
+    *   **V06DOC_BLOCKS.md:** Definir el motor `EV-DIAC-VAL` (Validación Diacrónica) y el motor `EV-PALE` para transcripción de fuentes primarias.
+    *   **V06DOC_WIDGETS.md:** Especificar los requisitos para `W-PHILO-IPA` (Pad de caracteres fonéticos) y `W-PHILO-ECDO` (Editor de fijación de textos).
+    *   **V06DOC_LEVELS.md:** Establecer el Rigor Engine x1.8 para el itinerario MAIOR-PHILO en Nivel C (LVL_C).
+
+3. **FASE DE CIERRE (PCS):**
+    *   Tras la validación de la rama filológica, se procederá al cierre de la sub-etapa de lenguas.
+
+### REFERENCIA TÉCNICA OBLIGATORIA:
+*   Documentación satélite: `V06DOC_LOGIC_MAPPING.md` (Fase IA + Fase Python).
+*   Modelo Crítico: Arquetipo `ARCH_HUM` (Humanidades / Hermenéutico).
+*   Widget Crítico: `W-LAYOUT-SIDE` (Modo SPLIT_TEXT para colación de variantes).

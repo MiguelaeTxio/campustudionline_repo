@@ -49,3 +49,7 @@ Antes de proponer un `PCS`, el modelo debe emitir un juicio crítico sobre su pr
 *   "¿He consultado la fuente primaria de la UGR para cada subarquetipo redactado hoy?"
 *   "¿He evitado la simplificación en todos los párrafos?"
 *   "¿Es este documento un espejo exacto de la acreditación real?"
+
+## 6. REGISTRO DE FIDELIDAD ALCANZADA
+*   [OK] SUB-LIN-INSTR: Modelo Instrumental (V4.1).
+*   [OK] SUB-LIN-MINOR: Modelo Minor / Iniciación (V4.2).

@@ -201,7 +201,6 @@
 ./templates/home.html
 ./templates/admin/base_site.html
 ./templates/includes/pagination_controls.html
-./AI_INCIDENTS.txt
 ./google_credentials.json
 ./contents/services/__init__.py
 ./contents/services/navigation_builder.py
@@ -281,7 +280,6 @@
 ./contents/management/commands/emergency_cleanup_legacy.py
 ./contents/management/__init__.py
 ./contents/study_room_forms.py
-./esad_harvester_v2.py
 ./manage.py
 ./feedback/urls.py
 ./feedback/templates/feedback/email/new_report_notification.html
@@ -354,7 +352,6 @@
 ./messaging/management/commands/delete_chat_session.py
 ./messaging/management/__init__.py
 ./alvarez_credentials.json
-./ks_segregated.py
 ./static/js/shepherd_helpers.js
 ./static/js/assessment_status_handler.js
 ./static/js/tours/announcements_list_tour.js
@@ -391,8 +388,6 @@
 ./static/vendor/bootstrap/css/bootstrap.min.css
 ./static/vendor/hyperscript/hyperscript.min.js
 ./static/vendor/htmx/htmx.min.js
-./ks.py
-./patch_tasks_segregated.py
 ./portfolio/urls.py
 ./portfolio/templates/portfolio/create_short_message.html
 ./portfolio/templates/portfolio/public_portfolio_detail.html
@@ -561,7 +556,6 @@
 ./users/management/commands/setup_groups.py
 ./users/management/commands/generate_referral_codes.py
 ./users/management/commands/find_redundant_containers.py
-./ERROR_FILE.txt
 ./DOCS/DOCUMENTATION/ARCHITECTURE_AND_DATA_MODEL_REFERENCE.md
 ./DOCS/DOCUMENTATION/DEPENDENCY_GUIDE.md
 ./DOCS/SESSION/CAMPUSTUDIONLINE_SCHEDULE_INFRA_BACKEND_SESSION_SUMMARY.md
@@ -807,7 +801,6 @@
 ./data/PHASE_2_WEST/uco_map_part07.json
 ./data/PHASE_2_WEST/uco_master_map.json
 ./data/PHASE_2_WEST/esad_final_data_v3.json
-./uja_parser_debug.py
 ./public_seo_previews/material_29_curso-ia-generativa-de-0-a-100-en-8.html
 ./public_seo_previews/material_23_unreal-engineblueprints-de-0-a-experto.html
 ./public_seo_previews/material_7.html
@@ -837,8 +830,6 @@
 ./public_seo_previews/material_27_30-dias-de-python.html
 ./public_seo_previews/material_5.html
 ./public_seo_previews/material_14_curso-de-selenium-qa.html
-./commands_fix_rotation.txt
-./commands_models.txt
 ./schedule/urls.py
 ./schedule/templates/schedule/event_confirm_delete.html
 ./schedule/templates/schedule/calendar_main.html

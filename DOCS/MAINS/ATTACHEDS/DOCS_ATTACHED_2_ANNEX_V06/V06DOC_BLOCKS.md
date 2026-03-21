@@ -13,10 +13,10 @@
     *   Calidad: No admite paráfrasis en niveles MAIOR o PROF.
     *   Parámetro: TERM_PREC (Máximo).
 
-*   **RBT-SHORT-LANG (Respuesta Breve Lingüística - UGR/CertAcles) [REFACTORIZADO SUBATÓMICO]**
-    *   **Mecánica:** Validación estricta de precisión léxica y gramatical mediante comparación de lemas y morfología exacta.
-    *   **Restricción de Extensión:** Obligatoriamente entre 1 y 4 palabras. El sistema invalida automáticamente (puntuación 0) cualquier respuesta con 0 palabras o más de 4 palabras, sin procesar su contenido semántico.
-    *   **Calidad:** Evalúa la adecuación al contexto de la tarea exigiendo exactitud absoluta en niveles B2/C1.
+*   **RBT-SHORT-LANG (Respuesta Breve Lingüística - UGR/CertAcles) [REFACTORIZADO V4.2]**
+    *   **Mecánica:** Validación de precisión léxica y morfología exacta.
+    *   **Extensión:** 1-4 palabras (Filtro automático).
+    *   **Módulo de Trazos (Minor/Iniciación):** En lenguas no latinas, el motor valida el ductus (orden y dirección de trazos) y la integridad grafémica del carácter mediante comparación de patrones OCR. La desviación del ductus normativo penaliza el ítem en un 50%.
 
 *   RPP-TRAZA (Resolución Procedimental con Arrastre de Error):
     *   Mecánica: Calificación multietapa con validación de la coherencia lógica.

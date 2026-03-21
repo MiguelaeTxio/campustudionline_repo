@@ -42,8 +42,8 @@ La determinación del idioma en las instrucciones y títulos de sección (interf
 
 ### 4.1. Arquetipo de Lenguas (ARCH_LANG)
 *   **Nivel A (A1/A2):**
-    *   **Itinerario MINOR / INSTR:** Castellano (Para garantizar la comprensión de la tarea).
-    *   **Itinerario MAIOR:** Bilingüe (Inmersión progresiva).
+    *   **Itinerario MINOR / INSTR / INTRO:** Castellano (Obligatorio para garantizar la comprensión absoluta de la tarea y seguridad jurídica según normativa UGR).
+    *   **Itinerario MAIOR:** Bilingüe (Inmersión progresiva con glosario de apoyo).
 *   **Nivel B (B1/B2):**
     *   **Itinerario MINOR / INSTR:** Bilingüe (Instrucciones duales para garantizar comprensión de la tarea, ej. pruebas de mediación).
     *   **Itinerario MAIOR:** Inmersión Total (Idioma Objetivo Dinámico).

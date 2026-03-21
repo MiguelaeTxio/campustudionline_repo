@@ -203,3 +203,10 @@
 ## PLUTO
 *  **Session:** Reinicio Estructural Rama Lenguas (Fidelidad UGR 100%) - SUB-LIN-INSTR
 *  **Description:** Ejecución de la Fase 1 del Hito 6: Refactorización de la rama ARCH_LANG bajo el Mandato Supremo (WORD_OF_GOD). Se procede al mapeo subatómico del subarquetipo SUB-LIN-INSTR (CertAcles/CLM) integrando los criterios reales de la UGR: evaluación de 4-5 destrezas, límites de palabras en respuestas cortas y bloqueos de navegación secuencial.
+
+# 2026-03-21
+# CampuStudiOnline --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+## MAMC
+*  **Session:** Refactorización Subatómica del Subarquetipo SUB-LIN-MINOR y Fidelidad UGR
+*  **Description:** Inicio de la sesión MAMC centrada en la refactorización subatómica del subarquetipo SUB-LIN-MINOR (Modelo Minor / Iniciación) para alcanzar el 100% de fidelidad con los criterios de la Universidad de Granada. Tras cargar la constelación documental completa del Hito 6, el foco se sitúa en la definición de la secuencia genética de evaluación para lenguas de iniciación, integrando obligatoriamente los widgets de trazos y OCR para alfabetos no latinos (Árabe, Chino, Japonés, Ruso, Hebreo) y validando los criterios de grafía, fonética y cultura base. Se auditarán los modelos de datos de las aplicaciones críticas para asegurar la compatibilidad con el sistema de orquestación basado en Structured Outputs y la lógica de penalizaciones FATAL no compensables exigida por la UGR.

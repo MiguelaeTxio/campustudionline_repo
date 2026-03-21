@@ -33,16 +33,26 @@ Este documento define la **Configuración Estructural Fija** (Receta) que cada E
         - Umbral Crítico: Mínimo 60% de la puntuación en CADA destreza.
         - Compensación: Prohibida (FAIL_LOGIC: FATAL).
         - Navegación: Unidireccional Sellada (No-Backtracking entre destrezas).
-*   **SUB-LIN-MINOR: Modelo Minor / Iniciación (UGR - Facultad Filosofía y Letras) [REFACTORIZADO V3.1]**
-    *   **Perfil:** Iniciación a la competencia lingüística y caligráfica (Alemán, Árabe, Checo, Chino, Griego, Hebreo, Italiano, Japonés, Polaco, Portugués, Ruso).
-    *   **Excepción B2:** Los itinerarios de Inglés y Francés Minor inician directamente en nivel B2 (MCERL).
-    *   **Secuencia Genética Obligatoria (4 Fases):**
-        1. **SD_GRAPH (Grafía y Fonética):** Dictado de signos/caracteres y transcripción. Uso OBLIGATORIO de Pad de Trazos/OCR para alfabetos no latinos (Chino, Árabe, Japonés, Ruso, Hebreo).
-        2. **SD_GRAM (Estructura Base):** Construcción morfosintáctica elemental (Módulo Inicial I y II).
-        3. **SD_READ_MIN (Lectura Adaptada):** Comprensión de textos breves y señalética real.
-        4. **SD_CULT (Contexto Sociocultural):** Validación de normas de cortesía, geografía y cultura base.
-    *   **Parámetros de Inmersión:** Inmersión VEHICULAR (Castellano) obligatoria en instrucciones para niveles LVL_A y LVL_B.
-    *   **Regla de Oro UGR (CertAcles):** Umbral del 60% por destreza obligatoria. Sin compensación.
+*   **SUB-LIN-MINOR: Modelo Minor / Iniciación (UGR - Facultad Filosofía y Letras) [REFACTORIZADO V4.2 - FIDELIDAD 100% UGR]**
+    *   **Perfil Institucional:** Iniciación a la competencia lingüística, caligráfica y sociocultural (Alemán, Árabe, Chino, Japonés, Ruso, etc.) según las Guías Docentes de la UGR.
+    *   **Secuencia Genética Obligatoria (5 Fases Subatómicas):**
+        1. **SD_PHON_GRAPH (Grafía y Fonética):**
+            - Tarea 1: Dictado de signos/caracteres y transcripción a sistema vehicular (Pinyin/Romaji/Transliteración).
+            - Tarea 2: Identificación de fonemas mediante discriminación auditiva.
+            - **Widget:** W-TXT-CLOZE (Modo Open con Pad de Trazos/OCR). **Bloqueo de teclado occidental obligatorio para lenguas no latinas.**
+        2. **SD_MORPH_BASE (Morfosintaxis y Estructura Elemental):**
+            - Tarea: Construcción de enunciados simples y morfología básica (declinación/conjugación inicial).
+            - **Motor:** CLO-MULTI y PRM-STRIKE.
+        3. **SD_LEX_COMM (Léxico y Función Comunicativa):**
+            - Tarea: Emparejamiento de actos de habla (saludos, presentaciones) con contextos reales.
+            - **Widget:** W-MIX-MATCH.
+        4. **SD_READ_ADAP (Comprensión Lectora Adaptada):**
+            - Tarea: Extracción de información específica en señalética real, menús y anuncios breves.
+            - **Layout:** SPLIT_TEXT (Panel lateral con estímulo visual real).
+        5. **SD_CULT_INTEGRITY (Competencia Intercultural y Contexto):**
+            - Tarea: Validación de protocolos de cortesía, geografía política y realidades culturales nucleares de la UGR.
+            - **Rigor:** LVL_A. Inmersión vehicular (Castellano) obligatoria en instrucciones.
+    *   **Regla de Oro UGR (CertAcles):** Umbral del 60% por destreza. Sin compensación (FAIL_LOGIC: FATAL).
 *   **SUB-LIN-PHILO: Modelo Filológico (UGR / Filología Hispánica y Clásica) [REFACTORIZADO V3.2]**
     *   **Perfil:** Análisis científico, histórico y ecdótico de la lengua y sus textos.
     *   **Secuencia Genética Obligatoria (4 Fases):**
