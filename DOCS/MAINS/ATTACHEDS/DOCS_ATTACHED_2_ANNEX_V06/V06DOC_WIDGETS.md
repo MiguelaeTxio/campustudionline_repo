@@ -1,5 +1,5 @@
-<!-- /home/MiguelAeTxio/PROJECTS/CampuStudiOnline/DOCS/MAINS/ATTACHEDS/DOCS_ATTACHED_2_ANNEX_V06/V06DOC_WIDGETS.md -->
-# V06DOC_WIDGETS - CATÁLOGO DE COMPONENTES DE INTERFAZ (V1.1)
+# /home/MiguelAeTxio/PROJECTS/CampuStudiOnline/DOCS/MAINS/ATTACHEDS/DOCS_ATTACHED_2_ANNEX_V06/V06DOC_WIDGETS.md
+# V06DOC_WIDGETS - CATÁLOGO DE COMPONENTES DE INTERFAZ (V1.2 - REFACTORIZACIÓN UGR)
 
 ## 1. LIBRERÍA DE COMPONENTES TÉCNICOS
 
@@ -16,8 +16,9 @@
 ## 2. LIBRERÍA DE COMPONENTES DISCURSIVOS Y DE ACCIÓN
 
 *   W-HUM-TEXT (Editor de Exégesis Crítica):
-    *   Uso: Humanidades y Artes.
+    *   Uso: Humanidades, Artes y Norma Lingüística (NORM).
     *   Funciones: Pantalla dividida (Fuente vs Ensayo), gestor de citas por arrastre, contador de penalización formal.
+    *   **Modo Revisión y Control de Cambios (Específico NORM):** Este modo permite la edición de un texto preexistente (estímulo) registrando cada intervención del alumno. El sistema diferencia visualmente entre inserciones, eliminaciones y sustituciones, permitiendo al motor de evaluación `EV-NORM-ANALYSIS` analizar la precisión de la corrección ortotipográfica y gramatical.
     *   **Directriz de Multimodalidad (Miguel Ángel):** Al interactuar con el editor, el sistema DEBE ofrecer obligatoriamente el selector de entrada:
         1. **Teclado Nativo:** Layout del idioma objetivo (ej. Árabe, Ruso).
         2. **Occidentalización:** Transliteración/Pinyin/Romaji para alfabetos no latinos.
@@ -30,30 +31,33 @@
 *   W-COMM-DIALOG (Interfaz de Mediación Dialéctica):
     *   Uso: Lenguas, Derecho, Educación.
     *   Funciones: Grabadora de audio, chat interactivo con IA UniversIA, análisis de registro formal/informal. Soporte para entrada multimodal en el chat.
-*   W-LAW-NAV (Navegador de Marco Normativo):
-    *   Uso: Derecho y Ciencias Sociales.
-    *   Funciones: Acceso a repositorio legal/normativo emulado, buscador de jurisprudencia y cita rápida.
+*   W-LAW-NAV (Navegador de Marco Normativo y Repositorios de Autoridad):
+    *   Uso: Derecho, Ciencias Sociales y Lingüística (NORM).
+    *   Funciones: Acceso a repositorio legal o normativo emulado, buscador de jurisprudencia o corpus y cita rápida por arrastre.
+    *   **Modo Lingüístico (W-LAW-NAV-LING):** Adaptación específica de la interfaz para la consulta de los recursos de la RAE y la ASALE. El widget proporciona acceso emulado a:
+        - **Buscador de Corpus (CORPES XXI / CREA):** Permite realizar consultas de frecuencias léxicas y gramaticales, devolviendo resultados por áreas lingüísticas (España, América, etc.) y por registros (académico, periodístico, coloquial).
+        - **Consultas al DPD y DLE:** Interfaz de acceso rápido para la verificación de artículos normativos.
+        - **Funcionalidad de Cita por Arrastre:** El alumno puede seleccionar un resultado de frecuencia o un fragmento de una norma y arrastrarlo directamente a la zona de justificación del editor de respuesta, generando una cita bibliográfica automática con el formato oficial de la UGR.
 
-## 3. LIBRERÍA DE COMPONENTES LINGÜÍSTICOS Y ESTRUCTURALES (NUEVO V1.1)
+## 3. LIBRERÍA DE COMPONENTES LINGÜÍSTICOS ESTRUCTURALES (NUEVO V1.1)
 
 *   W-TXT-CLOZE (Integrador de Huecos en Texto):
     *   Uso: Lenguas (Use of English) y Derecho (Completar escritos).
     *   Funciones: Renderizado de texto fluido con inputs incrustados. Soporta modo "Open" (Caja de texto) y "Select" (Dropdown en el hueco).
     *   **Directriz de Multimodalidad (Miguel Ángel):** Los inputs en modo "Open" deben heredar el selector de entrada multimodal (Teclado/Trazos/OCR) para garantizar la precisión caligráfica en lenguas Minor/Maior.
-    *   **Mandato Minor (Bloqueo Caligráfico) [NUEVO V3.1]:** En el subarquetipo SUB-LIN-MINOR, cuando el `target_language_code` sea no-latino (Chino, Japonés, Árabe, Hebreo, Ruso), los inputs en modo "Open" quedan bloqueados EXCLUSIVAMENTE a **Pad de Trazos** u **OCR**. Se deshabilita el teclado occidental para forzar la evaluación de la grafía real.
+    *   **Mandato Minor (Bloqueo Caligráfico):** En el subarquetipo SUB-LIN-MINOR, cuando el `target_language_code` sea no-latino (Chino, Japonés, Árabe, Hebreo, Ruso), los inputs en modo "Open" quedan bloqueados EXCLUSIVAMENTE a **Pad de Trazos** u **OCR**. Se deshabilita el teclado occidental para forzar la evaluación de la grafía real.
 *   W-MIX-MATCH (Matriz de Vinculación):
     *   Uso: Lenguas (Reading Headlines) y Ciencias (Concepto-Definición).
     *   Funciones: Arrastrar y soltar (Drag & Drop) o conectores visuales entre dos columnas.
 
-## 4. ESTRATEGIA DE LAYOUT Y PANELES (NUEVO V1.2 - UX OPTIMIZATION)
+## 4. ESTRATEGIA DE LAYOUT Y PANELES (UX OPTIMIZATION)
 
 *   **W-LAYOUT-SIDE (Panel Lateral Persistente):**
-    *   **Función:** Muestra el "Estímulo de Sección" (Texto de lectura, Supuesto de hecho, Datos clínicos) de forma estática (Sticky) mientras el alumno hace scroll en las preguntas.
+    *   **Función:** Muestra el "Estímulo de Sección" (Texto de lectura, Supuesto de hecho, Texto para corrección normativa) de forma estática (Sticky) mientras el alumno hace scroll en las preguntas.
     *   **Justificación UX:** Evita el scroll vertical repetitivo ("Yo-Yo effect").
-    *   **Contenido:** Estrictamente el material generado para el examen (Reading/Caso). NUNCA los apuntes del alumno.
+    *   **Contenido:** Estrictamente el material generado para el examen (Reading/Caso/Texto NORM). NUNCA los apuntes del alumno.
 
-
-### 1.4. Componentes Especializados PHILO (UGR) [REFACTORIZADO SUBATÓMICO - FIDELIDAD 100% UGR]
+## 5. COMPONENTES ESPECIALIZADOS PHILO (UGR) [REFACTORIZADO SUBATÓMICO - FIDELIDAD 100% UGR]
 
 *   **W-PHILO-IPA (Pad de Transcripción Fonética y Diacrónica):**
     *   **Función:** Interfaz de entrada de caracteres especializados para el análisis de la evolución fonética y la fonología histórica.

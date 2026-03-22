@@ -1,5 +1,5 @@
-<!-- /home/MiguelAeTxio/PROJECTS/CampuStudiOnline/DOCS/MAINS/ATTACHEDS/DOCS_ATTACHED_2_ANNEX_V06/V06DOC_LEVELS.md -->
-# V06DOC_LEVELS - MATRIZ DE INTERSECCIÓN PEDAGÓGICA (V1.2)
+# /home/MiguelAeTxio/PROJECTS/CampuStudiOnline/DOCS/MAINS/ATTACHEDS/DOCS_ATTACHED_2_ANNEX_V06/V06DOC_LEVELS.md
+# V06DOC_LEVELS - MATRIZ DE INTERSECCIÓN PEDAGÓGICA (V1.2 - REFACTORIZACIÓN UGR)
 
 Este documento define el cerebro pedagógico del emulador y las reglas de ajuste del motor de IA.
 
@@ -27,7 +27,7 @@ Este documento define el cerebro pedagógico del emulador y las reglas de ajuste
     *   Rigor Engine: x1.3.
     *   Configuración: Foco en la especialidad, rigor normativo, precisión técnica absoluta y uso de metalenguaje.
 *   ITIN_MAIOR + LVL_C / ITIN_INV:
-    *   Rigor Engine: x1.6 (General) | **x1.8 (Específico Philo UGR)**.
+    *   Rigor Engine: x1.6 (General) | **x1.7 (Específico NORM UGR)** | **x1.8 (Específico Philo UGR)**.
     *   Configuración: Densidad técnica máxima, casos límite/ambiguos, evaluación de la crítica (Rol Catedrático). Exigencia de fundamentación bibliográfica en el feedback (DCECH, Blecua, NGLE, CORPES XXI).
 
 ## 3. PARÁMETROS DE EMULACIÓN DE "INDISTINGUIBILIDAD"
@@ -35,11 +35,11 @@ Este documento define el cerebro pedagógico del emulador y las reglas de ajuste
 *   **DENSITY_INDEX (Índice de Densidad Epistemológica):**
     - **LVL_A:** 2-3 tecnicismos por cada 100 palabras.
     - **LVL_B:** 5-7 tecnicismos por cada 100 palabras.
-    - **LVL_C (Philo UGR):** >12 tecnicismos por cada 100 palabras. Uso obligatorio de metalenguaje científico (archifonema, lenición, metafonía, yod, ecdoquización).
-*   **DISTRACTOR_QUALITY:** Plausibilidad científica basada en errores de evolución fonética comunes o falsas etimologías históricas documentadas.
+    - **LVL_C (Philo / Norm UGR):** >12 tecnicismos por cada 100 palabras. Uso obligatorio de metalenguaje científico (archifonema, lenición, metafonía, yod, ecdoquización, diatopía, diafasía).
+*   **DISTRACTOR_QUALITY:** Plausibilidad científica basada en errores de evolución fonética comunes (Philo) o dudas lingüísticas reales documentadas en el DPD y CORPES XXI (Norm).
 *   **GRADING_BIAS (Sesgo de Calificación):**
     - **Constructivo (Minor):** Feedback de apoyo y refuerzo positivo.
-    - **Punitivo/Selectivo (Maior Philo UGR):** Rigor eliminatorio. La imprecisión técnica o la falta de rigor formal en Nivel C supone la anulación total del ítem.
+    - **Punitivo/Selectivo (Maior Philo / Norm UGR):** Rigor eliminatorio. La imprecisión técnica o la falta de rigor formal en Nivel C supone la anulación total del ítem.
 
 ## 4. PROTOCOLO DE IDIOMA DE EVALUACIÓN (NORMATIVA UGR/CLM)
 
@@ -56,18 +56,19 @@ Este documento define el cerebro pedagógico del emulador y las reglas de ajuste
 ### 4.2. Resto de Arquetipos (TECH, HEALTH, SOC, HUM)
 *   **Idioma Vehicular:** Castellano obligatorio por seguridad jurídica, salvo excepciones internacionales documentadas.
 
-### 4.3. Regla Especial Norma y Uso (UGR)
+### 4.3. Regla Especial Norma y Uso (UGR) [ACTUALIZADO V1.2]
 *   **ITIN_MAIOR (NORM) + LVL_C:**
     *   **Rigor Engine:** x1.7.
-    *   **Configuración:** Exigencia de corrección absoluta. El error en la justificación normativa (DPD) o la confusión de fenómenos antinormativos anula la puntuación del ítem.
+    *   **Idioma:** Castellano Académico Obligatorio (Uso de metalenguaje filológico).
+    *   **Configuración:** Exigencia de corrección absoluta. El error en la justificación normativa basada en el DPD o la confusión de fenómenos antinormativos (ej. confundir queísmo con dequeísmo) anula la puntuación del ítem (FAIL_LOGIC: FATAL).
 
-### 4.4. Política de Tolerancia Cero Ortográfica (MAIOR Philo UGR) [NUEVO V1.2]
+### 4.4. Política de Tolerancia Cero Ortográfica (MAIOR Philo / Norm UGR) [ACTUALIZADO V1.2]
 En cumplimiento de la normativa de los departamentos de Filología de la UGR para niveles de excelencia (LVL_C):
-1.  **Penalización Sistemática:** Descuento de **0.5 puntos** por cada falta de ortografía y **0.2 puntos** por cada error en tildes o signos de puntuación técnica.
-2.  **Barrera de Exclusión (Suspenso por Ortografía):** La presencia de **más de 4 faltas de ortografía** en una sección de producción escrita conlleva el **Suspenso Automático** de la sección con nota **0.0 (FAIL_LOGIC: FATAL)**.
+1.  **Penalización Sistemática:** Descuento de **0.5 puntos** por cada falta de ortografía y **0.2 puntos** por cada error en tildes o signos de puntuación técnica (incluyendo puntuación ortotipográfica).
+2.  **Barrera de Exclusión (Suspenso por Ortografía):** La presencia de **más de 4 faltas de ortografía** en una sección de producción escrita o de comentario crítico conlleva el **Suspenso Automático** de la sección con nota **0.0 (FAIL_LOGIC: FATAL)**.
 3.  **Ortografía Técnica y Paleográfica:** Se consideran faltas eliminatorias el uso incorrecto de grafemas medievales en transcripciones críticas y la mala aplicación del Alfabeto Fonético Internacional (IPA).
 
-### 4.5. Regla Especial Philo (UGR) [ACTUALIZADO V1.2]
+### 4.5. Regla Especial Philo (UGR)
 *   **ITIN_MAIOR (PHILO) + LVL_C:**
     *   **Rigor Engine:** x1.8 (Máxima exigencia académica).
     *   **Configuración:** Evaluación de la etiología del cambio lingüístico. Tolerancia cero a errores en la reconstrucción formal y en la cronología relativa (CHRONO_STRICT). El alumno debe demostrar una capacidad de razonamiento diacrónico equivalente a un egresado de Grado de la UGR.

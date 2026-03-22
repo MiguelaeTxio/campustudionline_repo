@@ -1,5 +1,5 @@
-<!-- /home/MiguelAeTxio/PROJECTS/CampuStudiOnline/DOCS/MAINS/ATTACHEDS/DOCS_ATTACHED_2_ANNEX_V06/V06DOC_SUBARCHETYPES.md -->
-# V06DOC_SUBARCHETYPES - MATRIZ DE ESPECIALIZACIÓN ACADÉMICA (V2.0 - DETERMINISTA)
+# /home/MiguelAeTxio/PROJECTS/CampuStudiOnline/DOCS/MAINS/ATTACHEDS/DOCS_ATTACHED_2_ANNEX_V06/V06DOC_SUBARCHETYPES.md
+# V06DOC_SUBARCHETYPES - MATRIZ DE ESPECIALIZACIÓN ACADÉMICA (V2.1 - DETERMINISTA)
 
 Este documento define la **Configuración Estructural Fija** (Receta) que cada Estrategia de Python debe implementar.
 **PRINCIPIO:** Python define los Secciones y los Ítems (Widgets). La IA solo rellena el contenido solicitado.
@@ -33,6 +33,7 @@ Este documento define la **Configuración Estructural Fija** (Receta) que cada E
         - Umbral Crítico: Mínimo 60% de la puntuación en CADA destreza.
         - Compensación: Prohibida (FAIL_LOGIC: FATAL).
         - Navegación: Unidireccional Sellada (No-Backtracking entre destrezas).
+
 *   **SUB-LIN-MINOR: Modelo Minor / Iniciación (UGR - Facultad Filosofía y Letras) [REFACTORIZADO V4.2 - FIDELIDAD 100% UGR]**
     *   **Perfil Institucional:** Iniciación a la competencia lingüística, caligráfica y sociocultural (Alemán, Árabe, Chino, Japonés, Ruso, etc.) según las Guías Docentes de la UGR.
     *   **Secuencia Genética Obligatoria (5 Fases Subatómicas):**
@@ -53,6 +54,7 @@ Este documento define la **Configuración Estructural Fija** (Receta) que cada E
             - Tarea: Validación de protocolos de cortesía, geografía política y realidades culturales nucleares de la UGR.
             - **Rigor:** LVL_A. Inmersión vehicular (Castellano) obligatoria en instrucciones.
     *   **Regla de Oro UGR (CertAcles):** Umbral del 60% por destreza. Sin compensación (FAIL_LOGIC: FATAL).
+
 *   **SUB-LIN-PHILO: Modelo Filológico / Crítica Textual (UGR - Facultad de Filosofía y Letras) [REFACTORIZADO SUBATÓMICO - FIDELIDAD 100% UGR]**
     *   **Perfil Institucional:** Análisis científico, histórico y ecdótico de la lengua española y sus monumentos literarios. Basado en los criterios de evaluación del Departamento de Lengua Española y el Departamento de Filologías Clásicas de la UGR.
     *   **Secuencia Genética Obligatoria (Cuatri-Destreza Científica):**
@@ -80,14 +82,34 @@ Este documento define la **Configuración Estructural Fija** (Receta) que cada E
         - **Prohibición de Paráfrasis:** Se exige el uso estricto del metalenguaje filológico oficial de la UGR.
     *   **Rigor Engine:** x1.8 (Nivel C1/C2 - Epistemológico).
 
-*   **SUB-LIN-NORM: Modelo Norma y Uso (UGR / Grado Filología) [VERIFICADO UGR 2025/26]**
-    *   **Perfil:** Análisis avanzado de la norma panhispánica y fenómenos antinormativos.
-    *   **Secuencia Genética Obligatoria (4 Fases):**
-        1. **SD_CORPUS_ANALYSIS:** Búsqueda y análisis de frecuencias en CORPES XXI/CREA (Widget W-LAW-NAV).
-        2. **SD_MORPH_ANTINORM:** Identificación de queísmo, dequeísmo, leísmo y concordancias complejas.
-        3. **SD_ORTHO_PRESCRIPTIVE:** Ortografía técnica y puntuación según la Ortografía de la Lengua Española (2010).
-        4. **SD_CRITICAL_NORM:** Comentario crítico sobre la adecuación de un texto al registro académico vs. norma.
-    *   **Rigor:** C1/C2 (Avanzado).
+*   **SUB-LIN-NORM: Modelo Norma y Uso (UGR / Grado en Filología Hispánica) [REFACTORIZADO SUBATÓMICO - FIDELIDAD 100% UGR]**
+    *   **Perfil Institucional:** Evaluación avanzada de la competencia normativa, prescriptiva y descriptiva del español contemporáneo bajo los estándares del Departamento de Lengua Española de la Universidad de Granada (UGR). El modelo evalúa la capacidad científica del alumno para discernir entre la norma panhispánica culta y los fenómenos de variación lingüística, utilizando como herramientas la gramática académica y el análisis de corpus.
+    *   **Secuencia Genética Obligatoria (Cuatri-Destreza Normativa):**
+        1. **SD_CORPUS_ANALYSIS (Investigación y Validación Empírica):**
+            - **Objetivo:** Capacitar al alumno en la validación de usos lingüísticos basándose en datos reales de frecuencia y prestigio.
+            - **Tarea:** Investigación emulada en CORPES XXI para determinar la aceptabilidad de construcciones en conflicto (ej. pluralización de "haber" impersonal, uso de "detrás mío" vs. "detrás de mí", o el uso del infinitivo fático). El alumno debe interpretar mapas geográficos y frecuencias por registro.
+            - **Widget:** W-LAW-NAV (Configurado como Navegador de Corpus Lingüístico).
+            - **Motor:** EV-NORM-ANALYSIS (Valida la interpretación científica del uso frente a la prescripción).
+        2. **SD_MORPH_ANTINORM (Diagnóstico de Desviaciones Morfosintácticas):**
+            - **Objetivo:** Detección y corrección razonada de infracciones gramaticales en el registro culto.
+            - **Tarea:** Identificación técnica de fenómenos como queísmo, dequeísmo, leísmo (de persona y de cosa), laísmo, loísmo y discordancias en el orden de los clíticos o en oraciones de pasiva refleja e impersonal.
+            - **Widget:** W-OBJ-STRIKE y W-TXT-CLOZE (Modo Input).
+            - **Motor:** RBT-CANON (Exigencia de precisión absoluta en la nomenclatura del fenómeno).
+        3. **SD_ORTHO_PRESCRIPTIVE (Ortografía y Ortotipografía Académica):**
+            - **Objetivo:** Aplicación rigurosa de la normativa de la RAE/ASALE (2010) y normas de edición técnica.
+            - **Tarea:** Edición de textos que presentan dificultades en el uso de mayúsculas diacríticas, puntuación compleja (posicionamiento de signos respecto a comillas y notas al pie), acentuación de compuestos y gestión de extranjerismos y neologismos.
+            - **Widget:** W-HUM-TEXT (Entorno de edición crítica).
+            - **Rigor:** x1.7 (Penalización severa por desviaciones de la OLE 2010).
+        4. **SD_CRITICAL_NORM (Comentario Crítico y Justificación Bibliográfica):**
+            - **Objetivo:** Defensa argumentada de la corrección lingüística basándose en obras de referencia oficiales.
+            - **Tarea:** Redacción de una justificación académica para la propuesta de mejora de un texto inadecuado, citando explícitamente la Nueva Gramática (NGLE) o el Diccionario Panhispánico de Dudas (DPD). Evaluación de la adecuación del registro al contexto (jurídico, administrativo, académico).
+            - **Layout:** SPLIT_TEXT (Panel lateral persistente con el texto fuente).
+            - **Motor:** DRA-HOLO (Rúbrica analítica holística de la UGR para Norma y Uso).
+    *   **Protocolo de Superación y Rigor (V06DOC_LEVELS):**
+        - **Umbral Crítico:** Mínimo 75% de precisión técnica.
+        - **Política de Tolerancia Cero:** El error en la identificación técnica de un fenómeno (ej. confundir un queísmo con una falta de régimen) o la cita falsa de una obra de referencia supone el suspenso automático del ítem (FAIL_LOGIC: FATAL).
+        - **Rigor Engine:** x1.7 (Nivel C1/C2 - Normativo).
+
 *   **SUB-LIN-TRA-TECH:** (Traducción Profesional). Glosarios, memorias de traducción y terminología.
 *   **SUB-LIN-TRA-LIT: Modelo de Traducción Literaria y Editorial (FTI UGR) [REFACTORIZADO QUIRÚRGICO]**
     *   **Perfil:** Traducción de textos creativos, poéticos y humanísticos basada en los criterios de la FTI (UGR).
@@ -97,6 +119,7 @@ Este documento define la **Configuración Estructural Fija** (Receta) que cada E
         3. **SD_TRA_CRIT (Crítica y Justificación):** Comentario exegético defendiendo las opciones de traducción y compensaciones literarias. (Widget: W-HUM-TEXT).
     *   **Rigor:** Hermenéutico / Nivel C2 (LVL_C).
     *   **Motor Principal:** DRA-HOLO (Rúbrica de Calidad Literaria UGR).
+
 ### HUMANIDADES
 *   **SUB-HUM-HIST:** (Modelo Historiográfico). Análisis de fuentes primarias y cronología.
 *   **SUB-HUM-PHIL:** (Modelo Dialéctico). Lógica formal, ética y ensayo crítico.

@@ -217,3 +217,10 @@
 ## EDC
 *  **Session:** Refactorización Subatómica del Subarquetipo Filológico (SUB-LIN-PHILO)
 *  **Description:** Inicio de la fase de refactorización del subarquetipo SUB-LIN-PHILO para alcanzar el 100% de fidelidad académica con los criterios de la Universidad de Granada. La sesión se centra en la investigación de las guías docentes de Filología Hispánica y Clásica (UGR) para documentar la secuencia genética de 4 fases: Fonética Histórica, Morfología Diacrónica, Lexicología y Crítica Textual. Se procederá a la actualización de la constelación documental del Hito 6 (Subarquetipos, Bloques, Widgets y Niveles) definiendo motores específicos como EV-DIAC-VAL y componentes de interfaz como el pad fonético W-PHILO-IPA, asegurando el cumplimiento del rigor epistemológico de Nivel C y el uso de layouts SPLIT_TEXT para la colación de variantes en la fase de ecdótica.
+
+# 2026-03-22
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+## EDC
+*  **Session:** Refactorización Subatómica del Subarquetipo SUB-LIN-NORM (UGR)
+*  **Description:** Sesión focalizada en la refactorización integral del subarquetipo SUB-LIN-NORM (Norma y Uso) siguiendo los criterios de la Universidad de Granada. Se documentará la secuencia genética de cuatro fases: análisis de corpus (CORPES XXI), identificación de fenómenos antinormativos, aplicación de normativa ortográfica (OLE 2010) y comentario crítico de adecuación. La tarea implica la actualización de la constelación documental V06 (Subarquetipos, Bloques, Widgets y Niveles) garantizando fidelidad absoluta a la normativa panhispánica y las guías docentes de la UGR, bajo el estricto cumplimiento del Protocolo de Reflexión Documental (V06DOC_WORD_OF_GOD) para evitar simplificaciones y asegurar un reflejo subatómico del sistema de acreditación real.
