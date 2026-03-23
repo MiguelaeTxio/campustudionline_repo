@@ -26,7 +26,9 @@ Este documento define el cerebro pedagógico del emulador y las reglas de ajuste
 *   ITIN_MAIOR + LVL_B / ITIN_PROF:
     *   Rigor Engine: x1.3.
     *   Configuración: Foco en la especialidad, rigor normativo, precisión técnica absoluta y uso de metalenguaje.
-*   ITIN_MAIOR + LVL_C / ITIN_INV:
+*   ITIN_MAIOR + LVL_C / ITIN_INV / ITIN_PROF (TRA-TECH):
+    *   Rigor Engine: x1.6 (General) | x1.7 (NORM) | x1.8 (PHILO / TRA-TECH).
+    *   Configuración: [ACTUALIZADO 2026] Exigencia máxima de precisión terminológica y adecuación al Skopos profesional.
     *   Rigor Engine: x1.6 (General) | **x1.7 (Específico NORM UGR)** | **x1.8 (Específico Philo UGR)**.
     *   Configuración: Densidad técnica máxima, casos límite/ambiguos, evaluación de la crítica (Rol Catedrático). Exigencia de fundamentación bibliográfica en el feedback (DCECH, Blecua, NGLE, CORPES XXI).
 

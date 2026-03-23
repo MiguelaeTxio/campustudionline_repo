@@ -110,7 +110,14 @@ Este documento define la **Configuración Estructural Fija** (Receta) que cada E
         - **Política de Tolerancia Cero:** El error en la identificación técnica de un fenómeno (ej. confundir un queísmo con una falta de régimen) o la cita falsa de una obra de referencia supone el suspenso automático del ítem (FAIL_LOGIC: FATAL).
         - **Rigor Engine:** x1.7 (Nivel C1/C2 - Normativo).
 
-*   **SUB-LIN-TRA-TECH:** (Traducción Profesional). Glosarios, memorias de traducción y terminología.
+*   **SUB-LIN-TRA-TECH: Modelo de Traducción Profesional y Técnica (FTI UGR) [REFACTORIZADO 2026]**
+    *   **Perfil Institucional:** Evaluación de la competencia traductora especializada (Científico-Técnica, Jurídico-Económica) bajo el enfoque del Skopos y la ISO 17100.
+    *   **Secuencia Genética Obligatoria (Fidelidad 100%):**
+        1.  **SD_TRA_ANALYSIS (Análisis del Encargo):** Identificación de la función textual, el destinatario y los problemas potenciales del texto (neologismos, ambigüedades sintácticas) antes de la traducción.
+        2.  **SD_TERM_RESEARCH (Fase Documental):** Creación de un glosario técnico bilingüe basado en fuentes de autoridad (IATE, UNTERM). Validación de equivalencias terminológicas unívocas.
+        3.  **SD_TRA_DRAFT (Traducción Directa):** Traducción de dos textos fuente de 350 palabras cada uno. Se evalúa la precisión léxica, el cumplimiento del registro y la adecuación al género textual.
+        4.  **SD_TRA_REVIEW (Control de Calidad y Post-edición):** Revisión de estilo y coherencia. Incluye la post-edición de un output de Traducción Automática (TA) para detectar alucinaciones y errores de cohesión.
+    *   **Protocolo de Superación:** Umbral mínimo del 50% en cada sección de traducción de forma independiente. Sin compensación (FAIL_LOGIC: FATAL).
 *   **SUB-LIN-TRA-LIT: Modelo de Traducción Literaria y Editorial (FTI UGR) [REFACTORIZADO QUIRÚRGICO]**
     *   **Perfil:** Traducción de textos creativos, poéticos y humanísticos basada en los criterios de la FTI (UGR).
     *   **Secuencia Genética Obligatoria (3 Fases):**

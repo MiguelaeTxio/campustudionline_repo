@@ -1,7 +1,11 @@
 <!-- /home/MiguelAeTxio/PROJECTS/CampuStudiOnline/DOCS/MAINS/ATTACHEDS/DOCS_ATTACHED_2_ANNEX_V06/V06DOC_BLOCKS.md -->
 # V06DOC_BLOCKS - CATÁLOGO DE MOTORES DE EVALUACIÓN (V1.1 - REFACTORIZACIÓN UGR)
 
-## 1. BLOQUES DE EVALUACIÓN OBJETIVA Y TÉCNICA
+## 1. BLOQUES DE EVALUACIÓN OBJETIVA Y TÉCNICA\n\n*   **EV-TRA-PRECISION-TECH (Motor de Precisión Terminológica FTI-UGR) [NUEVO 2026]**
+    *   **Mecánica:** Evaluación basada en la jerarquía de errores de la FTI.
+    *   **Categoría A (Sentido):** Contrasentido (-2.0), Sin sentido (-1.5), Falso sentido (-1.0).
+    *   **Categoría B (Terminología):** Uso de lemas no especializados en dominios técnicos. Penalización: -0.5.
+    *   **Categoría C (Gramática y Estilo):** Inadecuación de registro y errores ortotipográficos (OLE 2010). Penalización: -0.2.
 
 *   PRM-STRIKE (Respuesta Múltiple con Penalización Progresiva):
     *   Mecánica: Fórmula de corrección por azar UGR [Aciertos - (Errores/(N-1))].

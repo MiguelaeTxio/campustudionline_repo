@@ -1,7 +1,7 @@
 # /home/MiguelAeTxio/PROJECTS/CampuStudiOnline/DOCS/MAINS/ATTACHEDS/DOCS_ATTACHED_2_ANNEX_V06/V06DOC_WIDGETS.md
 # V06DOC_WIDGETS - CATÁLOGO DE COMPONENTES DE INTERFAZ (V1.2 - REFACTORIZACIÓN UGR)
 
-## 1. LIBRERÍA DE COMPONENTES TÉCNICOS
+## 1. LIBRERÍA DE COMPONENTES TÉCNICOS\n\n*   **W-TRA-CAT-EMULATOR (Simulador de Herramienta TAO) [NUEVO 2026]**\n    *   **Uso:** Traducción Profesional (SUB-LIN-TRA-TECH).\n    *   **Funciones:** Panel de traducción segmentada con ventana de sugerencias de memoria y glosario obligatorio. Audita el uso de la terminología sugerida.
 
 *   W-TECH-CALC (Consola de Cálculo Procedimental):
     *   Uso: Ingenierías y Ciencias.

@@ -224,3 +224,24 @@
 ## EDC
 *  **Session:** Refactorización Subatómica del Subarquetipo SUB-LIN-NORM (UGR)
 *  **Description:** Sesión focalizada en la refactorización integral del subarquetipo SUB-LIN-NORM (Norma y Uso) siguiendo los criterios de la Universidad de Granada. Se documentará la secuencia genética de cuatro fases: análisis de corpus (CORPES XXI), identificación de fenómenos antinormativos, aplicación de normativa ortográfica (OLE 2010) y comentario crítico de adecuación. La tarea implica la actualización de la constelación documental V06 (Subarquetipos, Bloques, Widgets y Niveles) garantizando fidelidad absoluta a la normativa panhispánica y las guías docentes de la UGR, bajo el estricto cumplimiento del Protocolo de Reflexión Documental (V06DOC_WORD_OF_GOD) para evitar simplificaciones y asegurar un reflejo subatómico del sistema de acreditación real.
+
+# 2026-03-23
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+## AAAA
+*  **Session:** Inicio de la Refactorización del Subarquetipo de Traducción Técnica (SUB-LIN-TRA-TECH)
+*  **Description:** Apertura de la sesión AAAA centrada en la Rama de Lenguas del sistema de autoevaluaciones. Tras la consolidación de los modelos normativo y filológico, se inicia la refactorización subatómica del subarquetipo SUB-LIN-TRA-TECH (Traducción Profesional y Técnica). El objetivo primordial es integrar los descriptores de evaluación de la FTI de la UGR, definiendo la jerarquía de errores de sentido y transferencia terminológica. Se preparará la lógica para los motores de precisión y la secuencia genética que incluye el análisis del encargo, investigación terminológica y revisión de estilo, garantizando la compatibilidad con el sistema de Structured Outputs y la centralización de prompts en el orquestador.
+
+# 2026-03-23
+# CampuStudiOnline --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+## AAAA
+*  **Session:** Inicio de Refactorización Subatómica: Traducción Técnica (FTI UGR) - Hito 6
+*  **Description:** Sesión AAAA dedicada al inicio de la refactorización subatómica del subarquetipo SUB-LIN-TRA-TECH (Traducción Profesional y Técnica) siguiendo los estándares de la Facultad de Traducción e Interpretación de la UGR. Se definirá la secuencia genética de evaluación: análisis del encargo (SD_TRA_ANALYSIS), investigación terminológica (SD_TERM_RESEARCH), traducción especializada (SD_TRA_DRAFT) y revisión de coherencia (SD_TRA_REVIEW). Se documentará el motor de precisión EV-TRA-PRECISION-TECH y el widget de navegación normativa W-LAW-NAV-LING. El objetivo es completar la Rama Lenguas con fidelidad institucional absoluta antes de proceder a la implementación lógica en el orquestador.
+
+# 2026-03-23
+# CampuStudiOnline --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+## AAAA
+*  **Session:** Inicio de Refactorización Subatómica: Traducción Técnica (FTI UGR) - Hito 6
+*  **Description:** Sesión AAAA dedicada al inicio de la refactorización subatómica del subarquetipo SUB-LIN-TRA-TECH (Traducción Profesional y Técnica) siguiendo los estándares de la Facultad de Traducción e Interpretación de la UGR. Se definirá la secuencia genética de evaluación: análisis del encargo (SD_TRA_ANALYSIS), investigación terminológica (SD_TERM_RESEARCH), traducción especializada (SD_TRA_DRAFT) y revisión de coherencia (SD_TRA_REVIEW). Se documentará el motor de precisión EV-TRA-PRECISION-TECH y el widget de navegación normativa W-LAW-NAV-LING. El objetivo es completar la Rama Lenguas con fidelidad institucional absoluta antes de proceder a la implementación lógica en el orquestador.
