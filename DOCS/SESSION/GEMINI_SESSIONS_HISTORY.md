@@ -245,3 +245,17 @@
 ## AAAA
 *  **Session:** Inicio de Refactorización Subatómica: Traducción Técnica (FTI UGR) - Hito 6
 *  **Description:** Sesión AAAA dedicada al inicio de la refactorización subatómica del subarquetipo SUB-LIN-TRA-TECH (Traducción Profesional y Técnica) siguiendo los estándares de la Facultad de Traducción e Interpretación de la UGR. Se definirá la secuencia genética de evaluación: análisis del encargo (SD_TRA_ANALYSIS), investigación terminológica (SD_TERM_RESEARCH), traducción especializada (SD_TRA_DRAFT) y revisión de coherencia (SD_TRA_REVIEW). Se documentará el motor de precisión EV-TRA-PRECISION-TECH y el widget de navegación normativa W-LAW-NAV-LING. El objetivo es completar la Rama Lenguas con fidelidad institucional absoluta antes de proceder a la implementación lógica en el orquestador.
+
+# 2026-03-24
+# CAMPUSTUDIONLINE --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+## CSO
+*  **Session:** Auditoría y Refactorización Subatómica de la Rama Lenguas (UGR 2026)
+*  **Description:** Sesión de inicio para la auditoría y reparación integral de la constelación documental del Hito 6. Se ha cargado el anexo principal y los doce documentos satélites para contrastar la fidelidad del Arquetipo de Lenguas con los estándares de la UGR 2026. El objetivo prioritario es detectar incongruencias en los subarquetipos (INSTR, MINOR, PHILO, NORM, TRA-TECH, TRA-LIT) y asegurar la eliminación de ruido técnico en los archivos de bloques y widgets. Se inicia la fase de investigación para alcanzar el 100% de fidelidad institucional, priorizando la estructura de acreditación CertAcles y la normativa de los departamentos de Filología, erradicando cualquier simplificación o alucinación documental.
+
+# 2026-03-24
+# CampuStudiOnline --ROADMAP
+# CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md
+## CYC
+*  **Session:** Auditoría y Preparación de Refactorización de la Rama Lenguas (UGR 2026)
+*  **Description:** Inicio de la sesión técnica centrada en la Rama Lenguas del Hito 6. Se ha cargado la constelación documental completa (V06) para realizar una auditoría subatómica de los subarquetipos lingüísticos (Instrumental, Minor, Filológico, Normativo y Traducción). El objetivo es alcanzar el 100% de fidelidad con los estándares de la UGR para 2026, eliminando ruido técnico en los archivos de bloques y widgets, y asegurando la integridad de los protocolos de evaluación (penta-destreza, no-backtracking y lógica fatal). Se han analizado las dependencias entre la lógica de orquestación y la estructura de las estrategias académicas. Se procederá a solicitar los modelos de Django para alinear la arquitectura de datos con las definiciones académicas y asegurar la correcta implementación de los Structured Outputs.

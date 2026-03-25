@@ -83,3 +83,32 @@
     *   **Gestor de Braquigrafía (Resolución de Abreviaturas):**
         - Diccionario visual de abreviaturas medievales integrado. Al seleccionar un signo abreviativo (braquigrafía), el widget sugiere resoluciones basadas en la normativa de la Real Chancillería de Granada.
     *   **Multimodalidad (Miguel Ángel):** Soporta **OCR Predictivo** entrenado en letras góticas, cortesanas y humanísticas para asistir en la primera fase de la lectura.
+
+## 6. LIBRERÍA TÉCNICA PARA EL MODELO INSTRUMENTAL (UGR 2026) [ADICIÓN QUIRÚRGICA - FIDELIDAD 100%]
+
+Esta sección define el comportamiento técnico y visual de los componentes de interacción activados bajo el subarquetipo SUB-LIN-INSTR (CertAcles / CLM-UGR).
+
+### W-AUDIO-INSTR (Reproductor de Audio de Rigor Institucional)
+*   **Uso:** Destreza SD_LIST (Comprensión Auditiva).
+*   **Comportamiento Técnico:**
+    1. **Contador de Reproducciones:** Implementa un bloqueo hermético del botón "Play" tras la segunda reproducción completa. Envía un flag de estado al orquestador para invalidar intentos posteriores.
+    2. **Inhibición de Navegación (Non-Scrubbing):** La barra de progreso es meramente informativa. Se deshabilita la interacción del alumno para adelantar o retrasar el audio, garantizando la audición lineal obligatoria en las pruebas de acreditación.
+    3. **Persistencia de Estado:** En caso de refresco de página (F5), el widget recupera el número de reproducciones consumidas desde la base de datos de sesión.
+
+### W-OCR-PRO (Módulo de Auditoría de Producción Manuscrita)
+*   **Uso:** Destreza SD_WRIT (Producción Escrita) y SD_MEDI (Mediación).
+*   **Funciones de Multimodalidad (Miguel Ángel):**
+    1. **Captura y Pre-procesamiento:** Interfaz de cámara con guías de encuadre. Aplica algoritmos de normalización de imagen (contraste, brillo y eliminación de ruido) para optimizar la legibilidad del manuscrito.
+    2. **Garantía de Autoría:** Registra metadatos de la captura (timestamp, geolocalización básica del dispositivo) para certificar que la producción es original y realizada en el tiempo estipulado para la sección.
+    3. **Envío Estructurado:** El widget envía la imagen optimizada al motor de evaluación para su análisis por el motor OCR de alta fidelidad integrado con la IA.
+
+### W-MEDI-LAYOUT (Interfaz de Doble Panel para Transferencia)
+*   **Uso:** Destreza SD_MEDI (Mediación Lingüística).
+*   **Distribución Visual (UX Design):**
+    1. **Panel Estímulo (Sticky Left/Top):** Visualización persistente del material de origen (gráfico, tabla de datos o texto especializado). No permite edición.
+    2. **Panel de Acción (Right/Bottom):** Editor de texto multimodal (W-HUM-TEXT) donde el alumno realiza la síntesis o adaptación.
+    3. **Interactividad de Cita:** Permite seleccionar fragmentos de datos en el Panel Estímulo y arrastrarlos al Panel de Acción para generar una cita fáctica precisa, evaluando la capacidad del alumno para manejar fuentes de información técnica.
+
+### W-INSTR-SELECTOR (Selector Multimodal CertAcles)
+*   **Comportamiento:** Componente global inyectado en todo widget de entrada de texto.
+*   **Configuración Instrumental:** Ofrece obligatoriamente los cuatro modos de entrada (Teclado Nativo, Occidentalización, Pad de Trazos, OCR). En el subarquetipo instrumental, el modo "Teclado Nativo" fuerza el layout del idioma objetivo, deshabilitando correctores ortográficos del sistema operativo para auditar la competencia real del alumno.

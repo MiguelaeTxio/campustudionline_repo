@@ -100,3 +100,32 @@
 *   **EV-TRA-PRECISION (Motor de Precisión Terminológica en Traducción):**
     *   **Mecánica:** Validación de equivalencias terminológicas en dominios especializados basándose en glosarios técnicos y diccionarios de especialidad.
     *   **Calidad:** Evalúa la univocidad en la lengua de llegada y la adecuación al registro meta.
+
+## 5. MOTORES ESPECÍFICOS PARA EL MODELO INSTRUMENTAL (UGR 2026) [ADICIÓN QUIRÚRGICA - FIDELIDAD 100%]
+
+Esta sección define la configuración técnica de los motores de evaluación cuando se activan bajo el subarquetipo SUB-LIN-INSTR (CertAcles / CLM-UGR).
+
+### A. MOTOR DE MEDIACIÓN LINGÜÍSTICA (BMT-SHIFT - INSTRUMENTAL)
+*   **Mecánica de Evaluación:** El motor actúa como un auditor de transferencia informativa. Evalúa la capacidad del alumno para procesar un estímulo fuente (gráfico, tabla o texto técnico) y producir un output adaptado a un destinatario y propósito específicos.
+*   **Criterios de Calificación Institucional (UGR):**
+    1. **Fidelidad Informativa (50%):** La IA detecta y penaliza la omisión de datos críticos presentes en la fuente o la inclusión de información no verificable (alucinación del alumno).
+    2. **Adecuación de Registro (50%):** Se evalúa si el alumno ha simplificado el lenguaje técnico del input para hacerlo accesible al destinatario solicitado, manteniendo la cortesía y el registro formal/académico requerido.
+*   **Umbral de Éxito:** Mínimo 6.0/10. Errores graves de interpretación de datos suponen una penalización de -2.0 puntos directos.
+
+### B. CONFIGURACIÓN DE RÚBRICA DRA-HOLO (CERTACLES B1/B2)
+*   **Estructura de Evaluación (Ejes Institucionales):**
+    1. **Adecuación al Encargo (Task Achievement):** Cumplimiento exhaustivo de la extensión léxica (120-150 / 150-180 palabras) y de todos los puntos de control del enunciado. (0 - 2.5 pts).
+    2. **Cohesión y Coherencia:** Uso fluido de marcadores discursivos, organización en párrafos lógicos y progresión temática clara. (0 - 2.5 pts).
+    3. **Riqueza Léxica:** Uso de vocabulario variado y preciso. En nivel B2, se exige el uso de colocaciones y expresiones idiomáticas de frecuencia media. (0 - 2.5 pts).
+    4. **Corrección Gramatical:** Control de estructuras gramaticales. Se penalizan severamente los errores fosilizados (ej. concordancia sujeto-verbo, tiempos verbales básicos). (0 - 2.5 pts).
+*   **Regla de No-Compensación:** El sistema monitoriza si algún eje cae por debajo de 1.5 puntos. En la acreditación oficial de la UGR, una debilidad extrema en un eje (ej. Adecuación) puede comprometer la superación de la destreza completa.
+
+### C. MOTOR DE VALIDACIÓN AUDITIVA (LISTENING RIGOR)
+*   **Control de Acceso:** El motor de reproducción de audio se bloquea herméticamente tras la segunda audición completa. El sistema registra el timestamp de cada reproducción para evitar manipulaciones de caché.
+*   **Validación de Ítems (RBT-SHORT-LANG):** Para las tareas de completado de esquemas o toma de notas, el motor valida respuestas de 1 a 4 palabras. Aplica un algoritmo de *Fuzzy Matching* con una tolerancia de distancia de Levenshtein mínima para errores tipográficos que no afecten al lema (ej. omisión de una letra muda), pero mantiene rigor absoluto en la semántica del concepto.
+
+### D. BAREMO DE PENALIZACIÓN FORMAL (FORM_PEN - INSTRUMENTAL)
+En cumplimiento de la normativa del CLM-UGR, se aplican descuentos automáticos sobre la nota bruta de la producción escrita (Writing/Mediation):
+*   **Faltas de Ortografía:** -0.1 puntos por cada error ortográfico.
+*   **Tildes y Puntuación:** -0.05 puntos por cada error ortotipográfico.
+*   **Umbral de Exclusión:** La presencia de más de 5 faltas de ortografía en una sola tarea conlleva la anulación inmediata de la misma (Nota: 0.0), marcando la destreza como FAIL_LOGIC: FATAL.

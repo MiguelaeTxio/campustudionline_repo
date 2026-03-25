@@ -1,3 +1,4 @@
+# /home/MiguelAeTxio/PROJECTS/CampuStudiOnline/users/views.py
 from django.core.signing import TimestampSigner, BadSignature
 from django.shortcuts import get_object_or_404
 # /home/MiguelAeTxio/CampuStudiOnline/users/views.py
@@ -101,6 +102,11 @@ def register(request):
 
 @require_POST
 def validate_registration_view(request):
+    """
+    Validates the registration data and prepares the activation flow.
+    -----------------------------------------------------------------
+    Valida los datos de registro y prepara el flujo de activación.
+    """
     User = get_user_model()
     try:
         data = json.loads(request.body)
@@ -119,24 +125,16 @@ def validate_registration_view(request):
         user.is_active = False
         user.save()
 
-        # --- LÓGICA DE REFERIDOS ---
+        # --- LÓGICA DE REFERIDOS (VERSIÓN CORREGIDA AAAA) ---
+        # Store the referral code in the profile for consumption after activation.
+        # ------------------------------------------------------------------------
+        # Almacena el código de referido en el perfil para su consumo tras la activación.
         referral_code = form.cleaned_data.get("referral_code")
         if referral_code:
-            try:
-                rec_code = RecommendationCode.objects.get(code=referral_code)
-                # Marcar código como usado
-                rec_code.is_used = True
-                rec_code.redeemed_by = user
-                rec_code.date_redeemed = timezone.now()
-                rec_code.save()
-                
-                # Vincular al perfil del usuario
-                profile, created = UserProfile.objects.get_or_create(user=user)
-                profile.referred_by = rec_code.vendor
-                profile.save()
-            except RecommendationCode.DoesNotExist:
-                pass
-        # ---------------------------
+            profile, created = UserProfile.objects.get_or_create(user=user)
+            profile.pending_referral_code = referral_code
+            profile.save()
+        # ----------------------------------------------------
 
         current_site = get_current_site(request)
         

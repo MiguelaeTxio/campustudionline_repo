@@ -9,30 +9,31 @@ Este documento define la **Configuración Estructural Fija** (Receta) que cada E
 
 ## 1. RAMA: ARTES Y HUMANIDADES (12 Modelos)
 ### LENGUAS (CLM / LENGUAS MODERNAS)
-*   **SUB-LIN-INSTR: Modelo Instrumental (Acreditación CertAcles / CLM UGR) [REFACTORIZADO SUBATÓMICO - FIDELIDAD 100% UGR]**
-    *   **Perfil Institucional:** Evaluación de la competencia comunicativa operativa (B1/B2) bajo el Marco Común Europeo de Referencia (MCERL) y la normativa del CLM-UGR y CertAcles.
-    *   **Secuencia Genética Obligatoria (Penta-Destreza):**
-        1. **SD_READ (Comprensión de Lectura):**
-            - Tarea 1: Comprensión Global/Ideación. Emparejar 6-8 encabezados con párrafos de un texto de 400-500 palabras. (Widget: W-MIX-MATCH / Motor: MAT-LINK).
-            - Tarea 2: Localización de Información Específica. Selección de datos concretos en 4-5 micro-textos temáticos. (Widget: W-OBJ-STRIKE / Motor: PRM-STRIKE).
-            - Tarea 3: Reconstrucción Coherente (Gapped Text). Reintegrar 5-6 fragmentos extraídos en su posición original. (Widget: W-TXT-CLOZE / Modo: Select / Motor: CLO-MULTI).
-        2. **SD_LIST (Comprensión Auditiva):**
-            - Tarea 1: Discriminación en Micro-Interacciones. Preguntas de opción múltiple sobre 6-8 diálogos situacionales. (Widget: W-OBJ-STRIKE / Motor: PRM-STRIKE).
-            - Tarea 2: Extracción de Datos / Toma de Notas. Completado de esquema basado en monólogo/entrevista. (Widget: W-TXT-CLOZE / Modo: Open). **Motor: RBT-SHORT-LANG (Restricción estricta: 1-4 palabras).**
-            - **Restricción de Acceso:** Máximo 2 reproducciones de audio por ítem.
-        3. **SD_WRIT (Expresión e Interacción Escrita):**
-            - Tarea 1: Interacción Funcional Dirigida. Email/Carta formal cubriendo 3-4 puntos obligatorios. Extensión: 120-150 palabras. (Widget: W-HUM-TEXT / Rúbrica: DRA-HOLO).
-            - Tarea 2: Discurso Académico / Ensayo. Producción argumentativa sobre tema propuesto. Extensión: 150-180 palabras. (Widget: W-HUM-TEXT / Rúbrica: DRA-HOLO).
-        4. **SD_SPEAK (Expresión e Interacción Oral):**
-            - Fase 1: Entrevista de Identidad y Entorno. (Widget: W-COMM-DIALOG).
-            - Fase 2: Monólogo Sostenido de Análisis. Descripción de situación basada en estímulo visual complejo. (Widget: W-COMM-DIALOG).
-            - Fase 3: Mediación Dialéctica / Negociación. Toma de decisiones compartida con UniversIA en tiempo real. (Widget: W-COMM-DIALOG / Motor: DIA-INTERACT).
-        5. **SD_MEDI (Mediación Lingüística):**
-            - Tarea 1: Transferencia Intralingüística/Interlingüística. Adaptación de información técnica de un gráfico o texto complejo a un destinatario no experto. (Widget: BMT-SHIFT).
-    *   **Protocolo de Superación UGR:**
-        - Umbral Crítico: Mínimo 60% de la puntuación en CADA destreza.
-        - Compensación: Prohibida (FAIL_LOGIC: FATAL).
-        - Navegación: Unidireccional Sellada (No-Backtracking entre destrezas).
+*   **SUB-LIN-INSTR: Modelo Instrumental (Acreditación CertAcles / CLM UGR 2026) [REFACTORIZADO SUBATÓMICO - FIDELIDAD 100% UGR]**
+    *   **Perfil Institucional y Pedagógico:** Evaluación técnica, legal y vinculante de la competencia comunicativa operativa (Niveles B1/B2 binivel) bajo el sello CertAcles y la normativa estricta del Centro de Lenguas Modernas (CLM-UGR). El modelo se fundamenta en las directrices del Volumen Complementario del Marco Común Europeo de Referencia para las Lenguas (MCERL 2020), el cual desplaza el foco desde la mera competencia gramatical hacia la interacción comunicativa y la mediación como ejes vertebradores de la competencia lingüística en entornos académicos y profesionales.
+    *   **Secuencia Genética Obligatoria (Estructura de Penta-Destreza ACLES):**
+        1. **SD_READ (Comprensión de Lectura - Proceso de Exégesis e Inferencia):**
+            - **Tarea 1 (Nivel B1 - Identificación Global / Gist):** Emparejamiento de 8 encabezados o resúmenes temáticos con un texto fuente de 450-550 palabras sobre cultura contemporánea, sostenibilidad o ciencia divulgativa. El alumno debe demostrar capacidad de *skimming* (lectura rápida) para captar la idea nuclear de cada párrafo, evitando los distractores basados en repetición de palabras clave superficiales. (Widget: W-MIX-MATCH / Motor: MAT-LINK).
+            - **Tarea 2 (Nivel B2 - Localización de Información Específica / Scanning):** Análisis comparativo de 5 micro-textos independientes (ej. críticas, anuncios, opiniones). El alumno debe localizar datos técnicos o matices de opinión específicos solicitados en los ítems. (Widget: W-OBJ-STRIKE / Motor: PRM-STRIKE).
+            - **Tarea 3 (Nivel B2+ - Reconstrucción de Cohesión / Gapped Text):** Reintegración de 5-6 fragmentos extraídos (oraciones o párrafos breves) en su posición original dentro de un texto académico complejo. Se evalúa el dominio de la estructura textual, la coherencia discursiva, el uso de marcadores del discurso y la resolución de anáforas y catáforas. (Widget: W-TXT-CLOZE / Modo: Select / Motor: CLO-MULTI).
+        2. **SD_LIST (Comprensión Auditiva - Rigor de Doble Audición Institucional):**
+            - **Tarea 1 (Interacciones Cortas y Registro):** 6-8 diálogos situacionales (ej. gestiones administrativas, interacciones sociales) con preguntas de opción múltiple. Evalúa la captación de la intención comunicativa, el tono y el registro sociolingüístico. (Widget: W-OBJ-STRIKE / Motor: PRM-STRIKE).
+            - **Tarea 2 (Extracción de Datos y Toma de Notas Académicas):** Monólogo, entrevista extensa o fragmento de conferencia (3-5 min). El alumno debe completar un esquema o resumen con información fáctica unívoca. (Widget: W-TXT-CLOZE / Modo: Open). **Motor: RBT-SHORT-LANG (Validación estricta de precisión léxica con extensión de 1 a 4 palabras).**
+            - **Restricción de Audio:** Implementación de bloqueo hermético de la interfaz; se permiten únicamente 2 reproducciones por pista para garantizar la fidelidad con las condiciones de examen oficial.
+        3. **SD_WRIT (Expresión e Interacción Escrita - Producción Dirigida y Multimodal):**
+            - **Tarea 1 (Interacción Funcional Transaccional):** Producción de una respuesta escrita (email, carta formal o informe breve) a partir de un estímulo previo, con una extensión de 120-150 palabras. El alumno debe cubrir obligatoriamente 4 puntos de control informativos especificados en el encargo. (Widget: W-HUM-TEXT / Rúbrica: DRA-HOLO).
+            - **Tarea 2 (Producción Académica / Ensayo Argumentativo):** Redacción extensa sobre un tema de debate social o académico propuesto. Se exige una estructura formal tripartita (Introducción/Tesis, Desarrollo Argumentativo con conectores lógicos, Conclusión). Extensión: 150-180 palabras. (Widget: W-HUM-TEXT / Rúbrica: DRA-HOLO).
+            - **Directriz de Multimodalidad (Miguel Ángel):** El selector de entrada DEBE habilitar obligatoriamente el modo **OCR/Captura**. Esta funcionalidad permite al alumno realizar la producción escrita en papel físico (emulando el protocolo de examen presencial tradicional del CLM-UGR) y digitalizar el manuscrito mediante la cámara del dispositivo. El sistema procesa la imagen para auditar la corrección gramatical, la adecuación al registro y el cumplimiento de la extensión léxica.
+        4. **SD_SPEAK (Expresión e Interacción Oral - Simulación Dialéctica):**
+            - **Fase 1 (Entrevista de Identidad):** Interacción inicial espontánea para evaluar la fluidez básica y el entorno personal del alumno.
+            - **Fase 2 (Monólogo de Análisis Visual):** Descripción, comparación y análisis crítico basado en un estímulo visual complejo (ej. dos fotografías contrastadas o un gráfico de tendencias). (Widget: W-COMM-DIALOG).
+            - **Fase 3 (Mediación Dialéctica / Negociación):** Toma de decisiones compartida e interacción en tiempo real con UniversIA en un escenario simulado (ej. planificación de un evento o resolución de un conflicto). Se evalúa la capacidad de reacción ante imprevistos y la adecuación pragmática. (Widget: W-COMM-DIALOG / Motor: DIA-INTERACT).
+        5. **SD_MEDI (Mediación Lingüística - Transferencia Estratégica de Información):**
+            - **Tarea 1 (Transferencia de Registro e Información):** El alumno debe sintetizar, explicar y adaptar información proveniente de un set de datos técnicos o un texto especializado (ej. una tabla de datos económicos o un folleto informativo complejo) para un destinatario específico con necesidades diferentes (ej. explicar un gráfico a un amigo o resumir una norma técnica para un usuario común). Se evalúa la fidelidad informativa y la adaptación del registro lingüístico. (Widget: BMT-SHIFT).
+    *   **Protocolo de Superación y Calificación (Regla de Oro ACLES-UGR):**
+        - **Umbral Crítico Institucional:** Es **OBLIGATORIO** alcanzar una puntuación mínima del 60% (6.0 sobre 10) en CADA UNA de las cinco destrezas evaluadas de forma totalmente independiente.
+        - **Lógica de Fallo Fatal:** El incumplimiento del umbral en una sola de las secciones (ej. obtener un 5.9 en Listening) supone el **Suspenso Automático** de la acreditación global. No se permite la compensación de notas entre destrezas (Media ponderada prohibida / FAIL_LOGIC: FATAL).
+        - **Navegación de Seguridad:** El flujo de examen es Unidireccional Sellado (*Non-Backtracking*). Una vez completada y enviada una destreza, el acceso a la misma queda bloqueado permanentemente para garantizar la validez del dominio lingüístico demostrado en tiempo real.
 
 *   **SUB-LIN-MINOR: Modelo Minor / Iniciación (UGR - Facultad Filosofía y Letras) [REFACTORIZADO V4.2 - FIDELIDAD 100% UGR]**
     *   **Perfil Institucional:** Iniciación a la competencia lingüística, caligráfica y sociocultural (Alemán, Árabe, Chino, Japonés, Ruso, etc.) según las Guías Docentes de la UGR.
