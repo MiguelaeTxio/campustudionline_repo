@@ -59,11 +59,12 @@ La IA recibe los ítems vacíos (definidos por la Estrategia) y devuelve **exclu
 *   feedback_category: [ID] (Referencia V06DOC_METADATA - FB_CONCEPT, FB_FORMAL, etc.).
 *   justification: Texto explicativo (Rol Catedrático).
 
---- SEPARATOR ---
+## 6. SECUENCIAS DE FASES POR SUBARQUETIPO (SUBDIVISION_SEQUENCE — CONTRATOS ESPECÍFICOS)
 
+Esta sección documenta los contratos de inyección de contenido específicos para cada subarquetipo que requiere una secuencia de fases distinta de la estructura genérica. Complementa la Sección 2 (SUBDIVISION_SEQUENCE) con las particularidades pedagógicas de cada modelo.
 
-### 2.1. Secuencia de Fases: SUB-LIN-PHILO (UGR)
-*   **Fase 1 (SD_PHONO):** Contrato para el análisis de leyes fonéticas. Requiere estímulo de texto fuente y salida JSON con pasos evolutivos.
-*   **Fase 2 (SD_MORPH_DIAC):** Foco en paradigmas de declinación/conjugación histórica.
-*   **Fase 3 (SD_LEX_SEM):** Análisis etimológico contrastado con el DCECH.
-*   **Fase 4 (SD_TEXT_CRIT):** Interfaz SPLIT_TEXT para colación de variantes y fijación de estema.
+### 6.1. Contrato de Fases: SUB-LIN-PHILO (UGR — Filología Hispánica)
+*   **Fase 1 (SD_PHONO — Fonética y Fonología Histórica):** Contrato para el análisis de leyes fonéticas diacrónicas. Requiere estímulo de texto fuente con étimo latino (u origen) y salida JSON con la secuencia completa de estadios evolutivos intermedios. Cada estadio debe incluir: forma en ese estadio, ley fonética aplicada, tipo de Yod si procede (I/II/III/IV) y justificación. Motor: EV-DIAC-VAL. Widget: W-PHILO-IPA.
+*   **Fase 2 (SD_MORPH_DIAC — Morfología Diacrónica):** Contrato con foco en paradigmas de declinación y conjugación histórica. La IA debe generar ítems que exijan la identificación de la ley de analogía o nivelación morfológica aplicada. Motor: EV-DIAC-VAL. Widget: W-PHILO-IPA.
+*   **Fase 3 (SD_LEX_SEM — Lexicología y Semántica Histórica):** Contrato de análisis etimológico. La IA debe contrastar el étimo con los criterios del DCECH (Corominas y Pascual) y el CORDE/CDH. Identificación de cultismos, semicultismos y palabras patrimoniales. Identificación de cambios semánticos (metáfora, metonimia, elipsis). Motor: RBT-CANON. Widget: W-HUM-TEXT.
+*   **Fase 4 (SD_TEXT_CRIT — Crítica Textual / Ecdótica):** Contrato de fijación de textos. Interfaz SPLIT_TEXT para colación de variantes y fijación de estema codicum. La IA genera el aparato crítico con variantes, adiciones, omisiones y propuesta de emendatio siguiendo la Metodología Blecua (UGR). Motor: EV-PALE. Widget: W-PHILO-ECDO.

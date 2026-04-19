@@ -5,7 +5,7 @@ Este documento define el procedimiento híbrido para la clasificación de asigna
 
 ## 1. FASE IA: IDENTIFICACIÓN DE NATURALEZA Y LOCALIZACIÓN
 
-Se utiliza `gemini-3.1-pro-preview` exclusivamente para resolver la ambigüedad semántica y la adaptación lingüística de la estructura.
+Se utiliza `gemini-2.5-flash` exclusivamente para resolver la ambigüedad semántica y la adaptación lingüística de la estructura.
 
 ### 1.1. Entrada del Clasificador
 *   `Subject.name`, `Branch.name`, `Degree.name`.

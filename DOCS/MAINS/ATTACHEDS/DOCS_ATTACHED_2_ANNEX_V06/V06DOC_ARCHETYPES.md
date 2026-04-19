@@ -14,21 +14,23 @@
     *   **Eje II (Científico-Filológico - MAIOR):** Grados en Filología y Traducción. Foco en el metalenguaje, la diacronía, la fonética histórica y el análisis científico de la lengua.
     *   **Eje III (Instrumental-Transversal - MINOR):** Competencia bilingüe añadida para otras ramas de conocimiento. Exigencia ineludible de dominio caligráfico explícito (trazos) en lenguas no occidentales (Árabe, Chino, Japonés, Ruso, Hebreo).
 *   **Niveles de Acreditación (MCERL):** A1 (Acceso), A2 (Plataforma), B1 (Umbral), B2 (Avanzado), C1 (Dominio Operativo Eficaz), C2 (Maestría).
-*   **Desglose Integral de Destrezas (Estructura Penta-Dimensional UGR/ACLES):**
-    1.  **Comprensión de Lectura (Reading):** Análisis exegético, inferencia de significado contextual profundo, distinción de registros y barrido de información específica (Skimming/Scanning).
-    2.  **Comprensión Auditiva (Listening):** Discriminación fonética, captación de matices sociolingüísticos, pragmática y extracción de datos en tiempo real (Restricción estricta del motor a un máximo de 2 reproducciones por pista de audio).
-    3.  **Expresión e Interacción Escrita (Writing):** Producción de textos funcionales y académicos (ensayos, informes, correos). La rúbrica evalúa milimétricamente la cohesión, coherencia, riqueza léxica, adecuación de registro y rigor gramatical normativo.
-    4.  **Expresión e Interacción Oral (Speaking):** Fluidez sostenida, control fonológico, alcance léxico y capacidad de argumentación dialéctica y reacción imprevista en tiempo real.
-    5.  **Mediación Lingüística (Interlingüística/Intralingüística):** Transferencia de información, síntesis de textos de origen complejo y adaptación estratégica del registro al destinatario u objetivo comunicativo.
-*   **Bloques de Evaluación Atómicos (Widgets y Motores):**
-    *   Múltiple Opción con Penalización por Azar (PRM-STRIKE).
-    *   Rellenado de Huecos Abierto (CLO-OPEN) y Selectivo (CLO-MULTI).
-    *   Emparejamiento y Ordenación de Párrafos (MAT-LINK).
-    *   Disertación con Rúbrica Analítica Holística (DRA-HOLO).
-    *   Interacción Dialéctica Asistida (DIA-INTERACT - Vía IA UniversIA).
-*   **Criterio de Éxito y Superación (Regla de Oro ACLES UGR):** 
-    *   Es **OBLIGATORIO, INNEGOCIABLE Y MANDATORIO** alcanzar un umbral mínimo del **60% de la puntuación máxima en CADA UNA de las cinco destrezas** de forma totalmente independiente.
-    *   **Prohibición de Compensación:** No existe media ponderada que salve un suspenso. El fallo en una sola destreza (< 60%) supone el suspenso automático y absoluto de la acreditación global (FAIL_LOGIC: FATAL).
+*   **Desglose Integral de Destrezas (Estructura Cuadri-Dimensional Oficial CLM-UGR — v5.0):**
+    1.  **Comprensión de Lectura (Reading — 75 min):** 5 textos binivel (2×B1 + 1 bisagra + 2×B2), aproximadamente 40 ítems. Tipos: respuesta múltiple, reintegración de fragmento, emparejamiento y respuesta corta (máx. 4 palabras). Sin penalización por respuesta incorrecta.
+    2.  **Comprensión Auditiva (Listening — aprox. 45 min):** 5 grabaciones binivel (2×B1 + 1 bisagra + 2×B2), aproximadamente 40 ítems. Tipos: respuesta múltiple, emparejamiento y respuesta corta (máx. 4 palabras). Límite estricto de 2 reproducciones por pista. Sin penalización por respuesta incorrecta.
+    3.  **Expresión e Interacción Escritas (Writing — 60 min):** 2 tareas de distinta tipología. Tarea B1: 200-250 palabras (carta, email informal/neutro, narración, artículo, blog, informe). Tarea B2: 250-300 palabras (carta, email formal, artículo, informe, ensayo, narración, reseña). Rúbrica DRA-HOLO: cumplimiento de la tarea, coherencia y cohesión, competencia lingüística general, corrección gramatical, dominio y riqueza de vocabulario.
+    4.  **Expresión e Interacción Orales (Speaking — 10 min):** Entrevista individual con examinador nativo del CLM. Tres fases: (A) preguntas sobre vida cotidiana (B1), (B) descripción y análisis de fotografía (B1/B2), (C) opinión argumentada sobre tema propuesto (B1/B2). Rúbrica: alcance y corrección gramatical y léxica, fluidez, coherencia y cohesión.
+    *   **NOTA CRÍTICA (v5.0):** La Mediación Lingüística NO constituye una destreza independiente en el examen oficial CertAcles del CLM-UGR. Queda eliminada como quinta destreza de este arquetipo.
+*   **Bloques de Evaluación Atómicos (Widgets y Motores — SUB-LIN-INSTR):**
+    *   Respuesta Múltiple sin penalización (W-OBJ-STRIKE / Motor: MAT-LINK — NO_NEGATIVE_MARKING activo).
+    *   Rellenado de Huecos Abierto (CLO-OPEN) y Selectivo (CLO-MULTI) — Widget: W-TXT-CLOZE.
+    *   Emparejamiento (MAT-LINK) — Widget: W-MIX-MATCH.
+    *   Respuesta Corta hasta 4 palabras (RBT-SHORT-LANG) con Fuzzy Matching de tolerancia mínima.
+    *   Producción Escrita con Rúbrica Analítica Holística (DRA-HOLO) — Widget: W-HUM-TEXT / W-OCR-PRO.
+    *   Interacción Oral con UniversIA (DIA-INTERACT) — Widget: W-COMM-DIALOG.
+*   **Criterio de Éxito y Superación (Sistema Oficial CLM-UGR 2026 — v5.0):**
+    *   **Mecanismo de Puntos de Corte Binivel:** La acreditación del nivel B1 o B2 en cada destreza se determina mediante puntos de corte variables fijados por convocatoria siguiendo las pautas del Consejo de Europa. No existe un umbral fijo del 60%: los puntos de corte se establecen mediante análisis estadístico de la distribución de respuestas de cada convocatoria.
+    *   **Obligatoriedad de Superación por Destreza:** El alumno debe alcanzar el nivel objetivo en las CUATRO destrezas de forma independiente. La compensación entre destrezas no está permitida.
+    *   **Gestión del Fallo Parcial:** Si el alumno no supera una única destreza, puede repetirla en convocatoria posterior en un plazo máximo de un año (FAIL_LOGIC: PARTIAL_RETRY). Si son dos o más destrezas, debe repetir el examen completo.
 
 ## 2. ARQUETIPO: CIENCIAS DE LA SALUD (ECOE)
 *   **Mecánica:** Rotación por estaciones cronometradas e independientes.

@@ -11,6 +11,7 @@
     *   Mecánica: Fórmula de corrección por azar UGR [Aciertos - (Errores/(N-1))].
     *   Calidad: Generación de distractores basados en errores conceptuales comunes.
     *   Parámetro: PUN_REST (Activo).
+    *   **EXCEPCIÓN CRÍTICA — SUB-LIN-INSTR (CertAcles / CLM-UGR):** Este motor queda DESACTIVADO para el subarquetipo SUB-LIN-INSTR en las destrezas SD_READ y SD_LIST. La Guía Oficial del Candidato CLM-UGR establece explícitamente que las respuestas incorrectas en Comprensión de Lectura y Comprensión Auditiva NO restan puntuación. El motor W-OBJ-STRIKE en INSTR opera en modo NO_NEGATIVE_MARKING (PUN_REST: Inactivo).
 
 *   RBT-CANON (Respuesta Breve de Precisión Terminológica):
     *   Mecánica: Validación por lexemas nucleares y palabras clave obligatorias.
@@ -105,27 +106,31 @@
 
 Esta sección define la configuración técnica de los motores de evaluación cuando se activan bajo el subarquetipo SUB-LIN-INSTR (CertAcles / CLM-UGR).
 
-### A. MOTOR DE MEDIACIÓN LINGÜÍSTICA (BMT-SHIFT - INSTRUMENTAL)
-*   **Mecánica de Evaluación:** El motor actúa como un auditor de transferencia informativa. Evalúa la capacidad del alumno para procesar un estímulo fuente (gráfico, tabla o texto técnico) y producir un output adaptado a un destinatario y propósito específicos.
-*   **Criterios de Calificación Institucional (UGR):**
-    1. **Fidelidad Informativa (50%):** La IA detecta y penaliza la omisión de datos críticos presentes en la fuente o la inclusión de información no verificable (alucinación del alumno).
-    2. **Adecuación de Registro (50%):** Se evalúa si el alumno ha simplificado el lenguaje técnico del input para hacerlo accesible al destinatario solicitado, manteniendo la cortesía y el registro formal/académico requerido.
-*   **Umbral de Éxito:** Mínimo 6.0/10. Errores graves de interpretación de datos suponen una penalización de -2.0 puntos directos.
+### A. MOTOR DE MEDIACIÓN LINGÜÍSTICA (BMT-SHIFT - INSTRUMENTAL) [ACTUALIZADO v5.0]
+*   **Nota de Alcance:** A partir de la versión 5.0, la Mediación Lingüística (SD_MEDI) NO constituye una destreza independiente en el subarquetipo SUB-LIN-INSTR. El motor BMT-SHIFT en contexto INSTR queda reservado como componente auxiliar de SD_WRIT (Tarea 2 — Nivel B2) cuando el tipo textual del encargo exige la síntesis o adaptación de información de un estímulo fuente (ej. informe o reseña con datos). No genera sección de examen autónoma ni cuenta como destreza separada en el cómputo de superación.
+*   **Mecánica de Evaluación (Auxiliar SD_WRIT):** El motor actúa como auditor de transferencia informativa dentro de la tarea de producción escrita. Evalúa la capacidad del alumno para procesar un estímulo fuente (gráfico, tabla o texto técnico) e integrarlo adecuadamente en su producción escrita, adaptando el registro al destinatario especificado en el encargo.
+*   **Criterios de Calificación (Integrados en DRA-HOLO):**
+    1. **Fidelidad Informativa:** La IA detecta y penaliza la omisión de datos críticos presentes en la fuente o la inclusión de información no verificable.
+    2. **Adecuación de Registro:** Se evalúa la simplificación del lenguaje técnico y la adecuación al destinatario. Estos criterios se integran en los ejes "Cumplimiento de la Tarea" y "Competencia Lingüística General" de la rúbrica DRA-HOLO.
+*   **Motor Autónomo (SUB-LIN-TRA-TECH / SUB-LIN-TRA-LIT):** El motor BMT-SHIFT mantiene su configuración autónoma completa (con umbral de éxito independiente y evaluación de Fidelidad Informativa al 50% + Adecuación de Registro al 50%) exclusivamente para los subarquetipos de Traducción.
 
-### B. CONFIGURACIÓN DE RÚBRICA DRA-HOLO (CERTACLES B1/B2)
-*   **Estructura de Evaluación (Ejes Institucionales):**
-    1. **Adecuación al Encargo (Task Achievement):** Cumplimiento exhaustivo de la extensión léxica (120-150 / 150-180 palabras) y de todos los puntos de control del enunciado. (0 - 2.5 pts).
-    2. **Cohesión y Coherencia:** Uso fluido de marcadores discursivos, organización en párrafos lógicos y progresión temática clara. (0 - 2.5 pts).
-    3. **Riqueza Léxica:** Uso de vocabulario variado y preciso. En nivel B2, se exige el uso de colocaciones y expresiones idiomáticas de frecuencia media. (0 - 2.5 pts).
-    4. **Corrección Gramatical:** Control de estructuras gramaticales. Se penalizan severamente los errores fosilizados (ej. concordancia sujeto-verbo, tiempos verbales básicos). (0 - 2.5 pts).
-*   **Regla de No-Compensación:** El sistema monitoriza si algún eje cae por debajo de 1.5 puntos. En la acreditación oficial de la UGR, una debilidad extrema en un eje (ej. Adecuación) puede comprometer la superación de la destreza completa.
+### B. CONFIGURACIÓN DE RÚBRICA DRA-HOLO (CERTACLES B1/B2) [CORREGIDO v5.0 - FIDELIDAD 100% UGR]
+*   **Estructura de Evaluación (Cinco Criterios Institucionales CLM-UGR):**
+    1. **Cumplimiento de la Tarea (Task Achievement):** Adecuación al tipo textual solicitado (carta, email, informe, ensayo, narración, reseña), cumplimiento de la extensión léxica obligatoria (**200-250 palabras para Tarea B1 / 250-300 palabras para Tarea B2**) y cobertura de todos los puntos de control informativos especificados en el enunciado. (0 - 2.0 pts).
+    2. **Coherencia y Cohesión:** Estructura lógica del texto, uso eficaz de marcadores del discurso, organización en párrafos con progresión temática clara y puntuación adecuada. (0 - 2.0 pts).
+    3. **Competencia Lingüística General:** Capacidad de expresión global: fluidez, naturalidad y adecuación del registro (informal/neutro para B1; formal añadido para B2). (0 - 2.0 pts).
+    4. **Corrección Gramatical:** Control de estructuras simples y complejas. Se penalizan especialmente los errores fosilizados (concordancia sujeto-verbo, tiempos verbales básicos, uso de preposiciones). (0 - 2.0 pts).
+    5. **Dominio y Riqueza de Vocabulario:** Precisión terminológica, variedad léxica y uso de expresiones idiomáticas según el nivel MCERL. En B2 se exige el uso de colocaciones y vocabulario abstracto. (0 - 2.0 pts).
+*   **Penalización Formal (FORM_PEN):** Descuentos automáticos sobre la nota bruta: -0.1 pts por cada falta de ortografía; -0.05 pts por cada error ortotipográfico (tildes, signos de puntuación). Umbral de exclusión: más de 5 faltas de ortografía en una sola tarea → anulación de la tarea (Nota: 0.0 — FAIL_LOGIC: FATAL en esa tarea).
+*   **Regla de No-Compensación entre Tareas:** Cada tarea se evalúa de forma independiente. La nota global de SD_WRIT es la media de ambas tareas, pero si una tarea es anulada por el umbral de exclusión de faltas, la destreza completa queda marcada como no superada.
 
 ### C. MOTOR DE VALIDACIÓN AUDITIVA (LISTENING RIGOR)
 *   **Control de Acceso:** El motor de reproducción de audio se bloquea herméticamente tras la segunda audición completa. El sistema registra el timestamp de cada reproducción para evitar manipulaciones de caché.
 *   **Validación de Ítems (RBT-SHORT-LANG):** Para las tareas de completado de esquemas o toma de notas, el motor valida respuestas de 1 a 4 palabras. Aplica un algoritmo de *Fuzzy Matching* con una tolerancia de distancia de Levenshtein mínima para errores tipográficos que no afecten al lema (ej. omisión de una letra muda), pero mantiene rigor absoluto en la semántica del concepto.
 
-### D. BAREMO DE PENALIZACIÓN FORMAL (FORM_PEN - INSTRUMENTAL)
-En cumplimiento de la normativa del CLM-UGR, se aplican descuentos automáticos sobre la nota bruta de la producción escrita (Writing/Mediation):
+### D. BAREMO DE PENALIZACIÓN FORMAL (FORM_PEN - INSTRUMENTAL) [CORREGIDO v5.0 - FIDELIDAD 100% UGR]
+En cumplimiento de la normativa del CLM-UGR, se aplican descuentos automáticos sobre la nota bruta de la producción escrita (SD_WRIT únicamente — la Mediación NO es destreza independiente en SUB-LIN-INSTR):
 *   **Faltas de Ortografía:** -0.1 puntos por cada error ortográfico.
-*   **Tildes y Puntuación:** -0.05 puntos por cada error ortotipográfico.
-*   **Umbral de Exclusión:** La presencia de más de 5 faltas de ortografía en una sola tarea conlleva la anulación inmediata de la misma (Nota: 0.0), marcando la destreza como FAIL_LOGIC: FATAL.
+*   **Tildes y Puntuación:** -0.05 puntos por cada error ortotipográfico (incluyendo puntuación ortotipográfica técnica).
+*   **Umbral de Exclusión Unificado:** La presencia de más de 5 faltas de ortografía en una sola tarea conlleva la anulación inmediata de esa tarea (Nota: 0.0 — FAIL_LOGIC: FATAL en esa tarea). Este umbral es coherente con el declarado en V06DOC_SUBARCHETYPES.md y V06DOC_LEVELS.md para SUB-LIN-INSTR.
+*   **Nota de Coherencia Documental:** Este baremo aplica exclusivamente a SD_WRIT. Las destrezas SD_READ y SD_LIST no aplican penalizaciones por respuesta incorrecta (NO_NEGATIVE_MARKING activo). La destreza SD_SPEAK es evaluada mediante rúbrica analítica DIA-INTERACT sin baremo de faltas ortográficas.

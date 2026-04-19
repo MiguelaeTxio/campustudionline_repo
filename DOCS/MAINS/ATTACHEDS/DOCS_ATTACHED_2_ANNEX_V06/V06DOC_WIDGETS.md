@@ -1,7 +1,11 @@
 # /home/MiguelAeTxio/PROJECTS/CampuStudiOnline/DOCS/MAINS/ATTACHEDS/DOCS_ATTACHED_2_ANNEX_V06/V06DOC_WIDGETS.md
 # V06DOC_WIDGETS - CATÁLOGO DE COMPONENTES DE INTERFAZ (V1.2 - REFACTORIZACIÓN UGR)
 
-## 1. LIBRERÍA DE COMPONENTES TÉCNICOS\n\n*   **W-TRA-CAT-EMULATOR (Simulador de Herramienta TAO) [NUEVO 2026]**\n    *   **Uso:** Traducción Profesional (SUB-LIN-TRA-TECH).\n    *   **Funciones:** Panel de traducción segmentada con ventana de sugerencias de memoria y glosario obligatorio. Audita el uso de la terminología sugerida.
+## 1. LIBRERÍA DE COMPONENTES TÉCNICOS
+
+*   **W-TRA-CAT-EMULATOR (Simulador de Herramienta TAO) [NUEVO 2026]**
+    *   **Uso:** Traducción Profesional (SUB-LIN-TRA-TECH).
+    *   **Funciones:** Panel de traducción segmentada con ventana de sugerencias de memoria y glosario obligatorio. Audita el uso de la terminología sugerida.
 
 *   W-TECH-CALC (Consola de Cálculo Procedimental):
     *   Uso: Ingenierías y Ciencias.
@@ -95,19 +99,19 @@ Esta sección define el comportamiento técnico y visual de los componentes de i
     2. **Inhibición de Navegación (Non-Scrubbing):** La barra de progreso es meramente informativa. Se deshabilita la interacción del alumno para adelantar o retrasar el audio, garantizando la audición lineal obligatoria en las pruebas de acreditación.
     3. **Persistencia de Estado:** En caso de refresco de página (F5), el widget recupera el número de reproducciones consumidas desde la base de datos de sesión.
 
-### W-OCR-PRO (Módulo de Auditoría de Producción Manuscrita)
-*   **Uso:** Destreza SD_WRIT (Producción Escrita) y SD_MEDI (Mediación).
+### W-OCR-PRO (Módulo de Auditoría de Producción Manuscrita) [ACTUALIZADO v5.0]
+*   **Uso:** Destreza SD_WRIT (Producción Escrita). En SUB-LIN-INSTR, la Mediación no constituye destreza independiente; este widget opera exclusivamente en el contexto de SD_WRIT cuando el encargo requiere producción manuscrita digitalizada.
 *   **Funciones de Multimodalidad (Miguel Ángel):**
-    1. **Captura y Pre-procesamiento:** Interfaz de cámara con guías de encuadre. Aplica algoritmos de normalización de imagen (contraste, brillo y eliminación de ruido) para optimizar la legibilidad del manuscrito.
-    2. **Garantía de Autoría:** Registra metadatos de la captura (timestamp, geolocalización básica del dispositivo) para certificar que la producción es original y realizada en el tiempo estipulado para la sección.
-    3. **Envío Estructurado:** El widget envía la imagen optimizada al motor de evaluación para su análisis por el motor OCR de alta fidelidad integrado con la IA.
+    1. **Captura y Pre-procesamiento:** Interfaz de cámara con guías de encuadre. Aplica algoritmos de normalización de imagen (contraste, brillo y eliminación de ruido) para optimizar la legibilidad del manuscrito. Emula el protocolo de examen presencial del CLM-UGR, donde la producción escrita se realiza obligatoriamente con bolígrafo.
+    2. **Garantía de Autoría:** Registra metadatos de la captura (timestamp, geolocalización básica del dispositivo) para certificar que la producción es original y realizada dentro del tiempo estipulado para la sección.
+    3. **Envío Estructurado:** El widget envía la imagen optimizada al motor de evaluación para su análisis por el motor OCR de alta fidelidad integrado con la IA (gemini-2.5-flash).
 
-### W-MEDI-LAYOUT (Interfaz de Doble Panel para Transferencia)
-*   **Uso:** Destreza SD_MEDI (Mediación Lingüística).
+### W-MEDI-LAYOUT (Interfaz de Doble Panel para Transferencia) [ACTUALIZADO v5.0]
+*   **Uso:** Componente auxiliar de SD_WRIT (Producción Escrita) en SUB-LIN-INSTR cuando el encargo de escritura incluye un estímulo fuente (gráfico, tabla de datos o texto especializado) que el alumno debe procesar e integrar en su producción. No constituye sección de examen autónoma en INSTR. Para los subarquetipos de Traducción (SUB-LIN-TRA-TECH / SUB-LIN-TRA-LIT), mantiene su función como interfaz principal de la fase documental y de transferencia.
 *   **Distribución Visual (UX Design):**
-    1. **Panel Estímulo (Sticky Left/Top):** Visualización persistente del material de origen (gráfico, tabla de datos o texto especializado). No permite edición.
-    2. **Panel de Acción (Right/Bottom):** Editor de texto multimodal (W-HUM-TEXT) donde el alumno realiza la síntesis o adaptación.
-    3. **Interactividad de Cita:** Permite seleccionar fragmentos de datos en el Panel Estímulo y arrastrarlos al Panel de Acción para generar una cita fáctica precisa, evaluando la capacidad del alumno para manejar fuentes de información técnica.
+    1. **Panel Estímulo (Sticky Left/Top):** Visualización persistente del material de origen (gráfico, tabla de datos o texto especializado). No permite edición por parte del alumno. Se mantiene visible durante toda la duración de la tarea de producción escrita.
+    2. **Panel de Acción (Right/Bottom):** Editor de texto multimodal (W-HUM-TEXT) donde el alumno redacta su producción escrita. Soporta los cuatro modos de entrada del W-INSTR-SELECTOR (Teclado Nativo, Occidentalización, Pad de Trazos, OCR/Captura).
+    3. **Interactividad de Cita:** Permite seleccionar fragmentos de datos del Panel Estímulo y arrastrarlos al Panel de Acción para generar una referencia fáctica precisa. Esta funcionalidad evalúa la capacidad del alumno para manejar e integrar fuentes de información técnica en su producción escrita.
 
 ### W-INSTR-SELECTOR (Selector Multimodal CertAcles)
 *   **Comportamiento:** Componente global inyectado en todo widget de entrada de texto.

@@ -403,6 +403,28 @@ CELERY_BEAT_SCHEDULE = {
 # ==============================================================================
 
 # --- Forensic Logging Configuration (ROBUST V2) ---
+# SilentStreamHandler: subclass of StreamHandler that suppresses OSError
+# exceptions caused by writing to a closed stderr/stdout descriptor.
+# This occurs on PythonAnywhere when the WSGI worker process is recycled
+# and the console stream becomes invalid. Without this guard, the logging
+# system catches the OSError and re-logs it via the root logger, producing
+# the repetitive 'OSError: write error' entries observed in django.log.
+# SilentStreamHandler: subclase de StreamHandler que suprime las excepciones
+# OSError causadas por escribir en un descriptor stderr/stdout cerrado.
+# Ocurre en PythonAnywhere cuando el proceso worker WSGI se recicla y el
+# stream de consola queda inválido. Sin esta guardia, el sistema de logging
+# captura el OSError y lo vuelve a loguear vía el logger raíz, produciendo
+# las entradas repetitivas 'OSError: write error' observadas en django.log.
+import logging as _logging_module
+import sys as _sys_module
+
+class _SilentStreamHandler(_logging_module.StreamHandler):
+    def emit(self, record):
+        try:
+            super().emit(record)
+        except OSError:
+            pass
+
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
@@ -414,7 +436,7 @@ LOGGING = {
     "handlers": {
         "console": {
             "level": "DEBUG",
-            "class": "logging.StreamHandler",
+            "class": "core.settings._SilentStreamHandler",
             "formatter": "verbose",
         },
         "file": {

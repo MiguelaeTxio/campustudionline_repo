@@ -37,12 +37,12 @@ El itinerario determina la profundidad del prompt, el rigor de la rúbrica y la 
 ## 2. SUBDIVISIONES TÉCNICAS (DESTREZAS POR GRUPO)
 Define las secciones del examen que activan widgets y rúbricas específicas.
 
-### A. BLOQUE COMUNICATIVO (Modelos CLM/CertAccles)
-*   SD_READ: Análisis exegético y comprensión inferencial.
-*   SD_WRIT: Producción literaria/científica y síntesis argumental.
-*   SD_LIST: Discriminación de registros y captación de matices fonéticos.
-*   SD_SPEAK: Interacción fluida (Evaluada mediante el módulo UniversIA).
-*   SD_MEDI: Transferencia de información (Resumen crítico, interpretación de datos).
+### A. BLOQUE COMUNICATIVO (Modelos CLM/CertAcles)
+*   SD_READ: Análisis exegético y comprensión inferencial. Estructura binivel (B1/B2) según distribución oficial CLM-UGR (5 textos: 2×B1 + 1 bisagra + 2×B2).
+*   SD_LIST: Discriminación de registros, captación de matices fonéticos y toma de notas académicas. Estructura binivel (5 grabaciones: 2×B1 + 1 bisagra + 2×B2). Límite de 2 reproducciones por pista.
+*   SD_WRIT: Producción escrita dirigida y multimodal. Extensiones oficiales CLM-UGR: Tarea B1 (200-250 palabras) / Tarea B2 (250-300 palabras).
+*   SD_SPEAK: Interacción oral evaluada mediante el módulo UniversIA. Tres fases: vida cotidiana (B1) / descripción de fotografía (B1-B2) / opinión sobre tema (B1-B2).
+*   **NOTA CRÍTICA (v5.0):** SD_MEDI queda eliminada como subdivisión autónoma del subarquetipo SUB-LIN-INSTR. La mediación no constituye destreza independiente en el examen oficial CertAcles del CLM-UGR. Queda reservada como componente auxiliar de SD_WRIT cuando el encargo lo requiera, y como subdivisión autónoma exclusivamente en los subarquetipos SUB-LIN-TRA-TECH y SUB-LIN-TRA-LIT.
 
 ### B. BLOQUE RESOLUTIVO (Modelos Politécnica/Ciencias)
 *   SD_THEO: Validación de leyes, axiomas y principios fundamentales.
@@ -56,10 +56,11 @@ Define las secciones del examen que activan widgets y rúbricas específicas.
 *   SD_PROC: Ejecución lógica de maniobras o trámites de derecho procesal.
 *   SD_ETHI: Evaluación deontológica, bioética y seguridad jurídica/clínica.
 
-#
-## 3. DESGLOSE COMPETENCIAL DETALLADO: SUB-LIN-INSTR (UGR 2026) [ADICIÓN QUIRÚRGICA - FIDELIDAD 100%]
+## 3. DESGLOSE COMPETENCIAL DETALLADO POR SUBARQUETIPO (UGR 2026) [ACTUALIZADO v5.0 - FIDELIDAD 100%]
 
-Esta sección desglosa las competencias específicas y el nivel de rigor académico aplicado a cada fase del subarquetipo instrumental (CertAcles / CLM-UGR).
+Esta sección desglosa las competencias específicas y el nivel de rigor académico aplicado a cada subdivisión de los subarquetipos de la Rama Lenguas.
+
+### 3.1. SUB-LIN-INSTR — Competencias por Subdivisión (CertAcles / CLM-UGR)
 
 ### SD_READ (Comprensión de Lectura - Proceso de Exégesis e Inferencia)
 *   **Dominios de Competencia:** COMP_ESP (Conocimiento léxico-gramatical) y COMP_GEN (Capacidad de síntesis).
@@ -83,19 +84,36 @@ Esta sección desglosa las competencias específicas y el nivel de rigor académ
 *   **Taxonomía Cognitiva:** COG_EVAL (Justificación de posturas) y COG_CREA (Reacción ante imprevistos).
 *   **Rigor Académico:** Interacción en tiempo real. El alumno debe mantener un discurso coherente y adaptado al registro (formal/informal) durante la mediación dialéctica con UniversIA.
 
-### SD_MEDI (Mediación Lingüística - Transferencia Estratégica)
-*   **Dominios de Competencia:** COMP_TRA (Pensamiento crítico) y COMP_PROF (Adaptación del mensaje).
-*   **Taxonomía Cognitiva:** COG_ANA (Análisis de fuentes técnicas) y COG_UND (Simplificación semántica).
-*   **Rigor Académico:** Fidelidad Informativa. La subdivisión exige la síntesis de un estímulo complejo (gráfico/tabla/texto especializado) para su correcta transferencia a un destinatario no experto, evitando la pérdida de datos nucleares.
+## D. BLOQUE CRÍTICO/ARTÍSTICO (Modelos Bellas Artes / Historia / Filosofía)
+*   SD_SOURCE: Crítica de fuentes primarias (Paleografía, Epigrafía, Arqueología, Archivística). Identificación de la tipología documental y datación paleográfica.
+*   SD_DISC: Construcción de discurso estético, histórico o filosófico coherente. Argumentación dialéctica y contextualización historiográfica o filosófica.
+*   SD_ARTE: Validación de técnica matérica, composición formal y coherencia semántica de la obra. Análisis iconográfico e iconológico según los niveles de Panofsky.
+*   SD_HERME: Exégesis crítica de textos filosóficos, literarios o musicológicos. Identificación de la tradición hermenéutica y posicionamiento argumentado del alumno.
 
-## D. BLOQUE CRÍTICO/ARTÍSTICO (Modelos Bellas Artes/Letras)
+### E. BLOQUE NORMATIVO (Modelo SUB-LIN-NORM / UGR — Filología Hispánica)
+*   SD_CORPUS_ANALYSIS: Investigación emulada de frecuencias y validación de usos reales en CORPES XXI y CREA. Interpretación de mapas geográficos y frecuencias por registro (académico, periodístico, coloquial). Motor: EV-NORM-ANALYSIS. Widget: W-LAW-NAV (Modo Lingüístico).
+*   SD_MORPH_ANTINORM: Detección y corrección razonada de fenómenos morfosintácticos antinormativos: queísmo, dequeísmo, leísmo de persona y de cosa, laísmo, loísmo, discordancias en clíticos y pasivas reflejas. Se exige identificación técnica precisa del fenómeno (nomenclatura exacta). Motor: RBT-CANON. Widget: W-OBJ-STRIKE y W-TXT-CLOZE.
+*   SD_ORTHO_PRESCRIPTIVE: Aplicación rigurosa de la normativa ortográfica y ortotipográfica de la RAE/ASALE (OLE 2010). Edición crítica de textos con dificultades en mayúsculas diacríticas, puntuación compleja, acentuación de compuestos y gestión de extranjerismos. Motor: EV-NORM-ANALYSIS. Widget: W-HUM-TEXT (Modo Revisión).
+*   SD_CRITICAL_NORM: Redacción de justificación académica argumentada citando explícitamente la NGLE o el DPD. Valoración de la adecuación del registro a la situación comunicativa formal (jurídica, administrativa, académica). Motor: DRA-HOLO. Widget: W-HUM-TEXT con SPLIT_TEXT.
 
-### E. BLOQUE NORMATIVO (Modelo SUB-LIN-NORM / UGR)
-*   SD_CORPUS_ANALYSIS: Investigación de frecuencias y validación de usos en CORPES XXI/CREA.
-*   SD_MORPH_ANTINORM: Análisis de fenómenos críticos (queísmo, leísmo, concordancias).
-*   SD_ORTHO_PRESCRIPTIVE: Aplicación de la normativa ortográfica y de puntuación (OLE 2010).
-*   SD_CRITICAL_NORM: Valoración de la adecuación del registro a la situación comunicativa formal.
+## 3.2. SUB-LIN-NORM — Competencias por Subdivisión (Filología Hispánica / UGR 2026)
 
-*   SD_SOURCE: Crítica de fuentes primarias (Paleografía, Epigrafía, Arqueología).
-*   SD_DISC: Construcción de discurso estético, histórico o filosófico coherente.
-*   SD_ARTE: Validación de técnica matérica, composición y coherencia de obra.
+*   **SD_CORPUS_ANALYSIS:**
+    *   **Dominios de Competencia:** COMP_ESP (Conocimiento de herramientas de corpus lingüístico) y COMP_TRA (Pensamiento crítico sobre la norma vs. el uso real).
+    *   **Taxonomía Cognitiva:** COG_ANA (Interpretación de frecuencias y distribución geográfica/registral) y COG_EVAL (Juicio sobre la aceptabilidad de construcciones en conflicto).
+    *   **Rigor Académico:** Nivel C1/C2. El alumno debe demostrar capacidad para leer e interpretar resultados de corpus con criterio científico, diferenciando el uso culto del coloquial y el peninsular del americano.
+
+*   **SD_MORPH_ANTINORM:**
+    *   **Dominios de Competencia:** COMP_ESP (Conocimiento de la gramática normativa panhispánica) y COMP_GEN (Capacidad de corrección y justificación argumentada).
+    *   **Taxonomía Cognitiva:** COG_APP (Aplicación de la norma a casos concretos) y COG_ANA (Identificación y clasificación técnica del fenómeno antinormativo).
+    *   **Rigor Académico:** Nivel C1/C2. Se exige el uso estricto de la nomenclatura técnica. La paráfrasis o corrección sin identificación del fenómeno no se admite.
+
+*   **SD_ORTHO_PRESCRIPTIVE:**
+    *   **Dominios de Competencia:** COMP_ESP (Dominio de la OLE 2010 y normas de edición técnica) y COMP_PROF (Adecuación a los estándares de la comunicación académica y profesional).
+    *   **Taxonomía Cognitiva:** COG_APP (Aplicación de las reglas ortotipográficas) y COG_EVAL (Detección y corrección de desviaciones en textos complejos).
+    *   **Rigor Académico:** Rigor x1.7. Penalización severa por desviaciones de la OLE 2010. La corrección ortotipográfica es condición necesaria pero no suficiente: se exige además justificación de la intervención.
+
+*   **SD_CRITICAL_NORM:**
+    *   **Dominios de Competencia:** COMP_ESP (Dominio de las obras de referencia de la RAE/ASALE) y COMP_GEN (Capacidad de redacción académica argumentada).
+    *   **Taxonomía Cognitiva:** COG_EVAL (Defensa razonada de una postura normativa) y COG_CREA (Redacción original con fundamentación bibliográfica).
+    *   **Rigor Académico:** Nivel C2. Se exige cita explícita y correcta de la NGLE o el DPD. La cita falsa o inexacta de una obra de referencia supone el suspenso automático del ítem (FAIL_LOGIC: FATAL).
