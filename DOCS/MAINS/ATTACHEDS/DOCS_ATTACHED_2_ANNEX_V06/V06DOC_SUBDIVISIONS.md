@@ -152,3 +152,44 @@ Esta sección desglosa las competencias específicas y el nivel de rigor académ
     *   **Dominios de Competencia:** COMP_ESP (Dominio de las obras de referencia de la RAE/ASALE) y COMP_GEN (Capacidad de redacción académica argumentada).
     *   **Taxonomía Cognitiva:** COG_EVAL (Defensa razonada de una postura normativa) y COG_CREA (Redacción original con fundamentación bibliográfica).
     *   **Rigor Académico:** Nivel C2. Se exige cita explícita y correcta de la NGLE o el DPD. La cita falsa o inexacta de una obra de referencia supone el suspenso automático del ítem (FAIL_LOGIC: FATAL).
+
+### 3.3. SUB-LIN-TRA-TECH — Competencias por Subdivisión (Traducción Especializada B-A Inglés, cód. 252113T / FTI-UGR 2026) [NUEVO v5.1 - FIDELIDAD 100% UGR]
+
+*   **SD_TRA_ANALYSIS:**
+    *   **Dominios de Competencia:** COMP_ESP (Conocimiento de los lenguajes de especialidad y los géneros textuales en inglés y español) y COMP_TRA (Capacidad de análisis de la función textual, el destinatario y los problemas de traducción antes de ejecutar el encargo).
+    *   **Taxonomía Cognitiva:** COG_ANA (Identificación de la función textual, registro, marco comunicativo y problemas potenciales: neologismos, ambigüedades sintácticas, densidad terminológica) y COG_EVAL (Juicio sobre la estrategia traductora más adecuada al Skopos del encargo).
+    *   **Rigor Académico:** Nivel profesional (ITIN_PROF). Conforme a CE03 y CE11 de la Guía Docente 252113T. El análisis previo es condición necesaria para acceder a las fases siguientes; su omisión o superficialidad penaliza el conjunto del encargo.
+
+*   **SD_TERM_RESEARCH:**
+    *   **Dominios de Competencia:** COMP_ESP (Dominio de las fuentes documentales y terminológicas especializadas: IATE, UNTERM, diccionarios técnicos bilingües) y COMP_PROF (Capacidad de gestión y elaboración de glosarios terminológicos para el encargo).
+    *   **Taxonomía Cognitiva:** COG_APP (Búsqueda, selección y validación de equivalencias terminológicas unívocas en fuentes de autoridad) y COG_ANA (Detección de lagunas terminológicas y resolución documentada).
+    *   **Rigor Académico:** Nivel profesional (ITIN_PROF). Conforme a CE21 y CE22 de la Guía Docente 252113T. La validación terminológica debe basarse en fuentes de autoridad acreditadas. El uso de lemas no especializados en dominios técnicos activa la penalización EV-TRA-PRECISION-TECH Categoría B (-0.5 por término).
+
+*   **SD_TRA_DRAFT:**
+    *   **Dominios de Competencia:** COMP_ESP (Precisión léxica, corrección gramatical y adecuación al género textual en español) y COMP_TRA (Fidelidad al sentido del texto fuente y cumplimiento del Skopos del encargo).
+    *   **Taxonomía Cognitiva:** COG_APP (Transferencia lingüística del inglés al español aplicando las estrategias seleccionadas en SD_TRA_ANALYSIS) y COG_CREA (Resolución de problemas de traducción no previstos con soluciones documentalmente justificadas).
+    *   **Rigor Académico:** Nivel profesional (ITIN_PROF). Textos de 200-250 palabras por bloque temático (jurídico, CSH, científico-técnico) en 1 hora, conforme al baremo oficial de evaluación de la Guía Docente 252113T. Se aplica la jerarquía EV-TRA-PRECISION-TECH: errores de Categoría A (contrasentido, sin sentido, falso sentido) son eliminatorios para el ítem afectado.
+
+*   **SD_TRA_REVIEW:**
+    *   **Dominios de Competencia:** COMP_PROF (Aplicación de los estándares de calidad de la ISO 17100:2015 a la revisión de traducciones) y COMP_GEN (Capacidad de detección y corrección de errores de cohesión, coherencia y adecuación de registro en la traducción propia y ajena).
+    *   **Taxonomía Cognitiva:** COG_EVAL (Evaluación crítica de la calidad traductora aplicando criterios profesionales: coherencia terminológica, adecuación al género, corrección ortotipográfica OLE 2010) y COG_APP (Post-edición de output de Traducción Automática: detección de alucinaciones, errores de cohesión y desviaciones de registro).
+    *   **Rigor Académico:** Nivel profesional (ITIN_PROF). Conforme a CE19 y CE23 de la Guía Docente 252113T. La revisión de TA exige distinguir errores estructurales de errores superficiales. La ausencia de corrección ortotipográfica en la versión final activa EV-TRA-PRECISION-TECH Categoría C (-0.2 por error).
+
+### 3.4. SUB-LIN-TRA-LIT — Competencias por Subdivisión (Literatura y Traducción Lengua B Inglés, cód. 25211NJ / FTI-UGR 2026) [NUEVO v5.1 - FIDELIDAD 100% UGR]
+
+*   **NOTA INSTITUCIONAL:** Las subdivisiones de SUB-LIN-TRA-LIT se anclan en la asignatura optativa Literatura y Traducción Lengua B Inglés (25211NJ), 3º curso, 2º semestre, del Grado en Traducción e Interpretación de la FTI-UGR. No existe asignatura obligatoria de Traducción Literaria en este Grado; la competencia literaria se canaliza por optativas de especialización. El itinerario es ITIN_MAI con nivel C2 hermenéutico (LVL_C).
+
+*   **SD_TRA_STYLE:**
+    *   **Dominios de Competencia:** COMP_ESP (Conocimiento de las variaciones formales y estilísticas de los textos literarios en inglés como resultado de su contexto histórico y cultural) y COMP_TRA (Capacidad de análisis de la voz del autor, rasgos dialectales o cronoflectales, figuras retóricas y desafíos de transferencia estética).
+    *   **Taxonomía Cognitiva:** COG_ANA (Identificación y descripción de los rasgos estilísticos, culturemas e intertextos relevantes del texto fuente que condicionan las decisiones traductoras) y COG_EVAL (Valoración de los retos que plantea la voz autorial para la transferencia a la lengua meta).
+    *   **Rigor Académico:** Nivel C2 hermenéutico (LVL_C / ITIN_MAI). Conforme a las competencias específicas del módulo B y C de la Guía Docente 25211NJ. El análisis estilístico debe demostrar consciencia de la relación entre el discurso literario y el universo de valores del idioma original (Reynolds, 2011). La superficialidad o genericidad en el análisis impide el acceso a SD_TRA_CREATIVE.
+
+*   **SD_TRA_CREATIVE:**
+    *   **Dominios de Competencia:** COMP_TRA (Recreación del efecto estético y literario en la lengua meta bajo el marco del Skopos: gestión de culturemas, referencias intertextuales, juegos de palabras y ritmo en poesía y teatro) y COMP_PROF (Dominio de las convenciones del género literario en español: registro literario, puntuación expresiva, sintaxis poética).
+    *   **Taxonomía Cognitiva:** COG_CREA (Generación de soluciones traductoras originales que preserven el efecto estético del texto fuente, con justificación de las compensaciones adoptadas) y COG_APP (Aplicación de las estrategias traductoras seleccionadas en SD_TRA_STYLE al texto completo).
+    *   **Rigor Académico:** Nivel C2 hermenéutico (LVL_C / ITIN_MAI). Conforme a la competencia específica del módulo D de la Guía Docente 25211NJ y a la metodología de talleres de traducción poética y shakesperiana. Se evalúa mediante rúbrica DRA-HOLO: adecuación al Skopos, calidad literaria de la versión, coherencia de las compensaciones y dominio del género en la lengua meta.
+
+*   **SD_TRA_CRIT:**
+    *   **Dominios de Competencia:** COMP_GEN (Capacidad de redacción de un comentario exegético académico en el que se defiendan razonadamente las decisiones traductoras adoptadas, con referencia a la bibliografía de la traductología literaria) y COMP_PROF (Consciencia del papel de la traducción en la formación de cánones literarios y en la transmisión intercultural de valores).
+    *   **Taxonomía Cognitiva:** COG_EVAL (Defensa argumentada de las opciones traductoras, incluyendo la justificación de las pérdidas inevitables y las compensaciones literarias adoptadas) y COG_CREA (Integración de perspectivas críticas de la traductología literaria: Venuti 2017, Reynolds 2011, Skopos).
+    *   **Rigor Académico:** Nivel C2 hermenéutico (LVL_C / ITIN_MAI). Conforme a los criterios de evaluación de la Guía Docente 25211NJ (ensayos críticos de 1500-2500 palabras evaluados mediante Turnitin). Se exige estructura académica rigurosa, cita bibliográfica correcta y argumentación original. La ausencia de fundamentación bibliográfica o la reproducción acrítica de opiniones ajenas activa FAIL_LOGIC: FATAL para la destreza.

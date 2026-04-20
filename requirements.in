@@ -36,7 +36,7 @@ pytz==2024.1
 tzdata==2024.1
 
 # ---- APIs and External Services / APIs y Servicios Externos ----
-google-genai>=1.51.0 # SDK Unificado Gemini v1
+google-genai>=1.73.1 # SDK Unificado Gemini v1
 google-cloud-vision # Para OCR de alta fidelidad en albaranes
 celery==5.4.0
 django-webpush

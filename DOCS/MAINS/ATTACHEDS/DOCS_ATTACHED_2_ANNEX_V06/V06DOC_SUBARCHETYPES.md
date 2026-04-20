@@ -129,7 +129,7 @@ Este documento define la **Configuración Estructural Fija** (Receta) que cada E
         - **Corrección Formal Obligatoria:** El informe propio del alumno (SD_STYLE, SD_ANNOT, SD_EVAL) debe estar libre de errores ortotipográficos. La presencia de más de 3 faltas ortotipográficas en el informe del alumno penaliza la destreza en un 20% adicional sobre la nota bruta.
     *   **Rigor Engine:** x1.5 (Nivel C1 - Profesional/Editorial). Inferior al x1.8 de PHILO dado el perfil aplicado y no epistemológico de la asignatura fuente.
 
-*   **SUB-LIN-NORM: Modelo Norma y Uso (UGR / Grado en Filología Hispánica) [REFACTORIZADO SUBATÓMICO - FIDELIDAD 100% UGR]**
+*   **SUB-LIN-NORM: Modelo Norma y Uso (UGR / Grado en Filología Hispánica — Asignatura: El Español Actual: Norma y Uso, cód. 2831111, 1º Grado, Troncal, Dpto. Lengua Española) [CERTIFICADO v5.1 — 2026-04-20]**
     *   **Perfil Institucional:** Evaluación avanzada de la competencia normativa, prescriptiva y descriptiva del español contemporáneo bajo los estándares del Departamento de Lengua Española de la Universidad de Granada (UGR). El modelo evalúa la capacidad científica del alumno para discernir entre la norma panhispánica culta y los fenómenos de variación lingüística, utilizando como herramientas la gramática académica y el análisis de corpus.
     *   **Secuencia Genética Obligatoria (Cuatri-Destreza Normativa):**
         1. **SD_CORPUS_ANALYSIS (Investigación y Validación Empírica):**
@@ -157,15 +157,15 @@ Este documento define la **Configuración Estructural Fija** (Receta) que cada E
         - **Política de Tolerancia Cero:** El error en la identificación técnica de un fenómeno (ej. confundir un queísmo con una falta de régimen) o la cita falsa de una obra de referencia supone el suspenso automático del ítem (FAIL_LOGIC: FATAL).
         - **Rigor Engine:** x1.7 (Nivel C1/C2 - Normativo).
 
-*   **SUB-LIN-TRA-TECH: Modelo de Traducción Profesional y Técnica (FTI UGR) [REFACTORIZADO 2026]**
+*   **SUB-LIN-TRA-TECH: Modelo de Traducción Profesional y Técnica (FTI UGR — Asignatura: Traducción Especializada B-A Inglés, cód. 252113T, 3º Grado, Obligatoria) [CERTIFICADO v5.1 — 2026-04-20]**
     *   **Perfil Institucional:** Evaluación de la competencia traductora especializada (Científico-Técnica, Jurídico-Económica) bajo el enfoque del Skopos y la ISO 17100.
     *   **Secuencia Genética Obligatoria (Fidelidad 100%):**
         1.  **SD_TRA_ANALYSIS (Análisis del Encargo):** Identificación de la función textual, el destinatario y los problemas potenciales del texto (neologismos, ambigüedades sintácticas) antes de la traducción.
         2.  **SD_TERM_RESEARCH (Fase Documental):** Creación de un glosario técnico bilingüe basado en fuentes de autoridad (IATE, UNTERM). Validación de equivalencias terminológicas unívocas.
-        3.  **SD_TRA_DRAFT (Traducción Directa):** Traducción de dos textos fuente de 350 palabras cada uno. Se evalúa la precisión léxica, el cumplimiento del registro y la adecuación al género textual.
+        3.  **SD_TRA_DRAFT (Traducción Directa):** Traducción de textos especializados de entre 200-250 palabras cada uno. Se evalúa la precisión léxica, el cumplimiento del registro y la adecuación al género textual.
         4.  **SD_TRA_REVIEW (Control de Calidad y Post-edición):** Revisión de estilo y coherencia. Incluye la post-edición de un output de Traducción Automática (TA) para detectar alucinaciones y errores de cohesión.
     *   **Protocolo de Superación:** Umbral mínimo del 50% en cada sección de traducción de forma independiente. Sin compensación (FAIL_LOGIC: FATAL).
-*   **SUB-LIN-TRA-LIT: Modelo de Traducción Literaria y Editorial (FTI UGR) [REFACTORIZADO QUIRÚRGICO]**
+*   **SUB-LIN-TRA-LIT: Modelo de Traducción Literaria y Editorial (FTI UGR — Asignatura: Literatura y Traducción Lengua B Inglés, cód. 25211NJ, 3º Grado, Optativa) [CERTIFICADO v5.1 — 2026-04-20]**
     *   **Perfil:** Traducción de textos creativos, poéticos y humanísticos basada en los criterios de la FTI (UGR).
     *   **Secuencia Genética Obligatoria (3 Fases):**
         1. **SD_TRA_STYLE (Análisis Estilístico Comparado):** Identificación de la voz del autor, rasgos dialectales/cronoflectales y desafíos retóricos. (Widget: W-HUM-TEXT).
