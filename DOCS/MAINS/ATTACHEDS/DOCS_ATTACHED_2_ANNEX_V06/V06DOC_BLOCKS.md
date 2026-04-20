@@ -18,10 +18,22 @@
     *   Calidad: No admite paráfrasis en niveles MAIOR o PROF.
     *   Parámetro: TERM_PREC (Máximo).
 
-*   **RBT-SHORT-LANG (Respuesta Breve Lingüística - UGR/CertAcles) [REFACTORIZADO V4.2]**
+*   **RBT-SHORT-LANG (Respuesta Breve Lingüística - UGR/CertAcles) [REFACTORIZADO V5.1]**
     *   **Mecánica:** Validación de precisión léxica y morfología exacta.
     *   **Extensión:** 1-4 palabras (Filtro automático).
-    *   **Módulo de Trazos (Minor/Iniciación):** En lenguas no latinas, el motor valida el ductus (orden y dirección de trazos) y la integridad grafémica del carácter mediante comparación de patrones OCR. La desviación del ductus normativo penaliza el ítem en un 50%.
+    *   **Módulo de Trazos (SUB-LIN-MINOR — Lenguas No Latinas) [AMPLIADO v5.1 - FIDELIDAD 100% UGR]:**
+        En el subarquetipo SUB-LIN-MINOR, cuando el `target_language_code` corresponde a una lengua no latina, el motor activa el Módulo de Trazos en colaboración con el widget W-CALLI-PAD. El módulo valida dos dimensiones independientes:
+        1.  **Validación de Ductus (Orden y Dirección de Trazos):** El motor verifica que la secuencia de trazos capturada por W-CALLI-PAD se corresponde con el ductus normativo de la lengua objetivo. La referencia normativa aplicada por `target_language_code` es:
+            - **Japonés (`ja`):** Norma MEXT (Ministerio de Educación japonés) para el orden de trazos de kana y kanji de uso común (jōyō kanji).
+            - **Árabe (`ar`):** Norma de escritura cursiva del árabe estándar moderno (MSA), con validación de la unión correcta de grafemas en posición inicial, medial y final de palabra.
+            - **Griego moderno (`el`):** Norma de escritura minúscula del griego moderno estándar, con validación de ligaduras y orden de trazos según la caligrafía escolar griega oficial.
+            - **Checo (`cs`):** Validación de los diacríticos especiales (háček, čárka) como parte integral del trazo — la omisión o el posicionamiento erróneo de un diacrítico computa como falta caligráfica.
+        2.  **Validación de Integridad Grafémica:** Comparación del carácter resultante con la base de patrones OCR de alta fidelidad (integrado con `gemini-2.5-flash`) para verificar la legibilidad y corrección formal del grafema, independientemente del ductus.
+        *   **Baremo de Penalización del Módulo de Trazos:**
+            - Ductus erróneo (orden/dirección incorrectos): penalización del **50%** sobre la puntuación del ítem caligráfico.
+            - Integridad grafémica comprometida (carácter ilegible o irreconocible): **FAIL_LOGIC: FATAL** para ese ítem (nota 0.0).
+            - Diacrítico omitido o mal posicionado (checo): penalización del **50%** sobre el ítem.
+        *   **Activación Condicional:** El Módulo de Trazos se activa únicamente en la destreza SD_PHON_GRAPH del subarquetipo SUB-LIN-MINOR con `target_language_code` no latino. Para SUB-LIN-INSTR y para las lenguas latinas de MINOR (alemán, francés, inglés, polaco, portugués), este módulo permanece inactivo y RBT-SHORT-LANG opera en modo estándar de validación léxica.
 
 *   RPP-TRAZA (Resolución Procedimental con Arrastre de Error):
     *   Mecánica: Calificación multietapa con validación de la coherencia lógica.

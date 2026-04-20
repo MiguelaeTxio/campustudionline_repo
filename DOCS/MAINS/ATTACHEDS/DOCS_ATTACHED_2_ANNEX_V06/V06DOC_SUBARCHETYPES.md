@@ -45,53 +45,89 @@ Este documento define la **Configuración Estructural Fija** (Receta) que cada E
         *   **Gestión del Fallo Parcial (Convocatorias Sucesivas):** Si el alumno supera el examen completo pero no alcanza el nivel en una única destreza, podrá examinarse de esa única destreza en una de las próximas convocatorias en un plazo máximo de un año. Esta posibilidad está limitada a una sola destreza pendiente; si son dos o más, debe repetir el examen completo.
         *   **Navegación de Seguridad (Non-Backtracking):** El flujo de examen es Unidireccional Sellado. Una vez completada y enviada una destreza, el acceso a la misma queda bloqueado permanentemente para garantizar la validez del dominio lingüístico demostrado en tiempo real.
 
-*   **SUB-LIN-MINOR: Modelo Minor / Iniciación (UGR - Facultad Filosofía y Letras) [REFACTORIZADO V4.2 - FIDELIDAD 100% UGR]**
-    *   **Perfil Institucional:** Iniciación a la competencia lingüística, caligráfica y sociocultural (Alemán, Árabe, Chino, Japonés, Ruso, etc.) según las Guías Docentes de la UGR.
+*   **SUB-LIN-MINOR: Modelo Minor / Iniciación (UGR - Facultad Filosofía y Letras — Grado en Lenguas Modernas y sus Literaturas) [REFACTORIZADO SUBATÓMICO - FIDELIDAD 100% UGR - v5.1]**
+    *   **Perfil Institucional:** Iniciación a la competencia lingüística, caligráfica y sociocultural en la lengua minor del Grado en Lenguas Modernas y sus Literaturas (Facultad de Filosofía y Letras, UGR). Las lenguas minor ofertadas en el plan de estudios vigente (BOE 02/12/2024) son: **alemán, árabe, checo, francés, griego moderno, inglés, japonés, polaco y portugués**. El plan de estudios contempla además la posibilidad de ampliar la oferta con otras lenguas que la UGR pueda ofertar con posterioridad. La competencia caligráfica es exigencia institucional explícita del título para todas las lenguas minor no latinas (árabe, checo, griego moderno, japonés), conforme a las competencias específicas 31 del Verifica del Grado. El modelo evalúa los tres niveles curriculares del Minor: inicial, intermedio y avanzado (36 ECTS de lengua + 12 ECTS de literatura).
+    *   **NOTA CRÍTICA DE DISTINCIÓN INSTITUCIONAL:** El subarquetipo SUB-LIN-MINOR corresponde al itinerario curricular del Grado en Lenguas Modernas (segunda lengua del título), cuyo marco de evaluación es el rendimiento académico en asignaturas regladas. Este marco es distinto al de SUB-LIN-INSTR (acreditación oficial CertAcles del CLM-UGR). El mecanismo de superación de MINOR no es un umbral fijo del 60% ni el sistema de puntos de corte CertAcles: la superación se rige por la normativa académica general de la UGR (calificación mínima de 5 sobre 10 en cada asignatura del bloque Minor).
     *   **Secuencia Genética Obligatoria (5 Fases Subatómicas):**
         1. **SD_PHON_GRAPH (Grafía y Fonética):**
-            - Tarea 1: Dictado de signos/caracteres y transcripción a sistema vehicular (Pinyin/Romaji/Transliteración).
+            - Tarea 1: Dictado de signos/caracteres y transcripción a sistema vehicular (Pinyin/Romaji/Transliteración árabe/Romanización del griego moderno según norma ISO 843).
             - Tarea 2: Identificación de fonemas mediante discriminación auditiva.
-            - **Widget:** W-TXT-CLOZE (Modo Open con Pad de Trazos/OCR). **Bloqueo de teclado occidental obligatorio para lenguas no latinas.**
+            - **Widget:** W-TXT-CLOZE (Modo Open con Pad de Trazos/OCR). **Bloqueo de teclado occidental obligatorio para lenguas no latinas (árabe, checo con diacríticos especiales, griego moderno, japonés).**
+            - **Widget Especializado:** W-CALLI-PAD (Pad Caligráfico para lenguas no latinas — ver V06DOC_WIDGETS.md sección 7).
         2. **SD_MORPH_BASE (Morfosintaxis y Estructura Elemental):**
-            - Tarea: Construcción de enunciados simples y morfología básica (declinación/conjugación inicial).
+            - Tarea: Construcción de enunciados simples y morfología básica (declinación/conjugación inicial, partículas gramaticales, sistema de casos en alemán/checo/japonés).
             - **Motor:** CLO-MULTI y PRM-STRIKE.
         3. **SD_LEX_COMM (Léxico y Función Comunicativa):**
-            - Tarea: Emparejamiento de actos de habla (saludos, presentaciones) con contextos reales.
+            - Tarea: Emparejamiento de actos de habla (saludos, presentaciones, situaciones cotidianas) con contextos reales de la cultura de la lengua minor.
             - **Widget:** W-MIX-MATCH.
         4. **SD_READ_ADAP (Comprensión Lectora Adaptada):**
-            - Tarea: Extracción de información específica en señalética real, menús y anuncios breves.
+            - Tarea: Extracción de información específica en textos auténticos breves (señalética real, menús, anuncios, titulares de prensa adaptados al nivel inicial/intermedio de la lengua minor).
             - **Layout:** SPLIT_TEXT (Panel lateral con estímulo visual real).
         5. **SD_CULT_INTEGRITY (Competencia Intercultural y Contexto):**
-            - Tarea: Validación de protocolos de cortesía, geografía política y realidades culturales nucleares de la UGR.
-            - **Rigor:** LVL_A. Inmersión vehicular (Castellano) obligatoria en instrucciones.
-    *   **Regla de Oro UGR (CertAcles):** Umbral del 60% por destreza. Sin compensación (FAIL_LOGIC: FATAL).
+            - Tarea: Validación de protocolos de cortesía, geografía política y realidades culturales nucleares de la comunidad lingüística de la lengua minor, conforme a los contenidos de las Guías Docentes de la UGR para esta asignatura.
+            - **Rigor:** LVL_A (nivel inicial) / LVL_B (niveles intermedio y avanzado). Inmersión vehicular (Castellano) obligatoria en instrucciones del nivel inicial.
+    *   **Protocolo de Superación (Marco Académico UGR — Grado en Lenguas Modernas):**
+        - **Mecanismo:** Calificación mínima de 5 sobre 10 en la evaluación de cada fase subatómica, conforme a la normativa académica general de la UGR. No aplica el sistema de puntos de corte CertAcles ni el umbral del 60% por destreza (marcos propios de SUB-LIN-INSTR).
+        - **Política de Tolerancia:** Se permite la paráfrasis si el concepto es correcto (ITIN_MIN). Los errores caligráficos en lenguas no latinas penalizan el ítem en un 50% (validación de ductus por motor RBT-SHORT-LANG con módulo de trazos activo).
+        - **FAIL_LOGIC:** PARTIAL (penalización proporcional al error, salvo en SD_PHON_GRAPH para lenguas no latinas donde el ductus erróneo es FATAL para el ítem caligráfico).
 
-*   **SUB-LIN-PHILO: Modelo Filológico / Crítica Textual (UGR - Facultad de Filosofía y Letras) [REFACTORIZADO SUBATÓMICO - FIDELIDAD 100% UGR]**
-    *   **Perfil Institucional:** Análisis científico, histórico y ecdótico de la lengua española y sus monumentos literarios. Basado en los criterios de evaluación del Departamento de Lengua Española y el Departamento de Filologías Clásicas de la UGR.
-    *   **Secuencia Genética Obligatoria (Cuatri-Destreza Científica):**
+*   **SUB-LIN-PHILO: Modelo Filológico / Lingüística Histórica (UGR - Grado en Filología Hispánica — Dpto. de Lengua Española) [REFACTORIZADO SUBATÓMICO - FIDELIDAD 100% UGR - v5.1]**
+    *   **Perfil Institucional:** Análisis científico e histórico de la lengua española desde sus orígenes latinos hasta la actualidad, basado en los criterios de evaluación del Departamento de Lengua Española de la UGR. Las asignaturas fuente son: Fonética y Fonología del Español (2831113, 1º Troncal), Historia de la Lengua Española I (2831141, 4º Obligatoria) e Historia de la Lengua Española II (2831145, 4º Obligatoria), complementadas por Historia del Léxico Español (28311A5, 4º Optativa). La Crítica Textual / Ecdótica se evalúa en el subarquetipo independiente SUB-LIN-ECDO (Dpto. de Literatura Española).
+    *   **NOTA CRÍTICA DE FIDELIDAD (v5.1):** Este subarquetipo evalúa exclusivamente las destrezas de lingüística histórica interna (fonética, morfosintaxis y léxico diacrónico) del Dpto. de Lengua Española. La Ecdótica y la Crítica Textual quedan fuera de su ámbito y se evalúan en SUB-LIN-ECDO. La estructura pasa de Cuatri-Destreza a **Tri-Destreza Científica**.
+    *   **Secuencia Genética Obligatoria (Tri-Destreza Científica — Dpto. Lengua Española UGR):**
         1. **SD_PHONO (Fonética y Fonología Histórica):**
-            - **Objetivo:** Reconstrucción de la cadena evolutiva desde el étimo latino (u origen) hasta el romance medieval o moderno.
-            - **Tarea:** Identificación de procesos de cambio (apócope, síncopa, metátesis, lenición, palatalización) y transcripción mediante el Alfabeto Fonético Internacional.
-            - **Widget:** W-PHILO-IPA (Pad Fonético especializado).
-            - **Motor:** EV-DIAC-VAL (Validación de pasos intermedios. Cada salto fonético debe estar justificado).
+            - **Objetivo:** Dominio del sistema fonológico del español como disciplina científica (base sincrónica, Fonética y Fonología 2831113) y reconstrucción de la cadena evolutiva desde el étimo latino hasta el romance medieval y moderno (aplicación diacrónica, Historia de la Lengua I 2831141).
+            - **Tarea A (Sincrónica):** Identificación y transcripción de fonemas, alófonos, variantes y fenómenos del sistema fonológico actual (vocales, consonantes, sílaba, acento, entonación). Contraste norma/uso. Widget: W-PHILO-IPA (Pad Fonético especializado con bloque de transcripción AFI).
+            - **Tarea B (Diacrónica):** Identificación de procesos de cambio fonético (apócope, síncopa, metátesis, lenición, palatalización, sonorización, vocalización) y reconstrucción de estadios evolutivos intermedios. Cada salto fonético debe estar justificado mediante la ley correspondiente. Widget: W-PHILO-IPA. Motor: EV-DIAC-VAL (CHRONO_STRICT activo — YOD_IDENTIFICATION obligatorio).
+            - **Fuentes de Autoridad:** Lapesa (1981), Lloyd (1993), Penny (2014), Hualde (2014).
         2. **SD_MORPH_DIAC (Morfología Diacrónica):**
-            - **Objetivo:** Análisis de la evolución de los paradigmas flexivos nominales y verbales.
-            - **Tarea:** Explicación de la reestructuración del sistema de casos latinos al sistema preposicional romance, creación de tiempos compuestos y evolución de los clíticos.
-            - **Rigor:** Nivel Catedrático (UGR). Se exige identificar la ley de analogía o nivelación morfológica aplicada.
+            - **Objetivo:** Análisis de la evolución de los paradigmas flexivos nominales y verbales del español, desde el latín hasta la actualidad (Historia de la Lengua II 2831145, Tema: Morfología histórica nominal y verbal).
+            - **Tarea:** Explicación de la reestructuración del sistema de casos latinos al sistema preposicional romance; evolución de los paradigmas pronominales y de los clíticos; creación de los tiempos compuestos; morfología verbal histórica. Se exige identificar la ley de analogía o nivelación morfológica aplicada en cada caso.
+            - **Rigor:** Nivel Catedrático (UGR). Motor: EV-DIAC-VAL.
+            - **Fuentes de Autoridad:** Alvar/Pottier (1993), Penny (2014), Azofra (2009), Company Company (2014).
         3. **SD_LEX_SEM (Lexicología y Semántica Histórica):**
-            - **Objetivo:** Estudio del origen y evolución del léxico (Etimología).
-            - **Tarea:** Análisis de cultismos, semicultismos y palabras patrimoniales. Identificación de cambios semánticos (metáfora, metonimia, elipsis).
-            - **Fuente de Autoridad:** Uso emulado de los criterios del DCECH (Corominas y Pascual) y el CORDE/CDH.
-        4. **SD_TEXT_CRIT (Crítica Textual / Ecdótica):**
-            - **Objetivo:** Establecimiento de la edición crítica de un texto medieval o clásico.
-            - **Tarea:** Ejecución de las fases neolachmannianas (Metodología Alberto Blecua): Recensio (inventario), Collatio (cotejo de variantes), Examinatio (juicio crítico) y Selectio/Emendatio (propuesta de fijación).
-            - **Widget:** W-PHILO-ECDO (Interfaz SPLIT_TEXT para colación de manuscritos).
-            - **Motor:** EV-PALE (Validación de normas de transcripción paleográfica vs. crítica).
+            - **Objetivo:** Estudio científico del origen y evolución del léxico español desde sus raíces latinas y su contacto con otras lenguas (Historia del Léxico Español 28311A5; Historia de la Lengua II, Tema 7: Lexicología y Semántica históricas).
+            - **Tarea:** Análisis de cultismos, semicultismos y palabras patrimoniales (dobletes léxicos). Identificación de los mecanismos de formación de palabras (prefijación, sufijación, composición) en perspectiva histórica. Identificación de cambios semánticos (metáfora, metonimia, elipsis, especialización, generalización). Validación etimológica mediante los recursos de autoridad.
+            - **Fuentes de Autoridad:** DCECH (Corominas y Pascual, 1980-1991), CORDE/CDH (RAE), NTLLE (RAE), Dworkin (A History of the Spanish Lexicon, 2012).
+            - **Motor:** RBT-CANON (Exigencia de precisión absoluta en la nomenclatura técnica; no se admite paráfrasis en LVL_C).
     *   **Protocolo de Superación y Rigor (V06DOC_LEVELS):**
-        - **Umbral Crítico:** 70% de precisión técnica mínima.
-        - **Política de Tolerancia Cero:** La presencia de una sola falta de ortografía técnica (tildes, grafemas medievales) en el Nivel C o la confusión de leyes fonéticas incompatibles supone la anulación inmediata del ítem (FAIL_LOGIC: FATAL).
-        - **Prohibición de Paráfrasis:** Se exige el uso estricto del metalenguaje filológico oficial de la UGR.
+        - **Umbral Crítico:** 70% de precisión técnica mínima por destreza. Sin compensación entre destrezas (FAIL_LOGIC: FATAL por destreza si no se alcanza el umbral).
+        - **Política de Tolerancia Cero:** La confusión de leyes fonéticas incompatibles, la identificación errónea del tipo de Yod (I/II/III/IV) o el error en la nomenclatura técnica morfológica o lexicológica en Nivel C supone la anulación inmediata del ítem (FAIL_LOGIC: FATAL para ese ítem).
+        - **Prohibición de Paráfrasis:** Se exige el uso estricto del metalenguaje filológico oficial de la UGR en las tres destrezas.
     *   **Rigor Engine:** x1.8 (Nivel C1/C2 - Epistemológico).
+
+*   **SUB-LIN-ECDO: Modelo de Edición y Crítica Textual (UGR - Grado en Filología Hispánica — Dpto. de Lengua Española) [REFACTORIZADO SUBATÓMICO - FIDELIDAD 100% UGR - v5.1]**
+    *   **Perfil Institucional:** Evaluación de las competencias de edición, corrección y crítica textual aplicadas al español, bajo los criterios de la asignatura **La Industria Editorial: Edición, Corrección, Anotación y Evaluación de Textos Españoles (28311A9)** — 4º curso, 1er semestre, Optativa — del Departamento de Lengua Española de la UGR (Guía Docente aprobada 18/06/2025). Este subarquetipo se desmembró de SUB-LIN-PHILO en v5.1 para garantizar la adscripción disciplinar correcta de cada dominio. La competencia CE10 ("Conocer las técnicas y métodos de la crítica textual y de la edición de textos, aplicados a la literatura escrita en español") actúa como competencia transversal de contexto. La metodología de referencia para la dimensión crítico-textual es Blecua (2004, Manual de crítica textual, Castalia), citado en la bibliografía complementaria oficial de 28311A9.
+    *   **NOTA DE DISTINCIÓN DISCIPLINAR:** Este subarquetipo no evalúa la Ecdótica neolachmanniana como eje metodológico central (dominio de investigación de Máster/Doctorado), sino la competencia práctica del filólogo como editor, corrector y evaluador de textos en el sentido de la asignatura 28311A9. La Ecdótica de Blecua se incorpora como componente de la destreza SD_ANNOT (anotación crítica), donde el alumno debe identificar y resolver problemas de transmisión textual en un contexto de edición profesional.
+    *   **Secuencia Genética Obligatoria (Cuatri-Destreza Editorial — Dpto. Lengua Española UGR 2025-2026):**
+        1. **SD_ORTOTYPO (Corrección Ortotipográfica):**
+            - **Objetivo:** Aplicación rigurosa de las normas ortotipográficas del español (OLE 2010 / RAE-ASALE) a un texto que va a ser editado (Temas 3-4 de 28311A9: corrección de primeras pruebas y ortotipografía).
+            - **Tarea:** El alumno recibe un texto con errores ortotipográficos (uso de mayúsculas, puntuación compleja, comillas, rayas, paréntesis, guiones, numerales, siglas, abreviaturas, extranjerismos) y debe marcarlos, clasificarlos y corregirlos siguiendo la OLE 2010 y las convenciones editoriales del español.
+            - **Widget:** W-HUM-TEXT (Modo Revisión y Control de Cambios — marca visualmente inserciones, supresiones y sustituciones).
+            - **Motor:** EV-NORM-ANALYSIS (Validación de la corrección ortotipográfica contra la OLE 2010 y el DPD).
+            - **Fuentes de Autoridad:** RAE/ASALE (2010, OLE), Martínez de Sousa (2004, Ortografía y ortotipografía del español actual).
+        2. **SD_STYLE (Corrección de Estilo):**
+            - **Objetivo:** Detección y corrección de problemas de estilo, coherencia, cohesión y adecuación de registro en un texto original o editado (Tema 4 de 28311A9: corrección de estilo).
+            - **Tarea:** El alumno recibe un texto con desviaciones de estilo (redundancias, anacolutos, discordancias de registro, ambigüedades sintácticas, vicios de dicción, cacofonías) y debe elaborar un informe de corrección de estilo razonado, proponiendo las intervenciones necesarias y justificándolas con criterios normativos o de uso.
+            - **Widget:** W-HUM-TEXT (Editor con SPLIT_TEXT — Panel estímulo con texto original / Panel de acción con propuesta de corrección).
+            - **Motor:** EV-NORM-ANALYSIS + DRA-HOLO (Rúbrica de calidad argumentativa del informe).
+            - **Fuentes de Autoridad:** Martínez de Sousa (2012, Manual de estilo de la lengua española), RAE/ASALE (2009, NGLE).
+        3. **SD_ANNOT (Anotación Crítica y Edición Científica):**
+            - **Objetivo:** Elaboración de una anotación crítica de un fragmento literario en español (competencia CE10 transversal del Grado), que implica el manejo de fuentes, la identificación de variantes textuales relevantes y la redacción de notas filológicas al pie (componente ecdótico — Blecua, 2004).
+            - **Tarea:** El alumno recibe un fragmento de texto literario español (Medieval, Siglo de Oro o Contemporáneo) y debe: (a) identificar los problemas de transmisión textual presentes (variantes, lectiones, errores evidentes); (b) proponer y justificar la lectura adoptada apoyándose en criterios ecdóticos básicos (lectio difficilior, lectio brevior, eliminatio codicum descriptorum); (c) redactar las notas al pie con el formato de edición científica estándar de la UGR.
+            - **Widget:** W-PHILO-ECDO (Modo SPLIT_TEXT para visualización simultánea de variantes) + W-HUM-TEXT (Editor de notas al pie).
+            - **Motor:** EV-PALE (Validación de la corrección de la transcripción y del aparato de variantes) + DRA-HOLO (Rúbrica de calidad argumentativa de las notas).
+            - **Fuentes de Autoridad:** Blecua, A. (2004, Manual de crítica textual, Castalia), Biblioteca Virtual Miguel de Cervantes, BVFE.
+        4. **SD_EVAL (Evaluación Editorial e Informe de Lector):**
+            - **Objetivo:** Elaboración de un informe de evaluación editorial de un original inédito o de una propuesta de edición, según los criterios de la industria editorial española (Prácticas de 28311A9: elaboración de informes de corrección y evaluación de originales).
+            - **Tarea:** El alumno recibe un original (fragmento de obra inédita o propuesta de edición científica) y debe elaborar un informe de lector profesional que incluya: valoración de la originalidad y calidad literaria o científica, viabilidad editorial y comercial, correcciones necesarias antes de la publicación, y recomendación final motivada (aceptar, rechazar o aceptar con cambios).
+            - **Widget:** W-HUM-TEXT (Editor de informe con rúbrica estructurada).
+            - **Motor:** DRA-HOLO (Rúbrica analítica holística: adecuación al género del informe, rigor argumentativo, corrección formal, viabilidad de la propuesta).
+    *   **Protocolo de Superación y Rigor:**
+        - **Umbral Crítico:** Mínimo 60% en cada destreza de forma independiente. Sin compensación entre destrezas (FAIL_LOGIC: FATAL por destreza si no se alcanza el umbral).
+        - **Política de Tolerancia Cero:** El error en la nomenclatura ortotipográfica técnica (ej. confundir raya con guion largo) o la cita falsa de una norma de autoridad (OLE, DPD, NGLE) anula el ítem (FAIL_LOGIC: FATAL para ese ítem).
+        - **Corrección Formal Obligatoria:** El informe propio del alumno (SD_STYLE, SD_ANNOT, SD_EVAL) debe estar libre de errores ortotipográficos. La presencia de más de 3 faltas ortotipográficas en el informe del alumno penaliza la destreza en un 20% adicional sobre la nota bruta.
+    *   **Rigor Engine:** x1.5 (Nivel C1 - Profesional/Editorial). Inferior al x1.8 de PHILO dado el perfil aplicado y no epistemológico de la asignatura fuente.
 
 *   **SUB-LIN-NORM: Modelo Norma y Uso (UGR / Grado en Filología Hispánica) [REFACTORIZADO SUBATÓMICO - FIDELIDAD 100% UGR]**
     *   **Perfil Institucional:** Evaluación avanzada de la competencia normativa, prescriptiva y descriptiva del español contemporáneo bajo los estándares del Departamento de Lengua Española de la Universidad de Granada (UGR). El modelo evalúa la capacidad científica del alumno para discernir entre la norma panhispánica culta y los fenómenos de variación lingüística, utilizando como herramientas la gramática académica y el análisis de corpus.

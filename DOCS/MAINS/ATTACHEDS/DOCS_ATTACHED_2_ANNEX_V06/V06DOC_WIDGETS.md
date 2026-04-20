@@ -116,3 +116,29 @@ Esta sección define el comportamiento técnico y visual de los componentes de i
 ### W-INSTR-SELECTOR (Selector Multimodal CertAcles)
 *   **Comportamiento:** Componente global inyectado en todo widget de entrada de texto.
 *   **Configuración Instrumental:** Ofrece obligatoriamente los cuatro modos de entrada (Teclado Nativo, Occidentalización, Pad de Trazos, OCR). En el subarquetipo instrumental, el modo "Teclado Nativo" fuerza el layout del idioma objetivo, deshabilitando correctores ortográficos del sistema operativo para auditar la competencia real del alumno.
+
+## 7. LIBRERÍA TÉCNICA PARA EL MODELO MINOR — PAD CALIGRÁFICO (UGR 2026) [NUEVO v5.1 - FIDELIDAD 100% UGR]
+
+Esta sección define el comportamiento técnico y visual del componente de entrada caligráfica activado bajo el subarquetipo SUB-LIN-MINOR para las lenguas no latinas (árabe, checo con diacríticos especiales, griego moderno, japonés), en cumplimiento de la competencia específica 31 del Verifica del Grado en Lenguas Modernas y sus Literaturas (Facultad de Filosofía y Letras, UGR — BOE 02/12/2024): "Conocer y dominar la caligrafía de la lengua minor".
+
+### W-CALLI-PAD (Pad Caligráfico para Lenguas No Latinas — SUB-LIN-MINOR)
+*   **Uso:** Destreza SD_PHON_GRAPH (Grafía y Fonética) en SUB-LIN-MINOR. Activado exclusivamente cuando el `target_language_code` corresponde a una lengua no latina: árabe (`ar`), japonés (`ja`), griego moderno (`el`), checo (`cs`). El widget queda deshabilitado para lenguas latinas (alemán, francés, inglés, polaco, portugués) donde el teclado nativo con diacríticos es suficiente.
+*   **Modos de Entrada (Selector Obligatorio):**
+    1.  **Pad de Trazos Digital:** Lienzo táctil calibrado para la escritura manual de caracteres. El alumno traza el carácter con el dedo o lápiz óptico. El sistema captura la secuencia completa de trazos (ductus) y la presión relativa de cada uno.
+    2.  **OCR/Captura de Manuscrito Físico:** El alumno escribe el carácter en papel físico y lo digitaliza mediante la cámara del dispositivo. El sistema aplica preprocesamiento de imagen (normalización de contraste y brillo, umbralización) antes de pasarlo al motor de validación.
+    *   **MANDATO DE BLOQUEO:** En SD_PHON_GRAPH para lenguas no latinas, se deshabilitan obligatoriamente el teclado occidental y la entrada por transliteración (Pinyin, Romaji, etc.) para forzar la evaluación de la grafía real. La occidentalización queda reservada únicamente para las tareas de transcripción a sistema vehicular (Tarea 1 de SD_PHON_GRAPH) cuando el enunciado lo especifique explícitamente.
+*   **Motor de Validación de Ductus (Integrado con RBT-SHORT-LANG):**
+    *   **Validación de Secuencia de Trazos:** El motor verifica que el orden y la dirección de los trazos del alumno se corresponden con el ductus normativo del carácter en la lengua objetivo. La referencia normativa por lengua es:
+        - **Japonés (`ja`):** Norma del Ministerio de Educación japonés (MEXT) para el orden de trazos de kana y kanji de uso común (jōyō kanji).
+        - **Árabe (`ar`):** Norma de escritura cursiva del árabe estándar moderno (MSA). Validación de la unión correcta de grafemas en posición inicial, medial y final de palabra.
+        - **Griego moderno (`el`):** Norma de escritura minúscula del griego moderno estándar. Validación de la ligadura y el orden de trazos según la caligrafía escolar griega oficial.
+        - **Checo (`cs`):** Validación de los diacríticos especiales (háček, čárka) como parte integral del trazo — la omisión o el posicionamiento erróneo de un diacrítico se considera falta caligráfica.
+    *   **Validación de Integridad Grafémica:** El motor compara el carácter resultante con la base de patrones OCR de alta fidelidad (integrado con `gemini-2.5-flash`) para verificar la legibilidad y la corrección formal del grafema producido, independientemente del ductus.
+    *   **Baremo de Penalización Caligráfica:**
+        - **Ductus erróneo (orden/dirección de trazos incorrecto):** Penalización del 50% sobre la puntuación del ítem caligráfico. El carácter puede ser legible pero el ductus es evaluado de forma autónoma como competencia específica del título.
+        - **Integridad grafémica comprometida (carácter ilegible o irreconocible):** FAIL_LOGIC: FATAL para ese ítem (nota 0.0). No aplica penalización parcial.
+        - **Diacrítico omitido o mal posicionado (checo):** Computa como falta caligráfica con penalización del 50% sobre el ítem.
+*   **UX y Accesibilidad:**
+    *   **Referencia Visual Animada:** El widget muestra, antes del inicio de la tarea, una animación del ductus normativo del tipo de carácter a producir (stroke order animation), conforme al estándar de los materiales pedagógicos de la UGR para lenguas no latinas. Esta referencia es visible durante la fase de instrucciones pero se oculta durante la evaluación.
+    *   **Área de Trazado Escalable:** El lienzo del pad se ajusta dinámicamente al tamaño de pantalla del dispositivo, garantizando un área mínima de 200×200 píxeles por carácter para asegurar la precisión del trazo en dispositivos móviles.
+    *   **Borrador por Carácter:** El alumno dispone de un botón de borrado por carácter (no por trazo individual) para reintentar la producción caligráfica dentro del tiempo asignado a la tarea.

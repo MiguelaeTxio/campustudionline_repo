@@ -37,12 +37,20 @@ El itinerario determina la profundidad del prompt, el rigor de la rúbrica y la 
 ## 2. SUBDIVISIONES TÉCNICAS (DESTREZAS POR GRUPO)
 Define las secciones del examen que activan widgets y rúbricas específicas.
 
-### A. BLOQUE COMUNICATIVO (Modelos CLM/CertAcles)
+### A. BLOQUE COMUNICATIVO (Modelos CLM/CertAcles — SUB-LIN-INSTR)
 *   SD_READ: Análisis exegético y comprensión inferencial. Estructura binivel (B1/B2) según distribución oficial CLM-UGR (5 textos: 2×B1 + 1 bisagra + 2×B2).
 *   SD_LIST: Discriminación de registros, captación de matices fonéticos y toma de notas académicas. Estructura binivel (5 grabaciones: 2×B1 + 1 bisagra + 2×B2). Límite de 2 reproducciones por pista.
 *   SD_WRIT: Producción escrita dirigida y multimodal. Extensiones oficiales CLM-UGR: Tarea B1 (200-250 palabras) / Tarea B2 (250-300 palabras).
 *   SD_SPEAK: Interacción oral evaluada mediante el módulo UniversIA. Tres fases: vida cotidiana (B1) / descripción de fotografía (B1-B2) / opinión sobre tema (B1-B2).
 *   **NOTA CRÍTICA (v5.0):** SD_MEDI queda eliminada como subdivisión autónoma del subarquetipo SUB-LIN-INSTR. La mediación no constituye destreza independiente en el examen oficial CertAcles del CLM-UGR. Queda reservada como componente auxiliar de SD_WRIT cuando el encargo lo requiera, y como subdivisión autónoma exclusivamente en los subarquetipos SUB-LIN-TRA-TECH y SUB-LIN-TRA-LIT.
+
+### A.2. BLOQUE CURRICULAR MINOR (Modelo SUB-LIN-MINOR — Grado en Lenguas Modernas, UGR) [NUEVO v5.1 - FIDELIDAD 100% UGR]
+*   **NOTA DE DISTINCIÓN INSTITUCIONAL:** Las subdivisiones de SUB-LIN-MINOR corresponden al itinerario curricular reglado del Grado en Lenguas Modernas y sus Literaturas (Facultad de Filosofía y Letras, UGR), no al sistema de acreditación CertAcles del CLM. Son fases de evaluación del rendimiento académico en asignaturas del bloque minor (36 ECTS de lengua + 12 ECTS de literatura), con superación por nota académica (mínimo 5/10), no por puntos de corte CertAcles.
+*   **SD_PHON_GRAPH:** Grafía y Fonética. Dictado de signos/caracteres, transcripción a sistema vehicular y discriminación auditiva de fonemas. En lenguas no latinas: bloqueo de teclado occidental obligatorio, evaluación de ductus mediante W-CALLI-PAD y motor RBT-SHORT-LANG con Módulo de Trazos activo.
+*   **SD_MORPH_BASE:** Morfosintaxis y Estructura Elemental. Construcción de enunciados simples, paradigmas de declinación/conjugación iniciales y partículas gramaticales de la lengua minor. Motor: CLO-MULTI y PRM-STRIKE.
+*   **SD_LEX_COMM:** Léxico y Función Comunicativa. Emparejamiento de actos de habla (saludos, presentaciones, situaciones cotidianas) con contextos reales de la cultura de la lengua minor. Widget: W-MIX-MATCH.
+*   **SD_READ_ADAP:** Comprensión Lectora Adaptada. Extracción de información específica en textos auténticos breves (señalética, menús, anuncios, titulares adaptados al nivel inicial/intermedio). Layout: SPLIT_TEXT con estímulo visual real en la lengua minor.
+*   **SD_CULT_INTEGRITY:** Competencia Intercultural y Contexto. Validación de protocolos de cortesía, geografía política y realidades culturales nucleares de la comunidad lingüística de la lengua minor, conforme a los contenidos de las Guías Docentes de la UGR.
 
 ### B. BLOQUE RESOLUTIVO (Modelos Politécnica/Ciencias)
 *   SD_THEO: Validación de leyes, axiomas y principios fundamentales.
@@ -56,9 +64,36 @@ Define las secciones del examen que activan widgets y rúbricas específicas.
 *   SD_PROC: Ejecución lógica de maniobras o trámites de derecho procesal.
 *   SD_ETHI: Evaluación deontológica, bioética y seguridad jurídica/clínica.
 
-## 3. DESGLOSE COMPETENCIAL DETALLADO POR SUBARQUETIPO (UGR 2026) [ACTUALIZADO v5.0 - FIDELIDAD 100%]
+## 3. DESGLOSE COMPETENCIAL DETALLADO POR SUBARQUETIPO (UGR 2026) [ACTUALIZADO v5.1 - FIDELIDAD 100%]
 
 Esta sección desglosa las competencias específicas y el nivel de rigor académico aplicado a cada subdivisión de los subarquetipos de la Rama Lenguas.
+
+### 3.0. SUB-LIN-MINOR — Competencias por Subdivisión (Grado en Lenguas Modernas / UGR 2026) [NUEVO v5.1]
+
+*   **SD_PHON_GRAPH:**
+    *   **Dominios de Competencia:** COMP_ESP (Conocimiento del sistema grafémico y fonológico de la lengua minor) y COMP_GEN (Capacidad de producción caligráfica correcta en lenguas no latinas).
+    *   **Taxonomía Cognitiva:** COG_REM (Reconocimiento y reproducción de grafemas y fonemas) y COG_APP (Aplicación del ductus normativo en la producción caligráfica).
+    *   **Rigor Académico:** LVL_A (nivel inicial). En lenguas no latinas, se exige dominio del ductus normativo según la referencia MEXT (japonés), MSA (árabe), norma escolar griega (griego moderno) o norma diacrítica checa (checo). La omisión del ductus correcto penaliza el ítem en un 50%; el carácter ilegible supone FAIL_LOGIC: FATAL para ese ítem.
+
+*   **SD_MORPH_BASE:**
+    *   **Dominios de Competencia:** COMP_ESP (Conocimiento de la morfología básica de la lengua minor) y COMP_GEN (Capacidad de construcción de enunciados simples con corrección gramatical).
+    *   **Taxonomía Cognitiva:** COG_UND (Comprensión de paradigmas flexivos elementales) y COG_APP (Aplicación de reglas morfológicas básicas en la producción de enunciados).
+    *   **Rigor Académico:** LVL_A / LVL_B. Se permite la paráfrasis si el concepto morfológico es correcto (ITIN_MIN). La imprecisión en el sistema de casos (alemán, checo, japonés) o en las partículas gramaticales penaliza proporcionalmente.
+
+*   **SD_LEX_COMM:**
+    *   **Dominios de Competencia:** COMP_ESP (Dominio del léxico funcional y actos de habla elementales de la lengua minor) y COMP_TRA (Competencia intercultural básica para la comunicación situacional).
+    *   **Taxonomía Cognitiva:** COG_REM (Reconocimiento de actos de habla y fórmulas de cortesía) y COG_APP (Adecuación del léxico al contexto comunicativo real).
+    *   **Rigor Académico:** LVL_A. Evaluación funcional: se valora la adecuación al contexto sobre la precisión formal estricta.
+
+*   **SD_READ_ADAP:**
+    *   **Dominios de Competencia:** COMP_ESP (Comprensión de textos auténticos breves en la lengua minor) y COMP_GEN (Capacidad de extracción de información específica en contextos reales).
+    *   **Taxonomía Cognitiva:** COG_UND (Comprensión de información explícita en textos cortos) y COG_ANA (Identificación de la intención comunicativa del texto).
+    *   **Rigor Académico:** LVL_A / LVL_B según el nivel curricular del Minor. El estímulo visual real (señalética, menús, anuncios) garantiza la autenticidad del input lingüístico conforme al enfoque comunicativo de las Guías Docentes UGR.
+
+*   **SD_CULT_INTEGRITY:**
+    *   **Dominios de Competencia:** COMP_TRA (Competencia intercultural y conocimiento de la realidad sociocultural de la comunidad de la lengua minor) y COMP_GEN (Capacidad de adecuación pragmática a contextos culturales distintos al propio).
+    *   **Taxonomía Cognitiva:** COG_UND (Comprensión de protocolos culturales y convenciones sociales) y COG_EVAL (Valoración crítica de la diversidad cultural como recurso comunicativo).
+    *   **Rigor Académico:** LVL_A (nivel inicial) / LVL_B (niveles intermedio y avanzado). Instrucciones obligatoriamente en castellano en el nivel inicial. A partir del nivel intermedio, inmersión progresiva en la lengua minor conforme al protocolo de idioma de V06DOC_LEVELS.md.
 
 ### 3.1. SUB-LIN-INSTR — Competencias por Subdivisión (CertAcles / CLM-UGR)
 
