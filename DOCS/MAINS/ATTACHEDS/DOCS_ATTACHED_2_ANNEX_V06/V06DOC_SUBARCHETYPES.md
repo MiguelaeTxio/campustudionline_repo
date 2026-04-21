@@ -169,7 +169,7 @@ Este documento define la **Configuración Estructural Fija** (Receta) que cada E
     *   **Perfil:** Traducción de textos creativos, poéticos y humanísticos basada en los criterios de la FTI (UGR).
     *   **Secuencia Genética Obligatoria (3 Fases):**
         1. **SD_TRA_STYLE (Análisis Estilístico Comparado):** Identificación de la voz del autor, rasgos dialectales/cronoflectales y desafíos retóricos. (Widget: W-HUM-TEXT).
-        2. **SD_TRA_CREATIVE (Transferencia Estética):** Recreación del efecto estético y literario en la lengua meta (Skopos). Gestión de culturemas e intertextualidad. (Widget: W-TRA-LIT-CREA).
+        2. **SD_TRA_CREATIVE (Transferencia Estética):** Recreación del efecto estético y literario en la lengua meta (Skopos). Gestión de culturemas e intertextualidad. (Widget: W-HUM-TEXT — Modo TRA-LIT).
         3. **SD_TRA_CRIT (Crítica y Justificación):** Comentario exegético defendiendo las opciones de traducción y compensaciones literarias. (Widget: W-HUM-TEXT).
     *   **Rigor:** Hermenéutico / Nivel C2 (LVL_C).
     *   **Motor Principal:** DRA-HOLO (Rúbrica de Calidad Literaria UGR).

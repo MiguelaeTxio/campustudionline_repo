@@ -3,9 +3,14 @@
 
 ## 1. LIBRERÍA DE COMPONENTES TÉCNICOS
 
-*   **W-TRA-CAT-EMULATOR (Simulador de Herramienta TAO) [NUEVO 2026]**
-    *   **Uso:** Traducción Profesional (SUB-LIN-TRA-TECH).
-    *   **Funciones:** Panel de traducción segmentada con ventana de sugerencias de memoria y glosario obligatorio. Audita el uso de la terminología sugerida.
+*   **W-DOC-RESOURCES (Panel de Recursos Documentales UGR) [REFACTORIZADO v5.1 — 2026-04-21]**
+    *   **Uso:** SUB-LIN-TRA-TECH, fases SD_TERM_RESEARCH y SD_TRA_DRAFT.
+    *   **Justificación de Reconversión:** El widget anterior (W-TRA-CAT-EMULATOR) emulaba una herramienta TAO profesional (memoria de traducción, glosario automático), lo cual es incorrecto para el contexto universitario UGR. En el examen oficial de Traducción Especializada B-A Inglés (252113T, FTI-UGR) el alumno no usa herramienta TAO: trabaja con diccionarios bilingües convencionales y elabora su propio glosario durante la fase SD_TERM_RESEARCH.
+    *   **Distribución Visual (Tres Paneles):**
+        1.  **Panel izquierdo (Estímulo — Sticky):** Texto fuente en inglés. No editable. Permanece visible durante toda la tarea.
+        2.  **Panel central (Recursos — Sticky):** Acceso emulado a diccionarios bilingües de referencia certificados por la Guía Docente 252113T: IATE (terminología UE), UNTERM (terminología ONU), Diccionario panhispánico del español jurídico (DPEJ-RAE), Diccionario médico CUN, Glosario científico-técnico. El alumno consulta los recursos y arrastra términos al panel de glosario.
+        3.  **Panel derecho (Glosario del alumno):** Zona de construcción del glosario bilingüe durante SD_TERM_RESEARCH. Los términos validados quedan disponibles durante SD_TRA_DRAFT como referencia no editable.
+    *   **Motor:** EV-TRA-PRECISION-TECH. La IA audita que los términos del glosario del alumno procedan de fuentes de autoridad y se apliquen coherentemente en la traducción final.
 
 *   W-TECH-CALC (Consola de Cálculo Procedimental):
     *   Uso: Ingenierías y Ciencias.
@@ -28,6 +33,17 @@
         2. **Occidentalización:** Transliteración/Pinyin/Romaji para alfabetos no latinos.
         3. **Pad Virtual/Trazos:** Escritura manual digital (Caligrafía).
         4. **OCR/Captura:** Digitalización de manuscrito físico del alumno.
+    *   **Modo TRA-LIT (SUB-LIN-TRA-LIT — SD_TRA_CREATIVE) [NUEVO v5.1 — 2026-04-21]:**
+        El widget W-TRA-LIT-CREA referenciado en versiones anteriores de V06DOC_SUBARCHETYPES.md queda eliminado como widget independiente. La destreza SD_TRA_CREATIVE de SUB-LIN-TRA-LIT se mapea a W-HUM-TEXT en modo SPLIT_TEXT con la siguiente configuración específica:
+        *   **Panel izquierdo (Estímulo — Sticky):** Texto literario fuente (poema, fragmento teatral o narrativo) en la lengua original (inglés). No editable. Permanece visible durante toda la fase de traducción.
+        *   **Panel derecho (Producción — Editor):** W-HUM-TEXT en modo edición libre donde el alumno redacta su traducción literaria al español. Modos de entrada activos: teclado latino estándar + OCR/captura de manuscrito. El modo Occidentalización/Pinyin/Romaji y el Pad de Trazos quedan deshabilitados (no aplican para la combinación inglés→español).
+        *   **Motor:** DRA-HOLO-LIT (Ejes 1, 2 y 3).
+        *   **Nota de implementación:** Toda referencia a W-TRA-LIT-CREA en la constelación documental debe entenderse como alias de W-HUM-TEXT en Modo TRA-LIT.
+    *   **Restricción de Entrada SUB-LIN-NORM [NUEVO v5.1 — 2026-04-21]:**
+        La Directriz de Multimodalidad genérica de W-HUM-TEXT contempla los modos Occidentalización/Pinyin/Romaji y Pad de Trazos como opciones del selector. Para el subarquetipo SUB-LIN-NORM estas opciones **no tienen cabida**: la asignatura El Español Actual: Norma y Uso (2831111, Filología Hispánica, UGR) evalúa exclusivamente competencia en español, lengua de alfabeto latino. En el contexto SUB-LIN-NORM los únicos modos de entrada activos son:
+        1.  **Teclado Latino Nativo:** Layout estándar del español con soporte de diacríticos propios (tildes, diéresis, eñe).
+        2.  **OCR/Captura:** Digitalización de manuscrito físico del alumno.
+        Los modos Occidentalización y Pad de Trazos quedan **deshabilitados** para este subarquetipo en todas sus fases (SD_CORPUS_ANALYSIS, SD_MORPH_ANTINORM, SD_ORTHO_PRESCRIPTIVE, SD_CRITICAL_NORM).
 
 *   W-PROC-ACTION (Panel de Acción Crítica):
     *   Uso: Salud y Seguridad Industrial.
@@ -142,3 +158,58 @@ Esta sección define el comportamiento técnico y visual del componente de entra
     *   **Referencia Visual Animada:** El widget muestra, antes del inicio de la tarea, una animación del ductus normativo del tipo de carácter a producir (stroke order animation), conforme al estándar de los materiales pedagógicos de la UGR para lenguas no latinas. Esta referencia es visible durante la fase de instrucciones pero se oculta durante la evaluación.
     *   **Área de Trazado Escalable:** El lienzo del pad se ajusta dinámicamente al tamaño de pantalla del dispositivo, garantizando un área mínima de 200×200 píxeles por carácter para asegurar la precisión del trazo en dispositivos móviles.
     *   **Borrador por Carácter:** El alumno dispone de un botón de borrado por carácter (no por trazo individual) para reintentar la producción caligráfica dentro del tiempo asignado a la tarea.
+
+## 8. LIBRERÍA DE COMPONENTES PARA LA RAMA ARTES Y HUMANIDADES (NUEVO v5.2 — 2026-04-21)
+
+Esta sección define los componentes de interacción activados bajo los subarquetipos de la Rama Artes y Humanidades que no tienen equivalente en las secciones anteriores.
+
+### W-ART-IDENT (Visor de Identificación y Comentario Iconográfico — SUB-HUM-ART-HIST) [NUEVO v5.2 — 2026-04-21]
+*   **Uso:** SUB-HUM-ART-HIST (Historia del Arte UGR). Instrumento nuclear de la prueba de reconocimiento iconográfico de imágenes, certificado como componente evaluativo del 50-60% de la calificación en el Grado en Historia del Arte UGR (Guías Docentes del Departamento de Historia del Arte, aprobadas 24/06/2025).
+*   **Fuente de Certificación:** Guías Docentes de Iconografía (26511M2), Historia de los Estilos e Iconografía (2931114), Historia del Arte del Renacimiento (2931127) e Historia del Arte Antiguo y Medieval (2921124) — Departamento de Historia del Arte, UGR, curso 2025-2026.
+*   **Distribución Visual (Tres Zonas):**
+    1.  **Zona Superior (Imagen — Sticky):** Visor HD de la obra de arte con zoom dinámico (mínimo 400% sin pérdida de calidad). Herramienta de marcado iconográfico: el alumno puede seleccionar y etiquetar zonas de la imagen (personajes, atributos, escenas, elementos arquitectónicos) para referirse a ellas en su análisis. Los marcadores quedan numerados y vinculados al editor de análisis. La imagen permanece visible durante toda la tarea.
+    2.  **Zona Media (Identificación Estructurada — Campos Fijos):** Formulario de identificación con los campos canónicos del análisis histórico-artístico UGR:
+        - **Autor / Atribución:** Campo de texto libre con validación terminológica (nombre canónico del artista o "Anónimo / Escuela de...").
+        - **Título / Denominación:** Campo de texto libre.
+        - **Cronología:** Campo de texto libre (admite dataciones aproximadas: "ca.", "primer tercio del siglo XVI", etc.).
+        - **Técnica y Soporte:** Campo de texto libre (ej. "Óleo sobre tabla", "Mármol de Carrara", "Fresco").
+        - **Localización / Institución:** Campo de texto libre (museo, colección, in situ).
+        - **Estilo / Período / Escuela:** Campo de texto libre con validación terminológica básica.
+        - Motor de validación de identificación: **EV-ICON-ART** (ver V06DOC_BLOCKS.md).
+    3.  **Zona Inferior (Análisis Libre — Editor):** W-HUM-TEXT en modo libre para el comentario formal e iconológico en tres niveles Panofsky:
+        - **Nivel Pre-iconográfico:** Descripción formal de lo que se ve (líneas, colores, composición, figuras).
+        - **Nivel Iconográfico:** Identificación de temas, motivos y fuentes literarias o religiosas.
+        - **Nivel Iconológico:** Interpretación del significado intrínseco, el contexto histórico-cultural y el programa iconográfico en su conjunto.
+        - El alumno puede referenciar los marcadores de zona colocados en el visor mediante sintaxis `[M1]`, `[M2]`, etc. para vincular la descripción con la imagen.
+*   **Motor principal:** EV-ICON-ART.
+*   **Layout:** FULL_STACK (las tres zonas se apilan verticalmente; la imagen es sticky al hacer scroll en el formulario y el editor).
+*   **Nota de corrección formal:** La corrección ortotipográfica del análisis se evalúa mediante el baremo estándar DRA-HOLO de la Rama Humanidades. El rigor terminológico en los campos de identificación es condición necesaria para la superación del ítem.
+
+### W-MUS-SCORE (Visor de Partitura y Análisis Musical — SUB-HUM-MUS) [NUEVO v5.2 — 2026-04-21]
+*   **Uso:** SUB-HUM-MUS (Historia y Ciencias de la Música UGR). Instrumento nuclear del análisis en partitura, certificado como componente evaluativo del 50% de la calificación en el Grado en Historia y Ciencias de la Música UGR (Guía Docente de Análisis II: Clasicismo y Romanticismo, cód. 2991132, aprobada 23/06/2025, y Fundamentos de la Expresión Musical y su Evolución I, cód. 2991114, aprobada 25/06/2025).
+*   **Fuente de Certificación:** Guías Docentes de Análisis II: Clasicismo y Romanticismo (2991132), Fundamentos de la Expresión Musical y su Evolución I (2991114) y Teoría y Práctica de la Interpretación Musical I (299112A) — Departamento de Historia y Ciencias de la Música, UGR, curso 2025-2026.
+*   **Distribución Visual (Dos Paneles):**
+    1.  **Panel izquierdo (Partitura — Sticky):** Visor HD de la partitura en imagen de alta resolución. Herramientas de anotación superpuestas directamente sobre la partitura:
+        - **Marcado de Compases:** El alumno puede seleccionar rangos de compases y etiquetarlos (ej. "Exposición", "Desarrollo", "Cadencia auténtica perfecta").
+        - **Etiquetado Armónico:** Inserción de símbolos de análisis armónico sobre los acordes (grados romanos: I, IV, V, ii, vii°; indicación de función tonal: T, S, D; identificación de cadencias).
+        - **Marcado de Motivos:** El alumno puede trazar arcos o corchetes sobre fragmentos melódicos para identificar motivos, temas y su transformación.
+        - **Indicación de Forma:** Botonera rápida para etiquetar secciones formales (A, B, A', Coda, Puente, etc.) conforme a la terminología estándar de LaRue (1989) y Cook (1991), referencias bibliográficas del Grado en Historia y Ciencias de la Música UGR.
+        - La partitura permanece visible y anotable durante toda la tarea.
+    2.  **Panel derecho (Análisis Musicológico — Editor):** W-HUM-TEXT en modo libre para el comentario analítico formal. El alumno redacta el análisis estructurado referenciando los marcadores de la partitura. Soporta notación musical básica mediante símbolos Unicode estándar (bemoles ♭, sostenidos ♯, becuadros ♮, corcheas ♩).
+*   **Motor de Identificación Auditiva (Complementario):** Cuando el subarquetipo activa la destreza SD_MUS_LIST (identificación auditiva), se integra el widget **W-AUDIO-INSTR** con configuración MUS: el número de reproducciones por fragmento se define por la estrategia de la asignatura (no fijo en 2 como en INSTR — variable según la guía docente de la asignatura fuente). Motor: **EV-MUS-ANAL**.
+*   **Motor principal:** EV-MUS-ANAL.
+*   **Layout:** SPLIT_TEXT (partitura en panel izquierdo sticky; editor de análisis en panel derecho).
+
+### W-PORTFOLIO (Portafolio Digital de Proceso Creativo — SUB-HUM-ART-CREA) [NUEVO v5.2 — 2026-04-21]
+*   **Uso:** SUB-HUM-ART-CREA (Bellas Artes UGR). Instrumento de emulación parcial certificada del portafolio/dossier de proceso creativo, que constituye el 60-70% de la calificación en el Grado en Bellas Artes UGR (Guías Docentes de Arte y Cuerpo, cód. 26011D1, y Principios Básicos de la Pintura, cód. 2601114, aprobadas en junio de 2025).
+*   **Declaración de Emulación Parcial Certificada [VINCULANTE]:** CampuStudiOnline emula exclusivamente las destrezas evaluables en entorno digital del Grado en Bellas Artes UGR. Las destrezas de taller presencial (técnica matérica directa, modelado físico, fundición escultórica, grabado tradicional) quedan fuera del alcance de la plataforma y se documentan explícitamente como no emulables. El widget evalúa: (a) el proceso creativo documentado mediante imágenes digitalizadas; (b) la memoria escrita de proceso; (c) el análisis crítico de la obra propia.
+*   **Fuente de Certificación:** Guías Docentes de Arte y Cuerpo (26011D1) y Principios Básicos de la Pintura (2601114) — Facultad de Bellas Artes, UGR, curso 2025-2026.
+*   **Distribución Visual (Tres Zonas):**
+    1.  **Zona Superior (Galería de Proceso — Carga de Imágenes):** Interfaz de carga de imágenes (capturas del proceso creativo en sus distintas fases: bocetos, estudios preparatorios, estados intermedios de la obra, obra final). El alumno carga entre 5 y 15 imágenes ordenadas cronológicamente. Cada imagen admite un pie de foto descriptivo (máx. 150 palabras) que documenta la fase del proceso y las decisiones técnicas adoptadas.
+        - Formatos admitidos: JPG, PNG, PDF (para obras en papel).
+        - La plataforma aplica validación básica de carga (tamaño máximo por imagen: 10 MB; mínimo de 5 imágenes para habilitar el envío).
+    2.  **Zona Media (Memoria de Proceso — Editor):** W-HUM-TEXT en modo libre para la redacción de la memoria de proceso creativo. La memoria debe incluir: descripción del proyecto y su intención artística, materiales y técnicas empleados, referentes artísticos y bibliográficos, decisiones creativas adoptadas y justificación de las mismas. Extensión mínima: 500 palabras. Motor: DRA-HOLO (rúbrica analítica holística adaptada al contexto de Bellas Artes).
+    3.  **Zona Inferior (Análisis Crítico — Editor):** W-HUM-TEXT en modo libre para el análisis crítico de la obra propia en relación con el contexto artístico contemporáneo y los contenidos de la asignatura. El alumno contextualiza su producción dentro de los debates artísticos actuales y la bibliografía del programa. Extensión mínima: 300 palabras.
+*   **Motor principal:** DRA-HOLO (configuración ART-CREA — ver V06DOC_BLOCKS.md).
+*   **Layout:** FULL_STACK (las tres zonas se apilan verticalmente con navegación por pestañas entre Galería, Memoria y Análisis Crítico).
+*   **Nota de restricción de entrada:** Los modos Occidentalización y Pad de Trazos de W-HUM-TEXT quedan deshabilitados en este widget (el castellano es el idioma vehicular obligatorio en Bellas Artes UGR). Modos activos: Teclado Latino Nativo y OCR/Captura.
