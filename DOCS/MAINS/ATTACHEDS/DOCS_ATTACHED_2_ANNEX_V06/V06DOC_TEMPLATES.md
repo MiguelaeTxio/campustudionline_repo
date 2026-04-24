@@ -136,3 +136,71 @@ Esta sección documenta los contratos de inyección de contenido específicos pa
     *   **Motor:** DRA-HOLO-LIT (Eje 4 exclusivamente).
     *   **Control de originalidad:** Enviado a través de Turnitin emulado para verificación de originalidad.
     *   **FAIL_LOGIC:** FATAL para la destreza si el ensayo carece de fundamentación bibliográfica o reproduce opiniones ajenas sin argumentación original.
+
+### 6.5. Contrato de Fases: SUB-HUM-ART-HIST (Dpto. Historia del Arte UGR — Iconografía, cód. 26511M2; Historia de los Estilos e Iconografía, cód. 2931114) [NUEVO v5.3 — 2026-04-22]
+*   **Estructura:** Dos destrezas evaluadas de forma independiente y no compensable. Umbral mínimo de 5/10 en cada destreza para superar el subarquetipo (FAIL_LOGIC: FATAL por destreza no superada). Ponderación: SD_ART_IDENT (50-60%) + SD_ART_ANAL (40-50%) según nivel pedagógico configurado.
+*   **NOTA CRÍTICA:** La identificación errónea del Autor o la Cronología en más de un período estilístico completo activa FAIL_LOGIC: FATAL para el ítem de identificación de SD_ART_IDENT, con independencia de la calidad del análisis en SD_ART_ANAL. Las dos destrezas no son compensables.
+*   **Fase 1 (SD_ART_IDENT — Reconocimiento Iconográfico de Imágenes):**
+    *   **Widget:** W-ART-IDENT (Visor de Identificación y Comentario Iconográfico).
+    *   **Estímulo:** La IA selecciona una imagen de obra de arte del corpus del programa (iconografía cristiana, clásica u otras culturas según el nivel y la configuración). La imagen se muestra en el visor de W-ART-IDENT con los campos de identificación estructurada vacíos.
+    *   **Campos del formulario de identificación (obligatorios):**
+        1.  **Autor/Atribución:** Nombre canónico del artista o fórmula de atribución según la historiografía oficial (ej. "Taller de Rafael", "Anónimo flamenco, s. XV"). La IA valida contra la base de datos del corpus.
+        2.  **Cronología/Período:** Fecha exacta o rango aceptable definido por el nivel pedagógico (LVL_A: ± un período estilístico completo; LVL_B: ± 25 años para obras datables).
+        3.  **Técnica/Soporte:** Terminología técnica precisa según el vocabulario del Dpto. de Historia del Arte UGR (ej. "óleo sobre tabla", "fresco", "tempera sobre pergamino").
+        4.  **Estilo/Escuela:** Adscripción estilística correcta conforme a la historiografía artística del programa (ej. "Manierismo florentino", "Gótico internacional", "Barroco romano").
+        5.  **Tema/Motivo iconográfico principal:** Denominación canónica del tema según el repertorio iconográfico del programa (Carmona Muela, Réau o Hall según la tipología de la obra).
+    *   **Motor:** EV-ICON-ART (Fase de Identificación — 40% del ítem dentro de la destreza SD_ART_IDENT).
+    *   **Non-backtracking:** Una vez enviado el formulario de identificación, el acceso queda bloqueado permanentemente. El alumno no puede modificar los campos de identificación durante la fase de análisis.
+*   **Fase 2 (SD_ART_ANAL — Análisis Formal e Iconológico — Metodología Panofsky):**
+    *   **Widget:** W-HUM-TEXT con layout W-LAYOUT-SIDE.
+    *   **Panel izquierdo (Estímulo — Sticky):** La misma imagen de la Fase 1, no editable. Permanece visible durante toda la fase.
+    *   **Panel derecho (Editor):** El alumno redacta el comentario analítico en modo edición libre, siguiendo de forma explícita los tres niveles de Panofsky con separación visible entre niveles:
+        *   **Nivel 1 — Descripción Pre-iconográfica:** Descripción formal exhaustiva (composición, figuras, espacios, tratamiento del color y la luz, técnica observable). El alumno no puede acceder al Nivel 2 sin haber completado este nivel.
+        *   **Nivel 2 — Análisis Iconográfico:** Identificación de temas, motivos, atributos simbólicos y fuentes literarias o religiosas del repertorio del programa. Se exige referencia explícita a la fuente iconográfica (texto bíblico, mitológico o literario que justifica la representación).
+        *   **Nivel 3 — Interpretación Iconológica:** Contextualización histórico-cultural de la obra, identificación del programa iconográfico en su conjunto, argumentación sobre el significado intrínseco. Se exige referencia a fuentes secundarias de la historiografía artística para LVL_B.
+    *   **Motor:** EV-ICON-ART (Fase de Análisis — 60% del ítem dentro de la destreza SD_ART_ANAL).
+    *   **FAIL_LOGIC:** FATAL para el Nivel 3 si el alumno no ha completado los Niveles 1 y 2 de forma evaluable.
+
+### 6.6. Contrato de Fases: SUB-HUM-ART-CREA — Emulación Parcial Certificada (Facultad de Bellas Artes UGR — Arte y Cuerpo, cód. 26011D1; Principios Básicos de la Pintura, cód. 2601114) [NUEVO v5.3 — 2026-04-22]
+*   **DECLARACIÓN DE EMULACIÓN PARCIAL CERTIFICADA [VINCULANTE]:** Este contrato de fases emula exclusivamente las destrezas digitalizables del Grado en Bellas Artes UGR. La destreza de taller presencial es no emulable. Esta declaración es permanente y vinculante.
+*   **Estructura:** Evaluación holística mediante DRA-HOLO configuración ART-CREA sobre el conjunto formado por el portafolio digital (SD_CREA_PORT) y la documentación escrita (SD_CREA_MEM). Umbral mínimo de superación: 5/10 en la media de los cuatro ejes. Sin compensación entre ejes: la ausencia de documentación del proceso (Eje 1 nulo) supone el suspenso del subarquetipo independientemente de la calidad de la memoria y el análisis.
+*   **Fase 1 (SD_CREA_PORT — Portafolio Digital de Proceso Creativo):**
+    *   **Widget:** W-PORTFOLIO.
+    *   **Estímulo:** La IA propone un encargo artístico contextualizado en uno de los bloques temáticos del programa del Grado en Bellas Artes UGR (arte e identidad, arte y cuerpo, arte y espacio, arte y diversidad cultural). El encargo especifica: temática, restricciones formales orientativas, referentes artísticos del programa que deben ser considerados, y número mínimo de estados del proceso a documentar.
+    *   **Tarea:** El alumno carga en W-PORTFOLIO una galería de imágenes que documenta el proceso creativo del proyecto propuesto:
+        *   **Estados obligatorios (mínimo según nivel):** LVL_A: 3-5 imágenes de estados intermedios + imagen final. LVL_B: 5-8 imágenes de estados intermedios + imagen final.
+        *   **Pie de foto de cada imagen (obligatorio):** Título del estado, descripción breve de la decisión creativa adoptada en ese estado, referente artístico del programa aplicado (si procede).
+        *   **Imágenes admitidas:** Fotografías del proceso de trabajo (bocetos digitales, estudios conceptuales, maquetas, documentación de referentes, capturas de pantalla de proceso digital, fotografías de obra en progreso). Las obras de taller físico ya realizadas por el alumno pueden fotografiarse y subirse como documentación, pero la plataforma no evalúa la destreza técnica de taller, únicamente la calidad de la documentación y la coherencia del proceso.
+    *   **Motor:** DRA-HOLO configuración ART-CREA (Eje 1 — Coherencia del Proceso Creativo).
+    *   **FAIL_LOGIC:** FATAL para Eje 1 si el alumno sube únicamente la imagen de la obra final sin documentación de estados intermedios.
+*   **Fase 2 (SD_CREA_MEM — Memoria de Proceso y Análisis Crítico):**
+    *   **Widget:** W-HUM-TEXT (editor libre, sin panel lateral).
+    *   **Tarea:** El alumno redacta en dos bloques diferenciados y claramente identificados en su texto:
+        *   **Bloque A — Memoria de Proceso:** Descripción y justificación de las decisiones creativas adoptadas a lo largo del proyecto documentado en el portafolio. Debe incluir: denominación precisa de los materiales y procedimientos utilizados (vocabulario técnico de las artes plásticas), descripción de los momentos de inflexión del proceso y sus motivaciones, y referencia explícita a los referentes artísticos del programa que fundamentan las decisiones adoptadas.
+        *   **Bloque B — Análisis Crítico:** Contextualización de la obra o proyecto propio dentro de los debates artísticos contemporáneos del programa del Grado. Debe incluir: identificación de la tradición o corriente artística con la que dialoga el proyecto, argumentación original sobre las decisiones creativas adoptadas (no mera descripción), y valoración de los resultados obtenidos en relación con la intención artística inicial.
+    *   **Motor:** DRA-HOLO configuración ART-CREA (Ejes 2, 3 y 4).
+    *   **FAIL_LOGIC:** FATAL para Eje 3 si el Bloque B se limita a describir la obra sin argumentación crítica propia. FATAL para Eje 4 si el conjunto de la documentación escrita contiene más de 5 faltas ortotipográficas graves.
+
+### 6.7. Contrato de Fases: SUB-HUM-MUS (Dpto. Historia y Ciencias de la Música UGR — Análisis II: Clasicismo y Romanticismo, cód. 2991132; Fundamentos de la Expresión Musical y su Evolución I, cód. 2991114) [NUEVO v5.3 — 2026-04-22]
+*   **Estructura:** Dos destrezas evaluadas de forma independiente y no compensable. Umbral mínimo de 5/10 en cada destreza para superar el subarquetipo (FAIL_LOGIC: FATAL por destreza no superada — coherente con la normativa explícita de la Guía Docente 2991132: "para aprobar la asignatura será imprescindible tener superados cada uno de estos instrumentos de evaluación en al menos un 50%"). Ponderación: SD_MUS_LIST (50%) + SD_MUS_SCORE (50%).
+*   **NOTA CRÍTICA — Reproducciones de audio:** El número de reproducciones por fragmento en SD_MUS_LIST es **variable** según la estrategia configurada para cada nivel pedagógico. NO está fijado en 2 reproducciones (ese límite es específico de SUB-LIN-INSTR/CertAcles). El motor EV-MUS-ANAL gestiona el número de reproducciones permitidas según la configuración de nivel.
+*   **Fase 1 (SD_MUS_LIST — Identificación Auditiva):**
+    *   **Widget:** W-AUDIO-INSTR (configuración MUS — número de reproducciones variable según nivel).
+    *   **Estímulo:** La IA selecciona un fragmento musical de entre 30 y 90 segundos del corpus del programa (obras del Clasicismo vienés para LVL_B; ampliado al Romanticismo para LVL_C). El fragmento se reproduce en el widget de audio.
+    *   **Ítems de identificación (combinación de los siguientes tipos):**
+        *   **Tipo A — Identificación múltiple (W-OBJ-STRIKE / Motor: EV-MUS-ANAL):** El alumno elige entre cuatro opciones para identificar: período estilístico, estilo/escuela compositiva, forma musical, género (sinfónico, camerístico, vocal, etc.), agrupación instrumental/vocal.
+        *   **Tipo B — Completado de ficha analítica (W-TXT-CLOZE / Modo: Open / Motor: EV-MUS-ANAL):** El alumno completa con términos del metalenguaje musicológico los campos de una ficha analítica del fragmento: textura, dinámica predominante, tipo de cadencia identificada, carácter rítmico.
+        *   **Tipo C — Emparejamiento (W-MIX-MATCH / Motor: EV-MUS-ANAL):** El alumno empareja fragmentos con compositores, períodos o características estilísticas.
+    *   **Non-backtracking:** Una vez enviadas las respuestas de identificación, el acceso queda bloqueado. El widget de audio se desactiva al inicio de la Fase 2.
+*   **Fase 2 (SD_MUS_SCORE — Análisis en Partitura):**
+    *   **Widgets:** W-MUS-SCORE (visor de partitura con anotación) + W-HUM-TEXT (editor de comentario musicológico).
+    *   **Estímulo:** La IA proporciona la partitura de un fragmento del corpus del programa — puede coincidir o no con el fragmento de la Fase 1 según la estrategia de nivel configurada.
+    *   **Tareas obligatorias (en el editor de W-MUS-SCORE y W-HUM-TEXT):**
+        *   **Bloque A — Análisis Armónico:** El alumno cifra los grados romanos de la progresión armónica del fragmento, identifica las funciones tonales (tónica, subdominante, dominante, funciones secundarias), señala las cadencias (auténtica perfecta, plagal, semicadencia, evitada) y, en LVL_C, identifica las modulaciones y los centros tonales secundarios.
+        *   **Bloque B — Análisis Formal:** El alumno identifica y delimita las secciones formales del fragmento con su denominación canónica conforme a LaRue (1989): exposición, desarrollo, recapitulación (si es forma sonata), secciones de una forma binaria, ternaria, rondó, etc. Cada sección debe delimitarse con compases de inicio y fin.
+        *   **Bloque C — Comentario Musicológico:** El alumno redacta un comentario con metalenguaje musicológico especializado que contextualice el fragmento en el período estilístico del compositor, relacione los recursos compositivos identificados en los Bloques A y B con las características del estilo del período, y — en LVL_C — cite al menos una referencia de la bibliografía analítica oficial del programa (LaRue, Cook, Bent, Blanquer Ponsoda o Cadwallader).
+    *   **Motor:** EV-MUS-ANAL (SD_MUS_SCORE).
+    *   **Penalizaciones específicas:**
+        *   Confusión de función tonal dominante con subdominante en contexto cadencial: -0.5 por error (coherente con EV-MUS-ANAL en V06DOC_BLOCKS.md).
+        *   Denominación formal incorrecta de una sección (ej. "recapitulación" por "desarrollo"): penalización en el eje de análisis formal.
+        *   Ausencia de cita bibliográfica en LVL_C: penalización del eje de calidad del comentario musicológico en un 30%.

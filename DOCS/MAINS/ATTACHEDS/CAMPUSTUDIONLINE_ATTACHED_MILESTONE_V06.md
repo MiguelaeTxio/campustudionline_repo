@@ -3,20 +3,22 @@
 # FECHA DE ACTUALIZACIÓN: 2026-04-21
 
 ## 1. RESUMEN DE LA SITUACIÓN ACTUAL (EDC)
-*   La Rama Lenguas queda COMPLETAMENTE CERTIFICADA Y SINCRONIZADA (v5.1, 2026-04-20 / v5.2, 2026-04-21). Los siete subarquetipos (SUB-LIN-INSTR, SUB-LIN-MINOR, SUB-LIN-PHILO, SUB-LIN-ECDO, SUB-LIN-NORM, SUB-LIN-TRA-TECH, SUB-LIN-TRA-LIT) han alcanzado Fidelidad 100% UGR y la constelación documental ha sido sincronizada íntegramente en la sesión del 2026-04-21: `V06DOC_WIDGETS.md` (reconversión W-TRA-CAT-EMULATOR→W-DOC-RESOURCES, mapeo W-TRA-LIT-CREA→W-HUM-TEXT modo TRA-LIT, restricción NORM, referencias cruzadas), `V06DOC_BLOCKS.md` (nota de certificación EV-TRA-PRECISION-TECH, DRA-HOLO-LIT, eliminación SD_TRA_REVIEW), `V06DOC_TEMPLATES.md` (contratos 6.2 SUB-LIN-NORM, 6.3 SUB-LIN-TRA-TECH, 6.4 SUB-LIN-TRA-LIT), `V06DOC_SUBARCHETYPES.md` (secuencia genética TRA-TECH reducida a tres destrezas, referencia W-TRA-LIT-CREA corregida).
-*   La sesión del 2026-04-21 ha arrancado la **Rama Artes y Humanidades**. Se ha completado la investigación online contra las Guías Docentes UGR 2025-2026 de los seis subarquetipos (SUB-HUM-HIST, SUB-HUM-PHIL, SUB-HUM-ART-HIST, SUB-HUM-ART-CREA, SUB-HUM-MUS, SUB-HUM-ANTH) y se ha construido el mapa completo de la rama con diagnóstico de widgets por subarquetipo.
-*   Se han tomado dos decisiones arquitectónicas vinculantes: SUB-HUM-ART-CREA opera como **Emulación Parcial Certificada** (solo destrezas digitalizables); SUB-HUM-ANTH es **subarquetipo transversal** sin asignatura monográfica UGR.
-*   Se ha completado la **Fase A** de la Rama Humanidades: adición a la constelación de tres widgets nuevos (`W-ART-IDENT`, `W-MUS-SCORE`, `W-PORTFOLIO`) y tres motores/configuraciones nuevos (`EV-ICON-ART`, `EV-MUS-ANAL`, `DRA-HOLO` configuración ART-CREA) en `V06DOC_WIDGETS.md` y `V06DOC_BLOCKS.md` respectivamente.
-*   Queda pendiente la **Fase B**: certificación subarquetipo a subarquetipo de la Rama Humanidades con actualización de `V06DOC_SUBARCHETYPES.md`, `V06DOC_SUBDIVISIONS.md`, `V06DOC_TEMPLATES.md` y `V06DOC_BLOCKS.md` según proceda.
+*   La Rama Lenguas queda COMPLETAMENTE CERTIFICADA Y SINCRONIZADA (v5.1, 2026-04-20 / v5.2, 2026-04-21). Los siete subarquetipos (SUB-LIN-INSTR, SUB-LIN-MINOR, SUB-LIN-PHILO, SUB-LIN-ECDO, SUB-LIN-NORM, SUB-LIN-TRA-TECH, SUB-LIN-TRA-LIT) han alcanzado Fidelidad 100% UGR y la constelación documental ha sido sincronizada íntegramente.
+*   La **Rama Artes y Humanidades** queda COMPLETAMENTE CERTIFICADA Y SINCRONIZADA (v5.3, 2026-04-22). Los seis subarquetipos han alcanzado Fidelidad 100% UGR en sesión única. La constelación documental ha sido actualizada íntegramente:
+    *   `V06DOC_SUBARCHETYPES.md` — Bloques SUB-HUM-HIST, SUB-HUM-PHIL, SUB-HUM-ART-HIST, SUB-HUM-ART-CREA, SUB-HUM-MUS y SUB-HUM-ANTH completos con perfiles institucionales, secuencias genéticas, protocolos de superación y rigor certificados contra Guías Docentes UGR 2025-2026.
+    *   `V06DOC_SUBDIVISIONS.md` — Secciones 4-9 añadidas con desglose competencial completo de las dos subdivisiones de cada subarquetipo.
+    *   `V06DOC_TEMPLATES.md` — Contratos de fases 6.5 (SUB-HUM-ART-HIST), 6.6 (SUB-HUM-ART-CREA) y 6.7 (SUB-HUM-MUS) añadidos con especificación completa de ítems, widgets y motores.
+*   Decisiones arquitectónicas vinculantes confirmadas y documentadas: SUB-HUM-ART-CREA opera como **Emulación Parcial Certificada** (solo destrezas digitalizables — portafolio digital, memoria de proceso, análisis crítico); SUB-HUM-ANTH es **subarquetipo transversal** sin asignatura monográfica UGR, documentado con nota institucional explícita.
+*   La siguiente fase es la **Rama Ciencias de la Salud (ECOE)** — primera rama pendiente de certificación tras el cierre de Lenguas y Humanidades.
 
 ## 2. HOJA DE RUTA PARA LA PRÓXIMA SESIÓN (LEY SUPREMA - INELUDIBLE)
-**ESTADO DEL HITO:** EN PROGRESO — Fase B de la Rama Artes y Humanidades pendiente.
-**FECHA DE ÚLTIMA ACTUALIZACIÓN:** 2026-04-21
-**OBJETIVO DE LA PRÓXIMA SESIÓN:** Completar la Fase B de la Rama Humanidades — certificación subarquetipo a subarquetipo — ejecutando en orden estricto e inamovible los pasos definidos a continuación.
+**ESTADO DEL HITO:** EN PROGRESO — Rama Ciencias de la Salud (ECOE) pendiente de certificación.
+**FECHA DE ÚLTIMA ACTUALIZACIÓN:** 2026-04-22
+**OBJETIVO DE LA PRÓXIMA SESIÓN:** Iniciar la certificación de la Rama Ciencias de la Salud — subarquetipo a subarquetipo — ejecutando en orden estricto e inamovible los pasos definidos a continuación.
 
 ---
 
-### CONSTELACIÓN DOCUMENTAL ACTIVA (v5.2)
+### CONSTELACIÓN DOCUMENTAL ACTIVA (v5.3)
 Los archivos satélite de la constelación V06 son:
 `V06DOC_ARCHETYPES.md`, `V06DOC_SUBARCHETYPES.md`, `V06DOC_BLOCKS.md`, `V06DOC_WIDGETS.md`, `V06DOC_LEVELS.md`, `V06DOC_SUBDIVISIONS.md`, `V06DOC_METADATA.md`, `V06DOC_STRUCTURE.md`, `V06DOC_BINDING_GUIDELINE.md`, `V06DOC_TEMPLATES.md`, `V06DOC_LOGIC_MAPPING.md`.
 
@@ -28,57 +30,57 @@ Los archivos satélite de la constelación V06 son:
 
 **NORTE INAMOVIBLE:** CampuStudiOnline es un emulador de pruebas evaluativas universitarias. El alumno solicita ser evaluado de una asignatura y recibe una prueba que replica fielmente los criterios, estructura y baremos del examen oficial de esa asignatura en la UGR. Todo lo que no figure en la evaluación ordinaria o extraordinaria de la Guía Docente oficial **no se evalúa y no tiene cabida en la constelación.**
 
-**DECISIONES ARQUITECTÓNICAS VINCULANTES (2026-04-21):**
-*   `SUB-HUM-ART-CREA` — **Emulación Parcial Certificada:** Solo destrezas digitalizables (portafolio digital, memoria de proceso, análisis crítico). Las destrezas de taller presencial quedan excluidas y documentadas como no emulables.
-*   `SUB-HUM-ANTH` — **Subarquetipo transversal:** Sin asignatura monográfica UGR. Se documenta explícitamente sin anclaje en guía docente específica.
+**PROHIBICIONES ABSOLUTAS HEREDADAS:**
+*   El modelo de la próxima sesión **NO PODRÁ INVENTAR NI SUPONER NADA** que no esté escrito en esta hoja de ruta o en la documentación satélite auditada.
+*   **NO** se permite el salto a otras ramas hasta que todos los subarquetipos de la Rama en curso alcancen Fidelidad 100% certificada por el usuario.
+*   **NO** se modificará ningún subarquetipo ya certificado salvo indicación explícita del usuario con el nombre exacto del subarquetipo a revisar.
+*   **NO** se crearán widgets ni motores adicionales sin investigación online previa contra las fuentes primarias UGR de la rama en curso.
 
-**INFRAESTRUCTURA DE WIDGETS Y MOTORES DISPONIBLE (Fase A completada — 2026-04-21):**
-Los siguientes componentes han sido añadidos a la constelación y están operativos:
-*   `W-ART-IDENT` — Visor de Identificación y Comentario Iconográfico (SUB-HUM-ART-HIST). Motor: EV-ICON-ART.
-*   `W-MUS-SCORE` — Visor de Partitura y Análisis Musical (SUB-HUM-MUS). Motor: EV-MUS-ANAL. Se integra con W-AUDIO-INSTR (reproducciones variables según estrategia).
-*   `W-PORTFOLIO` — Portafolio Digital de Proceso Creativo (SUB-HUM-ART-CREA). Motor: DRA-HOLO configuración ART-CREA.
-*   `EV-ICON-ART` — Motor de Identificación y Análisis Iconológico.
-*   `EV-MUS-ANAL` — Motor de Análisis Musical.
-*   `DRA-HOLO configuración ART-CREA` — Rúbrica Holística de Proceso Creativo.
+#### RAMA CIENCIAS DE LA SALUD — CERTIFICACIÓN SUBARQUETIPO A SUBARQUETIPO
 
-#### FASE B — CERTIFICACIÓN SUBARQUETIPO A SUBARQUETIPO (RAMA HUMANIDADES)
+La certificación de cada subarquetipo sigue el mismo patrón que las ramas anteriores: investigación online en tiempo real contra fuentes primarias UGR → redacción del bloque certificado → PMA/PMP sobre los documentos de la constelación afectados. El orden es inamovible.
 
-La certificación de cada subarquetipo sigue el mismo patrón que la Rama Lenguas: investigación online en tiempo real contra fuentes primarias UGR → redacción del bloque certificado → PMA/PMP sobre los documentos de la constelación afectados. El orden es inamovible.
+**PASO C1 — SUB-SAN-MED-CLIN (Medicina — Diagnóstico diferencial y razonamiento clínico)**
+*   **Fuentes a contrastar:** Guías Docentes del Grado en Medicina UGR (Dpto. de Medicina, Dpto. de Anatomía Patológica e Historia de la Ciencia). Asignaturas núcleo de razonamiento clínico y semiología. Verificar existencia de ECOE (Evaluación Clínica Objetiva Estructurada) en el plan de estudios.
+*   **Widgets previstos (a verificar):** W-CASE-ECOE (estación ECOE), W-OBJ-STRIKE, W-HUM-TEXT. Evaluar si se requiere widget nuevo para estaciones ECOE.
+*   **Documentos a actualizar:** `V06DOC_SUBARCHETYPES.md`, `V06DOC_SUBDIVISIONS.md`. `V06DOC_WIDGETS.md` y `V06DOC_BLOCKS.md` si se requiere widget o motor nuevo.
 
-**PASO B1 — SUB-HUM-HIST (Historiográfico — Grado en Historia UGR)**
-*   **Fuentes a contrastar:** Guías Docentes del Grado en Historia UGR (Dpto. de Historia Contemporánea y Dpto. de Historia Moderna, aprobadas 16/06/2025). Asignaturas núcleo: Historia Universal Contemporánea I (2921128) y asignaturas troncales del Grado.
-*   **Patrón evaluativo certificado:** Prueba escrita de desarrollo y comentario de fuentes primarias (60-70%) + evaluación continua (30-40%). Evaluación íntegramente discursiva. Sin componente de respuesta objetiva estandarizado.
-*   **Widgets disponibles:** W-HUM-TEXT, W-LAYOUT-SIDE, W-OBJ-STRIKE. No se requiere widget nuevo.
-*   **Documentos a actualizar:** `V06DOC_SUBARCHETYPES.md` (bloque SUB-HUM-HIST completo), `V06DOC_SUBDIVISIONS.md` (desglose competencial SUB-HUM-HIST).
+**PASO C2 — SUB-SAN-MED-BASIC (Básicas Médicas — Anatomía, Histología, Fisiología)**
+*   **Fuentes a contrastar:** Guías Docentes de Anatomía Humana, Histología y Fisiología Humana del Grado en Medicina UGR.
+*   **Patrón previsible:** Identificación de estructuras en imágenes (anatomía/histología) + preguntas de desarrollo. Verificar baremos exactos.
+*   **Documentos a actualizar:** `V06DOC_SUBARCHETYPES.md`, `V06DOC_SUBDIVISIONS.md`.
 
-**PASO B2 — SUB-HUM-PHIL (Dialéctico — Grado en Filosofía UGR)**
-*   **Fuentes a contrastar:** Guías Docentes del Grado en Filosofía UGR (Dpto. de Filosofía I y II, aprobadas 23-24/06/2025). Asignaturas núcleo: Historia de la Filosofía Antigua II (26311M3), Filosofía y Argumentación (2631111), Historia de la Filosofía Española (26311M5).
-*   **Patrón evaluativo certificado:** Prueba escrita en cuatro partes: test de precisión conceptual + preguntas de desarrollo de extensión media + comentario de texto filosófico del programa + ensayo filosófico (1200-2000 palabras) con mínimo dos fuentes bibliográficas.
-*   **Widgets disponibles:** W-OBJ-STRIKE, W-HUM-TEXT, W-LAYOUT-SIDE. No se requiere widget nuevo.
-*   **Documentos a actualizar:** `V06DOC_SUBARCHETYPES.md` (bloque SUB-HUM-PHIL completo), `V06DOC_SUBDIVISIONS.md` (desglose competencial SUB-HUM-PHIL).
+**PASO C3 — SUB-SAN-CUID (Enfermería — Planes NANDA/NIC/NOC y seguridad del paciente)**
+*   **Fuentes a contrastar:** Guías Docentes del Grado en Enfermería UGR (Facultad de Ciencias de la Salud). Verificar metodología de planes de cuidados y criterios de evaluación de seguridad del paciente.
+*   **Documentos a actualizar:** `V06DOC_SUBARCHETYPES.md`, `V06DOC_SUBDIVISIONS.md`.
 
-**PASO B3 — SUB-HUM-ART-HIST (Iconográfico — Grado en Historia del Arte UGR)**
-*   **Fuentes a contrastar:** Guías Docentes del Dpto. de Historia del Arte UGR, aprobadas 24/06/2025. Asignaturas núcleo: Iconografía (26511M2), Historia de los Estilos e Iconografía (2931114), Historia del Arte del Renacimiento (2931127), Historia del Arte Antiguo y Medieval (2921124).
-*   **Patrón evaluativo certificado:** Prueba de reconocimiento iconográfico de imágenes (50-60%) + trabajos/ensayos de análisis formal e iconológico (40-50%). Las dos partes no son compensables.
-*   **Widgets disponibles:** W-ART-IDENT (nuevo, ya en constelación), W-HUM-TEXT, W-LAYOUT-SIDE. Motor: EV-ICON-ART (nuevo, ya en constelación).
-*   **Documentos a actualizar:** `V06DOC_SUBARCHETYPES.md` (bloque SUB-HUM-ART-HIST completo), `V06DOC_SUBDIVISIONS.md` (desglose competencial SUB-HUM-ART-HIST), `V06DOC_TEMPLATES.md` (contrato de fases SUB-HUM-ART-HIST).
+**PASO C4 — SUB-SAN-ODON (Odontología — Materiales, radiología y técnica dental)**
+*   **Fuentes a contrastar:** Guías Docentes del Grado en Odontología UGR.
+*   **Documentos a actualizar:** `V06DOC_SUBARCHETYPES.md`, `V06DOC_SUBDIVISIONS.md`.
 
-**PASO B4 — SUB-HUM-ART-CREA (Bellas Artes — Emulación Parcial Certificada — Grado en Bellas Artes UGR)**
-*   **Fuentes a contrastar:** Guías Docentes de la Facultad de Bellas Artes UGR, aprobadas junio 2025. Asignaturas núcleo: Arte y Cuerpo (26011D1), Principios Básicos de la Pintura (2601114).
-*   **Patrón evaluativo certificado (parcial):** Portafolio/dossier de proceso creativo (60-70%) + memoria de proceso + análisis crítico. Destrezas de taller presencial excluidas por declaración de emulación parcial.
-*   **Widgets disponibles:** W-PORTFOLIO (nuevo, ya en constelación), W-HUM-TEXT. Motor: DRA-HOLO configuración ART-CREA (nuevo, ya en constelación).
-*   **Documentos a actualizar:** `V06DOC_SUBARCHETYPES.md` (bloque SUB-HUM-ART-CREA completo con declaración de emulación parcial), `V06DOC_SUBDIVISIONS.md` (desglose competencial SUB-HUM-ART-CREA), `V06DOC_TEMPLATES.md` (contrato de fases SUB-HUM-ART-CREA).
+**PASO C5 — SUB-SAN-FISIO (Fisioterapia — Valoración funcional y anatomía palpatoria)**
+*   **Fuentes a contrastar:** Guías Docentes del Grado en Fisioterapia UGR.
+*   **Documentos a actualizar:** `V06DOC_SUBARCHETYPES.md`, `V06DOC_SUBDIVISIONS.md`.
 
-**PASO B5 — SUB-HUM-MUS (Musicología — Grado en Historia y Ciencias de la Música UGR)**
-*   **Fuentes a contrastar:** Guías Docentes del Dpto. de Historia y Ciencias de la Música UGR, aprobadas 23-25/06/2025. Asignaturas núcleo: Análisis II: Clasicismo y Romanticismo (2991132), Fundamentos de la Expresión Musical y su Evolución I (2991114), Teoría y Práctica de la Interpretación Musical I (299112A).
-*   **Patrón evaluativo certificado:** Dos destrezas independientes no compensables (50%/50%): SD_MUS_LIST (identificación auditiva) + SD_MUS_SCORE (análisis en partitura). Umbral mínimo 5/10 en cada destreza.
-*   **Widgets disponibles:** W-MUS-SCORE (nuevo, ya en constelación), W-AUDIO-INSTR (reproducciones variables), W-OBJ-STRIKE, W-HUM-TEXT. Motor: EV-MUS-ANAL (nuevo, ya en constelación).
-*   **Documentos a actualizar:** `V06DOC_SUBARCHETYPES.md` (bloque SUB-HUM-MUS completo), `V06DOC_SUBDIVISIONS.md` (desglose competencial SUB-HUM-MUS), `V06DOC_TEMPLATES.md` (contrato de fases SUB-HUM-MUS).
+**PASO C6 — SUB-SAN-LAB (Bioquímica/Farmacia — Balances químicos, laboratorio y farmacología)**
+*   **Fuentes a contrastar:** Guías Docentes de los Grados en Farmacia y Bioquímica UGR.
+*   **Documentos a actualizar:** `V06DOC_SUBARCHETYPES.md`, `V06DOC_SUBDIVISIONS.md`.
 
-**PASO B6 — SUB-HUM-ANTH (Subarquetipo Transversal)**
-*   **Declaración:** Subarquetipo transversal sin asignatura monográfica UGR. La Antropología Social y Cultural se distribuye transversalmente en la UGR. Se documenta con nota institucional explícita de ausencia de anclaje en guía docente específica, al igual que SUB-LIN-TRA-LIT.
-*   **Widgets disponibles:** W-HUM-TEXT, W-OBJ-STRIKE, W-LAYOUT-SIDE. No se requiere widget nuevo.
-*   **Documentos a actualizar:** `V06DOC_SUBARCHETYPES.md` (bloque SUB-HUM-ANTH completo con nota transversal), `V06DOC_SUBDIVISIONS.md` (desglose competencial SUB-HUM-ANTH).
+**PASO C7 — SUB-SAN-PSY-CLIN (Psicología — Diagnóstico DSM/CIE y evaluación conductual)**
+*   **Fuentes a contrastar:** Guías Docentes del Grado en Psicología UGR (Facultad de Psicología). Asignaturas de Psicopatología y Evaluación Psicológica.
+*   **Documentos a actualizar:** `V06DOC_SUBARCHETYPES.md`, `V06DOC_SUBDIVISIONS.md`.
+
+**PASO C8 — SUB-SAN-PSY-EXP (Psicología Experimental — Metodología, estadística y diseños de investigación)**
+*   **Fuentes a contrastar:** Guías Docentes de Metodología de Investigación y Estadística del Grado en Psicología UGR.
+*   **Documentos a actualizar:** `V06DOC_SUBARCHETYPES.md`, `V06DOC_SUBDIVISIONS.md`.
+
+**PASO C9 — SUB-SAN-VET (Veterinaria — Clínica animal y cirugía veterinaria)**
+*   **Fuentes a contrastar:** Guías Docentes del Grado en Veterinaria UGR.
+*   **Documentos a actualizar:** `V06DOC_SUBARCHETYPES.md`, `V06DOC_SUBDIVISIONS.md`.
+
+**PASO C10 — SUB-SAN-NUT (Nutrición — Dietética, bromatología y salud pública)**
+*   **Fuentes a contrastar:** Guías Docentes del Grado en Nutrición Humana y Dietética UGR.
+*   **Documentos a actualizar:** `V06DOC_SUBARCHETYPES.md`, `V06DOC_SUBDIVISIONS.md`.
 
 #### ORDEN INAMOVIBLE DE SUBARQUETIPOS — HISTORIAL COMPLETO
 
@@ -118,11 +120,18 @@ La certificación de cada subarquetipo sigue el mismo patrón que la Rama Lengua
 *   [CERTIFICADO — 2026-04-20 / SINCRONIZADO v5.2 — 2026-04-21] `SUB-LIN-TRA-TECH` (v5.1). Fuente: Traducción Especializada B-A Inglés (252113T), 3º Grado en Traducción e Interpretación, Obligatoria, FTI-UGR (Guía Docente aprobada 01/07/2025). Sincronización: secuencia genética reducida a tres destrezas (SD_TRA_REVIEW eliminado), contrato de fases 6.3 añadido a TEMPLATES, W-DOC-RESOURCES operativo.
 *   [CERTIFICADO — 2026-04-20 / SINCRONIZADO v5.2 — 2026-04-21] `SUB-LIN-TRA-LIT` (v5.1). Fuente: Literatura y Traducción Lengua B Inglés (25211NJ), 3º Grado en Traducción e Interpretación, Optativa, FTI-UGR (Guía Docente aprobada 23/06/2025). Sincronización: W-TRA-LIT-CREA mapeado a W-HUM-TEXT Modo TRA-LIT, DRA-HOLO-LIT definido, contrato de fases 6.4 añadido a TEMPLATES.
 
-**RAMA HUMANIDADES — FASE A COMPLETADA (2026-04-21):**
-*   Investigación online contra Guías Docentes UGR 2025-2026 completada para los seis subarquetipos.
-*   Mapa completo de widgets por subarquetipo construido y validado.
-*   W-ART-IDENT, W-MUS-SCORE, W-PORTFOLIO, EV-ICON-ART, EV-MUS-ANAL y DRA-HOLO ART-CREA añadidos a la constelación.
-*   Fase B (certificación subarquetipo a subarquetipo) pendiente para la próxima sesión.
+**RAMA HUMANIDADES — CERRADA (v5.3 — 2026-04-22):**
+*   [CERTIFICADO — 2026-04-22] `SUB-HUM-HIST` (v5.3). Fuente: Historia Universal Contemporánea I (2921128, Dpto. Historia Contemporánea, aprobada 16/06/2025) e Historia Moderna Universal I (2921126, Dpto. Historia Moderna, aprobada 23/06/2025).
+*   [CERTIFICADO — 2026-04-22] `SUB-HUM-PHIL` (v5.3). Fuente: Historia de la Filosofía Antigua II (26311M3, Dpto. Filosofía II, aprobada 23/06/2025), Filosofía y Argumentación (2631111, aprobada 24/06/2025), Historia de la Filosofía Española (26311M5, aprobada 23/06/2025).
+*   [CERTIFICADO — 2026-04-22] `SUB-HUM-ART-HIST` (v5.3). Fuente: Iconografía (26511M2, Dpto. Historia del Arte, aprobada 24/06/2025) e Historia de los Estilos e Iconografía (2931114, aprobada 24/06/2025).
+*   [CERTIFICADO — 2026-04-22] `SUB-HUM-ART-CREA` (v5.3) — Emulación Parcial Certificada. Fuente: Arte y Cuerpo (26011D1, Dpto. Pintura/Escultura, aprobadas 09/06/2025 y 24/06/2025) y Principios Básicos de la Pintura (2601114, aprobada junio 2025).
+*   [CERTIFICADO — 2026-04-22] `SUB-HUM-MUS` (v5.3). Fuente: Análisis II: Clasicismo y Romanticismo (2991132, Dpto. Historia y Ciencias de la Música, aprobada 23/06/2025) y Fundamentos de la Expresión Musical y su Evolución I (2991114, aprobadas 23/06/2025 y 25/06/2025).
+*   [CERTIFICADO — 2026-04-22] `SUB-HUM-ANTH` (v5.3) — Subarquetipo Transversal. Sin asignatura monográfica UGR. Documentado con nota institucional de transversalidad vinculante.
+
+**SINCRONIZACIÓN CONSTELACIÓN (v5.3 — 2026-04-22):**
+*   `V06DOC_SUBARCHETYPES.md` — [SINCRONIZADO v5.3 — 2026-04-22]: Seis bloques de la Rama Humanidades completos con perfiles institucionales, secuencias genéticas y protocolos de superación certificados.
+*   `V06DOC_SUBDIVISIONS.md` — [SINCRONIZADO v5.3 — 2026-04-22]: Secciones 4-9 añadidas con desglose competencial completo de los doce subdivisiones de la Rama Humanidades.
+*   `V06DOC_TEMPLATES.md` — [SINCRONIZADO v5.3 — 2026-04-22]: Contratos 6.5 (SUB-HUM-ART-HIST), 6.6 (SUB-HUM-ART-CREA) y 6.7 (SUB-HUM-MUS) añadidos.
 
 ---
 

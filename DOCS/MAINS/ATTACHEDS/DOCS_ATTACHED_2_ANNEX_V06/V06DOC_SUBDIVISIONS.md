@@ -193,3 +193,240 @@ Esta sección desglosa las competencias específicas y el nivel de rigor académ
     *   **Dominios de Competencia:** COMP_GEN (Capacidad de redacción de un comentario exegético académico en el que se defiendan razonadamente las decisiones traductoras adoptadas, con referencia a la bibliografía de la traductología literaria) y COMP_PROF (Consciencia del papel de la traducción en la formación de cánones literarios y en la transmisión intercultural de valores).
     *   **Taxonomía Cognitiva:** COG_EVAL (Defensa argumentada de las opciones traductoras, incluyendo la justificación de las pérdidas inevitables y las compensaciones literarias adoptadas) y COG_CREA (Integración de perspectivas críticas de la traductología literaria: Venuti 2017, Reynolds 2011, Skopos).
     *   **Rigor Académico:** Nivel C2 hermenéutico (LVL_C / ITIN_MAI). Conforme a los criterios de evaluación de la Guía Docente 25211NJ (ensayos críticos de 1500-2500 palabras evaluados mediante Turnitin). Se exige estructura académica rigurosa, cita bibliográfica correcta y argumentación original. La ausencia de fundamentación bibliográfica o la reproducción acrítica de opiniones ajenas activa FAIL_LOGIC: FATAL para la destreza.
+
+## 4. SUB-HUM-HIST — Competencias por Subdivisión (Grado en Historia / UGR 2026) [CERTIFICADO v5.3 — 2026-04-22]
+
+### SD_HIST_DEV (Desarrollo Historiográfico — Prueba Escrita)
+*   **Dominios de Competencia:**
+    *   COMP_ESP (CE02 — Comprensión y estructuración de documentos y hechos históricos en marco temporal y geográfico amplio; CE76 — Manejo de conceptos, categorías y temas de la Edad Contemporánea/Moderna).
+    *   COMP_GEN (CG01 — Capacidad de análisis y síntesis; CG03 — Habilidades de comunicación escrita; CG09 — Capacidad de razonamiento crítico).
+*   **Taxonomía Cognitiva:**
+    *   COG_UND (Comprensión e interpretación de procesos históricos estructurales).
+    *   COG_ANA (Análisis de relaciones causales, cronológicas y entre agentes históricos).
+    *   COG_EVAL (Evaluación crítica de modelos interpretativos historiográficos y posicionamiento argumentado del alumno).
+    *   COG_CREA (Construcción de un discurso historiográfico original con esquema de análisis propio — nivel superior; la mera reproducción memorística no se admite).
+*   **Rigor Académico:**
+    *   Nivel LVL_A (1º-2º año): capacidad de exponer los procesos históricos con coherencia narrativa y precisión cronológica. Rigor Engine x1.2.
+    *   Nivel LVL_B (3º-4º año): capacidad de articular un discurso historiográfico con posicionamiento crítico sobre los debates interpretativos del período. Rigor Engine x1.4.
+    *   En ningún nivel se admite la sucesión de citas sin elaboración personal ni la reproducción de fragmentos sin atribución correcta.
+*   **Criterio de Superación:** Mínimo 5/10 (condición previa no compensable). FAIL_LOGIC: FATAL si no se alcanza este umbral — la nota de SD_HIST_PRAC no computa.
+
+### SD_HIST_PRAC (Análisis de Fuentes y Comentario de Documentos Históricos — Evaluación Continua / Práctica)
+*   **Dominios de Competencia:**
+    *   COMP_ESP (CE02 — Estructuración de documentos históricos; CE61 — Síntesis y análisis para la comprensión y estructuración de fuentes).
+    *   COMP_TRA (CG04 — Capacidad para obtener y gestionar información; CE60 — Apreciación de factores y procesos de cambio en sociedades humanas).
+    *   COMP_PROF (CE58 — Organización y gestión de información sobre sociedades y culturas; CE63 — Aprendizaje autónomo y adaptación a nuevas situaciones).
+*   **Taxonomía Cognitiva:**
+    *   COG_REM (Identificación del tipo documental, cronología y autoría de la fuente).
+    *   COG_UND (Contextualización del documento en su marco temporal, ideológico y geográfico).
+    *   COG_ANA (Análisis de la intención comunicativa de la fuente, sus sesgos y su relación con los procesos históricos del período).
+    *   COG_EVAL (Valoración crítica de la fuente como instrumento de conocimiento histórico y evaluación de su fiabilidad y representatividad).
+*   **Tipología documental emulable (certificada):**
+    *   Texto histórico primario: discurso político, tratado internacional, manifiesto ideológico, diario personal, correspondencia oficial o privada.
+    *   Documento cartográfico: mapa histórico de delimitaciones territoriales, rutas comerciales o expansión imperial.
+    *   Fuente iconográfica: grabado con carga política o social, ilustración de prensa histórica, fotografía de época con valor documental.
+    *   Fuente estadística: tabla de datos demográficos (censos, tasas de mortalidad/natalidad), datos económicos (producción industrial, comercio exterior), gráfico de evolución histórica de un indicador.
+*   **Rigor Académico:**
+    *   Nivel LVL_A: identificación y contextualización correcta del documento. Rigor Engine x1.2.
+    *   Nivel LVL_B: análisis crítico argumentado que relacione el documento con los debates historiográficos del período y con fuentes secundarias de la bibliografía oficial. Rigor Engine x1.4.
+    *   La mera descripción del contenido sin contextualización histórica no supera el umbral mínimo de la destreza.
+
+## 5. SUB-HUM-PHIL — Competencias por Subdivisión (Grado en Filosofía / UGR 2026) [CERTIFICADO v5.3 — 2026-04-22]
+
+### SD_PHIL_TEST (Precisión Conceptual — Test de respuesta alternativa)
+*   **Dominios de Competencia:**
+    *   COMP_ESP (CE01 — Lectura e interpretación de textos filosóficos; CE19 — Conocimiento de las grandes tradiciones filosóficas y sus principales teorías y argumentos).
+    *   COMP_GEN (CG01 — Conocimiento de conceptos y teorías de la historia de la filosofía; CG04 — Conocimiento de la lógica del lenguaje con precisión terminológica).
+*   **Taxonomía Cognitiva:**
+    *   COG_REM (Identificación exacta de autores, tesis, conceptos y categorías del programa).
+    *   COG_UND (Discriminación entre posiciones filosóficas próximas o que comparten terminología con significados distintos según el autor o la tradición).
+*   **Rigor Académico:**
+    *   La confusión de tesis entre autores (ej. atribuir a Aristóteles una tesis platónica o viceversa) activa penalización por azar (PRM-STRIKE). El test exige exactitud y no admite aproximación.
+    *   Nivel LVL_A: identificación de conceptos y autores nucleares del programa. Rigor Engine x1.3.
+    *   Nivel LVL_B: identificación de posiciones dentro de debates filosóficos complejos con discriminación fina entre variantes de una misma tradición. Rigor Engine x1.6.
+
+### SD_PHIL_DEV (Preguntas de Desarrollo de Extensión Media)
+*   **Dominios de Competencia:**
+    *   COMP_ESP (CE02 — Construcción y crítica de argumentos formales e informales; CE03 — Articulación escrita de argumentos filosóficos propios y ajenos).
+    *   COMP_GEN (CG02 — Comprensión de conceptos y teorías fundamentales del pensamiento filosófico; CG06 — Análisis de la estructura de problemas complejos y formulación de enfoques alternativos).
+*   **Taxonomía Cognitiva:**
+    *   COG_UND (Explicación e interpretación de tesis filosóficas del programa).
+    *   COG_ANA (Análisis de la estructura lógica del argumento filosófico: premisas, inferencias, conclusiones).
+    *   COG_EVAL (Valoración crítica de la solidez argumentativa de una posición filosófica).
+*   **Rigor Académico:**
+    *   La mera enumeración de ideas sin articulación argumentativa no supera el umbral. Se exige organización lógica del discurso y uso preciso de la terminología filosófica de la tradición a la que pertenece el texto o problema.
+    *   Nivel LVL_A: desarrollo coherente con terminología básica. Rigor Engine x1.3.
+    *   Nivel LVL_B: desarrollo con dominio del metalenguaje filosófico especializado y capacidad de situar la cuestión en el debate historiográfico de la tradición. Rigor Engine x1.6.
+
+### SD_PHIL_TEXT (Comentario de Texto Filosófico)
+*   **Dominios de Competencia:**
+    *   COMP_ESP (CE01 — Lectura e interpretación de textos filosóficos en su contexto cultural y tradición de pensamiento; CE05 — Capacidad de interpretar textos filosóficos situándolos en su respectiva tradición).
+    *   COMP_TRA (CG05 — Interpretación de textos filosóficos en su contexto cultural; CG08 — Comprensión e interpretación del presente a través de los conocimientos filosóficos adquiridos).
+*   **Taxonomía Cognitiva:**
+    *   COG_UND (Comprensión de la tesis central del texto y su articulación interna).
+    *   COG_ANA (Identificación de la estructura argumentativa, las premisas implícitas y las relaciones lógicas del fragmento).
+    *   COG_EVAL (Valoración de la posición del texto en el debate filosófico de su época y en relación con otros autores del programa).
+*   **Rigor Académico:**
+    *   La paráfrasis del texto sin interpretación filosófica interna no supera el umbral. El alumno debe demostrar dominio del contexto histórico-filosófico del autor y capacidad de relacionar el fragmento con el conjunto de su pensamiento.
+    *   Se penaliza la identificación errónea del autor o la adscripción del texto a una tradición filosófica incorrecta: FAIL_LOGIC: FATAL para ese ítem.
+    *   Nivel LVL_A: comentario con contextualización básica y análisis de las tesis principales. Rigor Engine x1.3.
+    *   Nivel LVL_B: comentario con análisis filosófico profundo, referencias a la bibliografía secundaria oficial y posicionamiento hermenéutico argumentado. Rigor Engine x1.6.
+
+### SD_PHIL_ESSAY (Ensayo Filosófico Argumentado)
+*   **Dominios de Competencia:**
+    *   COMP_ESP (CE02 — Construcción de argumentos filosóficos originales; CE03 — Articulación escrita de argumentos propios; CE15 — Defensa rigurosa y razonada de puntos de vista propios mediante terminología filosófica).
+    *   COMP_PROF (CG12 — Redacción de comentarios e informes filosóficos con juicios razonados y propuesta de alternativas; CG16 — Valoración ética y política de las acciones humanas desde el pensamiento filosófico).
+*   **Taxonomía Cognitiva:**
+    *   COG_EVAL (Defensa argumentada de una tesis filosófica con posicionamiento crítico ante el problema).
+    *   COG_CREA (Generación de una argumentación filosófica original con fundamentación bibliográfica; el ensayo debe aportar perspectiva propia, no limitarse a exponer posiciones ajenas).
+*   **Rigor Académico:**
+    *   **Extensión:** 1200-2000 palabras (coherente con los estándares del Grado en Filosofía UGR — evaluación de la Historia de la Filosofía Española y asignaturas equivalentes).
+    *   **Bibliografía:** Mínimo dos fuentes de la bibliografía oficial de la asignatura, citadas correctamente. La cita falsa o inexacta de una fuente filosófica supone FAIL_LOGIC: FATAL para el ensayo completo.
+    *   **Ausencia de posicionamiento propio:** Si el ensayo se limita a exponer posiciones ajenas sin argumentación original, la calificación del Eje 4 de DRA-HOLO (rigor del argumento propio) es 0.0.
+    *   **Corrección formal:** Más de 5 faltas ortotipográficas graves penaliza el eje de corrección formal en DRA-HOLO en un 50% adicional.
+    *   Nivel LVL_A: argumentación filosófica coherente con uso básico de la bibliografía. Rigor Engine x1.3.
+    *   Nivel LVL_B: argumentación filosófica de nivel académico con dominio del debate secundario y capacidad de refutar objeciones a la propia tesis. Rigor Engine x1.6.
+
+## 6. SUB-HUM-ART-HIST — Competencias por Subdivisión (Grado en Historia del Arte / UGR 2026) [CERTIFICADO v5.3 — 2026-04-22]
+
+### SD_ART_IDENT (Reconocimiento Iconográfico de Imágenes)
+*   **Dominios de Competencia:**
+    *   COMP_ESP (CE — Dominio de los repertorios iconográficos del programa: iconografía cristiana, clásica y de otras culturas, conforme a la bibliografía oficial del Dpto. de Historia del Arte UGR — Carmona Muela, Réau, Hall).
+    *   COMP_GEN (CG01 — Capacidad de análisis y síntesis; CG07 — Manejo de gráficos, fotografía e imagen en el contexto del arte; CG08 — Interpretación de periodos y estilos de la Historia del Arte).
+*   **Taxonomía Cognitiva:**
+    *   COG_REM (Recuperación exacta del nombre canónico del autor o atribución, cronología, técnica/soporte, estilo y escuela de la obra — sin tolerancia de error en los campos críticos Autor y Cronología).
+    *   COG_UND (Comprensión del contexto estilístico de la obra: adscripción correcta al período, movimiento o escuela conforme a la historiografía artística del programa).
+    *   COG_ANA (Identificación del tema o motivo iconográfico principal de la imagen a partir del repertorio iconográfico del programa).
+*   **Rigor Académico:**
+    *   La identificación errónea del Autor o la Cronología en más de un período estilístico completo activa FAIL_LOGIC: FATAL para el ítem de identificación, con independencia de la calidad del análisis posterior.
+    *   La precisión terminológica en los campos Técnica/Soporte y Estilo/Escuela es condición de evaluabilidad plena del ítem: el error en estos campos descuenta puntuación del motor EV-ICON-ART (Fase Identificación).
+    *   Nivel LVL_A (1º-2º año): corpus de obras del primer y segundo curso del Grado — repertorio iconográfico básico cristiano y clásico. Rigor Engine x1.3.
+    *   Nivel LVL_B (3º-4º año): corpus ampliado con iconografía de otras culturas y obras de mayor complejidad atributiva. Rigor Engine x1.6.
+
+### SD_ART_ANAL (Análisis Formal e Iconológico — Metodología Panofsky)
+*   **Dominios de Competencia:**
+    *   COMP_ESP (CE — Aplicación de la metodología tripartita de Panofsky: pre-iconografía, iconografía, iconología; dominio de las fuentes literarias y religiosas del repertorio iconográfico del programa).
+    *   COMP_TRA (CG05 — Sensibilidad hacia el patrimonio histórico y cultural; CG09 — Metodología científica en Historia del Arte: análisis integrales de la obra, síntesis, formulación de conclusiones).
+    *   COMP_PROF (CG09 — Planteamiento y resolución de problemas de atribución e interpretación historiográfica; EV-C2 — Nivel científico, creatividad y riqueza argumentativa en el análisis).
+*   **Taxonomía Cognitiva:**
+    *   COG_UND (Descripción pre-iconográfica: precisión y exhaustividad de la descripción formal — composición, figuras, espacios, color, luz. Condición de acceso al nivel iconográfico).
+    *   COG_ANA (Análisis iconográfico: correcta identificación de temas, motivos, atributos y fuentes literarias o religiosas del programa; dominio del repertorio iconográfico de Carmona Muela, Réau y Hall).
+    *   COG_EVAL (Interpretación iconológica: contextualización histórico-cultural, identificación del programa iconográfico en su conjunto, argumentación sobre el significado intrínseco de la obra; uso de fuentes secundarias de la historiografía artística).
+    *   COG_CREA (Formulación de una interpretación iconológica original y argumentada, no limitada a la reproducción de datos del manual).
+*   **Rigor Académico:**
+    *   El análisis debe seguir el orden tripartita de Panofsky de forma explícita: no se puede acceder al nivel iconológico sin haber completado el pre-iconográfico.
+    *   La mera descripción del contenido visible sin análisis iconográfico ni contextualización iconológica no supera el umbral mínimo de la destreza.
+    *   El uso de fuentes secundarias de la historiografía artística es obligatorio en el nivel LVL_B para superar el nivel iconológico.
+    *   Nivel LVL_A: análisis correcto de los tres niveles Panofsky con terminología básica de la disciplina. Rigor Engine x1.3.
+    *   Nivel LVL_B: análisis con rigor historiográfico, referencia a la bibliografía oficial y capacidad de relacionar la obra con el debate académico del período. Rigor Engine x1.6.
+
+## 7. SUB-HUM-ART-CREA — Competencias por Subdivisión — Emulación Parcial Certificada (Grado en Bellas Artes / UGR 2026) [CERTIFICADO v5.3 — 2026-04-22]
+
+**NOTA INSTITUCIONAL DE EMULACIÓN PARCIAL:** Este subarquetipo emula exclusivamente las destrezas digitalizables del Grado en Bellas Artes UGR. La destreza de taller presencial (realización física de obra artística) es no emulable y queda permanentemente excluida del alcance de la plataforma. Las competencias documentadas a continuación corresponden únicamente al alcance emulable certificado.
+
+### SD_CREA_PORT (Portafolio Digital de Proceso Creativo)
+*   **Dominios de Competencia — Alcance Emulable:**
+    *   COMP_ESP (CG09 — Capacidad de razonamiento crítico y autocrítico sobre el proceso creativo propio; CG15 — Sensibilidad estética aplicada a la selección y documentación de estados del proceso).
+    *   COMP_GEN (CG04 — Capacidad heurística y de especulación para la ideación y realización de proyectos; CG05/CG06 — Capacidad para el aprendizaje y trabajo autónomos demostrada en la coherencia del proceso documentado).
+    *   COMP_PROF (CG03 — Capacidad de comunicación del proceso creativo mediante documentación visual estructurada; CG16 — Sensibilidad hacia el patrimonio cultural aplicada a la fundamentación en referentes artísticos).
+*   **Taxonomía Cognitiva:**
+    *   COG_APP (Documentación aplicada del proceso creativo: selección de estados representativos del proceso, fotografía y descripción de cada estado con criterio artístico).
+    *   COG_ANA (Análisis de las decisiones adoptadas durante el proceso: identificación de los momentos de inflexión, las estrategias creativas aplicadas y los referentes artísticos del programa que las fundamentan).
+    *   COG_EVAL (Evaluación crítica de la coherencia del proceso: el alumno debe demostrar que las decisiones tomadas son coherentes entre sí y con la intención artística declarada al inicio del proyecto).
+*   **Destrezas excluidas por declaración de emulación parcial (no evaluables en la plataforma):**
+    *   Realización física de la pintura, escultura, instalación o performance.
+    *   Dominio técnico de materiales y soportes en el espacio de taller.
+    *   Presentación presencial de la obra en sala o espacio expositivo.
+*   **Rigor Académico:**
+    *   La ausencia de documentación de estados intermedios del proceso — presentación de obra final sin evidencia del proceso — activa FAIL_LOGIC: FATAL para el Eje 1 de DRA-HOLO ART-CREA. No existe compensación posible.
+    *   Los pies de foto de cada imagen son obligatorios y deben incluir: estado del proceso, decisión adoptada, referente artístico aplicado (si procede).
+    *   Nivel LVL_A: documentación de proceso con 3-5 estados intermedios. Rigor Engine x1.2.
+    *   Nivel LVL_B: documentación de proceso con 5-8 estados intermedios y fundamentación en referentes del programa. Rigor Engine x1.4.
+
+### SD_CREA_MEM (Memoria de Proceso y Análisis Crítico)
+*   **Dominios de Competencia — Alcance Emulable:**
+    *   COMP_ESP (CG09 — Razonamiento crítico y autocrítico sobre las decisiones creativas propias; dominio del vocabulario técnico de las artes plásticas — materiales, procedimientos, soportes).
+    *   COMP_GEN (CG03 — Comunicación escrita del proceso creativo con rigor terminológico; CG08 — Capacidad colaborativa y trabajo contextualizado en los debates artísticos contemporáneos).
+    *   COMP_PROF (Capacidad de contextualizar la obra propia en el ámbito artístico contemporáneo y argumentar sobre las decisiones adoptadas con fundamentación bibliográfica del programa).
+*   **Taxonomía Cognitiva:**
+    *   COG_UND (Comprensión y descripción del proceso creativo propio: materiales, procedimientos, soportes, intención artística).
+    *   COG_ANA (Análisis de la relación entre la intención artística declarada y las decisiones tomadas durante el proceso; análisis de la coherencia entre el proceso documentado y los referentes artísticos del programa).
+    *   COG_EVAL (Valoración crítica de la obra propia en el contexto de los debates artísticos contemporáneos del programa; evaluación de las pérdidas y compensaciones creativas adoptadas).
+    *   COG_CREA (Argumentación original sobre las decisiones creativas propias: el análisis crítico no puede limitarse a la descripción de la obra o del proceso; debe aportar perspectiva propia argumentada).
+*   **Rigor Académico:**
+    *   La memoria debe demostrar dominio del vocabulario técnico de las artes plásticas. La descripción del proceso con términos imprecisos o genéricos penaliza el Eje 2 de DRA-HOLO ART-CREA.
+    *   El análisis crítico debe contextualizar la obra propia en los debates artísticos del programa: la ausencia total de referentes artísticos o bibliográficos penaliza el Eje 3 en un 50% adicional.
+    *   La corrección ortotipográfica es condición de evaluabilidad: más de 5 faltas graves penaliza el Eje 4 en un 50% adicional.
+    *   Nivel LVL_A: memoria con terminología técnica básica y referencia a al menos un referente artístico del programa. Rigor Engine x1.2.
+    *   Nivel LVL_B: memoria con rigor terminológico avanzado, análisis crítico contextualizado en los debates artísticos del programa y fundamentación bibliográfica. Rigor Engine x1.4.
+
+## 8. SUB-HUM-MUS — Competencias por Subdivisión (Grado en Historia y Ciencias de la Música / UGR 2026) [CERTIFICADO v5.3 — 2026-04-22]
+
+### SD_MUS_LIST (Identificación Auditiva)
+*   **Dominios de Competencia:**
+    *   COMP_ESP (CG01 — Capacidad de análisis y síntesis en el dominio de los conocimientos musicológicos; dominio del metalenguaje descriptivo del estilo musical: período, forma, género, instrumentación, rasgos estilísticos).
+    *   COMP_GEN (CG06 — Capacidad para interpretar y reunir datos relevantes para emitir juicios críticos; CG13 — Razonamiento crítico aplicado a la escucha analítica activa).
+    *   COMP_TRA (CG15 — Capacidad de aprendizaje autónomo aplicada al entrenamiento auditivo sistemático).
+*   **Taxonomía Cognitiva:**
+    *   COG_REM (Identificación exacta de período estilístico, género y agrupación instrumental/vocal a partir de la escucha).
+    *   COG_UND (Comprensión de los rasgos estilísticos definitorios del período/compositor identificado: comprensión de por qué ese fragmento pertenece a ese período y no a otro).
+    *   COG_ANA (Análisis auditivo de los elementos del lenguaje musical: textura, armonía, ritmo, forma, timbre — discriminación analítica en tiempo real durante la escucha).
+    *   COG_EVAL (Evaluación crítica del estilo: capacidad de relacionar el fragmento con la producción del período y del compositor identificado; justificación argumentada de la identificación).
+*   **Rigor Académico:**
+    *   La identificación del período estilístico errada en más de un período completo (ej. confundir Barroco tardío con Clasicismo temprano) activa penalización en EV-MUS-ANAL. La confusión de estilos dentro del mismo período (ej. Haydn vs. Mozart) penaliza pero no activa FAIL_LOGIC: FATAL, siempre que la identificación del período sea correcta.
+    *   Umbral mínimo: 5/10 en esta destreza de forma independiente. Sin compensación con SD_MUS_SCORE.
+    *   Nivel LVL_B (3º año): corpus del Clasicismo vienés (Haydn, Mozart, Beethoven temprano) y Romanticismo temprano. Rigor Engine x1.3.
+    *   Nivel LVL_C (4º año): corpus ampliado al Romanticismo tardío, nacionalismos y fin de siglo. Rigor Engine x1.6.
+
+### SD_MUS_SCORE (Análisis en Partitura)
+*   **Dominios de Competencia:**
+    *   COMP_ESP (CG01 — Capacidad de análisis y síntesis en el dominio del análisis musical formal, armónico y estilístico; dominio del metalenguaje musicológico: grados romanos, funciones tonales, cadencias, denominación canónica de secciones formales conforme a LaRue 1989).
+    *   COMP_GEN (CG06 — Interpretación y síntesis de datos musicales para emitir juicios críticos sobre el estilo; CG07 — Destrezas en la resolución de problemas analíticos — identificación de modulaciones, cadencias, estructuras formales complejas).
+    *   COMP_PROF (CG08 — Capacidad de aplicar los conocimientos analíticos al estudio científico de partituras; referencia y dominio de la bibliografía analítica oficial del programa: LaRue, Cook, Bent, Blanquer Ponsoda, Cadwallader).
+*   **Taxonomía Cognitiva:**
+    *   COG_APP (Aplicación de los sistemas de análisis armónico y formal al análisis de una partitura concreta: cifrado de grados romanos, identificación de cadencias, delimitación de secciones formales con nomenclatura canónica).
+    *   COG_ANA (Análisis de las relaciones entre los elementos musicales: relación entre armonía y forma, entre textura y período estilístico, entre rasgos melódicos/rítmicos y el contexto histórico del compositor).
+    *   COG_EVAL (Evaluación del estilo mediante el comentario musicológico: contextualización estilística de la obra analizada en el período y la producción del compositor; valoración crítica de los recursos compositivos identificados con referencia a la bibliografía analítica).
+*   **Rigor Académico:**
+    *   **Análisis armónico:** La confusión de función tonal dominante con subdominante en un contexto cadencial activa penalización severa (-0.5 por error) coherente con el criterio del motor EV-MUS-ANAL en V06DOC_BLOCKS.md.
+    *   **Análisis formal:** Los errores en la denominación canónica de las secciones (ej. denominar "recapitulación" lo que es un "desarrollo") penalizan el eje de corrección del análisis formal.
+    *   **Comentario musicológico:** El uso de terminología imprecisa o no especializada penaliza el eje de calidad del metalenguaje. En LVL_C es obligatorio relacionar el análisis con la bibliografía analítica oficial del programa.
+    *   Umbral mínimo: 5/10 en esta destreza de forma independiente. Sin compensación con SD_MUS_LIST.
+    *   Nivel LVL_B (3º año): análisis de obras del Clasicismo con análisis armónico de dificultad media (modulaciones diatónicas, cadencias típicas, formas binaria y sonata). Rigor Engine x1.3.
+    *   Nivel LVL_C (4º año): análisis de obras del Romanticismo con análisis armónico avanzado (cromatismo, relaciones enarmónicas, formas ampliadas) y comentario musicológico con referencia obligatoria a la bibliografía oficial. Rigor Engine x1.6.
+
+## 9. SUB-HUM-ANTH — Competencias por Subdivisión — Subarquetipo Transversal (UGR 2026) [CERTIFICADO v5.3 — 2026-04-22]
+
+**NOTA INSTITUCIONAL DE TRANSVERSALIDAD [VINCULANTE]:** Este subarquetipo no tiene anclaje en una guía docente monográfica UGR específica. La Antropología Social y Cultural se distribuye transversalmente en los planes de estudio de las universidades andaluzas. Las competencias documentadas a continuación se derivan del perfil competencial transversal del arquetipo HERMENÉUTICO (V06DOC_ARCHETYPES.md, sección 5) y de los criterios de evaluación genéricos de las asignaturas de Ciencias Sociales y Humanidades donde la Antropología aparece como componente. Esta nota es permanente y análoga a la declaración de SUB-LIN-TRA-LIT.
+
+### SD_ANTH_TEXT (Comentario de Fuente Etnográfica o Texto Antropológico)
+*   **Dominios de Competencia:**
+    *   COMP_ESP (Dominio de las corrientes teóricas de la Antropología Social y Cultural: funcionalismo, estructuralismo, interpretativismo, constructivismo; identificación de las categorías analíticas aplicadas en el texto — cultura, estructura social, ritual, parentesco, identidad).
+    *   COMP_GEN (Capacidad de lectura crítica de fuentes etnográficas y textos antropológicos; capacidad de situar el texto en su tradición teórica y en su contexto histórico de producción).
+    *   COMP_TRA (Capacidad de pensamiento crítico intercultural: identificación de los supuestos epistemológicos del autor y evaluación de su validez desde perspectivas teóricas alternativas).
+*   **Taxonomía Cognitiva:**
+    *   COG_UND (Comprensión del argumento central del texto y de las categorías analíticas que emplea).
+    *   COG_ANA (Análisis de la estructura argumentativa del texto: premisas, evidencias etnográficas, conclusiones; identificación del marco teórico explícito e implícito).
+    *   COG_EVAL (Valoración crítica del texto: evaluación de la solidez de la evidencia etnográfica, de la coherencia interna del argumento y del posicionamiento del autor en el debate antropológico).
+*   **Rigor Académico:**
+    *   La mera descripción del contenido del texto sin identificación del marco teórico no supera el umbral mínimo de la destreza.
+    *   El comentario debe emplear metalenguaje antropológico reconocible. El uso de términos imprecisos o del lenguaje cotidiano en lugar de la terminología técnica de la disciplina penaliza la evaluación.
+    *   Nivel LVL_A: identificación del marco teórico y análisis de las categorías principales. Rigor Engine x1.2.
+    *   Nivel LVL_B: análisis con posicionamiento crítico argumentado y referencia a tradiciones teóricas alternativas. Rigor Engine x1.4.
+
+### SD_ANTH_ESSAY (Disertación Comparativa Intercultural)
+*   **Dominios de Competencia:**
+    *   COMP_ESP (Dominio del metalenguaje antropológico: aplicación de conceptos de estructura social, cultura, ritual, identidad, cambio cultural, diversidad en la construcción del argumento comparativo).
+    *   COMP_GEN (Capacidad de razonamiento comparativo intercultural: identificación de similitudes y diferencias entre contextos culturales distintos desde una perspectiva teórica explícita; neutralidad analítica — evitar el etnocentrismo y el relativismo acrítico).
+    *   COMP_PROF (Capacidad de argumentación académica en Ciencias Sociales: construcción de un argumento comparativo original, fundamentado y coherente con el marco teórico declarado).
+*   **Taxonomía Cognitiva:**
+    *   COG_ANA (Análisis comparativo de al menos dos contextos culturales distintos: identificación de los elementos comparables, de las diferencias estructurales y de los factores que las explican desde el marco teórico adoptado).
+    *   COG_EVAL (Evaluación crítica de los datos comparativos: valoración de la representatividad de los casos elegidos, de los límites de la comparación y de las implicaciones teóricas de los resultados).
+    *   COG_CREA (Construcción de una argumentación original: el ensayo no puede limitarse a yuxtaponer descripciones de dos culturas; debe articular una tesis comparativa propia, fundamentada en el metalenguaje antropológico y coherente con el marco teórico declarado).
+*   **Rigor Académico:**
+    *   **Marco teórico explícito:** La disertación debe declarar explícitamente el marco teórico adoptado al inicio. La ausencia de marco teórico explícito activa FAIL_LOGIC: FATAL para este ítem.
+    *   **Metalenguaje:** El uso de metalenguaje antropológico reconocible es condición de evaluabilidad plena. La descripción de fenómenos culturales con lenguaje cotidiano sin conceptualización disciplinar penaliza el eje de precisión terminológica.
+    *   **Comparación:** Mínimo dos contextos culturales distintos. La comparación debe ser analítica (basada en categorías compartidas) y no meramente descriptiva (no puede limitarse a describir cada cultura por separado).
+    *   **Extensión:** 800-1500 palabras. La desviación significativa de este rango penaliza el eje de adecuación al encargo de DRA-HOLO.
+    *   Nivel LVL_A: comparación de dos contextos con marco teórico básico. Rigor Engine x1.2.
+    *   Nivel LVL_B: comparación con marco teórico avanzado, argumentación original y evaluación crítica de los límites de la comparación. Rigor Engine x1.4.
