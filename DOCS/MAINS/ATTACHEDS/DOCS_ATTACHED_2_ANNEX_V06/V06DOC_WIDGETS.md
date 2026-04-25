@@ -213,3 +213,40 @@ Esta sección define los componentes de interacción activados bajo los subarque
 *   **Motor principal:** DRA-HOLO (configuración ART-CREA — ver V06DOC_BLOCKS.md).
 *   **Layout:** FULL_STACK (las tres zonas se apilan verticalmente con navegación por pestañas entre Galería, Memoria y Análisis Crítico).
 *   **Nota de restricción de entrada:** Los modos Occidentalización y Pad de Trazos de W-HUM-TEXT quedan deshabilitados en este widget (el castellano es el idioma vehicular obligatorio en Bellas Artes UGR). Modos activos: Teclado Latino Nativo y OCR/Captura.
+
+### W-CASE-ECOE (Estación Clínica ECOE Simulada — SUB-SAN-MED-CLIN) [NUEVO v5.4 — 2026-04-24]
+*   **Uso:** SUB-SAN-MED-CLIN (Medicina — Diagnóstico Diferencial y Razonamiento Clínico, Grado en Medicina UGR). Instrumento nuclear de evaluación de la destreza SD_ECOE_STATION, certificado como componente evaluativo formal del 10% de la calificación en Bases de la Medicina Interna II (cód. 2221131, aprobada 30/06/2025) y como instrumento de evaluación del Rotatorio de 6º Curso, Facultad de Medicina, UGR (Guía del Rotatorio Clínico 2025-2026).
+*   **Justificación de Creación como Widget Nuevo y Diferenciado:** El formato ECOE es un instrumento evaluativo oficial, estructuralmente diferenciado del examen tipo test y de cualquier otro widget existente en la constelación. La Guía Docente de Bases de la Medicina Interna II (aprobada 30/06/2025) lo define como un formato de examen que incorpora diversos instrumentos evaluativos y se desarrolla a lo largo de sucesivas estaciones que simulan situaciones clínicas. Su estructura de estaciones secuenciales encadenadas, navegación unidireccional sellada y retroalimentación por estación no es replicable con W-OBJ-STRIKE ni con ningún otro widget existente. Creación autorizada por el usuario en sesión 2026-04-24.
+*   **Fuente de Certificación:** Guía Docente de Bases de la Medicina Interna II (cód. 2221131, 3º Curso, 1º Semestre, 6 ECTS, Obligatoria, Módulo Formación Clínica Humana, Dpto. de Medicina, Facultad de Medicina, UGR — aprobada 30/06/2025) y página oficial Rotatorio y ECOE de 6º Curso, Facultad de Medicina, UGR (Guía del Rotatorio Clínico 2025-2026).
+*   **Descripción Funcional:** W-CASE-ECOE presenta al estudiante un caso clínico estructurado en estaciones secuenciales. Cada estación es una unidad evaluativa independiente pero narrativamente encadenada al mismo paciente. El estudiante avanza estación a estación sin posibilidad de retroceder, replicando la estructura temporal y la presión cognitiva del ECOE oficial UGR (desarrollado con pacientes simulados y simulación robótica avanzada en el Laboratorio de Habilidades Clínicas de la Facultad de Medicina UGR).
+*   **Anatomía de una Estación W-CASE-ECOE:**
+    1.  **Cabecera de Estación:** Número de estación y título descriptivo (ej. "Estación 1 — Motivo de Consulta", "Estación 2 — Identificación Sindrómica", "Estación 3 — Diagnóstico Diferencial").
+    2.  **Viñeta Clínica:** Texto narrativo con los datos del paciente en ese momento del caso: edad, sexo, síntoma principal, contexto clínico y datos adicionales progresivamente revelados a lo largo de las estaciones.
+    3.  **Pregunta o Tarea de la Estación:** Puede ser de los siguientes tipos:
+        -   Selección del diagnóstico más probable (opción múltiple, penalización 0,33 — PRM-STRIKE).
+        -   Identificación del síndrome clínico presente (opción múltiple, penalización 0,33 — PRM-STRIKE).
+        -   Priorización de la actuación clínica (opción múltiple, penalización 0,33 — PRM-STRIKE).
+        -   Selección de los datos de la anamnesis más relevantes (opción múltiple, penalización 0,33 — PRM-STRIKE).
+    4.  **Retroalimentación de Estación:** Al completar y enviar la estación, el sistema presenta el razonamiento correcto y la justificación clínica antes de desbloquear la siguiente. No es posible retroceder a la estación anterior (Non-Backtracking — Navegación Unidireccional Sellada, coherente con el protocolo del ECOE oficial UGR).
+    5.  **Cierre de Caso:** Al completar todas las estaciones, el sistema presenta: diagnóstico final del caso, resumen del rendimiento estación a estación y puntuación global del caso.
+*   **Número de Estaciones por Caso:** Entre 3 y 6 estaciones, calibradas para representar el flujo real de una estación ECOE UGR: anamnesis → identificación sindrómica → diagnóstico diferencial → priorización clínica.
+*   **Baremo (certificado — Guía Docente Bases de la Medicina Interna II, aprobada 30/06/2025):**
+    -   Ítem de opción múltiple: acierto +1 punto, error −0,33 puntos, omisión 0 puntos (PRM-STRIKE).
+    -   Puntuación global del caso: suma ponderada de estaciones.
+    -   Umbral de superación: ≥50% de la puntuación máxima posible del caso.
+    -   FAIL_LOGIC: FATAL si la puntuación global no alcanza el umbral mínimo.
+*   **Diferenciación respecto a W-OBJ-STRIKE (tabla certificada):**
+
+    | Característica          | W-OBJ-STRIKE                        | W-CASE-ECOE                                        |
+    |-------------------------|-------------------------------------|----------------------------------------------------|
+    | Estructura              | Preguntas independientes            | Estaciones encadenadas narrativamente              |
+    | Contexto clínico        | Viñeta breve por pregunta           | Caso único compartido entre todas las estaciones   |
+    | Navegación              | Libre                               | Secuencial sin retroceso (Non-Backtracking)        |
+    | Retroalimentación       | Al final del bloque completo        | Por estación, antes de avanzar a la siguiente      |
+    | Objetivo cognitivo      | Conocimiento y comprensión          | Razonamiento clínico integrado en tiempo real      |
+    | Referente evaluativo    | Examen tipo test ordinario UGR      | ECOE oficial (Bases II + Rotatorio 6º, UGR)        |
+    | Pirámide de Miller      | Saber / Saber cómo                  | Saber / Saber cómo / Demostrar cómo               |
+
+*   **Motor principal:** PRM-STRIKE (penalización 0,33 por error — baremo certificado ECOE UGR).
+*   **Layout:** FULL_STACK con progresión lineal de estaciones. La viñeta clínica de la estación activa ocupa la zona superior; la pregunta y las opciones de respuesta ocupan la zona inferior. Las estaciones completadas se muestran como hitos sellados en una barra de progreso lateral no interactiva.
+*   **Nota de restricción de navegación:** El botón "Anterior" queda permanentemente deshabilitado en todo el flujo del widget. Una vez enviada una estación mediante el botón "Confirmar y Continuar", el acceso a esa estación queda bloqueado. Este comportamiento es de estricto cumplimiento y no puede ser modificado por el alumno ni por el sistema de parametrización de la estrategia.
