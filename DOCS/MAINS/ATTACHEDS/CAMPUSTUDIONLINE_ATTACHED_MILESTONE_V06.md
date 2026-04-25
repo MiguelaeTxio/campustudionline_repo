@@ -1,6 +1,6 @@
 # ANEXO: HITO 06 - SISTEMA DE AUTOEVALUACIONES CON IA
-# ESTADO: EN PROGRESO - CERTIFICACIÓN RAMA CIENCIAS SOCIALES Y JURÍDICAS (V5.4)
-# FECHA DE ACTUALIZACIÓN: 2026-04-25
+# ESTADO: EN PROGRESO - CERTIFICACIÓN RAMA CIENCIAS SOCIALES Y JURÍDICAS (V5.5)
+# FECHA DE ACTUALIZACIÓN: 2026-04-26
 
 ## 1. RESUMEN DE LA SITUACIÓN ACTUAL (EDC)
 
@@ -25,9 +25,9 @@ La **Rama Ciencias de la Salud** queda **COMPLETAMENTE CERTIFICADA Y SINCRONIZAD
 
 ## 2. HOJA DE RUTA PARA LA PRÓXIMA SESIÓN (LEY SUPREMA - INELUDIBLE)
 
-**ESTADO DEL HITO:** EN PROGRESO — Rama Ciencias Sociales y Jurídicas pendiente de certificación.
-**FECHA DE ÚLTIMA ACTUALIZACIÓN:** 2026-04-25
-**OBJETIVO DE LA PRÓXIMA SESIÓN:** Iniciar la certificación de la Rama Ciencias Sociales y Jurídicas — subarquetipo a subarquetipo — ejecutando en orden estricto e inamovible los pasos definidos a continuación.
+**ESTADO DEL HITO:** EN PROGRESO — Rama Ciencias Sociales y Jurídicas — Pasos S1-S4 certificados. Pasos S5-S10 pendientes.
+**FECHA DE ÚLTIMA ACTUALIZACIÓN:** 2026-04-26
+**OBJETIVO DE LA PRÓXIMA SESIÓN:** Continuar la certificación de la Rama Ciencias Sociales y Jurídicas a partir del PASO S5, ejecutando en orden estricto e inamovible los pasos S5 a S10 definidos a continuación.
 
 ---
 
@@ -69,25 +69,22 @@ La certificación de cada subarquetipo sigue el mismo patrón que las ramas ante
 
 El orden de pasos es inamovible.
 
-**PASO S1 — SUB-SOC-LAW-PROC (Derecho Procesal — Plazos, trámites y técnica procesal)**
-*   **Fuentes a contrastar:** Guías Docentes del Grado en Derecho UGR (Facultad de Derecho). Asignaturas de Derecho Procesal Civil y Derecho Procesal Penal. Verificar baremos, formato de examen y estructura de evaluación.
-*   **Segregación previsible:** Derecho Procesal Civil vs. Derecho Procesal Penal (norma permanente: segregar).
-*   **Documentos a actualizar:** `V06DOC_SUBARCHETYPES.md`, `V06DOC_SUBDIVISIONS.md`.
+**PASO S1 — SUB-SOC-LAW-PROC → ✅ CERTIFICADO (v5.5 — 2026-04-26)**
+*   Segregado en: `SUB-SOC-LAW-PROC-CIV` (Derecho Procesal Civil, Guías Docentes 2421121 y 2421137 Bloque Civil, UGR, aprobadas 17/06/2025) y `SUB-SOC-LAW-PROC-PEN` (Derecho Procesal Penal, Guía Docente 2421137 Bloque Penal, UGR, aprobada 17/06/2025).
+*   Documentos actualizados: `V06DOC_SUBARCHETYPES.md` (sección ## 2. RAMA: CIENCIAS SOCIALES Y JURÍDICAS) y `V06DOC_SUBDIVISIONS.md` (secciones 5.1 y 5.2).
 
-**PASO S2 — SUB-SOC-LAW-DICT (Derecho Civil/Penal — Dictamen basado en hechos y jurisprudencia)**
-*   **Fuentes a contrastar:** Guías Docentes de Derecho Civil (Parte General y Obligaciones/Contratos) y Derecho Penal (Parte General y Parte Especial) del Grado en Derecho UGR.
-*   **Segregación previsible:** Civil vs. Penal (norma permanente: segregar). Verificar si hay asignaturas de prácticas jurídicas o clínica jurídica en el plan de estudios UGR.
-*   **Documentos a actualizar:** `V06DOC_SUBARCHETYPES.md`, `V06DOC_SUBDIVISIONS.md`.
+**PASO S2 — SUB-SOC-LAW-DICT → ✅ CERTIFICADO (v5.5 — 2026-04-26)**
+*   Segregado en: `SUB-SOC-LAW-DICT-CIV` (Derecho Civil I-IV, Guías Docentes 2421116/2421124/2421128/2421143, UGR, aprobadas 27/06/2025) y `SUB-SOC-LAW-DICT-PEN` (Derecho Penal I y II, Guías Docentes 242111A/2421122, UGR, aprobadas 26/06/2025). Sistema de evaluación certificado Derecho Penal II: examen final 70% (mínimo 3,5/7) + actividades 30% (mínimo 1,5/3).
+*   Documentos actualizados: `V06DOC_SUBARCHETYPES.md` y `V06DOC_SUBDIVISIONS.md` (secciones 5.3 y 5.4).
 
-**PASO S3 — SUB-SOC-ECON-QUAN (Economía — Contabilidad, econometría y micro/macro avanzada)**
-*   **Fuentes a contrastar:** Guías Docentes del Grado en Economía UGR (Facultad de Ciencias Económicas y Empresariales). Asignaturas de Macroeconomía, Microeconomía, Econometría y Contabilidad.
-*   **Segregación previsible:** Microeconomía/Macroeconomía vs. Econometría/Métodos Cuantitativos vs. Contabilidad (norma permanente: segregar en las disciplinas que resulten diferenciadas).
-*   **Documentos a actualizar:** `V06DOC_SUBARCHETYPES.md`, `V06DOC_SUBDIVISIONS.md`.
+**PASO S3 — SUB-SOC-ECON-QUAN → ✅ CERTIFICADO (v5.5 — 2026-04-26)**
+*   Segregado en: `SUB-SOC-ECON-QUAN-STAT` (Estadística y Técnicas Cuantitativas, Departamento de Métodos Cuantitativos UGR, aprobadas 25/06/2025) y `SUB-SOC-ECON-QUAN-ECON` (Econometría I-III: 2391131/2391136/2391141, Grado en Economía UGR, aprobadas 25/06/2025). Sistema de evaluación certificado Econometría I: prueba escrita 70% (mínimo 5/10) + evaluación continua 30%; extraordinaria: examen único 5T+5P.
+*   Documentos actualizados: `V06DOC_SUBARCHETYPES.md` y `V06DOC_SUBDIVISIONS.md` (secciones 5.5 y 5.6).
 
-**PASO S4 — SUB-SOC-ECON-MGMT (Empresa — Estrategia, marketing y organización)**
-*   **Fuentes a contrastar:** Guías Docentes del Grado en Administración y Dirección de Empresas (ADE) UGR. Asignaturas de Dirección Estratégica, Marketing y Organización de Empresas.
-*   **Segregación previsible:** Dirección Estratégica vs. Marketing vs. Organización/RRHH (norma permanente: segregar).
-*   **Documentos a actualizar:** `V06DOC_SUBARCHETYPES.md`, `V06DOC_SUBDIVISIONS.md`.
+**PASO S4 — SUB-SOC-ECON-MGMT → ✅ CERTIFICADO (v5.5 — 2026-04-26)**
+*   Segregado en tres subarquetipos: `SUB-SOC-ECON-MGMT-ACC` (Contabilidad Financiera I/II y de Gestión I, Guías Docentes 2351131/2351137, UGR, aprobadas 24/06/2025), `SUB-SOC-ECON-MGMT-STR` (Dirección Estratégica I/II: 2351135/2351139, Grado ADE UGR, aprobadas 23/06/2025; bibliografía certificada: Guerras y Navas 2022) y `SUB-SOC-ECON-MGMT-ECO` (Microeconomía I/II y Macroeconomía I/II, Grado en Economía/ADE UGR, aprobadas 2025).
+*   Sistema de evaluación certificado Contabilidad: evaluación continua con pruebas obligatorias; umbral mínimo 5/10 en parte teórica y 5/10 en parte teórico-práctica; extraordinaria: examen único con ambas partes.
+*   Documentos actualizados: `V06DOC_SUBARCHETYPES.md` y `V06DOC_SUBDIVISIONS.md` (secciones 5.7, 5.8 y 5.9).
 
 **PASO S5 — SUB-SOC-EDU-KIDS (Magisterio — Diseño de situaciones de aprendizaje y DUA)**
 *   **Fuentes a contrastar:** Guías Docentes del Grado en Educación Primaria e Infantil UGR (Facultad de Ciencias de la Educación). Asignaturas de Didáctica General, Diseño Curricular, Atención a la Diversidad (DUA).
@@ -165,17 +162,21 @@ El orden de pasos es inamovible.
 *   `V06DOC_SUBARCHETYPES.md` — [SINCRONIZADO v5.4 — 2026-04-25]: 18 bloques de la Rama Ciencias de la Salud completos.
 *   `V06DOC_SUBDIVISIONS.md` — [SINCRONIZADO v5.4 — 2026-04-25]: Secciones 4.1 a 4.18 añadidas con desglose competencial completo de todos los subarquetipos de la rama.
 
-**RAMA CIENCIAS SOCIALES Y JURÍDICAS — PENDIENTE:**
-*   `SUB-SOC-LAW-PROC` — [PENDIENTE CERTIFICACIÓN]
-*   `SUB-SOC-LAW-DICT` — [PENDIENTE CERTIFICACIÓN]
-*   `SUB-SOC-ECON-QUAN` — [PENDIENTE CERTIFICACIÓN]
-*   `SUB-SOC-ECON-MGMT` — [PENDIENTE CERTIFICACIÓN]
+**RAMA CIENCIAS SOCIALES Y JURÍDICAS — EN PROGRESO (v5.5 — 2026-04-26):**
+*   `SUB-SOC-LAW-PROC` → `SUB-SOC-LAW-PROC-CIV` + `SUB-SOC-LAW-PROC-PEN` — [CERTIFICADO v5.5 — 2026-04-26]
+*   `SUB-SOC-LAW-DICT` → `SUB-SOC-LAW-DICT-CIV` + `SUB-SOC-LAW-DICT-PEN` — [CERTIFICADO v5.5 — 2026-04-26]
+*   `SUB-SOC-ECON-QUAN` → `SUB-SOC-ECON-QUAN-STAT` + `SUB-SOC-ECON-QUAN-ECON` — [CERTIFICADO v5.5 — 2026-04-26]
+*   `SUB-SOC-ECON-MGMT` → `SUB-SOC-ECON-MGMT-ACC` + `SUB-SOC-ECON-MGMT-STR` + `SUB-SOC-ECON-MGMT-ECO` — [CERTIFICADO v5.5 — 2026-04-26]
 *   `SUB-SOC-EDU-KIDS` — [PENDIENTE CERTIFICACIÓN]
 *   `SUB-SOC-EDU-SEC` — [PENDIENTE CERTIFICACIÓN]
 *   `SUB-SOC-COMM-JOUR` — [PENDIENTE CERTIFICACIÓN]
 *   `SUB-SOC-COMM-AV` — [PENDIENTE CERTIFICACIÓN]
 *   `SUB-SOC-GEOG` — [PENDIENTE CERTIFICACIÓN]
 *   `SUB-SOC-WORK` — [PENDIENTE CERTIFICACIÓN]
+
+**SINCRONIZACIÓN CONSTELACIÓN (v5.5 — 2026-04-26):**
+*   `V06DOC_SUBARCHETYPES.md` — [SINCRONIZADO v5.5 — 2026-04-26]: Sección ## 2. RAMA: CIENCIAS SOCIALES Y JURÍDICAS añadida con 9 subarquetipos certificados (SUB-SOC-LAW-PROC-CIV, SUB-SOC-LAW-PROC-PEN, SUB-SOC-LAW-DICT-CIV, SUB-SOC-LAW-DICT-PEN, SUB-SOC-ECON-QUAN-STAT, SUB-SOC-ECON-QUAN-ECON, SUB-SOC-ECON-MGMT-ACC, SUB-SOC-ECON-MGMT-STR, SUB-SOC-ECON-MGMT-ECO).
+*   `V06DOC_SUBDIVISIONS.md` — [SINCRONIZADO v5.5 — 2026-04-26]: Secciones 5.1 a 5.9 añadidas con desglose competencial completo de los 9 subarquetipos certificados.
 
 ---
 
