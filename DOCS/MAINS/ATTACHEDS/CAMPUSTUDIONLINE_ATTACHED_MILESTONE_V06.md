@@ -1,5 +1,5 @@
 # ANEXO: HITO 06 - SISTEMA DE AUTOEVALUACIONES CON IA
-# ESTADO: EN PROGRESO - CERTIFICACIÓN RAMA CIENCIAS SOCIALES Y JURÍDICAS (V5.5)
+# ESTADO: EN PROGRESO - CERTIFICACIÓN RAMA CIENCIAS TÉCNICAS E INGENIERÍA (V5.6)
 # FECHA DE ACTUALIZACIÓN: 2026-04-26
 
 ## 1. RESUMEN DE LA SITUACIÓN ACTUAL (EDC)
@@ -59,7 +59,25 @@ Ruta base de la constelación:
 
 ---
 
-#### RAMA CIENCIAS SOCIALES Y JURÍDICAS — CERTIFICACIÓN SUBARQUETIPO A SUBARQUETIPO
+#### RAMA CIENCIAS SOCIALES Y JURÍDICAS — ✅ COMPLETAMENTE CERTIFICADA (v5.5 — 2026-04-27)
+
+Todos los pasos S1-S10 certificados y consolidados en  (secciones ## 2. RAMA: CIENCIAS SOCIALES Y JURÍDICAS) y  (secciones 5.1 a 5.26). Consultar el registro completo en el transcript de sesión 2026-04-26/27.
+
+---
+
+#### RAMA CIENCIAS TÉCNICAS E INGENIERÍA — CERTIFICACIÓN SUBARQUETIPO A SUBARQUETIPO
+
+**OBJETIVO DE LA PRÓXIMA SESIÓN:** Iniciar la certificación de la Rama Ciencias Técnicas e Ingeniería (Arqueótipo 3 — RESOLUTIVO). La investigación online en tiempo real contra las fuentes primarias UGR (ETSIIT, ETSICCP, ETSII, ETS Arquitectura) es la única fuente de verdad.
+
+**NORMAS PERMANENTES INAMOVIBLES (heredadas de sesiones anteriores):**
+*   Ante cualquier disyuntiva aglutinar vs. segregar → **SIEMPRE SEGREGAR**. Sin excepción. Sin consulta.
+*   **NO** se permite el salto a otras ramas hasta que todos los subarquetipos de la Rama en curso alcancen Fidelidad 100%.
+*   **NO** se modifica ningún subarquetipo ya certificado salvo indicación explícita del usuario.
+*   **NUEVO FLUJO DE TRABAJO (registrado 2026-04-27):** Investigación → Segregación → Bloques → PMA directo, sin presentación intermedia en chat para validación previa de bloques. Solo se detiene para la autorización del diff.
+
+**SUBARQUETIPOS DE LA RAMA CIENCIAS TÉCNICAS E INGENIERÍA (pendientes de certificación):**
+
+Consultar  sección  para el listado completo de subarquetipos a certificar. La certificación arranca en el PASO T1 (primer subarquetipo de la rama según el orden definido en el arqueótipo).
 
 La certificación de cada subarquetipo sigue el mismo patrón que las ramas anteriores:
 1. Investigación online en tiempo real contra fuentes primarias UGR.
@@ -162,7 +180,10 @@ El orden de pasos es inamovible.
 *   `V06DOC_SUBARCHETYPES.md` — [SINCRONIZADO v5.4 — 2026-04-25]: 18 bloques de la Rama Ciencias de la Salud completos.
 *   `V06DOC_SUBDIVISIONS.md` — [SINCRONIZADO v5.4 — 2026-04-25]: Secciones 4.1 a 4.18 añadidas con desglose competencial completo de todos los subarquetipos de la rama.
 
-**RAMA CIENCIAS SOCIALES Y JURÍDICAS — EN PROGRESO (v5.5 — 2026-04-26):**
+**RAMA CIENCIAS SOCIALES Y JURÍDICAS — ✅ CERRADA (v5.5 — 2026-04-27):**
+*   S1-S10: todos los subarquetipos certificados y consolidados (secciones 5.1 a 5.26 de ).
+
+**RAMA CIENCIAS TÉCNICAS E INGENIERÍA — EN PROGRESO (v5.6 — próxima sesión):**
 *   `SUB-SOC-LAW-PROC` → `SUB-SOC-LAW-PROC-CIV` + `SUB-SOC-LAW-PROC-PEN` — [CERTIFICADO v5.5 — 2026-04-26]
 *   `SUB-SOC-LAW-DICT` → `SUB-SOC-LAW-DICT-CIV` + `SUB-SOC-LAW-DICT-PEN` — [CERTIFICADO v5.5 — 2026-04-26]
 *   `SUB-SOC-ECON-QUAN` → `SUB-SOC-ECON-QUAN-STAT` + `SUB-SOC-ECON-QUAN-ECON` — [CERTIFICADO v5.5 — 2026-04-26]
