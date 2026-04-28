@@ -1622,3 +1622,209 @@ Fuente primaria certificada: Guías Docentes de Microeconomía I y II y Macroeco
     *   **Taxonomía Cognitiva:** COG_ANA (Análisis de un supuesto de conflicto dado: identificación del tipo de conflicto y su ámbito, determinación de la idoneidad de la mediación — o de su inviabilidad legal —, selección del modelo de mediación más adecuado con justificación, y descripción de las técnicas de mediación a aplicar en la fase de mediación) y COG_EVAL (Evaluación crítica de un proceso de mediación documentado: análisis del respeto de los principios de voluntariedad y neutralidad, evaluación de las técnicas de mediación utilizadas en cada fase, identificación de los errores metodológicos cometidos — si los hay — y propuesta de alternativas).
     *   **Rigor Académico:** ITIN_SOC. FAIL_LOGIC: FATAL si el alumno propone la mediación en un supuesto de violencia de género en relación de pareja (prohibición legal expresa, art. 44.5 LO 1/2004 — no admite excepción). FAIL_LOGIC: FATAL si el alumno confunde la mediación — el mediador no propone ni decide — con el arbitraje — el árbitro decide con carácter vinculante — en un supuesto donde la distinción determina el procedimiento aplicable y los derechos de las partes. La confusión entre el modelo de mediación Harvard — centrado en los intereses y en la consecución del acuerdo — y el modelo circular-narrativo — centrado en la transformación de las narrativas del conflicto — en un supuesto donde la distinción es relevante para la elección metodológica activa penalización proporcional.
     *   **Baremo:** DRA-HOLO configuración WORK-MED + PRM-STRIKE. Representa el 50% de la calificación. Umbral mínimo ≥5 puntos (sobre 10) en la prueba escrita para poder sumar con los trabajos.
+
+## 6. RAMA: INGENIERÍA Y ARQUITECTURA
+
+### 6.1. SUB-TEC-SOFT-ALG — Competencias por Subdivisión (Algorítmica, cód. 2961126 / ETSIIT-UGR 2025-2026)
+
+*   **SD_ALG_TEORIA:**
+    *   **Dominios de Competencia:** COMP_ESP (Dominio de la notación asintótica y las estrategias de diseño de algoritmos: divide y vencerás, greedy, programación dinámica, backtracking, branch and bound) y COMP_TRA (Razonamiento formal sobre la corrección y la complejidad computacional de una solución).
+    *   **Taxonomía Cognitiva:** COG_ANA (Análisis de complejidad temporal y espacial en el mejor, peor y caso promedio) y COG_EVAL (Juicio sobre la estrategia de diseño óptima para un problema dado, con justificación formal de la elección).
+    *   **Rigor Académico:** Nivel ITIN_MAI. El alumno debe demostrar capacidad de demostrar la corrección de un algoritmo (invariante de bucle, inducción) y de derivar la recurrencia y resolverla mediante el Teorema Maestro. La aplicación de una estrategia incorrecta sin justificación formal supone penalización severa.
+
+*   **SD_ALG_PRAC:**
+    *   **Dominios de Competencia:** COMP_ESP (Implementación en lenguaje de alto nivel de los algoritmos diseñados en SD_ALG_TEORIA) y COMP_PROF (Capacidad de defensa presencial de las decisiones de diseño e implementación ante el profesor).
+    *   **Taxonomía Cognitiva:** COG_APP (Implementación correcta y eficiente del algoritmo) y COG_ANA (Análisis empírico de la complejidad mediante medición de tiempos de ejecución y comparación con la complejidad teórica).
+    *   **Rigor Académico:** Nivel ITIN_MAI. La defensa presencial exige coherencia entre la complejidad teórica declarada y los tiempos empíricos medidos. Una implementación correcta con análisis empírico incorrecto es penalizable.
+
+### 6.2. SUB-TEC-SOFT-DS — Competencias por Subdivisión (Estructura de Datos, cód. 2961122 / ETSIIT-UGR 2025-2026)
+
+*   **SD_DS_TDA:**
+    *   **Dominios de Competencia:** COMP_ESP (Conocimiento de los TDAs nucleares de la informática: listas, pilas, colas, árboles — binario, ABB, AVL, B —, tablas hash y grafos; sus especificaciones algebraicas, representaciones e implementaciones) y COMP_TRA (Capacidad de análisis comparativo de implementaciones alternativas en términos de eficiencia temporal y espacial).
+    *   **Taxonomía Cognitiva:** COG_ANA (Análisis de la complejidad de las operaciones de cada TDA según la representación elegida) y COG_EVAL (Decisión justificada sobre el TDA y la representación más adecuados para una aplicación específica).
+    *   **Rigor Académico:** Nivel ITIN_MAI. El alumno debe ser capaz de trazar paso a paso las operaciones de inserción, eliminación y búsqueda sobre cualquier TDA del programa, identificando los cambios estructurales (reestructuraciones AVL, rehashing, rebalanceo B) en cada paso. La confusión entre el comportamiento de diferentes TDAs en supuestos donde la distinción es crítica activa FAIL_LOGIC: FATAL.
+
+*   **SD_DS_IMPL:**
+    *   **Dominios de Competencia:** COMP_ESP (Implementación en C++ de los TDAs del programa: uso correcto de plantillas, gestión de memoria dinámica, separación de interfaz e implementación) y COMP_PROF (Calidad del código: legibilidad, modularidad, documentación).
+    *   **Taxonomía Cognitiva:** COG_APP (Implementación correcta y eficiente de los TDAs) y COG_ANA (Verificación empírica de que la complejidad de la implementación se ajusta a la especificación teórica mediante los casos de prueba proporcionados).
+    *   **Rigor Académico:** Nivel ITIN_MAI. La implementación se valida contra una batería de casos de prueba automatizados. Una implementación funcionalmente correcta pero con complejidad empírica superior a la teórica es penalizable.
+
+### 6.3. SUB-TEC-SOFT-SE — Competencias por Subdivisión (Fundamentos de Ingeniería del Software, cód. 2961127 / ETSIIT-UGR 2025-2026)
+
+*   **SD_SE_TEORIA:**
+    *   **Dominios de Competencia:** COMP_ESP (Dominio de los fundamentos del proceso software: modelos de ciclo de vida, análisis de requisitos, diseño arquitectónico, patrones GoF, pruebas del software y gestión de proyectos) y COMP_TRA (Capacidad de aplicar los principios de la ingeniería del software al análisis de sistemas software descritos en lenguaje natural).
+    *   **Taxonomía Cognitiva:** COG_ANA (Identificación del modelo de ciclo de vida, el estilo arquitectónico y los patrones de diseño aplicables a un sistema dado) y COG_EVAL (Juicio sobre la calidad de un diseño: cohesión, acoplamiento, aplicabilidad de los principios SOLID; evaluación de la cobertura de pruebas de un conjunto de casos de prueba dado).
+    *   **Rigor Académico:** Nivel ITIN_MAI. El alumno debe ser capaz de producir diagramas UML correctos (clases, casos de uso, secuencia) a partir de una descripción en lenguaje natural, y de justificar con precisión terminológica la elección de un patrón de diseño o estilo arquitectónico. La confusión entre cohesión y acoplamiento en un supuesto de refactorización activa FAIL_LOGIC: FATAL.
+
+*   **SD_SE_PRAC:**
+    *   **Dominios de Competencia:** COMP_ESP (Desarrollo completo de un proyecto software: análisis de requisitos → diseño → implementación → pruebas → documentación, usando Git y metodologías ágiles) y COMP_PROF (Calidad de la entrega: trazabilidad requisitos → diseño → implementación → pruebas; calidad del modelado UML; cobertura de pruebas; calidad de la documentación).
+    *   **Taxonomía Cognitiva:** COG_APP (Aplicación del proceso de ingeniería del software a un proyecto real) y COG_CREA (Diseño de una arquitectura software original y coherente con los requisitos del proyecto).
+    *   **Rigor Académico:** Nivel ITIN_MAI. La trazabilidad entre las fases del proyecto es condición necesaria: un diseño que no puede rastrearse hasta los requisitos o una implementación que no puede rastrearse hasta el diseño supone penalización sobre la calificación global de SD_SE_PRAC.
+
+### 6.4. SUB-TEC-CIVIL-STRUCT — Competencias por Subdivisión (Teoría de Estructuras, cód. 2461126 / ETSICCP-UGR 2025-2026)
+
+*   **SD_STRUCT_TEST:**
+    *   **Dominios de Competencia:** COMP_ESP (Fundamentos del comportamiento de estructuras de barras: hipótesis cinemáticas, diagramas de esfuerzos en estructuras isostáticas, tensiones en la sección — Euler-Bernoulli, Jourawski —) y COMP_TRA (Capacidad de estudio autónomo y de respuesta bajo presión temporal en test periódicos de evaluación continua).
+    *   **Taxonomía Cognitiva:** COG_REM (Identificación de los tipos de estructuras, condiciones de contorno y convenios de signos de la ETSICCP-UGR) y COG_APP (Aplicación directa de los fundamentos a la resolución de pequeños problemas de cálculo de esfuerzos en estructuras isostáticas sencillas).
+    *   **Rigor Académico:** Nivel ITIN_MAI. La convención de signos de la ETSICCP-UGR para los diagramas de esfuerzos es vinculante e inamovible — el uso de convenios alternativos activa penalización sistemática.
+
+*   **SD_STRUCT_PARC1:**
+    *   **Dominios de Competencia:** COMP_ESP (Análisis completo de estructuras isostáticas: diagramas de esfuerzos N, V, M; cálculo de tensiones normales y tangenciales en la sección; cálculo de deformaciones por integración directa y métodos energéticos — Castigliano, trabajos virtuales —) y COMP_TRA (Capacidad de clasificar y resolver estructuras isostáticas de diversa tipología: vigas, arcos, celosías, estructuras mixtas).
+    *   **Taxonomía Cognitiva:** COG_ANA (Identificación del grado de isostacidad y selección del método de resolución adecuado) y COG_APP (Aplicación del proceso completo de análisis: diagrama de cuerpo libre → ecuaciones de equilibrio → diagramas de esfuerzos → tensiones → deformaciones).
+    *   **Rigor Académico:** Nivel ITIN_MAI. El proceso de resolución se evalúa por etapas — RPP-TRAZA. La clasificación incorrecta de la estructura (isostática vs. hiperestática) activa FAIL_LOGIC: FATAL.
+
+*   **SD_STRUCT_PARC2:**
+    *   **Dominios de Competencia:** COMP_ESP (Análisis de estructuras hiperestáticas por el método matricial de la rigidez: ensamblaje de la matriz de rigidez global, aplicación de condiciones de contorno, resolución del sistema, recuperación de esfuerzos; estabilidad elástica — carga crítica de Euler, longitudes de pandeo —) y COMP_TRA (Capacidad de implementar el proceso matricial completo de forma ordenada y sin errores de ensamblaje).
+    *   **Taxonomía Cognitiva:** COG_APP (Aplicación sistemática del método matricial a estructuras hiperestáticas sencillas) y COG_ANA (Análisis de la sensibilidad del resultado al número y tipo de condiciones de contorno aplicadas).
+    *   **Rigor Académico:** Nivel ITIN_MAI. Cada etapa del proceso matricial es evaluada de forma independiente por RPP-TRAZA. El ensamblaje incorrecto de la matriz de rigidez global es penalización severa pero no invalida las etapas previas correctas.
+
+### 6.5. SUB-TEC-CIVIL-CONC — Competencias por Subdivisión (Hormigón Armado, cód. 2461135 / ETSICCP-UGR 2025-2026)
+
+*   **SD_CONC_PARC1:**
+    *   **Dominios de Competencia:** COMP_ESP (Modelos constitutivos del hormigón y el acero según EC2; teoría de seguridad y estados límite; dimensionado de secciones a ELU en flexión, compresión y cortante; durabilidad y recubrimientos) y COMP_TRA (Aplicación del EC2 como referencia normativa primaria — el alumno debe demostrar que conoce y aplica la normativa, no solo los principios generales de la mecánica).
+    *   **Taxonomía Cognitiva:** COG_APP (Aplicación del proceso de dimensionado EC2: determinación del dominio de deformación → selección del modelo constitutivo → cálculo del armado mínimo necesario → verificación ELU) y COG_EVAL (Juicio sobre la adecuación del armado adoptado en términos de constructibilidad, economía y cumplimiento normativo).
+    *   **Rigor Académico:** Nivel ITIN_MAI. La aplicación del modelo constitutivo en el dominio de deformación correcto y la distinción entre γc y γs son condiciones necesarias de evaluabilidad. El error en estos parámetros activa FAIL_LOGIC: FATAL.
+
+*   **SD_CONC_PARC2:**
+    *   **Dominios de Competencia:** COMP_ESP (Estados límite de servicio según EC2: fisuración — abertura de fisura w_k —, deformación — flecha instantánea y diferida —; dimensionado de elementos estructurales completos: vigas, pilares, zapatas, muros; pretensado; modelo de bielas y tirantes) y COMP_TRA (Capacidad de dimensionar un elemento estructural completo desde la definición de la geometría hasta la verificación de todos los ELU y ELS aplicables).
+    *   **Taxonomía Cognitiva:** COG_APP (Dimensionado integrado de elementos estructurales de hormigón armado) y COG_EVAL (Verificación sistemática de todos los estados límite aplicables al elemento diseñado, con atención especial a los ELS en ambientes agresivos).
+    *   **Rigor Académico:** Nivel ITIN_MAI. La omisión de la verificación de ELS de fisuración en ambientes agresivos activa FAIL_LOGIC: FATAL. El cálculo de la flecha de vigas fisuradas sin reducción de la inercia eficaz activa penalización severa.
+
+### 6.6. SUB-TEC-CIVIL-STEEL — Competencias por Subdivisión (Estructuras Metálicas, cód. 2461136 / ETSICCP-UGR 2025-2026)
+
+*   **SD_STEEL_FUND:**
+    *   **Dominios de Competencia:** COMP_ESP (Propiedades mecánicas del acero estructural; clasificación de secciones EC3 según relaciones anchura/espesor; verificación de elementos a ELU en tracción, compresión — pandeo por flexión, torsión y lateral según curvas europeas de pandeo EC3 —, flexión y cortante) y COMP_TRA (Aplicación del EC3 como referencia normativa primaria para la verificación de elementos metálicos).
+    *   **Taxonomía Cognitiva:** COG_APP (Clasificación de la sección → selección de la curva de pandeo → cálculo del coeficiente de reducción → verificación ELU) y COG_EVAL (Juicio sobre qué fenómeno de inestabilidad gobierna el dimensionado para un elemento dado en función de su geometría y condiciones de contorno).
+    *   **Rigor Académico:** Nivel ITIN_MAI. La selección de la curva de pandeo EC3 incorrecta activa FAIL_LOGIC: FATAL. La clasificación de la sección sin verificar explícitamente las relaciones anchura/espesor del ala y el alma activa penalización severa.
+
+*   **SD_STEEL_UNION:**
+    *   **Dominios de Competencia:** COMP_ESP (Diseño y verificación de uniones soldadas y atornilladas según EC3; verificación de la interacción de esfuerzos en elementos sometidos a flexocompresión; vigas armadas) y COMP_TRA (Capacidad de diseñar uniones estructurales completas verificando todas las posibles vías de rotura relevantes según el EC3).
+    *   **Taxonomía Cognitiva:** COG_APP (Proceso de verificación de uniones: identificación de las vías de rotura relevantes → cálculo de la resistencia de cálculo de cada vía → selección de la más desfavorable → verificación) y COG_EVAL (Juicio sobre qué tipo de unión — soldada o atornillada, rígida o articulada — es más adecuada para una situación dada en función de las solicitaciones y los condicionantes constructivos).
+    *   **Rigor Académico:** Nivel ITIN_MAI. La omisión de la verificación al aplastamiento en uniones atornilladas a cortante cuando governa sobre la resistencia del tornillo activa FAIL_LOGIC: FATAL.
+
+### 6.4. SUB-TEC-CIVIL-STRUCT — Competencias por Subdivisión (Teoría de Estructuras, cód. 2461126 / ETSICCP-UGR 2025-2026)
+
+*   **SD_STRUCT_TEST:** COMP_ESP (fundamentos de estructuras de barras, diagramas de esfuerzos, tensiones en sección — convenio de signos ETSICCP-UGR vinculante). COG_REM + COG_APP. Umbral: convención de signos incorrecta activa penalización sistemática.
+*   **SD_STRUCT_PARC1:** COMP_ESP (análisis completo de isostáticas: diagramas N/V/M, tensiones, deformaciones por Castigliano y trabajos virtuales). COG_ANA (clasificación de la estructura) + COG_APP (proceso completo de análisis). Umbral ≥2,5/10 independiente — FAIL_LOGIC: FATAL por clasificación isostática/hiperestática incorrecta.
+*   **SD_STRUCT_PARC2:** COMP_ESP (hiperestáticas por método matricial de la rigidez completo: ensamblaje → condiciones de contorno → resolución → recuperación de esfuerzos; estabilidad elástica). COG_APP (método matricial sistemático) + COG_ANA (sensibilidad al número de condiciones de contorno). Umbral ≥2,5/10 independiente.
+
+### 6.5. SUB-TEC-CIVIL-CONC — Competencias por Subdivisión (Hormigón Armado, cód. 2461135 / ETSICCP-UGR 2025-2026)
+
+*   **SD_CONC_PARC1:** COMP_ESP (modelos constitutivos EC2; bases de cálculo; ELU flexión/compresión/cortante; durabilidad). COG_APP (proceso EC2: dominio → modelo → armado → verificación ELU) + COG_EVAL (adecuación constructiva y económica). FAIL_LOGIC: FATAL por dominio incorrecto; FATAL por confusión γc/γs.
+*   **SD_CONC_PARC2:** COMP_ESP (ELS fisuración w_k, flechas instantáneas y diferidas, elementos completos: vigas/pilares/zapatas, pretensado, bielas y tirantes). COG_APP (dimensionado integrado) + COG_EVAL (verificación sistemática de todos los ELS). FAIL_LOGIC: FATAL por omisión ELS fisuración en ambiente agresivo.
+
+### 6.6. SUB-TEC-CIVIL-STEEL — Competencias por Subdivisión (Estructuras Metálicas, cód. 2461136 / ETSICCP-UGR 2025-2026)
+
+*   **SD_STEEL_FUND:** COMP_ESP (propiedades del acero; clasificación de secciones EC3; verificación ELU tracción/compresión/pandeo/flexión/cortante). COG_APP (clasificación → selección curva de pandeo → coeficiente de reducción → verificación ELU) + COG_EVAL (fenómeno de inestabilidad gobernante). FAIL_LOGIC: FATAL por curva de pandeo incorrecta; FATAL por clasificación de sección sin verificar relaciones anchura/espesor.
+*   **SD_STEEL_UNION:** COMP_ESP (uniones soldadas y atornilladas EC3; interacción de esfuerzos flexocompresión; vigas armadas). COG_APP (identificación de vías de rotura → resistencias de cálculo → verificación) + COG_EVAL (tipo de unión más adecuado). FAIL_LOGIC: FATAL por omisión verificación aplastamiento en unión atornillada a cortante.
+
+### 6.7. SUB-TEC-INDUS-THERMO — Competencias por Subdivisión (Termodinámica, cód. 101240 / EPSC-UCO 2025-2026)
+
+*   **SD_THERMO_FUND:** COMP_ESP (1er y 2º principio en sistemas cerrados y abiertos; entropía; diagramas de estado; tablas de vapor). COG_REM (identificación de procesos y ciclos) + COG_APP (balances de energía rigurosos). Umbral ≥40% independiente. FAIL_LOGIC: FATAL por confusión sistema cerrado/abierto.
+*   **SD_THERMO_APPL:** COMP_ESP (ciclos Rankine y Brayton con mejoras; refrigeración/bomba de calor; transmisión de calor básica). COG_APP (resolución sistemática de ciclos) + COG_ANA (impacto de mejoras sobre rendimiento). Umbral ≥40% independiente. FAIL_LOGIC: FATAL por inversión del ciclo.
+
+### 6.8. SUB-TEC-INDUS-TMM — Competencias por Subdivisión (Teoría de Máquinas y Mecanismos, cód. 101246 / EPSC-UCO 2025-2026)
+
+*   **SD_TMM_ANAL:** COMP_ESP (movilidad, análisis cinemático y dinámico por coordenadas generalizadas y matrices de transformación). COG_APP (planteamiento → diferenciación → resolución matricial) + COG_ANA (identificación de singularidades). Umbral ≥5,0 independiente. FAIL_LOGIC: FATAL por identificación incorrecta de par cinemático.
+*   **SD_TMM_COMP:** COMP_ESP (implementación MATLAB de modelos cinemáticos; diagramas cinemáticos computacionales). COG_APP (implementación correcta) + COG_EVAL (verificación coherencia analítica/computacional). Umbral ≥5,0 independiente.
+
+### 6.9. SUB-TEC-INDUS-DEM — Competencias por Subdivisión (Diseño de Elementos de Máquinas, cód. 101256 / EPSC-UCO, aprobada 28/04/2025)
+
+*   **SD_DEM_FAIL:** COMP_ESP (tensiones combinadas; criterios estáticos Von Mises/Tresca/Rankine; fatiga: S-N, factores de Marin, Goodman modificado, Gerber, Kf). COG_EVAL (selección del criterio correcto: material dúctil/frágil, carga estática/cíclica, entalla) + COG_APP (aplicación al cálculo de coeficiente de seguridad). FAIL_LOGIC: FATAL por Von Mises en material frágil; FATAL por omisión Kf con entalla.
+*   **SD_DEM_ELEM:** COMP_ESP (diseño completo de árboles de transmisión — verificación a fatiga en sección crítica —; selección de cojinetes por vida L10; verificación AGMA de engranajes; transmisiones por correa y cadena; frenos y embragues). COG_APP (proceso de diseño mecánico normalizado completo) + COG_EVAL (coeficiente de seguridad, constructibilidad, economía). FAIL_LOGIC: FATAL por omisión verificación fatiga en sección crítica del árbol; FATAL por no convertir vida de diseño a millones de revoluciones.
+
+### 6.13. SUB-TEC-CHEM-BAL — Competencias por Subdivisión (Introducción a la Ingeniería Química, cód. 2201114 / UGR 2025-2026)
+
+*   **SD_CHEM_TEORIA:**
+    *   **Dominios de Competencia:** COMP_ESP (Fundamentos del proceso químico industrial: diagrama de flujo PFD, fenómenos de transporte, clasificación de operaciones unitarias de separación según principio fisicoquímico, reactores básicos) y COMP_TRA (Capacidad de interpretar un diagrama de flujo industrial e identificar correctamente todas las operaciones, corrientes y equipos involucrados).
+    *   **Taxonomía Cognitiva:** COG_REM (Identificación de operaciones unitarias y equipos a partir de su representación en PFD) y COG_ANA (Análisis de la estructura del proceso: etapas de reacción, separación, recirculación y purga).
+    *   **Rigor Académico:** Nivel ITIN_MAI. Umbral mínimo ≥5/10 de forma independiente para poder mediar con la parte de problemas. La confusión entre tipos de operaciones de separación activa FAIL_LOGIC: FATAL.
+
+*   **SD_CHEM_PROB:**
+    *   **Dominios de Competencia:** COMP_ESP (Planteamiento y resolución de balances de materia y energía en estado estacionario y no estacionario, con y sin reacción química, en sistemas con recirculación/by-pass/purga; diseño básico de reactores sencillos y operaciones de separación) y COMP_TRA (Capacidad de definir el volumen de control correcto, identificar todas las corrientes que lo atraviesan y plantear las ecuaciones de conservación de forma sistemática antes de resolver).
+    *   **Taxonomía Cognitiva:** COG_APP (Aplicación del método de balance: definición del sistema → identificación de corrientes → ecuaciones de conservación → resolución numérica) y COG_EVAL (Verificación de la consistencia de los resultados: grados de libertad del sistema, unidades, órdenes de magnitud razonables).
+    *   **Rigor Académico:** Nivel ITIN_MAI. Umbral mínimo ≥3,5/10 de forma independiente para poder mediar con la parte teórica. La omisión de la definición del volumen de control en balance con recirculación activa FAIL_LOGIC: FATAL. La confusión entre conversión y rendimiento en reacciones múltiples activa FAIL_LOGIC: FATAL.
+
+### 6.14. SUB-TEC-CHEM-REACT — Competencias por Subdivisión (Reactores Químicos, cód. 2201136 / UGR 2025-2026)
+
+*   **SD_REACT_HOMO:**
+    *   **Dominios de Competencia:** COMP_ESP (Diseño de reactores homogéneos ideales: CSTR, PFR, reactor discontinuo — ecuaciones de diseño, funcionamiento isotermo/adiabático/con intercambio de calor, análisis de estabilidad, optimización de temperatura, selectividad en reacciones múltiples; reactores no ideales: DTR por técnicas estímulo-respuesta, modelos de flujo no ideal) y COMP_TRA (Capacidad de seleccionar el tipo de reactor óptimo para maximizar la selectividad al producto deseado en función del orden de la reacción y del esquema cinético).
+    *   **Taxonomía Cognitiva:** COG_APP (Aplicación de las ecuaciones de diseño del reactor al cálculo del volumen necesario para una conversión objetivo) y COG_EVAL (Juicio sobre el tipo de reactor más adecuado — CSTR vs. PFR, isotermo vs. adiabático — en función de la cinética, la termoquímica y los criterios de selectividad).
+    *   **Rigor Académico:** Nivel ITIN_MAI. La aplicación de ecuaciones de diseño de CSTR a PFR sin justificación activa FAIL_LOGIC: FATAL. La omisión de la verificación de la región de máxima velocidad neta en la optimización de temperatura de una reacción reversible activa FAIL_LOGIC: FATAL.
+
+*   **SD_REACT_HETER:**
+    *   **Dominios de Competencia:** COMP_ESP (Diseño de reactores heterogéneos: gas-sólido catalíticos — factor de efectividad, módulo de Thiele, resistencias externas e internas —; gas-líquido — NTU, tanques de burbujeo, columnas de relleno —; multifásicos; reactores enzimáticos — Michaelis-Menten, enzimas inmovilizadas —; biorreactores — Monod, balance de oxígeno —; fotobiorreactores) y COMP_TRA (Capacidad de identificar el régimen de control del proceso heterogéneo — difusional externo, difusional interno o cinético — antes de plantear las ecuaciones de diseño).
+    *   **Taxonomía Cognitiva:** COG_ANA (Análisis de las resistencias al transporte de materia y calor en el reactor heterogéneo: identificación del paso limitante mediante criterios adimensionales — módulo de Thiele, número de Biot —) y COG_APP (Aplicación de los modelos de reactor heterogéneo al cálculo del volumen necesario y a la estimación del factor de efectividad global).
+    *   **Rigor Académico:** Nivel ITIN_MAI. La omisión del análisis de resistencias difusionales antes del diseño del reactor gas-sólido catalítico activa FAIL_LOGIC: FATAL. La aplicación de la cinética de Michaelis-Menten a un biorreactor sin verificar el régimen de Monod aplicable activa penalización severa.
+
+### 6.15. SUB-TEC-PROJ-ARCH — Competencias por Subdivisión (Proyectos 1-5, cdgs. 2091116-2091136 / ETSAG-UGR 2025-2026)
+
+*   **SD_ARCH_PROC:**
+    *   **Dominios de Competencia:** COMP_ESP (Proceso de proyecto arquitectónico en secuencia de complejidad creciente: desde ejercicios de iniciación espacial hasta proyecto integrado en tejido urbano real — programa funcional, solución espacial, representación gráfica completa: plantas/alzados/secciones/perspectivas/maquetas, memoria de proyecto) y COMP_PROF (Calidad del proceso de trabajo: evolución de las ideas, cuaderno de croquis, coherencia entre el concepto generador y la solución espacial final).
+    *   **Taxonomía Cognitiva:** COG_APP (Aplicación del proceso de proyecto al ejercicio propuesto: análisis del lugar y el programa → concepto → desarrollo espacial → representación) y COG_CREA (Generación de una propuesta arquitectónica original, coherente con el lugar, el programa y las condiciones culturales y constructivas del contexto).
+    *   **Rigor Académico:** Nivel ITIN_MAI. La inconsistencia geométrica entre plantas, alzados y secciones activa FAIL_LOGIC: FATAL. La ausencia de definición del programa funcional antes de la solución espacial activa FAIL_LOGIC: FATAL. Asistencia ≥80% y entrega de todos los trabajos en plazo son condiciones sine qua non de evaluación continua.
+
+*   **SD_ARCH_EXER:**
+    *   **Dominios de Competencia:** COMP_ESP (Capacidad de generar una propuesta arquitectónica coherente en tiempo limitado: análisis rápido del lugar y el programa → concepto → esquema espacial → representación gráfica esencial) y COMP_PROF (Capacidad de exponer y defender oralmente las decisiones de proyecto ante el tribunal con precisión terminológica arquitectónica).
+    *   **Taxonomía Cognitiva:** COG_APP (Síntesis proyectual bajo presión temporal) y COG_EVAL (Juicio sobre la pertinencia de la solución respecto al lugar, el programa y las condiciones del enunciado).
+    *   **Rigor Académico:** Nivel ITIN_MAI. Umbral ≥5/10 de forma independiente. La incapacidad de articular verbalmente la relación entre el concepto generador y la solución espacial activa FAIL_LOGIC: FATAL.
+
+### 6.16. SUB-TEC-PROJ-URB — Competencias por Subdivisión (Urbanismo 1-5 y Monográfico Urbanismo y Paisaje / ETSAG-UGR 2025-2026)
+
+*   **SD_URB_ANAL:**
+    *   **Dominios de Competencia:** COMP_ESP (Análisis morfológico de la ciudad: modelos de crecimiento urbano, trama/parcela/manzana/tipo edificatorio, espacio público; cartografía temática con atributos; herramientas de caracterización sociológica del espacio público; dimensión paisajística del urbanismo — visión histórica, sistema de espacios libres —) y COMP_TRA (Capacidad de producir documentos de análisis urbano de calidad iconográfica y comunicacional adecuada para su integración en propuestas de planeamiento o intervención).
+    *   **Taxonomía Cognitiva:** COG_ANA (Identificación de los modelos de crecimiento, la morfología dominante y los conflictos urbanos del ámbito analizado) y COG_EVAL (Juicio sobre la adecuación de los instrumentos de análisis disponibles al tipo de problema urbano que se quiere caracterizar).
+    *   **Rigor Académico:** Nivel ITIN_MAI. La confusión entre ciudad jardín de Howard y ciudad dispersa suburbana activa FAIL_LOGIC: FATAL. La cartografía sin fuente de datos, escala y sistema de proyección definidos activa penalización severa.
+
+*   **SD_URB_PROJ:**
+    *   **Dominios de Competencia:** COMP_ESP (Propuesta de intervención o planeamiento urbano: programa de usos, estrategia de movilidad, sistema de espacios libres, normativa urbanística aplicable — ordenanzas de altura, edificabilidad, usos —, impacto medioambiental y paisajístico; documentación técnica de planeamiento: planos de ordenación, fichas normativas, memoria) y COMP_PROF (Calidad comunicacional de la documentación técnica de planeamiento: cartografía, planos normativos, memoria justificativa).
+    *   **Taxonomía Cognitiva:** COG_APP (Aplicación de la normativa urbanística vigente al ámbito de intervención) y COG_CREA (Diseño de una estrategia de intervención urbana coherente con el análisis del ámbito, las necesidades detectadas y los objetivos de planeamiento).
+    *   **Rigor Académico:** Nivel ITIN_MAI. El incumplimiento de normativa urbanística sin justificación activa FAIL_LOGIC: FATAL. La propuesta de movilidad sin análisis de la red viaria y la demanda existente activa penalización severa.
+
+### 6.17. SUB-TEC-CONS-TECH — Competencias por Subdivisión (Construcción I-V / ETSIE-UGR 2025-2026)
+
+*   **SD_CONS_TEORIA:**
+    *   **Dominios de Competencia:** COMP_ESP (Sistemas constructivos de la edificación en secuencia I-V: cimentaciones, estructura portante, fachadas y cubiertas, compartimentación, instalaciones, rehabilitación — normativa CTE vinculante en todos los dominios —) y COMP_TRA (Capacidad de seleccionar y justificar normativamente el sistema constructivo adecuado para una situación dada, identificando los documentos básicos del CTE aplicables y los criterios de aceptación y rechazo de la solución).
+    *   **Taxonomía Cognitiva:** COG_REM (Identificación de sistemas constructivos, materiales y normativa CTE a partir de su descripción o representación gráfica) y COG_EVAL (Juicio sobre la adecuación técnica y normativa de una solución constructiva propuesta — identificación de incumplimientos del CTE y propuesta de correcciones —).
+    *   **Rigor Académico:** Nivel ITIN_MAI. La selección de sistema de cimentación sin reconocimiento geotécnico activa FAIL_LOGIC: FATAL. La inversión del orden de hojas en fachada ventilada cuando la disposición de la barrera de vapor es determinante para CTE-DB-HS1 activa FAIL_LOGIC: FATAL.
+
+*   **SD_CONS_PRAC:**
+    *   **Dominios de Competencia:** COMP_ESP (Resolución de detalles constructivos completos: selección del sistema → dimensionado → verificación CTE → especificación de ejecución y control; informes de seguimiento de obra) y COMP_PROF (Calidad de la representación gráfica del detalle constructivo: escala, leyenda, especificaciones de materiales, coherencia geométrica entre plantas/alzados/secciones del detalle).
+    *   **Taxonomía Cognitiva:** COG_APP (Aplicación del proceso de resolución de detalle constructivo a un sistema dado) y COG_EVAL (Verificación sistemática del cumplimiento de todos los documentos básicos CTE aplicables al detalle diseñado).
+    *   **Rigor Académico:** Nivel ITIN_MAI. El detalle constructivo que incumple documentos básicos CTE aplicables activa FAIL_LOGIC: FATAL. La ausencia de especificación del procedimiento de ejecución y las pruebas de control activa penalización severa.
+
+### 6.18. SUB-TEC-CONS-MAN — Competencias por Subdivisión (Organización y Programación en Edificación, cód. 2301132 / ETSIE-UGR 2025-2026)
+
+*   **SD_CONS_PROG:**
+    *   **Dominios de Competencia:** COMP_ESP (Métodos de programación de obras: CPM — camino crítico, holguras —; PERT — distribución beta, tres estimaciones, probabilidad de cumplimiento de plazo —; Método Roy; nivelación de recursos; curva S; MS Project; BIM 4D) y COMP_TRA (Capacidad de construir el diagrama de red de una obra a partir de una EDT, calcular el camino crítico y las holguras, y representar la programación en un diagrama de Gantt con asignación de recursos).
+    *   **Taxonomía Cognitiva:** COG_APP (Aplicación de los algoritmos CPM y PERT al cálculo del camino crítico y la probabilidad de cumplimiento de plazos) y COG_ANA (Análisis del impacto de una desviación en una actividad crítica vs. no crítica sobre el plazo total de la obra).
+    *   **Rigor Académico:** Nivel ITIN_MAI. La holgura total ≠ 0 en actividad crítica activa FAIL_LOGIC: FATAL. La aplicación del método PERT con estimación única de duración activa FAIL_LOGIC: FATAL.
+
+*   **SD_CONS_MGMT:**
+    *   **Dominios de Competencia:** COMP_ESP (Plan de obra completo: EDT + Gantt + red + asignación de recursos + curva S; seguimiento y control: comparación plan/real, análisis de desviaciones, reprogramación; gestión de equipos de obra; plan de control de calidad — ensayos de recepción de materiales, marcado CE, libro del edificio —) y COMP_PROF (Capacidad de redactar y defender un plan de obra realista, con asignación explícita de recursos a actividades críticas y plan de calidad de materiales estructurales conforme a CTE-DB-SE).
+    *   **Taxonomía Cognitiva:** COG_APP (Redacción del plan de obra integrando todos sus componentes de forma coherente) y COG_EVAL (Análisis crítico del plan: identificación de las actividades que concentran el riesgo de desviación de plazo y propuesta de medidas preventivas y correctoras).
+    *   **Rigor Académico:** Nivel ITIN_MAI. El plan de obra sin identificación del camino crítico y asignación de recursos a actividades críticas activa FAIL_LOGIC: FATAL. La ausencia del plan de control de calidad de materiales estructurales conforme a CTE-DB-SE activa FAIL_LOGIC: FATAL.
+
+### 6.19. SUB-TEC-PURE-ANAL — Competencias por Subdivisión (Análisis Matemático I-II, cdgs. 2701124/2701126 / UGR 2025-2026)
+
+*   **SD_ANAL_TEORIA:**
+    *   **Dominios de Competencia:** COMP_ESP (Teoremas nucleares del análisis matemático en varias variables y de la teoría de la medida: topología de espacios métricos — compacidad, completitud, conexión —; teorema de la función inversa y de la función implícita; Taylor en varias variables; extremos condicionados; medida de Lebesgue y sus propiedades; integral de Lebesgue; teoremas de convergencia — monótona, Fatou, dominada —; Fubini; cambio de variable) y COMP_TRA (Capacidad de construir y escribir demostraciones matemáticas formales completas, identificando en cada paso la hipótesis utilizada y el resultado previo invocado).
+    *   **Taxonomía Cognitiva:** COG_ANA (Análisis de la estructura lógica de una demostración: identificación de hipótesis necesarias, suficiencia de las condiciones, identificación de contraejemplos a enunciados falsos) y COG_EVAL (Juicio sobre la corrección de un razonamiento matemático dado: identificación de saltos lógicos, hipótesis no verificadas o uso incorrecto de teoremas).
+    *   **Rigor Académico:** Nivel ITIN_MAI — LVL_C. La confusión entre compacidad secuencial y compacidad topológica sin justificar su equivalencia activa FAIL_LOGIC: FATAL. La aplicación del teorema de convergencia dominada sin verificar la hipótesis de dominación activa FAIL_LOGIC: FATAL. La operación correcta sin demostración formal justificada es penalizable.
+
+*   **SD_ANAL_PROB:**
+    *   **Dominios de Competencia:** COMP_ESP (Cálculo de límites mediante la definición épsilon-delta y teoremas de convergencia; diferenciabilidad en varias variables: jacobiana, gradiente, plano tangente, derivadas direccionales; aplicación del teorema de la función inversa e implícita; extremos relativos y condicionados; integrales de Lebesgue: Fubini, cambio de variable, convergencia) y COMP_TRA (Capacidad de justificar formalmente cada paso de la resolución de un problema de análisis, invocando con precisión el teorema o la definición que lo sustenta).
+    *   **Taxonomía Cognitiva:** COG_APP (Aplicación del aparato analítico a la resolución de problemas no rutinarios, adaptando el método al enunciado específico) y COG_ANA (Identificación del teorema aplicable y verificación de sus hipótesis antes de su aplicación).
+    *   **Rigor Académico:** Nivel ITIN_MAI — LVL_C. Umbral ≥4/10 en el examen para mediar con evaluación continua. El uso de continuidad para deducir diferenciabilidad en dimensión > 1 sin demostración adicional activa FAIL_LOGIC: FATAL. El intercambio de límite e integral sin verificar hipótesis de convergencia dominada activa FAIL_LOGIC: FATAL.
+
+### 6.20. SUB-TEC-PURE-ALGSTR — Competencias por Subdivisión (Álgebra III cód. 2701132 / Topología I-II cdgs. 2701123/2701138 / UGR 2025-2026)
+
+*   **SD_ALGSTR_TEORIA:**
+    *   **Dominios de Competencia:** COMP_ESP (Teoremas nucleares del álgebra abstracta y la topología: extensiones de cuerpos y grupo de Galois — teorema fundamental de la teoría de Galois como antiisomorfismo de retículos —; cuerpos finitos; resolubilidad por radicales; construcciones con regla y compás; espacios topológicos — bases, subbases, axiomas de separación T₀-T₄ —; compacidad — Tychonoff —; conexión; homotopía y grupo fundamental) y COMP_TRA (Capacidad de construir y escribir demostraciones formales en álgebra abstracta y topología con el rigor propio del Grado en Matemáticas UGR).
+    *   **Taxonomía Cognitiva:** COG_ANA (Análisis de la estructura lógica de las demostraciones algebraicas y topológicas: identificación de las condiciones necesarias y suficientes, uso correcto de las equivalencias entre propiedades) y COG_EVAL (Juicio sobre la corrección de argumentos algebraicos y topológicos dados: identificación de hipótesis faltantes, uso incorrecto de teoremas, contraejemplos).
+    *   **Rigor Académico:** Nivel ITIN_MAI — LVL_C. La omisión del antiisomorfismo en el teorema fundamental de Galois activa FAIL_LOGIC: FATAL. La afirmación de irresolubilidad universal de ecuaciones de grado 5 sin análisis del grupo de Galois específico activa FAIL_LOGIC: FATAL. La operación correcta sin demostración formal justificada es penalizable.
+
+*   **SD_ALGSTR_PROB:**
+    *   **Dominios de Competencia:** COMP_ESP (Resolución de problemas de álgebra abstracta y topología: cálculo del cuerpo de descomposición y grupo de Galois de un polinomio; clasificación de cuerpos finitos; determinación de resolubilidad por radicales; determinación de construcciones posibles con regla y compás; verificación de axiomas de separación; demostración de compacidad o conexión; cálculo del grupo fundamental de espacios sencillos) y COMP_TRA (Capacidad de identificar la estrategia de resolución adecuada para cada problema y de ejecutarla con justificación formal completa).
+    *   **Taxonomía Cognitiva:** COG_APP (Aplicación de los teoremas del programa a la resolución de problemas concretos de álgebra y topología) y COG_ANA (Verificación de las hipótesis de los teoremas antes de su aplicación — especialmente: verificar que una extensión es de Galois antes de calcular su grupo de Galois; verificar compacidad individual antes de aplicar Tychonoff —).
+    *   **Rigor Académico:** Nivel ITIN_MAI — LVL_C. Umbral ≥4/10 en el examen para mediar (Topología). La afirmación de que el producto infinito de compactos no es compacto activa FAIL_LOGIC: FATAL (contradice Tychonoff). El cálculo del grupo de Galois sin verificar que la extensión es normal y separable activa FAIL_LOGIC: FATAL.

@@ -1,6 +1,6 @@
 # ANEXO: HITO 06 - SISTEMA DE AUTOEVALUACIONES CON IA
-# ESTADO: EN PROGRESO - CERTIFICACIÓN RAMA CIENCIAS TÉCNICAS E INGENIERÍA (V5.6)
-# FECHA DE ACTUALIZACIÓN: 2026-04-26
+# ESTADO: EN PROGRESO - CERTIFICACIÓN RAMA CIENCIAS (V5.7)
+# FECHA DE ACTUALIZACIÓN: 2026-04-28
 
 ## 1. RESUMEN DE LA SITUACIÓN ACTUAL (EDC)
 
@@ -25,9 +25,9 @@ La **Rama Ciencias de la Salud** queda **COMPLETAMENTE CERTIFICADA Y SINCRONIZAD
 
 ## 2. HOJA DE RUTA PARA LA PRÓXIMA SESIÓN (LEY SUPREMA - INELUDIBLE)
 
-**ESTADO DEL HITO:** EN PROGRESO — Rama Ciencias Sociales y Jurídicas — Pasos S1-S4 certificados. Pasos S5-S10 pendientes.
-**FECHA DE ÚLTIMA ACTUALIZACIÓN:** 2026-04-26
-**OBJETIVO DE LA PRÓXIMA SESIÓN:** Continuar la certificación de la Rama Ciencias Sociales y Jurídicas a partir del PASO S5, ejecutando en orden estricto e inamovible los pasos S5 a S10 definidos a continuación.
+**ESTADO DEL HITO:** EN PROGRESO — Rama Ciencias Técnicas e Ingeniería CERRADA (v5.6 — 2026-04-28). Próxima rama: Ciencias (6 subarquetipos originales — 5 ciclos de investigación pendientes).
+**FECHA DE ÚLTIMA ACTUALIZACIÓN:** 2026-04-28
+**OBJETIVO DE LA PRÓXIMA SESIÓN:** Iniciar la certificación de la Rama Ciencias a partir del PASO C1, ejecutando en orden estricto e inamovible los pasos C1 a C6 definidos a continuación.
 
 ---
 
@@ -65,27 +65,67 @@ Todos los pasos S1-S10 certificados y consolidados en  (secciones ## 2. RAMA: CI
 
 ---
 
-#### RAMA CIENCIAS TÉCNICAS E INGENIERÍA — CERTIFICACIÓN SUBARQUETIPO A SUBARQUETIPO
+#### RAMA CIENCIAS TÉCNICAS E INGENIERÍA — ✅ COMPLETAMENTE CERTIFICADA (v5.6 — 2026-04-28)
 
-**OBJETIVO DE LA PRÓXIMA SESIÓN:** Iniciar la certificación de la Rama Ciencias Técnicas e Ingeniería (Arqueótipo 3 — RESOLUTIVO). La investigación online en tiempo real contra las fuentes primarias UGR (ETSIIT, ETSICCP, ETSII, ETS Arquitectura) es la única fuente de verdad.
+Todos los pasos T1-T7 certificados y consolidados en `V06DOC_SUBARCHETYPES.md` (sección ## 4. RAMA: INGENIERÍA Y ARQUITECTURA) y `V06DOC_SUBDIVISIONS.md` (secciones 6.1 a 6.20).
 
-**NORMAS PERMANENTES INAMOVIBLES (heredadas de sesiones anteriores):**
+**Resultado final de segregación (7 originales → 16 certificados):**
+*   T1 — `SUB-TEC-SOFT` → `SUB-TEC-SOFT-ALG` + `SUB-TEC-SOFT-DS` + `SUB-TEC-SOFT-SE` (ETSIIT-UGR, aprobadas 30/06/2025)
+*   T2 — `SUB-TEC-CIVIL` → `SUB-TEC-CIVIL-STRUCT` + `SUB-TEC-CIVIL-CONC` + `SUB-TEC-CIVIL-STEEL` (ETSICCP-UGR, aprobadas 23/06/2025)
+*   T3 — `SUB-TEC-INDUS` → `SUB-TEC-INDUS-THERMO` + `SUB-TEC-INDUS-TMM` + `SUB-TEC-INDUS-DEM` (EPSC-UCO — nota vinculante: UGR no imparte Grado en Ingeniería Mecánica)
+*   T4 — `SUB-TEC-CHEM` → `SUB-TEC-CHEM-BAL` + `SUB-TEC-CHEM-REACT` (Grado Ingeniería Química UGR, aprobadas 2025-2026)
+*   T5 — `SUB-TEC-PROJ` → `SUB-TEC-PROJ-ARCH` + `SUB-TEC-PROJ-URB` (ETSAG-UGR, aprobadas 2025-2026)
+*   T6 — `SUB-TEC-CONS` → `SUB-TEC-CONS-TECH` + `SUB-TEC-CONS-MAN` (ETSIE-UGR, aprobadas 24/06/2025)
+*   T7 — `SUB-TEC-PURE` → `SUB-TEC-PURE-ANAL` + `SUB-TEC-PURE-ALGSTR` (Grado Matemáticas UGR, aprobadas 2025-2026)
+
+**FLUJO DE TRABAJO ACTIVO (consolidado 2026-04-27/28):** Investigación → Segregación → Bloques → PMA directo. Sin presentación intermedia en chat. Solo se detiene para la autorización del diff.
+
+---
+
+#### RAMA CIENCIAS — CERTIFICACIÓN SUBARQUETIPO A SUBARQUETIPO
+
+**OBJETIVO DE LA PRÓXIMA SESIÓN:** Iniciar la certificación de la Rama Ciencias (Arqueótipo 3 — RESOLUTIVO, dominio científico-experimental). La investigación online en tiempo real contra las fuentes primarias UGR (Facultad de Ciencias — Grados en Biología, Química, Física, Geología, Ciencias Ambientales, Estadística/Ciencia de Datos) es la única fuente de verdad.
+
+**NORMAS PERMANENTES INAMOVIBLES:**
 *   Ante cualquier disyuntiva aglutinar vs. segregar → **SIEMPRE SEGREGAR**. Sin excepción. Sin consulta.
-*   **NO** se permite el salto a otras ramas hasta que todos los subarquetipos de la Rama en curso alcancen Fidelidad 100%.
+*   **FLUJO DE TRABAJO:** Investigación → Segregación → Bloques → PMA directo. Sin presentación intermedia en chat. Solo se detiene para la autorización del diff.
+*   **NO** se permite el salto a otras ramas hasta que todos los subarquetipos de la Rama Ciencias alcancen Fidelidad 100%.
 *   **NO** se modifica ningún subarquetipo ya certificado salvo indicación explícita del usuario.
-*   **NUEVO FLUJO DE TRABAJO (registrado 2026-04-27):** Investigación → Segregación → Bloques → PMA directo, sin presentación intermedia en chat para validación previa de bloques. Solo se detiene para la autorización del diff.
+*   Si la UGR no imparte el Grado prototipo para un subarquetipo → buscar en otras universidades andaluzas (UCO, UMA, US, UJA, UAL) comenzando por la más próxima al dominio.
 
-**SUBARQUETIPOS DE LA RAMA CIENCIAS TÉCNICAS E INGENIERÍA (pendientes de certificación):**
+**PASOS DE CERTIFICACIÓN — RAMA CIENCIAS:**
 
-Consultar  sección  para el listado completo de subarquetipos a certificar. La certificación arranca en el PASO T1 (primer subarquetipo de la rama según el orden definido en el arqueótipo).
+**PASO C1 — SUB-SCI-BIO (Biología — Taxonomía, ecología y genética)**
+*   **Fuentes a contrastar:** Guías Docentes del Grado en Biología UGR (Facultad de Ciencias). Asignaturas de Botánica, Zoología, Ecología, Genética. Identificar asignaturas troncales con evaluación certificada 2025-2026.
+*   **Segregación previsible:** Biología Celular/Genética vs. Ecología vs. Zoología/Botánica (norma permanente: segregar).
+*   **Documentos a actualizar:** `V06DOC_SUBARCHETYPES.md`, `V06DOC_SUBDIVISIONS.md`.
 
-La certificación de cada subarquetipo sigue el mismo patrón que las ramas anteriores:
-1. Investigación online en tiempo real contra fuentes primarias UGR.
-2. Decisión de segregación si el subarquetipo agrupa disciplinas diferenciadas (norma permanente: siempre segregar).
-3. Redacción del bloque certificado — presentación al usuario para validación.
-4. PMA sobre `V06DOC_SUBARCHETYPES.md` y `V06DOC_SUBDIVISIONS.md` tras certificación del usuario.
+**PASO C2 — SUB-SCI-CHEM (Química — Síntesis, inorgánica y orgánica pura)**
+*   **Fuentes a contrastar:** Guías Docentes del Grado en Química UGR (Facultad de Ciencias). Asignaturas de Química Orgánica, Química Inorgánica, Síntesis. Distinguir del SUB-TEC-CHEM (Ingeniería Química) ya certificado — este subarquetipo es Química pura.
+*   **Segregación previsible:** Química Orgánica vs. Química Inorgánica vs. Síntesis/Técnicas (norma permanente: segregar).
+*   **Nota vinculante:** No confundir con SUB-TEC-CHEM-BAL ni SUB-TEC-CHEM-REACT — esos son ingeniería de procesos. Este subarquetipo es Química básica/pura.
+*   **Documentos a actualizar:** `V06DOC_SUBARCHETYPES.md`, `V06DOC_SUBDIVISIONS.md`.
 
-El orden de pasos es inamovible.
+**PASO C3 — SUB-SCI-PHYS (Física — Mecánica cuántica y electromagnetismo)**
+*   **Fuentes a contrastar:** Guías Docentes del Grado en Física UGR (Facultad de Ciencias). Asignaturas de Mecánica Cuántica, Electromagnetismo, Mecánica Clásica. Distinguir del SUB-TEC-PURE-ANAL (Análisis Matemático) ya certificado — este subarquetipo es Física pura.
+*   **Segregación previsible:** Mecánica Cuántica vs. Electromagnetismo vs. Mecánica Clásica/Estadística (norma permanente: segregar).
+*   **Documentos a actualizar:** `V06DOC_SUBARCHETYPES.md`, `V06DOC_SUBDIVISIONS.md`.
+
+**PASO C4 — SUB-SCI-GEOL (Geología — Mineralogía, estratigrafía y cartografía)**
+*   **Fuentes a contrastar:** Guías Docentes del Grado en Geología UGR (Facultad de Ciencias). Asignaturas de Mineralogía, Estratigrafía, Cartografía Geológica, Petrología.
+*   **Segregación previsible:** Mineralogía/Petrología vs. Estratigrafía vs. Cartografía Geológica (norma permanente: segregar).
+*   **Documentos a actualizar:** `V06DOC_SUBARCHETYPES.md`, `V06DOC_SUBDIVISIONS.md`.
+
+**PASO C5 — SUB-SCI-ENV (Ciencias Ambientales — Gestión de residuos y contaminación)**
+*   **Fuentes a contrastar:** Guías Docentes del Grado en Ciencias Ambientales UGR (Facultad de Ciencias). Asignaturas de Contaminación, Gestión de Residuos, Evaluación de Impacto Ambiental.
+*   **Segregación previsible:** Contaminación/Toxicología vs. Gestión de Residuos vs. EIA/Legislación ambiental (norma permanente: segregar).
+*   **Documentos a actualizar:** `V06DOC_SUBARCHETYPES.md`, `V06DOC_SUBDIVISIONS.md`.
+
+**PASO C6 — SUB-SCI-DATA (Ciencia de Datos — IA, Big Data y estadística computacional)**
+*   **Fuentes a contrastar:** Guías Docentes del Grado en Estadística UGR o Doble Grado Informática+Matemáticas UGR (Facultad de Ciencias). Verificar si la UGR imparte un Grado específico de Ciencia de Datos o si el prototipo más adecuado es el Grado en Estadística. Asignaturas de Aprendizaje Automático, Big Data, Estadística Computacional.
+*   **Nota vinculante:** Verificar la existencia del Grado en Ciencia de Datos en la UGR antes de buscar en otras universidades andaluzas.
+*   **Segregación previsible:** Aprendizaje Automático/IA vs. Big Data/Ingeniería de Datos vs. Estadística Computacional (norma permanente: segregar).
+*   **Documentos a actualizar:** `V06DOC_SUBARCHETYPES.md`, `V06DOC_SUBDIVISIONS.md`.
 
 **PASO S1 — SUB-SOC-LAW-PROC → ✅ CERTIFICADO (v5.5 — 2026-04-26)**
 *   Segregado en: `SUB-SOC-LAW-PROC-CIV` (Derecho Procesal Civil, Guías Docentes 2421121 y 2421137 Bloque Civil, UGR, aprobadas 17/06/2025) y `SUB-SOC-LAW-PROC-PEN` (Derecho Procesal Penal, Guía Docente 2421137 Bloque Penal, UGR, aprobada 17/06/2025).
@@ -183,26 +223,32 @@ El orden de pasos es inamovible.
 **RAMA CIENCIAS SOCIALES Y JURÍDICAS — ✅ CERRADA (v5.5 — 2026-04-27):**
 *   S1-S10: todos los subarquetipos certificados y consolidados (secciones 5.1 a 5.26 de ).
 
-**RAMA CIENCIAS TÉCNICAS E INGENIERÍA — EN PROGRESO (v5.6 — próxima sesión):**
-*   `SUB-SOC-LAW-PROC` → `SUB-SOC-LAW-PROC-CIV` + `SUB-SOC-LAW-PROC-PEN` — [CERTIFICADO v5.5 — 2026-04-26]
-*   `SUB-SOC-LAW-DICT` → `SUB-SOC-LAW-DICT-CIV` + `SUB-SOC-LAW-DICT-PEN` — [CERTIFICADO v5.5 — 2026-04-26]
-*   `SUB-SOC-ECON-QUAN` → `SUB-SOC-ECON-QUAN-STAT` + `SUB-SOC-ECON-QUAN-ECON` — [CERTIFICADO v5.5 — 2026-04-26]
-*   `SUB-SOC-ECON-MGMT` → `SUB-SOC-ECON-MGMT-ACC` + `SUB-SOC-ECON-MGMT-STR` + `SUB-SOC-ECON-MGMT-ECO` — [CERTIFICADO v5.5 — 2026-04-26]
-*   `SUB-SOC-EDU-KIDS` — [PENDIENTE CERTIFICACIÓN]
-*   `SUB-SOC-EDU-SEC` — [PENDIENTE CERTIFICACIÓN]
-*   `SUB-SOC-COMM-JOUR` — [PENDIENTE CERTIFICACIÓN]
-*   `SUB-SOC-COMM-AV` — [PENDIENTE CERTIFICACIÓN]
-*   `SUB-SOC-GEOG` — [PENDIENTE CERTIFICACIÓN]
-*   `SUB-SOC-WORK` — [PENDIENTE CERTIFICACIÓN]
+**RAMA CIENCIAS TÉCNICAS E INGENIERÍA — ✅ CERRADA (v5.6 — 2026-04-28):**
+*   `SUB-TEC-SOFT` → `SUB-TEC-SOFT-ALG` + `SUB-TEC-SOFT-DS` + `SUB-TEC-SOFT-SE` — [CERTIFICADO v5.6 — 2026-04-28] — ETSIIT-UGR
+*   `SUB-TEC-CIVIL` → `SUB-TEC-CIVIL-STRUCT` + `SUB-TEC-CIVIL-CONC` + `SUB-TEC-CIVIL-STEEL` — [CERTIFICADO v5.6 — 2026-04-28] — ETSICCP-UGR
+*   `SUB-TEC-INDUS` → `SUB-TEC-INDUS-THERMO` + `SUB-TEC-INDUS-TMM` + `SUB-TEC-INDUS-DEM` — [CERTIFICADO v5.6 — 2026-04-28] — EPSC-UCO
+*   `SUB-TEC-CHEM` → `SUB-TEC-CHEM-BAL` + `SUB-TEC-CHEM-REACT` — [CERTIFICADO v5.6 — 2026-04-28] — UGR Ingeniería Química
+*   `SUB-TEC-PROJ` → `SUB-TEC-PROJ-ARCH` + `SUB-TEC-PROJ-URB` — [CERTIFICADO v5.6 — 2026-04-28] — ETSAG-UGR
+*   `SUB-TEC-CONS` → `SUB-TEC-CONS-TECH` + `SUB-TEC-CONS-MAN` — [CERTIFICADO v5.6 — 2026-04-28] — ETSIE-UGR
+*   `SUB-TEC-PURE` → `SUB-TEC-PURE-ANAL` + `SUB-TEC-PURE-ALGSTR` — [CERTIFICADO v5.6 — 2026-04-28] — Grado Matemáticas UGR
 
-**SINCRONIZACIÓN CONSTELACIÓN (v5.5 — 2026-04-26):**
-*   `V06DOC_SUBARCHETYPES.md` — [SINCRONIZADO v5.5 — 2026-04-26]: Sección ## 2. RAMA: CIENCIAS SOCIALES Y JURÍDICAS añadida con 9 subarquetipos certificados (SUB-SOC-LAW-PROC-CIV, SUB-SOC-LAW-PROC-PEN, SUB-SOC-LAW-DICT-CIV, SUB-SOC-LAW-DICT-PEN, SUB-SOC-ECON-QUAN-STAT, SUB-SOC-ECON-QUAN-ECON, SUB-SOC-ECON-MGMT-ACC, SUB-SOC-ECON-MGMT-STR, SUB-SOC-ECON-MGMT-ECO).
-*   `V06DOC_SUBDIVISIONS.md` — [SINCRONIZADO v5.5 — 2026-04-26]: Secciones 5.1 a 5.9 añadidas con desglose competencial completo de los 9 subarquetipos certificados.
+**SINCRONIZACIÓN CONSTELACIÓN (v5.6 — 2026-04-28):**
+*   `V06DOC_SUBARCHETYPES.md` — [SINCRONIZADO v5.6 — 2026-04-28]: Sección ## 4. RAMA: INGENIERÍA Y ARQUITECTURA añadida con 16 subarquetipos certificados (secciones 6.1 a 6.20).
+*   `V06DOC_SUBDIVISIONS.md` — [SINCRONIZADO v5.6 — 2026-04-28]: Secciones 6.1 a 6.20 añadidas con desglose competencial completo de todos los subarquetipos de la rama.
+
+**RAMA CIENCIAS — EN PROGRESO (v5.7 — próxima sesión):**
+*   `SUB-SCI-BIO` — [PENDIENTE CERTIFICACIÓN]
+*   `SUB-SCI-CHEM` — [PENDIENTE CERTIFICACIÓN]
+*   `SUB-SCI-PHYS` — [PENDIENTE CERTIFICACIÓN]
+*   `SUB-SCI-GEOL` — [PENDIENTE CERTIFICACIÓN]
+*   `SUB-SCI-ENV` — [PENDIENTE CERTIFICACIÓN]
+*   `SUB-SCI-DATA` — [PENDIENTE CERTIFICACIÓN]
 
 ---
 
 **PROHIBICIONES ABSOLUTAS:**
 *   El modelo de la próxima sesión **NO PODRÁ INVENTAR NI SUPONER NADA** que no esté escrito en esta hoja de ruta o en la documentación satélite auditada.
-*   **NO** se permite el salto a otras ramas hasta que todos los subarquetipos de la Rama Ciencias Sociales y Jurídicas alcancen Fidelidad 100% certificada por el usuario.
+*   **NO** se permite el salto a otras ramas hasta que todos los subarquetipos de la Rama Ciencias alcancen Fidelidad 100% certificada por el usuario.
 *   **NO** se modificará ningún subarquetipo ya certificado salvo indicación explícita del usuario con el nombre exacto del subarquetipo a revisar.
 *   **NORMA PERMANENTE INAMOVIBLE:** Ante cualquier disyuntiva de aglutinar vs. segregar → SIEMPRE SEGREGAR. Sin excepción. Sin consulta.
+*   **FLUJO DE TRABAJO ACTIVO (consolidado 2026-04-27/28):** Investigación → Segregación → Bloques → PMA directo. Sin presentación intermedia en chat. Solo se detiene para la autorización del diff.
