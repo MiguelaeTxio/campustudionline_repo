@@ -1,6 +1,6 @@
 # ANEXO: HITO 06 - SISTEMA DE AUTOEVALUACIONES CON IA
-# ESTADO: EN PROGRESO - CERTIFICACIÓN RAMA CIENCIAS (V5.7)
-# FECHA DE ACTUALIZACIÓN: 2026-04-28
+# ESTADO: EN PROGRESO - CERTIFICACIÓN RAMA CIENCIAS SOCIALES Y JURÍDICAS (S5-S10) (V5.8)
+# FECHA DE ACTUALIZACIÓN: 2026-05-02
 
 ## 1. RESUMEN DE LA SITUACIÓN ACTUAL (EDC)
 
@@ -25,9 +25,9 @@ La **Rama Ciencias de la Salud** queda **COMPLETAMENTE CERTIFICADA Y SINCRONIZAD
 
 ## 2. HOJA DE RUTA PARA LA PRÓXIMA SESIÓN (LEY SUPREMA - INELUDIBLE)
 
-**ESTADO DEL HITO:** EN PROGRESO — Rama Ciencias Técnicas e Ingeniería CERRADA (v5.6 — 2026-04-28). Próxima rama: Ciencias (6 subarquetipos originales — 5 ciclos de investigación pendientes).
-**FECHA DE ÚLTIMA ACTUALIZACIÓN:** 2026-04-28
-**OBJETIVO DE LA PRÓXIMA SESIÓN:** Iniciar la certificación de la Rama Ciencias a partir del PASO C1, ejecutando en orden estricto e inamovible los pasos C1 a C6 definidos a continuación.
+**ESTADO DEL HITO:** EN PROGRESO — Rama Ciencias CERRADA (v5.7 — 2026-05-02). Próxima rama: Ciencias Sociales y Jurídicas — pasos S5 a S10 pendientes.
+**FECHA DE ÚLTIMA ACTUALIZACIÓN:** 2026-05-02
+**OBJETIVO DE LA PRÓXIMA SESIÓN:** Certificar los pasos S5 a S10 de la Rama Ciencias Sociales y Jurídicas en orden estricto e inamovible (S5 → S6 → S7 → S8 → S9 → S10).
 
 ---
 
@@ -82,9 +82,25 @@ Todos los pasos T1-T7 certificados y consolidados en `V06DOC_SUBARCHETYPES.md` (
 
 ---
 
-#### RAMA CIENCIAS — CERTIFICACIÓN SUBARQUETIPO A SUBARQUETIPO
+#### RAMA CIENCIAS — ✅ COMPLETAMENTE CERTIFICADA (v5.7 — 2026-05-02)
 
-**OBJETIVO DE LA PRÓXIMA SESIÓN:** Iniciar la certificación de la Rama Ciencias (Arqueótipo 3 — RESOLUTIVO, dominio científico-experimental). La investigación online en tiempo real contra las fuentes primarias UGR (Facultad de Ciencias — Grados en Biología, Química, Física, Geología, Ciencias Ambientales, Estadística/Ciencia de Datos) es la única fuente de verdad.
+Todos los pasos C1-C6 certificados y consolidados en `V06DOC_SUBARCHETYPES.md` (sección ## 5. RAMA: CIENCIAS) y `V06DOC_SUBDIVISIONS.md` (secciones 7.1 a 7.15).
+
+**Resultado final de segregación (6 originales → 14 certificados):**
+*   C1 — `SUB-SCI-BIO` → `SUB-SCI-BIO-GEN` + `SUB-SCI-BIO-ZOO` + `SUB-SCI-BIO-ECO` (UGR Biología, aprobadas 24-25/06/2025)
+*   C2 — `SUB-SCI-CHEM` → `SUB-SCI-CHEM-ORG` + `SUB-SCI-CHEM-INORG` (UGR Química, aprobadas 24-26/06/2025)
+*   C3 — `SUB-SCI-PHYS` → `SUB-SCI-PHYS-EM` + `SUB-SCI-PHYS-QM` (UGR Física, aprobada 24/06/2025)
+*   C4 — `SUB-SCI-GEOL` → `SUB-SCI-GEOL-MIN` + `SUB-SCI-GEOL-STRAT` + `SUB-SCI-GEOL-MAP` (UGR Geología, aprobadas 18-30/06/2025)
+*   C5 — `SUB-SCI-ENV` → `SUB-SCI-ENV-RES` + `SUB-SCI-ENV-CONT` (UGR Ciencias Ambientales, aprobadas 23-27/06/2025)
+*   C6 — `SUB-SCI-DATA` → `SUB-SCI-DATA-STAT` + `SUB-SCI-DATA-ML` + `SUB-SCI-DATA-BIG` (UCM GIDIA — nota vinculante: UGR no dispone de guías docentes activas para el Grado en Ciencias de Datos e IA en 2025-2026; fuente primaria: Grado en Ingeniería de Datos e Inteligencia Artificial, Facultad de Informática, UCM — fichas docentes aprobadas 27/06/2025)
+
+**SIGUIENTE FASE: Rama Ciencias Sociales y Jurídicas — pasos S5 a S10 pendientes.**
+
+---
+
+#### RAMA CIENCIAS SOCIALES Y JURÍDICAS — CERTIFICACIÓN S5-S10
+
+**OBJETIVO DE LA PRÓXIMA SESIÓN:** Certificar los pasos S5 a S10 en orden estricto e inamovible.
 
 **NORMAS PERMANENTES INAMOVIBLES:**
 *   Ante cualquier disyuntiva aglutinar vs. segregar → **SIEMPRE SEGREGAR**. Sin excepción. Sin consulta.
@@ -236,13 +252,17 @@ Todos los pasos T1-T7 certificados y consolidados en `V06DOC_SUBARCHETYPES.md` (
 *   `V06DOC_SUBARCHETYPES.md` — [SINCRONIZADO v5.6 — 2026-04-28]: Sección ## 4. RAMA: INGENIERÍA Y ARQUITECTURA añadida con 16 subarquetipos certificados (secciones 6.1 a 6.20).
 *   `V06DOC_SUBDIVISIONS.md` — [SINCRONIZADO v5.6 — 2026-04-28]: Secciones 6.1 a 6.20 añadidas con desglose competencial completo de todos los subarquetipos de la rama.
 
-**RAMA CIENCIAS — EN PROGRESO (v5.7 — próxima sesión):**
-*   `SUB-SCI-BIO` — [PENDIENTE CERTIFICACIÓN]
-*   `SUB-SCI-CHEM` — [PENDIENTE CERTIFICACIÓN]
-*   `SUB-SCI-PHYS` — [PENDIENTE CERTIFICACIÓN]
-*   `SUB-SCI-GEOL` — [PENDIENTE CERTIFICACIÓN]
-*   `SUB-SCI-ENV` — [PENDIENTE CERTIFICACIÓN]
-*   `SUB-SCI-DATA` — [PENDIENTE CERTIFICACIÓN]
+**RAMA CIENCIAS — ✅ CERRADA (v5.7 — 2026-05-02):**
+*   `SUB-SCI-BIO` → `SUB-SCI-BIO-GEN` + `SUB-SCI-BIO-ZOO` + `SUB-SCI-BIO-ECO` — [CERTIFICADO v5.7 — 2026-04-28] — UGR Biología
+*   `SUB-SCI-CHEM` → `SUB-SCI-CHEM-ORG` + `SUB-SCI-CHEM-INORG` — [CERTIFICADO v5.7 — 2026-04-28] — UGR Química
+*   `SUB-SCI-PHYS` → `SUB-SCI-PHYS-EM` + `SUB-SCI-PHYS-QM` — [CERTIFICADO v5.7 — 2026-04-28] — UGR Física
+*   `SUB-SCI-GEOL` → `SUB-SCI-GEOL-MIN` + `SUB-SCI-GEOL-STRAT` + `SUB-SCI-GEOL-MAP` — [CERTIFICADO v5.7 — 2026-04-28] — UGR Geología
+*   `SUB-SCI-ENV` → `SUB-SCI-ENV-RES` + `SUB-SCI-ENV-CONT` — [CERTIFICADO v5.7 — 2026-04-28] — UGR Ciencias Ambientales
+*   `SUB-SCI-DATA` → `SUB-SCI-DATA-STAT` + `SUB-SCI-DATA-ML` + `SUB-SCI-DATA-BIG` — [CERTIFICADO v5.7 — 2026-05-02] — UCM GIDIA (nota vinculante: UGR no dispone de guías docentes activas para el Grado en Ciencias de Datos e IA en 2025-2026)
+
+**SINCRONIZACIÓN CONSTELACIÓN (v5.7 — 2026-05-02):**
+*   `V06DOC_SUBARCHETYPES.md` — [SINCRONIZADO v5.7 — 2026-05-02]: Sección ## 5. RAMA: CIENCIAS completa con 14 subarquetipos certificados.
+*   `V06DOC_SUBDIVISIONS.md` — [SINCRONIZADO v5.7 — 2026-05-02]: Secciones 7.1 a 7.15 añadidas con desglose competencial completo de todos los subarquetipos de la rama.
 
 ---
 
