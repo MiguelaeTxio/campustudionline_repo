@@ -1,6 +1,6 @@
 # ANEXO: HITO 06 - SISTEMA DE AUTOEVALUACIONES CON IA
-# ESTADO: EN PROGRESO - CERTIFICACIÓN RAMA CIENCIAS SOCIALES Y JURÍDICAS (S5-S10) (V5.8)
-# FECHA DE ACTUALIZACIÓN: 2026-05-02
+# ESTADO: EN PROGRESO - FASE DOCUMENTAL COMPLETADA (V5.9) — LISTO PARA IMPLEMENTACIÓN
+# FECHA DE ACTUALIZACIÓN: 2026-05-11
 
 ## 1. RESUMEN DE LA SITUACIÓN ACTUAL (EDC)
 
@@ -56,12 +56,13 @@ La **Rama Ciencias de la Salud** queda **COMPLETAMENTE CERTIFICADA Y SINCRONIZAD
 | S016   | 2026-04-27 | v5.5 — Rama CSJ pasos S5-S10    | Certificación pasos S5-S10 Rama CSJ. S5: SUB-SOC-EDU-KIDS. S6: SUB-SOC-EDU-SEC. S7: SUB-SOC-COMM-JOUR. S8: SUB-SOC-COMM-AV. S9: SUB-SOC-GEOG→GEOG-SIG+GEOG-TER+GEOG-FIS (guías 2081127/20811X3/2081119, asistencia ≥75%, FAIL_LOGIC FATAL confusión vectorial/ráster). S10: SUB-SOC-WORK→WORK-INT+WORK-POL+WORK-MED (guías aprobadas 16/06/2025, asistencia ≥80%, FAIL_LOGIC FATAL mediación en violencia de género — prohibición legal art. 44.5 LO 1/2004). DECISIÓN VINCULANTE: flujo Investigación→Segregación→Bloques→PMA directo sin presentación intermedia en chat. Lección técnica: verificar stub exacto en disco con grep -n antes de construir OLD_BLOCK en cualquier PMA. Secciones 5.21-5.26 en SUBDIVISIONS.md. Rama CSJ CERRADA (v5.5). |
 | S017   | 2026-04-28 | v5.6 — Rama Ingeniería (cert.)   | Certificación completa Rama Ciencias Técnicas e Ingeniería: 7 subarquetipos originales → 16 certificados. T1→SOFT-ALG+SOFT-DS+SOFT-SE (ETSIIT-UGR). T2→CIVIL-STRUCT+CIVIL-CONC+CIVIL-STEEL (ETSICCP-UGR). T3→INDUS-THERMO+INDUS-TMM+INDUS-DEM (EPSC-UCO — nota vinculante: UGR no imparte Ingeniería Industrial). T4→CHEM-BAL+CHEM-REACT (IQ-UGR). T5→PROJ-ARCH+PROJ-URB (ETSAG-UGR). T6→CONS-TECH+CONS-MAN (ETSIE-UGR). T7→PURE-ANAL+PURE-ALGSTR (Matemáticas UGR). INCIDENCIAS: PMA T1 consumió ancla de T2/T3 — PMAs abortaron silenciosamente; resuelto con PMA unificado atómico. Búsqueda errónea inicial en Ingeniería Electrónica para T3 — corregido a UCO. Presentación de bloques en chat en T1 (incumplimiento flujo) consumió 30% cuota de sesión innecesariamente. Secciones 6.1-6.20 en SUBDIVISIONS.md. Rama Ingeniería CERRADA (v5.6). |
 | S018   | 2026-05-02 | v5.7 — Rama Ciencias (cert.)     | Certificación completa Rama Ciencias (C1-C5 ya certificados en S017; esta sesión certifica C6). INCIDENCIA CRÍTICA: al inicio de sesión se generó contenido nuevo sin haber leído la constelación — bloque duplicado en V06DOC_SUBARCHETYPES.md. Detectado mediante auditoría y resuelto con git checkout HEAD sobre el archivo afectado. C6 SUB-SCI-DATA: UGR no dispone de guías docentes activas para Grado en Ciencias de Datos e IA 2025-2026 — fuente primaria: Grado en Ingeniería de Datos e IA, Facultad de Informática UCM (fichas aprobadas 27/06/2025). Nota vinculante registrada. Fallo patcher por carácter raya larga (—) en codificación del archivo servidor — resuelto cambiando estrategia a SEARCH_MARKER por substring corto. Subarquetipos DATA→DATA-STAT+DATA-ML+DATA-BIG, secciones 7.13-7.15 en SUBDIVISIONS.md. Rama Ciencias CERRADA (v5.7). |
+| S019   | 2026-05-11 | v5.9 — Auditoría de Fidelidad Documental (87/87) | Auditoría de consistencia y fidelidad documental completa de la constelación V06: 87/87 subarquetipos verificados contra fuentes primarias UGR/UCO/UCM 2025-2026. Resultado: 86 CONFORMES + 1 INCIDENCIA LEVE (SUB-LIN-TRA-LIT: mecanismo Non-Backtracking entre fases no verificado en guía docente real — contenido conforme, estructura en duda). CERO incidencias moderadas. CERO incidencias graves. Constelación documental V06 declarada AUTORIZADA para la Fase de Implementación. La incidencia leve SUB-LIN-TRA-LIT queda como primer punto del orden del día de la S020. |
 
 ## 2. HOJA DE RUTA PARA LA PRÓXIMA SESIÓN (LEY SUPREMA - INELUDIBLE)
 
-**ESTADO DEL HITO:** EN PROGRESO — Fase Documental completada (v5.8 — 2026-05-10). TODAS LAS RAMAS CERTIFICADAS. Próxima acción: Auditoría de Consistencia de la Constelación V06 + inicio de la Fase de Implementación del emulador.
-**FECHA DE ÚLTIMA ACTUALIZACIÓN:** 2026-05-10
-**OBJETIVO DE LA PRÓXIMA SESIÓN:** Auditoría de consistencia completa de la constelación V06 para certificar que el 100% de los widgets, bloques, motores, contratos de fase y desgloses competenciales están correctamente definidos y sin referencias rotas, antes de abrir la Fase de Implementación dentro del Hito 6.
+**ESTADO DEL HITO:** EN PROGRESO — Fase Documental COMPLETADA Y AUDITADA (v5.9 — 2026-05-11). TODAS LAS RAMAS CERTIFICADAS. Constelación V06 AUTORIZADA para Implementación. Próxima acción: resolución de incidencia leve SUB-LIN-TRA-LIT e inicio de la Fase de Implementación.
+**FECHA DE ÚLTIMA ACTUALIZACIÓN:** 2026-05-11
+**OBJETIVO DE LA PRÓXIMA SESIÓN:** (1) Resolver la incidencia leve SUB-LIN-TRA-LIT verificando el mecanismo Non-Backtracking entre fases en la guía docente real 25211NJ. (2) Abrir formalmente la Fase de Implementación del Hito 6 con el primer bloque técnico a desarrollar.
 
 ---
 
