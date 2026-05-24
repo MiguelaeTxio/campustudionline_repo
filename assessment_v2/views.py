@@ -14,7 +14,7 @@ import re
 from .models.main import Exam, Submission
 from .services.engine.factory import ExamFactory
 from .services.quotas import QuotaService
-from .services.engine.logic import AcademicDeductor, GradingOrchestrator
+from .services.engine.logic import GradingOrchestrator
 from orchestrator.tasks import generate_exam_task
 from contents.models import ContentMaterial, ContentCopy
 from contents.utils import extract_toc_from_markdown, extract_content_range
@@ -58,27 +58,21 @@ class ExamCreateView(LoginRequiredMixin, View):
             messages.error(request, f"Límite: {reason}")
             return redirect('study_room:edit_copy', pk=content_copy.pk)
         
-        subject = content.subject.first()
-        
-        # CLASIFICACIÓN SINCRONA: Se realiza después de que el usuario envíe el rango seleccionado
-        metadata = AcademicDeductor.get_context_metadata(subject, context_title=content.title)
-        
         # Use the centralized utility to correctly extract the content range
         # Usa la utilidad centralizada para extraer correctamente el rango de contenido
         start_idx = request.POST.get('start_index')
         end_idx = request.POST.get('end_index')
         context_text = extract_content_range(content.markdown_content, start_idx, end_idx)
 
-        # Relational header creation
-        # Creación de la cabecera relacional
+        # Relational header creation — minimal, no AI classification here.
+        # Classification is delegated exclusively to generate_exam_task (single responsibility).
+        # Creación de la cabecera relacional — mínima, sin clasificación IA aquí.
+        # La clasificación se delega exclusivamente a generate_exam_task (responsabilidad única).
+        # Ref: V06DOC_LOGIC_MAPPING V1.3 — ERROR 5 (doble clasificación eliminada).
         exam = Exam.objects.create(
             user=request.user,
-            content_copy=content_copy,  # LINKED: Business Rule Compliance
-            archetype_id=metadata['archetype_id'],
-            sub_archetype_id=metadata['sub_archetype_id'], # IDENTITY PERSISTENCE / PERSISTENCIA DE IDENTIDAD
-            itinerary_id=metadata['itinerary_id'],
-            pedagogical_level=metadata['pedagogical_level'],
-            immersion_mode=metadata['immersion_mode']
+            content_copy=content_copy,
+            status='PENDING'
         )
         
         # Launch asynchronous generation task with scoped context

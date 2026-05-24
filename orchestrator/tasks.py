@@ -1071,7 +1071,10 @@ def generate_exam_task(self, exam_uuid, context_text=None, topic=None):
                     layout_mode=s_data.get('layout_mode', 'STANDARD'),
                     order=idx
                 )
-                sections_map[s_data['subdivision_id']] = section
+                # Indexar por orden (idx) y por subdivision_id.
+                # El índice por orden evita colisiones cuando dos secciones
+                # distintas tienen el mismo subdivision_id (ej: SUB-HUM-MUS).
+                sections_map[idx] = section
                 
                 # Crear ítems vacíos con el esqueleto predefinido
                 for i_idx, i_data in enumerate(s_data.get('items', [])):
@@ -1095,16 +1098,29 @@ def generate_exam_task(self, exam_uuid, context_text=None, topic=None):
         generated_titles = []
         usage_total = {"in": 0, "out": 0}
         
-        for s_info in skeleton:
-            db_sec = sections_map.get(s_info['subdivision_id'])
+        for s_idx, s_info in enumerate(skeleton):
+            db_sec = sections_map.get(s_idx)
             if not db_sec: continue
             
             # Inyección de immersion_mode y pedagogical_level ELIMINADA (Bugfix: TypeError)
             s_prompt = strategy.get_system_prompt()
             
+            # Construir skeleton_json con los UUIDs reales de los ítems de esta sección
+            # para que la IA los devuelva inmutables (SCHEMA-FIRST Protocol)
+            section_skeleton_json = json.dumps([
+                {
+                    'item_id': str(item.uuid),
+                    'block_type': item.block_type,
+                    'widget_id': item.widget_id,
+                    'task_instruction': item.metadata.get('task_instruction', '')
+                }
+                for item in db_items
+            ], ensure_ascii=False)
             u_prompt = strategy.get_user_prompt(
                 context_text=context_text, topic=topic or subject.name,
-                subdivision_id=s_info['subdivision_id'], generated_item_titles=generated_titles
+                subdivision_id=s_info['subdivision_id'],
+                generated_item_titles=generated_titles,
+                skeleton_json=section_skeleton_json
             )
             
             db_items = list(db_sec.items.all().order_by('order'))
@@ -1205,7 +1221,7 @@ def generate_exam_task(self, exam_uuid, context_text=None, topic=None):
                 contextual_logger(fatal_msg, level="CRITICAL")
                 raise AIServiceCriticalError(fatal_msg)
 
-        TrackingService.record_usage(exam.user, exam, "gemini-2.5-flash-lite", usage_total["in"], usage_total["out"], "Restored-Key")
+        TrackingService.record_usage(exam.user, exam, "gemini-2.5-flash", usage_total["in"], usage_total["out"], "EXAM_GEN")
         exam.status = 'READY'
         exam.expiration_date = timezone.now() + timedelta(hours=24)
         exam.event_log.append({"ts": timezone.now().isoformat(), "msg": "Generación Completada. Caduca en 24h."})

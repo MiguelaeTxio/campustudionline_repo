@@ -438,6 +438,7 @@
 ./assessment_v2/migrations/0005_exam_event_log.py
 ./assessment_v2/migrations/0010_exam_target_language_code_examitem_uuid_and_more.py
 ./assessment_v2/migrations/0009_alter_exam_archetype_id_alter_exam_immersion_mode_and_more.py
+./assessment_v2/migrations/0020_hito6_v59_full_taxonomy.py
 ./assessment_v2/migrations/0014_exam_localized_sections.py
 ./assessment_v2/migrations/0012_alter_exam_uuid_alter_examitem_uuid.py
 ./assessment_v2/migrations/0017_examitem_fail_logic_alter_exam_sub_archetype_id_and_more.py

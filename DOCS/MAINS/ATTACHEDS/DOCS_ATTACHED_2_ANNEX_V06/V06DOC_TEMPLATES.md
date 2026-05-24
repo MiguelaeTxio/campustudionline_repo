@@ -113,29 +113,28 @@ Esta sección documenta los contratos de inyección de contenido específicos pa
     *   **Motor:** EV-TRA-PRECISION-TECH con jerarquía de errores A/B/C: Categoría A (Sentido — Contrasentido -2.0, Sin sentido -1.5, Falso sentido -1.0), Categoría B (Terminología — lema no especializado -0.5), Categoría C (Gramática y Estilo — inadecuación de registro u error ortotipográfico OLE 2010, -0.2).
     *   **Non-backtracking:** Una vez enviado un bloque, el acceso queda bloqueado permanentemente.
 
-### 6.4. Contrato de Fases: SUB-LIN-TRA-LIT (FTI-UGR — Literatura y Traducción Lengua B Inglés, cód. 25211NJ) [NUEVO v5.1 — 2026-04-21]
-*   **Estructura:** Tres fases secuenciales evaluadas conjuntamente mediante DRA-HOLO-LIT. Umbral mínimo 5/10 en la media de los cuatro ejes de la rúbrica DRA-HOLO-LIT para superar el subarquetipo (coherente con la nota mínima 5 declarada en la Guía Docente 25211NJ). Non-backtracking entre fases: una vez completada y enviada una fase, el acceso queda bloqueado permanentemente.
-*   **Fase 1 (SD_TRA_STYLE — Análisis Estilístico Comparado):**
+### 6.4. Contrato de Fases: SUB-LIN-TRA-LIT (FTI-UGR — Literatura y Traducción Lengua B Inglés, cód. 25211NJ) [NUEVO v5.1 — 2026-04-21 / REFACTORIZADO v5.9 — 2026-05-16]
+*   **NOTA INSTITUCIONAL [VINCULANTE — v5.9]:** Sistema de evaluación continua sin fases selladas ni Non-Backtracking entre destrezas. Guía Docente 25211NJ (aprobada 23/06/2025): trabajos escritos 30% + presentaciones 40% + participación 30%. Las tres destrezas son independientes. Todos los envíos obligatoriamente por Turnitin.
+*   **Estructura:** Tres destrezas evaluadas holísticamente mediante DRA-HOLO-LIT. Umbral mínimo 5/10 en la media de los cuatro ejes (coherente con la nota mínima 5 de la Guía Docente 25211NJ).
+*   **Destreza 1 (SD_TRA_STYLE — Análisis Estilístico Comparado):**
     *   **Widget:** W-HUM-TEXT con layout SPLIT_TEXT.
-    *   **Panel izquierdo (Estímulo — Sticky):** Texto literario fuente (poema o fragmento teatral/narrativo en inglés, autor anglófono del corpus de la asignatura 25211NJ). No editable. Permanece visible durante toda la fase.
-    *   **Panel derecho (Editor):** El alumno redacta el análisis estilístico en modo edición libre.
-    *   **Tarea:** Identificación y descripción de la voz autorial, los rasgos estilísticos (registro, tono, ritmo, figuras retóricas), los culturemas y los retos de transferencia que plantea el texto fuente para la traducción al español.
-    *   **Extensión mínima del análisis:** 300 palabras.
+    *   **Panel izquierdo (Estímulo — Sticky):** Texto literario fuente (poema o fragmento teatral/narrativo en inglés, corpus de la asignatura 25211NJ). No editable.
+    *   **Panel derecho (Editor):** Análisis estilístico en modo edición libre.
+    *   **Tarea:** Identificación de voz autorial, rasgos estilísticos, culturemas y retos de transferencia. Extensión mínima: 300 palabras.
     *   **Motor:** DRA-HOLO-LIT (Ejes 1 y 2).
-    *   **Modos de entrada activos:** Teclado Latino Nativo y OCR/Captura de manuscrito. Occidentalización y Pad de Trazos deshabilitados (no aplican para inglés→español).
-*   **Fase 2 (SD_TRA_CREATIVE — Transferencia Estética):**
+    *   **Modos de entrada activos:** Teclado Latino Nativo y OCR/Captura. Occidentalización y Pad de Trazos deshabilitados.
+*   **Destreza 2 (SD_TRA_CREATIVE — Transferencia Estética):**
     *   **Widget:** W-HUM-TEXT en modo SPLIT_TEXT.
-    *   **Panel izquierdo (Estímulo — Sticky):** El mismo texto literario fuente de la Fase 1. No editable.
-    *   **Panel derecho (Editor):** El alumno redacta su traducción literaria al español en modo edición libre.
-    *   **Tarea:** Producción de la traducción literaria al español preservando el efecto estético del original. Gestión documentada de culturemas, intertextos y juegos lingüísticos. Las compensaciones adoptadas deben ser coherentes con el análisis realizado en la Fase 1.
+    *   **Panel izquierdo (Estímulo — Sticky):** El mismo texto fuente de la Destreza 1. No editable.
+    *   **Panel derecho (Editor):** Traducción literaria al español en modo edición libre.
+    *   **Tarea:** Producción de la traducción preservando el efecto estético del original. Gestión documentada de culturemas e intertextos.
     *   **Motor:** DRA-HOLO-LIT (Ejes 1, 2 y 3).
-    *   **Modos de entrada activos:** Teclado Latino Nativo y OCR/Captura de manuscrito. Occidentalización y Pad de Trazos deshabilitados.
-*   **Fase 3 (SD_TRA_CRIT — Comentario Exegético y Justificación Traductológica):**
+    *   **Modos de entrada activos:** Teclado Latino Nativo y OCR/Captura. Occidentalización y Pad de Trazos deshabilitados.
+*   **Destreza 3 (SD_TRA_CRIT — Comentario Exegético y Justificación Traductológica):**
     *   **Widget:** W-HUM-TEXT en modo libre (sin panel lateral).
-    *   **Tarea:** El alumno redacta el ensayo crítico justificando de forma razonada y documentada las decisiones traductoras adoptadas en las Fases 1 y 2. Extensión: 1500-2000 palabras, conforme a los criterios de evaluación de la Guía Docente 25211NJ. El ensayo debe incluir citas correctas de la bibliografía traductológica oficial: Reynolds (2011), Venuti (2017) y el marco del Skopos.
+    *   **Tarea:** Ensayo crítico de 1500-2000 palabras justificando las decisiones traductoras. Cita obligatoria de Reynolds (2011), Venuti (2017) y el marco del Skopos. Envío mediante Turnitin emulado.
     *   **Motor:** DRA-HOLO-LIT (Eje 4 exclusivamente).
-    *   **Control de originalidad:** Enviado a través de Turnitin emulado para verificación de originalidad.
-    *   **FAIL_LOGIC:** FATAL para la destreza si el ensayo carece de fundamentación bibliográfica o reproduce opiniones ajenas sin argumentación original.
+    *   **FAIL_LOGIC:** FATAL si el ensayo carece de fundamentación bibliográfica o reproduce opiniones ajenas sin argumentación original.
 
 ### 6.5. Contrato de Fases: SUB-HUM-ART-HIST (Dpto. Historia del Arte UGR — Iconografía, cód. 26511M2; Historia de los Estilos e Iconografía, cód. 2931114) [NUEVO v5.3 — 2026-04-22]
 *   **Estructura:** Dos destrezas evaluadas de forma independiente y no compensable. Umbral mínimo de 5/10 en cada destreza para superar el subarquetipo (FAIL_LOGIC: FATAL por destreza no superada). Ponderación: SD_ART_IDENT (50-60%) + SD_ART_ANAL (40-50%) según nivel pedagógico configurado.

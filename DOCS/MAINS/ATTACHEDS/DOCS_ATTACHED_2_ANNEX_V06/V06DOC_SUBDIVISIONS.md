@@ -175,9 +175,9 @@ Esta sección desglosa las competencias específicas y el nivel de rigor académ
     *   **Taxonomía Cognitiva:** COG_EVAL (Evaluación crítica de la calidad traductora aplicando criterios profesionales: coherencia terminológica, adecuación al género, corrección ortotipográfica OLE 2010) y COG_APP (Post-edición de output de Traducción Automática: detección de alucinaciones, errores de cohesión y desviaciones de registro).
     *   **Rigor Académico:** Nivel profesional (ITIN_PROF). Conforme a CE19 y CE23 de la Guía Docente 252113T. La revisión de TA exige distinguir errores estructurales de errores superficiales. La ausencia de corrección ortotipográfica en la versión final activa EV-TRA-PRECISION-TECH Categoría C (-0.2 por error).
 
-### 3.4. SUB-LIN-TRA-LIT — Competencias por Subdivisión (Literatura y Traducción Lengua B Inglés, cód. 25211NJ / FTI-UGR 2026) [NUEVO v5.1 - FIDELIDAD 100% UGR]
+### 3.4. SUB-LIN-TRA-LIT — Competencias por Subdivisión (Literatura y Traducción Lengua B Inglés, cód. 25211NJ / FTI-UGR 2026) [CERTIFICADO v5.1 - FIDELIDAD 100% UGR / REFACTORIZADO v5.9 — 2026-05-16]
 
-*   **NOTA INSTITUCIONAL:** Las subdivisiones de SUB-LIN-TRA-LIT se anclan en la asignatura optativa Literatura y Traducción Lengua B Inglés (25211NJ), 3º curso, 2º semestre, del Grado en Traducción e Interpretación de la FTI-UGR. No existe asignatura obligatoria de Traducción Literaria en este Grado; la competencia literaria se canaliza por optativas de especialización. El itinerario es ITIN_MAI con nivel C2 hermenéutico (LVL_C).
+*   **NOTA INSTITUCIONAL [VINCULANTE — v5.9]:** Sistema de evaluación continua certificado en la Guía Docente 25211NJ (aprobada 23/06/2025): trabajos escritos 30% + presentaciones orales 40% + participación en seminarios 30%. Las tres destrezas son independientes entre sí; no existe bloqueo secuencial entre ellas. El Non-Backtracking entre destrezas queda eliminado de la constelación por carecer de respaldo documental en la guía real.
 
 *   **SD_TRA_STYLE:**
     *   **Dominios de Competencia:** COMP_ESP (Conocimiento de las variaciones formales y estilísticas de los textos literarios en inglés como resultado de su contexto histórico y cultural) y COMP_TRA (Capacidad de análisis de la voz del autor, rasgos dialectales o cronoflectales, figuras retóricas y desafíos de transferencia estética).

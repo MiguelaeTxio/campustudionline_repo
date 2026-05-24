@@ -165,14 +165,15 @@ Este documento define la **Configuración Estructural Fija** (Receta) que cada E
         3.  **SD_TRA_DRAFT (Traducción Directa):** Traducción de textos especializados de entre 200-250 palabras cada uno. Se evalúa la precisión léxica, el cumplimiento del registro y la adecuación al género textual.
         4.  **SD_TRA_REVIEW (Control de Calidad y Post-edición):** Revisión de estilo y coherencia. Incluye la post-edición de un output de Traducción Automática (TA) para detectar alucinaciones y errores de cohesión.
     *   **Protocolo de Superación:** Umbral mínimo del 50% en cada sección de traducción de forma independiente. Sin compensación (FAIL_LOGIC: FATAL).
-*   **SUB-LIN-TRA-LIT: Modelo de Traducción Literaria y Editorial (FTI UGR — Asignatura: Literatura y Traducción Lengua B Inglés, cód. 25211NJ, 3º Grado, Optativa) [CERTIFICADO v5.1 — 2026-04-20]**
-    *   **Perfil:** Traducción de textos creativos, poéticos y humanísticos basada en los criterios de la FTI (UGR).
-    *   **Secuencia Genética Obligatoria (3 Fases):**
-        1. **SD_TRA_STYLE (Análisis Estilístico Comparado):** Identificación de la voz del autor, rasgos dialectales/cronoflectales y desafíos retóricos. (Widget: W-HUM-TEXT).
-        2. **SD_TRA_CREATIVE (Transferencia Estética):** Recreación del efecto estético y literario en la lengua meta (Skopos). Gestión de culturemas e intertextualidad. (Widget: W-HUM-TEXT — Modo TRA-LIT).
-        3. **SD_TRA_CRIT (Crítica y Justificación):** Comentario exegético defendiendo las opciones de traducción y compensaciones literarias. (Widget: W-HUM-TEXT).
+*   **SUB-LIN-TRA-LIT: Modelo de Traducción Literaria y Editorial (FTI UGR — Asignatura: Literatura y Traducción Lengua B Inglés, cód. 25211NJ, 3º Grado, Optativa) [CERTIFICADO v5.1 — 2026-04-20 / REFACTORIZADO v5.9 — 2026-05-16]**
+    *   **NOTA INSTITUCIONAL [VINCULANTE — v5.9]:** La Guía Docente 25211NJ (aprobada 23/06/2025) define un sistema de evaluación continua sin fases secuenciales selladas ni Non-Backtracking entre destrezas. Sistema certificado: trabajos escritos 30% + presentaciones orales 40% + participación en seminarios 30%. Las tres destrezas son independientes entre sí. Todos los envíos obligatoriamente por Turnitin. El Non-Backtracking entre destrezas queda eliminado de la constelación por carecer de respaldo documental en la guía real.
+    *   **Perfil:** Traducción de textos creativos, poéticos y humanísticos basada en los criterios de la FTI (UGR). Evaluación holística mediante DRA-HOLO-LIT. Umbral mínimo 5/10 en la media de los cuatro ejes.
+    *   **Secuencia Genética Obligatoria (3 Destrezas Independientes):**
+        1. **SD_TRA_STYLE (Análisis Estilístico Comparado):** Identificación de la voz del autor, rasgos dialectales/cronoflectales y desafíos retóricos. Extensión mínima 300 palabras. (Widget: W-HUM-TEXT con layout SPLIT_TEXT). Motor: DRA-HOLO-LIT (Ejes 1 y 2). Modos de entrada activos: Teclado Latino Nativo y OCR/Captura. Occidentalización y Pad de Trazos deshabilitados.
+        2. **SD_TRA_CREATIVE (Transferencia Estética):** Recreación del efecto estético y literario en la lengua meta (Skopos). Gestión de culturemas e intertextualidad. (Widget: W-HUM-TEXT — Modo TRA-LIT). Motor: DRA-HOLO-LIT (Ejes 1, 2 y 3). Modos de entrada activos: Teclado Latino Nativo y OCR/Captura.
+        3. **SD_TRA_CRIT (Crítica y Justificación):** Comentario exegético de 1500-2000 palabras defendiendo las opciones de traducción y compensaciones literarias. Cita obligatoria de Reynolds (2011), Venuti (2017) y el marco del Skopos. Envío mediante Turnitin emulado. (Widget: W-HUM-TEXT modo libre). Motor: DRA-HOLO-LIT (Eje 4). FAIL_LOGIC: FATAL si carece de fundamentación bibliográfica o reproduce opiniones ajenas sin argumentación original.
     *   **Rigor:** Hermenéutico / Nivel C2 (LVL_C).
-    *   **Motor Principal:** DRA-HOLO (Rúbrica de Calidad Literaria UGR).
+    *   **Motor Principal:** DRA-HOLO-LIT (Rúbrica de Calidad Literaria UGR).
 
 ### HUMANIDADES
 *   **SUB-HUM-HIST: Modelo Historiográfico (Grado en Historia UGR — Asignaturas: Historia Universal Contemporánea I, cód. 2921128; Historia Moderna Universal I, cód. 2921126; Dpto. Historia Contemporánea aprobado 16/06/2025, Dpto. Historia Moderna aprobado 23/06/2025) [CERTIFICADO v5.3 — 2026-04-22]**

@@ -1,6 +1,6 @@
 # ANEXO: HITO 06 - SISTEMA DE AUTOEVALUACIONES CON IA
-# ESTADO: EN PROGRESO - FASE DOCUMENTAL COMPLETADA (V5.9) — LISTO PARA IMPLEMENTACIÓN
-# FECHA DE ACTUALIZACIÓN: 2026-05-11
+# ESTADO: EN PROGRESO - FASE DE IMPLEMENTACIÓN ACTIVA (S020/S021)
+# FECHA DE ACTUALIZACIÓN: 2026-05-24
 
 ## 1. RESUMEN DE LA SITUACIÓN ACTUAL (EDC)
 
@@ -57,12 +57,42 @@ La **Rama Ciencias de la Salud** queda **COMPLETAMENTE CERTIFICADA Y SINCRONIZAD
 | S017   | 2026-04-28 | v5.6 — Rama Ingeniería (cert.)   | Certificación completa Rama Ciencias Técnicas e Ingeniería: 7 subarquetipos originales → 16 certificados. T1→SOFT-ALG+SOFT-DS+SOFT-SE (ETSIIT-UGR). T2→CIVIL-STRUCT+CIVIL-CONC+CIVIL-STEEL (ETSICCP-UGR). T3→INDUS-THERMO+INDUS-TMM+INDUS-DEM (EPSC-UCO — nota vinculante: UGR no imparte Ingeniería Industrial). T4→CHEM-BAL+CHEM-REACT (IQ-UGR). T5→PROJ-ARCH+PROJ-URB (ETSAG-UGR). T6→CONS-TECH+CONS-MAN (ETSIE-UGR). T7→PURE-ANAL+PURE-ALGSTR (Matemáticas UGR). INCIDENCIAS: PMA T1 consumió ancla de T2/T3 — PMAs abortaron silenciosamente; resuelto con PMA unificado atómico. Búsqueda errónea inicial en Ingeniería Electrónica para T3 — corregido a UCO. Presentación de bloques en chat en T1 (incumplimiento flujo) consumió 30% cuota de sesión innecesariamente. Secciones 6.1-6.20 en SUBDIVISIONS.md. Rama Ingeniería CERRADA (v5.6). |
 | S018   | 2026-05-02 | v5.7 — Rama Ciencias (cert.)     | Certificación completa Rama Ciencias (C1-C5 ya certificados en S017; esta sesión certifica C6). INCIDENCIA CRÍTICA: al inicio de sesión se generó contenido nuevo sin haber leído la constelación — bloque duplicado en V06DOC_SUBARCHETYPES.md. Detectado mediante auditoría y resuelto con git checkout HEAD sobre el archivo afectado. C6 SUB-SCI-DATA: UGR no dispone de guías docentes activas para Grado en Ciencias de Datos e IA 2025-2026 — fuente primaria: Grado en Ingeniería de Datos e IA, Facultad de Informática UCM (fichas aprobadas 27/06/2025). Nota vinculante registrada. Fallo patcher por carácter raya larga (—) en codificación del archivo servidor — resuelto cambiando estrategia a SEARCH_MARKER por substring corto. Subarquetipos DATA→DATA-STAT+DATA-ML+DATA-BIG, secciones 7.13-7.15 en SUBDIVISIONS.md. Rama Ciencias CERRADA (v5.7). |
 | S019   | 2026-05-11 | v5.9 — Auditoría de Fidelidad Documental (87/87) | Auditoría de consistencia y fidelidad documental completa de la constelación V06: 87/87 subarquetipos verificados contra fuentes primarias UGR/UCO/UCM 2025-2026. Resultado: 86 CONFORMES + 1 INCIDENCIA LEVE (SUB-LIN-TRA-LIT: mecanismo Non-Backtracking entre fases no verificado en guía docente real — contenido conforme, estructura en duda). CERO incidencias moderadas. CERO incidencias graves. Constelación documental V06 declarada AUTORIZADA para la Fase de Implementación. La incidencia leve SUB-LIN-TRA-LIT queda como primer punto del orden del día de la S020. |
+| S020   | 2026-05-16 | Resolución SUB-LIN-TRA-LIT + Apertura Implementación | Resolución incidencia SUB-LIN-TRA-LIT: verificación online guía 25211NJ (aprobada 23/06/2025) — sistema evaluación real: trabajos escritos 30% + presentaciones 40% + participación 30%. Sin Non-Backtracking entre destrezas. Opción B aplicada: refactorización quirúrgica PMA sobre V06DOC_SUBARCHETYPES, V06DOC_SUBDIVISIONS y V06DOC_TEMPLATES (3 destrezas independientes evaluadas holísticamente: SD_TRA_STYLE, SD_TRA_CREATIVE, SD_TRA_CRIT con DRA-HOLO-LIT). Auditoría completa de implementación: 42 errores identificados en 9 bloques. Inicio PEAs Fase de Implementación: models/main.py (migración 0020 aplicada) y core/services/gemini_schemas.py completados. |
+| S021   | 2026-05-24 | Implementación Hito 6 — PEAs core (12/17 archivos) | Continuación Fase de Implementación. PMA quirúrgico gemini_service.py (modelo gemini-2.5-flash, delay 0s, system_instruction 87 IDs). PEAs: base.py (11 motores completos, rigor matrix), logic.py (AcademicDeductor híbrido, GradingOrchestrator con kill-switches y gating variable), factory.py (6 arquetipos explícitos). PEAs strategies: languages.py (7 sub., rigor override), health.py (18 sub., ECOE ITIN_ROT), humanities.py (6 sub., Panofsky), science.py (15 sub.), social.py (19 sub., FATAL VG), tech.py (17 sub., tolerancia 1%). PMAs tasks.py (sections_map por orden, skeleton_json en prompt, tracking corregido), views.py (clasificación síncrona eliminada), quotas.py (ERROR excluido de cuota). Skills actualizadas (ped v2, pisa v2, pee v2, pcs v2, pcva v2). 15/17 archivos completados. Pendiente: exam_take.html, exam_report.html, validate_v06_engines.py.
 
 ## 2. HOJA DE RUTA PARA LA PRÓXIMA SESIÓN (LEY SUPREMA - INELUDIBLE)
 
-**ESTADO DEL HITO:** EN PROGRESO — Fase Documental COMPLETADA Y AUDITADA (v5.9 — 2026-05-11). TODAS LAS RAMAS CERTIFICADAS. Constelación V06 AUTORIZADA para Implementación. Próxima acción: resolución de incidencia leve SUB-LIN-TRA-LIT e inicio de la Fase de Implementación.
-**FECHA DE ÚLTIMA ACTUALIZACIÓN:** 2026-05-11
-**OBJETIVO DE LA PRÓXIMA SESIÓN:** (1) Resolver la incidencia leve SUB-LIN-TRA-LIT verificando el mecanismo Non-Backtracking entre fases en la guía docente real 25211NJ. (2) Abrir formalmente la Fase de Implementación del Hito 6 con el primer bloque técnico a desarrollar.
+**ESTADO DEL HITO:** EN PROGRESO — Fase de Implementación ACTIVA. Incidencia SUB-LIN-TRA-LIT resuelta (v5.9). Implementación S020/S021 en curso: 14/17 archivos completados.
+**FECHA DE ÚLTIMA ACTUALIZACIÓN:** 2026-05-24
+**OBJETIVO DE LA PRÓXIMA SESIÓN:** Completar los 3 archivos pendientes de la Fase de Implementación y ejecutar el primer despliegue real.
+
+---
+
+### FASE DE IMPLEMENTACIÓN — ESTADO ACTUAL (S020/S021 — 2026-05-24)
+
+**ARCHIVOS COMPLETADOS (PEA/PMA — SYNTAX OK verificado):**
+1. `assessment_v2/models/main.py` ✅ — Migración `0020_hito6_v59_full_taxonomy` aplicada. Enums completos: 87 subarquetipos, ~130 subdivisiones, 23 widgets, 22 motores.
+2. `core/services/gemini_schemas.py` ✅ — Schemas Pydantic alineados con v5.9: `AcademicClassificationSchema` (87 IDs), `ContentSchema` (source_text, targets, initial_scenario, cloze_options), `GradingLogicSchema` (gap_solutions como Dict, rubric_axes, kill_switch).
+3. `core/services/gemini_service.py` ✅ — PMA quirúrgico: modelo corregido a `gemini-2.5-flash`, delay proactivo eliminado (0s), `classify_subject_identity` system_instruction actualizada con árbol de decisión completo de los 87 IDs certificados.
+4. `assessment_v2/services/engine/strategies/base.py` ✅ — PEA completo: 11 motores implementados (PRM-STRIKE con NO_NEGATIVE_MARKING, RBT-CANON, RBT-SHORT-LANG, CLO-OPEN, CLO-MULTI, MAT-LINK, CDS-KILL, DRA-HOLO, DRA-HOLO-LIT, BMT-SHIFT, ILC-CONTEXT, EV-PALE, RPP-TRAZA con planteamiento-primo-50%, DIA-INTERACT). Rigor matrix LVL×ITIN completa.
+5. `assessment_v2/services/engine/logic.py` ✅ — PEA completo: `AcademicDeductor` (Fases 1+2 híbridas, barrera de fuego ARCH_LANG), `GradingOrchestrator` (kill-switches ARCH_HEALTH/ARCH_HUM/ARCH_SOC, gating ARCH_LANG por puntos de corte variables, voz del catedrático por nivel/itinerario).
+6. `assessment_v2/services/engine/factory.py` ✅ — PEA completo: mapeo explícito de los 6 arquetipos, fallback SocialStrategy documentado.
+7. `assessment_v2/services/engine/strategies/languages.py` ✅ — PEA completo: 7 subarquetipos certificados con esqueletos específicos, motores EV-DIAC-VAL, EV-NORM-ANALYSIS, EV-TRA-PRECISION-TECH, rigor override NORM×1.7/PHILO×1.8, inmersión VEHICULAR/BILINGUAL/TOTAL.
+8. `assessment_v2/services/engine/strategies/health.py` ✅ — PEA completo: 18 subarquetipos certificados, protocolo ECOE (ITIN_ROT, 5 estaciones), CDS-KILL con kill_switch, rigor override FISIO-NEURO y VET-CIR.
+9. `assessment_v2/services/engine/strategies/humanities.py` ✅ — PEA completo: 6 subarquetipos certificados, motores EV-ICON-ART (Panofsky) y EV-MUS-ANAL, esqueletos bipartitos no compensables (ART-HIST).
+10. `assessment_v2/services/engine/strategies/science.py` ✅ — PEA completo: 15 subarquetipos certificados, esqueletos TEORÍA+CALC por subarquetipo.
+11. `assessment_v2/services/engine/strategies/social.py` ✅ — PEA completo: 19 subarquetipos certificados, FATAL VG (LO 1/2004 art. 44.5), bonus fuentes reales +20%, `_grade_dra_holo_social` con detección normativa.
+12. `assessment_v2/services/engine/strategies/tech.py` ✅ — PEA completo: 17 subarquetipos certificados, `_validate_technical_value` con tolerancia 1% y variantes pipe, ITIN_PROF normativo.
+13. `orchestrator/tasks.py` ✅ — PMA: sections_map indexado por orden (elimina colisiones), skeleton_json inyectado en prompt, TrackingService corregido a `gemini-2.5-flash`, quota exclusión estado ERROR.
+14. `assessment_v2/views.py` ✅ — PMA: clasificación síncrona eliminada de `ExamCreateView.post()` (única clasificación en `generate_exam_task`), `AcademicDeductor` eliminado de imports de views.
+15. `assessment_v2/services/quotas.py` ✅ — PMA: exámenes en estado ERROR excluidos del cómputo de cuota diaria y semanal.
+
+**ARCHIVOS PENDIENTES (próxima sesión S022):**
+- `assessment_v2/templates/assessment_v2/exam_take.html` — PEA: implementar los 12 widgets faltantes (W-MUS-SCORE, W-ART-IDENT, W-CALLI-PAD, W-PORTFOLIO, W-PHILO-IPA, W-PHILO-ECDO, W-PHILO-OCR-PALE, W-DOC-RESOURCES, W-CASE-ECOE, W-MEDI-LAYOUT, W-OCR-PRO, W-INSTR-SELECTOR), corregir W-AUDIO-INSTR (bloqueo hermético 2ª reproducción), W-TXT-CLOZE (marcadores [HUECO_ID_N]), W-OBJ-STRIKE (radio desactivado al tachar), Non-Scrubbing en reproductores.
+- `assessment_v2/templates/assessment_v2/exam_report.html` — PEA: corregir acceso `item_score` (no `score`), `justification` directa (no `feedback.justification`).
+- `assessment_v2/management/commands/validate_v06_engines.py` — PEA: actualizar tabla TARGETS con los 87 IDs certificados.
+
+**ACCIÓN INMEDIATA SESIÓN S022:** Arrancar directamente con el PEA de `exam_take.html`. Es el archivo más extenso y crítico para la experiencia del alumno.
 
 ---
 

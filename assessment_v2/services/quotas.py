@@ -55,7 +55,11 @@ class QuotaService:
         week_start = now - timedelta(days=7)
 
         # Count exams created in the last 24h
-        daily_count = Exam.objects.filter(user=user, created_at__gte=day_start).count()
+        # Exámenes en estado ERROR se excluyen del cómputo — el email de notificación
+        # al usuario declara explícitamente que no se carga cuota en caso de error.
+        daily_count = Exam.objects.filter(
+            user=user, created_at__gte=day_start
+        ).exclude(status='ERROR').count()
         if daily_count >= plan.daily_exam_limit:
             return False, f"Límite diario alcanzado ({daily_count}/{plan.daily_exam_limit})."
         # CRITICAL RULE: Zero Tolerance Penalty for Free Plan (Anti-Abuse)
@@ -76,7 +80,10 @@ class QuotaService:
 
 
         # Count exams created in the last 7 days
-        weekly_count = Exam.objects.filter(user=user, created_at__gte=week_start).count()
+        # Excluir exámenes en estado ERROR (misma regla que el cómputo diario)
+        weekly_count = Exam.objects.filter(
+            user=user, created_at__gte=week_start
+        ).exclude(status='ERROR').count()
         if weekly_count >= plan.weekly_exam_limit:
             return False, f"Límite semanal alcanzado ({weekly_count}/{plan.weekly_exam_limit})."
 
