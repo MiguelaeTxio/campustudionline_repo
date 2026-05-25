@@ -12,6 +12,13 @@ CampuStudiOnline es una plataforma web de e-learning diseñada para centralizar 
 *   **Framework:** Django
 *   **Servidor de Aplicación:** WSGI
 *   **Gestión de Secretos:** Las variables de entorno y secretos se gestionan a través de un archivo `.env` y se cargan con `python-dotenv`.
+### 2.1.1. Logs del Servidor (PythonAnywhere)
+Los archivos de log de la aplicación en producción se encuentran en las siguientes rutas:
+*   **Access log:** `/var/log/www.campustudionline.com.access.log`
+*   **Error log:** `/var/log/www.campustudionline.com.error.log`
+*   **Server log:** `/var/log/www.campustudionline.com.server.log`
+*   **Logs históricos rotados:** `/var/log/` (con sufijos de fecha)
+*   **Nota:** Los logs de Django (`manage.py` commands) emiten directamente a `stdout` — para capturarlos redirigir con `> /home/MiguelAeTxio/SWAP/output.txt 2>&1`.
 ### 2.2. Arquitectura de Aplicaciones Django (Fusionada y Verificada)
 *   `academic_chat`: [FUNCIÓN PENDIENTE DE DOCUMENTAR - Aplicación funcional e independiente].
 *   `academic_directory`: Expone una navegación pública de la estructura académica.

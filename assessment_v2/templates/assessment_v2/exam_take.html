@@ -66,6 +66,26 @@
     .hd-zoom-active { transform: scale(1.8); cursor: zoom-out !important; transition: transform 0.3s; z-index: 1050; position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
     .img-scan-max { cursor: zoom-in; }
     .cursor-measure { cursor: crosshair !important; }
+    /* Widgets V06 — estilos migrados de inline a clase */
+    .ecdo-split-row { min-height: 350px; }
+    .ecdo-source-col { max-height: 400px; }
+    .pale-viewport-inner { min-height: 380px; position: relative; }
+    .pale-img-transform { transform-origin: top left; transition: transform 0.2s; }
+    .doc-res-results-box { min-height: 200px; max-height: 300px; font-size: 0.8rem; }
+    .medi-split-row { min-height: 420px; }
+    .medi-production-textarea { min-height: 300px; resize: none; }
+    .ocr-preview-box { min-height: 100px; }
+    .instr-canvas-pad { touch-action: none; cursor: crosshair; background: #fafafa; }
+    .score-viewport-inner { min-height: 400px; overflow: auto; position: relative; cursor: crosshair; }
+    .score-img-transform { transform-origin: top left; }
+    .score-svg-overlay { pointer-events: none; z-index: 10; }
+    .score-editor-panel { min-height: 400px; }
+    .art-ident-img-constrain { max-height: 450px; cursor: zoom-in; }
+    .calli-canvas-pad { touch-action: none; cursor: crosshair; background: #fafafa; }
+    .calli-range-control { width: 120px; }
+    .calli-color-control { width: 50px; padding: 2px; }
+    .audio-progress-track { height: 6px; pointer-events: none; cursor: not-allowed; }
+    .audio-progress-fill { width: 0%; }
 </style>
 <!-- MathJax for Engineering/Science Rendering -->
 <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
@@ -73,6 +93,7 @@
 {% endblock %}
 
 {% block content %}
+{# djlint:off H025 #}
 <div class="container-fluid mt-4 px-4" id="exam-container" data-exam-uuid="{{ exam.uuid }}">
     {# TECHNICAL HEADER (V06DOC_TEMPLATES) #}
     {# CABECERA TÉCNICA (V06DOC_TEMPLATES) #}
@@ -341,6 +362,541 @@
                             </div>
                         </div>
 
+                        {# 9. W-AUDIO-INSTR -> Reproductor institucional con bloqueo hermético #}
+                        {# Bloqueo 2ª reproducción completa + Non-Scrubbing (V06DOC_WIDGETS §6) #}
+                        {% elif item.widget_id == 'W-AUDIO-INSTR' %}
+                        <div class="widget-container p-3 border rounded bg-light">
+                            <h6 class="text-primary fw-bold border-bottom pb-2">
+                                <i class="bi bi-headphones"></i> {% trans "Audición Institucional" %}
+                                <span class="badge bg-secondary ms-2 audio-plays-badge" id="plays-badge-{{ item.id }}" data-plays="0" data-max-plays="{{ item.content.max_plays|default:2 }}">
+                                    {% trans "Reproducciones" %}: 0 / {{ item.content.max_plays|default:2 }}
+                                </span>
+                            </h6>
+                            {% if item.content.media_assets %}
+                                {% for asset in item.content.media_assets %}
+                                    {% if '.mp3' in asset or '.ogg' in asset or '.wav' in asset %}
+                                    <div class="d-flex align-items-center gap-3 mt-2">
+                                        {# Non-Scrubbing: controls="false" + pointer-events:none en barra de progreso via JS #}
+                                        <audio id="audio-instr-{{ item.id }}-{{ forloop.counter }}"
+                                               preload="auto"
+                                               data-item-id="{{ item.id }}"
+                                               data-play-index="{{ forloop.counter }}"
+                                               class="audio-instr-player w-100">
+                                            <source src="{{ asset }}" type="audio/mpeg">
+                                        </audio>
+                                        <button class="btn btn-outline-primary rounded-circle p-3 flex-shrink-0 btn-audio-instr-play"
+                                                id="btn-ainstr-{{ item.id }}-{{ forloop.counter }}"
+                                                data-item-id="{{ item.id }}"
+                                                data-play-index="{{ forloop.counter }}"
+                                                data-audio-id="audio-instr-{{ item.id }}-{{ forloop.counter }}">
+                                            <i class="bi bi-play-fill fs-5"></i>
+                                        </button>
+                                        <div class="flex-grow-1">
+                                            <div class="progress audio-progress-track">
+                                                <div class="progress-bar audio-progress-fill" id="audio-progress-{{ item.id }}-{{ forloop.counter }}"
+                                                     role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"><!-- --></div>
+                                            </div>
+                                        </div>
+                                        <div class="audio-wave d-none" id="wave-ainstr-{{ item.id }}-{{ forloop.counter }}">
+                                            <div><!-- --></div><div><!-- --></div><div><!-- --></div><div><!-- --></div>
+                                        </div>
+                                    </div>
+                                    {% endif %}
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+
+                        {# 10. W-MUS-SCORE -> Visor de partitura con editor de análisis (V06DOC_WIDGETS §7) #}
+                        {% elif item.widget_id == 'W-MUS-SCORE' %}
+                        <div class="widget-container border rounded overflow-hidden">
+                            <div class="row g-0">
+                                <div class="col-md-7 border-end">
+                                    <div class="p-2 bg-secondary text-white small d-flex justify-content-between align-items-center">
+                                        <span><i class="bi bi-music-note-beamed"></i> {% trans "Partitura — Análisis Interactivo" %}</span>
+                                        <div class="btn-group btn-group-sm">
+                                            <button class="btn btn-outline-light btn-sm" onclick="AssessmentWidgets.musScore.zoom('{{ item.id }}', 0.1)"><i class="bi bi-zoom-in"></i></button>
+                                            <button class="btn btn-outline-light btn-sm" onclick="AssessmentWidgets.musScore.zoom('{{ item.id }}', -0.1)"><i class="bi bi-zoom-out"></i></button>
+                                        </div>
+                                    </div>
+                                    <div class="mus-score-viewport bg-white p-2 score-viewport-inner" id="score-viewport-{{ item.id }}"
+                                         data-item-id="{{ item.id }}">
+                                        {% if item.content.media_assets %}
+                                            {% for asset in item.content.media_assets %}
+                                                {% if '.png' in asset or '.jpg' in asset or '.svg' in asset or '.pdf' in asset %}
+                                                <img src="{{ asset }}" class="w-100 mus-score-img score-img-transform" id="score-img-{{ item.id }}"
+                                                     alt="{% trans 'Partitura' %}" width="800" height="600"
+                                                     draggable="false">
+                                                {% endif %}
+                                            {% endfor %}
+                                        {% else %}
+                                            <div class="text-muted text-center p-5"><i class="bi bi-music-note-list fs-1"></i><p class="mt-2">{% trans "La partitura se cargará aquí." %}</p></div>
+                                        {% endif %}
+                                        <svg class="position-absolute top-0 start-0 w-100 h-100 score-svg-overlay"
+                                             id="score-annotations-{{ item.id }}"></svg>
+                                    </div>
+                                </div>
+                                <div class="col-md-5">
+                                    <div class="p-2 bg-light border-bottom small text-muted fw-bold">
+                                        <i class="bi bi-pencil-square"></i> {% trans "Editor de Análisis Musicológico" %}
+                                    </div>
+                                    <div class="p-3 d-flex flex-column gap-3 score-editor-panel">
+                                        <div>
+                                            <label class="form-label small fw-bold text-primary">{% trans "A. Análisis Armónico (Grados y Cadencias)" %}</label>
+                                            <textarea class="form-control response-input-text mus-analysis-field font-monospace" rows="4"
+                                                      data-field="harmonic" data-item-id="{{ item.id }}"
+                                                      placeholder="{% trans 'Ej: I - IV - V7 - I (Cadencia Auténtica Perfecta)...' %}"></textarea>
+                                        </div>
+                                        <div>
+                                            <label class="form-label small fw-bold text-primary">{% trans "B. Análisis Formal (Secciones — LaRue 1989)" %}</label>
+                                            <textarea class="form-control mus-analysis-field" rows="3"
+                                                      data-field="formal" data-item-id="{{ item.id }}"
+                                                      placeholder="{% trans 'Ej: Exposición (cc. 1-24): Tema A (Do M)...' %}"></textarea>
+                                        </div>
+                                        <div>
+                                            <label class="form-label small fw-bold text-primary">{% trans "C. Comentario Musicológico" %}</label>
+                                            <textarea class="form-control response-input-text mus-analysis-field" rows="5"
+                                                      data-field="comment" data-item-id="{{ item.id }}"
+                                                      placeholder="{% trans 'Contextualice estilísticamente. Cite bibliografía (LaRue, Cook, Bent)...' %}"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {# 11. W-ART-IDENT -> Formulario de identificación iconológica Panofsky (V06DOC_WIDGETS §8) #}
+                        {% elif item.widget_id == 'W-ART-IDENT' %}
+                        <div class="widget-container border rounded overflow-hidden">
+                            <div class="row g-0">
+                                <div class="col-md-6 border-end">
+                                    <div class="p-2 bg-dark text-white small"><i class="bi bi-image"></i> {% trans "Obra de Análisis" %}</div>
+                                    <div class="p-3 bg-white text-center art-ident-img-container" id="art-img-{{ item.id }}">
+                                        {% if item.content.media_assets %}
+                                            {% for asset in item.content.media_assets %}
+                                                {% if not '.mp3' in asset %}
+                                                <img src="{{ asset }}" class="img-fluid rounded shadow-sm art-ident-main-img art-ident-img-constrain"
+                                                     alt="{% trans 'Obra para identificar' %}" width="600" height="450"
+                                                     onclick="this.classList.toggle('hd-zoom-active')">
+                                                {% endif %}
+                                            {% endfor %}
+                                        {% else %}
+                                            <div class="text-muted p-5"><i class="bi bi-easel fs-1"></i><p>{% trans "La obra se cargará aquí." %}</p></div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="col-md-6 p-3">
+                                    <h6 class="text-muted border-bottom pb-2 fw-bold">
+                                        <i class="bi bi-card-list"></i> {% trans "Fase 1 — Identificación Estructurada (40%)" %}
+                                    </h6>
+                                    <div class="mb-2">
+                                        <label class="form-label small fw-bold">{% trans "Autor / Atribución" %}</label>
+                                        <input type="text" class="form-control art-ident-field" data-field="author" data-item-id="{{ item.id }}" placeholder="{% trans 'Nombre canónico o justificación de atribución...' %}">
+                                    </div>
+                                    <div class="mb-2">
+                                        <label class="form-label small fw-bold">{% trans "Cronología / Período" %}</label>
+                                        <input type="text" class="form-control art-ident-field" data-field="date" data-item-id="{{ item.id }}" placeholder="{% trans 'Fecha o período estilístico...' %}">
+                                    </div>
+                                    <div class="mb-2">
+                                        <label class="form-label small fw-bold">{% trans "Técnica / Soporte" %}</label>
+                                        <input type="text" class="form-control art-ident-field" data-field="technique" data-item-id="{{ item.id }}" placeholder="{% trans 'Óleo sobre lienzo / Fresco / Bronce...' %}">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label small fw-bold">{% trans "Estilo / Escuela" %}</label>
+                                        <input type="text" class="form-control art-ident-field" data-field="style" data-item-id="{{ item.id }}" placeholder="{% trans 'Barroco italiano / Escuela Flamenca...' %}">
+                                    </div>
+                                    <h6 class="text-muted border-bottom pb-2 fw-bold mt-3">
+                                        <i class="bi bi-layers"></i> {% trans "Fase 2 — Análisis Iconológico (60%) — Panofsky" %}
+                                    </h6>
+                                    <div class="mb-2">
+                                        <label class="form-label small fw-bold text-secondary">{% trans "Nivel 1 — Pre-iconográfico" %}</label>
+                                        <textarea class="form-control art-ident-field response-input-text" rows="2"
+                                                  data-field="pre_iconographic" data-item-id="{{ item.id }}"
+                                                  placeholder="{% trans 'Descripción formal: composición, figuras, color, luz...' %}"></textarea>
+                                    </div>
+                                    <div class="mb-2">
+                                        <label class="form-label small fw-bold text-secondary">{% trans "Nivel 2 — Iconográfico" %}</label>
+                                        <textarea class="form-control art-ident-field" rows="2"
+                                                  data-field="iconographic" data-item-id="{{ item.id }}"
+                                                  placeholder="{% trans 'Temas, motivos, atributos, fuentes literarias...' %}"></textarea>
+                                    </div>
+                                    <div>
+                                        <label class="form-label small fw-bold text-secondary">{% trans "Nivel 3 — Iconológico" %}</label>
+                                        <textarea class="form-control art-ident-field response-input-text" rows="3"
+                                                  data-field="iconological" data-item-id="{{ item.id }}"
+                                                  placeholder="{% trans 'Contextualización histórico-cultural, significado intrínseco...' %}"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {# 12. W-CALLI-PAD -> Pad de trazos caligráficos (V06DOC_WIDGETS §3/§5) #}
+                        {% elif item.widget_id == 'W-CALLI-PAD' %}
+                        <div class="widget-container border rounded p-3 bg-white">
+                            <div class="d-flex justify-content-between align-items-center border-bottom pb-2 mb-3">
+                                <h6 class="mb-0 fw-bold text-dark"><i class="bi bi-brush"></i> {% trans "Pad de Trazos Caligráficos" %}</h6>
+                                <div class="btn-group btn-group-sm">
+                                    <button type="button" class="btn btn-outline-secondary" onclick="AssessmentWidgets.calliPad.clear('{{ item.id }}')"><i class="bi bi-eraser"></i> {% trans "Borrar" %}</button>
+                                    <button type="button" class="btn btn-outline-primary" onclick="AssessmentWidgets.calliPad.save('{{ item.id }}')" data-item-id="{{ item.id }}"><i class="bi bi-check2"></i> {% trans "Confirmar trazo" %}</button>
+                                </div>
+                            </div>
+                            <div class="text-center mb-2">
+                                <small class="text-muted fst-italic calli-target-display">{{ item.content.stem }}</small>
+                            </div>
+                            <canvas id="calli-canvas-{{ item.id }}"
+                                    data-item-id="{{ item.id }}"
+                                    class="border rounded w-100 calli-canvas calli-canvas-pad"
+                                    height="200"></canvas>
+                            <div class="mt-2 d-flex justify-content-between align-items-center">
+                                <div>
+                                    <label class="form-label small mb-1">{% trans "Grosor del trazo" %}</label>
+                                    <input type="range" class="form-range calli-range-control" min="1" max="10" value="3"
+                                           oninput="AssessmentWidgets.calliPad.setWidth('{{ item.id }}', this.value)">
+                                </div>
+                                <div>
+                                    <label class="form-label small mb-1">{% trans "Color" %}</label>
+                                    <input type="color" class="form-control form-control-sm calli-color-control" value="#000000"
+                                           oninput="AssessmentWidgets.calliPad.setColor('{{ item.id }}', this.value)">
+                                </div>
+                                <span class="badge bg-secondary" id="calli-status-{{ item.id }}">{% trans "Listo" %}</span>
+                            </div>
+                            <input type="hidden" class="calli-data-hidden response-input-text" id="calli-data-{{ item.id }}" data-item-id="{{ item.id }}">
+                        </div>
+
+                        {# 13. W-PORTFOLIO -> Portafolio digital de proceso creativo (V06DOC_WIDGETS §9) #}
+                        {% elif item.widget_id == 'W-PORTFOLIO' %}
+                        <div class="widget-container border rounded p-3 bg-white">
+                            <div class="d-flex justify-content-between align-items-center border-bottom pb-2 mb-3">
+                                <h6 class="mb-0 fw-bold"><i class="bi bi-collection"></i> {% trans "Portafolio Digital de Proceso Creativo" %}</h6>
+                                <button type="button" class="btn btn-outline-primary btn-sm" onclick="AssessmentWidgets.portfolio.addEntry('{{ item.id }}')">
+                                    <i class="bi bi-plus-circle"></i> {% trans "Añadir fase" %}
+                                </button>
+                            </div>
+                            <div class="alert alert-info py-2 small">
+                                <i class="bi bi-info-circle"></i> {% trans "Documente CADA estado intermedio del proceso creativo (bocetos, versiones, pruebas). La ausencia de documentación de proceso activa FAIL_LOGIC: FATAL." %}
+                            </div>
+                            <div class="portfolio-entries-container row g-3" id="portfolio-entries-{{ item.id }}" data-item-id="{{ item.id }}">
+                                {# Entries injected by JS #}
+                            </div>
+                            <input type="hidden" class="response-input-text portfolio-data-hidden" id="portfolio-data-{{ item.id }}" data-item-id="{{ item.id }}">
+                        </div>
+
+                        {# 14. W-PHILO-IPA -> Pad de transcripción fonética y diacrónica (V06DOC_WIDGETS §5) #}
+                        {% elif item.widget_id == 'W-PHILO-IPA' %}
+                        <div class="widget-container border rounded p-3 bg-white">
+                            <h6 class="fw-bold border-bottom pb-2"><i class="bi bi-alphabet"></i> {% trans "Pad de Transcripción Fonética y Diacrónica" %}</h6>
+                            <div class="row g-2 mb-3">
+                                <div class="col-12">
+                                    <div class="p-2 bg-light border rounded mb-2">
+                                        <small class="text-muted fw-bold d-block mb-1">{% trans "Bloque Consonántico Medieval" %}</small>
+                                        {% for sym in "ʃ ʒ θ β ð ɣ ɲ ʎ ʝ s̺ z̺ tʃ dʒ"|split:" " %}
+                                        <button type="button" class="btn btn-outline-secondary btn-sm me-1 mb-1 ipa-btn" data-symbol="{{ sym }}" data-item-id="{{ item.id }}">{{ sym }}</button>
+                                        {% endfor %}
+                                    </div>
+                                    <div class="p-2 bg-light border rounded mb-2">
+                                        <small class="text-muted fw-bold d-block mb-1">{% trans "Modificadores Diacrónicos" %}</small>
+                                        {% for sym in "ā ē ī ō ū ă ĕ ĭ ŏ ŭ > < *"|split:" " %}
+                                        <button type="button" class="btn btn-outline-secondary btn-sm me-1 mb-1 ipa-btn" data-symbol="{{ sym }}" data-item-id="{{ item.id }}">{{ sym }}</button>
+                                        {% endfor %}
+                                    </div>
+                                    <div class="p-2 bg-light border rounded mb-2">
+                                        <small class="text-muted fw-bold d-block mb-1">{% trans "Selector de Yods" %}</small>
+                                        <button type="button" class="btn btn-outline-warning btn-sm me-1 mb-1 ipa-btn" data-symbol="Yod-I" data-item-id="{{ item.id }}">{% trans "Yod I" %}</button>
+                                        <button type="button" class="btn btn-outline-warning btn-sm me-1 mb-1 ipa-btn" data-symbol="Yod-II" data-item-id="{{ item.id }}">{% trans "Yod II" %}</button>
+                                        <button type="button" class="btn btn-outline-warning btn-sm me-1 mb-1 ipa-btn" data-symbol="Yod-III" data-item-id="{{ item.id }}">{% trans "Yod III" %}</button>
+                                        <button type="button" class="btn btn-outline-warning btn-sm me-1 mb-1 ipa-btn" data-symbol="Yod-IV" data-item-id="{{ item.id }}">{% trans "Yod IV" %}</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <textarea class="form-control response-input-text font-monospace" rows="4"
+                                      id="ipa-editor-{{ item.id }}" data-item-id="{{ item.id }}"
+                                      placeholder="{% trans 'Transcriba aquí usando los símbolos del teclado virtual...' %}"></textarea>
+                        </div>
+
+                        {# 15. W-PHILO-ECDO -> Editor de Crítica Textual y Colación (V06DOC_WIDGETS §5) #}
+                        {% elif item.widget_id == 'W-PHILO-ECDO' %}
+                        <div class="widget-container border rounded overflow-hidden">
+                            <div class="bg-dark text-white p-2 d-flex justify-content-between align-items-center">
+                                <span class="small fw-bold"><i class="bi bi-journals"></i> {% trans "Editor de Crítica Textual — Modo Collatio" %}</span>
+                                <div class="btn-group btn-group-sm">
+                                    <button class="btn btn-outline-light btn-sm active ecdo-mode-btn" data-mode="collatio" data-item-id="{{ item.id }}">{% trans "Collatio" %}</button>
+                                    <button class="btn btn-outline-light btn-sm ecdo-mode-btn" data-mode="apparatus" data-item-id="{{ item.id }}">{% trans "Aparato Crítico" %}</button>
+                                </div>
+                            </div>
+                            <div class="row g-0 ecdo-split-row">
+                                {% if item.content.media_assets %}
+                                <div class="col-md-4 border-end p-2 bg-light overflow-auto ecdo-source-col">
+                                    <small class="text-muted fw-bold d-block mb-2">{% trans "Fuente — Testimonio A" %}</small>
+                                    {% for asset in item.content.media_assets %}
+                                        {% if not '.mp3' in asset %}
+                                        <img src="{{ asset }}" class="img-fluid rounded border mb-1" alt="{% trans 'Testimonio' %}" width="400" height="300">
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+                                <div class="col-md-8 p-3">
+                                {% else %}
+                                <div class="col-12 p-3">
+                                {% endif %}
+                                    <div class="mb-2">
+                                        <label class="form-label small fw-bold">{% trans "Transcripción / Texto Establecido" %}</label>
+                                        <textarea class="form-control font-monospace response-input-text" rows="6"
+                                                  id="ecdo-text-{{ item.id }}" data-item-id="{{ item.id }}"
+                                                  placeholder="{% trans 'Fije aquí el texto tras la collatio de los testimonios...' %}"></textarea>
+                                    </div>
+                                    <div id="ecdo-apparatus-{{ item.id }}" class="d-none">
+                                        <label class="form-label small fw-bold">{% trans "Aparato Crítico (Variantes, Emendationes, Stemma)" %}</label>
+                                        <textarea class="form-control font-monospace" rows="4"
+                                                  id="ecdo-apparatus-text-{{ item.id }}" data-item-id="{{ item.id }}"
+                                                  placeholder="{% trans 'v.3: «fasta» A ] «fata» B; add. C — emend. Blecua...' %}"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {# 16. W-PHILO-OCR-PALE -> Visor paleográfico con OCR predictivo (V06DOC_WIDGETS §5) #}
+                        {% elif item.widget_id == 'W-PHILO-OCR-PALE' %}
+                        <div class="widget-container border rounded overflow-hidden">
+                            <div class="bg-secondary text-white p-2 d-flex justify-content-between align-items-center">
+                                <span class="small fw-bold"><i class="bi bi-file-earmark-text"></i> {% trans "Visor Paleográfico — Digitalización y Resolución" %}</span>
+                                <div class="btn-group btn-group-sm">
+                                    <button class="btn btn-outline-light btn-sm" onclick="AssessmentWidgets.paleViewer.toggleFilter('{{ item.id }}', 'contrast')"><i class="bi bi-sun"></i></button>
+                                    <button class="btn btn-outline-light btn-sm" onclick="AssessmentWidgets.paleViewer.toggleFilter('{{ item.id }}', 'invert')"><i class="bi bi-circle-half"></i></button>
+                                    <button class="btn btn-outline-light btn-sm" onclick="AssessmentWidgets.paleViewer.zoom('{{ item.id }}', 0.2)"><i class="bi bi-zoom-in"></i></button>
+                                    <button class="btn btn-outline-light btn-sm" onclick="AssessmentWidgets.paleViewer.zoom('{{ item.id }}', -0.2)"><i class="bi bi-zoom-out"></i></button>
+                                </div>
+                            </div>
+                            <div class="row g-0">
+                                <div class="col-md-6 border-end">
+                                    <div class="pale-viewer-container overflow-auto bg-white pale-viewport-inner"
+                                         id="pale-viewport-{{ item.id }}" data-item-id="{{ item.id }}" data-zoom="1" data-filter="">
+                                        {% if item.content.media_assets %}
+                                            {% for asset in item.content.media_assets %}
+                                                {% if not '.mp3' in asset %}
+                                                <img src="{{ asset }}" id="pale-img-{{ item.id }}"
+                                                     class="pale-manuscript-img w-100 pale-img-transform"
+                                                     alt="{% trans 'Manuscrito' %}" width="800" height="600">
+                                                {% endif %}
+                                            {% endfor %}
+                                        {% else %}
+                                            <div class="text-muted text-center p-5"><i class="bi bi-file-earmark fs-1"></i><p>{% trans "El manuscrito se cargará aquí." %}</p></div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="col-md-6 p-3 d-flex flex-column gap-3">
+                                    <div>
+                                        <label class="form-label small fw-bold"><i class="bi bi-pencil"></i> {% trans "Transcripción Literal (línea a línea)" %}</label>
+                                        <textarea class="form-control response-input-text font-monospace" rows="5"
+                                                  id="pale-transcription-{{ item.id }}" data-item-id="{{ item.id }}"
+                                                  placeholder="{% trans 'Copie el texto del manuscrito línea a línea...' %}"></textarea>
+                                    </div>
+                                    <div>
+                                        <label class="form-label small fw-bold"><i class="bi bi-book"></i> {% trans "Resolución de Braquigrafías" %}</label>
+                                        <textarea class="form-control font-monospace" rows="3"
+                                                  id="pale-brachygraph-{{ item.id }}" data-item-id="{{ item.id }}"
+                                                  placeholder="{% trans 'q̃ = que / p̃ = per / ñ = anno / …' %}"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {# 17. W-DOC-RESOURCES -> Panel de recursos documentales (IATE/UNTERM/CORPES) (V06DOC_WIDGETS §4) #}
+                        {% elif item.widget_id == 'W-DOC-RESOURCES' %}
+                        <div class="widget-container border rounded overflow-hidden">
+                            <div class="row g-0">
+                                <div class="col-md-5 border-end">
+                                    <div class="p-2 bg-info bg-opacity-10 border-bottom d-flex justify-content-between align-items-center">
+                                        <span class="small fw-bold"><i class="bi bi-database"></i> {% trans "Recursos Documentales" %}</span>
+                                        <div class="btn-group btn-group-sm">
+                                            <button class="btn btn-outline-info btn-sm doc-res-tab active" data-tab="iate" data-item-id="{{ item.id }}">IATE</button>
+                                            <button class="btn btn-outline-info btn-sm doc-res-tab" data-tab="unterm" data-item-id="{{ item.id }}">UNTERM</button>
+                                            <button class="btn btn-outline-info btn-sm doc-res-tab" data-tab="corpes" data-item-id="{{ item.id }}">CORPES XXI</button>
+                                        </div>
+                                    </div>
+                                    <div class="p-2">
+                                        <div class="input-group input-group-sm mb-2">
+                                            <input type="text" class="form-control doc-res-search" id="doc-res-search-{{ item.id }}"
+                                                   placeholder="{% trans 'Buscar término...' %}">
+                                            <button class="btn btn-info btn-sm" onclick="AssessmentWidgets.docResources.search('{{ item.id }}')">
+                                                <i class="bi bi-search"></i>
+                                            </button>
+                                        </div>
+                                        <div class="doc-res-results border rounded bg-white p-2 overflow-auto doc-res-results-box" id="doc-res-results-{{ item.id }}">
+                                            <p class="text-muted text-center mt-3 small">{% trans "Los resultados de búsqueda aparecerán aquí." %}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-7 p-3">
+                                    <label class="form-label small fw-bold">{% trans "Encargo de Traducción" %}</label>
+                                    <textarea class="form-control response-input-text" rows="10"
+                                              id="doc-res-editor-{{ item.id }}" data-item-id="{{ item.id }}"
+                                              placeholder="{% trans 'Redacte aquí su traducción. Arrastre términos desde el panel de recursos para generar citas automáticas...' %}"></textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                        {# 18. W-CASE-ECOE -> Interfaz de estación ECOE cronometrada (V06DOC_WIDGETS §10) #}
+                        {% elif item.widget_id == 'W-CASE-ECOE' %}
+                        <div class="widget-container border rounded border-danger overflow-hidden" id="ecoe-station-{{ item.id }}">
+                            <div class="bg-danger text-white p-2 d-flex justify-content-between align-items-center">
+                                <span class="small fw-bold"><i class="bi bi-hospital"></i> {% trans "ESTACIÓN ECOE — CASO CLÍNICO" %}</span>
+                                <span class="badge bg-dark fs-6 font-monospace" id="ecoe-station-timer-{{ item.id }}"
+                                      data-seconds="{{ item.content.time_limit|default:480 }}"
+                                      data-item-id="{{ item.id }}">
+                                    {{ item.content.time_limit|default:480|floatformat:0 }}s
+                                </span>
+                            </div>
+                            {% if item.content.initial_scenario %}
+                            <div class="p-3 bg-light border-bottom">
+                                <p class="small mb-0"><strong>{% trans "Escenario:" %}</strong> {{ item.content.initial_scenario }}</p>
+                            </div>
+                            {% endif %}
+                            <div class="p-3">
+                                <div class="mb-3">
+                                    <label class="form-label small fw-bold text-danger"><i class="bi bi-clipboard2-pulse"></i> {% trans "Anamnesis / Exploración" %}</label>
+                                    <textarea class="form-control response-input-text" rows="4"
+                                              data-field="anamnesis" data-item-id="{{ item.id }}"
+                                              placeholder="{% trans 'Describa el proceso de anamnesis y exploración realizado...' %}"></textarea>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label small fw-bold text-danger"><i class="bi bi-journal-medical"></i> {% trans "Juicio Diagnóstico / Plan de Actuación" %}</label>
+                                    <textarea class="form-control response-input-text" rows="4"
+                                              data-field="diagnosis" data-item-id="{{ item.id }}"
+                                              placeholder="{% trans 'Diagnóstico principal, diagnóstico diferencial y plan de actuación...' %}"></textarea>
+                                </div>
+                                <div class="mb-0">
+                                    <label class="form-label small fw-bold text-danger"><i class="bi bi-shield-exclamation"></i> {% trans "Comunicación y Seguridad del Paciente" %}</label>
+                                    <textarea class="form-control" rows="3"
+                                              data-field="safety" data-item-id="{{ item.id }}"
+                                              placeholder="{% trans 'Registre las medidas de seguridad, comunicación al paciente y consentimiento...' %}"></textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                        {# 19. W-MEDI-LAYOUT -> Panel doble estímulo/producción (V06DOC_WIDGETS §6) #}
+                        {% elif item.widget_id == 'W-MEDI-LAYOUT' %}
+                        <div class="widget-container border rounded overflow-hidden">
+                            <div class="row g-0 medi-split-row">
+                                <div class="col-md-5 border-end bg-light d-flex flex-column">
+                                    <div class="p-2 bg-secondary text-white small fw-bold">
+                                        <i class="bi bi-file-earmark-text"></i> {% trans "Panel Estímulo (Texto Fuente)" %}
+                                    </div>
+                                    <div class="p-3 overflow-auto flex-grow-1 stimulus-panel-scroll small"
+                                         id="medi-stimulus-{{ item.id }}">
+                                        {% if item.content.source_text %}
+                                            <div class="source-text-content" draggable="true">{{ item.content.source_text|linebreaks }}</div>
+                                        {% else %}
+                                            <p class="text-muted">{% trans "El texto fuente se cargará aquí." %}</p>
+                                        {% endif %}
+                                        {% if item.content.media_assets %}
+                                            {% for asset in item.content.media_assets %}
+                                                {% if not '.mp3' in asset %}
+                                                <img src="{{ asset }}" class="img-fluid rounded mb-2" alt="{% trans 'Estímulo visual' %}" width="400" height="300">
+                                                {% endif %}
+                                            {% endfor %}
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="col-md-7 d-flex flex-column">
+                                    <div class="p-2 bg-primary text-white small fw-bold d-flex justify-content-between align-items-center">
+                                        <span><i class="bi bi-pencil-square"></i> {% trans "Panel de Producción" %}</span>
+                                        <span class="badge bg-white text-primary" id="medi-wc-{{ item.id }}">0 {% trans "palabras" %}</span>
+                                    </div>
+                                    <div class="p-3 flex-grow-1 d-flex flex-column">
+                                        <textarea class="form-control response-input-text flex-grow-1 medi-production-textarea"
+                                                  id="medi-editor-{{ item.id }}" data-item-id="{{ item.id }}"
+                                                  placeholder="{% trans 'Redacte aquí su producción. Puede arrastrar fragmentos del panel izquierdo para generar citas...' %}"></textarea>
+                                        <div class="mt-2 d-flex justify-content-between align-items-center">
+                                            <small class="text-muted">{% trans "Arrastre selecciones del panel fuente para citarlas automáticamente." %}</small>
+                                            <span class="badge bg-secondary" id="medi-range-{{ item.id }}"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {# 20. W-OCR-PRO -> Módulo de producción manuscrita con cámara (V06DOC_WIDGETS §6) #}
+                        {% elif item.widget_id == 'W-OCR-PRO' %}
+                        <div class="widget-container border rounded p-3 bg-white">
+                            <h6 class="fw-bold border-bottom pb-2"><i class="bi bi-camera"></i> {% trans "Módulo de Producción Manuscrita" %}</h6>
+                            <div class="alert alert-warning small py-2">
+                                <i class="bi bi-info-circle"></i> {% trans "Redacte su respuesta en papel con bolígrafo, fotografíela con la cámara y envíe la imagen para su análisis." %}
+                            </div>
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label class="form-label small fw-bold">{% trans "Opción 1 — Captura con Cámara" %}</label>
+                                    <div class="border rounded bg-light text-center p-3 position-relative" id="ocr-camera-area-{{ item.id }}">
+                                        <video id="ocr-video-{{ item.id }}" class="w-100 d-none rounded" autoplay playsinline></video>
+                                        <canvas id="ocr-canvas-{{ item.id }}" class="w-100 d-none rounded"></canvas>
+                                        <div id="ocr-placeholder-{{ item.id }}">
+                                            <i class="bi bi-camera fs-1 text-muted"></i>
+                                            <p class="text-muted small mt-2">{% trans "Capture su producción manuscrita" %}</p>
+                                        </div>
+                                        <div class="mt-2 d-flex justify-content-center gap-2">
+                                            <button type="button" class="btn btn-primary btn-sm" onclick="AssessmentWidgets.ocrPro.startCamera('{{ item.id }}')">
+                                                <i class="bi bi-camera"></i> {% trans "Abrir cámara" %}
+                                            </button>
+                                            <button type="button" class="btn btn-success btn-sm d-none" id="ocr-capture-btn-{{ item.id }}"
+                                                    onclick="AssessmentWidgets.ocrPro.capture('{{ item.id }}')">
+                                                <i class="bi bi-check"></i> {% trans "Capturar" %}
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label small fw-bold">{% trans "Opción 2 — Subir imagen" %}</label>
+                                    <input type="file" class="form-control mb-2" accept="image/*"
+                                           id="ocr-file-{{ item.id }}" data-item-id="{{ item.id }}"
+                                           onchange="AssessmentWidgets.ocrPro.loadFile('{{ item.id }}', this)">
+                                    <div id="ocr-preview-{{ item.id }}" class="border rounded bg-light p-2 text-center ocr-preview-box">
+                                        <span class="text-muted small">{% trans "Vista previa de la imagen aquí" %}</span>
+                                    </div>
+                                    <input type="hidden" class="response-input-text ocr-data-hidden" id="ocr-data-{{ item.id }}" data-item-id="{{ item.id }}">
+                                </div>
+                            </div>
+                        </div>
+
+                        {# 21. W-INSTR-SELECTOR -> Selector multimodal CertAcles (V06DOC_WIDGETS §6) #}
+                        {% elif item.widget_id == 'W-INSTR-SELECTOR' %}
+                        <div class="widget-container border rounded p-3 bg-white">
+                            <h6 class="fw-bold border-bottom pb-2"><i class="bi bi-input-cursor-text"></i> {% trans "Selector de Modo de Entrada" %}</h6>
+                            <div class="btn-group w-100 mb-3" id="instr-mode-selector-{{ item.id }}" data-item-id="{{ item.id }}">
+                                <button type="button" class="btn btn-outline-primary active instr-mode-btn" data-mode="keyboard">
+                                    <i class="bi bi-keyboard"></i> {% trans "Teclado" %}
+                                </button>
+                                <button type="button" class="btn btn-outline-primary instr-mode-btn" data-mode="occidental">
+                                    <i class="bi bi-globe"></i> {% trans "Occidentalización" %}
+                                </button>
+                                <button type="button" class="btn btn-outline-primary instr-mode-btn" data-mode="strokes">
+                                    <i class="bi bi-brush"></i> {% trans "Trazos" %}
+                                </button>
+                                <button type="button" class="btn btn-outline-primary instr-mode-btn" data-mode="ocr">
+                                    <i class="bi bi-camera"></i> {% trans "OCR / Captura" %}
+                                </button>
+                            </div>
+                            <div id="instr-keyboard-{{ item.id }}" class="instr-input-panel">
+                                <textarea class="form-control response-input-text" rows="4"
+                                          data-item-id="{{ item.id }}" data-mode="keyboard"
+                                          placeholder="{% trans 'Escriba en el idioma objetivo. El corrector ortográfico del sistema está desactivado para evaluar la competencia real.' %}"
+                                          spellcheck="false" autocorrect="off" autocomplete="off"></textarea>
+                            </div>
+                            <div id="instr-occidental-{{ item.id }}" class="instr-input-panel d-none">
+                                <textarea class="form-control" rows="4"
+                                          data-item-id="{{ item.id }}" data-mode="occidental"
+                                          placeholder="{% trans 'Escriba en transliteración occidental. El sistema convertirá automáticamente.' %}"
+                                          spellcheck="false"></textarea>
+                            </div>
+                            <div id="instr-strokes-{{ item.id }}" class="instr-input-panel d-none">
+                                <canvas id="instr-canvas-{{ item.id }}" class="border rounded w-100 calli-canvas instr-canvas-pad"
+                                        height="180" data-item-id="{{ item.id }}"></canvas>
+                                <button class="btn btn-sm btn-outline-secondary mt-2"
+                                        onclick="AssessmentWidgets.calliPad.clear('instr-{{ item.id }}')">
+                                    <i class="bi bi-eraser"></i> {% trans "Borrar" %}
+                                </button>
+                            </div>
+                            <div id="instr-ocr-{{ item.id }}" class="instr-input-panel d-none">
+                                <input type="file" class="form-control" accept="image/*"
+                                       onchange="AssessmentWidgets.ocrPro.loadFile('instr-{{ item.id }}', this)">
+                            </div>
+                        </div>
+
                         {# GENERIC FALLBACK #}
                         {# FALLBACK GENÉRICO #}
                         {% else %}
@@ -483,9 +1039,62 @@
             }
         });
         
-        // Init New Widgets Logic
+        // Inicialización de todos los widgets
+        // Init all widget controllers
         AssessmentWidgets.initLawSearch();
         AssessmentWidgets.initChat();
+        AssessmentWidgets.initAudioInstr();
+        AssessmentWidgets.initIpaKeyboard();
+        AssessmentWidgets.initEcdo();
+        AssessmentWidgets.docResources.initTabs();
+        AssessmentWidgets.initMediLayout();
+        AssessmentWidgets.initInstrSelector();
+
+        // Inicializar canvas caligráficos W-CALLI-PAD
+        // Init calligraphic canvases for W-CALLI-PAD
+        document.querySelectorAll('.calli-canvas').forEach(canvas => {
+            const itemId = canvas.dataset.itemId;
+            if (itemId && canvas.id.startsWith('calli-canvas-')) {
+                AssessmentWidgets.calliPad.init(canvas.id, itemId);
+            }
+        });
+
+        // Sincronizar campos de análisis musical W-MUS-SCORE con widgetState
+        // Sync music analysis fields with widgetState
+        document.querySelectorAll('.mus-analysis-field').forEach(field => {
+            field.addEventListener('input', function() {
+                const itemId = this.dataset.itemId;
+                const fieldName = this.dataset.field;
+                if (!widgetState.musAnalysis[itemId]) widgetState.musAnalysis[itemId] = {};
+                widgetState.musAnalysis[itemId][fieldName] = this.value;
+            });
+        });
+
+        // Sincronizar campos W-ART-IDENT con widgetState
+        // Sync art identification fields with widgetState
+        document.querySelectorAll('.art-ident-field').forEach(field => {
+            field.addEventListener('input', function() {
+                const itemId = this.dataset.itemId;
+                const fieldName = this.dataset.field;
+                if (!widgetState.artIdent[itemId]) widgetState.artIdent[itemId] = {};
+                widgetState.artIdent[itemId][fieldName] = this.value;
+            });
+        });
+
+        // Sincronizar campos W-CASE-ECOE con widgetState
+        // Sync ECOE case fields with widgetState
+        document.querySelectorAll('[data-field][data-item-id]').forEach(field => {
+            if (field.closest('.widget-container') &&
+                field.closest('.widget-container').closest('.exam-item') &&
+                field.closest('.exam-item').querySelector('[id^="ecoe-station-"]')) {
+                field.addEventListener('input', function() {
+                    const itemId = this.dataset.itemId;
+                    const fname = this.dataset.field;
+                    if (!widgetState.ecoeCases[itemId]) widgetState.ecoeCases[itemId] = {};
+                    widgetState.ecoeCases[itemId][fname] = this.value;
+                });
+            }
+        });
     });
 
     // PMA 3: CLOZE WIDGET HYDRATION (Secure Render)
@@ -520,11 +1129,19 @@
     // IN-MEMORY STATE FOR COMPLEX WIDGETS
     // ESTADO EN MEMORIA PARA WIDGETS COMPLEJOS
     const widgetState = {
-        calcSteps: {}, // Map for RPP-TRAZA: itemId -> [{id: 1, value: "x"}]
-        scanMarkers: {}, // Metadata for ILC-CONTEXT
-        mixLinks: {},   // Map for MAT-LINK: itemId -> {source: target}
-        chatLogs: {},   // [FIX] Store chat history
-        measures: {}    // [FIX] W-CLIN-SCAN measures
+        calcSteps: {},    // RPP-TRAZA: itemId -> [{id, value}]
+        scanMarkers: {},  // ILC-CONTEXT: itemId -> [{x, y}]
+        mixLinks: {},     // MAT-LINK: itemId -> {source: target}
+        chatLogs: {},     // W-COMM-DIALOG: itemId -> [{sender, text, ts}]
+        measures: {},     // W-CLIN-SCAN: itemId -> medidas
+        musAnalysis: {},  // W-MUS-SCORE: itemId -> {harmonic, formal, comment}
+        artIdent: {},     // W-ART-IDENT: itemId -> {author, date, technique, style, pre_iconographic, iconographic, iconological}
+        calliData: {},    // W-CALLI-PAD / W-INSTR-SELECTOR: itemId -> dataURL
+        portfolioData: {},// W-PORTFOLIO: itemId -> [{image, caption}]
+        ecoeCases: {},    // W-CASE-ECOE: itemId -> {anamnesis, diagnosis, safety}
+        mediText: {},     // W-MEDI-LAYOUT: itemId -> text
+        ocrData: {},      // W-OCR-PRO: itemId -> dataURL
+        audioPlays: {},   // W-AUDIO-INSTR: audioId -> playCount
     };
 
     // [FIX] ASSESSMENT WIDGETS CONTROLLER
@@ -683,7 +1300,437 @@
             // Log to state
             if (!widgetState.chatLogs[itemId]) widgetState.chatLogs[itemId] = [];
             widgetState.chatLogs[itemId].push({sender, text, ts: Date.now()});
+        },
+
+        // ── W-AUDIO-INSTR: Bloqueo hermético 2ª reproducción + Non-Scrubbing
+        // Hermetic 2nd-play lock + Non-Scrubbing for institutional audio player
+        initAudioInstr: function() {
+            document.querySelectorAll('.btn-audio-instr-play').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const audioId = this.dataset.audioId;
+                    const itemId = this.dataset.itemId;
+                    const audio = document.getElementById(audioId);
+                    const badge = document.querySelector(`.audio-plays-badge[id="plays-badge-${itemId}"]`);
+                    if (!audio) return;
+
+                    const maxPlays = parseInt(badge ? badge.dataset.maxPlays : 2);
+                    if (!widgetState.audioPlays[audioId]) widgetState.audioPlays[audioId] = 0;
+
+                    // Bloqueo hermético: si ya alcanzó el límite, ignorar click
+                    // Hermetic lock: ignore click if play limit reached
+                    if (widgetState.audioPlays[audioId] >= maxPlays) {
+                        this.disabled = true;
+                        this.classList.replace('btn-outline-primary', 'btn-secondary');
+                        return;
+                    }
+
+                    if (audio.paused) {
+                        audio.play();
+                        this.innerHTML = '<i class="bi bi-pause-fill fs-5"></i>';
+                        const wave = document.getElementById(`wave-ainstr-${itemId}-${this.dataset.playIndex}`);
+                        if (wave) wave.classList.remove('d-none');
+                    } else {
+                        audio.pause();
+                        this.innerHTML = '<i class="bi bi-play-fill fs-5"></i>';
+                        const wave = document.getElementById(`wave-ainstr-${itemId}-${this.dataset.playIndex}`);
+                        if (wave) wave.classList.add('d-none');
+                    }
+                });
+            });
+
+            // Contabilizar reproducción completa y bloquear si alcanza el límite
+            // Count full play and lock button when limit reached
+            document.querySelectorAll('.audio-instr-player').forEach(audio => {
+                const audioId = audio.id;
+                const itemId = audio.dataset.itemId;
+                const playIndex = audio.dataset.playIndex;
+
+                // Non-Scrubbing: deshabilitar interacción con la barra de progreso
+                // Non-Scrubbing: disable progress bar scrubbing
+                audio.addEventListener('timeupdate', () => {
+                    const bar = document.getElementById(`audio-progress-${itemId}-${playIndex}`);
+                    if (bar && audio.duration) {
+                        const pct = (audio.currentTime / audio.duration * 100).toFixed(1);
+                        bar.style.width = `${pct}%`;
+                        bar.setAttribute('aria-valuenow', pct);
+                    }
+                });
+
+                audio.addEventListener('ended', () => {
+                    if (!widgetState.audioPlays[audioId]) widgetState.audioPlays[audioId] = 0;
+                    widgetState.audioPlays[audioId]++;
+
+                    const badge = document.querySelector(`#plays-badge-${itemId}`);
+                    const maxPlays = parseInt(badge ? badge.dataset.maxPlays : 2);
+                    if (badge) {
+                        badge.dataset.plays = widgetState.audioPlays[audioId];
+                        badge.textContent = `Reproducciones: ${widgetState.audioPlays[audioId]} / ${maxPlays}`;
+                    }
+
+                    const btn = document.querySelector(`.btn-audio-instr-play[data-audio-id="${audioId}"]`);
+                    if (btn) btn.innerHTML = '<i class="bi bi-play-fill fs-5"></i>';
+                    const wave = document.getElementById(`wave-ainstr-${itemId}-${playIndex}`);
+                    if (wave) wave.classList.add('d-none');
+
+                    // Bloqueo hermético si alcanzó el límite
+                    // Hermetic lock if limit reached
+                    if (widgetState.audioPlays[audioId] >= maxPlays && btn) {
+                        btn.disabled = true;
+                        btn.classList.replace('btn-outline-primary', 'btn-secondary');
+                        btn.title = 'Límite de reproducciones alcanzado';
+                        // Restaurar barra al 100% para indicar reproducción completada
+                        const bar = document.getElementById(`audio-progress-${itemId}-${playIndex}`);
+                        if (bar) { bar.style.width = '100%'; bar.setAttribute('aria-valuenow', 100); }
+                    }
+                });
+            });
+        },
+
+        // ── W-MUS-SCORE: Zoom de partitura + captura de análisis
+        // Music score zoom and analysis capture
+        musScore: {
+            scales: {},
+            zoom: function(itemId, delta) {
+                if (!this.scales[itemId]) this.scales[itemId] = 1;
+                this.scales[itemId] = Math.max(0.5, Math.min(3, this.scales[itemId] + delta));
+                const img = document.getElementById(`score-img-${itemId}`);
+                if (img) img.style.transform = `scale(${this.scales[itemId]})`;
+            }
+        },
+
+        // ── W-CALLI-PAD: Canvas de trazos caligráficos
+        // Calligraphic stroke canvas widget
+        calliPad: {
+            contexts: {},
+            drawing: {},
+            widths: {},
+            colors: {},
+            init: function(canvasId, itemId) {
+                const canvas = document.getElementById(canvasId);
+                if (!canvas) return;
+                const ctx = canvas.getContext('2d');
+                this.contexts[itemId] = ctx;
+                this.drawing[itemId] = false;
+                this.widths[itemId] = 3;
+                this.colors[itemId] = '#000000';
+                canvas.width = canvas.offsetWidth || 400;
+
+                const getPos = (e) => {
+                    const rect = canvas.getBoundingClientRect();
+                    const src = e.touches ? e.touches[0] : e;
+                    return { x: src.clientX - rect.left, y: src.clientY - rect.top };
+                };
+                const start = (e) => { e.preventDefault(); this.drawing[itemId] = true; const p = getPos(e); ctx.beginPath(); ctx.moveTo(p.x, p.y); };
+                const draw  = (e) => { e.preventDefault(); if (!this.drawing[itemId]) return; const p = getPos(e); ctx.lineTo(p.x, p.y); ctx.strokeStyle = this.colors[itemId]; ctx.lineWidth = this.widths[itemId]; ctx.lineCap = 'round'; ctx.stroke(); };
+                const end   = (e) => { e.preventDefault(); this.drawing[itemId] = false; };
+
+                canvas.addEventListener('mousedown', start);
+                canvas.addEventListener('mousemove', draw);
+                canvas.addEventListener('mouseup', end);
+                canvas.addEventListener('mouseleave', end);
+                canvas.addEventListener('touchstart', start, { passive: false });
+                canvas.addEventListener('touchmove', draw, { passive: false });
+                canvas.addEventListener('touchend', end, { passive: false });
+            },
+            clear: function(itemId) {
+                const ctx = this.contexts[itemId];
+                if (ctx) ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+                widgetState.calliData[itemId] = null;
+                const badge = document.getElementById(`calli-status-${itemId}`);
+                if (badge) { badge.textContent = 'Listo'; badge.className = 'badge bg-secondary'; }
+            },
+            save: function(itemId) {
+                const ctx = this.contexts[itemId];
+                if (!ctx) return;
+                const dataURL = ctx.canvas.toDataURL('image/png');
+                widgetState.calliData[itemId] = dataURL;
+                const hidden = document.getElementById(`calli-data-${itemId}`);
+                if (hidden) hidden.value = dataURL;
+                const badge = document.getElementById(`calli-status-${itemId}`);
+                if (badge) { badge.textContent = 'Trazo guardado'; badge.className = 'badge bg-success'; }
+            },
+            setWidth: function(itemId, w) { this.widths[itemId] = parseFloat(w); },
+            setColor: function(itemId, c) { this.colors[itemId] = c; }
+        },
+
+        // ── W-PORTFOLIO: Portafolio de proceso creativo
+        // Creative process portfolio widget
+        portfolio: {
+            addEntry: function(itemId) {
+                const container = document.getElementById(`portfolio-entries-${itemId}`);
+                if (!container) return;
+                const idx = container.children.length + 1;
+                const col = document.createElement('div');
+                col.className = 'col-md-6';
+                col.innerHTML = `
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-header d-flex justify-content-between align-items-center py-1">
+                            <span class="small fw-bold">Fase ${idx}</span>
+                            <button type="button" class="btn btn-sm btn-outline-danger py-0" onclick="this.closest('.col-md-6').remove(); AssessmentWidgets.portfolio.syncState('${itemId}')">
+                                <i class="bi bi-x"></i>
+                            </button>
+                        </div>
+                        <div class="card-body p-2">
+                            <input type="file" class="form-control form-control-sm mb-2 portfolio-img-input" accept="image/*"
+                                   onchange="AssessmentWidgets.portfolio.previewImg(this, '${itemId}')">
+                            <img class="img-fluid rounded mb-2 portfolio-preview d-none" alt="Vista previa" width="300" height="200">
+                            <textarea class="form-control form-control-sm portfolio-caption" rows="2"
+                                      placeholder="Documente el estado del proceso, decisiones y referentes..."
+                                      oninput="AssessmentWidgets.portfolio.syncState('${itemId}')"></textarea>
+                        </div>
+                    </div>`;
+                container.appendChild(col);
+            },
+            previewImg: function(input, itemId) {
+                if (!input.files || !input.files[0]) return;
+                const reader = new FileReader();
+                reader.onload = e => {
+                    const img = input.nextElementSibling;
+                    if (img && img.tagName === 'IMG') { img.src = e.target.result; img.classList.remove('d-none'); }
+                    AssessmentWidgets.portfolio.syncState(itemId);
+                };
+                reader.readAsDataURL(input.files[0]);
+            },
+            syncState: function(itemId) {
+                const container = document.getElementById(`portfolio-entries-${itemId}`);
+                if (!container) return;
+                const entries = [];
+                container.querySelectorAll('.col-md-6').forEach(col => {
+                    const img = col.querySelector('.portfolio-preview');
+                    const cap = col.querySelector('.portfolio-caption');
+                    entries.push({ image: img ? img.src : '', caption: cap ? cap.value : '' });
+                });
+                widgetState.portfolioData[itemId] = entries;
+                const hidden = document.getElementById(`portfolio-data-${itemId}`);
+                if (hidden) hidden.value = JSON.stringify(entries);
+            }
+        },
+
+        // ── W-PHILO-IPA: Teclado virtual fonético/diacrónico
+        // Virtual IPA/diachronic keyboard
+        initIpaKeyboard: function() {
+            document.querySelectorAll('.ipa-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const symbol = this.dataset.symbol;
+                    const itemId = this.dataset.itemId;
+                    const editor = document.getElementById(`ipa-editor-${itemId}`);
+                    if (!editor) return;
+                    const pos = editor.selectionStart;
+                    editor.value = editor.value.slice(0, pos) + symbol + editor.value.slice(editor.selectionEnd);
+                    editor.selectionStart = editor.selectionEnd = pos + symbol.length;
+                    editor.focus();
+                });
+            });
+        },
+
+        // ── W-PHILO-ECDO: Modo Collatio / Aparato Crítico
+        // Ecdotic editor mode toggle
+        initEcdo: function() {
+            document.querySelectorAll('.ecdo-mode-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const itemId = this.dataset.itemId;
+                    const mode = this.dataset.mode;
+                    this.closest('.btn-group').querySelectorAll('.ecdo-mode-btn').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    const apparatus = document.getElementById(`ecdo-apparatus-${itemId}`);
+                    if (apparatus) apparatus.classList.toggle('d-none', mode !== 'apparatus');
+                });
+            });
+        },
+
+        // ── W-PHILO-OCR-PALE: Zoom y filtros del visor paleográfico
+        // Paleographic viewer zoom and filter controls
+        paleViewer: {
+            zoom: function(itemId, delta) {
+                const vp = document.getElementById(`pale-viewport-${itemId}`);
+                if (!vp) return;
+                let z = parseFloat(vp.dataset.zoom || 1) + delta;
+                z = Math.max(0.5, Math.min(4, z));
+                vp.dataset.zoom = z;
+                const img = document.getElementById(`pale-img-${itemId}`);
+                if (img) img.style.transform = `scale(${z})`;
+            },
+            toggleFilter: function(itemId, filter) {
+                const img = document.getElementById(`pale-img-${itemId}`);
+                if (!img) return;
+                const vp = document.getElementById(`pale-viewport-${itemId}`);
+                const current = vp ? vp.dataset.filter || '' : '';
+                let filters = current ? current.split(' ') : [];
+                const filterMap = { contrast: 'contrast(2)', invert: 'invert(1)' };
+                const f = filterMap[filter];
+                if (filters.includes(f)) {
+                    filters = filters.filter(x => x !== f);
+                } else {
+                    filters.push(f);
+                }
+                const newFilter = filters.join(' ');
+                if (vp) vp.dataset.filter = newFilter;
+                img.style.filter = newFilter;
+            }
+        },
+
+        // ── W-DOC-RESOURCES: Búsqueda documental y cita por arrastre
+        // Documentary resources panel (IATE/UNTERM/CORPES)
+        docResources: {
+            activeTab: {},
+            search: function(itemId) {
+                const input = document.getElementById(`doc-res-search-${itemId}`);
+                const results = document.getElementById(`doc-res-results-${itemId}`);
+                if (!input || !results) return;
+                const term = input.value.trim();
+                if (!term) { results.innerHTML = '<p class="text-muted text-center mt-3 small">Introduzca un término para buscar.</p>'; return; }
+                const tab = this.activeTab[itemId] || 'iate';
+                const urlMap = {
+                    iate: `https://iate.europa.eu/search#overview?query=${encodeURIComponent(term)}&source=es&target=en`,
+                    unterm: `https://unterm.un.org/UNTERM/portal/welcome#?q=${encodeURIComponent(term)}`,
+                    corpes: `https://www.rae.es/banco-de-datos/corpes-xxi`
+                };
+                results.innerHTML = `<div class="p-2 small">
+                    <p class="mb-1 fw-bold text-info">Resultado de: <em>${term}</em> (${tab.toUpperCase()})</p>
+                    <a href="${urlMap[tab]}" target="_blank" class="btn btn-outline-info btn-sm w-100 mb-2">
+                        <i class="bi bi-box-arrow-up-right"></i> Abrir en ${tab.toUpperCase()}
+                    </a>
+                    <div class="draggable-result border rounded p-1 bg-light small" draggable="true"
+                         data-term="${term}" data-source="${tab.toUpperCase()}"
+                         ondragstart="event.dataTransfer.setData('text/plain', '[${tab.toUpperCase()}: ${term}] ')">
+                        <i class="bi bi-grip-vertical text-muted"></i> ${term} <span class="badge bg-info">${tab.toUpperCase()}</span>
+                    </div>
+                </div>`;
+            },
+            initTabs: function() {
+                document.querySelectorAll('.doc-res-tab').forEach(tab => {
+                    tab.addEventListener('click', function() {
+                        const itemId = this.dataset.itemId;
+                        const tabName = this.dataset.tab;
+                        this.closest('.btn-group').querySelectorAll('.doc-res-tab').forEach(t => t.classList.remove('active'));
+                        this.classList.add('active');
+                        AssessmentWidgets.docResources.activeTab[itemId] = tabName;
+                    });
+                });
+                // Arrastre desde editor de traducción
+                // Drag from translation editor
+                document.querySelectorAll('[id^="doc-res-editor-"]').forEach(editor => {
+                    editor.addEventListener('dragover', e => e.preventDefault());
+                    editor.addEventListener('drop', e => {
+                        e.preventDefault();
+                        const text = e.dataTransfer.getData('text/plain');
+                        if (text) {
+                            const pos = editor.selectionStart;
+                            editor.value = editor.value.slice(0, pos) + text + editor.value.slice(editor.selectionEnd);
+                        }
+                    });
+                });
+            }
+        },
+
+        // ── W-MEDI-LAYOUT: Contador de palabras + arrastre de citas
+        // Word counter and citation drag for translation/mediation layout
+        initMediLayout: function() {
+            document.querySelectorAll('[id^="medi-editor-"]').forEach(editor => {
+                const itemId = editor.dataset.itemId;
+                editor.addEventListener('input', function() {
+                    const words = this.value.trim().split(/\s+/).filter(w => w).length;
+                    const wc = document.getElementById(`medi-wc-${itemId}`);
+                    if (wc) wc.textContent = `${words} palabras`;
+                    widgetState.mediText[itemId] = this.value;
+                });
+            });
+            // Arrastre de citas desde panel fuente
+            // Citation drag from source panel
+            document.querySelectorAll('.source-text-content').forEach(src => {
+                src.addEventListener('dragstart', e => {
+                    const sel = window.getSelection().toString();
+                    if (sel) e.dataTransfer.setData('text/plain', `«${sel}» `);
+                });
+            });
+            document.querySelectorAll('[id^="medi-editor-"]').forEach(editor => {
+                editor.addEventListener('dragover', e => e.preventDefault());
+                editor.addEventListener('drop', e => {
+                    e.preventDefault();
+                    const text = e.dataTransfer.getData('text/plain');
+                    if (text) {
+                        const pos = editor.selectionStart;
+                        editor.value = editor.value.slice(0, pos) + text + editor.value.slice(editor.selectionEnd);
+                        const ev = new Event('input'); editor.dispatchEvent(ev);
+                    }
+                });
+            });
+        },
+
+        // ── W-OCR-PRO: Cámara y carga de imagen para producción manuscrita
+        // Camera capture and image upload for handwritten production
+        ocrPro: {
+            streams: {},
+            startCamera: function(itemId) {
+                const video = document.getElementById(`ocr-video-${itemId}`);
+                const placeholder = document.getElementById(`ocr-placeholder-${itemId}`);
+                const captureBtn = document.getElementById(`ocr-capture-btn-${itemId}`);
+                if (!video) return;
+                navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
+                    .then(stream => {
+                        this.streams[itemId] = stream;
+                        video.srcObject = stream;
+                        video.classList.remove('d-none');
+                        if (placeholder) placeholder.classList.add('d-none');
+                        if (captureBtn) captureBtn.classList.remove('d-none');
+                    })
+                    .catch(() => alert('No se pudo acceder a la cámara. Use la opción de subir imagen.'));
+            },
+            capture: function(itemId) {
+                const video = document.getElementById(`ocr-video-${itemId}`);
+                const canvas = document.getElementById(`ocr-canvas-${itemId}`);
+                if (!video || !canvas) return;
+                canvas.width = video.videoWidth;
+                canvas.height = video.videoHeight;
+                canvas.getContext('2d').drawImage(video, 0, 0);
+                const dataURL = canvas.toDataURL('image/jpeg', 0.85);
+                widgetState.ocrData[itemId] = dataURL;
+                const hidden = document.getElementById(`ocr-data-${itemId}`);
+                if (hidden) hidden.value = dataURL;
+                canvas.classList.remove('d-none');
+                video.classList.add('d-none');
+                if (this.streams[itemId]) { this.streams[itemId].getTracks().forEach(t => t.stop()); }
+                const btn = document.getElementById(`ocr-capture-btn-${itemId}`);
+                if (btn) btn.classList.add('d-none');
+            },
+            loadFile: function(itemId, input) {
+                if (!input.files || !input.files[0]) return;
+                const reader = new FileReader();
+                reader.onload = e => {
+                    const dataURL = e.target.result;
+                    widgetState.ocrData[itemId] = dataURL;
+                    const hidden = document.getElementById(`ocr-data-${itemId}`);
+                    if (hidden) hidden.value = dataURL;
+                    const preview = document.getElementById(`ocr-preview-${itemId}`);
+                    if (preview) preview.innerHTML = `<img src="${dataURL}" class="img-fluid rounded" alt="Vista previa" width="300" height="200">`;
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        },
+
+        // ── W-INSTR-SELECTOR: Conmutador de modo de entrada multimodal
+        // Multimodal input mode switcher for CertAcles
+        initInstrSelector: function() {
+            document.querySelectorAll('.instr-mode-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const selector = this.closest('[id^="instr-mode-selector-"]');
+                    const itemId = selector.dataset.itemId;
+                    const mode = this.dataset.mode;
+                    selector.querySelectorAll('.instr-mode-btn').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    ['keyboard', 'occidental', 'strokes', 'ocr'].forEach(m => {
+                        const panel = document.getElementById(`instr-${m}-${itemId}`);
+                        if (panel) panel.classList.toggle('d-none', m !== mode);
+                    });
+                    // Inicializar canvas de trazos si es la primera vez
+                    // Initialize stroke canvas on first activation
+                    if (mode === 'strokes') {
+                        AssessmentWidgets.calliPad.init(`instr-canvas-${itemId}`, `instr-${itemId}`);
+                    }
+                });
+            });
         }
+
     };
 
     // 1. RPP-TRAZA LOGIC (W-TECH-CALC)
@@ -820,10 +1867,22 @@
         });
     }, 1000);
 
-    // PRM-STRIKE LOGIC: Visual strikethrough (UI only)
+    // PRM-STRIKE LOGIC: Visual strikethrough + radio disable (V06DOC_WIDGETS)
+    // Tachar opción desactiva su radio para prevenir selección accidental
+    // Striking an option disables its radio to prevent accidental selection
     document.querySelectorAll('.btn-strike').forEach(btn => {
         btn.addEventListener('click', function() {
-            this.previousElementSibling.classList.toggle('striked-option');
+            const label = this.previousElementSibling;
+            const formCheck = this.closest('.form-check');
+            const radio = formCheck ? formCheck.querySelector('.response-input-radio') : null;
+            label.classList.toggle('striked-option');
+            if (radio) {
+                const isStruck = label.classList.contains('striked-option');
+                radio.disabled = isStruck;
+                // Si el radio estaba seleccionado y se tacha, deseleccionarlo
+                // If radio was checked and gets struck, uncheck it
+                if (isStruck && radio.checked) radio.checked = false;
+            }
         });
     });
 
@@ -893,9 +1952,69 @@
                 });
                 responses[itemId] = gapAnswers;
             } 
-            // 7. [FIX] W-COMM-DIALOG (Chat logs)
+            // 7. W-COMM-DIALOG (Chat logs)
             else if (item.dataset.widgetId === 'W-COMM-DIALOG') {
-                 responses[itemId] = widgetState.chatLogs[itemId] || [];
+                responses[itemId] = widgetState.chatLogs[itemId] || [];
+            }
+            // 8. W-MUS-SCORE (Análisis musical tri-campo)
+            else if (item.dataset.widgetId === 'W-MUS-SCORE') {
+                responses[itemId] = widgetState.musAnalysis[itemId] || { harmonic: '', formal: '', comment: '' };
+            }
+            // 9. W-ART-IDENT (Identificación iconológica)
+            else if (item.dataset.widgetId === 'W-ART-IDENT') {
+                responses[itemId] = widgetState.artIdent[itemId] || {};
+            }
+            // 10. W-CALLI-PAD (Trazo caligráfico — dataURL PNG)
+            else if (item.dataset.widgetId === 'W-CALLI-PAD') {
+                responses[itemId] = widgetState.calliData[itemId] || '';
+            }
+            // 11. W-PORTFOLIO (Portafolio creativo)
+            else if (item.dataset.widgetId === 'W-PORTFOLIO') {
+                responses[itemId] = widgetState.portfolioData[itemId] || [];
+            }
+            // 12. W-CASE-ECOE (Estación ECOE)
+            else if (item.dataset.widgetId === 'W-CASE-ECOE') {
+                responses[itemId] = widgetState.ecoeCases[itemId] || { anamnesis: '', diagnosis: '', safety: '' };
+            }
+            // 13. W-MEDI-LAYOUT (Producción con panel de estímulo)
+            else if (item.dataset.widgetId === 'W-MEDI-LAYOUT') {
+                const ed = document.getElementById(`medi-editor-${itemId}`);
+                responses[itemId] = { text: ed ? ed.value : '', formal_penalty: parseFloat(item.dataset.formalPenalty || 0) };
+            }
+            // 14. W-OCR-PRO (Producción manuscrita — dataURL JPEG)
+            else if (item.dataset.widgetId === 'W-OCR-PRO') {
+                responses[itemId] = widgetState.ocrData[itemId] || '';
+            }
+            // 15. W-INSTR-SELECTOR (Entrada multimodal CertAcles)
+            else if (item.dataset.widgetId === 'W-INSTR-SELECTOR') {
+                const active = item.querySelector('.instr-input-panel:not(.d-none) .response-input-text');
+                responses[itemId] = active ? active.value : (widgetState.calliData[`instr-${itemId}`] || '');
+            }
+            // 16. W-PHILO-IPA (Editor fonético/diacrónico)
+            else if (item.dataset.widgetId === 'W-PHILO-IPA') {
+                const ed = document.getElementById(`ipa-editor-${itemId}`);
+                responses[itemId] = ed ? ed.value : '';
+            }
+            // 17. W-PHILO-ECDO (Editor ecdótico)
+            else if (item.dataset.widgetId === 'W-PHILO-ECDO') {
+                const text = document.getElementById(`ecdo-text-${itemId}`);
+                const apparatus = document.getElementById(`ecdo-apparatus-text-${itemId}`);
+                responses[itemId] = { text: text ? text.value : '', apparatus: apparatus ? apparatus.value : '' };
+            }
+            // 18. W-PHILO-OCR-PALE (Visor paleográfico)
+            else if (item.dataset.widgetId === 'W-PHILO-OCR-PALE') {
+                const trans = document.getElementById(`pale-transcription-${itemId}`);
+                const brach = document.getElementById(`pale-brachygraph-${itemId}`);
+                responses[itemId] = { transcription: trans ? trans.value : '', brachygraphy: brach ? brach.value : '' };
+            }
+            // 19. W-DOC-RESOURCES (Recursos IATE/UNTERM/CORPES + traducción)
+            else if (item.dataset.widgetId === 'W-DOC-RESOURCES') {
+                const ed = document.getElementById(`doc-res-editor-${itemId}`);
+                responses[itemId] = { text: ed ? ed.value : '', formal_penalty: parseFloat(item.dataset.formalPenalty || 0) };
+            }
+            // 20. W-AUDIO-INSTR (Reproductor institucional — solo registra plays)
+            else if (item.dataset.widgetId === 'W-AUDIO-INSTR') {
+                responses[itemId] = { listened: true };
             }
             // FALLBACK
             else {

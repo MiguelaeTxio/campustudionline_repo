@@ -649,6 +649,7 @@
 ./DOCS/MAINS/ATTACHEDS/CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V04.md
 ./DOCS/MAINS/CONTENT_PROMPTS.md
 ./DOCS/MAINS/CAMPUSTUDIONLINE_MASTER_DOCUMENT.md
+./validate_output.txt
 ./global_settings/templates/admin/global_settings/send_custom_email.html
 ./global_settings/admin.py
 ./global_settings/admin_views.py

@@ -62,278 +62,152 @@ La **Rama Ciencias de la Salud** queda **COMPLETAMENTE CERTIFICADA Y SINCRONIZAD
 
 ## 2. HOJA DE RUTA PARA LA PRÓXIMA SESIÓN (LEY SUPREMA - INELUDIBLE)
 
-**ESTADO DEL HITO:** EN PROGRESO — Fase de Implementación ACTIVA. Incidencia SUB-LIN-TRA-LIT resuelta (v5.9). Implementación S020/S021 en curso: 14/17 archivos completados.
-**FECHA DE ÚLTIMA ACTUALIZACIÓN:** 2026-05-24
-**OBJETIVO DE LA PRÓXIMA SESIÓN:** Completar los 3 archivos pendientes de la Fase de Implementación y ejecutar el primer despliegue real.
+**ESTADO DEL HITO:** EN PROGRESO — Fase de Implementación COMPLETADA S022. Pendiente certificación de fidelidad documental antes del primer despliegue.
+**FECHA DE ÚLTIMA ACTUALIZACIÓN:** 2026-05-25
+**OBJETIVO DE LA PRÓXIMA SESIÓN (S023):** TLA — Auditoría de fidelidad documental completa. Certificar que los 21 widgets de `exam_take.html` implementados en S020/S021/S022 coinciden fielmente con los 11 satélites de la constelación. Corregir cualquier desviación detectada. Solo tras la certificación se puede declarar el hito listo para primer despliegue real.
 
 ---
 
-### FASE DE IMPLEMENTACIÓN — ESTADO ACTUAL (S020/S021 — 2026-05-24)
+### FASE DE IMPLEMENTACIÓN — ESTADO ACTUAL (S022 — 2026-05-25)
 
-**ARCHIVOS COMPLETADOS (PEA/PMA — SYNTAX OK verificado):**
-1. `assessment_v2/models/main.py` ✅ — Migración `0020_hito6_v59_full_taxonomy` aplicada. Enums completos: 87 subarquetipos, ~130 subdivisiones, 23 widgets, 22 motores.
-2. `core/services/gemini_schemas.py` ✅ — Schemas Pydantic alineados con v5.9: `AcademicClassificationSchema` (87 IDs), `ContentSchema` (source_text, targets, initial_scenario, cloze_options), `GradingLogicSchema` (gap_solutions como Dict, rubric_axes, kill_switch).
-3. `core/services/gemini_service.py` ✅ — PMA quirúrgico: modelo corregido a `gemini-2.5-flash`, delay proactivo eliminado (0s), `classify_subject_identity` system_instruction actualizada con árbol de decisión completo de los 87 IDs certificados.
-4. `assessment_v2/services/engine/strategies/base.py` ✅ — PEA completo: 11 motores implementados (PRM-STRIKE con NO_NEGATIVE_MARKING, RBT-CANON, RBT-SHORT-LANG, CLO-OPEN, CLO-MULTI, MAT-LINK, CDS-KILL, DRA-HOLO, DRA-HOLO-LIT, BMT-SHIFT, ILC-CONTEXT, EV-PALE, RPP-TRAZA con planteamiento-primo-50%, DIA-INTERACT). Rigor matrix LVL×ITIN completa.
-5. `assessment_v2/services/engine/logic.py` ✅ — PEA completo: `AcademicDeductor` (Fases 1+2 híbridas, barrera de fuego ARCH_LANG), `GradingOrchestrator` (kill-switches ARCH_HEALTH/ARCH_HUM/ARCH_SOC, gating ARCH_LANG por puntos de corte variables, voz del catedrático por nivel/itinerario).
-6. `assessment_v2/services/engine/factory.py` ✅ — PEA completo: mapeo explícito de los 6 arquetipos, fallback SocialStrategy documentado.
-7. `assessment_v2/services/engine/strategies/languages.py` ✅ — PEA completo: 7 subarquetipos certificados con esqueletos específicos, motores EV-DIAC-VAL, EV-NORM-ANALYSIS, EV-TRA-PRECISION-TECH, rigor override NORM×1.7/PHILO×1.8, inmersión VEHICULAR/BILINGUAL/TOTAL.
-8. `assessment_v2/services/engine/strategies/health.py` ✅ — PEA completo: 18 subarquetipos certificados, protocolo ECOE (ITIN_ROT, 5 estaciones), CDS-KILL con kill_switch, rigor override FISIO-NEURO y VET-CIR.
-9. `assessment_v2/services/engine/strategies/humanities.py` ✅ — PEA completo: 6 subarquetipos certificados, motores EV-ICON-ART (Panofsky) y EV-MUS-ANAL, esqueletos bipartitos no compensables (ART-HIST).
-10. `assessment_v2/services/engine/strategies/science.py` ✅ — PEA completo: 15 subarquetipos certificados, esqueletos TEORÍA+CALC por subarquetipo.
-11. `assessment_v2/services/engine/strategies/social.py` ✅ — PEA completo: 19 subarquetipos certificados, FATAL VG (LO 1/2004 art. 44.5), bonus fuentes reales +20%, `_grade_dra_holo_social` con detección normativa.
-12. `assessment_v2/services/engine/strategies/tech.py` ✅ — PEA completo: 17 subarquetipos certificados, `_validate_technical_value` con tolerancia 1% y variantes pipe, ITIN_PROF normativo.
-13. `orchestrator/tasks.py` ✅ — PMA: sections_map indexado por orden (elimina colisiones), skeleton_json inyectado en prompt, TrackingService corregido a `gemini-2.5-flash`, quota exclusión estado ERROR.
-14. `assessment_v2/views.py` ✅ — PMA: clasificación síncrona eliminada de `ExamCreateView.post()` (única clasificación en `generate_exam_task`), `AcademicDeductor` eliminado de imports de views.
-15. `assessment_v2/services/quotas.py` ✅ — PMA: exámenes en estado ERROR excluidos del cómputo de cuota diaria y semanal.
+**17/17 ARCHIVOS COMPLETADOS (SYNTAX OK verificado):**
+1. `assessment_v2/models/main.py` ✅
+2. `core/services/gemini_schemas.py` ✅
+3. `core/services/gemini_service.py` ✅
+4. `assessment_v2/services/engine/strategies/base.py` ✅
+5. `assessment_v2/services/engine/logic.py` ✅
+6. `assessment_v2/services/engine/factory.py` ✅
+7. `assessment_v2/services/engine/strategies/languages.py` ✅
+8. `assessment_v2/services/engine/strategies/health.py` ✅
+9. `assessment_v2/services/engine/strategies/humanities.py` ✅
+10. `assessment_v2/services/engine/strategies/science.py` ✅
+11. `assessment_v2/services/engine/strategies/social.py` ✅
+12. `assessment_v2/services/engine/strategies/tech.py` ✅
+13. `orchestrator/tasks.py` ✅
+14. `assessment_v2/views.py` ✅
+15. `assessment_v2/services/quotas.py` ✅
+16. `assessment_v2/templates/assessment_v2/exam_take.html` ✅ — S022: 12 widgets nuevos implementados (W-AUDIO-INSTR, W-MUS-SCORE, W-ART-IDENT, W-CALLI-PAD, W-PORTFOLIO, W-PHILO-IPA, W-PHILO-ECDO, W-PHILO-OCR-PALE, W-DOC-RESOURCES, W-CASE-ECOE, W-MEDI-LAYOUT, W-OCR-PRO, W-INSTR-SELECTOR). Correcciones: W-OBJ-STRIKE (radio desactivado al tachar), W-AUDIO-INSTR (bloqueo hermético + Non-Scrubbing), submission controller completo (20 widgets). 0 errores djlint.
+17. `assessment_v2/templates/assessment_v2/exam_report.html` ✅ — S022: `item_score` y `justification` directa corregidos. 0 errores djlint.
+18. `assessment_v2/management/commands/validate_v06_engines.py` ✅ — S022: rediseñado para búsqueda dinámica en BD (~2.500 asignaturas). Usa `get_exam_skeleton()` (API real). Resultado: 47/82 ÉXITO, 35/82 SKIP (datos pendientes), 0 FALLOS de código.
 
-**ARCHIVOS PENDIENTES (próxima sesión S022):**
-- `assessment_v2/templates/assessment_v2/exam_take.html` — PEA: implementar los 12 widgets faltantes (W-MUS-SCORE, W-ART-IDENT, W-CALLI-PAD, W-PORTFOLIO, W-PHILO-IPA, W-PHILO-ECDO, W-PHILO-OCR-PALE, W-DOC-RESOURCES, W-CASE-ECOE, W-MEDI-LAYOUT, W-OCR-PRO, W-INSTR-SELECTOR), corregir W-AUDIO-INSTR (bloqueo hermético 2ª reproducción), W-TXT-CLOZE (marcadores [HUECO_ID_N]), W-OBJ-STRIKE (radio desactivado al tachar), Non-Scrubbing en reproductores.
-- `assessment_v2/templates/assessment_v2/exam_report.html` — PEA: corregir acceso `item_score` (no `score`), `justification` directa (no `feedback.justification`).
-- `assessment_v2/management/commands/validate_v06_engines.py` — PEA: actualizar tabla TARGETS con los 87 IDs certificados.
-
-**ACCIÓN INMEDIATA SESIÓN S022:** Arrancar directamente con el PEA de `exam_take.html`. Es el archivo más extenso y crítico para la experiencia del alumno.
+**MASTER DOCUMENT:** Sección 2.1.1 Logs del Servidor añadida con rutas PythonAnywhere.
 
 ---
 
-### CONSTELACIÓN DOCUMENTAL ACTIVA (v5.4)
+### S023 — AUDITORÍA TLA: FIDELIDAD DOCUMENTAL COMPLETA
+
+**CONTEXTO OBLIGATORIO:**
+La implementación de los 12 widgets nuevos en `exam_take.html` se realizó
+en S022 desde memoria de sesión sin contrastar sistemáticamente la totalidad
+de los 11 satélites. La auditoría es OBLIGATORIA antes de declarar el hito
+listo para despliegue. El modelo de S023 NO puede saltarse este paso bajo
+ningún argumento.
+
+**CRITERIO DE ÉXITO:** Cada uno de los 21 widgets de `exam_take.html` queda
+auditado y certificado contra su especificación en los satélites. Las
+desviaciones quedan documentadas y corregidas. Al cierre de S023 se declara
+formalmente la Fase de Implementación como CERTIFICADA.
+
+---
+
+#### PASO 0 — Carga obligatoria ANTES de auditar (NO NEGOCIABLE)
+
+Solicitar y leer íntegramente, en este orden:
+1. `exam_take.html` actual del servidor.
+2. Los 11 satélites completos (todos, sin excepción):
+   - `V06DOC_WIDGETS.md`
+   - `V06DOC_STRUCTURE.md`
+   - `V06DOC_TEMPLATES.md`
+   - `V06DOC_BINDING_GUIDELINE.md`
+   - `V06DOC_METADATA.md`
+   - `V06DOC_SUBARCHETYPES.md`
+   - `V06DOC_BLOCKS.md`
+   - `V06DOC_SUBDIVISIONS.md`
+   - `V06DOC_LOGIC_MAPPING.md`
+   - `V06DOC_LEVELS.md`
+   - `V06DOC_ARCHETYPES.md`
+
+**PROHIBIDO** comenzar la auditoría sin haber leído la totalidad de estos
+12 documentos. Trabajar desde memoria de sesión anterior es un ERROR CRÍTICO.
+
+---
+
+#### PASO 1 — Auditoría widget por widget (21 widgets)
+
+Para cada `widget_id` presente en `exam_take.html`, contrastar:
+
+**A. HTML (estructura visual)**
+- ¿Los campos, controles y layout coinciden con la especificación de
+  `V06DOC_WIDGETS` para ese `widget_id`?
+- ¿Los `data-*` attributes están presentes según `V06DOC_BINDING_GUIDELINE`?
+- ¿Las clases CSS son coherentes con `V06DOC_TEMPLATES`?
+
+**B. JavaScript (comportamiento)**
+- ¿El método de init/control en `AssessmentWidgets` implementa el
+  comportamiento de `V06DOC_WIDGETS`?
+- ¿El submission controller recoge la respuesta en el formato exacto de
+  `V06DOC_BLOCKS` para el motor correspondiente?
+- ¿`widgetState` almacena la estructura correcta según `V06DOC_METADATA`?
+
+**C. Binding**
+- ¿El `widget_id` HTML coincide exactamente con `V06DOC_BINDING_GUIDELINE`?
+- ¿El `block_type` asociado es coherente con `V06DOC_BLOCKS`?
+
+---
+
+#### PASO 2 — Registro de desviaciones
+
+Por cada desviación detectada, registrar:
+- `widget_id` afectado.
+- Satélite de referencia y sección exacta.
+- Descripción de la desviación.
+- Corrección a aplicar.
+
+---
+
+#### PASO 3 — Correcciones
+
+Aplicar todas las correcciones del PASO 2 mediante PMA/PMP según alcance.
+Relanzar `djlint --lint` al finalizar. 0 errores como condición de salida.
+
+---
+
+#### PASO 4 — Certificación
+
+Una vez auditados los 21 widgets y aplicadas todas las correcciones:
+- Actualizar este anexo marcando la Fase de Implementación como CERTIFICADA.
+- Declarar el hito listo para primer despliegue real.
+- Programar en el MASTER DOCUMENT el cambio de fase del Hito 6 a
+  Fase de Despliegue.
+
+---
+
+### CONSTELACIÓN DOCUMENTAL ACTIVA (v5.9)
 
 Los archivos satélite de la constelación V06 son:
-`V06DOC_ARCHETYPES.md`, `V06DOC_SUBARCHETYPES.md`, `V06DOC_BLOCKS.md`, `V06DOC_WIDGETS.md`, `V06DOC_LEVELS.md`, `V06DOC_SUBDIVISIONS.md`, `V06DOC_METADATA.md`, `V06DOC_STRUCTURE.md`, `V06DOC_BINDING_GUIDELINE.md`, `V06DOC_TEMPLATES.md`, `V06DOC_LOGIC_MAPPING.md`.
+`V06DOC_ARCHETYPES.md`, `V06DOC_SUBARCHETYPES.md`, `V06DOC_BLOCKS.md`,
+`V06DOC_WIDGETS.md`, `V06DOC_LEVELS.md`, `V06DOC_SUBDIVISIONS.md`,
+`V06DOC_METADATA.md`, `V06DOC_STRUCTURE.md`, `V06DOC_BINDING_GUIDELINE.md`,
+`V06DOC_TEMPLATES.md`, `V06DOC_LOGIC_MAPPING.md`.
 
-Ruta base de la constelación:
+Ruta base:
 `/home/MiguelAeTxio/PROJECTS/CampuStudiOnline/DOCS/MAINS/ATTACHEDS/DOCS_ATTACHED_2_ANNEX_V06/`
 
-**IMPORTANTE:** La investigación online en tiempo real contra las fuentes primarias UGR es la única fuente de verdad para la certificación de cada subarquetipo.
-
 ---
 
-### PROTOCOLO DE EJECUCIÓN OBLIGATORIO (PRÓXIMA SESIÓN)
+### NORMAS PERMANENTES — INAMOVIBLES
 
-**NORTE INAMOVIBLE:** CampuStudiOnline es un emulador de pruebas evaluativas universitarias. El alumno solicita ser evaluado de una asignatura y recibe una prueba que replica fielmente los criterios, estructura y baremos del examen oficial de esa asignatura en la UGR. Todo lo que no figure en la evaluación ordinaria o extraordinaria de la Guía Docente oficial **no se evalúa y no tiene cabida en la constelación.**
+**NORTE INAMOVIBLE:** CampuStudiOnline es un emulador de pruebas evaluativas
+universitarias. El alumno solicita ser evaluado de una asignatura y recibe
+una prueba que replica fielmente los criterios, estructura y baremos del
+examen oficial de esa asignatura en la UGR. Todo lo que no figure en la
+evaluación ordinaria o extraordinaria de la Guía Docente oficial no se
+evalúa y no tiene cabida en la constelación.
 
-**NORMA PERMANENTE — INAMOVIBLE — NO SE VUELVE A CONSULTAR:**
-*   Ante cualquier disyuntiva de aglutinar vs. segregar → **SIEMPRE SEGREGAR**.
-*   Nunca se aglutina bajo ningún argumento, en ninguna sesión, sin excepción.
-
-**PROHIBICIONES ABSOLUTAS HEREDADAS:**
-*   El modelo de la próxima sesión **NO PODRÁ INVENTAR NI SUPONER NADA** que no esté escrito en esta hoja de ruta o en la documentación satélite auditada.
-*   **NO** se permite el salto a otras ramas hasta que todos los subarquetipos de la Rama en curso alcancen Fidelidad 100% certificada por el usuario.
-*   **NO** se modificará ningún subarquetipo ya certificado salvo indicación explícita del usuario con el nombre exacto del subarquetipo a revisar.
-*   **NO** se crearán widgets ni motores adicionales sin investigación online previa contra las fuentes primarias UGR de la rama en curso.
-
----
-
-#### RAMA CIENCIAS SOCIALES Y JURÍDICAS — ✅ COMPLETAMENTE CERTIFICADA (v5.5 — 2026-04-27)
-
-Todos los pasos S1-S10 certificados y consolidados en  (secciones ## 2. RAMA: CIENCIAS SOCIALES Y JURÍDICAS) y  (secciones 5.1 a 5.26). Consultar el registro completo en el transcript de sesión 2026-04-26/27.
-
----
-
-#### RAMA CIENCIAS TÉCNICAS E INGENIERÍA — ✅ COMPLETAMENTE CERTIFICADA (v5.6 — 2026-04-28)
-
-Todos los pasos T1-T7 certificados y consolidados en `V06DOC_SUBARCHETYPES.md` (sección ## 4. RAMA: INGENIERÍA Y ARQUITECTURA) y `V06DOC_SUBDIVISIONS.md` (secciones 6.1 a 6.20).
-
-**Resultado final de segregación (7 originales → 16 certificados):**
-*   T1 — `SUB-TEC-SOFT` → `SUB-TEC-SOFT-ALG` + `SUB-TEC-SOFT-DS` + `SUB-TEC-SOFT-SE` (ETSIIT-UGR, aprobadas 30/06/2025)
-*   T2 — `SUB-TEC-CIVIL` → `SUB-TEC-CIVIL-STRUCT` + `SUB-TEC-CIVIL-CONC` + `SUB-TEC-CIVIL-STEEL` (ETSICCP-UGR, aprobadas 23/06/2025)
-*   T3 — `SUB-TEC-INDUS` → `SUB-TEC-INDUS-THERMO` + `SUB-TEC-INDUS-TMM` + `SUB-TEC-INDUS-DEM` (EPSC-UCO — nota vinculante: UGR no imparte Grado en Ingeniería Mecánica)
-*   T4 — `SUB-TEC-CHEM` → `SUB-TEC-CHEM-BAL` + `SUB-TEC-CHEM-REACT` (Grado Ingeniería Química UGR, aprobadas 2025-2026)
-*   T5 — `SUB-TEC-PROJ` → `SUB-TEC-PROJ-ARCH` + `SUB-TEC-PROJ-URB` (ETSAG-UGR, aprobadas 2025-2026)
-*   T6 — `SUB-TEC-CONS` → `SUB-TEC-CONS-TECH` + `SUB-TEC-CONS-MAN` (ETSIE-UGR, aprobadas 24/06/2025)
-*   T7 — `SUB-TEC-PURE` → `SUB-TEC-PURE-ANAL` + `SUB-TEC-PURE-ALGSTR` (Grado Matemáticas UGR, aprobadas 2025-2026)
-
-**FLUJO DE TRABAJO ACTIVO (consolidado 2026-04-27/28):** Investigación → Segregación → Bloques → PMA directo. Sin presentación intermedia en chat. Solo se detiene para la autorización del diff.
-
----
-
-#### RAMA CIENCIAS — ✅ COMPLETAMENTE CERTIFICADA (v5.7 — 2026-05-02)
-
-Todos los pasos C1-C6 certificados y consolidados en `V06DOC_SUBARCHETYPES.md` (sección ## 5. RAMA: CIENCIAS) y `V06DOC_SUBDIVISIONS.md` (secciones 7.1 a 7.15).
-
-**Resultado final de segregación (6 originales → 14 certificados):**
-*   C1 — `SUB-SCI-BIO` → `SUB-SCI-BIO-GEN` + `SUB-SCI-BIO-ZOO` + `SUB-SCI-BIO-ECO` (UGR Biología, aprobadas 24-25/06/2025)
-*   C2 — `SUB-SCI-CHEM` → `SUB-SCI-CHEM-ORG` + `SUB-SCI-CHEM-INORG` (UGR Química, aprobadas 24-26/06/2025)
-*   C3 — `SUB-SCI-PHYS` → `SUB-SCI-PHYS-EM` + `SUB-SCI-PHYS-QM` (UGR Física, aprobada 24/06/2025)
-*   C4 — `SUB-SCI-GEOL` → `SUB-SCI-GEOL-MIN` + `SUB-SCI-GEOL-STRAT` + `SUB-SCI-GEOL-MAP` (UGR Geología, aprobadas 18-30/06/2025)
-*   C5 — `SUB-SCI-ENV` → `SUB-SCI-ENV-RES` + `SUB-SCI-ENV-CONT` (UGR Ciencias Ambientales, aprobadas 23-27/06/2025)
-*   C6 — `SUB-SCI-DATA` → `SUB-SCI-DATA-STAT` + `SUB-SCI-DATA-ML` + `SUB-SCI-DATA-BIG` (UCM GIDIA — nota vinculante: UGR no dispone de guías docentes activas para el Grado en Ciencias de Datos e IA en 2025-2026; fuente primaria: Grado en Ingeniería de Datos e Inteligencia Artificial, Facultad de Informática, UCM — fichas docentes aprobadas 27/06/2025)
-
-**SIGUIENTE FASE: Rama Ciencias Sociales y Jurídicas — pasos S5 a S10 pendientes.**
-
----
-
-#### RAMA CIENCIAS SOCIALES Y JURÍDICAS — CERTIFICACIÓN S5-S10
-
-**OBJETIVO DE LA PRÓXIMA SESIÓN:** Certificar los pasos S5 a S10 en orden estricto e inamovible.
-
-**NORMAS PERMANENTES INAMOVIBLES:**
-*   Ante cualquier disyuntiva aglutinar vs. segregar → **SIEMPRE SEGREGAR**. Sin excepción. Sin consulta.
-*   **FLUJO DE TRABAJO:** Investigación → Segregación → Bloques → PMA directo. Sin presentación intermedia en chat. Solo se detiene para la autorización del diff.
-*   **NO** se permite el salto a otras ramas hasta que todos los subarquetipos de la Rama Ciencias alcancen Fidelidad 100%.
-*   **NO** se modifica ningún subarquetipo ya certificado salvo indicación explícita del usuario.
-*   Si la UGR no imparte el Grado prototipo para un subarquetipo → buscar en otras universidades andaluzas (UCO, UMA, US, UJA, UAL) comenzando por la más próxima al dominio.
-
-**PASOS DE CERTIFICACIÓN — RAMA CIENCIAS:**
-
-**PASO C1 — SUB-SCI-BIO (Biología — Taxonomía, ecología y genética)**
-*   **Fuentes a contrastar:** Guías Docentes del Grado en Biología UGR (Facultad de Ciencias). Asignaturas de Botánica, Zoología, Ecología, Genética. Identificar asignaturas troncales con evaluación certificada 2025-2026.
-*   **Segregación previsible:** Biología Celular/Genética vs. Ecología vs. Zoología/Botánica (norma permanente: segregar).
-*   **Documentos a actualizar:** `V06DOC_SUBARCHETYPES.md`, `V06DOC_SUBDIVISIONS.md`.
-
-**PASO C2 — SUB-SCI-CHEM (Química — Síntesis, inorgánica y orgánica pura)**
-*   **Fuentes a contrastar:** Guías Docentes del Grado en Química UGR (Facultad de Ciencias). Asignaturas de Química Orgánica, Química Inorgánica, Síntesis. Distinguir del SUB-TEC-CHEM (Ingeniería Química) ya certificado — este subarquetipo es Química pura.
-*   **Segregación previsible:** Química Orgánica vs. Química Inorgánica vs. Síntesis/Técnicas (norma permanente: segregar).
-*   **Nota vinculante:** No confundir con SUB-TEC-CHEM-BAL ni SUB-TEC-CHEM-REACT — esos son ingeniería de procesos. Este subarquetipo es Química básica/pura.
-*   **Documentos a actualizar:** `V06DOC_SUBARCHETYPES.md`, `V06DOC_SUBDIVISIONS.md`.
-
-**PASO C3 — SUB-SCI-PHYS (Física — Mecánica cuántica y electromagnetismo)**
-*   **Fuentes a contrastar:** Guías Docentes del Grado en Física UGR (Facultad de Ciencias). Asignaturas de Mecánica Cuántica, Electromagnetismo, Mecánica Clásica. Distinguir del SUB-TEC-PURE-ANAL (Análisis Matemático) ya certificado — este subarquetipo es Física pura.
-*   **Segregación previsible:** Mecánica Cuántica vs. Electromagnetismo vs. Mecánica Clásica/Estadística (norma permanente: segregar).
-*   **Documentos a actualizar:** `V06DOC_SUBARCHETYPES.md`, `V06DOC_SUBDIVISIONS.md`.
-
-**PASO C4 — SUB-SCI-GEOL (Geología — Mineralogía, estratigrafía y cartografía)**
-*   **Fuentes a contrastar:** Guías Docentes del Grado en Geología UGR (Facultad de Ciencias). Asignaturas de Mineralogía, Estratigrafía, Cartografía Geológica, Petrología.
-*   **Segregación previsible:** Mineralogía/Petrología vs. Estratigrafía vs. Cartografía Geológica (norma permanente: segregar).
-*   **Documentos a actualizar:** `V06DOC_SUBARCHETYPES.md`, `V06DOC_SUBDIVISIONS.md`.
-
-**PASO C5 — SUB-SCI-ENV (Ciencias Ambientales — Gestión de residuos y contaminación)**
-*   **Fuentes a contrastar:** Guías Docentes del Grado en Ciencias Ambientales UGR (Facultad de Ciencias). Asignaturas de Contaminación, Gestión de Residuos, Evaluación de Impacto Ambiental.
-*   **Segregación previsible:** Contaminación/Toxicología vs. Gestión de Residuos vs. EIA/Legislación ambiental (norma permanente: segregar).
-*   **Documentos a actualizar:** `V06DOC_SUBARCHETYPES.md`, `V06DOC_SUBDIVISIONS.md`.
-
-**PASO C6 — SUB-SCI-DATA (Ciencia de Datos — IA, Big Data y estadística computacional)**
-*   **Fuentes a contrastar:** Guías Docentes del Grado en Estadística UGR o Doble Grado Informática+Matemáticas UGR (Facultad de Ciencias). Verificar si la UGR imparte un Grado específico de Ciencia de Datos o si el prototipo más adecuado es el Grado en Estadística. Asignaturas de Aprendizaje Automático, Big Data, Estadística Computacional.
-*   **Nota vinculante:** Verificar la existencia del Grado en Ciencia de Datos en la UGR antes de buscar en otras universidades andaluzas.
-*   **Segregación previsible:** Aprendizaje Automático/IA vs. Big Data/Ingeniería de Datos vs. Estadística Computacional (norma permanente: segregar).
-*   **Documentos a actualizar:** `V06DOC_SUBARCHETYPES.md`, `V06DOC_SUBDIVISIONS.md`.
-
-**PASO S1 — SUB-SOC-LAW-PROC → ✅ CERTIFICADO (v5.5 — 2026-04-26)**
-*   Segregado en: `SUB-SOC-LAW-PROC-CIV` (Derecho Procesal Civil, Guías Docentes 2421121 y 2421137 Bloque Civil, UGR, aprobadas 17/06/2025) y `SUB-SOC-LAW-PROC-PEN` (Derecho Procesal Penal, Guía Docente 2421137 Bloque Penal, UGR, aprobada 17/06/2025).
-*   Documentos actualizados: `V06DOC_SUBARCHETYPES.md` (sección ## 2. RAMA: CIENCIAS SOCIALES Y JURÍDICAS) y `V06DOC_SUBDIVISIONS.md` (secciones 5.1 y 5.2).
-
-**PASO S2 — SUB-SOC-LAW-DICT → ✅ CERTIFICADO (v5.5 — 2026-04-26)**
-*   Segregado en: `SUB-SOC-LAW-DICT-CIV` (Derecho Civil I-IV, Guías Docentes 2421116/2421124/2421128/2421143, UGR, aprobadas 27/06/2025) y `SUB-SOC-LAW-DICT-PEN` (Derecho Penal I y II, Guías Docentes 242111A/2421122, UGR, aprobadas 26/06/2025). Sistema de evaluación certificado Derecho Penal II: examen final 70% (mínimo 3,5/7) + actividades 30% (mínimo 1,5/3).
-*   Documentos actualizados: `V06DOC_SUBARCHETYPES.md` y `V06DOC_SUBDIVISIONS.md` (secciones 5.3 y 5.4).
-
-**PASO S3 — SUB-SOC-ECON-QUAN → ✅ CERTIFICADO (v5.5 — 2026-04-26)**
-*   Segregado en: `SUB-SOC-ECON-QUAN-STAT` (Estadística y Técnicas Cuantitativas, Departamento de Métodos Cuantitativos UGR, aprobadas 25/06/2025) y `SUB-SOC-ECON-QUAN-ECON` (Econometría I-III: 2391131/2391136/2391141, Grado en Economía UGR, aprobadas 25/06/2025). Sistema de evaluación certificado Econometría I: prueba escrita 70% (mínimo 5/10) + evaluación continua 30%; extraordinaria: examen único 5T+5P.
-*   Documentos actualizados: `V06DOC_SUBARCHETYPES.md` y `V06DOC_SUBDIVISIONS.md` (secciones 5.5 y 5.6).
-
-**PASO S4 — SUB-SOC-ECON-MGMT → ✅ CERTIFICADO (v5.5 — 2026-04-26)**
-*   Segregado en tres subarquetipos: `SUB-SOC-ECON-MGMT-ACC` (Contabilidad Financiera I/II y de Gestión I, Guías Docentes 2351131/2351137, UGR, aprobadas 24/06/2025), `SUB-SOC-ECON-MGMT-STR` (Dirección Estratégica I/II: 2351135/2351139, Grado ADE UGR, aprobadas 23/06/2025; bibliografía certificada: Guerras y Navas 2022) y `SUB-SOC-ECON-MGMT-ECO` (Microeconomía I/II y Macroeconomía I/II, Grado en Economía/ADE UGR, aprobadas 2025).
-*   Sistema de evaluación certificado Contabilidad: evaluación continua con pruebas obligatorias; umbral mínimo 5/10 en parte teórica y 5/10 en parte teórico-práctica; extraordinaria: examen único con ambas partes.
-*   Documentos actualizados: `V06DOC_SUBARCHETYPES.md` y `V06DOC_SUBDIVISIONS.md` (secciones 5.7, 5.8 y 5.9).
-
-**PASO S5 — SUB-SOC-EDU-KIDS (Magisterio — Diseño de situaciones de aprendizaje y DUA)**
-*   **Fuentes a contrastar:** Guías Docentes del Grado en Educación Primaria e Infantil UGR (Facultad de Ciencias de la Educación). Asignaturas de Didáctica General, Diseño Curricular, Atención a la Diversidad (DUA).
-*   **Segregación previsible:** Educación Infantil vs. Educación Primaria, o Didáctica General vs. Atención a la Diversidad (norma permanente: segregar).
-*   **Documentos a actualizar:** `V06DOC_SUBARCHETYPES.md`, `V06DOC_SUBDIVISIONS.md`.
-
-**PASO S6 — SUB-SOC-EDU-SEC (Profesorado — Didáctica específica y normativa educativa)**
-*   **Fuentes a contrastar:** Guías Docentes del Máster en Profesorado de Educación Secundaria UGR. Asignaturas de Aprendizaje y Desarrollo de la Personalidad, Procesos y Contextos Educativos y las didácticas específicas por especialidad.
-*   **Nota:** Verificar si el scope es el Máster de Profesorado (MAES) o el Grado en Pedagogía — la diferencia es determinante para la fuente primaria.
-*   **Documentos a actualizar:** `V06DOC_SUBARCHETYPES.md`, `V06DOC_SUBDIVISIONS.md`.
-
-**PASO S7 — SUB-SOC-COMM-JOUR (Periodismo — Redacción, ética y análisis de medios)**
-*   **Fuentes a contrastar:** Guías Docentes del Grado en Periodismo UGR (Facultad de Comunicación y Documentación). Asignaturas de Redacción Periodística, Ética y Deontología, Teoría de la Comunicación.
-*   **Segregación previsible:** Redacción/Géneros periodísticos vs. Ética/Teoría vs. Análisis de medios (norma permanente: segregar).
-*   **Documentos a actualizar:** `V06DOC_SUBARCHETYPES.md`, `V06DOC_SUBDIVISIONS.md`.
-
-**PASO S8 — SUB-SOC-COMM-AV (Audiovisual — Guion, técnica de cámara y postproducción)**
-*   **Fuentes a contrastar:** Guías Docentes del Grado en Comunicación Audiovisual UGR. Asignaturas de Guion Audiovisual, Realización y Técnica de Cámara, Postproducción y Edición.
-*   **Segregación previsible:** Guion vs. Técnica/Realización vs. Postproducción (norma permanente: segregar).
-*   **Emulación parcial previsible:** Prácticas de rodaje y grabación presencial no emulables — declarar Emulación Parcial Certificada si se confirma en las guías.
-*   **Documentos a actualizar:** `V06DOC_SUBARCHETYPES.md`, `V06DOC_SUBDIVISIONS.md`.
-
-**PASO S9 — SUB-SOC-GEOG (Geografía — Análisis territorial, SIG y climatología)**
-*   **Fuentes a contrastar:** Guías Docentes del Grado en Geografía y Gestión del Territorio UGR (Facultad de Filosofía y Letras). Asignaturas de Geografía Física, Climatología, Análisis Territorial y Sistemas de Información Geográfica (SIG).
-*   **Segregación previsible:** Geografía Física/Climatología vs. Geografía Humana/Territorial vs. SIG/Cartografía (norma permanente: segregar).
-*   **Documentos a actualizar:** `V06DOC_SUBARCHETYPES.md`, `V06DOC_SUBDIVISIONS.md`.
-
-**PASO S10 — SUB-SOC-WORK (Trabajo Social — Intervención social, políticas y mediación comunitaria)**
-*   **Fuentes a contrastar:** Guías Docentes del Grado en Trabajo Social UGR (Facultad de Trabajo Social). Asignaturas de Métodos y Técnicas de Intervención Social, Política Social, Mediación Comunitaria.
-*   **Segregación previsible:** Intervención individual/familiar vs. Intervención comunitaria vs. Políticas sociales (norma permanente: segregar).
-*   **Documentos a actualizar:** `V06DOC_SUBARCHETYPES.md`, `V06DOC_SUBDIVISIONS.md`.
-
----
-
-### 3. CONTROL DE INTEGRIDAD — ESTADO DE LAS RAMAS
-
-**RAMA LENGUAS — CERRADA (v5.1/v5.2 — 2026-04-20/21):**
-*   `SUB-LIN-INSTR` — [CERTIFICADO v5.0 — 2026-04-19]
-*   `SUB-LIN-MINOR` — [CERTIFICADO v5.1 — 2026-04-20]
-*   `SUB-LIN-PHILO` — [CERTIFICADO v5.1 — 2026-04-20]
-*   `SUB-LIN-ECDO` — [CERTIFICADO v5.1 — 2026-04-20]
-*   `SUB-LIN-NORM` — [CERTIFICADO v5.1 — 2026-04-20]
-*   `SUB-LIN-TRA-TECH` — [CERTIFICADO v5.1 — 2026-04-20 / SINCRONIZADO v5.2 — 2026-04-21]
-*   `SUB-LIN-TRA-LIT` — [CERTIFICADO v5.1 — 2026-04-20 / SINCRONIZADO v5.2 — 2026-04-21]
-
-**RAMA HUMANIDADES — CERRADA (v5.3 — 2026-04-22):**
-*   `SUB-HUM-HIST` — [CERTIFICADO v5.3 — 2026-04-22]
-*   `SUB-HUM-PHIL` — [CERTIFICADO v5.3 — 2026-04-22]
-*   `SUB-HUM-ART-HIST` — [CERTIFICADO v5.3 — 2026-04-22]
-*   `SUB-HUM-ART-CREA` — [CERTIFICADO v5.3 — 2026-04-22] — Emulación Parcial Certificada
-*   `SUB-HUM-MUS` — [CERTIFICADO v5.3 — 2026-04-22]
-*   `SUB-HUM-ANTH` — [CERTIFICADO v5.3 — 2026-04-22] — Subarquetipo Transversal
-
-**RAMA CIENCIAS DE LA SALUD — CERRADA (v5.4 — 2026-04-25):**
-*   `SUB-SAN-MED-CLIN` — [CERTIFICADO v5.4 — 2026-04-25] — UGR Medicina
-*   `SUB-SAN-MED-BASIC` — [CERTIFICADO v5.4 — 2026-04-25] — UGR Medicina
-*   `SUB-SAN-MED-FISIO-GEN` — [CERTIFICADO v5.4 — 2026-04-25] — UGR Medicina
-*   `SUB-SAN-MED-FISIO-NEURO` — [CERTIFICADO v5.4 — 2026-04-25] — UGR Medicina
-*   `SUB-SAN-CUID` — [CERTIFICADO v5.4 — 2026-04-25] — UGR Enfermería
-*   `SUB-SAN-ODON` — [CERTIFICADO v5.4 — 2026-04-25] — UGR Odontología — Emulación Parcial Certificada
-*   `SUB-SAN-FISIO` — [CERTIFICADO v5.4 — 2026-04-25] — UGR Fisioterapia — Emulación Parcial Certificada
-*   `SUB-SAN-BIOQUIM` — [CERTIFICADO v5.4 — 2026-04-25] — UGR Farmacia — Emulación Parcial Certificada
-*   `SUB-SAN-FARM` — [CERTIFICADO v5.4 — 2026-04-25] — UGR Farmacia
-*   `SUB-SAN-PSY-DIAG` — [CERTIFICADO v5.4 — 2026-04-25] — UGR Psicología
-*   `SUB-SAN-PSY-EVAL` — [CERTIFICADO v5.4 — 2026-04-25] — UGR Psicología
-*   `SUB-SAN-PSY-MET` — [CERTIFICADO v5.4 — 2026-04-25] — UGR Psicología
-*   `SUB-SAN-PSY-STAT` — [CERTIFICADO v5.4 — 2026-04-25] — UGR Psicología
-*   `SUB-SAN-VET-CLIN` — [CERTIFICADO v5.4 — 2026-04-25] — UCO Veterinaria — Emulación Parcial Certificada
-*   `SUB-SAN-VET-CIR` — [CERTIFICADO v5.4 — 2026-04-25] — UCO Veterinaria — Emulación Parcial Certificada
-*   `SUB-SAN-NUT-DIET` — [CERTIFICADO v5.4 — 2026-04-25] — UGR Nutrición
-*   `SUB-SAN-NUT-BROM` — [CERTIFICADO v5.4 — 2026-04-25] — UGR Nutrición — Emulación Parcial Certificada
-*   `SUB-SAN-NUT-SPUB` — [CERTIFICADO v5.4 — 2026-04-25] — UGR Nutrición — Doble umbral vinculante (40% por bloque)
-
-**SINCRONIZACIÓN CONSTELACIÓN (v5.4 — 2026-04-25):**
-*   `V06DOC_SUBARCHETYPES.md` — [SINCRONIZADO v5.4 — 2026-04-25]: 18 bloques de la Rama Ciencias de la Salud completos.
-*   `V06DOC_SUBDIVISIONS.md` — [SINCRONIZADO v5.4 — 2026-04-25]: Secciones 4.1 a 4.18 añadidas con desglose competencial completo de todos los subarquetipos de la rama.
-
-**RAMA CIENCIAS SOCIALES Y JURÍDICAS — ✅ CERRADA (v5.5 — 2026-04-27):**
-*   S1-S10: todos los subarquetipos certificados y consolidados (secciones 5.1 a 5.26 de ).
-
-**RAMA CIENCIAS TÉCNICAS E INGENIERÍA — ✅ CERRADA (v5.6 — 2026-04-28):**
-*   `SUB-TEC-SOFT` → `SUB-TEC-SOFT-ALG` + `SUB-TEC-SOFT-DS` + `SUB-TEC-SOFT-SE` — [CERTIFICADO v5.6 — 2026-04-28] — ETSIIT-UGR
-*   `SUB-TEC-CIVIL` → `SUB-TEC-CIVIL-STRUCT` + `SUB-TEC-CIVIL-CONC` + `SUB-TEC-CIVIL-STEEL` — [CERTIFICADO v5.6 — 2026-04-28] — ETSICCP-UGR
-*   `SUB-TEC-INDUS` → `SUB-TEC-INDUS-THERMO` + `SUB-TEC-INDUS-TMM` + `SUB-TEC-INDUS-DEM` — [CERTIFICADO v5.6 — 2026-04-28] — EPSC-UCO
-*   `SUB-TEC-CHEM` → `SUB-TEC-CHEM-BAL` + `SUB-TEC-CHEM-REACT` — [CERTIFICADO v5.6 — 2026-04-28] — UGR Ingeniería Química
-*   `SUB-TEC-PROJ` → `SUB-TEC-PROJ-ARCH` + `SUB-TEC-PROJ-URB` — [CERTIFICADO v5.6 — 2026-04-28] — ETSAG-UGR
-*   `SUB-TEC-CONS` → `SUB-TEC-CONS-TECH` + `SUB-TEC-CONS-MAN` — [CERTIFICADO v5.6 — 2026-04-28] — ETSIE-UGR
-*   `SUB-TEC-PURE` → `SUB-TEC-PURE-ANAL` + `SUB-TEC-PURE-ALGSTR` — [CERTIFICADO v5.6 — 2026-04-28] — Grado Matemáticas UGR
-
-**SINCRONIZACIÓN CONSTELACIÓN (v5.6 — 2026-04-28):**
-*   `V06DOC_SUBARCHETYPES.md` — [SINCRONIZADO v5.6 — 2026-04-28]: Sección ## 4. RAMA: INGENIERÍA Y ARQUITECTURA añadida con 16 subarquetipos certificados (secciones 6.1 a 6.20).
-*   `V06DOC_SUBDIVISIONS.md` — [SINCRONIZADO v5.6 — 2026-04-28]: Secciones 6.1 a 6.20 añadidas con desglose competencial completo de todos los subarquetipos de la rama.
-
-**RAMA CIENCIAS — ✅ CERRADA (v5.7 — 2026-05-02):**
-*   `SUB-SCI-BIO` → `SUB-SCI-BIO-GEN` + `SUB-SCI-BIO-ZOO` + `SUB-SCI-BIO-ECO` — [CERTIFICADO v5.7 — 2026-04-28] — UGR Biología
-*   `SUB-SCI-CHEM` → `SUB-SCI-CHEM-ORG` + `SUB-SCI-CHEM-INORG` — [CERTIFICADO v5.7 — 2026-04-28] — UGR Química
-*   `SUB-SCI-PHYS` → `SUB-SCI-PHYS-EM` + `SUB-SCI-PHYS-QM` — [CERTIFICADO v5.7 — 2026-04-28] — UGR Física
-*   `SUB-SCI-GEOL` → `SUB-SCI-GEOL-MIN` + `SUB-SCI-GEOL-STRAT` + `SUB-SCI-GEOL-MAP` — [CERTIFICADO v5.7 — 2026-04-28] — UGR Geología
-*   `SUB-SCI-ENV` → `SUB-SCI-ENV-RES` + `SUB-SCI-ENV-CONT` — [CERTIFICADO v5.7 — 2026-04-28] — UGR Ciencias Ambientales
-*   `SUB-SCI-DATA` → `SUB-SCI-DATA-STAT` + `SUB-SCI-DATA-ML` + `SUB-SCI-DATA-BIG` — [CERTIFICADO v5.7 — 2026-05-02] — UCM GIDIA (nota vinculante: UGR no dispone de guías docentes activas para el Grado en Ciencias de Datos e IA en 2025-2026)
-
-**SINCRONIZACIÓN CONSTELACIÓN (v5.7 — 2026-05-02):**
-*   `V06DOC_SUBARCHETYPES.md` — [SINCRONIZADO v5.7 — 2026-05-02]: Sección ## 5. RAMA: CIENCIAS completa con 14 subarquetipos certificados.
-*   `V06DOC_SUBDIVISIONS.md` — [SINCRONIZADO v5.7 — 2026-05-02]: Secciones 7.1 a 7.15 añadidas con desglose competencial completo de todos los subarquetipos de la rama.
-
----
-
-**PROHIBICIONES ABSOLUTAS:**
-*   El modelo de la próxima sesión **NO PODRÁ INVENTAR NI SUPONER NADA** que no esté escrito en esta hoja de ruta o en la documentación satélite auditada.
-*   **NO** se permite el salto a otras ramas hasta que todos los subarquetipos de la Rama Ciencias alcancen Fidelidad 100% certificada por el usuario.
-*   **NO** se modificará ningún subarquetipo ya certificado salvo indicación explícita del usuario con el nombre exacto del subarquetipo a revisar.
-*   **NORMA PERMANENTE INAMOVIBLE:** Ante cualquier disyuntiva de aglutinar vs. segregar → SIEMPRE SEGREGAR. Sin excepción. Sin consulta.
-*   **FLUJO DE TRABAJO ACTIVO (consolidado 2026-04-27/28):** Investigación → Segregación → Bloques → PMA directo. Sin presentación intermedia en chat. Solo se detiene para la autorización del diff.
+- Ante cualquier disyuntiva de aglutinar vs. segregar → SIEMPRE SEGREGAR.
+- El modelo NO PODRÁ INVENTAR NI SUPONER NADA que no esté en la hoja de
+  ruta o en la documentación satélite auditada.
+- NO se modificará ningún subarquetipo ya certificado salvo indicación
+  explícita del usuario con el nombre exacto del subarquetipo a revisar.
+- NO se crearán widgets ni motores adicionales sin investigación online
+  previa contra las fuentes primarias UGR.
