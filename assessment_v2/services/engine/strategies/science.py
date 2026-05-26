@@ -133,7 +133,7 @@ class ScienceStrategy(BaseExamStrategy):
         if sid == 'SUB-SCI-BIO-GEN':
             return [
                 {
-                    'subdivision_id': 'SD_BIO_TEORÍA',
+                    'subdivision_id': 'SD_BIO_TEORIA',
                     'title': 'Fundamentos de Biología Molecular y Genética',
                     'instructions': 'Responda a las cuestiones teóricas sobre biología molecular y genética.',
                     'layout_mode': 'STANDARD',
@@ -168,7 +168,7 @@ class ScienceStrategy(BaseExamStrategy):
         elif sid == 'SUB-SCI-BIO-ZOO':
             return [
                 {
-                    'subdivision_id': 'SD_BIO_TEORÍA',
+                    'subdivision_id': 'SD_BIO_TEORIA',
                     'title': 'Sistemática y Taxonomía Biológica',
                     'instructions': 'Identifique los taxones y clasifique los organismos según criterios filogenéticos.',
                     'layout_mode': 'STANDARD',
@@ -202,7 +202,7 @@ class ScienceStrategy(BaseExamStrategy):
         elif sid == 'SUB-SCI-BIO-ECO':
             return [
                 {
-                    'subdivision_id': 'SD_BIO_TEORÍA',
+                    'subdivision_id': 'SD_BIO_TEORIA',
                     'title': 'Fundamentos de Ecología',
                     'instructions': 'Responda a las cuestiones teóricas sobre estructura y funcionamiento de ecosistemas.',
                     'layout_mode': 'STANDARD',
@@ -556,7 +556,7 @@ class ScienceStrategy(BaseExamStrategy):
                     'layout_mode': 'STANDARD',
                     'time_limit': 1200,
                     'items': [
-                        {'block_type': 'PRM-STRIKE', 'widget_id': 'W-OBJ-STRIKE', 'weight': 1.0, 'fail_logic': 'PENALTY', 'level_quisite': 'MANDATORY',
+                        {'block_type': 'PRM-STRIKE', 'widget_id': 'W-OBJ-STRIKE', 'weight': 1.0, 'fail_logic': 'PENALTY', 'level_requisite': 'MANDATORY',
                          'task_instruction': 'Genera 5 preguntas sobre algoritmos supervisados (regresión lineal/logística, SVM, árboles de decisión, k-NN), métricas de evaluación (accuracy, F1, AUC-ROC) y validación cruzada.'}
                     ]
                 },

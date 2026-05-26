@@ -1,16 +1,16 @@
 # /home/MiguelAeTxio/PROJECTS/CampuStudiOnline/assessment_v2/management/commands/validate_v06_engines.py
 """
 Management command: validate_v06_engines
-Validates that all 87 certified sub-archetypes have a functional exam engine by locating
+Validates that all 82 certified sub-archetypes have a functional exam engine by locating
 real subjects with generated material already in the database (no fixed list, no data population).
 Uses get_exam_skeleton() — the actual BaseExamStrategy API — instead of the non-existent get_section_plan().
-Complies with V06DOC_SUBARCHETYPES v5.9 (87 sub-archetypes) and V06DOC_STRUCTURE v5.9.
+Complies with V06DOC_SUBARCHETYPES v5.9 (82 sub-archetypes) and V06DOC_STRUCTURE v5.9.
 ---
 Comando de gestión: validate_v06_engines
-Valida que los 87 subarquetipos certificados tienen un motor de examen funcional, localizando
+Valida que los 82 subarquetipos certificados tienen un motor de examen funcional, localizando
 asignaturas reales con material ya generado en la base de datos (sin lista fija, sin poblar datos).
 Usa get_exam_skeleton() — la API real de BaseExamStrategy — en lugar del inexistente get_section_plan().
-Cumple con V06DOC_SUBARCHETYPES v5.9 (87 subarquetipos) y V06DOC_STRUCTURE v5.9.
+Cumple con V06DOC_SUBARCHETYPES v5.9 (82 subarquetipos) y V06DOC_STRUCTURE v5.9.
 """
 import time
 import logging
@@ -34,12 +34,12 @@ logging.getLogger("google").setLevel(logging.ERROR)
 class Command(BaseCommand):
     help = (
         'Validación V06 — Protocolo de Resiliencia Extrema. '
-        'Verifica los 87 motores certificados contra asignaturas reales en BD. '
+        'Verifica los 82 motores certificados contra asignaturas reales en BD. '
         'No requiere poblar datos: trabaja con el catálogo existente (~2.500 asignaturas).'
     )
 
-    # Catálogo certificado v5.9 — 87 subarquetipos agrupados por arquetipo
-    # Certified catalogue v5.9 — 87 sub-archetypes grouped by archetype
+    # Catálogo certificado v5.9 — 82 subarquetipos agrupados por arquetipo
+    # Certified catalogue v5.9 — 82 sub-archetypes grouped by archetype
     # Ref: V06DOC_SUBARCHETYPES.md (v5.9 — 2026-05-16)
     CERTIFIED_SUB_ARCHETYPES = {
         'ARCH_LANG': [

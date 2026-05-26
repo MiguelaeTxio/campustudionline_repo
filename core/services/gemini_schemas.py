@@ -154,7 +154,6 @@ class LocalizedSectionsSchema(BaseModel):
     SD_LIST: Optional[List[str]] = Field(default=None, description="[Título, Instrucción]")
     SD_WRIT: Optional[List[str]] = Field(default=None, description="[Título, Instrucción]")
     SD_SPEAK: Optional[List[str]] = Field(default=None, description="[Título, Instrucción]")
-    SD_MEDI: Optional[List[str]] = Field(default=None, description="[Título, Instrucción]")
     SD_THEO: Optional[List[str]] = Field(default=None)
     SD_CALC: Optional[List[str]] = Field(default=None)
 
@@ -181,8 +180,9 @@ class PairSchema(BaseModel):
 class GradingLogicSchema(BaseModel):
     feedback_justification: str = Field(description="Explicación pedagógica detallada de la solución correcta.")
     correct_answer: Optional[str] = Field(default=None, description="Solución correcta genérica (texto).")
-    gap_solutions: Optional[List[str]] = Field(default=None, description="Soluciones en orden para los huecos de W-TXT-CLOZE.")
+    gap_solutions: Optional[dict] = Field(default=None, description="Soluciones para los huecos de W-TXT-CLOZE. Dict {gap_id: respuesta_aceptada}. Acepta variantes separadas por '|' por hueco. Ref: V06DOC_BLOCKS Sección 3.1 (CLO-OPEN).")
     pairs: Optional[List[PairSchema]] = Field(default=None, description="Pares de vinculación para W-MIX-MATCH.")
+    step_matrix: Optional[List[str]] = Field(default=None, description="Etapas de resolución para RPP-TRAZA (motor multietapa con arrastre de error). Cada elemento es una etapa evaluable de forma independiente.")
 
 class MetadataSchema(BaseModel):
     competency_tag: str = Field(description="Etiqueta de competencia evaluada (ej: COMP_GEN, COMP_TRA, COMP_ESP, COMP_PROF).")

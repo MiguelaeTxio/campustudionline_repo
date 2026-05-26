@@ -162,9 +162,11 @@ class BaseExamStrategy(ABC):
             penalty = Decimal('0.0')
         else:
             # Standard UGR formula: A - E/(N-1) / Fórmula UGR estándar: A - E/(N-1)
+            # Negative score is returned raw so GradingOrchestrator aggregates correctly.
+            # El orquestador recorta a 0.0 a nivel de sección, no el motor por ítem.
             penalty = Decimal('1') / Decimal(str(n_options - 1))
 
-        score = max(Decimal('0.0'), Decimal('0.0') - penalty)
+        score = Decimal('0.0') - penalty
         return score, {
             'status': 'INCORRECT',
             'feedback_category': 'FB_CONCEPT',
@@ -755,6 +757,56 @@ class BaseExamStrategy(ABC):
             'f1_score': float(f1_score),
             'recall': float(recall),
             'precision': float(precision)
+        }
+
+    def _grade_ev_tra_precision(self, item, student_input) -> tuple:
+        """
+        EV-TRA-PRECISION motor: Terminological precision validation in specialized translation.
+        Validates lexical equivalences in technical/specialized domains against authority glossaries.
+        Evaluates univocity in the target language and register adequacy.
+        Full AI evaluation required — returns heuristic pending AI.
+        ---
+        Motor EV-TRA-PRECISION: Validación de precisión terminológica en traducción especializada.
+        Valida equivalencias léxicas en dominios técnico/especializados contra glosarios de autoridad.
+        Evalúa la univocidad en la lengua de llegada y la adecuación al registro meta.
+        Requiere evaluación completa por IA — devuelve heurística pendiente de IA.
+        Ref: V06DOC_BLOCKS Sección 3 (EV-TRA-PRECISION).
+        """
+        logic = item.grading_logic
+
+        student_text = str(student_input).strip() if not isinstance(student_input, dict) \
+            else str(student_input.get('text', '')).strip()
+
+        if not student_text:
+            return Decimal('0.0'), {
+                'status': 'OMITTED',
+                'feedback_category': 'FB_PROCEDURAL',
+                'justification': 'No se ha proporcionado ninguna traducción para evaluar.'
+            }
+
+        word_count = len(student_text.split())
+
+        # Keyword heuristic: validates presence of expected technical equivalences
+        # Heurística de keywords: valida la presencia de equivalencias técnicas esperadas
+        keywords = logic.get('keywords', [])
+        keyword_hits = sum(1 for kw in keywords if kw.lower() in student_text.lower())
+        keyword_ratio = (keyword_hits / len(keywords)) if keywords else 0.5
+
+        heuristic_score = Decimal(str(round(min(keyword_ratio, 1.0), 4)))
+
+        return heuristic_score, {
+            'status': 'PENDING_AI_ANALYSIS',
+            'feedback_category': 'FB_PROCEDURAL',
+            'justification': logic.get(
+                'feedback_justification',
+                f'Traducción especializada recibida ({word_count} palabras). '
+                f'Validación de precisión terminológica y univocidad en lengua meta pendiente de IA.'
+            ),
+            'word_count': word_count,
+            'keyword_hits': keyword_hits,
+            'total_keywords': len(keywords),
+            'heuristic_score': float(heuristic_score),
+            'pending_ai_refinement': True
         }
 
     def _grade_rpp_traza(self, item, student_input) -> tuple:

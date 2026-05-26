@@ -90,11 +90,13 @@
 <!-- MathJax for Engineering/Science Rendering -->
 <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
 <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+<!-- WanaKana.js — Romaji↔Kana conversion for SUB-LIN-MINOR Japanese -->
+<script src="https://unpkg.com/wanakana@5.3.1/umd/wanakana.min.js"></script>
 {% endblock %}
 
 {% block content %}
 {# djlint:off H025 #}
-<div class="container-fluid mt-4 px-4" id="exam-container" data-exam-uuid="{{ exam.uuid }}">
+<div class="container-fluid mt-4 px-4" id="exam-container" data-exam-uuid="{{ exam.uuid }}" data-target-lang="{{ exam.target_language_code|default:'es' }}">
     {# TECHNICAL HEADER (V06DOC_TEMPLATES) #}
     {# CABECERA TÉCNICA (V06DOC_TEMPLATES) #}
     <div class="mb-4">
@@ -1711,6 +1713,119 @@
         // ── W-INSTR-SELECTOR: Conmutador de modo de entrada multimodal
         // Multimodal input mode switcher for CertAcles
         initInstrSelector: function() {
+
+            // ================================================================
+            // TRANSLITERATION ENGINE — SUB-LIN-MINOR (Occidental Mode)
+            // Motor de transliteración — Modo Occidentalización
+            // Ref: V06DOC_WIDGETS W-INSTR-SELECTOR, V06DOC_SUBARCHETYPES SUB-LIN-MINOR
+            // ================================================================
+
+            // ISO 233-3 Arabic transliteration map / Mapa de transliteración árabe ISO 233-3
+            const ARABIC_MAP = {
+                'th': 'ث', 'kh': 'خ', 'dh': 'ذ', 'sh': 'ش', 'gh': 'غ',
+                'a': 'ا', 'b': 'ب', 't': 'ت', 'j': 'ج', 'h': 'ح',
+                'd': 'د', 'r': 'ر', 'z': 'ز', 's': 'س', 'T': 'ط',
+                'Z': 'ظ', 'c': 'ع', 'f': 'ف', 'q': 'ق', 'k': 'ك',
+                'l': 'ل', 'm': 'م', 'n': 'ن', 'w': 'و', 'y': 'ي',
+                'i': 'ِ', 'u': 'ُ', 'A': 'آ', 'H': 'ه', 'x': 'خ'
+            };
+
+            // ISO 843 Greek transliteration map / Mapa de transliteración griego ISO 843
+            const GREEK_MAP = {
+                'th': 'θ', 'ch': 'χ', 'ps': 'ψ',
+                'a': 'α', 'v': 'β', 'g': 'γ', 'd': 'δ', 'e': 'ε',
+                'z': 'ζ', 'i': 'η', 'k': 'κ', 'l': 'λ', 'm': 'μ',
+                'n': 'ν', 'x': 'ξ', 'o': 'ο', 'p': 'π', 'r': 'ρ',
+                's': 'σ', 't': 'τ', 'y': 'υ', 'f': 'φ', 'o2': 'ω',
+                'A': 'Α', 'V': 'Β', 'G': 'Γ', 'D': 'Δ', 'E': 'Ε',
+                'Z': 'Ζ', 'I': 'Η', 'K': 'Κ', 'L': 'Λ', 'M': 'Μ',
+                'N': 'Ν', 'X': 'Ξ', 'O': 'Ο', 'P': 'Π', 'R': 'Ρ',
+                'S': 'Σ', 'T': 'Τ', 'Y': 'Υ', 'F': 'Φ', 'C': 'Χ',
+                'O2': 'Ω'
+            };
+
+            /**
+             * Applies multi-char-first transliteration from a map.
+             * Aplica transliteración priorizando secuencias de varios caracteres.
+             */
+            function applyTranslitMap(text, map) {
+                let result = '';
+                let i = 0;
+                while (i < text.length) {
+                    // Try 2-char sequences first / Intentar secuencias de 2 caracteres primero
+                    const two = text.slice(i, i + 2);
+                    const one = text[i];
+                    if (map[two] !== undefined) {
+                        result += map[two];
+                        i += 2;
+                    } else if (map[one] !== undefined) {
+                        result += map[one];
+                        i += 1;
+                    } else {
+                        result += one;
+                        i += 1;
+                    }
+                }
+                return result;
+            }
+
+            /**
+             * Binds live transliteration to a textarea for the given language.
+             * Vincula la transliteración en tiempo real a un textarea para el idioma dado.
+             */
+            function bindOccidentalInput(textarea, langCode) {
+                if (!textarea) return;
+
+                // Japanese: delegate to WanaKana (romaji → hiragana/katakana)
+                // Japonés: delegar a WanaKana (romaji → hiragana/katakana)
+                if (langCode === 'ja') {
+                    if (window.wanakana) {
+                        wanakana.bind(textarea, { IMEMode: true });
+                        textarea.placeholder = 'Escriba en romaji — conversión automática a kana (wanakana). Ej: ha → は, ka → か';
+                    } else {
+                        textarea.placeholder = 'Escriba en romaji (kana). WanaKana no disponible — verifique la conexión.';
+                    }
+                    return;
+                }
+
+                // Arabic: live substitution via ISO 233-3 map
+                // Árabe: sustitución en tiempo real via mapa ISO 233-3
+                if (langCode === 'ar') {
+                    textarea.placeholder = 'Escriba en transliteración ISO 233-3. Ej: b→ب, th→ث, sh→ش, gh→غ';
+                    textarea.addEventListener('input', function() {
+                        const pos = this.selectionStart;
+                        const converted = applyTranslitMap(this.value, ARABIC_MAP);
+                        if (converted !== this.value) {
+                            this.value = converted;
+                            this.setSelectionRange(pos, pos);
+                        }
+                    });
+                    return;
+                }
+
+                // Modern Greek: live substitution via ISO 843 map
+                // Griego moderno: sustitución en tiempo real via mapa ISO 843
+                if (langCode === 'el') {
+                    textarea.placeholder = 'Escriba en romanización ISO 843. Ej: a→α, th→θ, ps→ψ, ch→χ';
+                    textarea.addEventListener('input', function() {
+                        const pos = this.selectionStart;
+                        const converted = applyTranslitMap(this.value, GREEK_MAP);
+                        if (converted !== this.value) {
+                            this.value = converted;
+                            this.setSelectionRange(pos, pos);
+                        }
+                    });
+                    return;
+                }
+
+                // Czech and Latin-script languages: native OS keyboard suffices
+                // Checo y lenguas de escritura latina: teclado nativo del SO es suficiente
+                textarea.placeholder = 'Escriba directamente en el idioma objetivo. Use el teclado nativo del sistema para los diacríticos.';
+            }
+
+            // ================================================================
+            // MODE SWITCHER — W-INSTR-SELECTOR
+            // ================================================================
             document.querySelectorAll('.instr-mode-btn').forEach(btn => {
                 btn.addEventListener('click', function() {
                     const selector = this.closest('[id^="instr-mode-selector-"]');
@@ -1722,10 +1837,28 @@
                         const panel = document.getElementById(`instr-${m}-${itemId}`);
                         if (panel) panel.classList.toggle('d-none', m !== mode);
                     });
+
                     // Inicializar canvas de trazos si es la primera vez
                     // Initialize stroke canvas on first activation
                     if (mode === 'strokes') {
                         AssessmentWidgets.calliPad.init(`instr-canvas-${itemId}`, `instr-${itemId}`);
+                    }
+
+                    // Activar motor de transliteración al entrar en modo occidental
+                    // Activate transliteration engine when entering occidental mode
+                    if (mode === 'occidental') {
+                        const panel = document.getElementById(`instr-occidental-${itemId}`);
+                        if (!panel) return;
+                        // Detectar idioma objetivo del examen desde el atributo data del contenedor
+                        // Detect target language from exam container data attribute
+                        const examContainer = document.getElementById('exam-container');
+                        const langCode = examContainer ? (examContainer.dataset.targetLang || 'es') : 'es';
+                        const textarea = panel.querySelector('textarea');
+                        // Bind solo una vez / Bind only once
+                        if (textarea && !textarea.dataset.translitBound) {
+                            bindOccidentalInput(textarea, langCode);
+                            textarea.dataset.translitBound = 'true';
+                        }
                     }
                 });
             });

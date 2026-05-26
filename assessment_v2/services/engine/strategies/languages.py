@@ -123,6 +123,11 @@ class LanguagesStrategy(BaseExamStrategy):
             # Motor de precisión traductológica FTI-UGR (jerarquía de errores A/B/C)
             return self._grade_ev_tra_precision_tech(item, student_input)
 
+        elif block_type == 'EV-TRA-PRECISION':
+            # General terminological precision motor (specialized translation domains)
+            # Motor de precisión terminológica general (dominios de traducción especializada)
+            return self._grade_ev_tra_precision(item, student_input)
+
         # Fallback / Fallback
         return Decimal('0.0'), {
             'status': 'MOTOR_NOT_IMPLEMENTED',

@@ -117,7 +117,7 @@ class Exam(models.Model):
         SUB_SOC_WORK_POL       = 'SUB-SOC-WORK-POL',        _('Trabajo Social: Política Social y Bienestar')
         SUB_SOC_WORK_MED       = 'SUB-SOC-WORK-MED',        _('Trabajo Social: Mediación y Ámbitos Especializados')
 
-        # --- RAMA INGENIERÍA Y ARQUITECTURA (16) ---
+        # --- RAMA INGENIERÍA Y ARQUITECTURA (17) ---
         SUB_TEC_SOFT_ALG   = 'SUB-TEC-SOFT-ALG',   _('Algoritmia y Estructuras de Datos (ETSIIT-UGR)')
         SUB_TEC_SOFT_DS    = 'SUB-TEC-SOFT-DS',    _('Diseño de Software e Ingeniería (ETSIIT-UGR)')
         SUB_TEC_SOFT_SE    = 'SUB-TEC-SOFT-SE',    _('Ingeniería del Software (ETSIIT-UGR)')

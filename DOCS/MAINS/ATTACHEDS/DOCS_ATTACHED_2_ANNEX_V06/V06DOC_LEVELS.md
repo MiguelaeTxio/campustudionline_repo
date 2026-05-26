@@ -76,3 +76,60 @@ En cumplimiento de la normativa de los departamentos de Filología de la UGR par
 *   **ITIN_MAIOR (PHILO) + LVL_C:**
     *   **Rigor Engine:** x1.8 (Máxima exigencia académica).
     *   **Configuración:** Evaluación de la etiología del cambio lingüístico. Tolerancia cero a errores en la reconstrucción formal y en la cronología relativa (CHRONO_STRICT). El alumno debe demostrar una capacidad de razonamiento diacrónico equivalente a un egresado de Grado de la UGR.
+
+---
+
+## 5. ITINERARIO DOCENTE (ITIN_DOC) — CERTIFICACIÓN v5.9 [NUEVO 2026]
+
+### 5.1. Definición y Ámbito de Aplicación
+
+El itinerario `ITIN_DOC` (Itinerario Docente) es un itinerario certificado con identidad propia, aplicable exclusivamente a asignaturas de las ramas de **Ciencias de la Educación**: Grado en Educación Infantil, Grado en Educación Primaria, Dobles Grados con Educación, y Máster de Profesorado de Educación Secundaria (MAES). Su existencia responde a la naturaleza evaluativa diferencial de estas titulaciones, verificada contra guías docentes reales de la UGR 2024-2025.
+
+**Base documental de certificación:**
+*   Guías docentes del Grado en Educación Primaria UGR 2024-2025 (asignaturas: Didáctica: Teoría y Práctica de la Enseñanza, Diseño y Desarrollo del Currículum de Matemáticas, Didáctica de la Lengua Española I y II).
+*   Guías docentes del MAES UGR 2024-2025 (Procesos y Contextos Educativos — modalidad Granada, Ceuta y Melilla).
+*   Marco normativo vigente: LOMLOE, Real Decreto 157/2022 (currículo Educación Primaria), Real Decreto 217/2022 (currículo ESO y Bachillerato), Resolución DUA 2022.
+
+### 5.2. Perfil Evaluativo Certificado
+
+Las guías docentes de las titulaciones de Educación presentan un perfil evaluativo específico que no encaja en ninguno de los cinco itinerarios preexistentes:
+
+*   **Competencia central evaluada:** Transposición didáctica — capacidad de transformar el saber sabio en saber enseñado, adaptado a la etapa educativa, la diversidad del aula y el marco normativo vigente.
+*   **Instrumentos de evaluación reales:** planificaciones didácticas, situaciones de aprendizaje, unidades didácticas, casos simulados de aula con fundamentación normativa, test de terminología pedagógica, emparejamiento metodológico (método → autor / técnica → etapa).
+*   **Marco normativo transversal obligatorio:** LOMLOE, DUA (Diseño Universal para el Aprendizaje), competencias clave y competencias específicas del currículo vigente, perfiles de salida.
+
+### 5.3. Emulabilidad Digital Certificada
+
+Todos los instrumentos del perfil evaluativo de ITIN_DOC son emulables con la infraestructura de widgets y motores existente en V06. No requiere widgets ni motores nuevos:
+
+| Instrumento evaluativo | Motor | Widget |
+|---|---|---|
+| Situación de aprendizaje / Unidad didáctica | DRA-HOLO | W-HUM-TEXT |
+| Caso simulado con fundamentación normativa | DRA-HOLO | W-LAW-NAV |
+| Test de terminología pedagógica | PRM-STRIKE | W-OBJ-STRIKE |
+| Emparejamiento método → autor / técnica → etapa | MAT-LINK | W-MIX-MATCH |
+| Diseño de actividades con rúbrica | DRA-HOLO | W-HUM-TEXT |
+
+### 5.4. Matriz de Rigor ITIN_DOC
+
+El itinerario ITIN_DOC opera con los siguientes parámetros en la matriz de intersección LVL × ITIN:
+
+*   **ITIN_DOC + LVL_A:**
+    *   **Rigor Engine:** x0.9.
+    *   **Configuración:** Identificación de conceptos didácticos básicos y reconocimiento de etapas educativas. Tolerancia a la imprecisión terminológica si la intención pedagógica es clara.
+
+*   **ITIN_DOC + LVL_B:**
+    *   **Rigor Engine:** x1.1.
+    *   **Configuración:** Diseño de situaciones de aprendizaje funcionales. Exigencia de coherencia entre competencias, criterios de evaluación y saberes básicos según el marco LOMLOE. Referencia obligatoria al DUA cuando la situación lo requiera.
+
+*   **ITIN_DOC + LVL_C:**
+    *   **Rigor Engine:** x1.4.
+    *   **Configuración:** Transposición didáctica de nivel experto. Exigencia de fundamentación bibliográfica con autores del campo (Gimeno Sacristán, Zabalza, Perrenoud, Scriven). Uso obligatorio del metalenguaje didáctico-curricular (saber sabio/enseñado, transposición, situación de aprendizaje, perfil de salida, criterio de evaluación, descriptor operativo). La ausencia de referencia normativa vigente (LOMLOE, RD 157/2022 o RD 217/2022 según la etapa) anula el ítem (FAIL_LOGIC: FATAL).
+
+### 5.5. Regla de Deducción Automática
+
+El `AcademicDeductor` (`logic.py`) asigna `ITIN_DOC` automáticamente cuando la rama de la asignatura contiene las palabras clave: `educación`, `educacion`, `magisterio`, `didáctica`, `didactica`, `pedagogía`, `pedagogia`, `docent`. Esta regla está implementada y certificada en V1.3 de V06DOC_LOGIC_MAPPING.
+
+### 5.6. Nota de Versión
+
+`ITIN_DOC` fue implementado en la Fase de Implementación del Hito 6 (S020-S022) y certificado formalmente en S023 tras contraste con guías docentes reales de la UGR 2024-2025 y verificación de emulabilidad digital completa.

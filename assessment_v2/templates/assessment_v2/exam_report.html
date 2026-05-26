@@ -18,6 +18,19 @@
         </div>
     </div>
 
+    {# VOZ DEL CATEDRÁTICO (V06DOC_METADATA Sección 6 — qualitative_summary) #}
+    {% if submission.grading_report.qualitative_summary %}
+    <div class="card mb-4 border-primary shadow-sm">
+        <div class="card-header bg-primary text-white d-flex align-items-center gap-2">
+            <i class="bi bi-mortarboard-fill"></i>
+            <strong>{% trans "Valoración del Catedrático" %}</strong>
+        </div>
+        <div class="card-body bg-light fst-italic text-dark">
+            <p class="mb-0">{{ submission.grading_report.qualitative_summary }}</p>
+        </div>
+    </div>
+    {% endif %}
+
     <h3 class="h5 border-bottom mb-3">{% trans "Desglose por Bloques (Informe del Catedrático)" %}</h3>
     
     {# FIX INCIDENCIA 35: Iteración robusta sobre el reporte JSON dinámico #}
@@ -46,18 +59,18 @@
                             <em>"{{ item_report.justification|default:item_report.detail|default:"Evaluación completada." }}"</em>
                         </p>
                         
-                        {% if item_report.feedback.kill_switch_activated %}
+                        {% if item_report.kill_switch_activated %}
                         <div class="alert alert-danger mt-2 py-1 mb-0">
                             <strong>{% trans "KILL SWITCH ACTIVADO:" %}</strong> {% trans "Fallo crítico de seguridad anula esta sección." %}
                         </div>
                         {% endif %}
                         
                         {# FIX H021: Uso de clase 'small' en lugar de estilo en línea #}
-                        {% if item_report.feedback.trace %}
+                        {% if item_report.trace %}
                         <div class="mt-2 font-monospace text-muted small">
                             <strong>{% trans "Traza de Ejecución:" %}</strong>
                             <ul class="mb-0 ps-3">
-                            {% for trace_step in item_report.feedback.trace %}
+                            {% for trace_step in item_report.trace %}
                                 <li>{{ trace_step }}</li>
                             {% endfor %}
                             </ul>

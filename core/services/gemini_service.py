@@ -91,10 +91,16 @@ def clean_json_response(raw_text: str) -> str:
 # --- Public Functions ---
 
 def generate_text_content(prompt: str, api_key: ApiKey, task_id: str = None, system_instruction: str = None, response_schema: dict = None) -> Tuple[bool, str, str, dict]:
+    """
+    [V7-Stateless-SDKv1] Generates text content using the active Gemini model.
+    Supports Structured Outputs via response_schema (Pydantic or JSON Schema).
+    Returns a tuple: (success, text_or_error, api_key_name, usage_metadata).
+    ---
+    Genera contenido de texto usando el modelo Gemini activo.
+    Soporta Structured Outputs mediante response_schema (Pydantic o JSON Schema).
+    Devuelve una tupla: (exito, texto_o_error, nombre_clave, metadatos_uso).
+    """
     usage_metadata = {"input_tokens": 0, "output_tokens": 0}
-    """
-    [V7-Stateless-SDKv1] Genera texto usando Gemini 3.1 Pro Preview.
-    """
     close_old_connections()
     
     # Configuración base (Sin temperatura forzada para Gemini 3)
