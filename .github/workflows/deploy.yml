@@ -1,0 +1,147 @@
+name: Deploy CampuStudiOnline to PythonAnywhere
+
+# Despliegue automatico completo, creado 2026-07-24 en el marco de la
+# migracion de CampuStudiOnline al flujo NFS (edicion directa contra
+# GitHub), replicando el patron ya probado de EnterpriseBot. Se
+# dispara en cada push a main. Hace, en este orden: git pull en el
+# servidor via SSH, migrate --noinput, collectstatic --noinput
+# --clear, reload de la web app via API de PythonAnywhere, y reinicio
+# CONDICIONAL de las dos Always-on Tasks reales de CampuStudiOnline
+# (Primario id 182748, Pesado id 209547) segun el diff del push --
+# ver el paso "Reiniciar Always-on Tasks" para el patron exacto.
+# Nunca corre makemigrations (los archivos de migracion se generan y
+# revisan siempre en el workspace de Claude antes de pushear, nunca
+# en el servidor -- ver com-migrations seccion 1).
+#
+# NOTA sobre las etiquetas "Beat + Chat + Notificaciones" (Primario) /
+# "IA + Generacion" (Pesado) que aparecen en el panel de PythonAnywhere:
+# esas etiquetas las puso Gemini al construir la plataforma, no
+# reflejan necesariamente el enrutado real de colas. Auditoria real
+# contra CELERY_TASK_ROUTES en core/settings.py (2026-07-24): solo
+# 'orchestrator.tasks.generate_exam_task' esta enrutada a
+# 'high_priority' (Primario) -- todo lo demas (incluidos
+# academic_chat/tasks.py, messaging/tasks.py y schedule/tasks.py, pese
+# a lo que sugiere la etiqueta "Chat + Notificaciones") cae en la cola
+# 'default' por CELERY_TASK_DEFAULT_QUEUE, consumida por el worker
+# Pesado. Los patrones de este workflow siguen el enrutado REAL, no
+# las etiquetas. No se ha tocado el enrutado de colas en si -- es una
+# discrepancia solo de etiquetado, dejada anotada aqui.
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Preparar clave SSH dedicada
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.PA_SSH_PRIVATE_KEY }}" > ~/.ssh/pa_deploy_key
+          chmod 600 ~/.ssh/pa_deploy_key
+          ssh-keyscan -H ssh.pythonanywhere.com >> ~/.ssh/known_hosts
+
+      - name: git pull + migrate + collectstatic en PythonAnywhere
+        # set -o pipefail en el shell EXTERIOR de la Action (no basta
+        # con el `set -e` de dentro del script remoto de ssh) -- misma
+        # correccion que EnterpriseBot aplico tras su incidente S014,
+        # aplicada aqui desde el primer commit para no repetirlo.
+        run: |
+          set -o pipefail
+          ssh -i ~/.ssh/pa_deploy_key MiguelAeTxio@ssh.pythonanywhere.com '
+            set -e
+            cd /home/MiguelAeTxio/PROJECTS/CampuStudiOnline
+            OLD_HEAD=$(git rev-parse HEAD)
+            echo "--- git pull ---"
+            git pull origin main
+            NEW_HEAD=$(git rev-parse HEAD)
+            source /home/MiguelAeTxio/.virtualenvs/campus_pa_env_py3.10/bin/activate
+            echo "--- migrate ---"
+            python -m dotenv run python manage.py migrate --noinput
+            echo "--- collectstatic ---"
+            python -m dotenv run python manage.py collectstatic --noinput --clear
+            echo "--- CHANGED_FILES_START ---"
+            git diff --name-only "$OLD_HEAD" "$NEW_HEAD"
+            echo "--- CHANGED_FILES_END ---"
+          ' | tee /tmp/deploy_output.txt
+
+      - name: Recargar la web app (API PythonAnywhere)
+        if: success()
+        run: |
+          curl -sf --max-time 60 -X POST \
+            "https://www.pythonanywhere.com/api/v0/user/MiguelAeTxio/webapps/www.campustudionline.com/reload/" \
+            -H "Authorization: Token ${{ secrets.PA_API_TOKEN }}"
+          echo "--- Reload solicitado OK ---"
+
+      - name: Reiniciar Always-on Tasks si el push las afecta
+        # IDs reales de las Always-on Tasks de CampuStudiOnline
+        # (confirmados por Miguel Angel via URL de log, 2026-07-24):
+        #   182748 -- Primario: worker high_priority (hp_worker) + Beat
+        #   209547 -- Pesado: worker default,content_automation (heavy_worker)
+        #
+        # Patrones derivados de la auditoria real de tasks.py y de
+        # CELERY_TASK_ROUTES (core/settings.py), no de las etiquetas
+        # del panel -- ver nota al inicio de este archivo.
+        if: success()
+        run: |
+          set -o pipefail
+          CHANGED=$(sed -n '/--- CHANGED_FILES_START ---/,/--- CHANGED_FILES_END ---/p' /tmp/deploy_output.txt | sed '1d;$d')
+          {
+            echo "Archivos cambiados en este despliegue:"
+            echo "$CHANGED"
+            echo ""
+
+            if echo "$CHANGED" | grep -qE '^(orchestrator/tasks\.py|orchestrator/models\.py|orchestrator/signals\.py|core/celery\.py|core/settings\.py|core/services/gemini_service\.py|core/services/gemini_schemas\.py|core/services/prompt_generators\.py|academic_structure/models\.py|users/models\.py|contents/models\.py|contents/services/navigation_builder\.py|messaging/push_utils\.py)'; then
+              echo "--- Primario: cambios relevantes detectados, reiniciando (id 182748) ---"
+              curl -sf --max-time 60 -X POST "https://www.pythonanywhere.com/api/v0/user/MiguelAeTxio/always_on/182748/restart/" \
+                -H "Authorization: Token ${{ secrets.PA_API_TOKEN }}"
+              echo ""
+              echo "Primario: reinicio solicitado OK."
+            else
+              echo "Primario: sin cambios relevantes, no se reinicia."
+            fi
+
+            if echo "$CHANGED" | grep -qE '^(orchestrator/|content_automation/|academic_chat/tasks\.py|academic_chat/models\.py|messaging/tasks\.py|messaging/push_utils\.py|schedule/tasks\.py|schedule/models\.py|users/tasks\.py|core/celery\.py|core/settings\.py|core/services/|academic_structure/models\.py|contents/models\.py|contents/services/navigation_builder\.py)'; then
+              echo "--- Pesado: cambios relevantes detectados, reiniciando (id 209547) ---"
+              curl -sf --max-time 60 -X POST "https://www.pythonanywhere.com/api/v0/user/MiguelAeTxio/always_on/209547/restart/" \
+                -H "Authorization: Token ${{ secrets.PA_API_TOKEN }}"
+              echo ""
+              echo "Pesado: reinicio solicitado OK."
+            else
+              echo "Pesado: sin cambios relevantes, no se reinicia."
+            fi
+          } | tee /tmp/restart_output.txt
+
+      - name: Resumen del despliegue (mantener informado a Miguel Angel)
+        if: always()
+        env:
+          COMMIT_MESSAGE: ${{ github.event.head_commit.message }}
+        run: |
+          {
+            echo "## Despliegue CampuStudiOnline -- $(date -u '+%Y-%m-%d %H:%M UTC')"
+            echo ""
+            echo "**Commit:** \`${{ github.sha }}\`"
+            echo "**Mensaje (primera linea):** $(printf '%s' "$COMMIT_MESSAGE" | head -1)"
+            echo ""
+            echo "### Salida del servidor"
+            echo '```'
+            cat /tmp/deploy_output.txt 2>/dev/null || echo "(sin salida capturada -- revisar el paso anterior)"
+            echo '```'
+            if grep -q "No migrations to apply" /tmp/deploy_output.txt 2>/dev/null; then
+              echo ""
+              echo "Sin migraciones nuevas aplicadas en este despliegue."
+            else
+              echo ""
+              echo "**Atencion: puede haberse aplicado una migracion nueva -- revisar la salida de arriba.**"
+            fi
+            echo ""
+            echo "### Always-on Tasks (Primario / Pesado)"
+            echo '```'
+            cat /tmp/restart_output.txt 2>/dev/null || echo "(sin ejecutar -- revisar el paso anterior)"
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Limpiar clave SSH
+        if: always()
+        run: rm -f ~/.ssh/pa_deploy_key
