@@ -45,3 +45,6 @@ debug_output/
 # Credenciales de cuenta de servicio — nunca versionadas (incidente 2026-07-24, purgadas de todo el historial)
 google_credentials.json
 alvarez_credentials.json
+
+# Datos de importación pesados — no versionar (2026-07-24)
+data/PHASE_1_EAST/uma_data_final.json
