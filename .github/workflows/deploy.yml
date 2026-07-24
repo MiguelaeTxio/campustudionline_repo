@@ -53,8 +53,18 @@ jobs:
             set -e
             cd /home/MiguelAeTxio/PROJECTS/CampuStudiOnline
             OLD_HEAD=$(git rev-parse HEAD)
-            echo "--- git pull ---"
-            git pull origin main
+            echo "--- git fetch + reset --hard origin/main ---"
+            # Nunca "git pull" (merge): el checkout de despliegue debe
+            # alinearse siempre exactamente con origin/main, nunca
+            # fusionar. Imprescindible ademas tras la reescritura de
+            # historial de 2026-07-24 (git filter-repo, incidente de
+            # credenciales expuestas) -- el checkout previo del
+            # servidor tenia la historia antigua, con hashes de commit
+            # distintos a los nuevos, y un "git pull" normal fallaba
+            # con "refusing to merge unrelated histories" (visto en
+            # vivo, primera ejecucion real de este workflow).
+            git fetch origin main
+            git reset --hard origin/main
             NEW_HEAD=$(git rev-parse HEAD)
             source /home/MiguelAeTxio/.virtualenvs/campus_pa_env_py3.10/bin/activate
             echo "--- migrate ---"
