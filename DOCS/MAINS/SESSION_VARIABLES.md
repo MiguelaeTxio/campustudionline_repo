@@ -10,6 +10,8 @@
 - **GEN_SERVER_ROOT**: /home/MiguelAeTxio/
 - **APP_SERVER_ROOT**: PROJECTS/CampuStudiOnline/
 - **SERVER_ROOT**: {GEN_SERVER_ROOT}{APP_SERVER_ROOT}
+- **LOCAL_CLONE_PATH**: /home/claude/repo/CampuStudiOnline (workspace del modelo, flujo NFS — añadida 2026-07-24, ausente hasta ahora pese a estar referenciada por el flujo NFS)
+- **CAMPUSTUDIONLINE_GITHUB_REPO**: https://github.com/MiguelaeTxio/campustudionline_repo.git
 - **LOCAL_SWAP**: SWAP/
 - **LOCAL_VENV**: "C:/Users/numme/Documents/AvanzadoPython/Proyecto Fin de Curso Python Avanzado/campustudionline/"
 - **SERVER_VENV**: campus_pa_env_py3.10
