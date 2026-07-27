@@ -2177,7 +2177,12 @@
         });
 
         try {
-            const response = await fetch(`/assessment_v2/submit/${examUuid}/`, {
+            // [FIX 2026-07-27] La URL estaba cableada como '/assessment_v2/submit/...',
+            // pero core/urls.py monta la app en 'assessment/v2/'. El POST se iba a una
+            // ruta inexistente -> 404 -> el catch de abajo mostraba "Error critico de
+            // conexion" y la entrega no llegaba nunca al servidor. Se resuelve con
+            // {% url %} para que no pueda volver a desincronizarse del enrutado.
+            const response = await fetch("{% url 'assessment_v2:exam_submit' exam.uuid %}", {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', 'X-CSRFToken': '{{ csrf_token }}' },
                 body: JSON.stringify({responses: responses})
