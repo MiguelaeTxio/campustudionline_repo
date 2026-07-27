@@ -43,6 +43,7 @@ jobs:
           ssh-keyscan -H ssh.pythonanywhere.com >> ~/.ssh/known_hosts
 
       - name: git pull + migrate + collectstatic en PythonAnywhere
+        id: deploy
         # set -o pipefail en el shell EXTERIOR de la Action (no basta
         # con el `set -e` de dentro del script remoto de ssh) -- misma
         # correccion que EnterpriseBot aplico tras su incidente S014,
@@ -94,9 +95,26 @@ jobs:
       - name: Recargar la web app (API PythonAnywhere)
         if: success()
         run: |
-          curl -sf --max-time 60 -X POST \
+          # [2026-07-27] Antes: curl -sf, que abortaba el paso sin dejar rastro
+          # del motivo. Los logs de Actions viven en un host de Azure
+          # (productionresultssa*) que NO es alcanzable desde el workspace del
+          # modelo, asi que tres fallos seguidos de este paso fueron
+          # indiagnosticables. Ahora se captura el codigo HTTP y el cuerpo, se
+          # imprimen, y ademas se dejan en el servidor para poder leerlos por
+          # sftp como cualquier otro artefacto (ver com-file-request).
+          HTTP=$(curl -s -o /tmp/reload_body.txt -w '%{http_code}' --max-time 60 -X POST \
             "https://www.pythonanywhere.com/api/v0/user/MiguelAeTxio/webapps/www.campustudionline.com/reload/" \
-            -H "Authorization: Token ${{ secrets.PA_API_TOKEN }}"
+            -H "Authorization: Token ${{ secrets.PA_API_TOKEN }}")
+          echo "--- Reload: HTTP $HTTP ---"
+          head -c 500 /tmp/reload_body.txt || true
+          echo ""
+          BODY=$(head -c 300 /tmp/reload_body.txt | tr -d '\n' | tr -d "'")
+          ssh -i ~/.ssh/pa_deploy_key MiguelAeTxio@ssh.pythonanywhere.com \
+            "echo \"\$(date -u +'%Y-%m-%d %H:%M:%S') | commit ${{ github.sha }} | reload HTTP $HTTP | $BODY\" >> /home/MiguelAeTxio/SWAP/deploy_reload_history.txt" || true
+          if [ "$HTTP" -lt 200 ] || [ "$HTTP" -ge 300 ]; then
+            echo "ERROR: la recarga de la web app devolvio HTTP $HTTP"
+            exit 1
+          fi
           echo "--- Reload solicitado OK ---"
 
       - name: Reiniciar Always-on Tasks si el push las afecta
@@ -108,7 +126,14 @@ jobs:
         # Patrones derivados de la auditoria real de tasks.py y de
         # CELERY_TASK_ROUTES (core/settings.py), no de las etiquetas
         # del panel -- ver nota al inicio de este archivo.
-        if: success()
+        # [2026-07-27] Antes: if: success(), lo que ataba el reinicio de los
+        # workers al exito de la recarga de la web app. Son cosas
+        # independientes: Celery no se entera de un reload de uWSGI, y un
+        # fallo de la API de recarga dejaba a los workers ejecutando codigo
+        # viejo indefinidamente y en silencio. Ocurrio tres despliegues
+        # seguidos el 2026-07-27 (ff562bb, 7504fd9, 5c78a00). Ahora depende
+        # solo de que el codigo haya llegado al servidor.
+        if: steps.deploy.outcome == 'success'
         run: |
           set -o pipefail
           CHANGED=$(sed -n '/--- CHANGED_FILES_START ---/,/--- CHANGED_FILES_END ---/p' /tmp/deploy_output.txt | sed '1d;$d')
