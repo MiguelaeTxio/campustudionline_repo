@@ -254,19 +254,44 @@ class BaseExamStrategy(ABC):
             'no_negative_marking': True
         }
 
+    @staticmethod
+    def _normalize_gap_solutions(raw) -> dict:
+        """
+        Normalizes gap_solutions to {gap_id: accepted_answer} regardless of shape.
+        Accepts the current AI contract (list of {gap_id, accepted_answer}) and the
+        legacy dict shape stored in exams generated before the schema fix.
+        ---
+        Normaliza gap_solutions a {gap_id: respuesta_aceptada} sea cual sea su forma.
+        Acepta el contrato actual de la IA (lista de {gap_id, accepted_answer}) y la
+        forma dict antigua, presente en exámenes generados antes de la corrección del
+        esquema. La lista es obligatoria en el schema porque la API de Gemini rechaza
+        'additionalProperties', que Pydantic emite para cualquier dict sin parametrizar.
+        """
+        if not raw:
+            return {}
+        if isinstance(raw, dict):
+            return raw
+        if isinstance(raw, list):
+            normalized = {}
+            for entry in raw:
+                if isinstance(entry, dict) and entry.get('gap_id') is not None:
+                    normalized[entry['gap_id']] = entry.get('accepted_answer', '')
+            return normalized
+        return {}
+
     def _grade_clo_open(self, item, student_input) -> tuple:
         """
         CLO-OPEN motor: Open gap-filling. Validates each gap independently.
-        gap_solutions in grading_logic must be a dict {gap_id: accepted_answer}.
-        Pipe-separated variants accepted per gap.
+        gap_solutions arrives as a list of {gap_id, accepted_answer} and is normalized
+        to a dict before grading. Pipe-separated variants accepted per gap.
         ---
         Motor CLO-OPEN: Rellenado abierto de huecos. Valida cada hueco de forma independiente.
-        gap_solutions en grading_logic debe ser un dict {gap_id: respuesta_aceptada}.
-        Se aceptan variantes separadas por '|' por hueco.
+        gap_solutions llega como lista de {gap_id, accepted_answer} y se normaliza a dict
+        antes de calificar. Se aceptan variantes separadas por '|' por hueco.
         Ref: V06DOC_BLOCKS Sección 3.1 (CLO-OPEN).
         """
         logic = item.grading_logic
-        gap_solutions = logic.get('gap_solutions', {})
+        gap_solutions = self._normalize_gap_solutions(logic.get('gap_solutions'))
         no_negative   = bool(logic.get('no_negative_marking', False))
 
         if not gap_solutions:
@@ -335,7 +360,7 @@ class BaseExamStrategy(ABC):
         # CLO-MULTI comparte la lógica de resolución de CLO-OPEN
         # pero siempre con no_negative_marking=True (las opciones ya restringen las elecciones)
         logic = item.grading_logic
-        gap_solutions = logic.get('gap_solutions', {})
+        gap_solutions = self._normalize_gap_solutions(logic.get('gap_solutions'))
 
         if not gap_solutions:
             return Decimal('1.0'), {

@@ -976,7 +976,7 @@ class HealthStrategy(BaseExamStrategy):
             f'1. Los UUID de los ítems son INMUTABLES — devuélvelos exactamente como se reciben.\n'
             f'2. Para W-CLIN-SCAN incluye siempre una URL de imagen en media_assets.\n'
             f'3. Para CDS-KILL declara kill_switch en grading_logic según la criticidad del paso.\n'
-            f'4. gap_solutions DEBE ser un dict {{gap_id: respuesta}} — nunca una lista.\n'
+            f'4. gap_solutions DEBE ser una lista de objetos {{"gap_id": "[HUECO_ID_N]", "accepted_answer": "respuesta"}} — una entrada por hueco, nunca un diccionario.\n'
             f'5. Devuelve EXCLUSIVAMENTE el JSON estructurado según ExamSectionSchema — sin texto envolvente.'
         )
 

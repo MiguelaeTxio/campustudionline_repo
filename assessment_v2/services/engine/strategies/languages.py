@@ -692,7 +692,7 @@ class LanguagesStrategy(BaseExamStrategy):
                                 'cada hueco solicita el étimo, el estadio intermedio o el '
                                 'significado medieval de un término. '
                                 'Usa marcadores [HUECO_ID_1] ... [HUECO_ID_6]. '
-                                'gap_solutions debe incluir la forma etimológica correcta con variantes aceptables.'
+                                'gap_solutions debe incluir, por cada hueco, la forma etimológica correcta con variantes aceptables en accepted_answer.'
                             )
                         }
                     ]
@@ -1192,7 +1192,7 @@ class LanguagesStrategy(BaseExamStrategy):
             f'1. Los UUID de los ítems son INMUTABLES — devuélvelos exactamente como se reciben.\n'
             f'2. PROHIBIDO incluir metadatos, claves de corrección u opciones correctas en el campo "options" o "targets".\n'
             f'3. Para W-TXT-CLOZE usa SIEMPRE marcadores [HUECO_ID_N] — nunca guiones bajos ni otros formatos.\n'
-            f'4. gap_solutions DEBE ser un dict {{gap_id: respuesta_correcta}}, nunca una lista.\n'
+            f'4. gap_solutions DEBE ser una lista de objetos {{"gap_id": "[HUECO_ID_N]", "accepted_answer": "respuesta"}} — una entrada por hueco, nunca un diccionario.\n'
             f'5. Devuelve EXCLUSIVAMENTE el JSON estructurado según ExamSectionSchema — sin texto envolvente.'
         )
 
@@ -1244,7 +1244,7 @@ class LanguagesStrategy(BaseExamStrategy):
             f'4. El campo "stem" de cada ítem SIEMPRE en castellano (salvo modo TOTAL).\n'
             f'5. El contenido evaluable (opciones, text_with_gaps, targets) en \'{target_lang}\'.\n'
             f'6. Para CLO-MULTI y CLO-OPEN usa marcadores [HUECO_ID_N] en text_with_gaps.\n'
-            f'7. gap_solutions debe ser {{"[HUECO_ID_1]": "respuesta", "[HUECO_ID_2]": "respuesta", ...}}.\n'
+            f'7. gap_solutions debe ser [{{"gap_id": "[HUECO_ID_1]", "accepted_answer": "respuesta"}}, {{"gap_id": "[HUECO_ID_2]", "accepted_answer": "respuesta"}}, ...].\n'
             f'8. PROHIBIDO incluir la respuesta correcta en el campo "options" de forma identificable.\n'
             f'9. Si la sección requiere section_stimulus (SPLIT_TEXT/SPLIT_VISUAL), inclúyelo en el JSON.\n'
             f'10. Genera contenido académico real y riguroso — sin placeholders ni contenido genérico.'

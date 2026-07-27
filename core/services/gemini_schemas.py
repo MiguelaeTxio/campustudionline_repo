@@ -177,10 +177,14 @@ class PairSchema(BaseModel):
     izquierdo: str = Field(description="Elemento izquierdo del par.")
     derecho: str = Field(description="Elemento derecho del par vinculado.")
 
+class GapSolutionSchema(BaseModel):
+    gap_id: str = Field(description="Identificador del hueco tal y como aparece en el enunciado (ej: HUECO_1).")
+    accepted_answer: str = Field(description="Respuesta aceptada para ese hueco. Admite variantes separadas por '|'.")
+
 class GradingLogicSchema(BaseModel):
     feedback_justification: str = Field(description="Explicación pedagógica detallada de la solución correcta.")
     correct_answer: Optional[str] = Field(default=None, description="Solución correcta genérica (texto).")
-    gap_solutions: Optional[dict] = Field(default=None, description="Soluciones para los huecos de W-TXT-CLOZE. Dict {gap_id: respuesta_aceptada}. Acepta variantes separadas por '|' por hueco. Ref: V06DOC_BLOCKS Sección 3.1 (CLO-OPEN).")
+    gap_solutions: Optional[List[GapSolutionSchema]] = Field(default=None, description="Soluciones para los huecos de W-TXT-CLOZE, una entrada por hueco. Acepta variantes separadas por '|' en accepted_answer. Ref: V06DOC_BLOCKS Sección 3.1 (CLO-OPEN).")
     pairs: Optional[List[PairSchema]] = Field(default=None, description="Pares de vinculación para W-MIX-MATCH.")
     step_matrix: Optional[List[str]] = Field(default=None, description="Etapas de resolución para RPP-TRAZA (motor multietapa con arrastre de error). Cada elemento es una etapa evaluable de forma independiente.")
 
