@@ -70,7 +70,22 @@ jobs:
             echo "--- migrate ---"
             python -m dotenv run python manage.py migrate --noinput
             echo "--- collectstatic ---"
-            python -m dotenv run python manage.py collectstatic --noinput --clear
+            # Sin --clear a proposito (2026-07-27). --clear vacia
+            # STATIC_ROOT antes de regenerar: si algo falla despues, el
+            # sitio queda sin staticfiles.json y, con
+            # ManifestStaticFilesStorage, cada {% static %} lanza
+            # ValueError "Missing staticfiles manifest entry" -- es
+            # decir, 500 en TODAS las paginas a la vez. Incidente real
+            # de ese dia: caida total del sitio mientras este mismo
+            # paso reportaba exito.
+            python -m dotenv run python manage.py collectstatic --noinput
+            echo "--- verificacion del manifiesto (barrera dura) ---"
+            if [ ! -s staticfiles_production/staticfiles.json ]; then
+              echo "ERROR: staticfiles.json ausente o vacio tras collectstatic."
+              echo "Abortando el despliegue: recargar ahora dejaria el sitio con 500 en todas las paginas."
+              exit 1
+            fi
+            echo "staticfiles.json presente: $(wc -c < staticfiles_production/staticfiles.json) bytes"
             echo "--- CHANGED_FILES_START ---"
             git diff --name-only "$OLD_HEAD" "$NEW_HEAD"
             echo "--- CHANGED_FILES_END ---"
