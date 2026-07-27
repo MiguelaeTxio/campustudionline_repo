@@ -1102,6 +1102,23 @@ def generate_exam_task(self, exam_uuid, context_text=None, topic=None):
             db_sec = sections_map.get(s_idx)
             if not db_sec: continue
             
+            # [FIX 2026-07-27] db_items debe resolverse ANTES de construir
+            # section_skeleton_json, que lo itera. La asignación vivía DESPUÉS de
+            # ese uso, lo que producía UnboundLocalError en la primera sección de
+            # todo examen. El fallo era inalcanzable mientras la llamada a la IA
+            # reventaba antes por 'additionalProperties' en el response_schema;
+            # aflora al corregir aquello (ff562bb). Se sube tambien la guarda de
+            # resiliencia: no tiene sentido construir prompts para una seccion
+            # que ya esta llena.
+            db_items = list(db_sec.items.all().order_by('order'))
+            if not db_items: continue
+            
+            # [HITO 6 BLINDAJE] Resiliencia Celery: Si el primer item ya tiene contenido, la sección está lista
+            if db_items[0].content:
+                for item in db_items:
+                    generated_titles.append(str(item.content.get('stem', ''))[:30])
+                continue
+            
             # Inyección de immersion_mode y pedagogical_level ELIMINADA (Bugfix: TypeError)
             s_prompt = strategy.get_system_prompt()
             
@@ -1122,15 +1139,6 @@ def generate_exam_task(self, exam_uuid, context_text=None, topic=None):
                 generated_item_titles=generated_titles,
                 skeleton_json=section_skeleton_json
             )
-            
-            db_items = list(db_sec.items.all().order_by('order'))
-            if not db_items: continue
-            
-            # [HITO 6 BLINDAJE] Resiliencia Celery: Si el primer item ya tiene contenido, la sección está lista
-            if db_items[0].content:
-                for item in db_items:
-                    generated_titles.append(str(item.content.get('stem', ''))[:30])
-                continue
             
             # [HITO 6] SKELETON-PROMPT BINDING: Inyectar la instrucción específica por ítem
             widgets_info_list = []
@@ -1197,7 +1205,11 @@ def generate_exam_task(self, exam_uuid, context_text=None, topic=None):
                                 # [HITO 6] AUDIO GENERATION TRIGGER (SD_LIST) / DISPARADOR DE AUDIO
                                 if s_info['subdivision_id'] == 'SD_LIST':
                                     audio_text = db_sec.section_stimulus if db_sec.section_stimulus else db_item.content.get('stem', '')
-                                    audio_url = _generate_item_audio(db_item.id, audio_text, automation_settings.active_api_key)
+                                    # [FIX 2026-07-27] 'automation_settings' vivia solo en el ambito de
+                                    # _safe_generate_content, no en este: aqui era un NameError seguro.
+                                    # Inalcanzable hasta ahora porque la generacion moria antes; se
+                                    # habria disparado en el primer examen de idiomas con seccion SD_LIST.
+                                    audio_url = _generate_item_audio(db_item.id, audio_text, AutomationSettings.load().active_api_key)
                                     if audio_url: db_item.content['media_assets'] = [audio_url]
                                 db_item.save(update_fields=["content", "grading_logic", "metadata"])
                                 generated_titles.append(str(i_data.get('content', {}).get('stem', ''))[:30])
