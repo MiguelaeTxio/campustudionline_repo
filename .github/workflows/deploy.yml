@@ -133,7 +133,17 @@ jobs:
         # viejo indefinidamente y en silencio. Ocurrio tres despliegues
         # seguidos el 2026-07-27 (ff562bb, 7504fd9, 5c78a00). Ahora depende
         # solo de que el codigo haya llegado al servidor.
-        if: steps.deploy.outcome == 'success'
+        # [2026-07-28] La condicion llevaba solo "steps.deploy.outcome ==
+        # 'success'". No basta: cuando una condicion if: no incluye una funcion
+        # de estado, GitHub le antepone un success() implicito, de modo que el
+        # paso seguia atado al exito del paso ANTERIOR (la recarga web). Es
+        # decir, el desacople que describe el comentario de arriba nunca llego a
+        # ser efectivo. Ocurrio en vivo el 2026-07-28 (commit aa9cda2): la
+        # recarga fallo, este paso salio "skipped" y los dos workers se quedaron
+        # ejecutando codigo viejo, que es exactamente el escenario que el cambio
+        # del 2026-07-27 pretendia evitar. Con always() la condicion pasa a
+        # depender solo de que el codigo haya llegado al servidor.
+        if: always() && steps.deploy.outcome == 'success'
         run: |
           set -o pipefail
           CHANGED=$(sed -n '/--- CHANGED_FILES_START ---/,/--- CHANGED_FILES_END ---/p' /tmp/deploy_output.txt | sed '1d;$d')
