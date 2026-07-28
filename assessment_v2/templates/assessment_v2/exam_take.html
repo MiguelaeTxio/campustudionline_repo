@@ -2078,7 +2078,23 @@
                         markers: widgetState.scanMarkers[itemId] || []
                     };
                 } else {
-                    responses[itemId] = input ? input.value : '';
+                    // [S025] RBT-CANON puede renderizarse como W-OBJ-STRIKE (radios)
+                    // o como campo de texto, segun el widget_id que dicte la
+                    // Estrategia. Esta recoleccion se bifurca por block_type y
+                    // buscaba SIEMPRE un campo de texto, asi que en los
+                    // subarquetipos que lo pintan como opcion multiple la seleccion
+                    // del alumno se perdia y el item se calificaba como no
+                    // contestado. Incidencia real S025, examen 229, item 155:
+                    // respuesta enviada como cadena vacia pese a haber elegido.
+                    const radioMarcado = item.querySelector('.response-input-radio:checked');
+                    const hayRadios    = item.querySelector('.response-input-radio');
+                    if (radioMarcado) {
+                        responses[itemId] = radioMarcado.value;
+                    } else if (hayRadios) {
+                        responses[itemId] = '';
+                    } else {
+                        responses[itemId] = input ? input.value : '';
+                    }
                 }
             } 
             // 4. PRM-STRIKE (Options)

@@ -440,6 +440,13 @@ class GradingOrchestrator:
                 section_report['items'].append({
                     'item_id':           str(item.id),
                     'item_score':        float(item_final_score),
+                    # [S025] El estado (CORRECT / INCORRECT / OMITTED / ...) lo
+                    # devuelven todos los motores en item_feedback y hasta ahora se
+                    # descartaba al construir el informe. Sin el, distinguir "no
+                    # contestado" de "contestado y fallado" obligaba a volcar
+                    # student_responses a mano: exactamente lo que costo diagnosticar
+                    # la perdida de respuestas del item 155 en el examen 229.
+                    'status':            item_feedback.get('status', 'UNKNOWN'),
                     'feedback_category': fb_category,
                     'justification':     item_feedback.get(
                         'justification',
