@@ -120,6 +120,57 @@ class BaseExamStrategy(ABC):
     # Ref: V06DOC_BLOCKS (Sección 1 — Motores Objetivos y Estructurales)
     # ==========================================================================
 
+    @staticmethod
+    def _choice_equivalents(item, raw_value) -> list:
+        """
+        All acceptable spellings of a multiple-choice answer: the raw value plus
+        its id<->text counterpart resolved against content.options.
+        ---
+        Todas las formas aceptables de una respuesta de opcion multiple: el valor
+        tal cual, mas su equivalente id<->texto resuelto contra content.options.
+
+        Motivo: la plantilla renderiza cada opcion con value="{{ option.text }}",
+        asi que el navegador SIEMPRE envia el texto. La IA, en cambio, unas veces
+        devuelve en correct_answer el texto de la opcion y otras su identificador
+        ('C'), sin criterio fijo. Incidencia real S025, examen 229: SD_READ_ADAP
+        traia correct_answer 'C' y SD_CULT_INTEGRITY el texto completo, en el
+        mismo examen. Comparando en crudo, el caso de la letra marcaba como
+        incorrecta una respuesta acertada Y ademas aplicaba la penalizacion
+        1/(N-1) de PRM-STRIKE. Afecta a todos los arquetipos, no solo a idiomas.
+        """
+        formas = []
+        raw = str(raw_value).strip()
+        if not raw:
+            return formas
+        formas.append(raw)
+
+        opciones = []
+        if isinstance(getattr(item, 'content', None), dict):
+            opciones = item.content.get('options') or []
+
+        for opt in opciones:
+            if not isinstance(opt, dict):
+                continue
+            oid = str(opt.get('id', '')).strip()
+            otx = str(opt.get('text', '')).strip()
+            if oid and otx and raw.lower() == oid.lower():
+                formas.append(otx)
+            elif oid and otx and raw.lower() == otx.lower():
+                formas.append(oid)
+
+        # Reserva posicional: si la respuesta es una letra suelta y ningun id
+        # coincidio, se resuelve por posicion (A = primera opcion, B = segunda...).
+        # Cubre el caso de que la IA invente identificadores con otro formato
+        # mientras sigue nombrando las opciones por su letra.
+        if len(formas) == 1 and len(raw) == 1 and raw.isalpha():
+            indice = ord(raw.upper()) - ord('A')
+            if 0 <= indice < len(opciones):
+                opt = opciones[indice]
+                texto = str(opt.get('text', '')).strip() if isinstance(opt, dict) else str(opt).strip()
+                if texto:
+                    formas.append(texto)
+        return formas
+
     def _grade_prm_strike(self, item, student_input) -> tuple:
         """
         PRM-STRIKE motor: Multiple choice with progressive penalty formula.
@@ -132,7 +183,8 @@ class BaseExamStrategy(ABC):
         Ref: V06DOC_BLOCKS Sección 1.1 (PRM-STRIKE), V06DOC_METADATA Sec 5.
         """
         logic = item.grading_logic
-        correct_answer = str(logic.get('correct_answer', '')).strip().upper()
+        raw_correct    = str(logic.get('correct_answer', '')).strip()
+        formas_validas = [f.upper() for f in self._choice_equivalents(item, raw_correct)]
         no_negative    = bool(logic.get('no_negative_marking', False))
         n_options      = len(item.content.get('options', [])) or 4
 
@@ -149,7 +201,7 @@ class BaseExamStrategy(ABC):
                 'justification': logic.get('feedback_justification', 'Pregunta no respondida.')
             }
 
-        if student_answer == correct_answer:
+        if student_answer in formas_validas:
             return Decimal('1.0'), {
                 'status': 'CORRECT',
                 'feedback_category': 'FB_CONCEPT',
@@ -186,7 +238,12 @@ class BaseExamStrategy(ABC):
         """
         logic = item.grading_logic
         raw_correct = str(logic.get('correct_answer', ''))
-        valid_answers = [v.strip().lower() for v in raw_correct.split('|') if v.strip()]
+        valid_answers = []
+        for variante in raw_correct.split('|'):
+            variante = variante.strip()
+            if not variante:
+                continue
+            valid_answers.extend(f.lower() for f in self._choice_equivalents(item, variante))
         student_answer = str(student_input).strip().lower()
 
         if not student_answer:
