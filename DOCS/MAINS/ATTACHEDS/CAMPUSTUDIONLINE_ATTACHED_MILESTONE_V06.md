@@ -204,14 +204,26 @@ Abrir implica relajar esa condicion.
 
 ### DEUDA TECNICA ABIERTA
 
-**0. Anadida en S025 -- correccion de `deploy.yml` SIN VERIFICAR.**
+**0. Anadida en S025 -- correccion de `deploy.yml`: VERIFICADA EN EL PROPIO CIERRE.**
 El `if: always() && steps.deploy.outcome == 'success'` del paso de reinicio de
-Always-on Tasks (99a10b3) esta desplegado pero NO probado: el unico despliegue
-posterior no tocaba archivos relevantes, de modo que el paso salio en verde sin
-reiniciar nada. Solo se confirmara el dia que un despliegue con cambios
-relevantes tenga una recarga web fallida. No darlo por bueno hasta entonces.
+Always-on Tasks (99a10b3) quedo comprobado en produccion sin buscarlo: el
+despliegue del commit de cierre de S025 volvio a fallar en el paso 4 (recarga web
+via API de PythonAnywhere) y el paso 5 **se ejecuto igualmente**, en lugar de
+salir `skipped` como habia ocurrido esa misma manana con aa9cda2. El desacople es
+por tanto real y esta confirmado con evidencia.
 
-**0-bis. Anadida en S025 -- controles de verificacion, otra vez a mano.**
+**0-bis. Anadida en S025 -- la recarga web via API falla de forma intermitente.**
+Dos de los despliegues de S025 fallaron en el paso 4 con la llamada a
+`/api/v0/user/MiguelAeTxio/webapps/.../reload/`, y ambos habian desplegado el
+codigo correctamente en el paso 3. En el primer caso un relanzamiento sin cambios
+paso a la primera, lo que apunta a intermitencia del lado de PythonAnywhere y no
+a un defecto del workflow. El codigo HTTP y el cuerpo de cada intento quedan
+registrados en `SWAP/deploy_reload_history.txt`, en el servidor, precisamente
+para poder diagnosticarlo sin depender de los logs de Actions. Revisar ese
+historial en S026 antes de decidir si merece reintento automatico en el propio
+paso.
+
+**0-ter. Anadida en S025 -- controles de verificacion, otra vez a mano.**
 S025 volvio a improvisar los mismos tres controles que S024 dejo apuntados
 (`py_compile`, `node --check` sobre el fragmento JS extraido, y render real via
 `django.test.Client`), y los tres encontraron cosas. Siguen sin automatizar. El
