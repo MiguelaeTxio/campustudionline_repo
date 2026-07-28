@@ -192,6 +192,7 @@
 {% endblock content %}
 
 {% block extra_js %}
+{% include "includes/_mathjax.html" %}
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const timerElement = document.querySelector('.cooldown-timer');

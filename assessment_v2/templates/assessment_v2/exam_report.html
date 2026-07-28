@@ -93,3 +93,8 @@
     </div>
 </div>
 {% endblock %}
+
+{% block extra_js %}
+{{ block.super }}
+{% include "includes/_mathjax.html" %}
+{% endblock extra_js %}

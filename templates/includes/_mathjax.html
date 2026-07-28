@@ -1,0 +1,55 @@
+{# /home/MiguelAeTxio/PROJECTS/CampuStudiOnline/templates/includes/_mathjax.html #}
+{% comment %}
+Shared MathJax 3 loader and TeX delimiter configuration. Included by every
+template that renders academic text which may carry LaTeX: study materials,
+study-room copies, exam taking and grading reports.
+
+Two reasons this file exists instead of a per-template script tag:
+
+1. MathJax 3 enables ONLY \(...\) as inline delimiters by default. Single
+   dollar signs are NOT enabled. Since the exam content is written by Gemini,
+   which emits $...$ and \(...\) interchangeably, a template without this
+   configuration renders roughly half of its formulas and leaves the rest as
+   raw source. That was the real defect: exam_take.html loaded the engine with
+   no configuration at all.
+2. The configuration object MUST be evaluated before the engine script runs,
+   so it is declared first and deliberately left synchronous, while the engine
+   itself stays async.
+
+processEscapes keeps \$ available as a literal dollar sign, which matters
+because enabling $ as a delimiter would otherwise turn any currency amount
+into an attempted formula.
+---
+Cargador y configuración de delimitadores TeX de MathJax 3, compartido. Lo
+incluye toda plantilla que renderice texto académico susceptible de llevar
+LaTeX: materiales, copias de sala de estudio, realización de exámenes e
+informes de corrección.
+
+Dos motivos para que esto sea un archivo y no una etiqueta script por
+plantilla:
+
+1. MathJax 3 habilita por defecto ÚNICAMENTE \(...\) como delimitador en
+   línea. El dólar simple NO está habilitado. Como el contenido del examen lo
+   redacta Gemini, que emite indistintamente $...$ y \(...\), una plantilla
+   sin esta configuración renderiza aproximadamente la mitad de sus fórmulas
+   y deja el resto en crudo. Ese era el defecto real: exam_take.html cargaba
+   el motor sin ninguna configuración.
+2. El objeto de configuración DEBE evaluarse antes de que corra el script del
+   motor, por eso va primero y se deja síncrono a propósito, mientras que el
+   motor permanece asíncrono.
+
+processEscapes mantiene \$ disponible como dólar literal, lo que importa
+porque habilitar $ como delimitador convertiría si no cualquier importe en
+un intento de fórmula.
+{% endcomment %}
+<script>
+  window.MathJax = {
+    tex: {
+      inlineMath: [['$', '$'], ['\\(', '\\)']],
+      displayMath: [['$$', '$$'], ['\\[', '\\]']],
+      processEscapes: true
+    }
+  };
+</script>
+<script id="MathJax-script" async
+        src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
