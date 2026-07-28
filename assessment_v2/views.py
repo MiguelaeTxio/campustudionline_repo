@@ -180,6 +180,43 @@ class ExamTakeView(LoginRequiredMixin, DetailView):
                         destinos = [der for _, der in parejas]
                         random.Random(str(item.uuid)).shuffle(destinos)
                         item.content['targets'] = destinos
+
+                # [S025] BARAJADO DE PRESENTACION — validez del instrumento.
+                # La IA emite las opciones con la solucion en primer lugar de forma
+                # sistematica: verificado en los examenes 228 y 229, donde los doce
+                # huecos de cloze tenian la respuesta correcta como primera opcion.
+                # Sin barajar, la seccion se resuelve al 100% eligiendo siempre la
+                # primera opcion, sin conocer la materia. Agravado porque CLO-MULTI
+                # va con no_negative_marking y RBT-CANON no penaliza: ahi acertar por
+                # azar sale gratis.
+                #
+                # Se baraja aqui, en presentacion, y no en la generacion, por dos
+                # razones: cubre tambien los examenes ya generados, y deja intacto el
+                # orden almacenado, del que depende la resolucion posicional de
+                # correct_answer ('C' = tercera opcion) en _choice_equivalents.
+                # La semilla es estable (uuid del item, y gap_id en el cloze) para que
+                # el orden no cambie al recargar la pagina a mitad de examen.
+                if isinstance(item.content, dict):
+                    semilla = str(item.uuid)
+
+                    opciones = item.content.get('options')
+                    if isinstance(opciones, list) and len(opciones) > 1:
+                        barajadas = list(opciones)
+                        random.Random(semilla + ':options').shuffle(barajadas)
+                        item.content['options'] = barajadas
+
+                    grupos = item.content.get('cloze_options')
+                    if isinstance(grupos, list) and grupos:
+                        nuevos = []
+                        for grupo in grupos:
+                            if (isinstance(grupo, dict)
+                                    and isinstance(grupo.get('options'), list)
+                                    and len(grupo['options']) > 1):
+                                ops = list(grupo['options'])
+                                random.Random(semilla + ':' + str(grupo.get('gap_id'))).shuffle(ops)
+                                grupo = dict(grupo, options=ops)
+                            nuevos.append(grupo)
+                        item.content['cloze_options'] = nuevos
         
         return context
 
