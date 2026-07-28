@@ -1,5 +1,28 @@
 {% extends "base.html" %}
 {% load i18n %}
+{% load markdownify %}
+
+{% block extra_css %}
+<style>
+    /* Feedback rendered from Markdown: keep code blocks readable inside
+       the italic card body. / Feedback renderizado desde Markdown:
+       mantener legibles los bloques de codigo dentro del cuerpo en
+       cursiva de la tarjeta. */
+    .markdown-body p:last-child { margin-bottom: 0; }
+    .markdown-body pre {
+        background-color: #f6f8fa;
+        border: 1px solid #d0d7de;
+        border-radius: .375rem;
+        padding: .75rem;
+        overflow-x: auto;
+        font-size: .875em;
+        font-style: normal;
+    }
+    .markdown-body code { font-style: normal; }
+    .markdown-body ol,
+    .markdown-body ul { margin-bottom: .5rem; padding-left: 1.25rem; }
+</style>
+{% endblock extra_css %}
 
 {% block content %}
 <div class="container mt-4">
@@ -26,7 +49,7 @@
             <strong>{% trans "Valoración del Catedrático" %}</strong>
         </div>
         <div class="card-body bg-light fst-italic text-dark">
-            <p class="mb-0">{{ submission.grading_report.qualitative_summary }}</p>
+            <div class="mb-0 markdown-body">{{ submission.grading_report.qualitative_summary|markdownify:"assessment" }}</div>
         </div>
     </div>
     {% endif %}
@@ -54,10 +77,10 @@
                             {{ item_report.feedback_category }}
                         </span>
                         
-                        <p class="mb-0">
+                        <p class="mb-1">
                             <strong>{% trans "Análisis de UniversIA:" %}</strong>
-                            <em>"{{ item_report.justification|default:"Evaluación completada." }}"</em>
                         </p>
+                        <div class="mb-0 fst-italic markdown-body">{{ item_report.justification|default:"Evaluación completada."|markdownify:"assessment" }}</div>
                         
                         {% if item_report.kill_switch_activated %}
                         <div class="alert alert-danger mt-2 py-1 mb-0">

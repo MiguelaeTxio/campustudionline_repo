@@ -503,3 +503,55 @@ BASE_URL = SITE_URL
 # --- Crispy Forms Configuration ---
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 CRISPY_TEMPLATE_PACK = "bootstrap5"
+
+# --- Markdownify Configuration / Configuracion de Markdownify ---
+# Named configuration used ONLY by the assessment report, to render the
+# AI-written feedback (justification, qualitative_summary), which arrives
+# as Markdown: fenced code blocks, inline code and numbered lists.
+#
+# There is deliberately NO "default" key. The announcements board calls
+# the filter with no argument, which looks up MARKDOWNIFY["default"];
+# that raises KeyError, the filter catches it and falls back to an empty
+# settings dict -- byte-identical to today's behaviour, when the setting
+# does not exist at all. Adding a "default" key here would silently
+# change how announcements render.
+#
+# bleach sanitises the output, which matters because this text is
+# written by a language model. The default bleach whitelist lacks p, br
+# and pre, which is why they are listed explicitly.
+# ---
+# Configuracion con nombre, usada UNICAMENTE por el informe de
+# evaluacion, para renderizar el feedback redactado por la IA
+# (justification, qualitative_summary), que llega en Markdown: vallas de
+# codigo, codigo en linea y listas numeradas.
+#
+# NO hay clave "default" a proposito. El tablon de anuncios invoca el
+# filtro sin argumento, que busca MARKDOWNIFY["default"]; eso lanza
+# KeyError, el filtro lo captura y cae en un dict de ajustes vacio --
+# identico al comportamiento de hoy, cuando el ajuste no existe. Anadir
+# una clave "default" aqui cambiaria en silencio como se ven los
+# anuncios.
+#
+# bleach sanea la salida, lo que importa porque ese texto lo redacta un
+# modelo de lenguaje. La lista blanca por defecto de bleach carece de p,
+# br y pre, de ahi que se declaren de forma explicita.
+MARKDOWNIFY = {
+    "assessment": {
+        "WHITELIST_TAGS": [
+            "p",
+            "br",
+            "pre",
+            "code",
+            "ul",
+            "ol",
+            "li",
+            "strong",
+            "em",
+            "blockquote",
+        ],
+        "MARKDOWN_EXTENSIONS": [
+            "fenced_code",
+            "nl2br",
+        ],
+    },
+}
