@@ -10,13 +10,80 @@ Motor de autoevaluacion con IA basado en arquetipos y subarquetipos academicos.
 
 ## 2. HOJA DE RUTA PARA LA PROXIMA SESION (LEY SUPREMA - INELUDIBLE)
 
-**ESTADO DEL HITO:** EN PROGRESO - Pipeline VERIFICADO en produccion de extremo a extremo para ARCH_SCI (S024). Pendiente extension a los cinco arquetipos restantes.
-**FECHA DE ULTIMA ACTUALIZACION:** 2026-07-27
-**OBJETIVO S025:** Completar la prueba E2E para los cinco arquetipos que faltan y ejercitar los casos especiales que S024 no llego a tocar.
+**ESTADO DEL HITO:** EN PROGRESO - Pipeline VERIFICADO en produccion de extremo a extremo para ARCH_SCI (S024) y ARCH_LANG (S025). Pendiente extension a los cuatro arquetipos restantes.
+**FECHA DE ULTIMA ACTUALIZACION:** 2026-07-28
+**OBJETIVO S026:** Completar la prueba E2E para los cuatro arquetipos que faltan (TECH, HEALTH, SOC, HUM) y estrenar los caminos de idiomas que S025 no pudo cubrir por falta de copias de estudio.
+
+---
+
+### RESULTADO DE S025 -- ARCH_LANG VERIFICADO Y SIETE DEFECTOS TRANSVERSALES
+
+Los seis puntos de verificacion quedan CERRADOS para ARCH_LANG / SUB-LIN-MINOR
+(chino), verificados EJECUTANDO en produccion, no leyendo:
+
+| Punto | Verificacion | Evidencia |
+|---|---|---|
+| a | Clasificacion IA correcta | ARCH_LANG / SUB-LIN-MINOR / zh, ITIN_MIN, LVL_B, BILINGUAL |
+| b | Skeleton correcto del subarquetipo | 5 secciones exactas, en orden |
+| c | Llenado completo de items | 5/5 con contenido real en chino |
+| d | Widgets renderizados | W-OBJ-STRIKE, W-TXT-CLOZE y W-MIX-MATCH, vistos en navegador |
+| e | Entrega y calificacion | nota final 0.7333 con parcialidad real por item |
+| f | Informe con qualitative_summary | Valoracion del Catedratico renderizada |
+
+Examen de referencia: `720f08c6-b68c-46f4-a224-65e53d2836a4` (id 229), generado,
+respondido, entregado y calificado desde el navegador por Miguel Angel. El
+examen previo `3b1bcdf8` (id 228) se genero bajo el esquema antiguo y se
+descarto tras servir de evidencia; ambos sobre la copia de estudio
+`Lengua Moderna Minor Chino: Intermedio 1`.
+
+**Los siete defectos corregidos, todos TRANSVERSALES a los seis arquetipos y
+ninguno detectable leyendo el codigo:**
+
+| # | Defecto | Commit |
+|---|---|---|
+| 1 | `ContentSchema` no declaraba `cloze_options`: las instrucciones pedian a la IA un campo inexistente en el esquema estricto y se descartaba en silencio. Las opciones acababan en `options` con ids improvisados (G1_A..G6_C). Cloze irrellenable. | 4198780 |
+| 2 | `ContentSchema` no declaraba `source_text`, consumido por el panel lateral de los layouts SPLIT_TEXT y pedido por mas de quince `task_instruction` de languages, humanities y social. | 4198780 |
+| 3 | Desajuste de corchetes: la plantilla emitia `data-gap-id="[HUECO_ID_1]"` y el corrector buscaba `HUECO_ID_1`. Nota 0 en todo item cloze aunque el alumno acertase los seis huecos. | 4198780 |
+| 4 | `_grade_mat_link` hacia `pairs.items()` sobre lo que el esquema entrega como lista. Reventaba la correccion del examen COMPLETO con `'list' object has no attribute 'items'`, visible en pantalla para el alumno. | b62a460 |
+| 5 | W-MIX-MATCH irrealizable: la plantilla leia las columnas de `content.options` (vacio) y `content.targets` (campo inexistente). Ambas columnas en blanco. | b62a460 |
+| 6 | `correct_answer` llegaba unas veces como texto de la opcion y otras como su identificador ('C'), mientras el navegador envia siempre el texto. En el caso de la letra, PRM-STRIKE marcaba INCORRECTA una respuesta acertada y ademas aplicaba la penalizacion 1/(N-1). | 4b483da |
+| 7 | La recoleccion de respuestas se bifurca por `block_type` y el render por `widget_id`: RBT-CANON se pinta como radios pero se recogia como campo de texto. La seleccion del alumno se enviaba como cadena vacia. | aa9cda2 |
+
+Se confirma de nuevo el patron de S024: **cada defecto tapaba al siguiente**. El
+arreglo del cloze (1 y 3) estaba bien, pero no se habria visto funcionar nunca,
+porque el defecto 4 tumbaba la correccion del examen entero antes de calcular
+ninguna nota.
+
+**Defecto de validez del instrumento, detectado por Miguel Angel probando.**
+La IA emite las opciones con la solucion en PRIMER lugar de forma sistematica:
+verificado sobre los DOCE huecos de cloze de los examenes 228 y 229, doce de
+doce en posicion 1. Un alumno que no conozca la materia sacaba 6/6 eligiendo
+siempre la primera opcion. Corregido barajando en el servidor, en presentacion
+(`ExamTakeView`), con semilla estable por `uuid` de item y `gap_id`, y no en
+generacion: cubre los examenes ya generados y deja intacto el orden almacenado,
+del que depende la resolucion posicional de `correct_answer` en
+`_choice_equivalents`. Mismo patron ya aplicado a los destinos de W-MIX-MATCH.
+Commit 27bd6ca.
+
+**Incidencia de infraestructura ajena al hito.** Dos despliegues consecutivos
+fallaron sin ejecutar un solo paso (11 segundos, sin runner asignado): el
+repositorio estaba en PRIVADO y la cuota de minutos de Actions se habia agotado.
+Miguel Angel lo devolvio a publico y el relanzamiento paso. Ademas se corrigio
+`deploy.yml`: el paso de reinicio de Always-on Tasks llevaba
+`if: steps.deploy.outcome == 'success'`, y GitHub antepone un `success()`
+implicito a toda condicion sin funcion de estado, de modo que seguia atado al
+exito del paso anterior. El desacople que el comentario del 2026-07-27 decia
+haber implantado nunca fue efectivo, y volvio a morder hoy: fallo la recarga
+web, el paso salio `skipped` y los dos workers quedaron con codigo viejo en
+silencio. Commit 99a10b3.
+
+**Correccion documental.** Este anexo daba por publico el repositorio desde
+S024. Estuvo en privado hasta el 2026-07-28.
 
 ---
 
 ### RESULTADO DE S024 -- PRIMER PIPELINE COMPLETO DESDE EL 2026-03-17
+
 
 Los seis puntos de verificacion que exigia la hoja de ruta anterior quedan
 CERRADOS para ARCH_SCI / SUB-SCI-PHYS-EM, verificados EJECUTANDO, no leyendo:
@@ -62,40 +129,98 @@ datos en estado ERROR y son la evidencia que permitio el diagnostico.
 
 ---
 
-### HOJA DE RUTA S025 -- EN ESTE ORDEN
+### HOJA DE RUTA S026 -- EN ESTE ORDEN
 
-PASO 1 -- Completar la prueba E2E de los cinco arquetipos restantes
-- ARCH_TECH, ARCH_HEALTH, ARCH_SOC, ARCH_HUM, ARCH_LANG.
-- Las copias de estudio ya existen (Fisica, Antropologia social, Economia
-  Politica, Anatomia y las de idiomas), y arrastran el aviso rojo de
-  `assessment_status == ERROR` del lote del 2026-05-28. El aviso desaparece
-  al generar un examen nuevo que llegue a READY.
-- Verificar los seis puntos (a-f) en cada uno, igual que en ARCH_SCI.
+PASO 1 -- Completar la prueba E2E de los cuatro arquetipos restantes
+- ARCH_TECH (Algoritmica), ARCH_HEALTH (Anatomia), ARCH_SOC (Economia Politica)
+  y ARCH_HUM (Antropologia social). Las cuatro copias existen y arrastran el
+  aviso rojo de `assessment_status == ERROR` del lote del 2026-05-28, que
+  desaparece al generar un examen que llegue a READY.
+- Verificar los seis puntos (a-f) en cada uno, EJECUTANDO.
+- ATENCION ESPECIAL a `source_text`: se declaro en el esquema en S025 (4198780)
+  y NO se ha ejercitado nunca. Alimenta el panel lateral de los layouts
+  SPLIT_TEXT, que piden humanities y social. Es la pieza de S025 sin verificar,
+  exactamente el mismo papel que jugo `_normalize_gap_solutions` en S025.
+- Los siete defectos de S025 eran transversales, no especificos de idiomas, asi
+  que estos cuatro arquetipos deberian ir sensiblemente mas rapidos.
 
-PASO 2 -- Ejercitar W-TXT-CLOZE (SIN PROBAR TODAVIA)
-El normalizador `_normalize_gap_solutions` de `base.py` se escribio en S024
-y NO se ha ejecutado nunca con datos reales de la IA: el examen de Fisica uso
-W-OBJ-STRIKE y W-TECH-CALC, que no llevan `gap_solutions`. Hace falta un
-examen con widget cloze para confirmar que la IA respeta el contrato NUEVO
-(lista de objetos `{gap_id, accepted_answer}`) y que los motores CLO-OPEN y
-CLO-MULTI lo normalizan bien. Es la unica pieza de S024 sin verificar.
+PASO 2 -- Estreno de SD_LIST (comprension oral) -- RIESGO ALTO
+Requiere un examen de SUB-LIN-INSTR (copias disponibles: Catalan, Frances,
+Italiano Maior). El disparador de audio de `orchestrator/tasks.py` (~linea 1212)
+vive DENTRO del `try` cuyo `except` cuenta reintento local: si
+`_generate_item_audio` lanza, el fallo se registra como "Error Parseo JSON", se
+reintenta 3 veces y aborta la seccion con `AIServiceCriticalError`, tumbando el
+examen entero. Es decir, un fallo de audio es bloqueante Y se disfraza de error
+de parseo. Tenerlo presente al diagnosticar.
 
-PASO 3 -- Casos especiales que el anexo anterior ya pedia y siguen pendientes
-- Asignatura de Magisterio: confirmar que AcademicDeductor le asigna ITIN_DOC.
-- SUB-LIN-MINOR en japones: confirmar que `wanakana.bind()` se activa leyendo
-  `data-target-lang` del div#exam-container (modo Occidentalizacion).
-- Atencion especial a las secciones SD_LIST: el disparador de audio contenia
-  un NameError corregido en S024 (7504fd9) que nunca llego a ejecutarse. El
-  primer examen de idiomas con comprension oral es su estreno real.
+PASO 3 -- CLO-OPEN, sin cobertura posible hoy
+`CLO-OPEN` lo emite unicamente `SUB-LIN-PHILO`, y no existe copia de estudio de
+ninguna asignatura filologico-diacronica (gramatica historica, filologia latina,
+linguistica historica). Confirmar con Miguel Angel si existe tal asignatura en
+la estructura academica; si no, queda como pendiente justificado, no como
+omision. "El Espanol Actual: Norma y Uso" caera previsiblemente en
+`SUB-LIN-NORM`, que es CLO-MULTI otra vez.
 
-PASO 4 -- Decidir apertura a usuarios reales
+PASO 4 -- Japones / wanakana, sin cobertura posible hoy
+`bindOccidentalInput` solo contempla `ja`, `ar` y `el`; el chino cae en la rama
+generica, de modo que la copia de Minor Chino NO ejercita wanakana. Hace falta
+una copia de una asignatura de japones. Mismo tratamiento que el PASO 3.
+
+PASO 5 -- ITIN_DOC en Magisterio
+Pendiente desde el anexo anterior: confirmar que `AcademicDeductor` le asigna
+`ITIN_DOC`.
+
+PASO 6 -- Selector de dificultad UG / Endurecido (decision de Miguel Angel, S025)
+Criterio fijado por Miguel Angel: **manda lo que haga la UGR**. Lo que sea licito
+y no discrepe en exceso se implanta como estandar; lo que endurezca por encima
+del sistema de acreditacion va a un selector de dificultad que elija el usuario,
+con nivel estandar (UG) y dificil (endurecido).
+- El barajado desplegado en S025 NO es endurecimiento y se queda como estandar:
+  no toca ninguna regla de puntuacion, solo elimina un artefacto del generador.
+- Contenido candidato del modo endurecido: (a) distractores en W-MIX-MATCH, hoy
+  6 contra 6, de modo que la ultima pareja es gratis por eliminacion; (b)
+  extender la penalizacion a `CLO-MULTI`, que lleva `no_negative_marking` fijo en
+  el codigo sin ninguna cita UGR que lo respalde -- a diferencia del caso de
+  SUB-LIN-INSTR, que si la tiene.
+- CONFIRMADO en `V06DOC_BLOCKS.md` (lineas 12 y 15): la formula
+  `A - E/(N-1)` de PRM-STRIKE es la correccion por azar UGR, y el
+  `NO_NEGATIVE_MARKING` de SD_READ/SD_LIST en SUB-LIN-INSTR es una regla
+  explicita de la Guia Oficial del Candidato CLM-UGR, no una omision.
+
+PASO 7 -- Densidad de items (verificar normativa ANTES de tocar skeletons)
+El examen 229 tuvo CINCO items, uno por seccion, de modo que cada item pesa el
+20% de la nota final y un acierto por azar la mueve dos decimas. Ningun documento
+V06 fija la densidad: la determinan los skeletons de cada Estrategia. El
+"densidad UGR (17 items)" que aparece en el historial es del sistema anterior a
+este hito. Subir la densidad NO es endurecer, es medir mejor, asi que iria al
+estandar -- pero verificar la normativa real antes de tocar ningun skeleton.
+
+PASO 8 -- Decidir apertura a usuarios reales
 El panel de evaluacion de `edit_copy.html` esta condicionado a
-`request.user.is_staff or request.user.id == 1`; el resto de usuarios ve la
-pantalla "En Mantenimiento". Abrir implica relajar esa condicion.
+`request.user.is_staff or request.user.id == 1`; el resto ve "En Mantenimiento".
+Abrir implica relajar esa condicion.
 
 ---
 
-### DEUDA TECNICA ABIERTA, DETECTADA EN S024
+### DEUDA TECNICA ABIERTA
+
+**0. Anadida en S025 -- correccion de `deploy.yml` SIN VERIFICAR.**
+El `if: always() && steps.deploy.outcome == 'success'` del paso de reinicio de
+Always-on Tasks (99a10b3) esta desplegado pero NO probado: el unico despliegue
+posterior no tocaba archivos relevantes, de modo que el paso salio en verde sin
+reiniciar nada. Solo se confirmara el dia que un despliegue con cambios
+relevantes tenga una recarga web fallida. No darlo por bueno hasta entonces.
+
+**0-bis. Anadida en S025 -- controles de verificacion, otra vez a mano.**
+S025 volvio a improvisar los mismos tres controles que S024 dejo apuntados
+(`py_compile`, `node --check` sobre el fragmento JS extraido, y render real via
+`django.test.Client`), y los tres encontraron cosas. Siguen sin automatizar. El
+render via `django.test.Client` fue ademas decisivo para descartar un falso
+diagnostico: probo que el `<script>` con las opciones del cloze SI se emitia
+correctamente, y que el problema estaba en la lectura de la pantalla, no en el
+codigo.
+
+### DEUDA TECNICA HEREDADA DE S024
 
 **1. Dos tareas periodicas fantasma (prioridad alta, afecta a reglas de negocio del hito).**
 Beat dispara puntualmente `orchestrator.tasks.purge_and_penalize_corrections`
@@ -304,3 +429,4 @@ S021  2026-05-24  Implementacion core 12/17 archivos   PEAs base.py, logic.py, f
 S022  2026-05-25  Implementacion cierre 17/17 archivos exam_take.html (22 widgets), exam_report.html, validate_v06_engines.py. SYNTAX OK.
 S023  2026-05-26  Auditoria TLA + Certificacion        11 incidencias: 9 resueltas, 2 cerradas. ITIN_DOC certificado V06DOC_LEVELS. Modo Occidentalizacion (ja/ar/el). Selector rango verificado. Fase Implementacion CERTIFICADA. collectstatic ejecutado.
 S024  2026-07-27  Pipeline E2E VERIFICADO (ARCH_SCI)   7 defectos corregidos, ninguno detectable por lectura: additionalProperties en el schema (ff562bb), 2 NameError en generate_exam_task (7504fd9), filtro 'split' inexistente (5c78a00), URL de entrega con prefijo erroneo (4f72fce), cadena JS partida que anulaba todo el script (5656bce), clave fantasma en el informe (7e8b3f9). Cada uno tapaba al siguiente. Los seis puntos (a-f) cerrados para ARCH_SCI ejecutando, no leyendo. Desvio: caida total de produccion por manifiesto de estaticos ausente + 3 correcciones del pipeline de despliegue. Pendiente: 5 arquetipos, W-TXT-CLOZE, ITIN_DOC, japones.
+S025  2026-07-28  Pipeline E2E VERIFICADO (ARCH_LANG)  7 defectos corregidos, todos transversales y ninguno detectable por lectura: ContentSchema no declaraba cloze_options ni source_text (4198780), desajuste de corchetes en gap_id que daba 0 en todo cloze (4198780), pairs.items() sobre lista que tumbaba la correccion entera (b62a460), W-MIX-MATCH con las dos columnas vacias (b62a460), correct_answer como letra penalizando aciertos (4b483da), RBT-CANON recogido como texto pese a pintarse como radios (aa9cda2). Defecto de validez detectado por Miguel Angel probando: solucion siempre en primera posicion, 12/12 huecos en dos examenes; barajado en servidor con semilla estable (27bd6ca). Los seis puntos (a-f) cerrados para ARCH_LANG con el examen 720f08c6, nota 0.7333. Incidencia: 2 despliegues fallidos por cuota de Actions agotada con el repo en privado; y desacople real del reinicio de workers en deploy.yml, que nunca fue efectivo por el success() implicito (99a10b3). Criterio fijado: manda la UGR; lo que endurezca por encima va a selector UG/Endurecido. Pendiente: 4 arquetipos, source_text, SD_LIST, CLO-OPEN y japones sin copia.
