@@ -438,19 +438,49 @@ class BaseExamStrategy(ABC):
             'total_gaps': total_gaps
         }
 
+    @classmethod
+    def _normalize_pairs(cls, raw) -> dict:
+        """
+        Normalizes matching pairs to {left: right} regardless of shape.
+        The AI contract is a list of {izquierdo, derecho}; the legacy shape was a
+        plain dict. Grading always works on the dict form.
+        ---
+        Normaliza los pares de vinculacion a {izquierdo: derecho} sea cual sea su
+        forma. El contrato de la IA es una lista de {izquierdo, derecho}, igual que
+        gap_solutions y por la misma razon (Gemini rechaza 'additionalProperties',
+        que Pydantic emite para cualquier dict sin parametrizar). La forma antigua
+        era un dict plano. La calificacion trabaja siempre sobre el dict.
+        Incidencia real S025: sin esta normalizacion, _grade_mat_link llamaba a
+        .items() sobre una lista y la correccion entera del examen reventaba con
+        "'list' object has no attribute 'items'", visible para el alumno.
+        """
+        if not raw:
+            return {}
+        if isinstance(raw, dict):
+            return raw
+        if isinstance(raw, list):
+            normalized = {}
+            for entry in raw:
+                if isinstance(entry, dict) and entry.get('izquierdo') is not None:
+                    normalized[str(entry['izquierdo'])] = entry.get('derecho', '')
+            return normalized
+        return {}
+
     def _grade_mat_link(self, item, student_input) -> tuple:
         """
         MAT-LINK motor: Drag & drop matching. Scores proportionally by correct pairs.
-        pairs in grading_logic: {source_text: target_text}.
+        pairs in grading_logic arrives as a list of {izquierdo, derecho} and is
+        normalized to {left: right} before grading.
         student_input expected as {source_text: student_target}.
         ---
         Motor MAT-LINK: Emparejamiento por arrastre. Califica proporcionalmente por pares correctos.
-        pairs en grading_logic: {texto_fuente: texto_destino}.
+        pairs en grading_logic llega como lista de {izquierdo, derecho} y se normaliza
+        a {izquierdo: derecho} antes de calificar.
         student_input se espera como {texto_fuente: destino_del_alumno}.
         Ref: V06DOC_BLOCKS Sección 3.3 (MAT-LINK).
         """
         logic  = item.grading_logic
-        pairs  = logic.get('pairs', {})
+        pairs  = self._normalize_pairs(logic.get('pairs'))
 
         if not pairs:
             return Decimal('1.0'), {

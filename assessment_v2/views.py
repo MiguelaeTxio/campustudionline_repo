@@ -10,6 +10,7 @@ from django.utils import timezone
 from decimal import Decimal
 import json
 import re
+import random
 
 from .models.main import Exam, Submission
 from .services.engine.factory import ExamFactory
@@ -149,6 +150,36 @@ class ExamTakeView(LoginRequiredMixin, DetailView):
                         else:
                             clean_opts.append({'text': str(opt)})
                     item.content['options'] = clean_opts
+
+                # [S025] W-MIX-MATCH: las dos columnas se derivan de
+                # grading_logic.pairs, que es la unica fuente de verdad del
+                # emparejamiento. La IA no rellena content.options ni
+                # content.targets para este widget, asi que la plantilla
+                # pintaba ambas columnas vacias y el ejercicio era
+                # irrealizable. Se deriva aqui, en memoria, sin persistir.
+                #
+                # Los destinos se BARAJAN con una semilla estable (el uuid del
+                # item): si se mostrasen en el mismo orden que los elementos,
+                # el ejercicio se resolveria emparejando fila con fila sin
+                # saber la materia. La semilla fija evita que el orden cambie
+                # al recargar la pagina a mitad de examen.
+                if getattr(item, 'widget_id', None) == 'W-MIX-MATCH':
+                    raw_pairs = item.grading_logic.get('pairs') if isinstance(item.grading_logic, dict) else None
+                    parejas = []
+                    if isinstance(raw_pairs, list):
+                        for p in raw_pairs:
+                            if isinstance(p, dict) and p.get('izquierdo') is not None:
+                                parejas.append((str(p.get('izquierdo')), str(p.get('derecho', ''))))
+                    elif isinstance(raw_pairs, dict):
+                        parejas = [(str(k), str(v)) for k, v in raw_pairs.items()]
+
+                    if parejas:
+                        if not isinstance(item.content, dict):
+                            item.content = {}
+                        item.content['options'] = [{'text': izq} for izq, _ in parejas]
+                        destinos = [der for _, der in parejas]
+                        random.Random(str(item.uuid)).shuffle(destinos)
+                        item.content['targets'] = destinos
         
         return context
 
