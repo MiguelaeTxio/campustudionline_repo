@@ -1105,23 +1105,38 @@
         const output = el.querySelector('.cloze-output');
         
         const blockType = el.closest('.exam-item').dataset.blockType;
+        // [S025 FIX] cloze_options llega del esquema como LISTA de {gap_id, options}.
+        // Se normaliza a diccionario indexado por gap_id DESNUDO (sin corchetes), que es
+        // la forma canónica que usan gap_solutions y el corrector del servidor.
+        // Se tolera la forma dict antigua por si quedasen exámenes previos en base.
+        const stripBrackets = (k) => String(k).trim().replace(/^\[|\]$/g, '').trim();
         let optionsDict = {};
         try {
             const scriptTag = document.getElementById(el.dataset.uuid);
             if (scriptTag) {
-                optionsDict = JSON.parse(scriptTag.textContent);
+                const raw = JSON.parse(scriptTag.textContent);
+                if (Array.isArray(raw)) {
+                    raw.forEach(entry => {
+                        if (entry && entry.gap_id) {
+                            optionsDict[stripBrackets(entry.gap_id)] = entry.options || [];
+                        }
+                    });
+                } else if (raw && typeof raw === 'object') {
+                    Object.keys(raw).forEach(k => { optionsDict[stripBrackets(k)] = raw[k] || []; });
+                }
             }
         } catch(e) { console.error("Error parsing cloze options:", e); }
 
         // [HITO 6 FIX] Detección explícita de marcadores [HUECO_ID_X] dictados por la Estrategia
         let renderedHTML = source.replace(/\[HUECO_ID_\d+\]/g, (match) => {
+            const gapId = stripBrackets(match);
             if (blockType === 'CLO-MULTI') {
                 let optionsHTML = '<option value="">---</option>';
-                const opts = optionsDict[match] ||[];
+                const opts = optionsDict[gapId] || [];
                 opts.forEach(opt => { optionsHTML += `<option value="${opt}">${opt}</option>`; });
-                return `<select class="cloze-input form-select d-inline-block text-center mx-1 border-primary rounded" data-gap-id="${match}" style="width: auto; background: #f8f9fa;">${optionsHTML}</select>`;
+                return `<select class="cloze-input form-select d-inline-block text-center mx-1 border-primary rounded" data-gap-id="${gapId}" style="width: auto; background: #f8f9fa;">${optionsHTML}</select>`;
             } else {
-                return `<input type="text" class="cloze-input form-control d-inline-block text-center mx-1 border-bottom border-primary rounded-0 px-2" data-gap-id="${match}" style="width: 120px; background: #f8f9fa;" placeholder="?" autocomplete="off">`;
+                return `<input type="text" class="cloze-input form-control d-inline-block text-center mx-1 border-bottom border-primary rounded-0 px-2" data-gap-id="${gapId}" style="width: 120px; background: #f8f9fa;" placeholder="?" autocomplete="off">`;
             }
         });
         

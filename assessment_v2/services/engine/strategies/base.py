@@ -255,29 +255,62 @@ class BaseExamStrategy(ABC):
         }
 
     @staticmethod
-    def _normalize_gap_solutions(raw) -> dict:
+    def _strip_gap_brackets(key) -> str:
+        """
+        Canonical form of a gap key: bare identifier, no surrounding brackets.
+        The exam template writes data-gap-id straight from the regex match, which
+        includes the brackets ('[HUECO_ID_1]'), while the AI emits the bare id
+        ('HUECO_ID_1'). Both sides are canonicalised here before any comparison.
+        ---
+        Forma canónica de la clave de un hueco: identificador desnudo, sin corchetes.
+        La plantilla del examen escribe data-gap-id directamente desde la coincidencia
+        del regex, que incluye los corchetes ('[HUECO_ID_1]'), mientras que la IA emite
+        el identificador desnudo ('HUECO_ID_1'). Ambos lados se canonizan aquí antes de
+        cualquier comparación. Incidencia real S025: sin este saneado, todo ítem cloze
+        se calificaba con 0 aunque el alumno acertase todos los huecos.
+        """
+        return str(key).strip().strip('[]').strip()
+
+    @classmethod
+    def _normalize_gap_solutions(cls, raw) -> dict:
         """
         Normalizes gap_solutions to {gap_id: accepted_answer} regardless of shape.
         Accepts the current AI contract (list of {gap_id, accepted_answer}) and the
-        legacy dict shape stored in exams generated before the schema fix.
+        legacy dict shape stored in exams generated before the schema fix. Keys are
+        canonicalised without brackets.
         ---
         Normaliza gap_solutions a {gap_id: respuesta_aceptada} sea cual sea su forma.
         Acepta el contrato actual de la IA (lista de {gap_id, accepted_answer}) y la
         forma dict antigua, presente en exámenes generados antes de la corrección del
         esquema. La lista es obligatoria en el schema porque la API de Gemini rechaza
         'additionalProperties', que Pydantic emite para cualquier dict sin parametrizar.
+        Las claves se canonizan sin corchetes.
         """
         if not raw:
             return {}
         if isinstance(raw, dict):
-            return raw
+            return {cls._strip_gap_brackets(k): v for k, v in raw.items()}
         if isinstance(raw, list):
             normalized = {}
             for entry in raw:
                 if isinstance(entry, dict) and entry.get('gap_id') is not None:
-                    normalized[entry['gap_id']] = entry.get('accepted_answer', '')
+                    normalized[cls._strip_gap_brackets(entry['gap_id'])] = entry.get('accepted_answer', '')
             return normalized
         return {}
+
+    @classmethod
+    def _normalize_student_gaps(cls, student_input) -> dict:
+        """
+        Canonicalises the keys of the student's cloze answers, so grading does not
+        depend on whether the browser submitted bracketed or bare gap ids.
+        ---
+        Canoniza las claves de las respuestas de cloze del alumno, para que la
+        calificación no dependa de si el navegador envió los identificadores con
+        corchetes o sin ellos.
+        """
+        if not isinstance(student_input, dict):
+            return {}
+        return {cls._strip_gap_brackets(k): v for k, v in student_input.items()}
 
     def _grade_clo_open(self, item, student_input) -> tuple:
         """
@@ -309,6 +342,8 @@ class BaseExamStrategy(ABC):
                 'feedback_category': 'FB_PROCEDURAL',
                 'justification': 'Formato de respuesta de cloze incorrecto.'
             }
+
+        student_input = self._normalize_student_gaps(student_input)
 
         total_gaps  = len(gap_solutions)
         correct_gaps = 0
@@ -375,6 +410,8 @@ class BaseExamStrategy(ABC):
                 'feedback_category': 'FB_PROCEDURAL',
                 'justification': 'Formato de respuesta de cloze incorrecto.'
             }
+
+        student_input = self._normalize_student_gaps(student_input)
 
         total_gaps   = len(gap_solutions)
         correct_gaps = 0

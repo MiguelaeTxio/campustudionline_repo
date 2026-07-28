@@ -403,8 +403,11 @@ class LanguagesStrategy(BaseExamStrategy):
                             'task_instruction': (
                                 'Genera un texto académico en el idioma objetivo con exactamente 8 huecos (CLO-MULTI). '
                                 'Cada hueco evalúa léxico o gramática en contexto. '
-                                'Usa marcadores [HUECO_ID_1] ... [HUECO_ID_8]. '
-                                'Proporciona 4 opciones por hueco en cloze_options. '
+                                'Usa marcadores [HUECO_ID_1] ... [HUECO_ID_8] dentro de text_with_gaps. '
+                                'Rellena cloze_options con una entrada por hueco: gap_id SIN corchetes '
+                                '(HUECO_ID_1 ... HUECO_ID_8) y 4 opciones para cada uno. '
+                                'Rellena gap_solutions con esos mismos gap_id; la respuesta correcta de cada '
+                                'hueco debe figurar literalmente entre las opciones de ese mismo hueco. '
                                 'NO_NEGATIVE_MARKING activo para esta sección.'
                             )
                         },
@@ -548,8 +551,11 @@ class LanguagesStrategy(BaseExamStrategy):
                                 'Genera oraciones simples con huecos (CLO-MULTI) que evalúen '
                                 'estructuras morfosintácticas elementales del idioma '
                                 '(conjugación básica, concordancia, orden de palabras). '
-                                'Usa marcadores [HUECO_ID_1] ... [HUECO_ID_6]. '
-                                'Proporciona 3 opciones por hueco en cloze_options.'
+                                'Usa marcadores [HUECO_ID_1] ... [HUECO_ID_6] dentro de text_with_gaps. '
+                                'Rellena cloze_options con una entrada por hueco: gap_id SIN corchetes '
+                                '(HUECO_ID_1 ... HUECO_ID_6) y 3 opciones para cada uno. '
+                                'Rellena gap_solutions con esos mismos gap_id; la respuesta correcta de cada '
+                                'hueco debe figurar literalmente entre las opciones de ese mismo hueco.'
                             )
                         }
                     ]
@@ -724,7 +730,10 @@ class LanguagesStrategy(BaseExamStrategy):
                                 '(puntuación, mayúsculas, comillas, cursivas, guiones, etc.) '
                                 'marcados como huecos CLO-MULTI. '
                                 'Usa marcadores [HUECO_ID_1] ... [HUECO_ID_8]. '
-                                'Cada hueco presenta la forma errónea vs. la correcta entre las opciones. '
+                                'Rellena cloze_options con una entrada por hueco: gap_id SIN corchetes '
+                                '(HUECO_ID_1 ... HUECO_ID_8), presentando como opciones la forma errónea '
+                                'y la correcta. Rellena gap_solutions con esos mismos gap_id; la respuesta '
+                                'correcta debe figurar literalmente entre las opciones de ese hueco. '
                                 'El source_text es el texto completo con errores para el panel lateral.'
                             )
                         }
@@ -850,7 +859,11 @@ class LanguagesStrategy(BaseExamStrategy):
                                 'Genera un texto con 8 desviaciones morfosintácticas deliberadas '
                                 '(queísmo, dequeísmo, laísmo, leísmo, concordancias incorrectas, '
                                 'tiempos verbales erróneos, etc.) marcadas como huecos CLO-MULTI. '
-                                'Cada hueco presenta la forma errónea y la correcta como opciones. '
+                                'Usa marcadores [HUECO_ID_1] ... [HUECO_ID_8] dentro de text_with_gaps. '
+                                'Rellena cloze_options con una entrada por hueco: gap_id SIN corchetes '
+                                '(HUECO_ID_1 ... HUECO_ID_8), presentando como opciones la forma errónea '
+                                'y la correcta. Rellena gap_solutions con esos mismos gap_id; la respuesta '
+                                'correcta debe figurar literalmente entre las opciones de ese hueco. '
                                 'El source_text es el texto completo para el panel lateral.'
                             )
                         }

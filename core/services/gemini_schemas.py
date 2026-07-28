@@ -1,3 +1,4 @@
+# /home/MiguelAeTxio/PROJECTS/CampuStudiOnline/core/services/gemini_schemas.py
 from pydantic import BaseModel, Field
 from typing import List, Optional
 
@@ -167,18 +168,24 @@ class OptionSchema(BaseModel):
     id: str = Field(description="Identificador de la opción (ej: 'A', 'B', 'C', 'D').")
     text: str = Field(description="Texto de la opción (exclusivamente texto visible, PROHIBIDO incluir metadatos).")
 
+class ClozeOptionGroupSchema(BaseModel):
+    gap_id: str = Field(description="Identificador del hueco SIN corchetes, tal y como aparece dentro del marcador del texto (para el marcador [HUECO_ID_1] el valor es HUECO_ID_1).")
+    options: List[str] = Field(description="Opciones seleccionables para ese hueco concreto. Una de ellas DEBE coincidir literalmente con el accepted_answer del mismo gap_id en gap_solutions.")
+
 class ContentSchema(BaseModel):
     stem: str = Field(description="El enunciado, pregunta o estímulo principal del ítem.")
-    options: Optional[List[OptionSchema]] = Field(default=None, description="Lista de opciones de respuesta (Mínimo 4 para W-OBJ-STRIKE).")
+    options: Optional[List[OptionSchema]] = Field(default=None, description="Lista de opciones de respuesta (Mínimo 4 para W-OBJ-STRIKE). NO se usa para W-TXT-CLOZE: las opciones de los huecos van en cloze_options.")
     media_assets: Optional[List[str]] = Field(default=None, description="URLs de recursos multimedia opcionales.")
     text_with_gaps: Optional[str] = Field(default=None, description="Texto continuo con huecos (Obligatorio para W-TXT-CLOZE).")
+    cloze_options: Optional[List[ClozeOptionGroupSchema]] = Field(default=None, description="Opciones por hueco para CLO-MULTI (W-TXT-CLOZE), una entrada por cada hueco del texto. Obligatorio en CLO-MULTI; se omite en CLO-OPEN, que es de respuesta libre. Es una LISTA de objetos y nunca un diccionario: la API de Gemini rechaza 'additionalProperties', que Pydantic emite para cualquier dict sin parametrizar.")
+    source_text: Optional[str] = Field(default=None, description="Texto fuente completo destinado al panel lateral de los ítems con layout SPLIT_TEXT (corpus, facsímil, fragmento original, texto con errores). Se renderiza aparte del stem.")
 
 class PairSchema(BaseModel):
     izquierdo: str = Field(description="Elemento izquierdo del par.")
     derecho: str = Field(description="Elemento derecho del par vinculado.")
 
 class GapSolutionSchema(BaseModel):
-    gap_id: str = Field(description="Identificador del hueco tal y como aparece en el enunciado (ej: HUECO_1).")
+    gap_id: str = Field(description="Identificador del hueco SIN corchetes, tal y como aparece dentro del marcador del texto (para el marcador [HUECO_ID_1] el valor es HUECO_ID_1). Debe coincidir con el gap_id usado en cloze_options.")
     accepted_answer: str = Field(description="Respuesta aceptada para ese hueco. Admite variantes separadas por '|'.")
 
 class GradingLogicSchema(BaseModel):
