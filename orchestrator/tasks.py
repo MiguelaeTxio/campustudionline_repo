@@ -154,6 +154,82 @@ def _generate_item_audio(item_id, text, api_key):
 # SECCIÓN 2: GENERACIÓN DE CONTENIDO (RESTAURADO V24.13)
 # ==============================================================================
 
+# --- Newline sentinel / Centinela de salto de linea (S026) ---
+# Gemini, called with response_mime_type=application/json and a strict
+# response_schema, returns string values with NO newline escapes at all.
+# Verified on 2026-07-29 against gemini-2.5-flash: the raw response
+# text, before any parsing, arrives as
+#   '{"j":"...solicitado.```    INICIOPrograma    DECLARAR..."}'
+# with the indentation intact and the line break simply absent. The
+# project code is not at fault: clean_json_response, dirtyjson and
+# response.text.strip() were each tested in isolation and all three
+# preserve newlines. The loss happens at the API boundary, in
+# constrained decoding.
+#
+# The model is therefore instructed to emit an explicit token, restored
+# here on the way into the database. Restoring at persistence time and
+# not at render time keeps the templates dumb, as com-standards
+# requires. The mechanism is additive: if the model omits the token the
+# text is stored exactly as it is today, so there is no regression.
+# ---
+# Gemini, invocado con response_mime_type=application/json y un
+# response_schema estricto, devuelve las cadenas SIN ningun escape de
+# salto de linea. Verificado el 2026-07-29 contra gemini-2.5-flash: el
+# texto crudo de la respuesta, antes de parsear nada, llega como
+#   '{"j":"...solicitado.```    INICIOPrograma    DECLARAR..."}'
+# con la indentacion intacta y el salto sencillamente ausente. El
+# codigo del proyecto no tiene la culpa: clean_json_response, dirtyjson
+# y response.text.strip() se probaron por separado y los tres preservan
+# los saltos. La perdida ocurre en la frontera con la API, en la
+# decodificacion restringida.
+#
+# Por eso se instruye al modelo para que emita un token explicito, que
+# se restituye aqui al entrar en la base de datos. Restituir en la
+# persistencia y no en el renderizado mantiene tontas las plantillas,
+# como exige com-standards. El mecanismo es aditivo: si el modelo omite
+# el token, el texto se guarda igual que hoy, sin regresion.
+NEWLINE_SENTINEL = "<<NL>>"
+
+NEWLINE_DIRECTIVE = (
+    "\n\n--- DIRECTIVA DE SALTOS DE LINEA (OBLIGATORIA) ---\n"
+    "El transporte JSON descarta los saltos de linea reales. En "
+    "CUALQUIER campo de texto que generes, escribe cada salto de "
+    "linea como el token literal " + NEWLINE_SENTINEL + ", sin "
+    "espacios alrededor.\n"
+    "Ejemplo de valla de codigo markdown:\n"
+    "```pseudocode" + NEWLINE_SENTINEL + "funcion f(n):"
+    + NEWLINE_SENTINEL + "  retornar n" + NEWLINE_SENTINEL + "```\n"
+    "Ejemplo de lista numerada:\n"
+    "1. Primer paso" + NEWLINE_SENTINEL + "2. Segundo paso\n"
+    "No uses " + NEWLINE_SENTINEL + " para ninguna otra cosa. Si un "
+    "texto no necesita saltos de linea, no incluyas ninguno."
+)
+
+
+def _restore_newlines(node):
+    """
+    Recursively replace the newline sentinel with real newlines across
+    the whole parsed AI payload: item content, grading logic and
+    section stimulus alike. Returns plain dict/list containers, which
+    is safe because dirtyjson's AttributedDict and AttributedList
+    subclass them and the downstream code only uses .get() and
+    iteration.
+    ---
+    Sustituye recursivamente el centinela por saltos de linea reales
+    en todo el arbol devuelto por la IA: contenido del item, logica de
+    calificacion y estimulo de seccion por igual. Devuelve contenedores
+    dict/list planos, lo cual es seguro porque AttributedDict y
+    AttributedList de dirtyjson heredan de ellos y el codigo posterior
+    solo usa .get() e iteracion.
+    """
+    if isinstance(node, str):
+        return node.replace(NEWLINE_SENTINEL, "\n")
+    if isinstance(node, dict):
+        return {k: _restore_newlines(v) for k, v in node.items()}
+    if isinstance(node, list):
+        return [_restore_newlines(v) for v in node]
+    return node
+
 
 def _safe_generate_content(prompt, system_instruction=None, response_schema=None, logger_callback=None):
     """
@@ -1120,7 +1196,7 @@ def generate_exam_task(self, exam_uuid, context_text=None, topic=None):
                 continue
             
             # Inyección de immersion_mode y pedagogical_level ELIMINADA (Bugfix: TypeError)
-            s_prompt = strategy.get_system_prompt()
+            s_prompt = strategy.get_system_prompt() + NEWLINE_DIRECTIVE
             
             # Construir skeleton_json con los UUIDs reales de los ítems de esta sección
             # para que la IA los devuelva inmutables (SCHEMA-FIRST Protocol)
@@ -1172,7 +1248,9 @@ def generate_exam_task(self, exam_uuid, context_text=None, topic=None):
                     try:
                         usage_total["in"] += usage.get("input_tokens", 0)
                         usage_total["out"] += usage.get("output_tokens", 0)
-                        parsed_resp = dirtyjson.loads(clean_json_response(resp))
+                        parsed_resp = _restore_newlines(
+                            dirtyjson.loads(clean_json_response(resp))
+                        )
                         items = parsed_resp.get("items", [])
                         
                         if "section_stimulus" in parsed_resp:
