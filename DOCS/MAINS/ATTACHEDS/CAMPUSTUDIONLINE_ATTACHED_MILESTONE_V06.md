@@ -10,9 +10,106 @@ Motor de autoevaluacion con IA basado en arquetipos y subarquetipos academicos.
 
 ## 2. HOJA DE RUTA PARA LA PROXIMA SESION (LEY SUPREMA - INELUDIBLE)
 
-**ESTADO DEL HITO:** EN PROGRESO - Pipeline VERIFICADO en produccion de extremo a extremo para ARCH_SCI (S024) y ARCH_LANG (S025). Pendiente extension a los cuatro arquetipos restantes.
-**FECHA DE ULTIMA ACTUALIZACION:** 2026-07-28
-**OBJETIVO S026:** Completar la prueba E2E para los cuatro arquetipos que faltan (TECH, HEALTH, SOC, HUM) y estrenar los caminos de idiomas que S025 no pudo cubrir por falta de copias de estudio.
+**ESTADO DEL PIPELINE:** VERIFICADO en produccion de extremo a extremo para
+ARCH_SCI (S024), ARCH_LANG (S025) y ARCH_TECH (S026). Pendiente extension a
+ARCH_HEALTH, ARCH_SOC y ARCH_HUM.
+**FECHA DE ULTIMA ACTUALIZACION:** 2026-07-29
+**NOTA:** el estado de seguimiento del hito (EN PROGRESO / PAUSADO) vive
+exclusivamente en `CAMPUSTUDIONLINE_ANNEX_ROUTER.md`. Este anexo no lo declara,
+conforme a la regla de oro 1 del PCH. La linea que antes decia
+"ESTADO DEL HITO: EN PROGRESO" era una infraccion heredada, corregida en S026.
+
+---
+
+### RESULTADO DE S026 -- ARCH_TECH VERIFICADO, TRES DEFECTOS TRANSVERSALES DE PRESENTACION, Y APERTURA DE H38
+
+**ARCH_TECH cerrado.** Los seis puntos (a-f) verificados EJECUTANDO sobre el
+examen `4274e2df` (Algoritmica): clasificacion correcta (Ciencias Tecnicas e
+Ingenieria, Resolutivo), esqueleto de 2 secciones, 3 items con contenido real,
+widgets renderizados (W-OBJ-STRIKE y W-TECH-CALC), entrega calificada e informe
+con Valoracion del Catedratico.
+
+Calificacion comprobada como CORRECTA, no asumida: nota 0,2500 con items a 1,00
+/ 0,00 / 0,00. No es la media de items (0,3333) sino la media POR SECCIONES,
+(0,5 + 0,0) / 2, conforme a `logic.py:483`
+(`final_score = total_exam_score / section_count`). Miguel Angel confirmo que
+acerto el selector, respondio la segunda con texto basura a proposito y dejo la
+tercera sin responder. No hay octavo defecto de calificacion.
+
+**Tres defectos de presentacion, todos transversales a los seis arquetipos:**
+
+1. `301d58d` -- Renderizado de formulas LaTeX. El arreglo de MathJax de
+   d873394/0b3bfc2 solo habia llegado a contenidos. `assessment_v2`, creado
+   despues en ec69b5f, nunca heredo la configuracion, y las copias de sala de
+   estudio no la tuvieron nunca. `exam_take.html` cargaba el motor SIN
+   configuracion, y MathJax 3 habilita por defecto unicamente `\(...\)`, no el
+   dolar simple: como el contenido lo redacta Gemini, que alterna ambas
+   notaciones, se renderizaba aproximadamente la mitad de las formulas de forma
+   aparentemente aleatoria. `exam_report.html` no cargaba MathJax en absoluto.
+   Configuracion canonica extraida a `templates/includes/_mathjax.html` e
+   incluida en los cuatro ambitos.
+   SEGURIDAD: se elimino `polyfill.io` de `exam_take.html`. Dominio adquirido
+   por Funnull en febrero de 2024, inyectaba malware en dispositivos moviles en
+   cualquier sitio que lo embebiera; suspendido por Namecheap el 27 de junio de
+   2024.
+
+2. `29158ad` -- Markdown del informe de correccion. `justification` y
+   `qualitative_summary` se pintaban en crudo, sin `linebreaks` ni procesador,
+   pese a que la IA los redacta EN Markdown. Se cableo `django-markdownify`,
+   ya presente en requirements y usado hasta entonces solo por el tablon de
+   anuncios, con una configuracion con nombre `assessment`. NO se define clave
+   `default`: el filtro sin argumento de anuncios lanza KeyError, lo captura y
+   cae en ajustes vacios, identico al comportamiento previo. Verificado leyendo
+   el codigo del filtro, no por suposicion. `bleach` sanea la salida, lo que
+   importa porque ese texto lo redacta un modelo de lenguaje.
+
+3. `cfded37` -- Saltos de linea descartados por la API. ESTE ES EL HALLAZGO DE
+   FONDO DE S026. Gemini, con `response_mime_type: application/json` y
+   `response_schema` estricto, devuelve las cadenas SIN ningun escape de salto
+   de linea. Comprobado pidiendole expresamente un bloque multilinea: el texto
+   CRUDO, antes de parsear nada, llega con la indentacion intacta y el salto
+   sencillamente ausente (`INICIOPrograma` pegado, cuatro espacios delante).
+   El codigo del proyecto quedo EXONERADO probando por separado
+   `clean_json_response` (su regex de blindaje LaTeX no toca `\n` porque `n`
+   figura entre los escapes validos), `dirtyjson` (preserva tanto `\n` escapado
+   como salto literal) y `response.text.strip()` (solo recorta extremos).
+   Solucion: se instruye al modelo para que escriba cada salto como `<<NL>>`
+   (`NEWLINE_DIRECTIVE`, anadida a `s_prompt` en `tasks.py` en un unico punto,
+   de modo que cubre los seis arquetipos sin tocar los seis `get_system_prompt`)
+   y se restituye al entrar en la base de datos (`_restore_newlines`, recorrido
+   recursivo tras el parseo, cubre contenido, `grading_logic` y
+   `section_stimulus`). La restitucion va en la persistencia y no en el
+   renderizado, para mantener tontas las plantillas segun `com-standards`.
+   Mecanismo ADITIVO: si el modelo omite el token, el texto se guarda igual que
+   antes, sin regresion posible.
+   CONFIRMADO EN PRODUCCION: primer examen generado despues del arreglo
+   (`5c200071`, ARCH_HEALTH) trae 5, 8 y 1 saltos en sus tres feedbacks.
+
+**CORRECCION A LA HOJA DE RUTA DE S025 SOBRE `source_text`.** El anexo afirmaba
+que `source_text` "alimenta el panel lateral de los layouts SPLIT_TEXT". Es
+INEXACTO y conviene no repetirlo: el panel lateral (`#side-stimulus-panel`) lo
+alimenta `section_stimulus`, a nivel de SECCION, via el JS de
+`exam_take.html:992-1000`, que exige `layoutMode === 'SPLIT_TEXT'` Y un
+`.section-stimulus-content` no vacio. `source_text` es cosa del ITEM y solo lo
+pintan dos ramas de plantilla: `W-HUM-TEXT` y `W-MEDI-LAYOUT`. Son dos canales
+independientes. Auditados ambos en S026 y AMBOS SANOS por lectura: `source_text`
+declarado en `ContentSchema` (`gemini_schemas.py:181`), pedido solo por items
+`W-HUM-TEXT` (6 de 6 peticiones en humanities y social), renderizado en
+`exam_take.html:285`, y persistido integro (`db_item.content = ai_content`, sin
+seleccion de claves). `section_stimulus` declarado en `ExamSectionSchema:210` y
+persistido en `tasks.py`. Sano por lectura NO ES sano: S024 y S025 demostraron
+que la lectura no detecta esta clase de fallos. Sigue sin ejercitarse.
+
+**ARCH_HEALTH bloqueado -- origen de H38.** Se genero el examen `5c200071`
+(Anatomia, READY), y sus items `W-CLIN-SCAN` piden observar imagenes que no
+existen. El motor instruye a la IA para que INVENTE URLs de imagen en cinco
+estrategias, y no hay generador, ni almacenamiento, ni servicio de recuperacion
+en toda la plataforma. Detalle completo en
+`CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V38.md`. Miguel Angel decidio no aplicar
+puente ni parche: las evaluaciones no estan abiertas a usuarios, de modo que un
+examen roto no hace dano, y procede resolver las imagenes bien de una vez. Las
+instrucciones de inventar URLs se dejan INTACTAS a proposito hasta que H38 las
+sustituya -- no son un descuido.
 
 ---
 
@@ -129,20 +226,30 @@ datos en estado ERROR y son la evidencia que permitio el diagnostico.
 
 ---
 
-### HOJA DE RUTA S026 -- EN ESTE ORDEN
+### HOJA DE RUTA AL REANUDAR H06 -- EN ESTE ORDEN
 
-PASO 1 -- Completar la prueba E2E de los cuatro arquetipos restantes
-- ARCH_TECH (Algoritmica), ARCH_HEALTH (Anatomia), ARCH_SOC (Economia Politica)
-  y ARCH_HUM (Antropologia social). Las cuatro copias existen y arrastran el
-  aviso rojo de `assessment_status == ERROR` del lote del 2026-05-28, que
-  desaparece al generar un examen que llegue a READY.
+Actualizada en S026. El hito se pausa aqui para atender H38 (imagenes de
+evaluacion), que bloquea ARCH_HEALTH. Al reanudar, este es el estado real:
+ARCH_SCI, ARCH_LANG y ARCH_TECH quedan verificados; ARCH_HEALTH depende de H38;
+ARCH_SOC y ARCH_HUM estan libres de esa dependencia y son el arranque natural.
+
+PASO 1 -- Completar la prueba E2E de los arquetipos restantes
+- PRIMERO ARCH_SOC (Economia Politica) y ARCH_HUM (Antropologia social), que NO
+  dependen de imagenes y por tanto no esperan a H38. Las copias existen y
+  arrastran el aviso rojo de `assessment_status == ERROR` del lote del
+  2026-05-28, que desaparece al generar un examen que llegue a READY.
+- DESPUES ARCH_HEALTH (Anatomia), una vez H38 entregue imagenes reales. El
+  examen `5c200071` quedo generado pero con los `W-CLIN-SCAN` inservibles.
 - Verificar los seis puntos (a-f) en cada uno, EJECUTANDO.
-- ATENCION ESPECIAL a `source_text`: se declaro en el esquema en S025 (4198780)
-  y NO se ha ejercitado nunca. Alimenta el panel lateral de los layouts
-  SPLIT_TEXT, que piden humanities y social. Es la pieza de S025 sin verificar,
-  exactamente el mismo papel que jugo `_normalize_gap_solutions` en S025.
-- Los siete defectos de S025 eran transversales, no especificos de idiomas, asi
-  que estos cuatro arquetipos deberian ir sensiblemente mas rapidos.
+- ATENCION ESPECIAL a `source_text`, que sigue SIN ejercitarse nunca pese a
+  llevar dos sesiones anunciado. Lo piden items `W-HUM-TEXT` en humanities y
+  social, asi que ARCH_SOC y ARCH_HUM son justamente donde toca. Leer antes la
+  correccion del RESULTADO DE S026: `source_text` NO alimenta el panel lateral
+  -- eso es `section_stimulus`, otro canal distinto, tambien sin ejercitar.
+- Los defectos de S025 y los tres de S026 eran todos transversales, no
+  especificos de un arquetipo, asi que lo que queda deberia ir mas rapido.
+- Verificar de paso que el centinela `<<NL>>` se comporta en arquetipos con
+  listas y pasos numerados, no solo en los que emiten codigo.
 
 PASO 2 -- Estreno de SD_LIST (comprension oral) -- RIESGO ALTO
 Requiere un examen de SUB-LIN-INSTR (copias disponibles: Catalan, Frances,

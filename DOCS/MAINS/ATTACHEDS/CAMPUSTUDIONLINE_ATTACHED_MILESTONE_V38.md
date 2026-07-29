@@ -8,6 +8,30 @@ el ítem se redacte a partir de la imagen recuperada, y no al revés.
 
 ---
 
+## Contexto de Arranque
+
+Este hito toma el relevo de H06, que queda pausado el 2026-07-29 en
+S026 porque H38 lo bloquea: los ítems `W-CLIN-SCAN` de ARCH_HEALTH
+dependen de imágenes que hoy no existen.
+
+Estado en que queda H06, para no perderlo de vista:
+
+- Pipeline verificado de extremo a extremo en producción para
+  ARCH_SCI (S024), ARCH_LANG (S025) y ARCH_TECH (S026).
+- ARCH_HEALTH depende de este hito.
+- ARCH_SOC y ARCH_HUM **no** dependen de él: quedan libres y son el
+  arranque natural cuando H06 se reanude. Son además los que deben
+  ejercitar `source_text`, que lleva dos sesiones anunciado y sin
+  probarse nunca.
+
+No se ha aplicado ningún puente ni parche provisional sobre las
+instrucciones de URL inventada. Están intactas a propósito, por
+decisión explícita de Miguel Ángel — no son un descuido, y retirarlas
+antes de que exista el servicio de recuperación solo degradaría los
+enunciados sin ganar nada a cambio.
+
+---
+
 ## Contexto Técnico (hallazgo de S026, 2026-07-29)
 
 ### El defecto
