@@ -5,7 +5,7 @@ from datetime import time, date
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db import models
-from django.db.models import Q
+from django.db.models import Case, F, Q, Value, When
 
 # Importaciones necesarias para las ForeignKeys y modelos movidos
 from academic_structure.models import Branch, Degree, TimeStampedModel
@@ -352,21 +352,57 @@ class PendingContentTask(TimeStampedModel):
         help_text='Marca de tiempo para detectar tareas "zombies" que murieron silenciosamente.'
     )
 
+    # ======================================================================
+    # CLAVES DE UNICIDAD DE TAREA ACTIVA
+    # ----------------------------------------------------------------
+    # MySQL no admite constraints condicionales: Django omite en
+    # silencio cualquier UniqueConstraint que lleve `condition`, sin
+    # error de migración. Las dos constraints originales de este modelo
+    # nunca llegaron a existir en la base de datos por ese motivo.
+    # La forma portable es una columna generada que vale la clave
+    # mientras la tarea está activa y NULL en cuanto alcanza estado
+    # terminal, con un índice único incondicional encima: MySQL admite
+    # varios NULL en un índice único. Se calcula en el motor, de modo
+    # que un `queryset.update()` que cierre la tarea libera el hueco
+    # igual que un `save()`.
+    # ======================================================================
+    TERMINAL_STATUSES = ["COMPLETED", "FAILED", "FAILED_FATAL"]
+
+    active_subject_key = models.GeneratedField(
+        expression=Case(
+            When(~Q(status__in=TERMINAL_STATUSES), then=F("subject")),
+            default=Value(None),
+            output_field=models.CharField(max_length=32),
+        ),
+        output_field=models.CharField(max_length=32, null=True),
+        db_persist=True,
+        verbose_name="Clave de Tarea Académica Activa",
+    )
+    active_free_title_key = models.GeneratedField(
+        expression=Case(
+            When(
+                ~Q(status__in=TERMINAL_STATUSES) & Q(subject__isnull=True),
+                then=F("course_title"),
+            ),
+            default=Value(None),
+            output_field=models.CharField(max_length=255),
+        ),
+        output_field=models.CharField(max_length=255, null=True),
+        db_persist=True,
+        verbose_name="Clave de Curso Libre Activo",
+    )
+
     class Meta:
         verbose_name = "Tarea de Automatización de Contenido"
         verbose_name_plural = "Tareas de Automatización de Contenido"
         ordering = ["-created_at"]
         constraints = [
             models.UniqueConstraint(
-                fields=["subject"],
-                condition=~Q(status__in=["COMPLETED", "FAILED", "FAILED_FATAL"])
-                & Q(subject__isnull=False),
+                fields=["active_subject_key"],
                 name="unique_active_academic_task_per_subject",
             ),
             models.UniqueConstraint(
-                fields=["course_title"],
-                condition=~Q(status__in=["COMPLETED", "FAILED", "FAILED_FATAL"])
-                & Q(subject__isnull=True),
+                fields=["active_free_title_key"],
                 name="unique_active_free_task_per_title",
             ),
             models.CheckConstraint(
