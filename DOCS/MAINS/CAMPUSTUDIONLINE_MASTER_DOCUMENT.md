@@ -39,6 +39,9 @@ Los archivos de log de la aplicación en producción se encuentran en las siguie
 *   **Repositorio Remoto:** De acuerdo con la convención de la plataforma, el nombre canónico del repositorio para este proyecto es `campustudionline_repo`.
 ---
 ## 3. Hoja de Ruta Estratégica Consolidada
+### Hito 38: Adquisición y Licenciamiento de Imágenes para Evaluaciones
+(Ver anexo `CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V38.md`)
+
 ### Hito 37: Migración a Gemini 3 Flash y Estandarización de SDK
 (Ver anexo `CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V37.md`)
 

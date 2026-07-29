@@ -66,6 +66,7 @@ Cumple dos funciones inseparables:
 | H35 | Optimización de Infraestructura Redis y Gestión de Tareas | `CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V35.md` |
 | H36 | Implementación de la Sala de Traducción | `CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V36.md` |
 | H37 | Migración a Gemini 3 Flash y Estandarización de SDK | `CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V37.md` |
+| H38 | Adquisición y Licenciamiento de Imágenes para Evaluaciones | `CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V38.md` |
 
 Todos los anexos viven en `DOCS/MAINS/ATTACHEDS/`. Numeración con
 huecos (H09, H15, H16, H17 no existen) heredada del proyecto
@@ -89,6 +90,13 @@ que estaban marcados en el master document antes de la migración):
   heredada: funcionalidad técnica completa, pendiente integración
   futura con IA.
 - H34 — Optimización de Redes Sociales y Metadatos de Compartición
+
+**Hito PAUSADO abierto en S026** (no heredado de la migración):
+
+- H38 — Adquisición y Licenciamiento de Imágenes para Evaluaciones.
+  Abierto el 2026-07-29 al detectarse que el motor de evaluación pide
+  a la IA URLs de imagen inventadas. Queda PAUSADO a la espera de que
+  Miguel Ángel confirme si pasa a EN PROGRESO desplazando a H06.
 
 El resto de hitos de la tabla no llevan marca de estado porque están
 terminados — no se anota "COMPLETADO" en ningún sitio del sistema,
