@@ -127,6 +127,38 @@ sale prácticamente gratis.
 
 ---
 
+## Registro de Sesiones
+
+### S026 — 2026-07-29 — Apertura del hito
+
+Hito abierto en esta sesión, como desvío de H06. El trabajo de S026 se
+dedicó en su mayor parte a H06 y está registrado en su anexo; aquí
+queda únicamente lo relativo a las imágenes.
+
+El hallazgo llegó al generar el examen `5c200071` (Anatomía) durante
+la campaña E2E de H06: los ítems `W-CLIN-SCAN` pedían observar
+imágenes inexistentes. La investigación descartó una a una las
+hipótesis baratas y terminó en un hueco de diseño, no en un defecto de
+implementación — el detalle completo está en la sección de contexto
+técnico de este mismo anexo.
+
+Se descartó expresamente una salvaguarda por forma de URL, después de
+comprobar que el modelo produce indistintamente dominios inventados de
+principio a fin y URLs con la estructura correcta de Wikimedia Commons
+y el hash inventado. No hay patrón que distinga una válida de una
+falsa; solo sirve pedir el recurso.
+
+Se corrigió además una suposición equivocada del modelo durante la
+sesión: dio por hecho que la plataforma cobraba, al ver
+`SubscriptionPlan` en el código, y de ahí dedujo que las licencias no
+comerciales quedaban descartadas. Es falso — no hay actividad
+económica dada de alta y el acceso es gratuito. La conclusión correcta
+no es prohibir las licencias NC hoy, sino registrar la licencia como
+dato de cada imagen para que el día que se active el cobro sea una
+consulta y no una auditoría manual.
+
+---
+
 ## Hoja de Ruta para la Siguiente Sesión (LEY SUPREMA)
 
 ### 1. Modelo de datos de recursos
