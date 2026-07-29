@@ -209,6 +209,7 @@ INSTALLED_APPS = [
     "universia.apps.UniversiaConfig",
     "schedule.apps.ScheduleConfig",
     "translation_room.apps.TranslationRoomConfig",
+    "media_library.apps.MediaLibraryConfig",
     "assessment_v2.apps.AssessmentV2Config",
 ]
 

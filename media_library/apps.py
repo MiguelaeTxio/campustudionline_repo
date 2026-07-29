@@ -1,0 +1,8 @@
+# /home/MiguelAeTxio/PROJECTS/CampuStudiOnline/media_library/apps.py
+from django.apps import AppConfig
+
+
+class MediaLibraryConfig(AppConfig):
+    default_auto_field = "django.db.models.BigAutoField"
+    name = "media_library"
+    verbose_name = "Biblioteca Multimedia"
