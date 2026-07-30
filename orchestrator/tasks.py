@@ -1478,7 +1478,22 @@ def generate_exam_task(self, exam_uuid, context_text=None, topic=None):
                             if db_item.widget_id not in WIDGETS_CON_IMAGEN_REAL:
                                 continue
                             try:
-                                consulta = (topic or subject.name or '').strip()
+                                # [S027 - afinado tras observar convergencia
+                                # entre generaciones distintas] Antes solo
+                                # se usaba topic/subject.name, identico para
+                                # TODOS los items del examen -- Wikimedia
+                                # tiende a devolver el mismo mejor resultado
+                                # para una consulta tan generica, asi que
+                                # examenes distintos de la misma asignatura
+                                # convergian en la misma imagen para el
+                                # primer item. Se añade el titulo de la
+                                # propia seccion (dato real ya disponible en
+                                # db_sec, no inventado): "Anatomía
+                                # Macroscópica — Nomenclatura" y "Anatomía
+                                # Radiológica — Semiología" son consultas
+                                # bien distintas aunque compartan asignatura.
+                                base = (topic or subject.name or '').strip()
+                                consulta = f"{db_sec.title} {base}".strip()
                                 if not consulta:
                                     continue
                                 resultado_imagen = _generate_item_image_content(

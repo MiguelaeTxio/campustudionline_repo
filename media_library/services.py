@@ -106,6 +106,40 @@ def _normalize_license_code(license_raw):
     variante, version = m.group(1).upper(), m.group(2)
     return f"CC-{variante}-{version}"
 
+
+# [S027 - backfill de recursos existentes] Formato real observado:
+# https://creativecommons.org/licenses/by/2.5
+# https://creativecommons.org/licenses/by-sa/4.0/
+# https://creativecommons.org/publicdomain/zero/1.0/
+_CC_LICENSE_URL_PATTERN = _re.compile(
+    r"creativecommons\.org/licenses/(by(?:-nc-sa|-nc-nd|-sa|-nc|-nd)?)/(\d+\.\d+)",
+    _re.IGNORECASE,
+)
+
+
+def resolve_license_from_url(license_url):
+    """
+    Same normalization as _normalize_license_code, but from the license
+    URL instead of the LicenseShortName text.
+    ---
+    Misma normalizacion que _normalize_license_code, pero a partir de
+    la URL de la licencia en lugar del texto LicenseShortName. Se
+    usa para reconstruir el codigo correcto de recursos que quedaron
+    en UNKNOWN antes de que existiera el reconocedor por texto (S027):
+    el dato ya estaba guardado en license_url, no hacia falta volver a
+    consultar Wikimedia. Nunca inventa una licencia: si no encaja en
+    el patron estandar de CC, devuelve None.
+    """
+    if not license_url:
+        return None
+    if "publicdomain/zero" in license_url.lower():
+        return "CC0-1.0"
+    m = _CC_LICENSE_URL_PATTERN.search(license_url)
+    if not m:
+        return None
+    variante, version = m.group(1).upper(), m.group(2)
+    return f"CC-{variante}-{version}"
+
 # Con Content-Type de imagen no basta un prefijo simple: algunos
 # servidores devuelven "image/jpeg; charset=binary" u otras variantes.
 _ALLOWED_IMAGE_PREFIXES = ("image/",)
