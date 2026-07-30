@@ -234,6 +234,85 @@ def generate_multimodal_correction(prompt: str, audio_path: str, api_key: ApiKey
         logger.error(f"Error en corrección multimodal: {e}")
         return False, str(e), api_key.name
 
+def generate_multimodal_item_content(image_bytes: bytes, image_mime_type: str, prompt: str, api_key: ApiKey, system_instruction: str = None, response_schema: dict = None, task_id: str = None) -> Tuple[bool, str, str, dict]:
+    """
+    [HITO 38] Generate item content (stem/keywords) from a real, already
+    verified image, instead of asking the model to invent a URL.
+    ---
+    [HITO 38] Genera contenido de ítem (stem/keywords) a partir de una
+    imagen real ya verificada, en lugar de pedirle al modelo que invente
+    una URL. Inversión del flujo de generación (H38 punto 3): la imagen
+    se recupera y verifica primero, y el enunciado se redacta después,
+    sobre esa imagen concreta — así se evita el defecto raiz de H38, una
+    radiografia patologica ilustrando una pregunta sobre anatomia normal.
+
+    Misma forma de retorno que generate_text_content: (exito,
+    texto_o_error, nombre_clave, metadatos_uso). No lanza excepcion por
+    fallos de red o de cuota: los devuelve como fallo controlado, porque
+    este servicio se llama en un paso de posprocesado que no debe tumbar
+    la generacion del resto del examen.
+    """
+    usage_metadata = {"input_tokens": 0, "output_tokens": 0}
+    close_old_connections()
+
+    generation_config = {"max_output_tokens": 4096}
+    if response_schema:
+        generation_config["response_mime_type"] = "application/json"
+        generation_config["response_schema"] = response_schema
+
+    safety_settings = [
+        types.SafetySetting(category=c, threshold="BLOCK_NONE")
+        for c in [
+            "HARM_CATEGORY_HARASSMENT", "HARM_CATEGORY_HATE_SPEECH",
+            "HARM_CATEGORY_SEXUALLY_EXPLICIT", "HARM_CATEGORY_DANGEROUS_CONTENT",
+        ]
+    ]
+
+    contents = [
+        types.Part.from_bytes(data=image_bytes, mime_type=image_mime_type),
+        types.Part.from_text(text=prompt),
+    ]
+
+    try:
+        if task_id:
+            try:
+                PendingContentTask.objects.filter(pk=task_id).update(api_key_used=api_key.name)
+            except Exception as e:
+                logger.error(f"Error en registro atómico (multimodal item) para tarea {task_id}: {e}", exc_info=True)
+
+        response = _execute_gemini_call(contents, api_key, generation_config, safety_settings, system_instruction=system_instruction)
+        if hasattr(response, "usage_metadata"):
+            usage_metadata["input_tokens"] = response.usage_metadata.prompt_token_count
+            usage_metadata["output_tokens"] = response.usage_metadata.candidates_token_count
+
+        if not response.candidates:
+            return False, "Respuesta bloqueada o vacía (multimodal item).", api_key.name, usage_metadata
+
+        candidate = response.candidates[0]
+        finish_reason = str(candidate.finish_reason)
+        if "RECITATION" in finish_reason:
+            return False, "RECITATION_ERROR: Bloqueo por derechos de autor (Recitación).", api_key.name, usage_metadata
+        if not response.text:
+            return False, "Error: El modelo no generó texto visible (multimodal item).", api_key.name, usage_metadata
+
+        return True, response.text.strip(), api_key.name, usage_metadata
+
+    except APIError as e:
+        error_str = str(e).upper()
+        if e.code == 429 or "429" in error_str or "QUOTA" in error_str or "RESOURCE" in error_str:
+            raise AIServiceCriticalError(f"QUOTA_EXCEEDED: {e}")
+        elif e.code == 503 or "503" in error_str or "OVERLOAD" in error_str:
+            raise AIServiceCriticalError(f"SERVER_OVERLOAD: {e}")
+        else:
+            raise AIServiceCriticalError(f"API_ERROR_{e.code}: {e}")
+    except Exception as e:
+        error_str = str(e).upper()
+        if "429" in error_str or "RESOURCE_EXHAUSTED" in error_str or "QUOTA" in error_str:
+            raise AIServiceCriticalError(f"QUOTA_EXCEEDED: {e}")
+        logger.critical(f"Error inesperado en generate_multimodal_item_content: {e}", exc_info=True)
+        raise AIServiceCriticalError(f"Error inesperado en generación multimodal de ítem: {e}") from e
+
+
 def classify_subject_identity(subject_name: str, branch_name: str, degree_name: str, api_key: ApiKey) -> Tuple[bool, dict, str]:
     """
     [HITO 6] Classifies a subject using AI to resolve semantic ambiguity (Hybrid Protocol).

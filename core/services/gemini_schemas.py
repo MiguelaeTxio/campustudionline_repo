@@ -208,3 +208,12 @@ class ExamItemSchema(BaseModel):
 class ExamSectionSchema(BaseModel):
     items: List[ExamItemSchema]
     section_stimulus: Optional[str] = Field(default=None, description="Texto, caso clínico o lectura compartida para toda la sección (opcional).")
+
+# --- HITO 38 punto 3: contenido de item generado sobre una imagen real ---
+# Esquema deliberadamente minimo: la imagen ya esta verificada y
+# almacenada antes de esta llamada (H38), asi que el modelo solo redacta
+# el enunciado y los terminos esperados sobre la imagen que se le adjunta,
+# nunca inventa una URL.
+class ImageItemContentSchema(BaseModel):
+    stem: str = Field(description="Enunciado clínico/contextual redactado a partir de la imagen adjunta, describiendo la prueba diagnóstica y pidiendo al alumno su interpretación. No debe mencionar ninguna URL.")
+    keywords: List[str] = Field(description="Términos semiológicos, anatómicos o clínicos que se esperan en la interpretación del alumno, correspondientes a lo que realmente se ve en la imagen adjunta.")

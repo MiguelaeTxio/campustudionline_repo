@@ -35,7 +35,9 @@ from contents.models import (
     FreeContentMasterCategory,
     FreeContentSubCategory,
 )
-from core.services.gemini_service import generate_text_content, generate_audio_content, clean_json_response, AIServiceCriticalError
+from core.services.gemini_service import generate_text_content, generate_audio_content, generate_multimodal_item_content, clean_json_response, AIServiceCriticalError
+from core.services.gemini_schemas import ImageItemContentSchema
+from media_library.services import search as search_media_images, verify_and_store as verify_media_resource, WikimediaSearchError
 
 from core.services.prompt_generators import (
     generate_course_metadata_prompt,
@@ -133,6 +135,99 @@ def _purge_zombie_tasks():
 
 
 # [HITO 6] AUDIO GENERATION HELPER / FUNCIÓN AUXILIAR PARA GENERAR AUDIO
+def _generate_item_image_content(search_query, api_key, task_id=None, excluir_ids=None):
+    """
+    [HITO 38 punto 3] Retrieve and verify a real image FIRST, then ask
+    Gemini to write the item's stem/keywords about that specific image.
+    ---
+    [HITO 38 punto 3] Recupera y verifica una imagen real PRIMERO, y
+    solo despues le pide a Gemini que redacte el stem/keywords del
+    item sobre esa imagen concreta. Es la inversion del flujo que da
+    nombre al punto 3: si se pidiera la imagen para una pregunta ya
+    escrita, se podria acabar con una radiografia patologica
+    ilustrando una pregunta sobre anatomia normal.
+
+    Devuelve un dict {'stem', 'keywords', 'media_url', 'attribution'}
+    en exito, o None si no se pudo recuperar ninguna imagen verificada
+    o la generacion fallo. Nunca lanza excepcion por un fallo esperable
+    (busqueda vacia, imagen rota, cuota agotada): este paso es un
+    posprocesado que no debe tumbar el resto de la generacion del
+    examen si el catalogo de imagenes falla.
+
+    excluir_ids permite no repetir un recurso ya asignado a otro item
+    de la misma seccion: sin esto, dos items W-CLIN-SCAN con la misma
+    consulta de busqueda podrian terminar mostrando la misma imagen.
+    """
+    excluir_ids = excluir_ids or set()
+    try:
+        resultados = search_media_images(search_query, limit=5)
+    except WikimediaSearchError as e:
+        logger.warning(f"Busqueda de imagen fallida para '{search_query}': {e}")
+        return None
+
+    recurso = None
+    for candidato in resultados:
+        candidato_recurso, creado = verify_media_resource(candidato, search_query=search_query)
+        if candidato_recurso is not None and candidato_recurso.id not in excluir_ids:
+            recurso = candidato_recurso
+            break
+    if recurso is None:
+        logger.warning(f"Ningun resultado verificable/nuevo para '{search_query}' (0/{len(resultados)}).")
+        return None
+
+    prompt = (
+        f"Consulta academica original: \"{search_query}\".\n"
+        f"Se adjunta una imagen real, ya verificada, recuperada de un catalogo "
+        f"licenciado para ilustrar esta consulta. Redacta el enunciado (stem) "
+        f"describiendo lo que se observa en ESTA imagen concreta y pidiendo al "
+        f"alumno su interpretacion clinica o tecnica. No inventes ningun dato "
+        f"que no se pueda deducir de la imagen. No menciones ninguna URL: la "
+        f"imagen ya esta incluida y se mostrara directamente al alumno."
+    )
+    try:
+        recurso.file.open('rb')
+        imagen_bytes = recurso.file.read()
+        success, resp, _, _ = generate_multimodal_item_content(
+            image_bytes=imagen_bytes,
+            image_mime_type=recurso.content_type or "image/jpeg",
+            prompt=prompt,
+            api_key=api_key,
+            response_schema=ImageItemContentSchema,
+            task_id=task_id,
+        )
+    except AIServiceCriticalError as e:
+        logger.warning(f"Generacion multimodal fallida para '{search_query}': {e}")
+        return None
+    finally:
+        recurso.file.close()
+
+    if not success:
+        logger.warning(f"Generacion multimodal sin exito para '{search_query}': {resp}")
+        return None
+
+    try:
+        parsed = json.loads(clean_json_response(resp))
+        stem = str(parsed["stem"]).strip()
+        keywords = list(parsed.get("keywords", []))
+    except Exception as e:
+        logger.warning(f"JSON de generacion multimodal ilegible para '{search_query}': {e}")
+        return None
+    if not stem:
+        return None
+
+    atribucion = recurso.attribution_text or recurso.author or ""
+    return {
+        "stem": stem,
+        "keywords": keywords,
+        "media_url": recurso.file.url,
+        "attribution": atribucion,
+        "license_code": recurso.license.code,
+        "license_url": recurso.license_url or recurso.license.url,
+        "source_page_url": recurso.source_page_url,
+        "resource_id": recurso.id,
+    }
+
+
 def _generate_item_audio(item_id, text, api_key):
     """
     Converts item text to speech and saves to media/assessment/audio/.
@@ -1291,7 +1386,75 @@ def generate_exam_task(self, exam_uuid, context_text=None, topic=None):
                                     if audio_url: db_item.content['media_assets'] = [audio_url]
                                 db_item.save(update_fields=["content", "grading_logic", "metadata"])
                                 generated_titles.append(str(i_data.get('content', {}).get('stem', ''))[:30])
-                        
+
+                        # [HITO 38 punto 3] INVERSION DEL FLUJO PARA W-CLIN-SCAN
+                        # Se sustituye el contenido de los items de imagen POR
+                        # SEPARADO de la llamada por lotes de arriba: primero
+                        # se recupera y verifica una imagen real, y solo
+                        # despues se le pide a Gemini que redacte el stem
+                        # sobre esa imagen concreta. Paso aislado y con
+                        # degradacion segura: si falla para un item, ese
+                        # item conserva el contenido (con URL inventada) que
+                        # ya escribio la llamada por lotes de arriba, y el
+                        # resto de la seccion no se ve afectado. No es el
+                        # estado final deseado -- el punto 4 de la hoja de
+                        # ruta retirara esa instruccion de invencion cuando
+                        # este paso este asentado -- pero nunca deja un item
+                        # peor de lo que ya estaba.
+                        recursos_usados_seccion = set()
+                        for db_item in db_items:
+                            if db_item.widget_id != 'W-CLIN-SCAN':
+                                continue
+                            try:
+                                consulta = (topic or subject.name or '').strip()
+                                if not consulta:
+                                    continue
+                                resultado_imagen = _generate_item_image_content(
+                                    consulta,
+                                    AutomationSettings.load().active_api_key,
+                                    task_id=None,
+                                    excluir_ids=recursos_usados_seccion,
+                                )
+                                if resultado_imagen is None:
+                                    contextual_logger(
+                                        f"H38: sin imagen verificable para item "
+                                        f"{db_item.uuid} (consulta='{consulta}'); "
+                                        f"conserva contenido de la llamada por lotes.",
+                                        level="WARNING",
+                                    )
+                                    continue
+                                recursos_usados_seccion.add(resultado_imagen['resource_id'])
+                                db_item.content['stem'] = resultado_imagen['stem']
+                                db_item.content['media_assets'] = [resultado_imagen['media_url']]
+                                db_item.content['media_attribution'] = {
+                                    'text': resultado_imagen['attribution'],
+                                    'license_code': resultado_imagen['license_code'],
+                                    'license_url': resultado_imagen['license_url'],
+                                    'source_page_url': resultado_imagen['source_page_url'],
+                                }
+                                db_item.grading_logic['keywords'] = resultado_imagen['keywords']
+                                db_item.save(update_fields=["content", "grading_logic"])
+                                contextual_logger(
+                                    f"H38: item {db_item.uuid} actualizado con "
+                                    f"imagen real verificada (recurso "
+                                    f"{resultado_imagen['resource_id']})."
+                                )
+                            except Exception as img_err:
+                                # Defensa en profundidad: aunque el diseño de
+                                # _generate_item_image_content ya evita
+                                # lanzar, cualquier fallo inesperado aqui
+                                # NUNCA debe colarse en el except de la
+                                # seccion (eso forzaria un reintento completo
+                                # de la llamada por lotes, gastando cuota).
+                                # El item conserva el contenido de la
+                                # llamada por lotes.
+                                contextual_logger(
+                                    f"H38: excepcion inesperada procesando "
+                                    f"imagen para item {db_item.uuid}: "
+                                    f"{img_err}",
+                                    level="ERROR",
+                                )
+
                         section_success = True
                         time.sleep(5)
                     except Exception as parse_err:
