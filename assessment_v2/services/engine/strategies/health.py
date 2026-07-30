@@ -164,7 +164,8 @@ class HealthStrategy(BaseExamStrategy):
         I_IMAGE     = (
             'Genera el stem describiendo una prueba diagnóstica (RX, TC, RM, ECG, espirometría, '
             'histología, etc.) con hallazgos patológicos concretos para que el alumno la interprete. '
-            'Incluye la URL de la imagen en media_assets. '
+            'No incluyas ninguna URL en media_assets: el sistema recupera y verifica una imagen real '
+            'por separado, y puede sustituir este enunciado por uno redactado sobre esa imagen concreta. '
             'Proporciona en keywords los términos semiológicos esperados.'
         )
         I_SAFETY    = (
@@ -314,7 +315,8 @@ class HealthStrategy(BaseExamStrategy):
                              'Genera el stem describiendo una imagen radiológica normal (RX tórax, '
                              'RM cerebral, ecografía abdominal) con estructuras a identificar. '
                              'El alumno debe identificar las estructuras señaladas y describir '
-                             'los parámetros de normalidad. Incluye URL de imagen en media_assets.'
+                             'los parámetros de normalidad. No incluyas ninguna URL en media_assets: '
+                             'el sistema recupera y verifica una imagen real por separado.'
                          )}
                     ]
                 },
@@ -974,7 +976,7 @@ class HealthStrategy(BaseExamStrategy):
             f'{safety_rule}\n\n'
             f'REGLAS CRÍTICAS DE GENERACIÓN:\n'
             f'1. Los UUID de los ítems son INMUTABLES — devuélvelos exactamente como se reciben.\n'
-            f'2. Para W-CLIN-SCAN incluye siempre una URL de imagen en media_assets.\n'
+            f'2. Para W-CLIN-SCAN NUNCA incluyas una URL en media_assets - el sistema adjunta una imagen real verificada mediante un servicio dedicado.\n'
             f'3. Para CDS-KILL declara kill_switch en grading_logic según la criticidad del paso.\n'
             f'4. gap_solutions DEBE ser una lista de objetos {{"gap_id": "[HUECO_ID_N]", "accepted_answer": "respuesta"}} — una entrada por hueco, nunca un diccionario.\n'
             f'5. Devuelve EXCLUSIVAMENTE el JSON estructurado según ExamSectionSchema — sin texto envolvente.'
@@ -1022,8 +1024,9 @@ class HealthStrategy(BaseExamStrategy):
             f'2. Incluye UN ítem por cada UUID del esqueleto. No añadas ni elimines ítems.\n'
             f'3. Conserva cada item_id UUID EXACTAMENTE como aparece en el esqueleto.\n'
             f'4. Para ítems CDS-KILL: declara kill_switch=True/False según la criticidad clínica del paso.\n'
-            f'5. Para ítems ILC-CONTEXT (W-CLIN-SCAN): incluye URL de imagen en media_assets y '
-            f'los keywords clínicos esperados en grading_logic.keywords.\n'
+            f'5. Para ítems ILC-CONTEXT (W-CLIN-SCAN): NUNCA incluyas una URL en media_assets '
+            f'- el sistema adjunta una imagen real verificada por separado -, y proporciona '
+            f'igualmente los keywords clínicos esperados en grading_logic.keywords.\n'
             f'6. Para ítems RPP-TRAZA: define step_matrix completa con weights que sumen 1.0.\n'
             f'7. Todo el contenido en castellano. Terminología clínica en castellano (con término latino/inglés entre paréntesis cuando sea necesario).\n'
             f'8. Genera contenido clínico real y riguroso basado en el material de estudio — '

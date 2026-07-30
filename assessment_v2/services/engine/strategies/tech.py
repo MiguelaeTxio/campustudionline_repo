@@ -757,7 +757,7 @@ class TechnicalStrategy(BaseExamStrategy):
             f'2. Para RPP-TRAZA: step_matrix completa con weights que sumen 1.0. '
             f'Los valores esperados deben ser numéricos precisos o expresiones simbólicas inequívocas.\n'
             f'3. Para RBT-CANON: correct_answer con los términos exactos esperados, variantes separadas por |.\n'
-            f'4. Para ILC-CONTEXT (W-CLIN-SCAN): URL de imagen técnica en media_assets y keywords esperados.\n'
+            f'4. Para ILC-CONTEXT (W-CLIN-SCAN): NUNCA incluyas una URL en media_assets - el sistema adjunta una imagen real verificada mediante un servicio dedicado, y proporciona los keywords esperados.\n'
             f'5. Los enunciados (stem) en castellano. Nomenclatura técnica normalizada entre paréntesis.\n'
             f'6. Devuelve EXCLUSIVAMENTE el JSON estructurado según ExamSectionSchema — sin texto envolvente.'
         )
