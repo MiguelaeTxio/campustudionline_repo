@@ -134,6 +134,38 @@ def _purge_zombie_tasks():
         logger.error(f"Error purga zombies: {e}")
 
 
+# [HITO 38 punto 6] FUSION SEGURA DE media_assets
+# ------------------------------------------------------------------
+# Defecto documentado en el anexo de H38: `db_item.content['media_assets']
+# = [audio_url]` (linea original ~1416) SOBRESCRIBE la lista entera en
+# lugar de anadir. Era inocuo mientras no existian imagenes reales; el
+# punto 3 las introdujo, y el propio codigo nuevo del punto 3 tenia el
+# MISMO patron de sobrescritura en la asignacion de imagen. Hoy audio
+# (SD_LIST, arquitectura de idiomas) e imagen (W-CLIN-SCAN/W-ART-IDENT,
+# salud/humanidades) nunca coinciden en el mismo item -- pertenecen a
+# arquetipos distintos -- asi que el fallo no se ha disparado nunca en
+# produccion, pero el patron es fragil por diseno en los dos sitios, no
+# solo en el original, y se corrige en ambos con el mismo criterio.
+#
+# Los audios se detectan por extension .mp3, el mismo criterio que ya
+# usan las plantillas de examen (exam_take.html: "not '.mp3' in asset").
+def _set_media_asset(content, url, tipo):
+    """
+    Replace only the entry of the given kind ('audio' or 'imagen') in
+    content['media_assets'], preserving any entry of the other kind.
+    ---
+    Reemplaza solo la entrada del tipo indicado ('audio' o 'imagen') en
+    content['media_assets'], preservando cualquier entrada del otro
+    tipo. Nunca sobrescribe la lista entera.
+    """
+    existentes = list(content.get('media_assets') or [])
+    if tipo == 'audio':
+        conservados = [a for a in existentes if not str(a).lower().endswith('.mp3')]
+    else:
+        conservados = [a for a in existentes if str(a).lower().endswith('.mp3')]
+    content['media_assets'] = conservados + [url]
+
+
 # [HITO 6] AUDIO GENERATION HELPER / FUNCIÓN AUXILIAR PARA GENERAR AUDIO
 # [HITO 38 punto 3+] Prompts por tipo de ejercicio, cada uno alineado con
 # la fuente de certificacion real del widget (V06DOC_WIDGETS/V06DOC_BLOCKS)
@@ -1413,7 +1445,8 @@ def generate_exam_task(self, exam_uuid, context_text=None, topic=None):
                                     # Inalcanzable hasta ahora porque la generacion moria antes; se
                                     # habria disparado en el primer examen de idiomas con seccion SD_LIST.
                                     audio_url = _generate_item_audio(db_item.id, audio_text, AutomationSettings.load().active_api_key)
-                                    if audio_url: db_item.content['media_assets'] = [audio_url]
+                                    if audio_url:
+                                        _set_media_asset(db_item.content, audio_url, 'audio')
                                 db_item.save(update_fields=["content", "grading_logic", "metadata"])
                                 generated_titles.append(str(i_data.get('content', {}).get('stem', ''))[:30])
 
@@ -1458,7 +1491,7 @@ def generate_exam_task(self, exam_uuid, context_text=None, topic=None):
                                     continue
                                 recursos_usados_seccion.add(resultado_imagen['resource_id'])
                                 db_item.content['stem'] = resultado_imagen['stem']
-                                db_item.content['media_assets'] = [resultado_imagen['media_url']]
+                                _set_media_asset(db_item.content, resultado_imagen['media_url'], 'imagen')
                                 db_item.content['media_attribution'] = {
                                     'text': resultado_imagen['attribution'],
                                     'license_code': resultado_imagen['license_code'],

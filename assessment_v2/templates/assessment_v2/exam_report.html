@@ -72,6 +72,30 @@
                         </span>
                     </div>
 
+                    {# [HITO 38 punto 5] Miniatura + atribucion del recurso, si el item la tiene #}
+                    {% if item_report.media_attribution %}
+                    <div class="d-flex align-items-start gap-2 mb-2 p-2 bg-light rounded">
+                        {% for asset in item_report.media_assets %}
+                            {% if not '.mp3' in asset %}
+                            <img src="{{ asset }}" class="rounded border" style="width:80px;height:60px;object-fit:cover;" alt="{% trans 'Recurso visual del ítem' %}">
+                            {% endif %}
+                        {% endfor %}
+                        <div class="small text-muted">
+                            <i class="bi bi-info-circle"></i>
+                            {% if item_report.media_attribution.text %}{{ item_report.media_attribution.text }}{% endif %}
+                            {% if item_report.media_attribution.license_code %}
+                                &middot; {% trans "Licencia" %}:
+                                {% if item_report.media_attribution.license_url %}
+                                <a href="{{ item_report.media_attribution.license_url }}" target="_blank" rel="noopener">{{ item_report.media_attribution.license_code }}</a>
+                                {% else %}{{ item_report.media_attribution.license_code }}{% endif %}
+                            {% endif %}
+                            {% if item_report.media_attribution.source_page_url %}
+                                &middot; <a href="{{ item_report.media_attribution.source_page_url }}" target="_blank" rel="noopener">{% trans "Fuente" %}</a>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endif %}
+
                     <div class="bg-light p-3 rounded small">
                         <span class="badge {% if item_report.feedback_category == 'FB_SAFETY' %}bg-danger{% elif item_report.feedback_category == 'FB_FORMAL' %}bg-warning text-dark{% else %}bg-info{% endif %} mb-2">
                             {{ item_report.feedback_category }}

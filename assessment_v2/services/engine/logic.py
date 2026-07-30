@@ -454,7 +454,17 @@ class GradingOrchestrator:
                     ),
                     'kill_switch_activated': item_feedback.get('kill_switch_activated', False),
                     'trace':             item_feedback.get('trace', []),
-                    'pending_ai_refinement': item_feedback.get('pending_ai_refinement', False)
+                    'pending_ai_refinement': item_feedback.get('pending_ai_refinement', False),
+                    # [HITO 38 punto 5] Atribucion de licencia. El contrato
+                    # documentado en V06DOC_TEMPLATES Seccion 5 es un minimo
+                    # (item_score/feedback_category/justification), no
+                    # cerrado -- este mismo dict ya extiende mas alla con
+                    # status/trace/kill_switch_activated. media_attribution
+                    # solo viene poblado por el servicio de H38 (Wikimedia);
+                    # para el resto de items sera None y el template lo
+                    # omite sin mas.
+                    'media_assets':      item.content.get('media_assets', []),
+                    'media_attribution': item.content.get('media_attribution'),
                 })
 
                 section_score += item_final_score

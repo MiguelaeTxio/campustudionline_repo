@@ -235,6 +235,21 @@
                                     </div>
                                     {% endif %}
                                 {% endfor %}
+                                {% if item.content.media_attribution %}
+                                <div class="media-attribution small text-muted text-start mb-2">
+                                    <i class="bi bi-info-circle"></i>
+                                    {% if item.content.media_attribution.text %}{{ item.content.media_attribution.text }}{% endif %}
+                                    {% if item.content.media_attribution.license_code %}
+                                        &middot; {% trans "Licencia" %}:
+                                        {% if item.content.media_attribution.license_url %}
+                                        <a href="{{ item.content.media_attribution.license_url }}" target="_blank" rel="noopener">{{ item.content.media_attribution.license_code }}</a>
+                                        {% else %}{{ item.content.media_attribution.license_code }}{% endif %}
+                                    {% endif %}
+                                    {% if item.content.media_attribution.source_page_url %}
+                                        &middot; <a href="{{ item.content.media_attribution.source_page_url }}" target="_blank" rel="noopener">{% trans "Fuente" %}</a>
+                                    {% endif %}
+                                </div>
+                                {% endif %}
                             {% endif %}
                             <textarea class="form-control mt-3 response-input-text" rows="3" placeholder="{% trans 'Escriba su juicio diagnóstico / interpretación...' %}"></textarea>
                         </div>
@@ -481,6 +496,21 @@
                                             {% endfor %}
                                         {% else %}
                                             <div class="text-muted p-5"><i class="bi bi-easel fs-1"></i><p>{% trans "La obra se cargará aquí." %}</p></div>
+                                        {% endif %}
+                                        {% if item.content.media_attribution %}
+                                        <div class="media-attribution small text-muted text-start mt-2">
+                                            <i class="bi bi-info-circle"></i>
+                                            {% if item.content.media_attribution.text %}{{ item.content.media_attribution.text }}{% endif %}
+                                            {% if item.content.media_attribution.license_code %}
+                                                &middot; {% trans "Licencia" %}:
+                                                {% if item.content.media_attribution.license_url %}
+                                                <a href="{{ item.content.media_attribution.license_url }}" target="_blank" rel="noopener">{{ item.content.media_attribution.license_code }}</a>
+                                                {% else %}{{ item.content.media_attribution.license_code }}{% endif %}
+                                            {% endif %}
+                                            {% if item.content.media_attribution.source_page_url %}
+                                                &middot; <a href="{{ item.content.media_attribution.source_page_url }}" target="_blank" rel="noopener">{% trans "Fuente" %}</a>
+                                            {% endif %}
+                                        </div>
                                         {% endif %}
                                     </div>
                                 </div>
