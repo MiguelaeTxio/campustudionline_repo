@@ -64,23 +64,47 @@ EXTMETADATA_FILTER = "|".join([
     "ImageDescription",
 ])
 
-# Mapeo verificado contra 3 archivos reales en sesion S027: los
-# valores de LicenseShortName siguen este patron estable "CC BY[-SA|
-# -NC|-ND] X.Y" o "CC0". Cualquier valor no reconocido cae a UNKNOWN,
-# nunca se inventa una licencia mas permisiva de la declarada.
-_LICENSE_CODE_MAP = {
-    "CC0": "CC0-1.0",
-    "CC BY 3.0": "CC-BY-3.0",
-    "CC BY 4.0": "CC-BY-4.0",
-    "CC BY-SA 3.0": "CC-BY-SA-3.0",
-    "CC BY-SA 4.0": "CC-BY-SA-4.0",
-    "CC BY-ND 4.0": "CC-BY-ND-4.0",
-    "CC BY-NC 4.0": "CC-BY-NC-4.0",
-    "CC BY-NC-SA 4.0": "CC-BY-NC-SA-4.0",
-    "CC BY-NC-ND 4.0": "CC-BY-NC-ND-4.0",
-    "Public domain": "PD",
-    "PD": "PD",
-}
+# [S027 - correccion tras E2E real] Wikimedia devolvio "CC BY 2.5" en
+# produccion, version no contemplada por la tabla fija original (solo
+# 3.0/4.0). En vez de seguir enumerando versiones a mano, se reconoce
+# el patron estandar de Creative Commons con una expresion regular:
+# cubre CUALQUIER version (1.0, 2.0, 2.5, 3.0, 4.0...) para BY, BY-SA,
+# BY-NC, BY-ND, BY-NC-SA, BY-NC-ND. Si el codigo resultante no esta
+# sembrado en MediaLicense (verify_and_store lo comprueba), sigue
+# cayendo a UNKNOWN exactamente igual que antes -- esto NUNCA inventa
+# una licencia, solo deja de perder informacion real por una tabla
+# incompleta.
+import re as _re
+
+_CC_LICENSE_PATTERN = _re.compile(
+    r"^CC\s+(BY-NC-SA|BY-NC-ND|BY-SA|BY-NC|BY-ND|BY)\s+(\d+\.\d+)$",
+    _re.IGNORECASE,
+)
+
+
+def _normalize_license_code(license_raw):
+    """
+    Normalize a Wikimedia LicenseShortName into our MediaLicense.code
+    format, for ANY Creative Commons version.
+    ---
+    Normaliza un LicenseShortName de Wikimedia al formato de
+    MediaLicense.code, para CUALQUIER version de Creative Commons.
+    Nunca adivina un codigo para algo que no encaje en el patron
+    estandar; en ese caso devuelve None y el llamador cae a UNKNOWN,
+    igual que antes.
+    """
+    if not license_raw:
+        return None
+    limpio = license_raw.strip()
+    if limpio.upper() == "CC0":
+        return "CC0-1.0"
+    if limpio.lower() in ("public domain", "pd"):
+        return "PD"
+    m = _CC_LICENSE_PATTERN.match(limpio)
+    if not m:
+        return None
+    variante, version = m.group(1).upper(), m.group(2)
+    return f"CC-{variante}-{version}"
 
 # Con Content-Type de imagen no basta un prefijo simple: algunos
 # servidores devuelven "image/jpeg; charset=binary" u otras variantes.
@@ -169,7 +193,7 @@ def search(query, limit=5, timeout=20):
             "width": info.get("width") or 0,
             "height": info.get("height") or 0,
             "size": info.get("size") or 0,
-            "license_code": _LICENSE_CODE_MAP.get(license_raw),
+            "license_code": _normalize_license_code(license_raw),
             "license_raw": license_raw,
             "license_url": _valor("LicenseUrl") or "",
             "usage_terms": _valor("UsageTerms") or "",

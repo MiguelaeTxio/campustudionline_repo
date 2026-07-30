@@ -1330,7 +1330,15 @@ def generate_exam_task(self, exam_uuid, context_text=None, topic=None):
         # FASE DE LLENADO ATÓMICO (Bucle Iterativo por Sección)
         generated_titles = []
         usage_total = {"in": 0, "out": 0}
-        
+        # [HITO 38 punto 7 - correccion tras E2E real] El conjunto de
+        # recursos ya usados debe vivir a nivel de EXAMEN, no de seccion.
+        # Verificado en produccion el 2026-07-30: dos secciones distintas
+        # (SD_ANAT_MACRO y SD_ANAT_RADIO) con la misma consulta de
+        # busqueda (topic="Anatomia") terminaron mostrando la MISMA
+        # imagen, porque el conjunto se reiniciaba en cada seccion y
+        # ninguna de las dos veia lo que la otra ya habia usado.
+        recursos_usados_examen = set()
+
         for s_idx, s_info in enumerate(skeleton):
             db_sec = sections_map.get(s_idx)
             if not db_sec: continue
@@ -1466,7 +1474,6 @@ def generate_exam_task(self, exam_uuid, context_text=None, topic=None):
                         # V06DOC_WIDGETS.md y V06DOC_BLOCKS.md que el widget
                         # certificado por la UGR usa una unica obra por item.
                         WIDGETS_CON_IMAGEN_REAL = ('W-CLIN-SCAN', 'W-ART-IDENT')
-                        recursos_usados_seccion = set()
                         for db_item in db_items:
                             if db_item.widget_id not in WIDGETS_CON_IMAGEN_REAL:
                                 continue
@@ -1478,7 +1485,7 @@ def generate_exam_task(self, exam_uuid, context_text=None, topic=None):
                                     consulta,
                                     AutomationSettings.load().active_api_key,
                                     task_id=None,
-                                    excluir_ids=recursos_usados_seccion,
+                                    excluir_ids=recursos_usados_examen,
                                     widget_id=db_item.widget_id,
                                 )
                                 if resultado_imagen is None:
@@ -1489,7 +1496,7 @@ def generate_exam_task(self, exam_uuid, context_text=None, topic=None):
                                         level="WARNING",
                                     )
                                     continue
-                                recursos_usados_seccion.add(resultado_imagen['resource_id'])
+                                recursos_usados_examen.add(resultado_imagen['resource_id'])
                                 db_item.content['stem'] = resultado_imagen['stem']
                                 _set_media_asset(db_item.content, resultado_imagen['media_url'], 'imagen')
                                 db_item.content['media_attribution'] = {
