@@ -135,7 +135,26 @@ def _purge_zombie_tasks():
 
 
 # [HITO 6] AUDIO GENERATION HELPER / FUNCIÓN AUXILIAR PARA GENERAR AUDIO
-def _generate_item_image_content(search_query, api_key, task_id=None, excluir_ids=None):
+# [HITO 38 punto 3+] Prompts por tipo de ejercicio, cada uno alineado con
+# la fuente de certificacion real del widget (V06DOC_WIDGETS/V06DOC_BLOCKS)
+# en lugar de una redaccion generica que no encaja con ambos dominios.
+_CONTEXTOS_IMAGEN_ITEM = {
+    'W-CLIN-SCAN': (
+        "pidiendo al alumno su interpretacion clinica o tecnica "
+        "(hallazgos, semiologia, diagnostico diferencial segun corresponda)"
+    ),
+    'W-ART-IDENT': (
+        "pidiendo al alumno que identifique la obra (autor, titulo, "
+        "cronologia, tecnica y soporte, localizacion, estilo/periodo/escuela) "
+        "y que redacte despues su analisis en los tres niveles Panofsky "
+        "(pre-iconografico, iconografico, iconologico), conforme a la "
+        "metodologia certificada del Departamento de Historia del Arte UGR "
+        "(V06DOC_BLOCKS, motor EV-ICON-ART)"
+    ),
+}
+
+
+def _generate_item_image_content(search_query, api_key, task_id=None, excluir_ids=None, widget_id='W-CLIN-SCAN'):
     """
     [HITO 38 punto 3] Retrieve and verify a real image FIRST, then ask
     Gemini to write the item's stem/keywords about that specific image.
@@ -155,8 +174,16 @@ def _generate_item_image_content(search_query, api_key, task_id=None, excluir_id
     examen si el catalogo de imagenes falla.
 
     excluir_ids permite no repetir un recurso ya asignado a otro item
-    de la misma seccion: sin esto, dos items W-CLIN-SCAN con la misma
-    consulta de busqueda podrian terminar mostrando la misma imagen.
+    de la misma seccion: sin esto, dos items con la misma consulta de
+    busqueda podrian terminar mostrando la misma imagen.
+
+    widget_id selecciona el marco pedagogico del prompt (ver
+    _CONTEXTOS_IMAGEN_ITEM). Ampliado en S027 para cubrir tambien
+    W-ART-IDENT (SUB-HUM-ART-HIST), verificado contra V06DOC_WIDGETS.md
+    y V06DOC_BLOCKS.md: el widget certificado usa UNA sola obra por
+    item, no varias -- la instruccion original de humanities.py que
+    pedia 3 imagenes era un defecto respecto a la propia especificacion
+    UGR del proyecto, no una necesidad real.
     """
     excluir_ids = excluir_ids or set()
     try:
@@ -175,14 +202,17 @@ def _generate_item_image_content(search_query, api_key, task_id=None, excluir_id
         logger.warning(f"Ningun resultado verificable/nuevo para '{search_query}' (0/{len(resultados)}).")
         return None
 
+    marco_pedagogico = _CONTEXTOS_IMAGEN_ITEM.get(
+        widget_id, _CONTEXTOS_IMAGEN_ITEM['W-CLIN-SCAN']
+    )
     prompt = (
         f"Consulta academica original: \"{search_query}\".\n"
         f"Se adjunta una imagen real, ya verificada, recuperada de un catalogo "
         f"licenciado para ilustrar esta consulta. Redacta el enunciado (stem) "
-        f"describiendo lo que se observa en ESTA imagen concreta y pidiendo al "
-        f"alumno su interpretacion clinica o tecnica. No inventes ningun dato "
-        f"que no se pueda deducir de la imagen. No menciones ninguna URL: la "
-        f"imagen ya esta incluida y se mostrara directamente al alumno."
+        f"describiendo lo que se observa en ESTA imagen concreta, {marco_pedagogico}. "
+        f"No inventes ningun dato que no se pueda deducir de la imagen. "
+        f"No menciones ninguna URL: la imagen ya esta incluida y se mostrara "
+        f"directamente al alumno."
     )
     try:
         recurso.file.open('rb')
@@ -1387,7 +1417,7 @@ def generate_exam_task(self, exam_uuid, context_text=None, topic=None):
                                 db_item.save(update_fields=["content", "grading_logic", "metadata"])
                                 generated_titles.append(str(i_data.get('content', {}).get('stem', ''))[:30])
 
-                        # [HITO 38 punto 3] INVERSION DEL FLUJO PARA W-CLIN-SCAN
+                        # [HITO 38 punto 3] INVERSION DEL FLUJO PARA ITEMS DE IMAGEN
                         # Se sustituye el contenido de los items de imagen POR
                         # SEPARADO de la llamada por lotes de arriba: primero
                         # se recupera y verifica una imagen real, y solo
@@ -1396,14 +1426,16 @@ def generate_exam_task(self, exam_uuid, context_text=None, topic=None):
                         # degradacion segura: si falla para un item, ese
                         # item conserva el contenido (con URL inventada) que
                         # ya escribio la llamada por lotes de arriba, y el
-                        # resto de la seccion no se ve afectado. No es el
-                        # estado final deseado -- el punto 4 de la hoja de
-                        # ruta retirara esa instruccion de invencion cuando
-                        # este paso este asentado -- pero nunca deja un item
-                        # peor de lo que ya estaba.
+                        # resto de la seccion no se ve afectado. Cubre
+                        # W-CLIN-SCAN (ILC-CONTEXT, salud/ciencia/tecnica) y,
+                        # desde S027, W-ART-IDENT (EV-ICON-ART,
+                        # SUB-HUM-ART-HIST) -- verificado contra
+                        # V06DOC_WIDGETS.md y V06DOC_BLOCKS.md que el widget
+                        # certificado por la UGR usa una unica obra por item.
+                        WIDGETS_CON_IMAGEN_REAL = ('W-CLIN-SCAN', 'W-ART-IDENT')
                         recursos_usados_seccion = set()
                         for db_item in db_items:
-                            if db_item.widget_id != 'W-CLIN-SCAN':
+                            if db_item.widget_id not in WIDGETS_CON_IMAGEN_REAL:
                                 continue
                             try:
                                 consulta = (topic or subject.name or '').strip()
@@ -1414,6 +1446,7 @@ def generate_exam_task(self, exam_uuid, context_text=None, topic=None):
                                     AutomationSettings.load().active_api_key,
                                     task_id=None,
                                     excluir_ids=recursos_usados_seccion,
+                                    widget_id=db_item.widget_id,
                                 )
                                 if resultado_imagen is None:
                                     contextual_logger(

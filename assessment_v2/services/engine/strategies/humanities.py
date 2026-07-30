@@ -432,12 +432,15 @@ class HumanitiesStrategy(BaseExamStrategy):
                             'fail_logic': 'FATAL',
                             'level_requisite': 'MANDATORY',
                             'task_instruction': (
-                                'Proporciona 3 imágenes de obras de arte del período o movimiento '
-                                'del material de estudio como media_assets. '
-                                'Para cada obra el alumno debe identificar: '
-                                'título, autor, fecha aproximada, estilo/movimiento, técnica y soporte, '
-                                'y localización actual. '
-                                'Proporciona en keywords los atributos de identificación esperados por obra. '
+                                'Genera el stem invitando al alumno a identificar y analizar '
+                                'la obra de arte del período o movimiento del material de '
+                                'estudio que se muestra en la imagen adjunta. No incluyas '
+                                'ninguna URL en media_assets: el sistema adjunta una imagen '
+                                'real verificada, de una unica obra, por separado. '
+                                'El alumno debe identificar: titulo, autor, fecha aproximada, '
+                                'estilo/movimiento, tecnica y soporte, y localizacion actual, '
+                                'y despues redactar el analisis en los tres niveles Panofsky. '
+                                'Proporciona en keywords los atributos de identificacion esperados. '
                                 'fail_logic=FATAL: la no identificación anula el análisis posterior.'
                             )
                         }
@@ -796,7 +799,7 @@ class HumanitiesStrategy(BaseExamStrategy):
             f'REGLAS CRÍTICAS DE GENERACIÓN:\n'
             f'1. Los UUID de los ítems son INMUTABLES — devuélvelos exactamente como se reciben.\n'
             f'2. DRA-HOLO requiere siempre: rubric_axes (4 ejes con suma 1.0) y word_count_range en grading_logic.\n'
-            f'3. EV-ICON-ART: proporciona media_assets con URL de imagen y keywords con atributos de identificación.\n'
+            f'3. EV-ICON-ART: NUNCA incluyas una URL en media_assets - el sistema adjunta una imagen real verificada mediante un servicio dedicado -, y proporciona los keywords con atributos de identificacion.\n'
             f'4. EV-MUS-ANAL: proporciona keywords con términos musicológicos esperados.\n'
             f'5. Los textos fuente (fuentes históricas, fragmentos filosóficos, partituras) van en source_text o section_stimulus.\n'
             f'6. PROHIBIDO incluir la respuesta correcta en options de forma identificable.\n'
