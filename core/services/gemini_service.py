@@ -19,6 +19,10 @@ logger = logging.getLogger(__name__)
 # --- Configuration Constants ---
 # Modelo activo certificado — Directriz Técnica Vinculante CampuStudiOnline
 GEMINI_MODEL_NAME = "gemini-2.5-flash"
+# [FIX S028] gemini-2.5-flash es solo texto — no soporta response_modalities=["AUDIO"].
+# Modelo TTS dedicado, exclusivo para _generate_item_audio (SD_LIST).
+# Ref: https://ai.google.dev/gemini-api/docs/speech-generation (Supported models, 2026-07-30)
+GEMINI_TTS_MODEL_NAME = "gemini-2.5-flash-preview-tts"
 # Delay entre llamadas: 0 por defecto (sin delay proactivo forzado).
 # El control de cuota lo gestiona _safe_generate_content mediante rotación de claves.
 PROACTIVE_DELAY_SECONDS = 0
@@ -30,14 +34,18 @@ class AIServiceCriticalError(Exception):
 
 # --- Helper Functions (Stateless Design) ---
 
-def _execute_gemini_call(contents, api_key: ApiKey, generation_config: dict, safety_settings: list, system_instruction: str = None) -> types.GenerateContentResponse:
+def _execute_gemini_call(contents, api_key: ApiKey, generation_config: dict, safety_settings: list, system_instruction: str = None, model: str = None) -> types.GenerateContentResponse:
     """
     Configura el cliente unificado (v1) y realiza la llamada.
     Habilitado para multimodalidad (Texto, Audio, Imagen).
+    [FIX S028] Parámetro `model` opcional — por defecto GEMINI_MODEL_NAME
+    (comportamiento idéntico al previo para todas las llamadas existentes).
+    Permite a generate_audio_content invocar GEMINI_TTS_MODEL_NAME en su lugar.
     """
+    model = model or GEMINI_MODEL_NAME
     client = genai.Client(api_key=api_key.key)
     
-    logger.info(f"Llamada Multimodal con clave '{api_key.name}' usando '{GEMINI_MODEL_NAME}'.")
+    logger.info(f"Llamada Multimodal con clave '{api_key.name}' usando '{model}'.")
     time.sleep(PROACTIVE_DELAY_SECONDS)
     
     # Combinar configuración base con la dinámica (ej: response_mime_type)
@@ -59,7 +67,7 @@ def _execute_gemini_call(contents, api_key: ApiKey, generation_config: dict, saf
     config = types.GenerateContentConfig(**config_params)
 
     return client.models.generate_content(
-        model=GEMINI_MODEL_NAME,
+        model=model,
         contents=contents,
         config=config
     )
@@ -179,11 +187,21 @@ def generate_text_content(prompt: str, api_key: ApiKey, task_id: str = None, sys
 
 def generate_audio_content(prompt: str, api_key: ApiKey) -> Tuple[bool, bytes, str]:
     """
-    [HITO 6] Genera un archivo de audio (MPEG) nativamente usando Gemini 3.1 Pro Preview.
+    [HITO 6] Genera un archivo de audio (MPEG) nativamente usando un modelo Gemini TTS.
+    [FIX S028] Antes usaba GEMINI_MODEL_NAME (gemini-2.5-flash, solo texto) — fallaba
+    siempre con 400 INVALID_ARGUMENT "This model only supports text output"
+    (confirmado en log de producción, alwayson-log-209547.log, 2026-07-31).
+    Ahora usa GEMINI_TTS_MODEL_NAME y envía speech_config con una voz explícita,
+    ambos requisitos documentados por Google para response_modalities=["AUDIO"].
     """
     close_old_connections()
     generation_config = {
         "response_modalities": ["AUDIO"],
+        "speech_config": types.SpeechConfig(
+            voice_config=types.VoiceConfig(
+                prebuilt_voice_config=types.PrebuiltVoiceConfig(voice_name="Kore")
+            )
+        ),
     }
     
     # Reutilizamos los safety_settings definidos en generate_text_content (simplificado para el parche)
@@ -192,12 +210,11 @@ def generate_audio_content(prompt: str, api_key: ApiKey) -> Tuple[bool, bytes, s
                                  "HARM_CATEGORY_SEXUALLY_EXPLICIT", "HARM_CATEGORY_DANGEROUS_CONTENT"]]
 
     try:
-        response = _execute_gemini_call(prompt, api_key, generation_config, safety_settings)
-        # En generación de audio, el contenido viene en las partes de la respuesta
-        if response.data:
-            return True, response.data, api_key.name
-        
-        # Fallback para algunas versiones del SDK que lo devuelven en partes
+        response = _execute_gemini_call(prompt, api_key, generation_config, safety_settings, model=GEMINI_TTS_MODEL_NAME)
+        # [FIX S028] response.data NO existe en google-genai==1.55.0 (GenerateContentResponse
+        # usa extra='forbid' — accederlo lanza AttributeError, capturado silenciosamente por
+        # el except de abajo). Confirmado instalando la misma versión pinneada en sandbox.
+        # El contenido de audio viene en las partes de la respuesta (candidates[].content.parts).
         for candidate in response.candidates:
             for part in candidate.content.parts:
                 if part.inline_data:

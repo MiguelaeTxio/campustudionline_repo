@@ -115,7 +115,11 @@
                 </div>
                 <div class="alert alert-info py-2 small"><em>{{ section.instructions }}</em></div>
                 
-                {% if section.section_stimulus %}
+                {# [FIX S028] SD_LIST (comprension auditiva) NUNCA muestra el guion como texto #}
+                {# legible -- el alumno debe escucharlo via el reproductor de audio del item, #}
+                {# no leerlo. El resto de secciones con section_stimulus (lectura, fuente #}
+                {# primaria de W-HUM-TEXT, etc.) mantienen su comportamiento previo intacto. #}
+                {% if section.section_stimulus and section.subdivision_id != 'SD_LIST' %}
                 <div class="card mb-4 border-info shadow-sm">
                     <div class="card-body bg-light text-dark fs-5">
                         {{ section.section_stimulus|safe }}
