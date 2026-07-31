@@ -11,9 +11,13 @@ Motor de autoevaluacion con IA basado en arquetipos y subarquetipos academicos.
 ## 2. HOJA DE RUTA PARA LA PROXIMA SESION (LEY SUPREMA - INELUDIBLE)
 
 **ESTADO DEL PIPELINE:** VERIFICADO en produccion de extremo a extremo para
-ARCH_SCI (S024), ARCH_LANG (S025) y ARCH_TECH (S026). Pendiente extension a
-ARCH_HEALTH, ARCH_SOC y ARCH_HUM.
-**FECHA DE ULTIMA ACTUALIZACION:** 2026-07-29
+ARCH_SCI (S024), ARCH_LANG (S025), ARCH_TECH (S026) y ARCH_SOC (S028, seis
+puntos completos). ARCH_HEALTH (S028): puntos a-d y f verificados con
+imagenes reales de H38 confirmadas en produccion; punto e (calificacion)
+solo con camino de fallo, pendiente con respuesta real. ARCH_HUM (S028):
+`source_text` confirmado por fin en `W-HUM-TEXT`; puntos e-f solo con
+camino de fallo, pendiente con respuesta real.
+**FECHA DE ULTIMA ACTUALIZACION:** 2026-07-31
 **NOTA:** el estado de seguimiento del hito (EN PROGRESO / PAUSADO) vive
 exclusivamente en `CAMPUSTUDIONLINE_ANNEX_ROUTER.md`. Este anexo no lo declara,
 conforme a la regla de oro 1 del PCH. La linea que antes decia
@@ -32,6 +36,65 @@ mas abajo), no se modifica -- sigue siendo la ley suprema tal cual
 quedo escrita, con su orden PASO 1 (ARCH_SOC y ARCH_HUM primero,
 despues ARCH_HEALTH ahora que H38 ya entrega imagenes reales) en
 adelante.
+
+---
+
+### RESULTADO DE S028 -- ARCH_SOC CERRADO, ARCH_HEALTH VERIFICADO CON IMAGENES REALES DE H38, ARCH_HUM PARCIAL
+
+**ARCH_SOC cerrado.** SUB-SOC-ECON-MGMT-ECO ("Economia Politica"), LVL_A,
+examen `67a49ecd-21c2-49c8-a2a1-11426f387cfd`. Los seis puntos (a-f)
+verificados EJECUTANDO: clasificacion correcta, skeleton de 2 secciones
+(Microeconomia / Macroeconomia), 3 items con contenido real (2 opcion
+multiple + 1 problema abierto Cobb-Douglas), widgets renderizados,
+entrega calificada (nota 0,0833, verificada CORRECTA por calculo:
+seccion 1 = (1,00+0,00)/2 = 0,5; seccion 2 = -0,33 por penalizacion
+1/(N-1) en opcion incorrecta de 4; media de secciones = 1/12 = 0,0833),
+informe con Valoracion del Catedratico. Centinela `<<NL>>` confirmado
+sano en contenido con pasos numerados (Paso 1 a Paso 4 en lineas
+separadas). Este subarquetipo no usa `W-HUM-TEXT`, no ejercita
+`source_text`. El aviso rojo heredado del lote 2026-05-28 (examen
+`df036475`, ERROR) queda resuelto.
+
+**ARCH_HEALTH -- imagenes reales de H38 confirmadas en produccion.**
+SUB-SAN-MED-BASIC ("Anatomia"), LVL_A, examen `2c1c80e4-f554-4dd3-8ff9-
+e57a96e996d9`. Skeleton de 3 secciones (Anatomia Macroscopica,
+Anatomia Radiologica, Histologia Microscopica), 3/3 items con contenido
+real. Los dos items `W-CLIN-SCAN` muestran imagenes REALES y DISTINTAS
+entre si -- globo ocular (Patrick J. Lynch, licencia UNKNOWN) y molde de
+corrosion vascular (Own work, CC-BY-SA-4.0) -- confirmando en una
+generacion fresca de esta sesion tanto el servicio de recuperacion como
+la deduplicacion a nivel de examen (arreglo de S027) y la propagacion de
+atribucion al informe (tambien con miniaturas e licencia visibles).
+Ningun `<img>` roto, ningun dominio inventado. Puntos a-d y f cerrados
+por lectura de pantalla real. Punto e (entrega y calificacion) queda
+solo PARCIALMENTE verificado: el examen se entrego sin respuesta real
+en los campos de interpretacion (nota final 0,0000), igual que en
+ARCH_SOC placeholder y en ARCH_HUM -- valida el camino de entrega y el
+kill-switch/penalizacion por campo vacio, pero no el motor de
+calificacion real de EV-* /CDS-KILL contra una respuesta con contenido.
+
+**ARCH_HUM -- parcial, pero con hallazgo bueno.** SUB-HUM-ANTH
+("Antropologia social"), LVL_A, examen `025e14d7-a32e-4925-911e-
+199fa4bb0070`. Clasificacion y skeleton correctos (2 secciones:
+Comentario de Fuente Etnografica / Disertacion Comparativa
+Intercultural), 2/2 items con contenido real. **`source_text`
+CONFIRMADO por fin, tras dos sesiones anunciado sin ejercitarse**: el
+item 175 trae el panel "Fuente Primaria" poblado por la IA con un
+fragmento etnografico real (Kula Ring, terminologia nativa
+soulava/mwali, analisis emic/etic), renderizado correctamente en
+`W-HUM-TEXT`. El item 176 (disertacion comparativa) trae ese panel
+vacio -- coherente con su propio enunciado (sin fuente asociada), no
+confirmado por lectura de `humanities.py` todavia. Punto e-f solo
+PARCIAL: ambos items se entregaron sin texto en "Ensayo Critico" (nota
+0,0000), validando el kill-switch de PENALIZACION FORMAL HUMANIDADES
+por campo vacio, pero no la calificacion real de un ensayo con
+contenido. Miguel Angel decidio continuar sin repetir la prueba con
+texto real -- queda pendiente si se retoma.
+
+**Pendiente para cerrar del todo el punto e-f de ARCH_HEALTH y
+ARCH_HUM:** repetir cualquiera de los dos examenes respondiendo con
+contenido real, para verificar los motores de calificacion (no solo el
+camino de fallo por campo vacio).
 
 ---
 
