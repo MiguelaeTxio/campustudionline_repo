@@ -159,58 +159,183 @@ consulta y no una auditoría manual.
 
 ---
 
+### S027 — 2026-07-30 — Cierre completo del hito
+
+Sesión larga y densa: los siete puntos de la hoja de ruta quedan
+cerrados, verificados con datos reales de producción en cada paso, y
+con dos incidencias reales encontradas y corregidas ya fuera de la
+hoja de ruta original.
+
+**Punto 1 — Modelo de datos** (`2e8b0b0`). App nueva `media_library`
+(opción C sobre las tres planteadas: independiente y modular, decisión
+de Miguel Ángel). Tres modelos: `MediaCatalog`, `MediaLicense`,
+`MediaResource`, con `checksum` SHA-256 único, `upload_to` particionado
+por hash, y estado de verificación explícito. Migración de esquema
+(`0001`) y de datos (`0002`, siembra de catálogos y 11 licencias)
+separadas a propósito, según `com-migrations` sección 2.3. Hallazgo de
+diseño verificado contra el propio código de Django 5.0.7:
+`supports_partial_indexes=False` en MySQL hace que cualquier
+`UniqueConstraint` con `condition` se omita en silencio, sin error de
+migración — la constraint de `external_id` se rediseñó como
+`null=True` + constraint incondicional (MySQL admite varios `NULL` en
+un índice único), verificado con `SHOW INDEX` real en producción.
+
+**Desvío de sesión — reparación de `orchestrator` (commiteado y
+revertido)**. Al comprobar la constraint anterior se encontró que
+`orchestrator` tiene 6 claves ajenas y 3 constraints declaradas en los
+modelos que no existen en la base de datos real — las migraciones
+`0001`/`0002` de esa app están aplicadas con 4 ms de diferencia entre
+sí, marca de un historial reparado a mano en su día durante el
+renombrado de `content_automation` a `orchestrator` (confirmado por
+Miguel Ángel). Se escribió una migración de reparación
+(`4f678b9`), que en el primer despliegue real falló por
+`TransactionManagementError` (el `RunPython` no declaraba
+`atomic=False`, y MySQL no admite DDL dentro de una transacción). El
+fallo abortó todo antes de escribir nada — verificado con los propios
+logs del servidor, incluida una falsa alarma inicial sobre pérdida de
+datos que quedó descartada al comparar los conteos reales antes y
+después. Se decidió revertir el commit completo (`803cca6`) en lugar
+de arreglarlo a mitad de otro hito, y encauzar la reparación de fondo
+hacia H21 (Refactorización del Orquestador), que es donde corresponde.
+**No forma parte del cierre de H38** — queda como incidencia
+documentada, no resuelta.
+
+**Punto 2 — Servicio de recuperación** (`a5944a3`, `32c6e86`).
+Decisión explícita de Miguel Ángel: Wikimedia Commons en exclusiva,
+sin catálogo de contingencia. Motivo medido en producción, no
+supuesto: sobre 8 peticiones reales a la API de Open-i, 3 terminaron
+en timeout (37,5% de fallo), y de 10 elementos reales de su colección
+PMC ninguno traía un solo campo de licencia — el código de terceros
+auditado en GitHub que parseaba `item.license` lo hacía sobre un
+supuesto que sus propios autores tampoco habían confirmado. Wikimedia,
+en cambio, respondió 6/6 en las pruebas de fiabilidad y el vocabulario
+de `extmetadata` coincidió con la documentación oficial en los tres
+archivos reales consultados. `media_library/services.py`:
+`search()` y `verify_and_store()`, con verificación de contenido real
+vía Pillow antes de guardar — no solo la cabecera `Content-Type`, que
+puede mentir o venir de una descarga truncada; defecto real encontrado
+durante la propia verificación (`IntegrityError` por `width`/`height`
+en `None` cuando Pillow no puede decodificar la imagen) y corregido
+antes de desplegar.
+
+**Punto 3 — Inversión del flujo** (`90e76ed`, ampliado en `1372f51`).
+`generate_multimodal_item_content()` en `gemini_service.py` y
+`_generate_item_image_content()` en `orchestrator/tasks.py`, enganchado
+como posprocesado aislado tras el éxito de cada sección, con
+degradación segura: si falla, el ítem conserva el contenido de la
+llamada por lotes en vez de quedar peor. Ampliado a `W-ART-IDENT`
+(Historia del Arte) a petición explícita de Miguel Ángel — antes de
+construir soporte multi-imagen se consultó la propia constelación
+documental del hito (`V06DOC_WIDGETS.md`, `V06DOC_BLOCKS.md`,
+certificación UGR) y se confirmó que la instrucción original de
+`humanities.py` (3 imágenes por ítem) era un defecto respecto a la
+propia especificación certificada, no una necesidad real: el widget
+usa una única obra. Se corrigió a una imagen, sin tocar ninguna
+plantilla.
+
+**Punto 4 — Retirada de URL inventada** (`1b34639`, completado para
+`humanities.py` en `1372f51`). Las cinco estrategias ya no piden URLs
+que no pueden conocer.
+
+**Puntos 5 y 6** (`4c484f1`). Atribución (autor, licencia, enlace) en
+`exam_take.html` y `exam_report.html`, solo donde el dato existe de
+verdad. `logic.py` propaga `media_assets`/`media_attribution` al
+informe de calificación. Corregido también el defecto documentado de
+`orchestrator/tasks.py:1291` (sobrescritura de `media_assets` en lugar
+de fusión) — y se encontró que el propio código nuevo del punto 3
+tenía el mismo patrón, corregido igual en los dos sitios con un
+helper único (`_set_media_asset`), probado reproduciendo el bug
+original.
+
+**Punto 7 — Prueba E2E real** (`70fc6fc`, refinado en `f70ba5f`).
+Examen real generado en producción sobre la asignatura Anatomía (la
+misma que originó el hito). Generación completa sin excepciones, pero
+la ejecución real reveló tres cosas que ninguna lectura de código
+hubiera mostrado:
+
+1. Los dos ítems `W-CLIN-SCAN` del examen recibieron la misma imagen
+   — el conjunto de exclusión de duplicados se reiniciaba en cada
+   sección en lugar de vivir a nivel de examen. Corregido y verificado
+   reproduciendo el escenario exacto.
+2. Wikimedia devolvió `CC BY 2.5`, versión no contemplada por la tabla
+   de mapeo fija del punto 2 (solo cubría 3.0/4.0). Cayó a `UNKNOWN`
+   — comportamiento seguro por diseño, pero con pérdida real de
+   información conocida. Sustituido por un reconocedor genérico por
+   expresión regular que cubre cualquier versión de CC, con migración
+   de siembra (`0004`) para las versiones históricas que Wikimedia usa
+   de verdad.
+3. **Bloqueo de infraestructura, no de código**: la imagen real
+   devolvía 404 en producción porque `/media/` solo lo sirve Django
+   bajo `DEBUG` y el *mapping* de archivos estáticos en el panel Web
+   de PythonAnywhere, pendiente desde el arranque del hito, seguía sin
+   hacerse. Resuelto por Miguel Ángel durante la propia sesión,
+   verificado con una petición HTTP real (`200`, `image/jpeg`, tamaño
+   exacto coincidente con el archivo original).
+
+Un segundo examen real, generado por Miguel Ángel de forma independiente
+tras dar el hito por cerrado, confirmó que el punto 6 funcionaba (dos
+imágenes distintas dentro del mismo examen) pero reveló un cuarto
+hallazgo: dos exámenes *distintos* de la misma asignatura convergían en
+la misma imagen para el primer ítem, porque la consulta de búsqueda
+dependía solo del título de la asignatura, idéntico entre generaciones.
+Corregido en `f70ba5f` enriqueciendo la consulta con el título de la
+propia sección (dato real ya disponible, no inventado) y, de paso, se
+corrigió también el recurso ya existente que había quedado en `UNKNOWN`
+antes del arreglo de licencias — sin volver a consultar Wikimedia,
+reutilizando `license_url`, que ya estaba guardado correctamente desde
+el principio.
+
+**Despliegue**: 11 commits, 11 despliegues verdes salvo uno
+(`70fc6fc`), que falló por *timeout* de `curl` esperando la API de
+recarga de PythonAnywhere (código de salida 28, no un fallo de
+código) — la migración y el reinicio de workers de ese mismo
+despliegue sí tuvieron éxito; resuelto con una recarga manual de
+Miguel Ángel y verificado. Cada despliegue que tocó
+`orchestrator/tasks.py` se verificó con datos reales — timestamps
+correlacionados con el arranque real de `hp_worker`/`heavy_worker`, y
+en un caso, captura directa del panel de PythonAnywhere con ambos
+servicios en `Starting`.
+
+**Fuera de alcance, documentado y no tocado**: un error preexistente
+en `assessment_v2.services.tracking` (`unsupported operand type(s) for
++=: 'float' and 'decimal.Decimal'`) salió a la luz durante la prueba
+E2E real — no impidió que el examen se completara, pero el registro de
+consumo de tokens de esa generación se perdió. Es una incidencia
+propia, no de H38.
+
+---
+
 ## Hoja de Ruta para la Siguiente Sesión (LEY SUPREMA)
 
-### 1. Modelo de datos de recursos
+**Hito H38 completado.** Los siete puntos de la hoja de ruta original
+están cerrados y verificados con datos reales de producción, no solo
+con despliegues verdes. No queda ningún punto pendiente propio de este
+hito.
 
-Crear el modelo de recurso multimedia con, como mínimo: URL de origen,
-archivo almacenado localmente, autor, licencia, URL de la licencia,
-catálogo de procedencia, consulta que lo encontró, y fecha de
-verificación. Migración escrita en el mismo commit que el modelo, según
-`com-migrations` sección 1.
+Cabos sueltos que no forman parte del cierre, para quien retome
+cualquiera de ellos:
 
-### 2. Servicio de recuperación y verificación
+- **Reparación de `orchestrator`** (6 claves ajenas y 3 constraints
+  ausentes en la base de datos real, migración de datos con 4 ms de
+  diferencia entre sí — historial reparado a mano en su día). Pertenece
+  a H21. Diagnóstico completo en la bitácora de esta sesión.
+- **`assessment_v2.services.tracking`**: error preexistente con
+  `Decimal`/`float` al registrar uso de tokens, detectado durante la
+  prueba E2E de hoy. No es de H38.
+- **`W-ART-IDENT` con más de una obra por ítem**: hoy usa una sola,
+  alineado con la certificación UGR vigente. Si algún día se quisiera
+  comparar varias obras en el mismo ítem, hace falta rediseñar también
+  la plantilla (`exam_take.html`), no solo el servicio.
+- **Paso manual pendiente que sí se resolvió hoy**: el *mapping* de
+  `/media/` en PythonAnywhere ya está hecho y verificado — no queda
+  nada por hacer ahí.
 
-Consulta contra catálogo permitido, verificación **real** por petición
-HTTP (código 200 y `content-type` de imagen), descarga y
-almacenamiento local. El almacenamiento local no es un lujo: resuelve
-los enlaces rotos y evita el hotlinking masivo, que Wikimedia
-desaconseja expresamente.
-
-### 3. Inversión del flujo de generación
-
-Hoy la IA escribe la pregunta y después inventa la URL. Debe ser al
-revés: recuperar la imagen primero, verificarla, y pasársela a Gemini
-de forma multimodal —capacidad que `core/services/gemini_service.py`
-ya tiene, según registra su propio log— para que redacte `stem` y
-`grading_logic` **sobre esa imagen concreta**.
-
-Motivo: si se busca imagen para una pregunta ya escrita, se acaba con
-una radiografía patológica ilustrando una pregunta sobre anatomía
-normal.
-
-### 4. Retirada de las instrucciones de URL inventada
-
-Sustituir en las cinco estrategias (health, science, tech, humanities)
-la orden de incluir URL por el contrato nuevo del servicio de
-recuperación. No antes: mientras no exista el servicio, retirarlas solo
-degradaría los enunciados sin ganar nada.
-
-### 5. Atribución en la interfaz
-
-Mostrar autor, licencia y enlace en `exam_take.html` y en
-`exam_report.html`. No es cortesía: es la condición de las licencias
-CC BY y CC BY-SA.
-
-### 6. Corregir la sobrescritura de `media_assets`
-
-`orchestrator/tasks.py:1291` **sobrescribe** la lista entera con la URL
-del audio en lugar de añadirla. Hoy es inocuo porque no hay imágenes
-reales; en cuanto las haya, un ítem con imagen y audio perdería la
-imagen.
-
-### 7. Prueba E2E
-
-Generar un examen de ARCH_HEALTH con imagen real y recorrer los seis
-puntos de control (a-f) ejecutando en producción, nunca leyendo
-código, según la metodología que S024 y S025 dejaron asentada.
+El hito EN PROGRESO en el enrutador sigue siendo H38 — esta sesión no
+incluyó un PCH explícito, así que el marcador no se mueve aquí. La
+decisión natural para la siguiente sesión, ya anotada desde S026: H06
+queda pausado desde S026 precisamente porque H38 lo bloqueaba, y el
+bloqueo ha desaparecido. Su arranque natural son ARCH_SOC y ARCH_HUM
+—que además deben ejercitar `source_text`, pendiente desde hace dos
+sesiones—, y ahora también sirve para probar `W-ART-IDENT` con datos
+reales por primera vez. Queda a decisión explícita de Miguel Ángel
+mover el marcador.
