@@ -38,7 +38,7 @@ Cumple dos funciones inseparables:
 | H03 | Ecosistema de Salas de Chat Globales y Contextuales | `CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V03.md` |
 | H04 | Gestión Avanzada de Cuentas de Usuario | `CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V04.md` |
 | H05 | Mantenimiento y Mejoras Generales | `CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V05.md` |
-| H06 | Sistema de Autoevaluaciones con IA | `CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md` |
+| **H06** | **Sistema de Autoevaluaciones con IA** | **`CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md`** ← EN PROGRESO |
 | H07 | Mejoras de Usabilidad y Feedback de Usuario | `CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V07.md` |
 | H08 | Estandarización de Imagen Corporativa en Emails | `CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V08.md` |
 | H10 | Depuración: Sistema de Notificaciones Push | `CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V10.md` |
@@ -66,7 +66,7 @@ Cumple dos funciones inseparables:
 | H35 | Optimización de Infraestructura Redis y Gestión de Tareas | `CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V35.md` |
 | H36 | Implementación de la Sala de Traducción | `CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V36.md` |
 | H37 | Migración a Gemini 3 Flash y Estandarización de SDK | `CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V37.md` |
-| **H38** | **Adquisición y Licenciamiento de Imágenes para Evaluaciones** | **`CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V38.md`** ← EN PROGRESO |
+| H38 | Adquisición y Licenciamiento de Imágenes para Evaluaciones | `CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V38.md` |
 
 Todos los anexos viven en `DOCS/MAINS/ATTACHEDS/`. Numeración con
 huecos (H09, H15, H16, H17 no existen) heredada del proyecto
@@ -76,8 +76,19 @@ original — no se renumera, se respeta tal cual estaba.
 
 ## 3. Resultado Actual
 
-**Hito EN PROGRESO:** H38 — Adquisición y Licenciamiento de Imágenes
-para Evaluaciones → `CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V38.md`
+**Hito EN PROGRESO:** H06 — Sistema de Autoevaluaciones con IA →
+`CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V06.md`. Reactivado en S028
+(2026-07-31): H38 quedó cerrado en S027 con sus siete puntos
+verificados en producción, el bloqueo sobre ARCH_HEALTH desapareció,
+y Miguel Ángel confirmó explícitamente la reanudación. La hoja de
+ruta de reanudación, redactada en S026, no se ha tocado — sigue siendo
+la ley suprema tal cual quedó escrita.
+
+H38 queda sin marca de estado: los siete puntos de su hoja de ruta
+están cerrados y verificados con datos reales de producción, no hay
+trabajo pendiente propio del hito. No se anota "COMPLETADO" (ver
+directriz 6) — la ausencia de marca es la convención del sistema para
+hitos terminados.
 
 **Hitos PAUSADO** (heredados de la migración de sistema de estados,
 2026-07-24 — no son un desvío de esta sesión, sino el estado real en
@@ -90,15 +101,6 @@ que estaban marcados en el master document antes de la migración):
   heredada: funcionalidad técnica completa, pendiente integración
   futura con IA.
 - H34 — Optimización de Redes Sociales y Metadatos de Compartición
-
-**Hito PAUSADO en S026** (no heredado de la migración):
-
-- H06 — Sistema de Autoevaluaciones con IA. Pausado el 2026-07-29 para
-  atender H38, que lo bloquea: los ítems `W-CLIN-SCAN` de ARCH_HEALTH
-  dependen de imágenes que hoy no existen. Al reanudarlo, el arranque
-  natural son ARCH_SOC y ARCH_HUM, que no tienen esa dependencia y son
-  además los que deben ejercitar `source_text`. Hoja de ruta de
-  reanudación ya redactada en su anexo.
 
 El resto de hitos de la tabla no llevan marca de estado porque están
 terminados — no se anota "COMPLETADO" en ningún sitio del sistema,

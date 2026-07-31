@@ -21,6 +21,20 @@ conforme a la regla de oro 1 del PCH. La linea que antes decia
 
 ---
 
+### REACTIVACION EN S028 -- 2026-07-31
+
+Hito reactivado. H38 (Adquisicion y Licenciamiento de Imagenes para
+Evaluaciones) cerro sus siete puntos en S027, verificados con datos
+reales de produccion; el bloqueo que pausaba este hito desaparecio.
+Miguel Angel confirmo la reanudacion explicitamente. La hoja de ruta
+de reanudacion, redactada en S026 ("HOJA DE RUTA AL REANUDAR H06",
+mas abajo), no se modifica -- sigue siendo la ley suprema tal cual
+quedo escrita, con su orden PASO 1 (ARCH_SOC y ARCH_HUM primero,
+despues ARCH_HEALTH ahora que H38 ya entrega imagenes reales) en
+adelante.
+
+---
+
 ### RESULTADO DE S026 -- ARCH_TECH VERIFICADO, TRES DEFECTOS TRANSVERSALES DE PRESENTACION, Y APERTURA DE H38
 
 **ARCH_TECH cerrado.** Los seis puntos (a-f) verificados EJECUTANDO sobre el

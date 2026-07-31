@@ -305,6 +305,18 @@ propia, no de H38.
 
 ---
 
+### S028 — 2026-07-31 — PCH: marcador movido a H06
+
+Sin trabajo nuevo propio de H38 en esta sesión. Miguel Ángel confirmó
+la reanudación de H06 ("Continuamos con las evaluaciones"), y el
+enrutador (`CAMPUSTUDIONLINE_ANNEX_ROUTER.md`) mueve el marcador
+`← EN PROGRESO` de H38 a H06, conforme a `nfs-campustudionline-pch`
+Caso B. H38 queda sin marca de estado por estar terminado — los siete
+puntos de su hoja de ruta original siguen cerrados y verificados,
+según registro de S027.
+
+---
+
 ## Hoja de Ruta para la Siguiente Sesión (LEY SUPREMA)
 
 **Hito H38 completado.** Los siete puntos de la hoja de ruta original
