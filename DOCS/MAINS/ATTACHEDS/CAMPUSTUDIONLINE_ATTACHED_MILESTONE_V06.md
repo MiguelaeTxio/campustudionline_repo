@@ -98,6 +98,76 @@ camino de fallo por campo vacio).
 
 ---
 
+### RESULTADO DE S028 (CONTINUACION) -- ESTRENO Y REPARACION DE SD_LIST (COMPRENSION AUDITIVA), TRES DEFECTOS ENCADENADOS CORREGIDOS
+
+**PASO 2 de la hoja de ruta, cerrado.** Riesgo alto confirmado y
+corregido en produccion, con verificacion final positiva de Miguel
+Angel ("el audio ahora se oye perfecto").
+
+La nota de S026 que daba por buenas las copias Catalan/Frances/
+Italiano Maior para `SUB-LIN-INSTR` resulto correcta solo para
+**Italiano Maior** (`Lengua Moderna Maior Italiano: Avanzado 1`,
+copy_id `cca8697a-bf99-4f45-9013-420beee675ba`, LVL_C) -- la IA
+clasifico Catalan (`Idioma Moderno Inicial I: Catalan`, "Inicial")
+correctamente como `SUB-LIN-MINOR` segun su propia definicion
+certificada en V06DOC_SUBARCHETYPES v5.9, no como una confusion del
+motor. No se llego a probar Frances.
+
+**Tres defectos reales encadenados en la cadena de audio de `SD_LIST`,
+diagnosticados con log de produccion real y corregidos uno a uno:**
+
+1. `generate_audio_content` llamaba a `GEMINI_MODEL_NAME`
+   (`gemini-2.5-flash`, solo texto) para generar audio nativo. Log real
+   (`alwayson-log-209547.log`, 2026-07-31): `400 INVALID_ARGUMENT: This
+   model only supports text output`. Corregido con
+   `GEMINI_TTS_MODEL_NAME = "gemini-2.5-flash-preview-tts"` dedicado, y
+   parametro `model` opcional anadido a `_execute_gemini_call` (sin
+   afectar a ninguna llamada existente).
+2. No se enviaba `speech_config` (voz), obligatorio para
+   `response_modalities=["AUDIO"]` segun la documentacion oficial de
+   Google. Anadida voz `Kore`.
+3. `if response.data:` -- `GenerateContentResponse` usa `extra='forbid'`
+   en `google-genai==1.55.0` (confirmado instalando la misma version
+   pinneada en sandbox); ese acceso lanzaba `AttributeError`, atrapado
+   en silencio por el `except` generico. Nunca se habia ejecutado
+   porque el fallo del punto 1 abortaba antes. Eliminado el acceso
+   roto; la ruta correcta (`candidates[].content.parts[].inline_data`)
+   ya estaba escrita como fallback y ahora es la unica ruta.
+4. (Cuarto defecto, encontrado en la SEGUNDA prueba real, tras
+   desplegar los tres anteriores): el audio se generaba pero sonaba
+   vacio -- Gemini TTS devuelve PCM crudo (mono, 16-bit, 24kHz), y
+   `_generate_item_audio` lo guardaba tal cual con extension `.mp3`,
+   sin contenedor. El navegador no puede decodificar PCM crudo como
+   MP3. Corregido envolviendolo en un WAV real con el modulo estandar
+   `wave` (igual que el ejemplo oficial de Google) y guardando como
+   `.wav`. Plantilla actualizada para reconocer tambien `.wav` en el
+   reproductor del item.
+
+**Defecto adicional, ya presente antes de esta sesion, tambien
+corregido:** `section_stimulus` (el guion que sirve de base al audio)
+se mostraba siempre como texto legible en pantalla para cualquier
+seccion que lo tuviera (linea 118 de `exam_take.html`), sin distinguir
+`SD_LIST` (donde debe escucharse) de secciones de lectura como
+`W-HUM-TEXT` (donde si debe leerse, verificado horas antes en esta
+misma sesion con Antropologia). Corregido anadiendo la condicion
+`section.subdivision_id != 'SD_LIST'`.
+
+**Hallazgo aparte, documentado pero NO corregido en esta sesion:**
+`assessment_media_utils.js` guarda la grabacion de voz del alumno
+(Speaking, boton "Grabar") como `.mp3`/`audio-mpeg`, pero
+`MediaRecorder` normalmente graba en `webm`/`ogg` -- posible mismatch
+del mismo tipo que el punto 4 de arriba. Miguel Angel reporto no poder
+reproducir una grabacion de prueba, coherente con esta sospecha, pero
+no se ha investigado a fondo. Pendiente para otra sesion.
+
+Commits: `2442bb6` (fallos 1-3 + fuga de `section_stimulus`),
+`31cc2c7` (fallo 4, contenedor WAV). Ambos desplegados y verificados
+paso a paso en GitHub Actions (incluido el patron de reinicio de
+Primario y Pesado, que coincide literalmente con los archivos
+tocados en ambos commits).
+
+---
+
 ### RESULTADO DE S026 -- ARCH_TECH VERIFICADO, TRES DEFECTOS TRANSVERSALES DE PRESENTACION, Y APERTURA DE H38
 
 **ARCH_TECH cerrado.** Los seis puntos (a-f) verificados EJECUTANDO sobre el

@@ -173,6 +173,9 @@
                             <div class="audio-wave d-none mx-auto" id="wave_rec_{{ item.id }}"><div><!-- --></div><div><!-- --></div><div><!-- --></div><div><!-- --></div></div>
                             <div id="status_{{ item.id }}" class="mt-2 small text-muted">{% trans "Listo para grabar" %}</div>
                             <span class="badge bg-dark mt-2" id="timer_{{ item.id }}">00:00</span>
+                            {# [FIX S028] Reproduccion local -- el alumno debe poder escuchar #}
+                            {# lo que ha grabado antes de entregar el examen. #}
+                            <audio id="playback_{{ item.id }}" controls class="d-none w-100 mt-2"></audio>
                             <input type="file" class="d-none" id="audio_input_{{ item.id }}" name="audio_response_{{ item.id }}">
                         </div>
                         {% endif %}

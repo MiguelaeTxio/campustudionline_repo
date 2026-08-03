@@ -94,7 +94,18 @@ const AssessmentMedia = {
         start: async function(questionId) {
             try {
                 const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-                this.mediaRecorder = new MediaRecorder(stream);
+                // [FIX S028] Antes: new MediaRecorder(stream) sin mimeType explicito, y
+                // el blob resultante se renombraba a mp3 a la fuerza (ver comentario viejo
+                // mas abajo, ahora eliminado). MediaRecorder graba en el formato que el
+                // navegador soporte de verdad (normalmente webm/opus) -- hay que preguntarle
+                // cual es y etiquetar el archivo con la verdad, o el navegador no puede
+                // decodificarlo despues.
+                const preferredType = MediaRecorder.isTypeSupported('audio/webm;codecs=opus')
+                    ? 'audio/webm;codecs=opus'
+                    : (MediaRecorder.isTypeSupported('audio/webm') ? 'audio/webm' : '');
+                this.mediaRecorder = preferredType
+                    ? new MediaRecorder(stream, { mimeType: preferredType })
+                    : new MediaRecorder(stream);
                 this.chunks = [];
                 this.currentQuestionId = questionId;
 
@@ -102,20 +113,33 @@ const AssessmentMedia = {
                 const btnStop = document.getElementById(`btn_stop_${questionId}`);
                 const wave = document.getElementById(`wave_rec_${questionId}`);
                 const status = document.getElementById(`status_${questionId}`);
+                const playback = document.getElementById(`playback_${questionId}`);
 
                 this.mediaRecorder.ondataavailable = (e) => {
                     if (e.data.size > 0) this.chunks.push(e.data);
                 };
 
                 this.mediaRecorder.onstop = () => {
-                    const blob = new Blob(this.chunks, { type: 'audio/mp3' }); // Nota: WebM en realidad, pero renombramos
+                    // [FIX S028] mimeType real reportado por el propio MediaRecorder tras
+                    // grabar (nunca 'audio/mp3' -- eso era una etiqueta falsa).
+                    const realType = this.mediaRecorder.mimeType || 'audio/webm';
+                    const extension = realType.includes('webm') ? 'webm' : (realType.includes('ogg') ? 'ogg' : 'webm');
+                    const blob = new Blob(this.chunks, { type: realType });
                     const fileInput = document.getElementById(`audio_input_${questionId}`);
-                    
-                    // Crear archivo para el input
-                    const file = new File([blob], `recording_q${questionId}.mp3`, { type: 'audio/mpeg' });
+
+                    // Crear archivo para el input, con la extension y el tipo reales
+                    const file = new File([blob], `recording_q${questionId}.${extension}`, { type: realType });
                     const container = new DataTransfer();
                     container.items.add(file);
                     fileInput.files = container.files;
+
+                    // [FIX S028] Reproduccion local inmediata para que el alumno pueda
+                    // comprobar su propia grabacion antes de entregar.
+                    if (playback) {
+                        const url = URL.createObjectURL(blob);
+                        playback.src = url;
+                        playback.classList.remove('d-none');
+                    }
 
                     // Stop stream tracks
                     stream.getTracks().forEach(track => track.stop());
