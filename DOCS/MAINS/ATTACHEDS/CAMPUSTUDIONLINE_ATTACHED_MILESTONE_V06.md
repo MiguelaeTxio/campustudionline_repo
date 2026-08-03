@@ -168,6 +168,74 @@ tocados en ambos commits).
 
 ---
 
+### RESULTADO DE S028 (CONTINUACION 2) -- GRABADORA DE VOZ (SPEAKING) REPARADA, DEFECTO DE BLOQUEO TOTAL DE NAVEGACION ENCONTRADO Y CORREGIDO, REGRESION PROPIA CORREGIDA
+
+**Grabadora de voz (SD_SPEAK/W-COMM-DIALOG), etiquetado corregido y
+reproduccion local anadida.** El boton "Grabar" grababa con
+`MediaRecorder(stream)` sin especificar codec y luego renombraba el
+blob a `.mp3`/`audio-mpeg` a la fuerza (el propio comentario del
+codigo decia "Nota: WebM en realidad, pero renombramos"). Sin ninguna
+forma de comprobar la grabacion antes de entregar. Corregido: deteccion
+real del codec soportado (`audio/webm;codecs=opus`), etiquetado
+correcto del Blob/File, y reproduccion local inmediata via
+`URL.createObjectURL`. Verificado por Miguel Angel con una grabacion
+real ("se ha escuchado perfectamente"). Alcance deliberadamente
+acotado: NO conecta la grabacion con el backend ni con calificacion
+real -- ver mas abajo el hallazgo de arquitectura mayor.
+
+**Hallazgo de arquitectura mayor, NO abordado esta sesion, candidato a
+hito propio.** El motor `DIA-INTERACT` (y `DRA-HOLO` y afines en
+`social.py`/`languages.py`/`humanities.py`) esta disenado para devolver
+siempre `PENDING_AI_ANALYSIS` con `pending_ai_refinement: True`, en
+espera de un paso posterior de analisis por IA que **no existe en
+ningun sitio del codigo**. `generate_multimodal_correction` ya existe
+en `gemini_service.py` y ya adivina bien `mime_type="audio/webm"`, pero
+no se llama desde ninguna parte. Afecta a tres arquetipos
+(ARCH_LANG, ARCH_SOC, ARCH_HUM), no solo a Speaking. Motor de
+refinamiento completo pendiente de diseno y sesion dedicada.
+
+**Defecto de bloqueo TOTAL de navegacion, encontrado y corregido.**
+Miguel Angel reporto "Siguiente estacion no funciona" -- el examen
+quedaba atascado en la primera seccion, en cualquier examen, siempre.
+Causa: `activateSection(0)`, llamada sincrona dentro de
+`initExamEngine()` en el bloque de arranque de la pagina, hacia
+`if (window.MathJax) { MathJax.typesetPromise([currentSec]); }`.
+`window.MathJax` existe pronto (sincrono), pero `typesetPromise` se
+adjunta mas tarde, cuando termina el arranque asincrono real de
+MathJax -- la comprobacion pasaba pero la llamada lanzaba
+`TypeError` sin capturar, cortando en seco el resto del script de
+arranque: ni el listener global de ".btn-next-station" ni ningun
+`AssessmentWidgets.init*()` llegaban a registrarse. Corregidos los
+tres puntos que llamaban a `MathJax.typesetPromise` para comprobar
+`typeof MathJax.typesetPromise === 'function'`, no solo la existencia
+del objeto. Verificado por Miguel Angel: navegacion restaurada.
+Corregida de paso, en el mismo commit, una perdida de datos real: el
+manejo de archivos de audio en el envio final sobrescribia por
+completo la respuesta de `DIA-INTERACT` (chat "Interaccion
+Dialectica") si tambien existia una grabacion -- ahora se conserva
+dentro de la clave `log`.
+
+**Regresion propia, encontrada y corregida en la misma sesion.** Al
+cambiar la extension del audio de `.mp3` a `.wav` (fallo 4 de mas
+arriba), 7 puntos de `exam_take.html` que decidian "si el asset no es
+`.mp3`, es una imagen" (`{% if not '.mp3' in asset %}`) empezaron a
+tratar el propio audio `.wav` como imagen, mostrando el placeholder
+roto "Recurso Visual" en items `W-OBJ-STRIKE` de `SD_LIST`. Corregidas
+las 7 apariciones para excluir tambien `.wav`. Verificado por Miguel
+Angel: ya no aparece el placeholder, se ve el reproductor de audio
+correctamente.
+
+**PASO 2 de la hoja de ruta (SD_LIST) queda cerrado del todo**, con
+cuatro rondas de fix-verificacion-fix reales en produccion, todas
+confirmadas por Miguel Angel con datos frescos.
+
+Commits: `66af29d` (grabadora, etiquetado + reproduccion local),
+`c69c881` (bloqueo de navegacion MathJax + perdida de datos
+DIA-INTERACT), `9d2172f` (regresion propia .wav-como-imagen). Los
+tres desplegados y verificados en GitHub Actions.
+
+---
+
 ### RESULTADO DE S026 -- ARCH_TECH VERIFICADO, TRES DEFECTOS TRANSVERSALES DE PRESENTACION, Y APERTURA DE H38
 
 **ARCH_TECH cerrado.** Los seis puntos (a-f) verificados EJECUTANDO sobre el
