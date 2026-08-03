@@ -1043,7 +1043,16 @@
             }
             
             // Trigger MathJax Reprocess for the new visible section
-            if (window.MathJax) {
+            // [FIX S028] window.MathJax puede existir (el objeto de config
+            // arranca sincrono) antes de que su propio arranque asincrono
+            // termine de adjuntar typesetPromise. Llamarlo entonces lanzaba
+            // TypeError sin capturar, que cortaba en seco el resto del
+            // script de inicializacion de la pagina -- incluido el listener
+            // de "Siguiente Estacion" y varios AssessmentWidgets.init*(),
+            // registrados mas abajo en el mismo bloque de arranque. Defecto
+            // real de bloqueo total de la navegacion del examen, encontrado
+            // por Miguel Angel en produccion.
+            if (window.MathJax && typeof MathJax.typesetPromise === 'function') {
                 MathJax.typesetPromise([currentSec]);
             }
 
@@ -1922,7 +1931,7 @@
         input.addEventListener('keyup', function(e) {
              const itemId = this.closest('.exam-item').dataset.itemId;
              const preview = document.getElementById(`math-preview-${itemId}`);
-             if (preview && window.MathJax) {
+             if (preview && window.MathJax && typeof MathJax.typesetPromise === 'function') {
                  preview.innerHTML = `\\[${this.value}\\]`;
                  MathJax.typesetPromise([preview]);
              }
@@ -1941,7 +1950,7 @@
                 
                 const log = document.getElementById(`log-${itemId}`);
                 log.innerHTML += `<div class="input-group input-group-sm mb-1"><span class="input-group-text bg-dark text-success border-success">Paso ${stepId}</span><input type="text" class="form-control bg-dark text-success border-success" value="${val}" readonly></div>`;
-                if (window.MathJax) MathJax.typesetPromise([log]);
+                if (window.MathJax && typeof MathJax.typesetPromise === 'function') MathJax.typesetPromise([log]);
                 
                 this.value = '';
                 const preview = document.getElementById(`math-preview-${itemId}`);
@@ -2234,11 +2243,22 @@
         // Speaking responses will be treated as "File Uploaded" placeholder in JSON.
         
         // Check for audio inputs
+        // [FIX S028] Antes esto SOBRESCRIBIA por completo responses[itemId]
+        // con {file_uploaded, filename}, perdiendo el chat_log de
+        // DIA-INTERACT (widgetState.chatLogs) que se habia asignado un poco
+        // mas arriba para el mismo itemId cuando el item es W-COMM-DIALOG.
+        // _grade_dia_interact acepta un dict con clave 'log', asi que se
+        // conserva el log existente en vez de perderlo.
         document.querySelectorAll('input[type="file"][name^="audio_response_"]').forEach(input => {
              const itemId = input.id.replace('audio_input_', '');
              if (input.files.length > 0) {
-                 responses[itemId] = { file_uploaded: true, filename: input.files[0].name };
-                 // In a real scenario, we would upload the file here or use FormData
+                 const existing = responses[itemId];
+                 if (Array.isArray(existing)) {
+                     responses[itemId] = { log: existing, file_uploaded: true, filename: input.files[0].name };
+                 } else {
+                     responses[itemId] = { file_uploaded: true, filename: input.files[0].name };
+                 }
+                 // En un escenario real, aqui se subiria el archivo o se usaria FormData
              }
         });
 
