@@ -16,7 +16,12 @@ puntos completos). ARCH_HEALTH (S028): puntos a-d y f verificados con
 imagenes reales de H38 confirmadas en produccion; punto e (calificacion)
 solo con camino de fallo, pendiente con respuesta real. ARCH_HUM (S028):
 `source_text` confirmado por fin en `W-HUM-TEXT`; puntos e-f solo con
-camino de fallo, pendiente con respuesta real.
+camino de fallo, pendiente con respuesta real. `SD_LIST` (S028): CERRADO
+del todo, con cuatro rondas de fix-verificacion-fix reales en produccion
+(modelo TTS, contenedor WAV, grabadora de voz, defecto de bloqueo total de
+navegacion por MathJax, y una regresion propia). Motor de refinamiento
+`PENDING_AI_ANALYSIS` documentado como hallazgo mayor, candidato a hito
+propio -- ver PASO 5 de la hoja de ruta.
 **FECHA DE ULTIMA ACTUALIZACION:** 2026-07-31
 **NOTA:** el estado de seguimiento del hito (EN PROGRESO / PAUSADO) vive
 exclusivamente en `CAMPUSTUDIONLINE_ANNEX_ROUTER.md`. Este anexo no lo declara,
@@ -443,54 +448,50 @@ datos en estado ERROR y son la evidencia que permitio el diagnostico.
 
 ### HOJA DE RUTA AL REANUDAR H06 -- EN ESTE ORDEN
 
-Actualizada en S026. El hito se pausa aqui para atender H38 (imagenes de
-evaluacion), que bloquea ARCH_HEALTH. Al reanudar, este es el estado real:
-ARCH_SCI, ARCH_LANG y ARCH_TECH quedan verificados; ARCH_HEALTH depende de H38;
-ARCH_SOC y ARCH_HUM estan libres de esa dependencia y son el arranque natural.
+Actualizada en S028. PASO 1 y PASO 2 de la version anterior (S026) quedan
+CERRADOS -- ver RESULTADO DE S028 y su continuacion mas arriba para el
+detalle completo. Este es el estado real al reanudar:
 
-PASO 1 -- Completar la prueba E2E de los arquetipos restantes
-- PRIMERO ARCH_SOC (Economia Politica) y ARCH_HUM (Antropologia social), que NO
-  dependen de imagenes y por tanto no esperan a H38. Las copias existen y
-  arrastran el aviso rojo de `assessment_status == ERROR` del lote del
-  2026-05-28, que desaparece al generar un examen que llegue a READY.
-- DESPUES ARCH_HEALTH (Anatomia), una vez H38 entregue imagenes reales. El
-  examen `5c200071` quedo generado pero con los `W-CLIN-SCAN` inservibles.
-- Verificar los seis puntos (a-f) en cada uno, EJECUTANDO.
-- ATENCION ESPECIAL a `source_text`, que sigue SIN ejercitarse nunca pese a
-  llevar dos sesiones anunciado. Lo piden items `W-HUM-TEXT` en humanities y
-  social, asi que ARCH_SOC y ARCH_HUM son justamente donde toca. Leer antes la
-  correccion del RESULTADO DE S026: `source_text` NO alimenta el panel lateral
-  -- eso es `section_stimulus`, otro canal distinto, tambien sin ejercitar.
-- Los defectos de S025 y los tres de S026 eran todos transversales, no
-  especificos de un arquetipo, asi que lo que queda deberia ir mas rapido.
-- Verificar de paso que el centinela `<<NL>>` se comporta en arquetipos con
-  listas y pasos numerados, no solo en los que emiten codigo.
+PASO 1 -- CLO-OPEN, sin cobertura posible hasta confirmar dato academico
+`CLO-OPEN` lo emite unicamente `SUB-LIN-PHILO`, y no existe copia de estudio
+de ninguna asignatura filologico-diacronica (gramatica historica, filologia
+latina, linguistica historica). Confirmar con Miguel Angel si existe tal
+asignatura en la estructura academica; si no, queda como pendiente
+justificado, no como omision. "El Espanol Actual: Norma y Uso" caera
+previsiblemente en `SUB-LIN-NORM`, que es CLO-MULTI otra vez.
 
-PASO 2 -- Estreno de SD_LIST (comprension oral) -- RIESGO ALTO
-Requiere un examen de SUB-LIN-INSTR (copias disponibles: Catalan, Frances,
-Italiano Maior). El disparador de audio de `orchestrator/tasks.py` (~linea 1212)
-vive DENTRO del `try` cuyo `except` cuenta reintento local: si
-`_generate_item_audio` lanza, el fallo se registra como "Error Parseo JSON", se
-reintenta 3 veces y aborta la seccion con `AIServiceCriticalError`, tumbando el
-examen entero. Es decir, un fallo de audio es bloqueante Y se disfraza de error
-de parseo. Tenerlo presente al diagnosticar.
+PASO 2 -- Japones / wanakana, sin cobertura posible hasta confirmar dato academico
+`bindOccidentalInput` solo contempla `ja`, `ar` y `el`; el chino cae en la
+rama generica, de modo que la copia de Minor Chino NO ejercita wanakana.
+Hace falta una copia de una asignatura de japones. Mismo tratamiento que el
+PASO 1.
 
-PASO 3 -- CLO-OPEN, sin cobertura posible hoy
-`CLO-OPEN` lo emite unicamente `SUB-LIN-PHILO`, y no existe copia de estudio de
-ninguna asignatura filologico-diacronica (gramatica historica, filologia latina,
-linguistica historica). Confirmar con Miguel Angel si existe tal asignatura en
-la estructura academica; si no, queda como pendiente justificado, no como
-omision. "El Espanol Actual: Norma y Uso" caera previsiblemente en
-`SUB-LIN-NORM`, que es CLO-MULTI otra vez.
+PASO 3 -- ITIN_DOC en Magisterio
+Pendiente desde hace varias sesiones: confirmar que `AcademicDeductor` le
+asigna `ITIN_DOC`.
 
-PASO 4 -- Japones / wanakana, sin cobertura posible hoy
-`bindOccidentalInput` solo contempla `ja`, `ar` y `el`; el chino cae en la rama
-generica, de modo que la copia de Minor Chino NO ejercita wanakana. Hace falta
-una copia de una asignatura de japones. Mismo tratamiento que el PASO 3.
+PASO 4 -- Cerrar del todo el punto e-f de ARCH_HEALTH y ARCH_HUM (S028)
+Ambos arquetipos quedaron verificados en S028 salvo el motor de
+calificacion real: los examenes de prueba se entregaron con los campos de
+interpretacion/ensayo vacios, validando solo el camino de fallo (kill-switch
+por campo vacio), no una calificacion real con contenido. Repetir cualquiera
+de los dos examenes (Anatomia `SUB-SAN-MED-BASIC` o Antropologia social
+`SUB-HUM-ANTH`) respondiendo de verdad.
 
-PASO 5 -- ITIN_DOC en Magisterio
-Pendiente desde el anexo anterior: confirmar que `AcademicDeductor` le asigna
-`ITIN_DOC`.
+PASO 5 -- Motor de refinamiento PENDING_AI_ANALYSIS -- HITO NUEVO CANDIDATO
+Hallazgo de S028, acordado con Miguel Angel como hito propio, NO como tarea
+suelta de H06: `DIA-INTERACT` (Speaking/dialogo) y `DRA-HOLO` (ensayos
+largos) y afines, en `base.py`/`social.py`/`languages.py`/`humanities.py`,
+estan disenados para devolver siempre `PENDING_AI_ANALYSIS` con
+`pending_ai_refinement: True`, en espera de un analisis por IA posterior que
+NO EXISTE en ningun sitio del codigo. Afecta a tres arquetipos (ARCH_LANG,
+ARCH_SOC, ARCH_HUM), no es cosa de un solo widget. `generate_multimodal_
+correction` (`gemini_service.py`) ya existe y ya adivina bien
+`mime_type="audio/webm"`, pero no se llama desde ninguna parte -- gran parte
+del trabajo de investigacion ya esta hecho, falta disenar el motor en si:
+sincrono en la propia entrega o asincrono con estado "calificacion en
+proceso", y como se actualiza el informe ya persistido. Requiere una sesion
+propia de diseno, no un parche.
 
 PASO 6 -- Selector de dificultad UG / Endurecido (decision de Miguel Angel, S025)
 Criterio fijado por Miguel Angel: **manda lo que haga la UGR**. Lo que sea licito
@@ -522,6 +523,7 @@ El panel de evaluacion de `edit_copy.html` esta condicionado a
 `request.user.is_staff or request.user.id == 1`; el resto ve "En Mantenimiento".
 Abrir implica relajar esa condicion.
 
+---
 ---
 
 ### DEUDA TECNICA ABIERTA
