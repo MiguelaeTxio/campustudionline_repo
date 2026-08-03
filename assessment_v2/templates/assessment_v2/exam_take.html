@@ -234,7 +234,7 @@
 
                             {% if item.content.media_assets %}
                                 {% for asset in item.content.media_assets %}
-                                    {% if not '.mp3' in asset %}
+                                    {% if not '.mp3' in asset and not '.wav' in asset %}
                                     <div class="image-wrapper position-relative d-inline-block scan-container scan-container-wrapper mb-2" data-item-id="{{ item.id }}">
                                         <img src="{{ asset }}" class="img-fluid rounded border shadow-sm img-scan-max" 
                                              alt="{% trans 'Evidencia Clínica' %}" width="800" height="600">
@@ -268,7 +268,7 @@
                                     {% if item.content.media_assets %}
                                         <div class="mb-3 text-center">
                                             {% for asset in item.content.media_assets %}
-                                                {% if not '.mp3' in asset %}
+                                                {% if not '.mp3' in asset and not '.wav' in asset %}
                                                 <img src="{{ asset }}" class="img-fluid rounded img-thumb-max mb-2" alt="{% trans 'Recurso Visual' %}" width="300" height="200">
                                                 {% endif %}
                                             {% endfor %}
@@ -298,7 +298,7 @@
                                 <h6 class="text-muted border-bottom pb-2">{% trans "Fuente Primaria" %}</h6>
                                 {% if item.content.media_assets %}
                                     {% for asset in item.content.media_assets %}
-                                        {% if not '.mp3' in asset %}
+                                        {% if not '.mp3' in asset and not '.wav' in asset %}
                                         <img src="{{ asset }}" class="img-fluid mb-2" alt="{% trans 'Fuente Visual' %}" width="400" height="300">
                                         {% endif %}
                                     {% endfor %}
@@ -495,7 +495,7 @@
                                     <div class="p-3 bg-white text-center art-ident-img-container" id="art-img-{{ item.id }}">
                                         {% if item.content.media_assets %}
                                             {% for asset in item.content.media_assets %}
-                                                {% if not '.mp3' in asset %}
+                                                {% if not '.mp3' in asset and not '.wav' in asset %}
                                                 <img src="{{ asset }}" class="img-fluid rounded shadow-sm art-ident-main-img art-ident-img-constrain"
                                                      alt="{% trans 'Obra para identificar' %}" width="600" height="450"
                                                      onclick="this.classList.toggle('hd-zoom-active')">
@@ -664,7 +664,7 @@
                                 <div class="col-md-4 border-end p-2 bg-light overflow-auto ecdo-source-col">
                                     <small class="text-muted fw-bold d-block mb-2">{% trans "Fuente — Testimonio A" %}</small>
                                     {% for asset in item.content.media_assets %}
-                                        {% if not '.mp3' in asset %}
+                                        {% if not '.mp3' in asset and not '.wav' in asset %}
                                         <img src="{{ asset }}" class="img-fluid rounded border mb-1" alt="{% trans 'Testimonio' %}" width="400" height="300">
                                         {% endif %}
                                     {% endfor %}
@@ -707,7 +707,7 @@
                                          id="pale-viewport-{{ item.id }}" data-item-id="{{ item.id }}" data-zoom="1" data-filter="">
                                         {% if item.content.media_assets %}
                                             {% for asset in item.content.media_assets %}
-                                                {% if not '.mp3' in asset %}
+                                                {% if not '.mp3' in asset and not '.wav' in asset %}
                                                 <img src="{{ asset }}" id="pale-img-{{ item.id }}"
                                                      class="pale-manuscript-img w-100 pale-img-transform"
                                                      alt="{% trans 'Manuscrito' %}" width="800" height="600">
@@ -825,7 +825,7 @@
                                         {% endif %}
                                         {% if item.content.media_assets %}
                                             {% for asset in item.content.media_assets %}
-                                                {% if not '.mp3' in asset %}
+                                                {% if not '.mp3' in asset and not '.wav' in asset %}
                                                 <img src="{{ asset }}" class="img-fluid rounded mb-2" alt="{% trans 'Estímulo visual' %}" width="400" height="300">
                                                 {% endif %}
                                             {% endfor %}
