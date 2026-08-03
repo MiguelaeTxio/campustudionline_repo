@@ -6,6 +6,8 @@ import json
 import dirtyjson
 import time
 import re
+import wave
+import io
 from datetime import datetime, timedelta
 import pytz
 
@@ -295,14 +297,29 @@ def _generate_item_audio(item_id, text, api_key):
     Converts item text to speech and saves to media/assessment/audio/.
     ---
     Convierte el texto del ítem en voz y lo guarda en media/assessment/audio/.
+    [FIX S028] generate_audio_content devuelve PCM crudo (mono, 16-bit,
+    24kHz -- formato documentado por Google para sus modelos TTS), no un
+    MP3 valido. Guardarlo tal cual con extension .mp3 producia un archivo
+    que el navegador no podia decodificar (se reproducia silencio, aunque
+    el reproductor mostrara movimiento). Se envuelve en un contenedor WAV
+    real con el modulo estandar `wave`, igual que el ejemplo oficial de
+    Google, y se guarda como .wav.
     """
     try:
         success, audio_bytes, _ = generate_audio_content(text, api_key)
         if success and audio_bytes:
-            filename = f"assessment/audio/item_{item_id}.mp3"
+            wav_buffer = io.BytesIO()
+            with wave.open(wav_buffer, "wb") as wf:
+                wf.setnchannels(1)
+                wf.setsampwidth(2)
+                wf.setframerate(24000)
+                wf.writeframes(audio_bytes)
+            wav_bytes = wav_buffer.getvalue()
+
+            filename = f"assessment/audio/item_{item_id}.wav"
             if default_storage.exists(filename):
                 default_storage.delete(filename)
-            path = default_storage.save(filename, ContentFile(audio_bytes))
+            path = default_storage.save(filename, ContentFile(wav_bytes))
             return default_storage.url(path)
     except Exception as e:
         logger.error(f"Error generando audio para ítem {item_id}: {e}")

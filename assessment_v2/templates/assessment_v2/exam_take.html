@@ -140,7 +140,7 @@
                         {# INTEGRACIÓN REPRODUCTOR AUDIO (Listening) #}
                         {% if item.content.media_assets %}
                             {% for asset in item.content.media_assets %}
-                                {% if '.mp3' in asset %}
+                                {% if '.mp3' in asset or '.wav' in asset %}
                                 <div class="widget-container p-3 border rounded bg-light mb-3">
                                     <div class="d-flex align-items-center gap-3">
                                         <button class="btn btn-outline-primary rounded-circle p-3" id="btn_tts_{{ item.id }}_{{ forloop.counter }}" onclick="AssessmentMedia.player.toggle('{{ asset }}', '{{ item.id }}_{{ forloop.counter }}')">
