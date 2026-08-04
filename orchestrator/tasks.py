@@ -522,8 +522,21 @@ def deep_validate_json_structure(expected, received, path="root"):
     equivalencia SOLO cuando el valor esperado (de un intento previo exitoso)
     tambien estaba vacio -- si el campo esperado tenia contenido real y
     significativo, la deriva estructural se sigue rechazando igual que antes.
-    Hallazgo real: examen e3e629c4, seccion SD_LIST, 3 intentos agotados por
-    media_assets ausente/null/lista segun el intento.
+
+    [FIX S029 -- AMPLIACION, mismo dia] media_assets es un caso categorico
+    aparte, no cubierto por la regla anterior: se inyecta en db_item.content
+    DESPUES de la respuesta de la IA, via _set_media_asset (audio de SD_LIST,
+    imagen de W-CLIN-SCAN/W-ART-IDENT) -- ver comentario [HITO 38 punto 6]
+    mas arriba en este archivo. Si un item se genera bien en un primer
+    intento y se le inyecta el audio/imagen real, el 'expected' de cualquier
+    reintento posterior de la MISMA seccion (por fallo de OTRO item) pasa a
+    exigir que la IA reproduzca ese media_assets ya inyectado -- cosa que la
+    IA nunca hace ni debe hacer, es tarea nuestra, no suya. Es una
+    imposibilidad estructural por diseno, no un caso raro: se excluye
+    'media_assets' de esta comprobacion siempre, en cualquier direccion,
+    independientemente de si el valor esperado esta vacio o ya poblado.
+    Hallazgos reales: examenes e3e629c4, 7ab7c127 y c61f91e4, los tres en
+    seccion SD_LIST, agotando 3 intentos por esta causa.
     """
     def _is_empty(v):
         return v is None or v == [] or v == {} or v == ''
@@ -532,6 +545,8 @@ def deep_validate_json_structure(expected, received, path="root"):
         if not isinstance(received, dict):
             raise ValueError(f"[{path}] Se esperaba un objeto/diccionario, se recibió {type(received).__name__}")
         for k, v in expected.items():
+            if k == 'media_assets':
+                continue  # Inyectado post-IA, nunca sujeto a consistencia entre reintentos (S029)
             if k not in received:
                 if _is_empty(v):
                     continue  # Campo opcional no provisto -- equivalente a null/[] (S029)
