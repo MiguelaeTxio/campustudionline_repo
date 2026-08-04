@@ -292,6 +292,15 @@
                             {% endif %}
 
                         {# 5. DRA-HOLO -> W-HUM-TEXT (Essay/Dissertation) #}
+                        {# [FIX S029] Se embebe el selector multimodal W-INSTR-SELECTOR #}
+                        {# (V06DOC_WIDGETS.md linea 129: "Soporta los cuatro modos de #}
+                        {# entrada del W-INSTR-SELECTOR"), ausente hasta ahora pese a #}
+                        {# estar certificado. Hallazgo real S029: examen SUB-LIN-INSTR #}
+                        {# de japones sin ningun item W-INSTR-SELECTOR independiente, y #}
+                        {# W-HUM-TEXT era un textarea liso sin wanakana ni ningun otro #}
+                        {# modo. Se reutiliza integramente el mismo mecanismo (botones, #}
+                        {# paneles, bindOccidentalInput, calliPad, ocrPro) del widget #}
+                        {# independiente mas abajo, bajo el mismo item.id. #}
                         {% elif item.widget_id == 'W-HUM-TEXT' %}
                         <div class="widget-container split-container row g-0 border rounded">
                             <div class="col-md-6 source-panel bg-light p-3 border-end source-panel-scroll">
@@ -308,7 +317,44 @@
                             <div class="col-md-6 editor-panel p-3 position-relative">
                                 <h6 class="text-muted border-bottom pb-2">{% trans "Ensayo Crítico" %}</h6>
                                 <span class="position-absolute top-0 end-0 mt-3 me-3 badge bg-secondary" id="quality-metric-{{ item.id }}">Formalidad: N/A</span>
-                                <textarea class="form-control response-input-text border-0 h-100 font-serif editor-textarea" rows="15" placeholder="{% trans 'Desarrolle su argumento. Arrastre aquí fragmentos de la fuente...' %}"></textarea>
+                                <div class="btn-group w-100 mb-2" id="instr-mode-selector-{{ item.id }}" data-item-id="{{ item.id }}">
+                                    <button type="button" class="btn btn-sm btn-outline-primary active instr-mode-btn" data-mode="keyboard">
+                                        <i class="bi bi-keyboard"></i> {% trans "Teclado" %}
+                                    </button>
+                                    <button type="button" class="btn btn-sm btn-outline-primary instr-mode-btn" data-mode="occidental">
+                                        <i class="bi bi-globe"></i> {% trans "Occidentalización" %}
+                                    </button>
+                                    <button type="button" class="btn btn-sm btn-outline-primary instr-mode-btn" data-mode="strokes">
+                                        <i class="bi bi-brush"></i> {% trans "Trazos" %}
+                                    </button>
+                                    <button type="button" class="btn btn-sm btn-outline-primary instr-mode-btn" data-mode="ocr">
+                                        <i class="bi bi-camera"></i> {% trans "OCR / Captura" %}
+                                    </button>
+                                </div>
+                                <div id="instr-keyboard-{{ item.id }}" class="instr-input-panel">
+                                    <textarea class="form-control response-input-text border-0 font-serif editor-textarea" rows="12"
+                                              data-item-id="{{ item.id }}" data-mode="keyboard"
+                                              placeholder="{% trans 'Desarrolle su argumento. Arrastre aquí fragmentos de la fuente...' %}"
+                                              spellcheck="false" autocorrect="off" autocomplete="off"></textarea>
+                                </div>
+                                <div id="instr-occidental-{{ item.id }}" class="instr-input-panel d-none">
+                                    <textarea class="form-control response-input-text border-0 font-serif editor-textarea" rows="12"
+                                              data-item-id="{{ item.id }}" data-mode="occidental"
+                                              placeholder="{% trans 'Escriba en transliteración occidental. El sistema convertirá automáticamente.' %}"
+                                              spellcheck="false"></textarea>
+                                </div>
+                                <div id="instr-strokes-{{ item.id }}" class="instr-input-panel d-none">
+                                    <canvas id="instr-canvas-{{ item.id }}" class="border rounded w-100 calli-canvas instr-canvas-pad"
+                                            height="180" data-item-id="{{ item.id }}"></canvas>
+                                    <button class="btn btn-sm btn-outline-secondary mt-2"
+                                            onclick="AssessmentWidgets.calliPad.clear('instr-{{ item.id }}')">
+                                        <i class="bi bi-eraser"></i> {% trans "Borrar" %}
+                                    </button>
+                                </div>
+                                <div id="instr-ocr-{{ item.id }}" class="instr-input-panel d-none">
+                                    <input type="file" class="form-control" accept="image/*"
+                                           onchange="AssessmentWidgets.ocrPro.loadFile('instr-{{ item.id }}', this)">
+                                </div>
                             </div>
                         </div>
 
@@ -916,7 +962,7 @@
                                           spellcheck="false" autocorrect="off" autocomplete="off"></textarea>
                             </div>
                             <div id="instr-occidental-{{ item.id }}" class="instr-input-panel d-none">
-                                <textarea class="form-control" rows="4"
+                                <textarea class="form-control response-input-text" rows="4"
                                           data-item-id="{{ item.id }}" data-mode="occidental"
                                           placeholder="{% trans 'Escriba en transliteración occidental. El sistema convertirá automáticamente.' %}"
                                           spellcheck="false"></textarea>
@@ -2111,10 +2157,18 @@
             } 
             // 3. ILC-CONTEXT / DRA-HOLO / RBT-CANON (Simple text)
             else if (blockType === 'ILC-CONTEXT' || blockType === 'DRA-HOLO' || blockType === 'RBT-CANON') {
-                const input = item.querySelector('.response-input-text');
+                // [FIX S029] DRA-HOLO puede renderizarse con el selector multimodal
+                // W-INSTR-SELECTOR embebido (W-HUM-TEXT). Hay que coger el panel
+                // visible, no siempre el primer .response-input-text del DOM (que
+                // era el de teclado, y perdia lo escrito en Occidentalizacion).
+                const visibleInstrInput = item.querySelector('.instr-input-panel:not(.d-none) .response-input-text');
+                const input = visibleInstrInput || item.querySelector('.response-input-text');
                 if (blockType === 'DRA-HOLO') {
+                    const visiblePanel = item.querySelector('.instr-input-panel:not(.d-none)');
+                    const activeMode = visiblePanel ? visiblePanel.id.replace(`instr-`, '').replace(`-${itemId}`, '') : 'keyboard';
                     responses[itemId] = {
-                        text: input ? input.value : '',
+                        text: input ? input.value : (widgetState.calliData[`instr-${itemId}`] || ''),
+                        input_mode: activeMode,
                         formal_penalty: parseFloat(item.dataset.formalPenalty || 0)
                     };
                 } else if (blockType === 'ILC-CONTEXT') {
