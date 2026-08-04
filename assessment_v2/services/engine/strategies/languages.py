@@ -439,8 +439,9 @@ class LanguagesStrategy(BaseExamStrategy):
                             'fail_logic': 'PENALTY',
                             'level_requisite': 'MANDATORY',
                             'task_instruction': (
-                                'Genera 5 preguntas de opción múltiple (A/B/C/D) basadas en la transcripción '
-                                'del audio proporcionado como section_stimulus. '
+                                'Genera 5 preguntas de opción múltiple (A/B/C/D) basadas en el diálogo '
+                                'que TÚ MISMO generas para esta sección en el campo section_stimulus '
+                                '(ver regla 9-BIS: dialogo original, nunca copiado del contexto de estudio). '
                                 'Las preguntas deben evaluar comprensión global, actitud del hablante '
                                 'e inferencia pragmática. NO_NEGATIVE_MARKING activo para esta sección.'
                             )
@@ -453,7 +454,8 @@ class LanguagesStrategy(BaseExamStrategy):
                             'level_requisite': 'MANDATORY',
                             'task_instruction': (
                                 'Genera 3 preguntas de respuesta breve (≤4 palabras) sobre datos concretos '
-                                'mencionados en el audio. Respuestas únicas e inequívocas. '
+                                'mencionados en el diálogo que TÚ MISMO generas para esta sección en '
+                                'section_stimulus (ver regla 9-BIS). Respuestas únicas e inequívocas. '
                                 'NO_NEGATIVE_MARKING activo (CLM-UGR protocol).'
                             )
                         }
@@ -1239,6 +1241,29 @@ class LanguagesStrategy(BaseExamStrategy):
             f'\nESQUELETO DE ÍTEMS (OBLIGATORIO — no modificar los item_id UUID):\n{skeleton_json}\n'
         ) if skeleton_json else ''
 
+        # [FIX S029] SD_LIST tiene layout_mode='STANDARD', por lo que nunca
+        # entraba en la condicion SPLIT_TEXT/SPLIT_VISUAL de la regla 9 --
+        # la IA nunca recibia instruccion explicita de generar el dialogo
+        # real como section_stimulus, pese a que los item_instruction de
+        # SD_LIST (PRM-STRIKE/RBT-SHORT-LANG) hablan de "la transcripcion
+        # del audio proporcionado" como si ya existiera. Sin instruccion
+        # clara, la IA a veces copiaba fragmentos del CONTEXTO DEL MATERIAL
+        # DE ESTUDIO en vez de generar un dialogo nuevo -- confirmado con
+        # caso real: examen 14b1245e, SD_LIST, section_stimulus contaminado
+        # con texto en espanol del material de estudio, TTS leyendolo en
+        # espanol en lugar de generar audio real en el idioma objetivo.
+        listening_note = (
+            f'9-BIS. Esta seccion es SD_LIST (Comprension Auditiva): DEBES generar '
+            f'tu, en el campo "section_stimulus", un dialogo o monologo ORIGINAL '
+            f'completo, natural y coherente, EXCLUSIVAMENTE en \'{target_lang}\', que '
+            f'sera convertido a audio real por sintesis de voz. NUNCA copies, '
+            f'parafrasees ni reutilices fragmentos del CONTEXTO DEL MATERIAL DE '
+            f'ESTUDIO de arriba (ese contexto es solo para fijar el tema y el '
+            f'nivel lexico-gramatical, no es el guion). Las preguntas de los '
+            f'items de esta seccion se basan en ESTE dialogo que tu generas, no '
+            f'en el material de estudio.\n'
+        ) if subdivision_id == 'SD_LIST' else ''
+
         return (
             f'GENERA EL CONTENIDO DE EVALUACIÓN PARA LA SIGUIENTE SECCIÓN.\n\n'
             f'Sub-arquetipo: {self.sub_archetype_id}\n'
@@ -1260,5 +1285,6 @@ class LanguagesStrategy(BaseExamStrategy):
             f'7. gap_solutions debe ser [{{"gap_id": "[HUECO_ID_1]", "accepted_answer": "respuesta"}}, {{"gap_id": "[HUECO_ID_2]", "accepted_answer": "respuesta"}}, ...].\n'
             f'8. PROHIBIDO incluir la respuesta correcta en el campo "options" de forma identificable.\n'
             f'9. Si la sección requiere section_stimulus (SPLIT_TEXT/SPLIT_VISUAL), inclúyelo en el JSON.\n'
+            f'{listening_note}'
             f'10. Genera contenido académico real y riguroso — sin placeholders ni contenido genérico.'
         )
