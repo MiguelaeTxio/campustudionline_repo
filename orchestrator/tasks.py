@@ -511,15 +511,37 @@ def deep_validate_json_structure(expected, received, path="root"):
     """
     Validación estricta recursiva del esqueleto JSON frente a la salida de la IA.
     Garantiza que la IA actúe solo como máquina de relleno, sin alterar estructura.
+
+    [FIX S029] Varios campos del esquema real (core/services/gemini_schemas.py)
+    son genuinamente opcionales -- Optional[...] = Field(default=None): options,
+    media_assets, text_with_gaps, cloze_options, source_text, correct_answer,
+    gap_solutions, pairs, step_matrix, section_stimulus. La IA los representa
+    de forma inconsistente entre reintentos de la misma seccion (ausente, null,
+    o lista vacia son formas EQUIVALENTES de "sin valor" para un campo opcional),
+    y esta funcion los trataba como deriva estructural fatal. Se tolera esa
+    equivalencia SOLO cuando el valor esperado (de un intento previo exitoso)
+    tambien estaba vacio -- si el campo esperado tenia contenido real y
+    significativo, la deriva estructural se sigue rechazando igual que antes.
+    Hallazgo real: examen e3e629c4, seccion SD_LIST, 3 intentos agotados por
+    media_assets ausente/null/lista segun el intento.
     """
+    def _is_empty(v):
+        return v is None or v == [] or v == {} or v == ''
+
     if isinstance(expected, dict):
         if not isinstance(received, dict):
             raise ValueError(f"[{path}] Se esperaba un objeto/diccionario, se recibió {type(received).__name__}")
         for k, v in expected.items():
             if k not in received:
+                if _is_empty(v):
+                    continue  # Campo opcional no provisto -- equivalente a null/[] (S029)
                 raise ValueError(f"[{path}] Falta la clave obligatoria: '{k}'")
+            if _is_empty(v) and _is_empty(received[k]):
+                continue  # Ambas formas vacias son equivalentes para un campo opcional (S029)
             deep_validate_json_structure(v, received[k], f"{path}.{k}")
     elif isinstance(expected, list):
+        if received is None:
+            return  # null es equivalente a lista vacia para un campo opcional (S029)
         if not isinstance(received, list):
             raise ValueError(f"[{path}] Se esperaba un array/lista, se recibió {type(received).__name__}")
         # No verificamos longitud de lista, la IA rellena los marcadores.
