@@ -452,8 +452,9 @@ Actualizada en S028. PASO 1 y PASO 2 de la version anterior (S026) quedan
 CERRADOS -- ver RESULTADO DE S028 y su continuacion mas arriba para el
 detalle completo. Este es el estado real al reanudar:
 
-PASO 1 -- CLO-OPEN -- E2E COMPLETO EN S029: defecto real de calificacion
-encontrado y corregido, pendiente reverificacion numerica
+PASO 1 -- CLO-OPEN -- CERRADO DEL TODO EN S029: pipeline E2E completo,
+defecto real de calificacion encontrado, corregido y verificado
+numericamente
 `CLO-OPEN` lo emite unicamente `SUB-LIN-PHILO`. Secuencia completa verificada
 en S029: (1) asignatura `Gramatica Historica del Espanol` confirmada real
 (Comando S `CampuStudiOnline_005.txt`); (2) `ContentMaterial` generado de
@@ -463,12 +464,11 @@ verificado con notificaciones push y email reales); (3) copia de estudio
 creada por Miguel Angel, bloqueada primero por el limite real de 6
 `ContentCopy` (documentado, `contents/study_room_views.py:114`) -- ver nota
 en DEUDA TECNICA sobre el aviso de cupo no visto, pendiente de reproduccion
-en caliente; (4) examen real generado (uuid `d7da300a-b195-4da4-8c8b-
-61da1a7674db`), clasificado correctamente como `SUB-LIN-PHILO` (confirmado
-contra BD, el aviso de "mal clasificado" era la etiqueta generica del admin
-de `archetype_id`, corregido anadiendo `sub_archetype_id` a `ExamAdmin.
-list_display`, commit `4ae24f2`); (5) examen completado y calificado por
-Miguel Angel (nota final 0.3000).
+en caliente; (4) examen real generado (uuid `d7da300a`), clasificado
+correctamente como `SUB-LIN-PHILO` (confirmado contra BD, el aviso de "mal
+clasificado" era la etiqueta generica del admin de `archetype_id`, corregido
+anadiendo `sub_archetype_id` a `ExamAdmin.list_display`, commit `4ae24f2`);
+(5) examen completado y calificado por Miguel Angel (nota final 0.3000).
 
 **DEFECTO REAL ENCONTRADO en el propio motor `CLO-OPEN`** (`_grade_clo_open`,
 `base.py`): el item 202 obtuvo 2/6 huecos correctos pero nota 0.0. Causa:
@@ -479,10 +479,21 @@ Miguel Angel (nota final 0.3000).
 `RBT-SHORT-LANG` aplica `NO_NEGATIVE_MARKING` siempre, citando el protocolo
 CLM-UGR, sin excepcion. Mismo criterio que ya senalaba el PASO 6 para
 `CLO-MULTI` (penalizacion sin cita = va a modo Endurecido, nunca al
-estandar). Corregido en el commit que sigue a este: default cambiado a
-`True`, rama penalizada conservada para un futuro modo endurecido explicito.
-**Pendiente para cerrar del todo:** repetir el examen (o un nuevo `CLO-OPEN`)
-para confirmar numericamente que 2/6 aciertos da ahora 0.33 y no 0.0.
+estandar). Corregido (commit `33a0bc5`): default cambiado a `True`, rama
+penalizada conservada para un futuro modo endurecido explicito.
+
+**VERIFICACION NUMERICA FINAL** (segundo examen real, uuid `2ed00ae5`,
+Comando S `CampuStudiOnline_014.txt`): item CLO-OPEN con 1/6 huecos
+correctos a mano (comparacion real contra `gap_solutions` y respuesta real
+del alumno) dio nota persistida 0.3000 -- exactamente `(1/6) * 1.8`, donde
+1.8 es el `rigor_factor` certificado y ya existente de `SUB-LIN-PHILO` para
+`ITIN_MAI` (independiente del nivel pedagogico, ver `languages.py`
+`_get_grading_params`: "el rigor filologico es maximo"). Aritmetica exacta,
+sin discrepancia. El motor ya no se hunde a 0 con aciertos parciales y el
+multiplicador de rigor certificado se sigue aplicando correctamente encima.
+Pipeline completo (estructura academica -> generacion de contenido ->
+generacion de examen -> clasificacion -> calificacion real) verificado de
+extremo a extremo, ejecutando, no solo leyendo.
 
 PASO 2 -- Japones / wanakana -- VERIFICADO S029: decenas de asignaturas
 existen, falta copia de estudio
