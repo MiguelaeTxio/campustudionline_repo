@@ -134,7 +134,13 @@ de datos real de producción: ninguna `Branch` de la UGR se llama "Educación"
 ni "Magisterio" — las titulaciones de Educación (Grado en Educación Infantil/
 Primaria, Pedagogía, MAES, dobles grados, etc.) se archivan bajo las cinco
 ramas de conocimiento estándar (Artes y Humanidades, Ciencias, CC. Sociales
-y Jurídicas, según el caso), nunca bajo una rama propia. El `AcademicDeductor`
+y Jurídicas, según el caso), nunca bajo una rama propia. Confirmado también
+contra la fuente oficial: el portal `grados.ugr.es` y la resolución BOE-A-
+2020-14196 (publicación del plan de estudios) declaran expresamente que la
+Rama de conocimiento del Grado en Educación Primaria de la UGR es «Ciencias
+Sociales y Jurídicas» — coincide exactamente con el dato real de la base de
+datos del proyecto, confirmando que la señal fiable es el nombre de la
+titulación, nunca la rama. El `AcademicDeductor`
 (`logic.py`) asigna ahora `ITIN_DOC` automáticamente cuando el **nombre de la
 titulación** (`Degree.name`, no `Branch.name`) contiene las palabras clave:
 `educación`, `educacion`, `magisterio`, `didáctica`, `didactica`, `pedagogía`,
