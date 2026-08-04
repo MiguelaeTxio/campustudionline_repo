@@ -452,19 +452,28 @@ Actualizada en S028. PASO 1 y PASO 2 de la version anterior (S026) quedan
 CERRADOS -- ver RESULTADO DE S028 y su continuacion mas arriba para el
 detalle completo. Este es el estado real al reanudar:
 
-PASO 1 -- CLO-OPEN, sin cobertura posible hasta confirmar dato academico
-`CLO-OPEN` lo emite unicamente `SUB-LIN-PHILO`, y no existe copia de estudio
-de ninguna asignatura filologico-diacronica (gramatica historica, filologia
-latina, linguistica historica). Confirmar con Miguel Angel si existe tal
-asignatura en la estructura academica; si no, queda como pendiente
-justificado, no como omision. "El Espanol Actual: Norma y Uso" caera
-previsiblemente en `SUB-LIN-NORM`, que es CLO-MULTI otra vez.
+PASO 1 -- CLO-OPEN -- VERIFICADO S029: asignatura SI existe, falta copia de estudio
+`CLO-OPEN` lo emite unicamente `SUB-LIN-PHILO`. Verificado contra la BD real
+de produccion (Comando S, `CampuStudiOnline_005.txt`): SI existe la
+asignatura `Gramatica Historica del Espanol` (filologico-diacronica), pero
+tiene 0 copias de estudio (`ContentCopy`) reales -- nadie la ha copiado
+todavia. El bloqueo NO es de estructura academica (ya verificado que existe),
+es que el pipeline de generacion de examen necesita `context_text` de una
+`ContentCopy` real y no hay ninguna. Requiere que Miguel Angel cree una copia
+de estudio real de esa asignatura en la plataforma -- accion de usuario, no
+ejecutable desde el flujo de edicion directa contra GitHub. "El Espanol
+Actual: Norma y Uso" seguiria cayendo previsiblemente en `SUB-LIN-NORM`
+(CLO-MULTI), no sirve como sustituto.
 
-PASO 2 -- Japones / wanakana, sin cobertura posible hasta confirmar dato academico
+PASO 2 -- Japones / wanakana -- VERIFICADO S029: decenas de asignaturas
+existen, falta copia de estudio
 `bindOccidentalInput` solo contempla `ja`, `ar` y `el`; el chino cae en la
 rama generica, de modo que la copia de Minor Chino NO ejercita wanakana.
-Hace falta una copia de una asignatura de japones. Mismo tratamiento que el
-PASO 1.
+Verificado contra la BD real (mismo Comando S que PASO 1): existen mas de 70
+filas de asignaturas de japones (Idioma Moderno/Minor/Literatura Japonesa,
+niveles I-X, distintas titulaciones/universidades), pero 0 copias de estudio
+reales en ninguna. Mismo bloqueo que el PASO 1: falta que Miguel Angel cree
+una copia de estudio real de cualquiera de ellas.
 
 PASO 3 -- ITIN_DOC en Magisterio -- **CERRADO EN S029**
 **Defecto real confirmado y corregido, verificado ejecutando contra datos
