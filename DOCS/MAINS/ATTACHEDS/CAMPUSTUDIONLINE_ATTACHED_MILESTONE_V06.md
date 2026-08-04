@@ -452,18 +452,37 @@ Actualizada en S028. PASO 1 y PASO 2 de la version anterior (S026) quedan
 CERRADOS -- ver RESULTADO DE S028 y su continuacion mas arriba para el
 detalle completo. Este es el estado real al reanudar:
 
-PASO 1 -- CLO-OPEN -- VERIFICADO S029: asignatura SI existe, falta copia de estudio
-`CLO-OPEN` lo emite unicamente `SUB-LIN-PHILO`. Verificado contra la BD real
-de produccion (Comando S, `CampuStudiOnline_005.txt`): SI existe la
-asignatura `Gramatica Historica del Espanol` (filologico-diacronica), pero
-tiene 0 copias de estudio (`ContentCopy`) reales -- nadie la ha copiado
-todavia. El bloqueo NO es de estructura academica (ya verificado que existe),
-es que el pipeline de generacion de examen necesita `context_text` de una
-`ContentCopy` real y no hay ninguna. Requiere que Miguel Angel cree una copia
-de estudio real de esa asignatura en la plataforma -- accion de usuario, no
-ejecutable desde el flujo de edicion directa contra GitHub. "El Espanol
-Actual: Norma y Uso" seguiria cayendo previsiblemente en `SUB-LIN-NORM`
-(CLO-MULTI), no sirve como sustituto.
+PASO 1 -- CLO-OPEN -- E2E COMPLETO EN S029: defecto real de calificacion
+encontrado y corregido, pendiente reverificacion numerica
+`CLO-OPEN` lo emite unicamente `SUB-LIN-PHILO`. Secuencia completa verificada
+en S029: (1) asignatura `Gramatica Historica del Espanol` confirmada real
+(Comando S `CampuStudiOnline_005.txt`); (2) `ContentMaterial` generado de
+extremo a extremo via el pipeline `ContentRequest` -> senal de auto-
+aprobacion (Hito 24) -> `global_orchestrator_task` -> IA real (82 secciones,
+verificado con notificaciones push y email reales); (3) copia de estudio
+creada por Miguel Angel, bloqueada primero por el limite real de 6
+`ContentCopy` (documentado, `contents/study_room_views.py:114`) -- ver nota
+en DEUDA TECNICA sobre el aviso de cupo no visto, pendiente de reproduccion
+en caliente; (4) examen real generado (uuid `d7da300a-b195-4da4-8c8b-
+61da1a7674db`), clasificado correctamente como `SUB-LIN-PHILO` (confirmado
+contra BD, el aviso de "mal clasificado" era la etiqueta generica del admin
+de `archetype_id`, corregido anadiendo `sub_archetype_id` a `ExamAdmin.
+list_display`, commit `4ae24f2`); (5) examen completado y calificado por
+Miguel Angel (nota final 0.3000).
+
+**DEFECTO REAL ENCONTRADO en el propio motor `CLO-OPEN`** (`_grade_clo_open`,
+`base.py`): el item 202 obtuvo 2/6 huecos correctos pero nota 0.0. Causa:
+`no_negative_marking` defecteaba a `False`, aplicando una penalizacion de
+0.5 por hueco erroneo sin ninguna cita UGR que la respalde -- (2 - 4*0.5)/6
+= 0. La propia documentacion certificada (`V06DOC_BLOCKS.md` Sec 3,
+"CLO-OPEN ... se apoya en el motor RBT-SHORT-LANG") contradice ese defecto:
+`RBT-SHORT-LANG` aplica `NO_NEGATIVE_MARKING` siempre, citando el protocolo
+CLM-UGR, sin excepcion. Mismo criterio que ya senalaba el PASO 6 para
+`CLO-MULTI` (penalizacion sin cita = va a modo Endurecido, nunca al
+estandar). Corregido en el commit que sigue a este: default cambiado a
+`True`, rama penalizada conservada para un futuro modo endurecido explicito.
+**Pendiente para cerrar del todo:** repetir el examen (o un nuevo `CLO-OPEN`)
+para confirmar numericamente que 2/6 aciertos da ahora 0.33 y no 0.0.
 
 PASO 2 -- Japones / wanakana -- VERIFICADO S029: decenas de asignaturas
 existen, falta copia de estudio
@@ -553,7 +572,14 @@ con nivel estandar (UG) y dificil (endurecido).
   6 contra 6, de modo que la ultima pareja es gratis por eliminacion; (b)
   extender la penalizacion a `CLO-MULTI`, que lleva `no_negative_marking` fijo en
   el codigo sin ninguna cita UGR que lo respalde -- a diferencia del caso de
-  SUB-LIN-INSTR, que si la tiene.
+  SUB-LIN-INSTR, que si la tiene. **Ampliado en S029: el mismo candidato
+  incluye tambien `CLO-OPEN`** -- tenia por defecto una penalizacion de 0.5
+  por hueco erroneo (SIN cita UGR, defecto real encontrado en produccion:
+  examen `d7da300a`, item 202, 2/6 correctos daba nota 0.0), corregida a
+  `no_negative_marking=True` por defecto (alineado con `RBT-SHORT-LANG`, del
+  que `CLO-OPEN` se declara dependiente en `V06DOC_BLOCKS.md`). La rama de
+  penalizacion se conserva en el codigo para cuando este PASO 6 se implemente
+  de verdad -- CLO-MULTI y CLO-OPEN comparten el mismo tratamiento.
 - CONFIRMADO en `V06DOC_BLOCKS.md` (lineas 12 y 15): la formula
   `A - E/(N-1)` de PRM-STRIKE es la correccion por azar UGR, y el
   `NO_NEGATIVE_MARKING` de SD_READ/SD_LIST en SUB-LIN-INSTR es una regla

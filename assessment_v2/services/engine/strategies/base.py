@@ -382,7 +382,17 @@ class BaseExamStrategy(ABC):
         """
         logic = item.grading_logic
         gap_solutions = self._normalize_gap_solutions(logic.get('gap_solutions'))
-        no_negative   = bool(logic.get('no_negative_marking', False))
+        # [FIX S029] Default corregido de False a True: CLO-OPEN se declara
+        # dependiente de RBT-SHORT-LANG (V06DOC_BLOCKS Sec 3.1), que aplica
+        # NO_NEGATIVE_MARKING siempre segun protocolo CLM-UGR (sin excepcion,
+        # sin opcion de override). El False por defecto anterior penalizaba
+        # respuestas abiertas sin ninguna cita UGR que lo respaldara -- mismo
+        # criterio ya aplicado a CLO-MULTI (ver PASO 6 de la hoja de ruta H06).
+        # Verificado con caso real: examen d7da300a, item 202, 2/6 huecos
+        # correctos daba nota 0.0 en vez de ~0.33 por la penalizacion no
+        # certificada. Se conserva la rama penalizada por si un futuro modo
+        # endurecido la activa explicitamente via grading_logic.
+        no_negative   = bool(logic.get('no_negative_marking', True))
 
         if not gap_solutions:
             return Decimal('1.0'), {
@@ -424,6 +434,8 @@ class BaseExamStrategy(ABC):
         else:
             # Standard penalty: each wrong gap subtracts its share
             # Penalización estándar: cada hueco erróneo resta su fracción
+            # [S029] Alcanzable solo si un modo endurecido futuro fuerza
+            # no_negative_marking=False explicitamente en grading_logic.
             raw_score = max(
                 Decimal('0.0'),
                 (Decimal(str(correct_gaps)) - Decimal(str(wrong_gaps * 0.5))) / Decimal(str(total_gaps))
