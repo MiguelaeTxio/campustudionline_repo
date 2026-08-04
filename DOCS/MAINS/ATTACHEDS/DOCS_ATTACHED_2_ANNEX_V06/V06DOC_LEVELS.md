@@ -128,8 +128,20 @@ El itinerario ITIN_DOC opera con los siguientes parámetros en la matriz de inte
 
 ### 5.5. Regla de Deducción Automática
 
-El `AcademicDeductor` (`logic.py`) asigna `ITIN_DOC` automáticamente cuando la rama de la asignatura contiene las palabras clave: `educación`, `educacion`, `magisterio`, `didáctica`, `didactica`, `pedagogía`, `pedagogia`, `docent`. Esta regla está implementada y certificada en V1.3 de V06DOC_LOGIC_MAPPING.
+**CORREGIDO EN S029 -- la regla certificada en S023 describía un mapeo por
+rama que resultó inalcanzable con datos reales.** Verificado contra la base
+de datos real de producción: ninguna `Branch` de la UGR se llama "Educación"
+ni "Magisterio" — las titulaciones de Educación (Grado en Educación Infantil/
+Primaria, Pedagogía, MAES, dobles grados, etc.) se archivan bajo las cinco
+ramas de conocimiento estándar (Artes y Humanidades, Ciencias, CC. Sociales
+y Jurídicas, según el caso), nunca bajo una rama propia. El `AcademicDeductor`
+(`logic.py`) asigna ahora `ITIN_DOC` automáticamente cuando el **nombre de la
+titulación** (`Degree.name`, no `Branch.name`) contiene las palabras clave:
+`educación`, `educacion`, `magisterio`, `didáctica`, `didactica`, `pedagogía`,
+`pedagogia`, `maestro`, `profesorado`. El chequeo por rama se conserva como
+fallback inofensivo. Esta corrección no cambia el perfil evaluativo
+certificado (Secciones 5.1-5.4), solo el mecanismo de deducción.
 
 ### 5.6. Nota de Versión
 
-`ITIN_DOC` fue implementado en la Fase de Implementación del Hito 6 (S020-S022) y certificado formalmente en S023 tras contraste con guías docentes reales de la UGR 2024-2025 y verificación de emulabilidad digital completa.
+`ITIN_DOC` fue implementado en la Fase de Implementación del Hito 6 (S020-S022) y certificado formalmente en S023 tras contraste con guías docentes reales de la UGR 2024-2025 y verificación de emulabilidad digital completa. La regla de deducción automática (Sección 5.5) fue corregida en S029 tras confirmar, ejecutando contra datos reales de producción, que la señal de rama nunca se materializaba — la certificación original del perfil evaluativo (5.1-5.4) permanece válida y no se ve afectada.

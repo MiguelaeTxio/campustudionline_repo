@@ -467,8 +467,21 @@ Hace falta una copia de una asignatura de japones. Mismo tratamiento que el
 PASO 1.
 
 PASO 3 -- ITIN_DOC en Magisterio
-Pendiente desde hace varias sesiones: confirmar que `AcademicDeductor` le
-asigna `ITIN_DOC`.
+**DEFECTO REAL CONFIRMADO Y CORREGIDO EN S029, PENDIENTE DE VERIFICACION EN
+PRODUCCION.** Consulta real contra la BD de produccion (Comando S,
+`CampuStudiOnline_001/002.txt`) confirma: no existe ninguna `Branch` llamada
+"Educacion"/"Magisterio"; las 37 titulaciones reales de Educacion (Grado en
+Educacion Infantil/Primaria, Pedagogia, MAES, dobles grados) se reparten
+entre `Artes y Humanidades`, `Ciencias` y `Ciencias Sociales y Juridicas`.
+`deduce_itinerary` solo miraba `branch.name` -> `ITIN_DOC` era codigo muerto,
+inalcanzable con datos reales pese a estar certificado en S023
+(V06DOC_LOGIC_MAPPING V1.3). Corregido en `logic.py`: se anade deteccion por
+`Degree.name` (senal correcta), con el chequeo de rama conservado como
+fallback. Documentacion satelite `V06DOC_LEVELS.md` Seccion 5.5 corregida en
+el mismo commit. **Pendiente para cerrar del todo:** verificar en produccion,
+ejecutando (no solo leyendo), que un examen real generado sobre una
+asignatura real de Educacion (p. ej. "Grado en Educacion Primaria") recibe
+`ITIN_DOC` y no `ITIN_MAI`/`ITIN_MIN` por defecto.
 
 PASO 4 -- Cerrar del todo el punto e-f de ARCH_HEALTH y ARCH_HUM (S028)
 **CORREGIDO EN S029 -- NO EJECUTABLE TAL COMO ESTA REDACTADO.** Lectura real

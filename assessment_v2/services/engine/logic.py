@@ -57,21 +57,52 @@ class AcademicDeductor:
     @staticmethod
     def deduce_itinerary(subject, context_title=None) -> str:
         """
-        Phase 2 — Deduces the ITIN_ID from branch keywords and subject type.
-        Priority order: explicit name detection → branch mapping → subject_type fallback.
+        Phase 2 — Deduces the ITIN_ID from degree/branch keywords and subject type.
+        Priority order: explicit name detection → degree mapping (ITIN_DOC) →
+        branch mapping → subject_type fallback.
+        CORRECTED S029: ITIN_DOC cannot be detected via branch_name — real UGR
+        academic data files Education degrees (Grado en Educación Infantil/
+        Primaria, Pedagogía, MAES, etc.) under the five standard knowledge
+        branches (Artes y Humanidades, Ciencias, CC. Sociales y Jurídicas...),
+        never under a branch literally named for Education. Verified against
+        real production data (37 real Education-related Degree rows, zero
+        matching Branch rows). The correct signal is Degree.name, not
+        Branch.name. The branch-keyword check is kept as a harmless fallback
+        in case a future data source ever does classify by branch this way.
         ---
-        Fase 2 — Deduce el ITIN_ID a partir de palabras clave de la rama y tipo de asignatura.
-        Orden de prioridad: detección explícita en nombre → mapeo de rama → fallback por subject_type.
+        Fase 2 — Deduce el ITIN_ID a partir de palabras clave de titulación/rama
+        y tipo de asignatura. Orden de prioridad: detección explícita en nombre
+        → mapeo de titulación (ITIN_DOC) → mapeo de rama → fallback por subject_type.
+        CORREGIDO S029: ITIN_DOC no se puede detectar vía branch_name — los datos
+        académicos reales de la UGR clasifican las titulaciones de Educación
+        (Grado en Educación Infantil/Primaria, Pedagogía, MAES, etc.) bajo las
+        cinco ramas de conocimiento estándar, nunca bajo una rama llamada
+        literalmente Educación. Verificado contra datos reales de producción
+        (37 titulaciones reales relacionadas con Educación, cero ramas
+        coincidentes). La señal correcta es Degree.name, no Branch.name. Se
+        conserva el chequeo por rama como fallback inofensivo por si alguna
+        fuente de datos futura sí clasificara así.
         Ref: V06DOC_LOGIC_MAPPING V1.3 Sección 2 (Parámetros Deterministas).
         """
         name        = (context_title or subject.name).lower()
         branch_name = subject.academic_year.degree.branch.name.lower()
+        degree_name = subject.academic_year.degree.name.lower()
 
         # 1. Explicit name detection / Detección explícita en el nombre
         if re.search(r'\bmaior\b', name):
             return 'ITIN_MAI'
         if re.search(r'\bminor\b', name):
             return 'ITIN_MIN'
+
+        # 1-bis. Teaching/Education degree detection (S029 fix) — signal lives in
+        # the degree name, not the branch name, per real UGR academic data.
+        # Detección de titulación de Educación (arreglo S029) — la señal vive en
+        # el nombre de la titulación, no de la rama, según datos reales UGR.
+        if any(k in degree_name for k in (
+            'educación', 'educacion', 'magisterio', 'didáctica', 'didactica',
+            'pedagogía', 'pedagogia', 'maestro', 'profesorado'
+        )):
+            return 'ITIN_DOC'
 
         # 2. Branch keyword mapping / Mapeo por palabra clave de rama
         # Health/Clinical sciences → Rotatorio / Ciencias de la Salud/Clínicas → Rotatorio
