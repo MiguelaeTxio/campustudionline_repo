@@ -471,12 +471,19 @@ Pendiente desde hace varias sesiones: confirmar que `AcademicDeductor` le
 asigna `ITIN_DOC`.
 
 PASO 4 -- Cerrar del todo el punto e-f de ARCH_HEALTH y ARCH_HUM (S028)
-Ambos arquetipos quedaron verificados en S028 salvo el motor de
-calificacion real: los examenes de prueba se entregaron con los campos de
-interpretacion/ensayo vacios, validando solo el camino de fallo (kill-switch
-por campo vacio), no una calificacion real con contenido. Repetir cualquiera
-de los dos examenes (Anatomia `SUB-SAN-MED-BASIC` o Antropologia social
-`SUB-HUM-ANTH`) respondiendo de verdad.
+**CORREGIDO EN S029 -- NO EJECUTABLE TAL COMO ESTA REDACTADO.** Lectura real
+de codigo en S029 (`base.py`, `health.py`, `humanities.py`) confirma que
+tanto `ILC-CONTEXT` (motor de `W-CLIN-SCAN` en ARCH_HEALTH) como `DRA-HOLO`
+(motor del Ensayo Critico en ARCH_HUM) son el mismo stub `PENDING_AI_ANALYSIS`
+que describe el PASO 5 de mas abajo: `_grade_ilc_context` devuelve siempre
+`Decimal('0.6')` fijo sin evaluar el contenido real (solo comprueba que no
+este vacio); `_grade_dra_holo` devuelve una nota base fija de `0.6` con
+penalizacion por longitud de palabras, tampoco evalua calidad de contenido.
+Repetir cualquiera de los dos examenes respondiendo de verdad NO verificaria
+ningun motor real -- confirmaria otra vez el mismo camino heuristico fijo.
+Este paso queda BLOQUEADO hasta que se resuelva el PASO 5. No se retira de la
+hoja de ruta porque sigue siendo trabajo real pendiente, pero no es accionable
+de forma independiente.
 
 PASO 5 -- Motor de refinamiento PENDING_AI_ANALYSIS -- HITO NUEVO CANDIDATO
 Hallazgo de S028, acordado con Miguel Angel como hito propio, NO como tarea
@@ -492,6 +499,16 @@ del trabajo de investigacion ya esta hecho, falta disenar el motor en si:
 sincrono en la propia entrega o asincrono con estado "calificacion en
 proceso", y como se actualiza el informe ya persistido. Requiere una sesion
 propia de diseno, no un parche.
+
+**AMPLIACION S029 -- el stub afecta a un cuarto motor y a mas arquetipos de
+los documentados.** `ILC-CONTEXT` (`_grade_ilc_context` en `base.py`) es un
+motor transversal aparte de `DIA-INTERACT`/`DRA-HOLO`, con el mismo patron
+(`Decimal('0.6')` fijo, `pending_ai_refinement: True`), y lo usan CUATRO
+estrategias, no tres: `health.py` (ARCH_HEALTH, via `W-CLIN-SCAN`),
+`science.py` (ARCH_SCI), `social.py` (ARCH_SOC) y `tech.py` (ARCH_TECH). El
+diseno del motor de refinamiento de este PASO 5 tiene que cubrir tambien
+`ILC-CONTEXT`, no solo `DIA-INTERACT`/`DRA-HOLO` -- confirmado por lectura de
+codigo real, no por inferencia.
 
 PASO 6 -- Selector de dificultad UG / Endurecido (decision de Miguel Angel, S025)
 Criterio fijado por Miguel Angel: **manda lo que haga la UGR**. Lo que sea licito
