@@ -466,22 +466,32 @@ rama generica, de modo que la copia de Minor Chino NO ejercita wanakana.
 Hace falta una copia de una asignatura de japones. Mismo tratamiento que el
 PASO 1.
 
-PASO 3 -- ITIN_DOC en Magisterio
-**DEFECTO REAL CONFIRMADO Y CORREGIDO EN S029, PENDIENTE DE VERIFICACION EN
-PRODUCCION.** Consulta real contra la BD de produccion (Comando S,
-`CampuStudiOnline_001/002.txt`) confirma: no existe ninguna `Branch` llamada
-"Educacion"/"Magisterio"; las 37 titulaciones reales de Educacion (Grado en
-Educacion Infantil/Primaria, Pedagogia, MAES, dobles grados) se reparten
-entre `Artes y Humanidades`, `Ciencias` y `Ciencias Sociales y Juridicas`.
-`deduce_itinerary` solo miraba `branch.name` -> `ITIN_DOC` era codigo muerto,
-inalcanzable con datos reales pese a estar certificado en S023
-(V06DOC_LOGIC_MAPPING V1.3). Corregido en `logic.py`: se anade deteccion por
-`Degree.name` (senal correcta), con el chequeo de rama conservado como
-fallback. Documentacion satelite `V06DOC_LEVELS.md` Seccion 5.5 corregida en
-el mismo commit. **Pendiente para cerrar del todo:** verificar en produccion,
-ejecutando (no solo leyendo), que un examen real generado sobre una
-asignatura real de Educacion (p. ej. "Grado en Educacion Primaria") recibe
-`ITIN_DOC` y no `ITIN_MAI`/`ITIN_MIN` por defecto.
+PASO 3 -- ITIN_DOC en Magisterio -- **CERRADO EN S029**
+**Defecto real confirmado y corregido, verificado ejecutando contra datos
+reales de produccion (no solo por lectura de codigo).** Consulta real contra
+la BD de produccion (Comando S, `CampuStudiOnline_001/002.txt`) confirmo: no
+existe ninguna `Branch` llamada "Educacion"/"Magisterio"; las 37 titulaciones
+reales de Educacion (Grado en Educacion Infantil/Primaria, Pedagogia, MAES,
+dobles grados) se reparten entre `Artes y Humanidades`, `Ciencias` y
+`Ciencias Sociales y Juridicas`. `deduce_itinerary` solo miraba
+`branch.name` -> `ITIN_DOC` era codigo muerto, inalcanzable con datos reales
+pese a estar certificado en S023 (V06DOC_LOGIC_MAPPING V1.3). Confirmado
+tambien contra la fuente oficial UGR (`grados.ugr.es`, BOE-A-2020-14196): la
+Rama de conocimiento real del Grado en Educacion Primaria es "Ciencias
+Sociales y Juridicas", coincidente con el dato de produccion. Corregido en
+`logic.py` (commit `47c1108`): se anade deteccion por `Degree.name` (senal
+correcta), con el chequeo de rama conservado como fallback. Documentacion
+satelite `V06DOC_LEVELS.md` Seccion 5.5 corregida en el mismo commit, con
+referencia a la fuente UGR anadida en `00325de`. **Verificacion final
+post-despliegue** (Comando S, `CampuStudiOnline_004.txt`): 10/10 asignaturas
+reales bajo "Doble Grado en Educacion Infantil y Educacion Primaria" reciben
+`ITIN_DOC` correctamente tras el despliegue real en produccion. Ambos
+despliegues confirmados verificando cada step individualmente via API de
+Actions, no solo el veredicto global -- el primero (`47c1108`) tuvo una
+recarga web fallida por la intermitencia ya documentada de PythonAnywhere
+(migracion y reinicio de workers si correctos), resuelta sola en el segundo
+despliegue (`00325de`), que si trae ambos commits por el `fetch`+`reset
+--hard` del pipeline.
 
 PASO 4 -- Cerrar del todo el punto e-f de ARCH_HEALTH y ARCH_HUM (S028)
 **CORREGIDO EN S029 -- NO EJECUTABLE TAL COMO ESTA REDACTADO.** Lectura real
