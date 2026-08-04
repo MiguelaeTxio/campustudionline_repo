@@ -577,6 +577,23 @@ Abrir implica relajar esa condicion.
 
 ### DEUDA TECNICA ABIERTA
 
+**-1. Anadida en S029 -- aviso de limite de 6 copias de estudio, reportado
+como no visto por Miguel Angel. PENDIENTE DE REPRODUCCION EN CALIENTE, NO
+CONFIRMADO.** Miguel Angel reporto que al intentar crear una copia de
+estudio estando ya sobre el limite de 6 (`ContentCopy.objects.filter(user=
+request.user).count() >= 6` en `contents/study_room_views.py:114`), no vio
+ningun aviso -- `messages.error(...)` seguido de redirect a
+`original_content.get_absolute_url()`. Revision de codigo (vista, plantilla
+`content_detail.html`, `base.html` con `{% if messages %}` dentro de
+`<main>`, orden de middleware) no encuentra ningun defecto obvio -- todo
+estructuralmente correcto por lectura. El log de errores del intervalo
+(`CampuStudiOnline_009.txt`) no muestra ninguna excepcion asociada a ese
+intento concreto -- si encontro, en cambio, un `AttributeError` real y no
+relacionado (`Exam.was_viewed`, corregido en el commit `8d4a2fe`, ver mas
+abajo). **No se confirma que ambos hallazgos esten conectados.** Pendiente:
+reproducir en caliente (forzar el limite de nuevo con el log a la vista en
+el momento exacto) en vez de seguir infiriendo de logs pasados.
+
 **0. Anadida en S025 -- correccion de `deploy.yml`: VERIFICADA EN EL PROPIO CIERRE.**
 El `if: always() && steps.deploy.outcome == 'success'` del paso de reinicio de
 Always-on Tasks (99a10b3) quedo comprobado en produccion sin buscarlo: el
