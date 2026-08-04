@@ -12,8 +12,8 @@ class ExamAdmin(admin.ModelAdmin):
     Administración de Exámenes con integración de Dashboard personalizado.
     """
 
-    list_display = ('uuid_short', 'user', 'archetype_id', 'status_badge', 'created_at')
-    list_filter = ('status', 'archetype_id', 'created_at')
+    list_display = ('uuid_short', 'user', 'archetype_id', 'sub_archetype_id', 'status_badge', 'created_at')
+    list_filter = ('status', 'archetype_id', 'sub_archetype_id', 'created_at')
     search_fields = ('uuid', 'user__username')
     readonly_fields = ('uuid', 'created_at', 'updated_at')
 
