@@ -89,8 +89,11 @@
 </style>
 <!-- MathJax for Engineering/Science Rendering -->
 {% include "includes/_mathjax.html" %}
-<!-- WanaKana.js — Romaji↔Kana conversion for SUB-LIN-MINOR Japanese -->
-<script src="https://unpkg.com/wanakana@5.3.1/umd/wanakana.min.js"></script>
+<!-- WanaKana.js — Romaji↔Kana conversion for Japanese (target_language_code='ja') -->
+<!-- [FIX S029] Autoalojado tras confirmar fallo real de carga del CDN externo -->
+<!-- (unpkg.com) en conexion movil real -- mismo criterio ya aplicado a MathJax/ -->
+<!-- polyfill.io: no depender de una CDN externa para una funcionalidad nucleo. -->
+<script src="{% static 'vendor/wanakana/wanakana.min.js' %}"></script>
 {% endblock %}
 
 {% block content %}
