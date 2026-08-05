@@ -12,13 +12,16 @@ Motor de autoevaluacion con IA basado en arquetipos y subarquetipos academicos.
 
 **ESTADO DEL PIPELINE:** VERIFICADO en produccion de extremo a extremo para
 ARCH_SCI (S024), ARCH_LANG (S025), ARCH_TECH (S026) y ARCH_SOC (S028, seis
-puntos completos). ARCH_HEALTH (S029): PASO 4 en curso, item 248 con
-imagen real verificada, item 249 sin confirmar al cierre -- ver hoja de
-ruta abajo. ARCH_HUM: puntos e-f siguen pendientes de respuesta real.
-`SD_LIST` (S028): CERRADO del todo. Motor de refinamiento
-`PENDING_AI_ANALYSIS`: CONSTRUIDO Y VERIFICADO en S029, movido a hito
-propio (H39, PAUSADO).
-**FECHA DE ULTIMA ACTUALIZACION:** 2026-08-05 (S029)
+puntos completos). ARCH_HEALTH: PASO 4 CERRADO en S030 por decision
+explicita de Miguel Angel -- ver detalle completo mas abajo, incluida la
+parte que quedo sin verificar (motor de calificacion real de ILC-CONTEXT
+para el item 249, solo se ejercito el kill-switch de campo vacio).
+ARCH_HUM: puntos e-f siguen pendientes de respuesta real. `SD_LIST`
+(S028): CERRADO del todo. Motor de refinamiento `PENDING_AI_ANALYSIS`:
+CONSTRUIDO Y VERIFICADO end-to-end en S029 (entorno controlado) y
+en S030 verificado por segunda vez contra un examen 100% de produccion
+(ver PASO 4); vive como hito propio (H39, PAUSADO).
+**FECHA DE ULTIMA ACTUALIZACION:** 2026-08-05 (S030)
 **NOTA:** el estado de seguimiento del hito (EN PROGRESO / PAUSADO) vive
 exclusivamente en `CAMPUSTUDIONLINE_ANNEX_ROUTER.md`. Este anexo no lo declara,
 conforme a la regla de oro 1 del PCH. La linea que antes decia
@@ -468,7 +471,10 @@ PASO 3 -- ITIN_DOC en Magisterio -- CERRADO DEL TODO (ver detalle completo
 mas arriba, sin cambios en S029 respecto a como quedo documentado).
 
 PASO 4 -- Cerrar del todo el punto e-f de ARCH_HEALTH y ARCH_HUM --
-DESBLOQUEADO, EN CURSO, NO CERRADO AL FIN DE S029
+DESBLOQUEADO, EN CURSO, NO CERRADO AL FIN DE S029 (CERRADO EN S030 POR
+DECISION DE MIGUEL ANGEL -- ver "RESULTADO DE S030" mas abajo, antes del
+PASO 5, para el estado final real, incluida la parte que quedo sin
+verificar)
 El bloqueo original (motor `PENDING_AI_ANALYSIS` inexistente) ya no existe
 -- el motor esta construido y verificado (ver H39). En S029 se retomo con
 el examen real `8dd7b72d-8085-46e5-a759-6eb44e791213` (SUB-SAN-MED-BASIC,
@@ -523,6 +529,85 @@ ITIN_ROT, LVL_A), generado sobre la copia de estudio real de Anatomia:
 5. Verificar clasificacion, calificacion inicial y que
    `refine_pending_ai_items_task` se encola sola y produce una nota final
    coherente -- solo entonces el PASO 4 queda cerrado del todo.
+
+---
+
+### RESULTADO DE S030 -- PASO 4 CERRADO POR DECISION DE MIGUEL ANGEL, HTML CRUDO EN ATRIBUCION CORREGIDO EN ORIGEN, refine_pending_ai_items_task VERIFICADO POR SEGUNDA VEZ CONTRA PRODUCCION REAL
+
+**Estado real del item 249 verificado primero, sin asumir nada** (ver
+punto pendiente dejado por S029): `content.media_assets` SI tenia una
+imagen real (no la url inventada ni el hueco vacio que se temia), pero
+era el recurso de globo ocular ya usado en el examen `2c1c80e4` de S028
+(`MediaResource id=2`), con un `stem` coherente con esa imagen pero
+incoherente con la seccion real del item ("Anatomia Radiologica --
+Semiologia"). Conclusion: ni el primer intento improvisado de S029 dejo
+el item en un estado "roto" en el sentido tecnico -- dejo un item
+END-TO-END coherente pero sobre el tema equivocado, reutilizando un
+recurso ya usado en otro examen.
+
+**Item 249 repoblado con el pipeline real** (`_generate_item_image_content`
+de `orchestrator/tasks.py`, la misma funcion que usa el bucle de
+produccion, no un script paralelo), excluyendo `MediaResource id=2` y con
+consultas orientadas a radiografia de torax normal. Resultado: imagen real
+verificada semanticamente (`Chest_X-ray.jpg`, `MediaResource id=6`,
+CC-BY-SA-4.0), `stem` y `keywords` coherentes con "Anatomia Radiologica --
+Semiologia" (radiografia PA de torax normal, paciente preempleo
+asintomatico). Persistido en el item real, no en un examen nuevo.
+
+**HTML crudo en `media_attribution.text` -- confirmado como defecto real
+y sistemico, no anecdotico.** El recurso recien creado (`id=6`) trajo
+`attribution: <span class="int-own-work" lang="en">Own work</span>`
+directamente del campo `Credit` de Wikimedia -- mismo tipo de fallo que ya
+tenia el recurso del item 248 (`Gray1238.png`, lista `<ul><li>` completa
+con enlaces). Como las plantillas `exam_take.html`/`exam_report.html`
+imprimen `media_attribution.text` sin `|safe` (Django autoescapa por
+defecto), ese HTML nunca se renderizaba como marcado -- se veia
+literalmente en pantalla con las etiquetas, confirmado visualmente en
+capturas reales de Miguel Angel. Corregido en origen: `strip_tags()`
+aplicado en `media_library/services.py::search()` sobre `Artist`/`Credit`
+antes de que `verify_and_store()` los persista (commit `c56cd40`,
+desplegado y verificado paso a paso en el Action -- los 8 pasos en verde,
+incluida la barrera de manifiesto de `collectstatic`). Backfill de datos
+(sin migracion, sin cambio de esquema) sobre los dos `MediaResource` ya
+afectados (`id=5` Gray1238.png, `id=6` Chest_X-ray.jpg) y sobre los
+`ExamItem` que ya tenian la copia sucia en su propio `content` (items
+**170** y **248** -- el 170 no se habia detectado hasta este barrido).
+Verificado con capturas reales de pantalla tras el fix: ambos items
+muestran la atribucion limpia en produccion.
+
+**Cierre del PASO 4 -- decision explicita de Miguel Angel, no verificacion
+completa segun el criterio original de la hoja de ruta.** Miguel Angel
+respondio el examen `8dd7b72d` en produccion real:
+- Item 250 (histologia, opcion multiple): correcto, nota 1,00.
+- Item 249 (radiografia de torax, `ILC-CONTEXT`): campo de interpretacion
+  dejado VACIO. Nota 0,00, mismo camino de fallo por campo vacio que ya
+  se habia validado en S028/S029. **El motor de calificacion real de
+  `ILC-CONTEXT` contra una interpretacion radiologica con contenido
+  SIGUE SIN EJERCITARSE.** Miguel Angel decidio cerrar el PASO 4 sin este
+  punto, de forma explicita.
+- Item 248 (triangulo femoral, `RBT-CANON`): respuesta deliberadamente
+  disparatada ("tiene un huevo mas grande que el otro"), para probar el
+  motor de calificacion real contra contenido no vacio. Resultado
+  confirmado en dos fases reales de produccion: nota inicial 0,60
+  ("Revision IA en curso", credito obtenido con nota acumulada 0,5333),
+  y tras encolarse sola `refine_pending_ai_items_task` y completar su
+  revision en profundidad (notificacion push + email reales recibidos
+  con la nota ya actualizada), la nota bajo a 0,00 con una justificacion
+  coherente ("responde de manera totalmente inapropiada... no define
+  ninguno de los cinco terminos pedidos"), nota acumulada final 0,3333.
+  **Esta SI es la primera verificacion E2E de `refine_pending_ai_items_task`
+  contra un examen 100% de produccion** (S029 lo verifico en un entorno
+  controlado) -- relevante tambien para la hoja de ruta de H39, aunque
+  ese hito siga PAUSADO y este anexo no la modifique.
+
+**Resumen para quien retome cualquier trabajo futuro sobre `ILC-CONTEXT`/
+`W-CLIN-SCAN`:** el motor de calificacion real de ese tipo de item, con
+una interpretacion clinica/radiologica de contenido real (ni vacia ni
+disparatada), no tiene ninguna verificacion en produccion todavia -- ni
+en H06 ni en H39. Si se retoma, usar un item `ILC-CONTEXT` cualquiera
+(no necesariamente el 249) con una respuesta real de contenido.
+
+---
 
 PASO 5 -- Motor de refinamiento PENDING_AI_ANALYSIS -- MOVIDO A HITO PROPIO
 (H39, PAUSADO)
