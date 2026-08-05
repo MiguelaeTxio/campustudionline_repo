@@ -1,6 +1,6 @@
 {# /home/MiguelAeTxio/PROJECTS/CampuStudiOnline/assessment_v2/templates/assessment_v2/exam_take.html #}
 {% extends "base.html" %}
-{% load i18n static assessment_extras %}
+{% load i18n static markdownify assessment_extras %}
 
 {% block extra_css %}
 <style>
@@ -136,7 +136,9 @@
                 <div class="card mb-4 exam-item" data-item-id="{{ item.id }}" data-block-type="{{ item.block_type }}" data-widget-id="{{ item.widget_id }}">
                     <div class="card-body">
                         <div class="d-flex justify-content-between">
-                            <p class="fw-bold mb-3">{{ forloop.counter }}. {{ item.content.stem }}</p>
+                            <div class="fw-bold mb-3 markdown-body">
+                                <span>{{ forloop.counter }}.</span> {{ item.content.stem|markdownify:"assessment" }}
+                            </div>
                         </div>
 
                         {# --- AUDIO PLAYER INTEGRATION (Listening) --- #}

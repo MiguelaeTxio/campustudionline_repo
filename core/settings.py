@@ -511,9 +511,10 @@ CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 CRISPY_TEMPLATE_PACK = "bootstrap5"
 
 # --- Markdownify Configuration / Configuracion de Markdownify ---
-# Named configuration used ONLY by the assessment report, to render the
-# AI-written feedback (justification, qualitative_summary), which arrives
-# as Markdown: fenced code blocks, inline code and numbered lists.
+# [EXPANDED S029] Named configuration used by the assessment report AND
+# the exam-taking screen (item stem), to render AI-written text
+# (justification, qualitative_summary, stem), which arrives as Markdown:
+# fenced code blocks, inline code and numbered lists.
 #
 # There is deliberately NO "default" key. The announcements board calls
 # the filter with no argument, which looks up MARKDOWNIFY["default"];
@@ -526,10 +527,11 @@ CRISPY_TEMPLATE_PACK = "bootstrap5"
 # written by a language model. The default bleach whitelist lacks p, br
 # and pre, which is why they are listed explicitly.
 # ---
-# Configuracion con nombre, usada UNICAMENTE por el informe de
-# evaluacion, para renderizar el feedback redactado por la IA
-# (justification, qualitative_summary), que llega en Markdown: vallas de
-# codigo, codigo en linea y listas numeradas.
+# [AMPLIADO S029] Configuracion con nombre, usada por el informe de
+# evaluacion Y por la pantalla de realizacion del examen (enunciado/stem
+# de cada item), para renderizar texto redactado por la IA (justification,
+# qualitative_summary, stem), que llega en Markdown: vallas de codigo,
+# codigo en linea y listas numeradas.
 #
 # NO hay clave "default" a proposito. El tablon de anuncios invoca el
 # filtro sin argumento, que busca MARKDOWNIFY["default"]; eso lanza
