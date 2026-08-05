@@ -1776,10 +1776,18 @@ def _build_refinement_prompt(block_type, item, student_input, item_report):
         text = student_input.get('text', '') if isinstance(student_input, dict) else str(student_input or '')
         if not text.strip():
             return None
+        # [FIX S029 - H39] correct_answer es la pauta real de correccion del
+        # catedratico (identificacion TAI, valores de referencia, etc.) --
+        # ausente hasta ahora en este prompt, obligando a la IA a juzgar sin
+        # la pauta real. Hallazgo al preparar la verificacion del PASO 4 de
+        # H06 con datos reales (examen SUB-SAN-MED-BASIC, items 248/249).
+        correct_answer = item.grading_logic.get('correct_answer', '') if item.grading_logic else ''
+        pauta = f"\n\nPauta de corrección del catedrático (referencia real):\n{correct_answer}" if correct_answer else ''
         return (
             base_instruction +
             f"Enunciado (interpretación de contexto/imagen):\n{item.content.get('stem', '')}\n\n"
             f"Interpretación real del alumno:\n{text}"
+            f"{pauta}"
         )
 
     return None
