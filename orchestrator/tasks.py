@@ -224,6 +224,77 @@ def _traducir_termino_busqueda(termino, api_key):
         return None
 
 
+def _verificar_relevancia_semantica(recurso, tema, api_key):
+    """
+    [FIX S029 - cuarto nivel] Confirma via IA multimodal que la imagen
+    candidata REALMENTE representa el tema buscado, no solo que paso la
+    verificacion estructural (formato de imagen valido, licencia
+    reconocida). Hallazgo real: la busqueda por texto puede coincidir con
+    una pagina suelta de un atlas de anatomia general cuyo contenido real
+    es sobre otra estructura completamente distinta -- "Right femoral
+    triangle" encontro una pagina de "Cunningham's Text-book of Anatomy"
+    (1914) que en realidad ilustraba reflexiones peritoneales, no el
+    triangulo femoral. La coincidencia era textual (titulo de la obra
+    general), no de contenido real de la imagen.
+
+    Devuelve True/False. Ante cualquier fallo (IA no disponible, JSON
+    ilegible, imagen no legible), devuelve False -- mismo criterio de
+    degradacion segura que el resto del pipeline de imagen: mejor
+    descartar una imagen dudosa y probar el siguiente candidato que
+    aceptar una imagen que no es lo que dice ser.
+    """
+    try:
+        recurso.file.open('rb')
+        imagen_bytes = recurso.file.read()
+    except Exception as e:
+        logger.warning(f"No se pudo leer el archivo del recurso {recurso.id} para verificacion semantica: {e}")
+        return False
+    finally:
+        try:
+            recurso.file.close()
+        except Exception:
+            pass
+
+    prompt = (
+        f"Se adjunta una imagen candidata para ilustrar el siguiente tema "
+        f"academico: \"{tema}\".\n"
+        f"Examina la imagen con atencion. Responde EXCLUSIVAMENTE con el "
+        f"JSON solicitado: 'relevant' es true SOLO si la imagen muestra o "
+        f"esta realmente relacionada con ese tema concreto; false si "
+        f"muestra otra cosa (aunque proceda de una obra general sobre el "
+        f"mismo campo). 'reason' es una justificacion breve en español."
+    )
+    schema = {
+        "type": "OBJECT",
+        "properties": {
+            "relevant": {"type": "BOOLEAN"},
+            "reason": {"type": "STRING"},
+        },
+        "required": ["relevant", "reason"],
+    }
+    try:
+        success, resp, _, _ = generate_multimodal_item_content(
+            image_bytes=imagen_bytes,
+            image_mime_type=recurso.content_type or "image/jpeg",
+            prompt=prompt,
+            api_key=api_key,
+            response_schema=schema,
+        )
+        if not success:
+            return False
+        parsed = json.loads(clean_json_response(resp))
+        relevante = bool(parsed.get("relevant"))
+        if not relevante:
+            logger.warning(
+                f"Verificacion semantica RECHAZO recurso {recurso.id} para "
+                f"tema '{tema}': {parsed.get('reason', '')}"
+            )
+        return relevante
+    except Exception as e:
+        logger.warning(f"Verificacion semantica fallida para recurso {recurso.id}: {e}")
+        return False
+
+
 def _generate_item_image_content(search_queries, api_key, task_id=None, excluir_ids=None, widget_id='W-CLIN-SCAN'):
     """
     [HITO 38 punto 3] Retrieve and verify a real image FIRST, then ask
@@ -281,13 +352,16 @@ def _generate_item_image_content(search_queries, api_key, task_id=None, excluir_
 
         for candidato in resultados:
             candidato_recurso, creado = verify_media_resource(candidato, search_query=query_candidata)
-            if candidato_recurso is not None and candidato_recurso.id not in excluir_ids:
-                recurso = candidato_recurso
-                search_query = query_candidata
-                break
+            if candidato_recurso is None or candidato_recurso.id in excluir_ids:
+                continue
+            if not _verificar_relevancia_semantica(candidato_recurso, query_candidata, api_key):
+                continue
+            recurso = candidato_recurso
+            search_query = query_candidata
+            break
         if recurso is not None:
             break
-        logger.warning(f"Ningun resultado verificable/nuevo para '{query_candidata}' (0/{len(resultados)}).")
+        logger.warning(f"Ningun resultado verificable/nuevo/relevante para '{query_candidata}' (0/{len(resultados)}).")
 
     if recurso is None:
         return None
