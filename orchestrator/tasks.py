@@ -188,7 +188,7 @@ _CONTEXTOS_IMAGEN_ITEM = {
 }
 
 
-def _generate_item_image_content(search_query, api_key, task_id=None, excluir_ids=None, widget_id='W-CLIN-SCAN'):
+def _generate_item_image_content(search_queries, api_key, task_id=None, excluir_ids=None, widget_id='W-CLIN-SCAN'):
     """
     [HITO 38 punto 3] Retrieve and verify a real image FIRST, then ask
     Gemini to write the item's stem/keywords about that specific image.
@@ -218,22 +218,42 @@ def _generate_item_image_content(search_query, api_key, task_id=None, excluir_id
     item, no varias -- la instruccion original de humanities.py que
     pedia 3 imagenes era un defecto respecto a la propia especificacion
     UGR del proyecto, no una necesidad real.
+
+    [FIX S029] search_queries es ahora una LISTA de consultas candidatas
+    (antes: una sola cadena), probadas en orden hasta que una devuelva
+    un recurso verificable. Hallazgo real: la consulta generica (titulo
+    de seccion + asignatura) a veces no encuentra NADA en Wikimedia para
+    un tema clinico concreto (ej. "triangulo femoral de Scarpa"), aunque
+    si existan imagenes reales indexadas bajo el nombre especifico de la
+    estructura. Se mantiene compatibilidad: si se pasa una cadena suelta,
+    se envuelve en una lista de un elemento.
     """
+    if isinstance(search_queries, str):
+        search_queries = [search_queries]
     excluir_ids = excluir_ids or set()
-    try:
-        resultados = search_media_images(search_query, limit=5)
-    except WikimediaSearchError as e:
-        logger.warning(f"Busqueda de imagen fallida para '{search_query}': {e}")
-        return None
 
     recurso = None
-    for candidato in resultados:
-        candidato_recurso, creado = verify_media_resource(candidato, search_query=search_query)
-        if candidato_recurso is not None and candidato_recurso.id not in excluir_ids:
-            recurso = candidato_recurso
+    search_query = None
+    for query_candidata in search_queries:
+        if not query_candidata or not query_candidata.strip():
+            continue
+        try:
+            resultados = search_media_images(query_candidata, limit=5)
+        except WikimediaSearchError as e:
+            logger.warning(f"Busqueda de imagen fallida para '{query_candidata}': {e}")
+            continue
+
+        for candidato in resultados:
+            candidato_recurso, creado = verify_media_resource(candidato, search_query=query_candidata)
+            if candidato_recurso is not None and candidato_recurso.id not in excluir_ids:
+                recurso = candidato_recurso
+                search_query = query_candidata
+                break
+        if recurso is not None:
             break
+        logger.warning(f"Ningun resultado verificable/nuevo para '{query_candidata}' (0/{len(resultados)}).")
+
     if recurso is None:
-        logger.warning(f"Ningun resultado verificable/nuevo para '{search_query}' (0/{len(resultados)}).")
         return None
 
     marco_pedagogico = _CONTEXTOS_IMAGEN_ITEM.get(
@@ -1599,11 +1619,38 @@ def generate_exam_task(self, exam_uuid, context_text=None, topic=None):
                                 # Radiológica — Semiología" son consultas
                                 # bien distintas aunque compartan asignatura.
                                 base = (topic or subject.name or '').strip()
-                                consulta = f"{db_sec.title} {base}".strip()
-                                if not consulta:
+                                consulta_generica = f"{db_sec.title} {base}".strip()
+                                # [FIX S029] La consulta generica a veces no
+                                # encuentra NADA en Wikimedia para un tema
+                                # clinico concreto (verificado en vivo:
+                                # "Anatomía Macroscópica — Nomenclatura
+                                # Anatomía" -> 0 resultados totales, ni
+                                # siquiera PDFs). db_item.content ya tiene un
+                                # stem real y especifico en este punto (linea
+                                # ~1547, de la llamada por lotes anterior a
+                                # este bucle) que SI nombra la estructura
+                                # concreta -- ej. "triángulo femoral o de
+                                # Scarpa". Se extrae ese tema especifico
+                                # (contenido entre parentesis si existe, si
+                                # no la primera frase) y se prueba primero,
+                                # cayendo a la consulta generica solo si la
+                                # especifica no encuentra nada.
+                                stem_real = db_item.content.get('stem', '') if db_item.content else ''
+                                tema_especifico = None
+                                m = re.search(r'\(([^)]{4,80})\)', stem_real)
+                                if m:
+                                    tema_especifico = m.group(1).strip()
+                                elif stem_real:
+                                    tema_especifico = stem_real.split('.')[0].strip()[:120]
+                                consultas = []
+                                if tema_especifico:
+                                    consultas.append(f"{tema_especifico} {base}".strip())
+                                if consulta_generica:
+                                    consultas.append(consulta_generica)
+                                if not consultas:
                                     continue
                                 resultado_imagen = _generate_item_image_content(
-                                    consulta,
+                                    consultas,
                                     AutomationSettings.load().active_api_key,
                                     task_id=None,
                                     excluir_ids=recursos_usados_examen,
@@ -1612,7 +1659,7 @@ def generate_exam_task(self, exam_uuid, context_text=None, topic=None):
                                 if resultado_imagen is None:
                                     contextual_logger(
                                         f"H38: sin imagen verificable para item "
-                                        f"{db_item.uuid} (consulta='{consulta}'); "
+                                        f"{db_item.uuid} (consultas={consultas}); "
                                         f"conserva contenido de la llamada por lotes.",
                                         level="WARNING",
                                     )
