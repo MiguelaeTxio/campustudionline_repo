@@ -97,7 +97,7 @@ jobs:
             # Quirk conocido de Django: a veces hace falta una segunda pasada
             # de collectstatic para que el post-procesado resuelva todas las
             # entradas. Se reintenta una vez antes de fallar duro.
-            NEW_STATIC_FILES=$(git diff --name-only --diff-filter=ACM "$OLD_HEAD" "$NEW_HEAD" -- 'static/' | sed 's|^static/||')
+            NEW_STATIC_FILES=$(git diff --name-only --diff-filter=ACM "$OLD_HEAD" "$NEW_HEAD" -- static/ | sed "s|^static/||")
             check_static_manifest() {
               MISSING=""
               for f in $NEW_STATIC_FILES; do
