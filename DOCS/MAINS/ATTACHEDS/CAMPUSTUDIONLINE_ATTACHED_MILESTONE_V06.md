@@ -606,6 +606,56 @@ diseno del motor de refinamiento de este PASO 5 tiene que cubrir tambien
 `ILC-CONTEXT`, no solo `DIA-INTERACT`/`DRA-HOLO` -- confirmado por lectura de
 codigo real, no por inferencia.
 
+**MOTOR IMPLEMENTADO Y VERIFICADO E2E EN S029, PENDIENTE PCH FORMAL.**
+Diseno acordado con Miguel Angel: asincrono (cola `high_priority`, misma
+que `generate_exam_task`), notificacion push+email al terminar para que el
+alumno pueda abandonar la pagina. `DIA-INTERACT` resulto ser texto
+(`chat_log`), no audio -- confirmado leyendo `_grade_dia_interact` y la
+recoleccion real del frontend, simplificando el motor a un unico camino de
+texto (`generate_text_content` con `response_schema` estructurado) para los
+tres tipos, sin necesitar la via multimodal de audio.
+
+Componentes: `GradingOrchestrator.recompute_aggregate_scores` (recalcula
+section_scores/final_score/passed sin reejecutar toda la estrategia),
+`refine_pending_ai_items_task` + `_build_refinement_prompt` (orchestrator/
+tasks.py), `_send_grading_refinement_notification` (calca el patron
+PROBADO de `_send_completion_notifications`, no el patron roto de
+`send_unified_notification` usado en `_send_exam_failure_notification` --
+firma incorrecta y nombres de URL de la app `assessment` legacy, queda
+anotado en deuda tecnica sin corregir), plantilla de email nueva, ruta
+Celery `high_priority`, conexion en `ExamSubmitView` via
+`transaction.on_commit`, banner + marca por item en `exam_report.html`.
+
+**DOS DEFECTOS REALES encontrados verificando en caliente contra la
+`Submission 20` real** (examen `74407b97`, item 228, el mismo "Jjmbvcgj"
+de sesiones anteriores):
+1. `gemini-2.5-flash` devolvia 404 real ("no longer available to new
+   users") -- confirmado con multiples fuentes externas independientes:
+   Google esta apagando ese modelo de forma anticipada para numerosas
+   cuentas, antes de su fecha oficial (16 oct 2026). Afecta a TODA la
+   plataforma (`GEMINI_MODEL_NAME` es una constante global). Migrado a
+   `gemini-3.5-flash`. Verificado con llamada real: HTTP 200, respuesta
+   real de la IA sobre la respuesta del alumno.
+2. Un `str_replace` anterior en la misma sesion borro por error la linea
+   `def _get_next_subject_queryset(settings_obj):`, dejando su cuerpo
+   huerfano absorbido dentro de `_send_grading_refinement_notification`
+   -- sintacticamente valido (`py_compile` no lo detecto), pero rompia en
+   tiempo de ejecucion (`NameError: settings_obj`) en cuanto la
+   notificacion intentaba enviarse. Corregido restaurando la linea exacta.
+
+**Verificacion final real**: `_send_grading_refinement_notification`
+ejecutada de forma aislada contra la Submission 20 ya refinada, sin
+excepcion, push enviado con exito a la mayoria de suscripciones reales
+(dos fallos preexistentes y no relacionados: una suscripcion con
+credenciales VAPID desincronizadas y otra con payload rechazado por
+Windows Push -- deuda tecnica aparte, no corregida aqui) y email aceptado
+por MailerSend (202).
+
+**Pendiente:** decidir con Miguel Angel el PCH formal (acordado en S028
+como hito propio, no tarea suelta de H06); verificacion E2E completa
+generando un examen NUEVO con item pendiente desde cero (esta verificacion
+uso una Submission ya existente de una sesion anterior).
+
 PASO 6 -- Selector de dificultad UG / Endurecido (decision de Miguel Angel, S025)
 Criterio fijado por Miguel Angel: **manda lo que haga la UGR**. Lo que sea licito
 y no discrepe en exceso se implanta como estandar; lo que endurezca por encima
@@ -647,6 +697,30 @@ Abrir implica relajar esa condicion.
 ---
 
 ### DEUDA TECNICA ABIERTA
+
+**-2. Anadida en S029 -- `send_unified_notification` roto en
+`_send_exam_failure_notification`.** Llamada con firma que no coincide con
+la funcion real (`core/utils.py`: espera `subject_template`,
+`body_template_prefix`, `context` dict; se le pasa texto literal traducido
+y una URL como si fueran esos parametros) y con nombres de URL de la app
+`assessment` legacy (`assessment:view_results`, `assessment:take_assessment`)
+en vez de `assessment_v2`. Envuelto en el `try/except` de la funcion, falla
+silenciosamente cada vez -- el email de fallo de examen si llega
+(`send_mail` es una llamada aparte), pero el push nunca. No corregido en
+S029, encontrado leyendo codigo para no replicar el patron en
+`_send_grading_refinement_notification` (que usa el patron probado de
+`_send_completion_notifications` en su lugar).
+
+**-3. Anadida en S029 -- dos fallos preexistentes de push detectados
+verificando `_send_grading_refinement_notification`.** UserSubscription ID
+23: `WebPushException 403 Forbidden -- las credenciales VAPID de la
+cabecera no corresponden a las usadas al crear la suscripcion` (la clave
+VAPID del servidor cambio en algun momento sin invalidar suscripciones
+antiguas). UserSubscription ID 14 (Windows/WNS): `400 Bad Request` sin
+cuerpo de respuesta. Ninguno de los dos es nuevo ni causado por el PASO 5
+-- aparecen identicos en logs de sesiones anteriores (ver
+`_send_completion_notifications`). No investigado a fondo, anotado para
+una sesion de limpieza de suscripciones push obsoletas.
 
 **-1. Anadida en S029 -- aviso de limite de 6 copias de estudio, reportado
 como no visto por Miguel Angel. PENDIENTE DE REPRODUCCION EN CALIENTE, NO
