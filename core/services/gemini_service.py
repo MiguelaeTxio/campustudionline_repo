@@ -18,7 +18,20 @@ logger = logging.getLogger(__name__)
 
 # --- Configuration Constants ---
 # Modelo activo certificado — Directriz Técnica Vinculante CampuStudiOnline
-GEMINI_MODEL_NAME = "gemini-2.5-flash"
+# [FIX S029 - URGENTE] gemini-2.5-flash devolvía 404 real en producción:
+# "This model models/gemini-2.5-flash is no longer available to new users."
+# Confirmado con multiples fuentes externas independientes (foro oficial de
+# Google AI Developers, GitHub, prensa especializada): Google esta apagando
+# gemini-2.5-flash de forma ANTICIPADA para numerosas cuentas/proyectos,
+# bastante antes de su fecha oficial de apagado (16 oct 2026) -- patron ya
+# reportado ampliamente, no un caso aislado de este proyecto. Migrado a
+# gemini-3.5-flash (lanzado 2026-05-19), sin fecha de apagado anunciada a
+# fecha de este arreglo -- destino de migracion recomendado explicitamente
+# en la comunidad para quien sufre este mismo 404 anticipado. Afecta a TODA
+# la plataforma: cualquier llamada de texto/multimodal via
+# _execute_gemini_call usa esta constante global, no solo el motor de
+# refinamiento del PASO 5 que lo detecto.
+GEMINI_MODEL_NAME = "gemini-3.5-flash"
 # [FIX S028] gemini-2.5-flash es solo texto — no soporta response_modalities=["AUDIO"].
 # Modelo TTS dedicado, exclusivo para _generate_item_audio (SD_LIST).
 # Ref: https://ai.google.dev/gemini-api/docs/speech-generation (Supported models, 2026-07-30)
