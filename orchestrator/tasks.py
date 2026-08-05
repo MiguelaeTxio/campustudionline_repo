@@ -757,7 +757,7 @@ def _send_grading_refinement_notification(submission):
         logger.error(f"Error en _send_grading_refinement_notification: {e}")
 
 
-
+def _get_next_subject_queryset(settings_obj):
     base_queryset = Subject.objects.filter(content_materials__isnull=True)
     active_task_subject_names = PendingContentTask.objects.exclude(status__in=[PendingContentTask.StatusChoices.COMPLETED, PendingContentTask.StatusChoices.FAILED_FATAL]).values_list('subject__name', flat=True).distinct()
     query = base_queryset.exclude(name__in=active_task_subject_names)
