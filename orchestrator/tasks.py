@@ -188,6 +188,42 @@ _CONTEXTOS_IMAGEN_ITEM = {
 }
 
 
+def _traducir_termino_busqueda(termino, api_key):
+    """
+    [FIX S029] Wikimedia Commons cataloga la mayoria de imagenes
+    anatomicas/cientificas en ingles o en latin, no en espanol -- una
+    busqueda en espanol, por especifica que sea, puede no coincidir con
+    nada indexado aunque la imagen exista. Traduce el termino especifico
+    (ej. "triángulo femoral o de Scarpa derecho") a su nombre en ingles o
+    latin cientifico habitual (ej. "femoral triangle" / "trigonum
+    femorale"), para usarlo como tercera consulta candidata en
+    _generate_item_image_content.
+
+    Nunca lanza excepcion: fallo de traduccion no debe tumbar el resto
+    de la generacion del examen, igual que el resto de este pipeline de
+    imagen. Devuelve None si falla.
+    """
+    if not termino or not termino.strip():
+        return None
+    prompt = (
+        f"Traduce el siguiente termino anatomico/cientifico del espanol al "
+        f"ingles o al latin cientifico (el que sea mas habitual en "
+        f"catalogos de imagenes internacionales como Wikimedia Commons): "
+        f"\"{termino}\".\n"
+        f"Responde EXCLUSIVAMENTE con el termino traducido, sin comillas, "
+        f"sin explicacion, sin puntuacion final."
+    )
+    try:
+        success, texto, _, _ = generate_text_content(prompt, api_key=api_key)
+        if not success:
+            return None
+        traduccion = texto.strip().strip('"').strip("'")
+        return traduccion if traduccion else None
+    except Exception as e:
+        logger.warning(f"Traduccion de termino de busqueda fallida para '{termino}': {e}")
+        return None
+
+
 def _generate_item_image_content(search_queries, api_key, task_id=None, excluir_ids=None, widget_id='W-CLIN-SCAN'):
     """
     [HITO 38 punto 3] Retrieve and verify a real image FIRST, then ask
@@ -1645,6 +1681,23 @@ def generate_exam_task(self, exam_uuid, context_text=None, topic=None):
                                 consultas = []
                                 if tema_especifico:
                                     consultas.append(f"{tema_especifico} {base}".strip())
+                                    # [FIX S029] Tercer nivel: si el tema
+                                    # especifico en espanol no encuentra
+                                    # nada (verificado en vivo: 0/0 para
+                                    # "triángulo femoral o de Scarpa
+                                    # derecho"), Wikimedia cataloga la
+                                    # mayoria de imagenes anatomicas en
+                                    # ingles/latin, no en espanol. Se
+                                    # traduce el tema especifico via IA
+                                    # real (_traducir_termino_busqueda) y
+                                    # se anade como segunda consulta,
+                                    # antes de caer a la generica.
+                                    traduccion = _traducir_termino_busqueda(
+                                        tema_especifico,
+                                        AutomationSettings.load().active_api_key,
+                                    )
+                                    if traduccion:
+                                        consultas.append(traduccion)
                                 if consulta_generica:
                                     consultas.append(consulta_generica)
                                 if not consultas:
