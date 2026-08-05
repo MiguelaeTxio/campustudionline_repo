@@ -495,15 +495,49 @@ Pipeline completo (estructura academica -> generacion de contenido ->
 generacion de examen -> clasificacion -> calificacion real) verificado de
 extremo a extremo, ejecutando, no solo leyendo.
 
-PASO 2 -- Japones / wanakana -- VERIFICADO S029: decenas de asignaturas
-existen, falta copia de estudio
+PASO 2 -- Japones / wanakana -- CERRADO EN S029: E2E completo, tres defectos
+reales encontrados y corregidos, verificado con evidencia visual real
 `bindOccidentalInput` solo contempla `ja`, `ar` y `el`; el chino cae en la
 rama generica, de modo que la copia de Minor Chino NO ejercita wanakana.
-Verificado contra la BD real (mismo Comando S que PASO 1): existen mas de 70
-filas de asignaturas de japones (Idioma Moderno/Minor/Literatura Japonesa,
-niveles I-X, distintas titulaciones/universidades), pero 0 copias de estudio
-reales en ninguna. Mismo bloqueo que el PASO 1: falta que Miguel Angel cree
-una copia de estudio real de cualquiera de ellas.
+Secuencia completa de S029 (mismo patron que PASO 1): asignatura real
+confirmada (mas de 70 filas de japones), `ContentMaterial` generado E2E via
+el pipeline `ContentRequest`, copia de estudio creada, examen real generado
+(`SUB-LIN-INSTR`).
+
+**DEFECTO 1 -- audio en espanol en vez de japones.** La regla de salida del
+prompt (`get_user_prompt`, `languages.py`) solo instruia a la IA a generar
+`section_stimulus` para `layout_mode` `SPLIT_TEXT`/`SPLIT_VISUAL`. `SD_LIST`
+tiene `layout_mode='STANDARD'`, asi que nunca recibia esa instruccion, pese
+a que los `task_instruction` de sus items daban por hecho que el audio ya
+existia. La IA a veces copiaba el CONTEXTO DEL MATERIAL DE ESTUDIO (en
+espanol) en `section_stimulus`, y el TTS lo leia tal cual. Corregido con
+regla 9-BIS explicita para `SD_LIST` (commit `248ce30`).
+
+**DEFECTO 2 -- Occidentalizacion sin convertir a kana.** Confirmado con
+evidencia real (no por suposicion): el placeholder mostraba "WanaKana no
+disponible -- verifique la conexion", confirmando fallo de carga del CDN
+externo (`unpkg.com`) en la conexion movil real de Miguel Angel. Corregido
+autoalojando `wanakana@5.3.1` en `static/vendor/wanakana/` (commit `b5b77c8`),
+mismo criterio que MathJax/retirada de polyfill.io.
+
+**DEFECTO 3 -- 500 real al autoalojar wanakana.** El propio arreglo del
+Defecto 2 causo un 500 real: `collectstatic` corrio sin ningun error en el
+despliegue automatico, pero no post-proceso el archivo nuevo en esa pasada
+-- `ValueError: Missing staticfiles manifest entry for
+'vendor/wanakana/wanakana.min.js'` (confirmado en el log REAL de Django,
+`BASE_DIR/logs/error.log` -- distinto del log de plataforma de
+PythonAnywhere, que no captura excepciones de Django; error de diagnostico
+propio durante la sesion, corregido a mitad de la busqueda). Corregido
+ejecutando `collectstatic` una segunda vez a mano en el servidor (resolvio
+la entrada), y blindado el pipeline (`.github/workflows/deploy.yml`,
+commit pendiente de push): barrera dura que verifica explicitamente que
+cada archivo estatico nuevo/modificado del commit tenga entrada real en el
+manifiesto, con reintento automatico de `collectstatic` antes de fallar.
+
+**Verificacion visual final real**: captura de pantalla confirmando "こにちわ"
+como conversion correcta de "Konichiwa" en el cuadro de Occidentalizacion,
+y confirmacion directa de Miguel Angel de que el audio de Listening
+Comprehension suena correctamente en japones.
 
 PASO 3 -- ITIN_DOC en Magisterio -- **CERRADO EN S029**
 **Defecto real confirmado y corregido, verificado ejecutando contra datos

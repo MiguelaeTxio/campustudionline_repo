@@ -87,6 +87,43 @@ jobs:
               exit 1
             fi
             echo "staticfiles.json presente: $(wc -c < staticfiles_production/staticfiles.json) bytes"
+            echo "--- verificacion de archivos estaticos nuevos/modificados en el manifiesto ---"
+            # [FIX S029] Defecto real encontrado en produccion: collectstatic
+            # completo sin ningun error (exit 0, staticfiles.json no vacio),
+            # pero un archivo estatico nuevo (static/vendor/wanakana/
+            # wanakana.min.js) no quedo con entrada en el manifiesto tras
+            # esa pasada -- 500 real en cualquier pagina que lo referenciara
+            # via {% static %} (ManifestStaticFilesStorage exige la entrada).
+            # Quirk conocido de Django: a veces hace falta una segunda pasada
+            # de collectstatic para que el post-procesado resuelva todas las
+            # entradas. Se reintenta una vez antes de fallar duro.
+            NEW_STATIC_FILES=$(git diff --name-only --diff-filter=ACM "$OLD_HEAD" "$NEW_HEAD" -- 'static/' | sed 's|^static/||')
+            check_static_manifest() {
+              MISSING=""
+              for f in $NEW_STATIC_FILES; do
+                if ! grep -qF "\"$f\"" staticfiles_production/staticfiles.json; then
+                  MISSING="$MISSING $f"
+                fi
+              done
+              echo "$MISSING"
+            }
+            if [ -n "$NEW_STATIC_FILES" ]; then
+              MISSING=$(check_static_manifest)
+              if [ -n "$MISSING" ]; then
+                echo "Faltan en el manifiesto tras la primera pasada:$MISSING"
+                echo "--- reintentando collectstatic (segunda pasada) ---"
+                python -m dotenv run python manage.py collectstatic --noinput
+                MISSING=$(check_static_manifest)
+              fi
+              if [ -n "$MISSING" ]; then
+                echo "ERROR: siguen faltando en el manifiesto tras dos pasadas:$MISSING"
+                echo "Abortando el despliegue: recargar ahora dejaria 500 en cualquier pagina que use estos archivos."
+                exit 1
+              fi
+              echo "Todos los archivos estaticos nuevos/modificados confirmados en el manifiesto:$NEW_STATIC_FILES"
+            else
+              echo "Sin archivos estaticos nuevos/modificados en este push."
+            fi
             echo "--- CHANGED_FILES_START ---"
             git diff --name-only "$OLD_HEAD" "$NEW_HEAD"
             echo "--- CHANGED_FILES_END ---"
