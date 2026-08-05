@@ -12,17 +12,13 @@ Motor de autoevaluacion con IA basado en arquetipos y subarquetipos academicos.
 
 **ESTADO DEL PIPELINE:** VERIFICADO en produccion de extremo a extremo para
 ARCH_SCI (S024), ARCH_LANG (S025), ARCH_TECH (S026) y ARCH_SOC (S028, seis
-puntos completos). ARCH_HEALTH (S028): puntos a-d y f verificados con
-imagenes reales de H38 confirmadas en produccion; punto e (calificacion)
-solo con camino de fallo, pendiente con respuesta real. ARCH_HUM (S028):
-`source_text` confirmado por fin en `W-HUM-TEXT`; puntos e-f solo con
-camino de fallo, pendiente con respuesta real. `SD_LIST` (S028): CERRADO
-del todo, con cuatro rondas de fix-verificacion-fix reales en produccion
-(modelo TTS, contenedor WAV, grabadora de voz, defecto de bloqueo total de
-navegacion por MathJax, y una regresion propia). Motor de refinamiento
-`PENDING_AI_ANALYSIS` documentado como hallazgo mayor, candidato a hito
-propio -- ver PASO 5 de la hoja de ruta.
-**FECHA DE ULTIMA ACTUALIZACION:** 2026-07-31
+puntos completos). ARCH_HEALTH (S029): PASO 4 en curso, item 248 con
+imagen real verificada, item 249 sin confirmar al cierre -- ver hoja de
+ruta abajo. ARCH_HUM: puntos e-f siguen pendientes de respuesta real.
+`SD_LIST` (S028): CERRADO del todo. Motor de refinamiento
+`PENDING_AI_ANALYSIS`: CONSTRUIDO Y VERIFICADO en S029, movido a hito
+propio (H39, PAUSADO).
+**FECHA DE ULTIMA ACTUALIZACION:** 2026-08-05 (S029)
 **NOTA:** el estado de seguimiento del hito (EN PROGRESO / PAUSADO) vive
 exclusivamente en `CAMPUSTUDIONLINE_ANNEX_ROUTER.md`. Este anexo no lo declara,
 conforme a la regla de oro 1 del PCH. La linea que antes decia
@@ -448,250 +444,104 @@ datos en estado ERROR y son la evidencia que permitio el diagnostico.
 
 ### HOJA DE RUTA AL REANUDAR H06 -- EN ESTE ORDEN
 
-Actualizada en S028. PASO 1 y PASO 2 de la version anterior (S026) quedan
-CERRADOS -- ver RESULTADO DE S028 y su continuacion mas arriba para el
-detalle completo. Este es el estado real al reanudar:
+Reescrita por completo en S029 (cierre de sesion), sustituyendo integramente
+la version anterior -- ver mas arriba en este mismo anexo (secciones
+"RESULTADO DE S028" y anteriores) para el historial completo, no se pierde
+nada, solo se deja de repetir aqui.
 
-PASO 1 -- CLO-OPEN -- CERRADO DEL TODO EN S029: pipeline E2E completo,
-defecto real de calificacion encontrado, corregido y verificado
-numericamente
-`CLO-OPEN` lo emite unicamente `SUB-LIN-PHILO`. Secuencia completa verificada
-en S029: (1) asignatura `Gramatica Historica del Espanol` confirmada real
-(Comando S `CampuStudiOnline_005.txt`); (2) `ContentMaterial` generado de
-extremo a extremo via el pipeline `ContentRequest` -> senal de auto-
-aprobacion (Hito 24) -> `global_orchestrator_task` -> IA real (82 secciones,
-verificado con notificaciones push y email reales); (3) copia de estudio
-creada por Miguel Angel, bloqueada primero por el limite real de 6
-`ContentCopy` (documentado, `contents/study_room_views.py:114`) -- ver nota
-en DEUDA TECNICA sobre el aviso de cupo no visto, pendiente de reproduccion
-en caliente; (4) examen real generado (uuid `d7da300a`), clasificado
-correctamente como `SUB-LIN-PHILO` (confirmado contra BD, el aviso de "mal
-clasificado" era la etiqueta generica del admin de `archetype_id`, corregido
-anadiendo `sub_archetype_id` a `ExamAdmin.list_display`, commit `4ae24f2`);
-(5) examen completado y calificado por Miguel Angel (nota final 0.3000).
+**RESUMEN DE S029 (sesion muy larga, 27 commits):** PASO 1, 2 y 3 cerrados
+del todo con verificacion real. El motor `PENDING_AI_ANALYSIS` (antiguo
+PASO 5) se construyo, se verifico end-to-end y se formalizo como hito propio
+(H39, PAUSADO) via PCH. H38 (imagenes) recibio cuatro correcciones reales en
+cadena (exclusion de PDF, consulta en dos niveles, traduccion IA,
+verificacion semantica), todas verificadas en produccion. PASO 4 avanzo
+mucho pero **NO quedo cerrado**: ver estado exacto abajo, incluida una
+incidencia sin resolver al cierre.
 
-**DEFECTO REAL ENCONTRADO en el propio motor `CLO-OPEN`** (`_grade_clo_open`,
-`base.py`): el item 202 obtuvo 2/6 huecos correctos pero nota 0.0. Causa:
-`no_negative_marking` defecteaba a `False`, aplicando una penalizacion de
-0.5 por hueco erroneo sin ninguna cita UGR que la respalde -- (2 - 4*0.5)/6
-= 0. La propia documentacion certificada (`V06DOC_BLOCKS.md` Sec 3,
-"CLO-OPEN ... se apoya en el motor RBT-SHORT-LANG") contradice ese defecto:
-`RBT-SHORT-LANG` aplica `NO_NEGATIVE_MARKING` siempre, citando el protocolo
-CLM-UGR, sin excepcion. Mismo criterio que ya senalaba el PASO 6 para
-`CLO-MULTI` (penalizacion sin cita = va a modo Endurecido, nunca al
-estandar). Corregido (commit `33a0bc5`): default cambiado a `True`, rama
-penalizada conservada para un futuro modo endurecido explicito.
+PASO 1 -- CLO-OPEN -- CERRADO DEL TODO (ver detalle completo mas arriba,
+sin cambios en S029 respecto a como quedo documentado).
 
-**VERIFICACION NUMERICA FINAL** (segundo examen real, uuid `2ed00ae5`,
-Comando S `CampuStudiOnline_014.txt`): item CLO-OPEN con 1/6 huecos
-correctos a mano (comparacion real contra `gap_solutions` y respuesta real
-del alumno) dio nota persistida 0.3000 -- exactamente `(1/6) * 1.8`, donde
-1.8 es el `rigor_factor` certificado y ya existente de `SUB-LIN-PHILO` para
-`ITIN_MAI` (independiente del nivel pedagogico, ver `languages.py`
-`_get_grading_params`: "el rigor filologico es maximo"). Aritmetica exacta,
-sin discrepancia. El motor ya no se hunde a 0 con aciertos parciales y el
-multiplicador de rigor certificado se sigue aplicando correctamente encima.
-Pipeline completo (estructura academica -> generacion de contenido ->
-generacion de examen -> clasificacion -> calificacion real) verificado de
-extremo a extremo, ejecutando, no solo leyendo.
+PASO 2 -- Japones / wanakana -- CERRADO DEL TODO (ver detalle completo mas
+arriba, sin cambios en S029 respecto a como quedo documentado).
 
-PASO 2 -- Japones / wanakana -- CERRADO EN S029: E2E completo, tres defectos
-reales encontrados y corregidos, verificado con evidencia visual real
-`bindOccidentalInput` solo contempla `ja`, `ar` y `el`; el chino cae en la
-rama generica, de modo que la copia de Minor Chino NO ejercita wanakana.
-Secuencia completa de S029 (mismo patron que PASO 1): asignatura real
-confirmada (mas de 70 filas de japones), `ContentMaterial` generado E2E via
-el pipeline `ContentRequest`, copia de estudio creada, examen real generado
-(`SUB-LIN-INSTR`).
+PASO 3 -- ITIN_DOC en Magisterio -- CERRADO DEL TODO (ver detalle completo
+mas arriba, sin cambios en S029 respecto a como quedo documentado).
 
-**DEFECTO 1 -- audio en espanol en vez de japones.** La regla de salida del
-prompt (`get_user_prompt`, `languages.py`) solo instruia a la IA a generar
-`section_stimulus` para `layout_mode` `SPLIT_TEXT`/`SPLIT_VISUAL`. `SD_LIST`
-tiene `layout_mode='STANDARD'`, asi que nunca recibia esa instruccion, pese
-a que los `task_instruction` de sus items daban por hecho que el audio ya
-existia. La IA a veces copiaba el CONTEXTO DEL MATERIAL DE ESTUDIO (en
-espanol) en `section_stimulus`, y el TTS lo leia tal cual. Corregido con
-regla 9-BIS explicita para `SD_LIST` (commit `248ce30`).
+PASO 4 -- Cerrar del todo el punto e-f de ARCH_HEALTH y ARCH_HUM --
+DESBLOQUEADO, EN CURSO, NO CERRADO AL FIN DE S029
+El bloqueo original (motor `PENDING_AI_ANALYSIS` inexistente) ya no existe
+-- el motor esta construido y verificado (ver H39). En S029 se retomo con
+el examen real `8dd7b72d-8085-46e5-a759-6eb44e791213` (SUB-SAN-MED-BASIC,
+ITIN_ROT, LVL_A), generado sobre la copia de estudio real de Anatomia:
 
-**DEFECTO 2 -- Occidentalizacion sin convertir a kana.** Confirmado con
-evidencia real (no por suposicion): el placeholder mostraba "WanaKana no
-disponible -- verifique la conexion", confirmando fallo de carga del CDN
-externo (`unpkg.com`) en la conexion movil real de Miguel Angel. Corregido
-autoalojando `wanakana@5.3.1` en `static/vendor/wanakana/` (commit `b5b77c8`),
-mismo criterio que MathJax/retirada de polyfill.io.
+- Items 248 y 249 (`ILC-CONTEXT`/`W-CLIN-SCAN`): ambos sin imagen
+  (`media_assets: None`) al generarse, porque el examen se creo ANTES de
+  las correcciones de H38 de esta misma sesion. Se investigo la causa real
+  (no una conjetura): la busqueda de Wikimedia devolvia 5/5 PDFs para el
+  item 248, y tras excluirlos, 0 resultados totales -- la consulta generica
+  nunca fue lo bastante especifica. Corregido con los cuatro niveles de
+  busqueda documentados en la seccion H38 de este mismo commit.
+- Item 248: repoblado a mano con el pipeline real corregido (no un examen
+  nuevo, el mismo item 248 actualizado en la BD). Resultado verificado:
+  imagen real del triangulo femoral (Gray1238.png, plate real de Gray's
+  Anatomy), stem coherente con el tema, pasando la verificacion semantica
+  real. **Este resultado SI esta confirmado.**
+- Item 249: **ESTADO REAL AL CIERRE -- NO CONFIRMADO, REQUIERE
+  REVERIFICACION AL RETOMAR.** Se intento repoblar dos veces. El primer
+  intento (script improvisado con una consulta generica demasiado pobre,
+  error del propio modelo, no del pipeline real) devolvio una imagen de
+  orbita ocular, claramente incorrecta para una radiografia de torax. El
+  segundo intento, ya con la consulta generica real (titulo de seccion +
+  asignatura) y excluyendo el recurso ya asignado al item 248, aparento
+  completarse pero Miguel Angel senalo al cierre de la sesion que el
+  resultado mostrado (una imagen de rodilla/rotula, con el texto de
+  atribucion renderizado como HTML en crudo en vez de procesado) no se
+  correspondia con lo que el modelo describia, y que "el ultimo script no
+  se ejecuta". **No se ha verificado con certeza en que estado quedo el
+  item 249 en la base de datos real.** Primera accion de la proxima sesion:
+  consultar item 249 en produccion (`ExamItem.objects.get(id=249)`,
+  inspeccionar `content.media_assets` y `content.stem` reales) antes de dar
+  nada por hecho, y corregir tambien el renderizado en crudo del HTML de
+  atribucion si se confirma (buscar donde se muestra `media_attribution.text`
+  en `exam_take.html` -- probablemente esta usando el HTML crudo que
+  Wikimedia devuelve en `extmetadata` sin sanear ni convertir a texto
+  plano, mismo tipo de fallo que el del stem sin markdown corregido hoy,
+  pero al reves: aqui sobra HTML en vez de faltar).
+- Items 248/249 aun no se han respondido de verdad por Miguel Angel dentro
+  del examen `8dd7b72d` -- la respuesta con contenido real que cierra el
+  PASO 4 sigue pendiente.
 
-**DEFECTO 3 -- 500 real al autoalojar wanakana.** El propio arreglo del
-Defecto 2 causo un 500 real: `collectstatic` corrio sin ningun error en el
-despliegue automatico, pero no post-proceso el archivo nuevo en esa pasada
--- `ValueError: Missing staticfiles manifest entry for
-'vendor/wanakana/wanakana.min.js'` (confirmado en el log REAL de Django,
-`BASE_DIR/logs/error.log` -- distinto del log de plataforma de
-PythonAnywhere, que no captura excepciones de Django; error de diagnostico
-propio durante la sesion, corregido a mitad de la busqueda). Corregido
-ejecutando `collectstatic` una segunda vez a mano en el servidor (resolvio
-la entrada), y blindado el pipeline (`.github/workflows/deploy.yml`,
-commit pendiente de push): barrera dura que verifica explicitamente que
-cada archivo estatico nuevo/modificado del commit tenga entrada real en el
-manifiesto, con reintento automatico de `collectstatic` antes de fallar.
+**Siguiente sesion, en este orden:**
+1. Verificar el estado real del item 249 (ver arriba) antes de nada.
+2. Si hace falta, repoblar el item 249 correctamente, confirmando con
+   `_verificar_relevancia_semantica` que la imagen es la correcta (torax,
+   no otra estructura).
+3. Corregir el renderizado de `media_attribution.text` si se confirma que
+   muestra HTML crudo en la interfaz.
+4. Miguel Angel responde el examen `8dd7b72d` con contenido real (items 248,
+   249, 250).
+5. Verificar clasificacion, calificacion inicial y que
+   `refine_pending_ai_items_task` se encola sola y produce una nota final
+   coherente -- solo entonces el PASO 4 queda cerrado del todo.
 
-**Verificacion visual final real**: captura de pantalla confirmando "こにちわ"
-como conversion correcta de "Konichiwa" en el cuadro de Occidentalizacion,
-y confirmacion directa de Miguel Angel de que el audio de Listening
-Comprehension suena correctamente en japones.
-
-PASO 3 -- ITIN_DOC en Magisterio -- **CERRADO EN S029**
-**Defecto real confirmado y corregido, verificado ejecutando contra datos
-reales de produccion (no solo por lectura de codigo).** Consulta real contra
-la BD de produccion (Comando S, `CampuStudiOnline_001/002.txt`) confirmo: no
-existe ninguna `Branch` llamada "Educacion"/"Magisterio"; las 37 titulaciones
-reales de Educacion (Grado en Educacion Infantil/Primaria, Pedagogia, MAES,
-dobles grados) se reparten entre `Artes y Humanidades`, `Ciencias` y
-`Ciencias Sociales y Juridicas`. `deduce_itinerary` solo miraba
-`branch.name` -> `ITIN_DOC` era codigo muerto, inalcanzable con datos reales
-pese a estar certificado en S023 (V06DOC_LOGIC_MAPPING V1.3). Confirmado
-tambien contra la fuente oficial UGR (`grados.ugr.es`, BOE-A-2020-14196): la
-Rama de conocimiento real del Grado en Educacion Primaria es "Ciencias
-Sociales y Juridicas", coincidente con el dato de produccion. Corregido en
-`logic.py` (commit `47c1108`): se anade deteccion por `Degree.name` (senal
-correcta), con el chequeo de rama conservado como fallback. Documentacion
-satelite `V06DOC_LEVELS.md` Seccion 5.5 corregida en el mismo commit, con
-referencia a la fuente UGR anadida en `00325de`. **Verificacion final
-post-despliegue** (Comando S, `CampuStudiOnline_004.txt`): 10/10 asignaturas
-reales bajo "Doble Grado en Educacion Infantil y Educacion Primaria" reciben
-`ITIN_DOC` correctamente tras el despliegue real en produccion. Ambos
-despliegues confirmados verificando cada step individualmente via API de
-Actions, no solo el veredicto global -- el primero (`47c1108`) tuvo una
-recarga web fallida por la intermitencia ya documentada de PythonAnywhere
-(migracion y reinicio de workers si correctos), resuelta sola en el segundo
-despliegue (`00325de`), que si trae ambos commits por el `fetch`+`reset
---hard` del pipeline.
-
-PASO 4 -- Cerrar del todo el punto e-f de ARCH_HEALTH y ARCH_HUM (S028)
-**CORREGIDO EN S029 -- NO EJECUTABLE TAL COMO ESTA REDACTADO.** Lectura real
-de codigo en S029 (`base.py`, `health.py`, `humanities.py`) confirma que
-tanto `ILC-CONTEXT` (motor de `W-CLIN-SCAN` en ARCH_HEALTH) como `DRA-HOLO`
-(motor del Ensayo Critico en ARCH_HUM) son el mismo stub `PENDING_AI_ANALYSIS`
-que describe el PASO 5 de mas abajo: `_grade_ilc_context` devuelve siempre
-`Decimal('0.6')` fijo sin evaluar el contenido real (solo comprueba que no
-este vacio); `_grade_dra_holo` devuelve una nota base fija de `0.6` con
-penalizacion por longitud de palabras, tampoco evalua calidad de contenido.
-Repetir cualquiera de los dos examenes respondiendo de verdad NO verificaria
-ningun motor real -- confirmaria otra vez el mismo camino heuristico fijo.
-Este paso queda BLOQUEADO hasta que se resuelva el PASO 5. No se retira de la
-hoja de ruta porque sigue siendo trabajo real pendiente, pero no es accionable
-de forma independiente.
-
-PASO 5 -- Motor de refinamiento PENDING_AI_ANALYSIS -- HITO NUEVO CANDIDATO
-Hallazgo de S028, acordado con Miguel Angel como hito propio, NO como tarea
-suelta de H06: `DIA-INTERACT` (Speaking/dialogo) y `DRA-HOLO` (ensayos
-largos) y afines, en `base.py`/`social.py`/`languages.py`/`humanities.py`,
-estan disenados para devolver siempre `PENDING_AI_ANALYSIS` con
-`pending_ai_refinement: True`, en espera de un analisis por IA posterior que
-NO EXISTE en ningun sitio del codigo. Afecta a tres arquetipos (ARCH_LANG,
-ARCH_SOC, ARCH_HUM), no es cosa de un solo widget. `generate_multimodal_
-correction` (`gemini_service.py`) ya existe y ya adivina bien
-`mime_type="audio/webm"`, pero no se llama desde ninguna parte -- gran parte
-del trabajo de investigacion ya esta hecho, falta disenar el motor en si:
-sincrono en la propia entrega o asincrono con estado "calificacion en
-proceso", y como se actualiza el informe ya persistido. Requiere una sesion
-propia de diseno, no un parche.
-
-**AMPLIACION S029 -- el stub afecta a un cuarto motor y a mas arquetipos de
-los documentados.** `ILC-CONTEXT` (`_grade_ilc_context` en `base.py`) es un
-motor transversal aparte de `DIA-INTERACT`/`DRA-HOLO`, con el mismo patron
-(`Decimal('0.6')` fijo, `pending_ai_refinement: True`), y lo usan CUATRO
-estrategias, no tres: `health.py` (ARCH_HEALTH, via `W-CLIN-SCAN`),
-`science.py` (ARCH_SCI), `social.py` (ARCH_SOC) y `tech.py` (ARCH_TECH). El
-diseno del motor de refinamiento de este PASO 5 tiene que cubrir tambien
-`ILC-CONTEXT`, no solo `DIA-INTERACT`/`DRA-HOLO` -- confirmado por lectura de
-codigo real, no por inferencia.
-
-**MOTOR IMPLEMENTADO Y VERIFICADO E2E EN S029, PENDIENTE PCH FORMAL.**
-Diseno acordado con Miguel Angel: asincrono (cola `high_priority`, misma
-que `generate_exam_task`), notificacion push+email al terminar para que el
-alumno pueda abandonar la pagina. `DIA-INTERACT` resulto ser texto
-(`chat_log`), no audio -- confirmado leyendo `_grade_dia_interact` y la
-recoleccion real del frontend, simplificando el motor a un unico camino de
-texto (`generate_text_content` con `response_schema` estructurado) para los
-tres tipos, sin necesitar la via multimodal de audio.
-
-Componentes: `GradingOrchestrator.recompute_aggregate_scores` (recalcula
-section_scores/final_score/passed sin reejecutar toda la estrategia),
-`refine_pending_ai_items_task` + `_build_refinement_prompt` (orchestrator/
-tasks.py), `_send_grading_refinement_notification` (calca el patron
-PROBADO de `_send_completion_notifications`, no el patron roto de
-`send_unified_notification` usado en `_send_exam_failure_notification` --
-firma incorrecta y nombres de URL de la app `assessment` legacy, queda
-anotado en deuda tecnica sin corregir), plantilla de email nueva, ruta
-Celery `high_priority`, conexion en `ExamSubmitView` via
-`transaction.on_commit`, banner + marca por item en `exam_report.html`.
-
-**DOS DEFECTOS REALES encontrados verificando en caliente contra la
-`Submission 20` real** (examen `74407b97`, item 228, el mismo "Jjmbvcgj"
-de sesiones anteriores):
-1. `gemini-2.5-flash` devolvia 404 real ("no longer available to new
-   users") -- confirmado con multiples fuentes externas independientes:
-   Google esta apagando ese modelo de forma anticipada para numerosas
-   cuentas, antes de su fecha oficial (16 oct 2026). Afecta a TODA la
-   plataforma (`GEMINI_MODEL_NAME` es una constante global). Migrado a
-   `gemini-3.5-flash`. Verificado con llamada real: HTTP 200, respuesta
-   real de la IA sobre la respuesta del alumno.
-2. Un `str_replace` anterior en la misma sesion borro por error la linea
-   `def _get_next_subject_queryset(settings_obj):`, dejando su cuerpo
-   huerfano absorbido dentro de `_send_grading_refinement_notification`
-   -- sintacticamente valido (`py_compile` no lo detecto), pero rompia en
-   tiempo de ejecucion (`NameError: settings_obj`) en cuanto la
-   notificacion intentaba enviarse. Corregido restaurando la linea exacta.
-
-**Verificacion final real**: `_send_grading_refinement_notification`
-ejecutada de forma aislada contra la Submission 20 ya refinada, sin
-excepcion, push enviado con exito a la mayoria de suscripciones reales
-(dos fallos preexistentes y no relacionados: una suscripcion con
-credenciales VAPID desincronizadas y otra con payload rechazado por
-Windows Push -- deuda tecnica aparte, no corregida aqui) y email aceptado
-por MailerSend (202).
-
-**Pendiente:** decidir con Miguel Angel el PCH formal (acordado en S028
-como hito propio, no tarea suelta de H06); verificacion E2E completa
-generando un examen NUEVO con item pendiente desde cero (esta verificacion
-uso una Submission ya existente de una sesion anterior).
+PASO 5 -- Motor de refinamiento PENDING_AI_ANALYSIS -- MOVIDO A HITO PROPIO
+(H39, PAUSADO)
+Ya no es tarea de H06. Construido, verificado end-to-end y documentado en
+`CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V39.md`. Ver ese anexo para su propia
+hoja de ruta (verificacion de `ILC-CONTEXT`/`DIA-INTERACT` con datos reales,
+decision sobre el widget de audio no conectado, `send_unified_notification`
+roto).
 
 PASO 6 -- Selector de dificultad UG / Endurecido (decision de Miguel Angel, S025)
-Criterio fijado por Miguel Angel: **manda lo que haga la UGR**. Lo que sea licito
-y no discrepe en exceso se implanta como estandar; lo que endurezca por encima
-del sistema de acreditacion va a un selector de dificultad que elija el usuario,
-con nivel estandar (UG) y dificil (endurecido).
-- El barajado desplegado en S025 NO es endurecimiento y se queda como estandar:
-  no toca ninguna regla de puntuacion, solo elimina un artefacto del generador.
-- Contenido candidato del modo endurecido: (a) distractores en W-MIX-MATCH, hoy
-  6 contra 6, de modo que la ultima pareja es gratis por eliminacion; (b)
-  extender la penalizacion a `CLO-MULTI`, que lleva `no_negative_marking` fijo en
-  el codigo sin ninguna cita UGR que lo respalde -- a diferencia del caso de
-  SUB-LIN-INSTR, que si la tiene. **Ampliado en S029: el mismo candidato
-  incluye tambien `CLO-OPEN`** -- tenia por defecto una penalizacion de 0.5
-  por hueco erroneo (SIN cita UGR, defecto real encontrado en produccion:
-  examen `d7da300a`, item 202, 2/6 correctos daba nota 0.0), corregida a
-  `no_negative_marking=True` por defecto (alineado con `RBT-SHORT-LANG`, del
-  que `CLO-OPEN` se declara dependiente en `V06DOC_BLOCKS.md`). La rama de
-  penalizacion se conserva en el codigo para cuando este PASO 6 se implemente
-  de verdad -- CLO-MULTI y CLO-OPEN comparten el mismo tratamiento.
-- CONFIRMADO en `V06DOC_BLOCKS.md` (lineas 12 y 15): la formula
-  `A - E/(N-1)` de PRM-STRIKE es la correccion por azar UGR, y el
-  `NO_NEGATIVE_MARKING` de SD_READ/SD_LIST en SUB-LIN-INSTR es una regla
-  explicita de la Guia Oficial del Candidato CLM-UGR, no una omision.
+Sin cambios en S029. Criterio fijado por Miguel Angel: manda lo que haga la
+UGR. Candidatos ampliados en S029: penalizacion de `CLO-MULTI` Y `CLO-OPEN`
+(ver PASO 1 mas arriba para el detalle del hallazgo de `CLO-OPEN`).
 
 PASO 7 -- Densidad de items (verificar normativa ANTES de tocar skeletons)
-El examen 229 tuvo CINCO items, uno por seccion, de modo que cada item pesa el
-20% de la nota final y un acierto por azar la mueve dos decimas. Ningun documento
-V06 fija la densidad: la determinan los skeletons de cada Estrategia. El
-"densidad UGR (17 items)" que aparece en el historial es del sistema anterior a
-este hito. Subir la densidad NO es endurecer, es medir mejor, asi que iria al
-estandar -- pero verificar la normativa real antes de tocar ningun skeleton.
+Sin cambios en S029.
 
 PASO 8 -- Decidir apertura a usuarios reales
-El panel de evaluacion de `edit_copy.html` esta condicionado a
-`request.user.is_staff or request.user.id == 1`; el resto ve "En Mantenimiento".
-Abrir implica relajar esa condicion.
+Sin cambios en S029.
 
 ---
 ---
