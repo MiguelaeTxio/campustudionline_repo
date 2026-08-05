@@ -151,6 +151,11 @@ CELERY_TASK_DEFAULT_ROUTING_KEY = 'task.default'
 
 CELERY_TASK_ROUTES = {
     'orchestrator.tasks.generate_exam_task': {'queue': 'high_priority'},
+    # [PASO 5 H06 - S029] Refinamiento asincrono de items PENDING_AI_ANALYSIS.
+    # Misma cola que generate_exam_task: es IA casi en tiempo real para el
+    # alumno, no debe esperar detras de la generacion masiva de contenido
+    # del worker Pesado (cola 'default').
+    'orchestrator.tasks.refine_pending_ai_items_task': {'queue': 'high_priority'},
     'orchestrator.tasks.generate_full_course_task': {'queue': 'content_automation'},
     'orchestrator.tasks.global_orchestrator_task': {'queue': 'default'},
 }

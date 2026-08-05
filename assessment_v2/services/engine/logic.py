@@ -581,6 +581,93 @@ class GradingOrchestrator:
         return report
 
     @staticmethod
+    def recompute_aggregate_scores(submission):
+        """
+        [HITO PASO 5 - S029] Recomputes section_scores/final_score/passed/
+        qualitative_summary from an ALREADY-PERSISTED grading_report after
+        one or more items have been updated in place (e.g. by the async
+        AI-refinement task for PENDING_AI_ANALYSIS items). Does NOT
+        re-run the grading strategy — item_final_score values already
+        include rigor adjustment and kill-switch logic from the original
+        grade_submission() pass; only the aggregation step (mean of items
+        per section, mean of sections, gating) is redone here, to avoid
+        re-triggering side effects (shuffling, redundant AI calls) for
+        items that were already correctly graded.
+        ---
+        [HITO PASO 5 - S029] Recalcula section_scores/final_score/passed/
+        qualitative_summary a partir de un grading_report YA PERSISTIDO
+        tras actualizar uno o mas items in situ (p.ej. la tarea asincrona
+        de refinamiento por IA de items PENDING_AI_ANALYSIS). NO reejecuta
+        la estrategia de calificacion — los item_final_score ya incluyen
+        el ajuste de rigor y la logica de kill-switch de la pasada
+        original de grade_submission(); solo se rehace aqui el paso de
+        agregacion (media de items por seccion, media de secciones,
+        gating), para no disparar efectos secundarios (barajado,
+        llamadas a IA redundantes) sobre items ya calificados bien.
+        """
+        report = submission.grading_report or {}
+        sections = report.get('sections', [])
+        exam = submission.exam
+
+        section_scores = {}
+        total_exam_score = Decimal('0.0')
+        section_count = len(sections)
+
+        for sec_rep in sections:
+            items = sec_rep.get('items', [])
+            if items:
+                item_scores = [Decimal(str(it.get('item_score', 0.0))) for it in items]
+                section_normalized = sum(item_scores) / Decimal(str(len(item_scores)))
+            else:
+                section_normalized = Decimal('0.0')
+            sec_rep['section_score'] = float(section_normalized)
+            section_scores[sec_rep.get('subdivision_id')] = float(section_normalized)
+            total_exam_score += section_normalized
+
+        final_score = (
+            total_exam_score / Decimal(str(section_count))
+        ) if section_count > 0 else Decimal('0.0')
+
+        passed = final_score >= Decimal('0.5')
+        # Reset gating flags before recomputing, para no acumular duplicados
+        # entre sucesivas llamadas a recompute_aggregate_scores.
+        report['global_flags'] = [
+            f for f in report.get('global_flags', [])
+            if not str(f).startswith('GATING_FAILED:')
+        ]
+        if exam.archetype_id == 'ARCH_LANG':
+            for sec_rep in sections:
+                sec_score = float(sec_rep.get('section_score', 0.0))
+                if sec_score < 0.5:
+                    passed = False
+                    report['global_flags'].append(
+                        f"GATING_FAILED: Destreza {sec_rep.get('subdivision_id')} "
+                        f"no supera el mínimo certificado (50%). "
+                        f"Nota obtenida: {sec_score:.2%}."
+                    )
+
+        report['qualitative_summary'] = GradingOrchestrator._generate_qualitative_feedback(
+            score      = final_score,
+            level      = exam.pedagogical_level,
+            itinerary  = exam.itinerary_id,
+            archetype  = exam.archetype_id,
+            stats      = report.get('feedback_stats', {})
+        )
+
+        submission.grading_report = report
+        submission.section_scores = section_scores
+        submission.final_score    = final_score
+        submission.passed         = passed
+        submission.save(update_fields=['grading_report', 'section_scores', 'final_score', 'passed'])
+
+        logger.info(
+            f"GradingOrchestrator.recompute_aggregate_scores OK — "
+            f"Submission {submission.id} | Nota final: {float(final_score):.4f} | "
+            f"Superado: {passed}"
+        )
+        return report
+
+    @staticmethod
     def _generate_qualitative_feedback(score, level, itinerary, archetype, stats) -> str:
         """
         Generates the 'Professor Voice' qualitative summary.

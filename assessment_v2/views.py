@@ -262,6 +262,23 @@ class ExamSubmitView(LoginRequiredMixin, View):
                 exam.status = 'GRADED'
                 exam.save(update_fields=['status', 'updated_at'])
 
+                # [PASO 5 H06 - S029] Si quedaron items en PENDING_AI_ANALYSIS
+                # (DRA-HOLO, ILC-CONTEXT, DIA-INTERACT), se encola el
+                # refinamiento real por IA en segundo plano. on_commit, no
+                # .delay() directo: evita que el worker Celery arranque
+                # antes de que esta transaccion haya confirmado la fila de
+                # Submission en la base de datos.
+                has_pending_refinement = any(
+                    item_rep.get('pending_ai_refinement')
+                    for sec_rep in (submission.grading_report or {}).get('sections', [])
+                    for item_rep in sec_rep.get('items', [])
+                )
+                if has_pending_refinement:
+                    from orchestrator.tasks import refine_pending_ai_items_task
+                    transaction.on_commit(
+                        lambda sid=submission.id: refine_pending_ai_items_task.delay(sid)
+                    )
+
             return JsonResponse({'status': 'SUCCESS', 'url': reverse('assessment_v2:exam_report', args=[uuid])})
         except Exception as e:
             return JsonResponse({'status': 'ERROR', 'message': str(e)}, status=400)
@@ -279,5 +296,12 @@ class ExamReportView(LoginRequiredMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['submission'] = get_object_or_404(Submission, exam=self.object)
+        submission = get_object_or_404(Submission, exam=self.object)
+        context['submission'] = submission
+        # [PASO 5 H06 - S029] Para el banner de "revision en curso por IA".
+        context['has_pending_refinement'] = any(
+            item_rep.get('pending_ai_refinement')
+            for sec_rep in (submission.grading_report or {}).get('sections', [])
+            for item_rep in sec_rep.get('items', [])
+        )
         return context

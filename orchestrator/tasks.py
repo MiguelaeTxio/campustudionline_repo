@@ -50,9 +50,9 @@ from messaging.push_utils import send_notification_to_user
 from core.utils import send_unified_notification
 
 # --- NUEVAS IMPORTACIONES HITO 6 ---
-from assessment_v2.models.main import Exam, ExamSection, ExamItem
+from assessment_v2.models.main import Exam, ExamSection, ExamItem, Submission
 from assessment_v2.services.engine.factory import ExamFactory
-from assessment_v2.services.engine.logic import AcademicDeductor
+from assessment_v2.services.engine.logic import AcademicDeductor, GradingOrchestrator
 from assessment_v2.services.tracking import TrackingService
 
 logger = logging.getLogger(__name__)
@@ -705,7 +705,59 @@ def _send_exam_failure_notification(exam):
         logger.error(f"Error en _send_exam_failure_notification: {e}")
 
 
-def _get_next_subject_queryset(settings_obj):
+def _send_grading_refinement_notification(submission):
+    """
+    [HITO PASO 5 - S029] Notifica al alumno (push + email) cuando el
+    refinamiento asincrono por IA de los items PENDING_AI_ANALYSIS ha
+    terminado y la nota final ya esta actualizada. Calca el patron
+    PROBADO de _send_completion_notifications (send_notification_to_user
+    + send_mail con plantilla html) -- NO el de _send_exam_failure_notification,
+    que llama a send_unified_notification con una firma que no coincide
+    con la funcion real y con nombres de URL de la app 'assessment' legacy
+    (no 'assessment_v2'); ese patron esta roto y el fallo queda anotado
+    aparte en deuda tecnica, no se replica aqui.
+    ---
+    [HITO PASO 5 - S029] Notifies the student (push + email) when the
+    async AI-refinement of PENDING_AI_ANALYSIS items has finished and the
+    final score is already updated. Mirrors the PROVEN-WORKING pattern of
+    _send_completion_notifications, not the broken send_unified_notification
+    pattern used in _send_exam_failure_notification (see deuda tecnica note).
+    """
+    try:
+        exam = submission.exam
+        user = exam.user
+        exam_url = reverse('assessment_v2:exam_report', kwargs={'uuid': exam.uuid})
+        full_url = f"https://{settings.ALLOWED_HOSTS[0]}{exam_url}"
+        course_title = exam.content_copy.original_content.title if exam.content_copy else 'tu evaluación'
+
+        push_title = "¡Calificación Final Disponible!"
+        push_body = f"La revisión en profundidad por IA de '{course_title}' ha terminado. Nota: {float(submission.final_score):.2f}."
+        email_subject = f"[CampuStudiOnline] Calificación final de '{course_title}' actualizada"
+        email_body_text = (
+            f"¡Hola!\n\nLa revisión en profundidad por Inteligencia Artificial de tu evaluación "
+            f"'{course_title}' ha terminado. Tu nota final es {float(submission.final_score):.2f} "
+            f"({'superado' if submission.passed else 'no superado'}).\n\n"
+            f"Puedes consultar el informe completo aquí:\n{full_url}\n\n"
+            f"Atentamente,\nEl equipo de CampuStudiOnline"
+        )
+        context = {
+            'course_title': course_title,
+            'final_score': f"{float(submission.final_score):.2f}",
+            'passed': submission.passed,
+            'result_url': full_url,
+        }
+        html_message = render_to_string('orchestrator/email/grading_refinement_complete.html', context)
+        send_notification_to_user(user, push_title, push_body, url=exam_url)
+        send_mail(
+            subject=email_subject, message=email_body_text,
+            from_email=settings.DEFAULT_FROM_EMAIL, recipient_list=[user.email],
+            fail_silently=True, html_message=html_message
+        )
+    except Exception as e:
+        logger.error(f"Error en _send_grading_refinement_notification: {e}")
+
+
+
     base_queryset = Subject.objects.filter(content_materials__isnull=True)
     active_task_subject_names = PendingContentTask.objects.exclude(status__in=[PendingContentTask.StatusChoices.COMPLETED, PendingContentTask.StatusChoices.FAILED_FATAL]).values_list('subject__name', flat=True).distinct()
     query = base_queryset.exclude(name__in=active_task_subject_names)
@@ -1644,3 +1696,176 @@ def generate_exam_task(self, exam_uuid, context_text=None, topic=None):
             # Notificación al Usuario (Incidencia 27)
             _send_exam_failure_notification(exam)
 
+
+# ==============================================================================
+# SECCIÓN 4: PASO 5 H06 — REFINAMIENTO ASÍNCRONO PENDING_AI_ANALYSIS (S029)
+# ==============================================================================
+# Motor de refinamiento real para items DRA-HOLO, ILC-CONTEXT y DIA-INTERACT,
+# que hasta ahora devolvian siempre PENDING_AI_ANALYSIS con una nota
+# heuristica fija sin ninguna evaluacion real de contenido por IA. Diseño
+# acordado con Miguel Angel en S029: asincrono (no dentro de la peticion
+# HTTP de "Finalizar Evaluacion", para no arriesgar timeout del worker WSGI
+# ni alargar la espera del alumno), cola high_priority (misma que
+# generate_exam_task), notificacion push+email al terminar para que el
+# alumno pueda abandonar la pagina sin perder el resultado.
+
+REFINEMENT_RESPONSE_SCHEMA = {
+    "type": "OBJECT",
+    "properties": {
+        "score": {
+            "type": "NUMBER",
+            "description": "Nota decimal de 0.0 (nulo) a 1.0 (perfecto)."
+        },
+        "justification": {
+            "type": "STRING",
+            "description": "Justificación docente detallada en español, citando aciertos y errores concretos."
+        },
+    },
+    "required": ["score", "justification"],
+}
+
+
+def _build_refinement_prompt(block_type, item, student_input, item_report):
+    """
+    Construye el prompt de correccion real segun el tipo de bloque.
+    Devuelve None si el block_type no esta cubierto por este motor.
+    ---
+    Builds the real correction prompt depending on block type.
+    Returns None if the block_type isn't covered by this engine.
+    """
+    base_instruction = (
+        "Eres un catedrático universitario corrigiendo una prueba de evaluación real "
+        "de un alumno. Responde EXCLUSIVAMENTE con el JSON solicitado: 'score' es un "
+        "número decimal entre 0.0 (nulo) y 1.0 (perfecto); 'justification' es tu "
+        "justificación docente detallada en español, citando aciertos y errores "
+        "concretos del alumno — nunca genérica.\n\n"
+    )
+
+    if block_type == 'DIA-INTERACT':
+        chat_log = student_input if isinstance(student_input, list) else (
+            student_input.get('log', []) if isinstance(student_input, dict) else []
+        )
+        transcript = "\n".join(
+            f"{'ALUMNO' if e.get('sender') == 'user' else 'UNIVERSIA'}: {e.get('text', '')}"
+            for e in chat_log if isinstance(e, dict)
+        )
+        if not transcript.strip():
+            return None
+        return (
+            base_instruction +
+            f"Tarea propuesta al alumno:\n{item.content.get('stem', '')}\n\n"
+            f"Transcripción real de la interacción dialéctica:\n{transcript}\n\n"
+            "Evalúa la competencia comunicativa del alumno: fluidez, corrección "
+            "gramatical, registro adecuado y capacidad real de mantener la interacción "
+            "y defender sus argumentos."
+        )
+
+    if block_type == 'DRA-HOLO':
+        text = student_input.get('text', '') if isinstance(student_input, dict) else str(student_input or '')
+        if not text.strip():
+            return None
+        source = item.content.get('source_text', '')
+        return (
+            base_instruction +
+            (f"Fuente primaria proporcionada al alumno:\n{source}\n\n" if source else '') +
+            f"Enunciado:\n{item.content.get('stem', '')}\n\n"
+            f"Ensayo/respuesta real del alumno:\n{text}"
+        )
+
+    if block_type == 'ILC-CONTEXT':
+        text = student_input.get('text', '') if isinstance(student_input, dict) else str(student_input or '')
+        if not text.strip():
+            return None
+        return (
+            base_instruction +
+            f"Enunciado (interpretación de contexto/imagen):\n{item.content.get('stem', '')}\n\n"
+            f"Interpretación real del alumno:\n{text}"
+        )
+
+    return None
+
+
+@shared_task(bind=True, max_retries=2, default_retry_delay=300)
+def refine_pending_ai_items_task(self, submission_id):
+    """
+    [PASO 5 H06 - S029] Refina de verdad, via IA, todos los items en
+    PENDING_AI_ANALYSIS de una Submission ya calificada (DRA-HOLO,
+    ILC-CONTEXT, DIA-INTERACT). Actualiza el grading_report in situ,
+    recalcula la nota final agregada (GradingOrchestrator.
+    recompute_aggregate_scores) y notifica al alumno por push+email al
+    terminar. Se encola justo despues de la calificacion sincrona inicial
+    (assessment_v2/views.py), solo si quedo algun item pendiente.
+    """
+    db.close_old_connections()
+    try:
+        submission = Submission.objects.select_related('exam').get(pk=submission_id)
+    except Submission.DoesNotExist:
+        logger.error(f"refine_pending_ai_items_task: Submission {submission_id} no existe.")
+        return
+
+    report = submission.grading_report or {}
+    responses = submission.student_responses.get('responses', {}) \
+        if isinstance(submission.student_responses, dict) else {}
+
+    api_key = ApiKey.objects.filter(is_enabled=True, is_quarantined=False).order_by('id').first()
+    if not api_key:
+        logger.warning(f"refine_pending_ai_items_task: sin claves disponibles, reintentando submission {submission_id}.")
+        raise self.retry(countdown=600)
+
+    any_refined = False
+    any_pending_left = False
+
+    for sec_rep in report.get('sections', []):
+        for item_rep in sec_rep.get('items', []):
+            if not item_rep.get('pending_ai_refinement'):
+                continue
+
+            item_id = item_rep.get('item_id')
+            try:
+                item = ExamItem.objects.get(pk=item_id)
+            except ExamItem.DoesNotExist:
+                continue
+
+            student_payload = responses.get(str(item_id), {})
+            student_input = student_payload.get('raw_input') if (
+                isinstance(student_payload, dict) and 'raw_input' in student_payload
+            ) else student_payload
+
+            prompt = _build_refinement_prompt(item.block_type, item, student_input, item_rep)
+            if prompt is None:
+                # Sin contenido real que evaluar (respuesta vacia) -- se deja
+                # la nota heuristica original, no es un item para IA.
+                item_rep['pending_ai_refinement'] = False
+                continue
+
+            try:
+                success, text_or_error, _, _ = generate_text_content(
+                    prompt, api_key=api_key, response_schema=REFINEMENT_RESPONSE_SCHEMA
+                )
+                if not success:
+                    raise AIServiceCriticalError(text_or_error)
+                parsed = dirtyjson.loads(clean_json_response(text_or_error))
+                new_score = max(0.0, min(1.0, float(parsed['score'])))
+                new_justification = str(parsed['justification'])
+            except Exception as e:
+                logger.error(f"refine_pending_ai_items_task: fallo refinando item {item_id} (submission {submission_id}): {e}")
+                any_pending_left = True
+                continue
+
+            item_rep['item_score'] = new_score
+            item_rep['status'] = 'GRADED'
+            item_rep['justification'] = new_justification
+            item_rep['pending_ai_refinement'] = False
+            any_refined = True
+
+    submission.grading_report = report
+    if any_refined:
+        GradingOrchestrator.recompute_aggregate_scores(submission)
+    else:
+        submission.save(update_fields=['grading_report'])
+
+    if any_refined and not any_pending_left:
+        _send_grading_refinement_notification(submission)
+    elif any_pending_left:
+        logger.warning(f"refine_pending_ai_items_task: submission {submission_id} con items aun pendientes tras el intento, reintentando.")
+        raise self.retry(countdown=600)

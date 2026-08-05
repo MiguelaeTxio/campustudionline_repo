@@ -1,0 +1,15 @@
+{% extends "emails/base_email.html" %}
+
+{% block content %}
+<h2 style="color: #333333;">Calificación Final Disponible</h2>
+<p>¡Hola!</p>
+<p>La revisión en profundidad por Inteligencia Artificial de tu evaluación <strong>"{{ course_title }}"</strong> ha terminado.</p>
+<p style="font-size: 18px;">Nota final: <strong>{{ final_score }}</strong> — {% if passed %}<span style="color: #2e7d32;">Superado</span>{% else %}<span style="color: #c62828;">No superado</span>{% endif %}</p>
+<br>
+<div style="text-align: center; margin-top: 20px; margin-bottom: 20px;">
+    <a href="{{ result_url }}" style="display: inline-block; padding: 12px 24px; background-color: #0056b3; color: #ffffff; text-decoration: none; border-radius: 6px; font-weight: bold;">Ver el informe completo</a>
+</div>
+<br>
+<p>Gracias por tu paciencia mientras completábamos la revisión.</p>
+<p>El equipo de CampuStudiOnline</p>
+{% endblock %}
