@@ -67,6 +67,7 @@ Cumple dos funciones inseparables:
 | H36 | Implementación de la Sala de Traducción | `CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V36.md` |
 | H37 | Migración a Gemini 3 Flash y Estandarización de SDK | `CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V37.md` |
 | H38 | Adquisición y Licenciamiento de Imágenes para Evaluaciones | `CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V38.md` |
+| H39 | Motor de Refinamiento por IA para Ítems PENDING_AI_ANALYSIS | `CAMPUSTUDIONLINE_ATTACHED_MILESTONE_V39.md` |
 
 Todos los anexos viven en `DOCS/MAINS/ATTACHEDS/`. Numeración con
 huecos (H09, H15, H16, H17 no existen) heredada del proyecto
@@ -90,8 +91,19 @@ trabajo pendiente propio del hito. No se anota "COMPLETADO" (ver
 directriz 6) — la ausencia de marca es la convención del sistema para
 hitos terminados.
 
-**Hitos PAUSADO** (heredados de la migración de sistema de estados,
-2026-07-24 — no son un desvío de esta sesión, sino el estado real en
+**Hitos PAUSADO:**
+
+- H39 — Motor de Refinamiento por IA para Ítems PENDING_AI_ANALYSIS —
+  hito nuevo creado en S029 (no heredado de la migración de 2026-07-24).
+  El motor en sí ya está construido y verificado end-to-end en producción
+  (trabajo real hecho como desvío durante una sesión de H06, al
+  desbloquear su PASO 4) — el anexo documenta ese trabajo ya hecho y dos
+  puntos de hoja de ruta pendientes: verificación E2E con examen generado
+  desde cero, y decisión de alcance sobre `ILC-CONTEXT` en los cuatro
+  arquetipos que lo usan (ARCH_HEALTH, ARCH_SCI, ARCH_SOC, ARCH_TECH).
+
+**Hitos PAUSADO heredados de la migración de sistema de estados
+(2026-07-24 — no son un desvío de esta sesión, sino el estado real en
 que estaban marcados en el master document antes de la migración):
 
 - H20 — Refinamiento del Proceso de Scraping de Datos
