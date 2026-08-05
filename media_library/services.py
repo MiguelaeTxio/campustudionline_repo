@@ -176,11 +176,24 @@ def search(query, limit=5, timeout=20):
     verify_and_store(). Puede lanzar WikimediaSearchError si la API no
     responde tras los reintentos.
     """
+    # [FIX S029] gsrnamespace=6 (espacio de nombres File:) incluye PDFs,
+    # no solo imagenes -- Wikimedia los almacena en el mismo namespace.
+    # Verificado en vivo: la busqueda de texto completo para una consulta
+    # academica real ("Anatomía Macroscópica — Nomenclatura Anatomía")
+    # devolvio 5/5 resultados en PDF (revistas cientificas, un texto legal,
+    # un libro de anatomia veterinaria), 0 imagenes reales -- verify_and_
+    # store los rechazo correctamente a los 5, pero el item se quedo sin
+    # imagen. Se excluye el tipo exacto que causo el problema con la
+    # sintaxis de EXCLUSION (-filemime:), confirmada fiable por la
+    # documentacion oficial de CirrusSearch -- la sintaxis de INCLUSION
+    # positiva (filetype:image) tiene errores conocidos y documentados
+    # que excluyen SVG por accidente (T374182), no se usa aqui a proposito.
+    query_sin_pdf = f"{query} -filemime:application/pdf"
     params = {
         "action": "query",
         "format": "json",
         "generator": "search",
-        "gsrsearch": query,
+        "gsrsearch": query_sin_pdf,
         "gsrnamespace": 6,
         "gsrlimit": limit,
         "prop": "imageinfo",
