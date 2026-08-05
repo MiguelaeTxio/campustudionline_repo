@@ -35,6 +35,7 @@ import requests
 from django.core.files.base import ContentFile
 from django.db import IntegrityError
 from django.utils import timezone
+from django.utils.html import strip_tags
 from PIL import Image, UnidentifiedImageError
 
 from .models import MediaCatalog, MediaLicense, MediaResource
@@ -245,8 +246,19 @@ def search(query, limit=5, timeout=20):
             "license_url": _valor("LicenseUrl") or "",
             "usage_terms": _valor("UsageTerms") or "",
             "attribution_required": _valor("AttributionRequired"),
-            "artist": _valor("Artist") or "",
-            "credit": _valor("Credit") or "",
+            # [FIX] Los campos Artist/Credit de Wikimedia Commons a veces
+            # traen HTML crudo (ej. '<span class="int-own-work">Own
+            # work</span>', o listas <ul><li> completas con enlaces en
+            # citas bibliograficas). Como las plantillas de exam_take.html
+            # y exam_report.html imprimen media_attribution.text sin
+            # `|safe` (Django autoescapa por defecto), ese HTML nunca se
+            # renderiza como marcado -- se ve literalmente en pantalla como
+            # texto con etiquetas, tal como confirmo Miguel Angel para el
+            # item 249 del examen 8dd7b72d en S030. Se sanea aqui, en el
+            # origen, para que ningun MediaResource nuevo vuelva a
+            # persistir HTML en author/attribution_text.
+            "artist": strip_tags(_valor("Artist") or "").strip(),
+            "credit": strip_tags(_valor("Credit") or "").strip(),
         })
     return resultados
 
