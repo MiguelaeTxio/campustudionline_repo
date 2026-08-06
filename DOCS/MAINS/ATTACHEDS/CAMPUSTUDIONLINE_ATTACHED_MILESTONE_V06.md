@@ -20,8 +20,11 @@ ARCH_HUM: puntos e-f siguen pendientes de respuesta real. `SD_LIST`
 (S028): CERRADO del todo. Motor de refinamiento `PENDING_AI_ANALYSIS`:
 CONSTRUIDO Y VERIFICADO end-to-end en S029 (entorno controlado) y
 en S030 verificado por segunda vez contra un examen 100% de produccion
-(ver PASO 4); vive como hito propio (H39, PAUSADO).
-**FECHA DE ULTIMA ACTUALIZACION:** 2026-08-05 (S030)
+(ver PASO 4); vive como hito propio (H39, PAUSADO). PASO 6 (selector de
+dificultad UGR/Endurecido): CERRADO EN S031, verificado en produccion real
+con motor sintetico y examen real con distractores generados por Gemini
+(ver "RESULTADO DE S031").
+**FECHA DE ULTIMA ACTUALIZACION:** 2026-08-06 (S031)
 **NOTA:** el estado de seguimiento del hito (EN PROGRESO / PAUSADO) vive
 exclusivamente en `CAMPUSTUDIONLINE_ANNEX_ROUTER.md`. Este anexo no lo declara,
 conforme a la regla de oro 1 del PCH. La linea que antes decia
@@ -445,91 +448,6 @@ datos en estado ERROR y son la evidencia que permitio el diagnostico.
 
 ---
 
-### HOJA DE RUTA AL REANUDAR H06 -- EN ESTE ORDEN
-
-Reescrita por completo en S030 (cierre de sesion), sustituyendo integramente
-la version anterior -- ver mas arriba en este mismo anexo (secciones
-"RESULTADO DE S029", "RESULTADO DE S030" y la correccion posterior) para el
-historial completo, no se pierde nada, solo se deja de repetir aqui.
-
-**RESUMEN DE S029 (sesion muy larga, 27 commits):** PASO 1, 2 y 3 cerrados
-del todo con verificacion real. El motor `PENDING_AI_ANALYSIS` (antiguo
-PASO 5) se construyo, se verifico end-to-end y se formalizo como hito propio
-(H39, PAUSADO) via PCH. H38 (imagenes) recibio cuatro correcciones reales en
-cadena (exclusion de PDF, consulta en dos niveles, traduccion IA,
-verificacion semantica), todas verificadas en produccion. PASO 4 avanzo
-mucho pero no quedo cerrado al final de esa sesion.
-
-**RESUMEN DE S030:** PASO 4 retomado y cerrado del todo con verificacion
-real completa (ver "RESULTADO DE S030" y su correccion posterior, mas abajo
-en este mismo anexo, para el detalle completo -- incluye el fix de HTML
-crudo en `media_attribution.text`, commit `c56cd40`, desplegado y verificado
-paso a paso). **No queda ningun paso pendiente de la hoja de ruta anterior
-a este punto.** La sesion siguiente arranca directamente en el PASO 6.
-
-PASO 1 -- CLO-OPEN -- CERRADO DEL TODO (ver detalle completo mas arriba,
-sin cambios en S029/S030 respecto a como quedo documentado).
-
-PASO 2 -- Japones / wanakana -- CERRADO DEL TODO (ver detalle completo mas
-arriba, sin cambios en S029/S030 respecto a como quedo documentado).
-
-PASO 3 -- ITIN_DOC en Magisterio -- CERRADO DEL TODO (ver detalle completo
-mas arriba, sin cambios en S029/S030 respecto a como quedo documentado).
-
-PASO 4 -- Cerrar del todo el punto e-f de ARCH_HEALTH y ARCH_HUM --
-CERRADO DEL TODO EN S030, CON VERIFICACION REAL COMPLETA (ver "RESULTADO DE
-S030" y su correccion posterior, mas abajo, para el detalle final real,
-incluido el motor `ILC-CONTEXT` ya ejercitado en produccion con contenido
-real, no solo con el kill-switch de campo vacio).
-El bloqueo original (motor `PENDING_AI_ANALYSIS` inexistente) ya no existe
--- el motor esta construido y verificado (ver H39). En S029 se retomo con
-el examen real `8dd7b72d-8085-46e5-a759-6eb44e791213` (SUB-SAN-MED-BASIC,
-ITIN_ROT, LVL_A), generado sobre la copia de estudio real de Anatomia:
-
-- Items 248 y 249 (`ILC-CONTEXT`/`W-CLIN-SCAN`): ambos sin imagen
-  (`media_assets: None`) al generarse, porque el examen se creo ANTES de
-  las correcciones de H38 de esta misma sesion. Se investigo la causa real
-  (no una conjetura): la busqueda de Wikimedia devolvia 5/5 PDFs para el
-  item 248, y tras excluirlos, 0 resultados totales -- la consulta generica
-  nunca fue lo bastante especifica. Corregido con los cuatro niveles de
-  busqueda documentados en la seccion H38 de este mismo commit.
-- Item 248: repoblado a mano con el pipeline real corregido (no un examen
-  nuevo, el mismo item 248 actualizado en la BD). Resultado verificado:
-  imagen real del triangulo femoral (Gray1238.png, plate real de Gray's
-  Anatomy), stem coherente con el tema, pasando la verificacion semantica
-  real. **Este resultado SI esta confirmado.**
-- Item 249: **ESTADO REAL AL CIERRE -- NO CONFIRMADO, REQUIERE
-  REVERIFICACION AL RETOMAR.** Se intento repoblar dos veces. El primer
-  intento (script improvisado con una consulta generica demasiado pobre,
-  error del propio modelo, no del pipeline real) devolvio una imagen de
-  orbita ocular, claramente incorrecta para una radiografia de torax. El
-  segundo intento, ya con la consulta generica real (titulo de seccion +
-  asignatura) y excluyendo el recurso ya asignado al item 248, aparento
-  completarse pero Miguel Angel senalo al cierre de la sesion que el
-  resultado mostrado (una imagen de rodilla/rotula, con el texto de
-  atribucion renderizado como HTML en crudo en vez de procesado) no se
-  correspondia con lo que el modelo describia, y que "el ultimo script no
-  se ejecuta". **No se ha verificado con certeza en que estado quedo el
-  item 249 en la base de datos real.** Primera accion de la proxima sesion:
-  consultar item 249 en produccion (`ExamItem.objects.get(id=249)`,
-  inspeccionar `content.media_assets` y `content.stem` reales) antes de dar
-  nada por hecho, y corregir tambien el renderizado en crudo del HTML de
-  atribucion si se confirma (buscar donde se muestra `media_attribution.text`
-  en `exam_take.html` -- probablemente esta usando el HTML crudo que
-  Wikimedia devuelve en `extmetadata` sin sanear ni convertir a texto
-  plano, mismo tipo de fallo que el del stem sin markdown corregido hoy,
-  pero al reves: aqui sobra HTML en vez de faltar).
-- Items 248/249 aun no se han respondido de verdad por Miguel Angel dentro
-  del examen `8dd7b72d` -- la respuesta con contenido real que cierra el
-  PASO 4 sigue pendiente.
-
-**Los 5 puntos que aqui figuraban ("Siguiente sesion, en este orden") se
-ejecutaron y verificaron todos en S030 -- ver "RESULTADO DE S030" y su
-correccion posterior para el detalle real de cada uno. No hay nada
-pendiente de este bloque.**
-
----
-
 ### RESULTADO DE S030 -- PASO 4 CERRADO POR DECISION DE MIGUEL ANGEL, HTML CRUDO EN ATRIBUCION CORREGIDO EN ORIGEN, refine_pending_ai_items_task VERIFICADO POR SEGUNDA VEZ CONTRA PRODUCCION REAL
 
 **Estado real del item 249 verificado primero, sin asumir nada** (ver
@@ -689,7 +607,171 @@ se ha tocado.
 ---
 ---
 
-### DEUDA TECNICA ABIERTA
+### RESULTADO DE S031 -- PASO 6 CERRADO: SELECTOR DE DIFICULTAD UGR/ENDURECIDO IMPLEMENTADO, VERIFICADO Y DESPLEGADO EN PRODUCCION REAL; TRES DESVIOS REALES RESUELTOS
+
+**PASO 6 de la hoja de ruta, cerrado del todo.** Implementado el selector de
+dificultad decidido por Miguel Angel en S025: `Exam.DifficultyMode`
+(`UGR`/`ENDURECIDO`, default `UGR`), campo `Exam.difficulty_mode`,
+selector visible en `exam_create.html` (radio buttons, UGR marcado por
+defecto), propagado a la estrategia tanto en generacion
+(`orchestrator/tasks.py::generate_exam_task`) como en calificacion
+(`ExamSubmitView.post`) via `ExamFactory.get_strategy(..., difficulty_mode=...)`.
+
+**Motor de calificacion.** Nuevo `BaseExamStrategy._is_hardened()` (lee
+`self.config['difficulty_mode']`, nunca re-deriva -- el modo es una
+eleccion del alumno persistida en `Exam.difficulty_mode`). `_grade_clo_open`
+y `_grade_clo_multi` (esta ultima, antes sin penalizacion fija por diseno)
+ahora comparten el mismo default dependiente del modo
+(`no_negative_marking = not self._is_hardened()`), respetando cualquier
+override explicito ya fijado por la propia estrategia (SUB-LIN-INSTR
+SD_READ/SD_LIST sigue forzando sin penalizacion siempre, verificado en
+ambos modos). Candidato de S029 "extender la penalizacion a CLO-MULTI"
+queda cerrado.
+
+**Distractores en W-MIX-MATCH.** Candidato de S029. Nuevo campo
+`grading_logic.distractors` (`GradingLogicSchema`), instruccion condicional
+inyectada en `widgets_info_list` de `orchestrator/tasks.py` solo para items
+MAT-LINK en modo ENDURECIDO, renderizado en `views.py` (los senuelos se
+anaden a la columna de destino de W-MIX-MATCH antes de barajar, nunca se
+persisten en `content`, nunca pueden puntuar como par correcto porque
+`_grade_mat_link` solo conoce `pairs`).
+
+**Verificacion real, no solo por lectura de codigo:**
+1. Motor sintetico contra el clon de produccion real (`manage.py shell`,
+   `ExamItem`/`ExamSection` sin persistir): CLO-MULTI y CLO-OPEN dan
+   `0.5` en UGR y `0.25` en ENDURECIDO (formula de penalizacion estandar
+   verificada con calculo exacto); override `SUB-LIN-INSTR SD_READ` da
+   `0.5` en ambos modos, proteccion CertAcles intacta.
+2. Examen real generado por Miguel Angel desde la UI en modo ENDURECIDO
+   sobre una copia de estudio real de Zoologia (`SUB-SCI-BIO-ZOO`, examen
+   `b390fc70-891e-4976-a7b4-c2ce17c5866e`): el item MAT-LINK trae
+   `grading_logic.distractors` con 2 senuelos reales generados por Gemini
+   (caracteristicas de Echinodermata y Chordata), semanticamente coherentes
+   y sin corresponder a ningun `izquierdo` de los 6 pares reales
+   (Porifera/Cnidaria/Platyhelminthes/Nematoda/Mollusca/Arthropoda).
+
+**Tres desvios reales de la sesion, todos con causa diagnosticada contra
+logs/BD reales, no conjeturados, y todos desplegados:**
+
+1. **`TokenUsage.estimated_cost_usd` rompia el tracking de coste.**
+   Descubierto ejecutando la generacion de verificacion (examen
+   `135ed7de`, sobre Anatomia -- sin MAT-LINK en su esqueleto, por eso no
+   sirvio para verificar distractores, pero si disparo este hallazgo).
+   Causa: `default=0.0` (float nativo) en el campo -- `get_or_create()`
+   deja el objeto NUEVO con el default asignado tal cual en memoria (float),
+   sin pasar por el backend de BD que lo habria convertido a Decimal; el
+   fetch de una fila YA EXISTENTE si lo hace bien, por eso el fallo solo
+   aparecia en el primer registro diario por usuario.
+   `usage.estimated_cost_usd += cost_usd` (Decimal) fallaba con TypeError,
+   capturado en silencio por el except generico de `record_usage`. Sin
+   datos que reparar (la excepcion ocurre antes de `save()`, dentro de
+   `transaction.atomic()`). Fix: `default=Decimal('0.0')`.
+
+2. **`delete_copy` (500 en crudo) por deuda legacy de la app `assessment`.**
+   Miguel Angel encontro el 500 real intentando borrar una ContentCopy
+   propia. Diagnosticado contra el traceback real de
+   `logs/error.log` (path NO estaba en `SESSION_VARIABLES.md` -- distinto
+   de `LOG_WEB_ERROR`, que es el log WSGI y nunca recibe tracebacks de
+   Django en este proyecto; anadidas `LOG_DJANGO_ERROR`/`LOG_DJANGO_APP`
+   tras el PVR bloquear la peticion hasta confirmar la ruta con Miguel
+   Angel). Causa real: `MySQLdb.IntegrityError` (1451) -- una fila
+   huerfana en la tabla legacy `assessment_assessment` (app `assessment`,
+   eliminada del codigo, fuera de `INSTALLED_APPS`) mantenia una FK real
+   en MySQL hacia esa ContentCopy que Django ya no conocia; su collector
+   de borrado no la cascadeaba. Reparacion de esquema 100% manual
+   (introspeccion real de la BD, com-migrations seccion 3): eliminadas las
+   4 tablas legacy `assessment_*` (`assessment_assessment`,
+   `assessment_assessmentsettings`, `assessment_question`,
+   `assessment_useranswer`), confirmadas practicamente vacias (1+1+6+0
+   filas) sin ningun modelo Django vivo detras, orden de DROP respetando
+   sus FKs internas. Ejecutado y verificado por Miguel Angel en produccion
+   real (la copia se borro sin error tras el fix). Fix de codigo
+   defensivo ademas: `delete_copy` captura `IntegrityError` con mensaje
+   claro en vez de 500 en crudo, para cualquier otro resto huerfano
+   futuro similar.
+
+3. **Nombres de universidad en etiquetas visibles de la taxonomia H06.**
+   Miguel Angel senalo que "UGR" no debe aparecer nunca de cara al
+   usuario (mismo criterio que el Directorio Academico, "institucion
+   academica" en vez del nombre real). Corregido primero en el selector
+   de dificultad nuevo, y al buscar el alcance completo se encontraron
+   320 apariciones en ~30 archivos del repo -- de las cuales las
+   realmente de cara al usuario eran las 4 taxonomias `TextChoices` de
+   `assessment_v2/models/main.py` usadas como `choices=` de campos reales
+   (`SubArchetype` 82 entradas, `Subdivision` 166, `BlockType` 20,
+   `Widget` 22), revisadas una a una aplicando un criterio consistente
+   ("(UGR)" -> "(Acreditacion Estandar)", "(Materia UGR)" -> "(Materia --
+   Acreditacion Estandar)", "Centro-UGR" -> "Centro", "CLM-UGR"/"FTI-UGR"
+   -> "CLM"/"FTI"). Aprovechado el mismo barrido para "UCO"/"UCM" por la
+   misma razon de fondo. El valor interno de cada choice no cambia, solo
+   la etiqueta legible -- sin impacto en datos ya persistidos. Migracion
+   de las 4 `AlterField` generada programaticamente desde el propio
+   `models.py` (no retipeada a mano) para garantizar fidelidad exacta en
+   un cambio de este volumen. Fuera de alcance, deliberadamente no
+   tocado: comentarios de codigo, docstrings, prompts internos a Gemini,
+   scripts de import/scraping -- ninguno es texto de cara al usuario.
+
+**Los 6 commits de la sesion, todos verificados en produccion con datos
+reales tras cada push** (Action en verde + migracion confirmada por
+`manage.py showmigrations`/`git log -1` real cuando el log de Actions no
+fue descargable por restriccion de red del modelo; dos despliegues de esta
+sesion tuvieron fallo transitorio en el paso de recarga de la web app --
+confirmado por Miguel Angel como timeout real por trafico alto en
+PythonAnywhere, no un fallo de codigo -- resueltos con recarga manual
+desde el panel, con migracion y reinicio de Always-on Tasks ya confirmados
+correctos en ambos casos antes de pedir la recarga manual):
+
+- `519b357` -- feat: selector de dificultad UGR/Endurecido (H06 PASO 6).
+- `a11f7b1` -- fix: TokenUsage.estimated_cost_usd.
+- `ad005d4` -- docs: LOG_DJANGO_ERROR/LOG_DJANGO_APP en SESSION_VARIABLES.md.
+- `440c11e` -- fix: delete_copy + limpieza de las 4 tablas legacy assessment_*.
+- `d79f1fb` -- fix: nombre de universidad fuera del selector de dificultad.
+- `2b22fcb` -- refactor: nombres de universidad fuera de toda la taxonomia H06.
+
+---
+
+### HOJA DE RUTA AL REANUDAR H06 -- EN ESTE ORDEN
+
+Reescrita por completo en S031 (cierre de sesion), sustituyendo integramente
+la version anterior ("HOJA DE RUTA AL REANUDAR H06" de S030, ver mas arriba
+en este mismo anexo para el historial completo del PASO 4 y anteriores, no
+se pierde nada, solo se deja de repetir aqui). **No queda ningun paso
+pendiente anterior al PASO 7. La sesion siguiente arranca directamente en
+el PASO 7.**
+
+PASO 6 -- Selector de dificultad UG/Endurecido -- CERRADO DEL TODO EN S031,
+CON VERIFICACION REAL COMPLETA (motor sintetico + examen real con Gemini
+generando distractores reales). Ver "RESULTADO DE S031" mas arriba para el
+detalle completo.
+
+PASO 7 -- **PUNTO DE ENTRADA REAL DE LA PROXIMA SESION.** Densidad de items
+(verificar normativa ANTES de tocar skeletons)
+Sin cambios en S031.
+
+PASO 8 -- Decidir apertura a usuarios reales
+Sin cambios en S031. Nota nueva de S031: la plataforma ya tiene usuarios
+reales generando copias de estudio por su cuenta (confirmado visualmente
+por Miguel Angel durante esta sesion, capturas del panel de admin con
+usuarias reales como `miriam_` creando contenido) -- relevante para este
+paso cuando se retome, aunque la decision formal de apertura sigue sin
+tomarse.
+
+**Fuera de esta hoja de ruta, deuda tecnica que no bloquea nada de lo
+anterior pero sigue abierta (ver seccion "DEUDA TECNICA ABIERTA" mas abajo
+para el detalle completo, mas lo anadido en S031):** `send_unified_notification`
+roto en `_send_exam_failure_notification`; dos fallos preexistentes de push
+(VAPID UserSub 23, WNS UserSub 14); aviso de limite de 6 copias de estudio
+pendiente de reproducir en caliente; nombre de archivo sin extension real
+en `verify_and_store()` de `media_library/services.py`. **Nuevo en S031:**
+el paso "Recargar la web app" de `deploy.yml` fallo de forma transitoria
+dos veces en esta misma sesion por timeout (trafico alto real en
+PythonAnywhere, confirmado por Miguel Angel, no un fallo de codigo) --
+resuelto ambas veces con recarga manual desde el panel; si se repite con
+frecuencia en sesiones futuras, podria valer la pena subir el `--max-time`
+del curl de ese paso o anadir un reintento automatico, pero no se toca
+ahora sin mas datos de frecuencia real.
+
+---
 
 **-2. Anadida en S029 -- `send_unified_notification` roto en
 `_send_exam_failure_notification`.** Llamada con firma que no coincide con
