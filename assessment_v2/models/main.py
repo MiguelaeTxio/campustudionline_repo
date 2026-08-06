@@ -60,7 +60,7 @@ class Exam(models.Model):
     # -------------------------------------------------------------------------
     class SubArchetype(models.TextChoices):
         # --- RAMA LENGUAS (7) ---
-        SUB_LIN_INSTR     = 'SUB-LIN-INSTR',     _('Instrumental / CertAcles CLM-UGR')
+        SUB_LIN_INSTR     = 'SUB-LIN-INSTR',     _('Instrumental / CertAcles CLM')
         SUB_LIN_MINOR     = 'SUB-LIN-MINOR',     _('Minor / Iniciación (Lengua B/C)')
         SUB_LIN_PHILO     = 'SUB-LIN-PHILO',     _('Filológico / Lingüística Histórica')
         SUB_LIN_ECDO      = 'SUB-LIN-ECDO',      _('Ecdótica / Edición y Crítica Textual')
@@ -69,89 +69,89 @@ class Exam(models.Model):
         SUB_LIN_TRA_LIT   = 'SUB-LIN-TRA-LIT',   _('Traducción Literaria / Literatura y Traducción')
 
         # --- RAMA HUMANIDADES (6) ---
-        SUB_HUM_HIST      = 'SUB-HUM-HIST',      _('Historiográfico (Historia UGR)')
-        SUB_HUM_PHIL      = 'SUB-HUM-PHIL',      _('Dialéctico (Filosofía UGR)')
-        SUB_HUM_ART_HIST  = 'SUB-HUM-ART-HIST',  _('Iconográfico (Historia del Arte UGR)')
+        SUB_HUM_HIST      = 'SUB-HUM-HIST',      _('Historiográfico (Historia — Acreditación Estándar)')
+        SUB_HUM_PHIL      = 'SUB-HUM-PHIL',      _('Dialéctico (Filosofía — Acreditación Estándar)')
+        SUB_HUM_ART_HIST  = 'SUB-HUM-ART-HIST',  _('Iconográfico (Historia del Arte — Acreditación Estándar)')
         SUB_HUM_ART_CREA  = 'SUB-HUM-ART-CREA',  _('Bellas Artes — Emulación Parcial Certificada')
-        SUB_HUM_MUS       = 'SUB-HUM-MUS',       _('Musicológico (Historia y Ciencias de la Música UGR)')
+        SUB_HUM_MUS       = 'SUB-HUM-MUS',       _('Musicológico (Historia y Ciencias de la Música — Acreditación Estándar)')
         SUB_HUM_ANTH      = 'SUB-HUM-ANTH',      _('Antropológico — Subarquetipo Transversal')
 
         # --- RAMA CIENCIAS DE LA SALUD (18) ---
-        SUB_SAN_MED_CLIN      = 'SUB-SAN-MED-CLIN',      _('Diagnóstico Clínico y Razonamiento (Medicina UGR)')
+        SUB_SAN_MED_CLIN      = 'SUB-SAN-MED-CLIN',      _('Diagnóstico Clínico y Razonamiento (Medicina — Acreditación Estándar)')
         SUB_SAN_MED_BASIC     = 'SUB-SAN-MED-BASIC',     _('Ciencias Básicas Médicas: Anatomía e Histología')
-        SUB_SAN_MED_FISIO_GEN = 'SUB-SAN-MED-FISIO-GEN', _('Fisiología General y Médica (Medicina UGR)')
-        SUB_SAN_MED_FISIO_NEU = 'SUB-SAN-MED-FISIO-NEURO', _('Fisiología Neurológica (Medicina UGR)')
-        SUB_SAN_CUID          = 'SUB-SAN-CUID',          _('Cuidados / Enfermería NANDA (UGR)')
+        SUB_SAN_MED_FISIO_GEN = 'SUB-SAN-MED-FISIO-GEN', _('Fisiología General y Médica (Medicina — Acreditación Estándar)')
+        SUB_SAN_MED_FISIO_NEU = 'SUB-SAN-MED-FISIO-NEURO', _('Fisiología Neurológica (Medicina — Acreditación Estándar)')
+        SUB_SAN_CUID          = 'SUB-SAN-CUID',          _('Cuidados / Enfermería NANDA (Acreditación Estándar)')
         SUB_SAN_ODON          = 'SUB-SAN-ODON',          _('Odontología — Emulación Parcial Certificada')
         SUB_SAN_FISIO         = 'SUB-SAN-FISIO',         _('Fisioterapia — Emulación Parcial Certificada')
-        SUB_SAN_BIOQUIM       = 'SUB-SAN-BIOQUIM',       _('Bioquímica Metabólica (Farmacia UGR) — EP Cert.')
-        SUB_SAN_FARM          = 'SUB-SAN-FARM',          _('Farmacología I y II (Farmacia UGR)')
-        SUB_SAN_PSY_DIAG      = 'SUB-SAN-PSY-DIAG',      _('Psicopatología del Adulto (Psicología UGR)')
+        SUB_SAN_BIOQUIM       = 'SUB-SAN-BIOQUIM',       _('Bioquímica Metabólica (Farmacia — Acreditación Estándar) — EP Cert.')
+        SUB_SAN_FARM          = 'SUB-SAN-FARM',          _('Farmacología I y II (Farmacia — Acreditación Estándar)')
+        SUB_SAN_PSY_DIAG      = 'SUB-SAN-PSY-DIAG',      _('Psicopatología del Adulto (Psicología — Acreditación Estándar)')
         SUB_SAN_PSY_EVAL      = 'SUB-SAN-PSY-EVAL',      _('Evaluación Psicológica: Técnicas y Aplicaciones')
-        SUB_SAN_PSY_MET       = 'SUB-SAN-PSY-MET',       _('Métodos y Diseños (Psicología UGR)')
+        SUB_SAN_PSY_MET       = 'SUB-SAN-PSY-MET',       _('Métodos y Diseños (Psicología — Acreditación Estándar)')
         SUB_SAN_PSY_STAT      = 'SUB-SAN-PSY-STAT',      _('Descripción y Exploración de Datos (Psicología)')
-        SUB_SAN_VET_CLIN      = 'SUB-SAN-VET-CLIN',      _('Veterinaria Clínica (UCO) — EP Certificada')
-        SUB_SAN_VET_CIR       = 'SUB-SAN-VET-CIR',       _('Cirugía Veterinaria (UCO) — EP Certificada')
-        SUB_SAN_NUT_DIET      = 'SUB-SAN-NUT-DIET',      _('Dietética y Nutrición Clínica (UGR)')
-        SUB_SAN_NUT_BROM      = 'SUB-SAN-NUT-BROM',      _('Bromatología (Nutrición UGR) — EP Certificada')
+        SUB_SAN_VET_CLIN      = 'SUB-SAN-VET-CLIN',      _('Veterinaria Clínica — EP Certificada')
+        SUB_SAN_VET_CIR       = 'SUB-SAN-VET-CIR',       _('Cirugía Veterinaria — EP Certificada')
+        SUB_SAN_NUT_DIET      = 'SUB-SAN-NUT-DIET',      _('Dietética y Nutrición Clínica (Acreditación Estándar)')
+        SUB_SAN_NUT_BROM      = 'SUB-SAN-NUT-BROM',      _('Bromatología (Nutrición — Acreditación Estándar) — EP Certificada')
         SUB_SAN_NUT_SPUB      = 'SUB-SAN-NUT-SPUB',      _('Salud Pública y Alimentación en Colectividades')
 
         # --- RAMA CIENCIAS SOCIALES Y JURÍDICAS (26) ---
-        SUB_SOC_LAW_PROC_CIV  = 'SUB-SOC-LAW-PROC-CIV',  _('Derecho Procesal Civil (UGR)')
-        SUB_SOC_LAW_PROC_PEN  = 'SUB-SOC-LAW-PROC-PEN',  _('Derecho Procesal Penal (UGR)')
-        SUB_SOC_LAW_DICT_CIV  = 'SUB-SOC-LAW-DICT-CIV',  _('Derecho Civil I-IV — Dictamen (UGR)')
-        SUB_SOC_LAW_DICT_PEN  = 'SUB-SOC-LAW-DICT-PEN',  _('Derecho Penal I-II — Dictamen (UGR)')
-        SUB_SOC_ECON_QUAN_STAT = 'SUB-SOC-ECON-QUAN-STAT', _('Estadística y Técnicas Cuantitativas (UGR)')
-        SUB_SOC_ECON_QUAN_ECON = 'SUB-SOC-ECON-QUAN-ECON', _('Econometría I-III (Economía UGR)')
-        SUB_SOC_ECON_MGMT_ACC  = 'SUB-SOC-ECON-MGMT-ACC',  _('Contabilidad Financiera y de Gestión (UGR)')
-        SUB_SOC_ECON_MGMT_STR  = 'SUB-SOC-ECON-MGMT-STR',  _('Dirección Estratégica I-II (ADE UGR)')
-        SUB_SOC_ECON_MGMT_ECO  = 'SUB-SOC-ECON-MGMT-ECO',  _('Microeconomía y Macroeconomía (UGR)')
-        SUB_SOC_EDU_KIDS       = 'SUB-SOC-EDU-KIDS',        _('Magisterio Infantil/Primaria DUA (UGR)')
-        SUB_SOC_EDU_SEC        = 'SUB-SOC-EDU-SEC',         _('Máster Profesorado Secundaria MAES (UGR)')
-        SUB_SOC_COMM_JOUR      = 'SUB-SOC-COMM-JOUR',       _('Periodismo y Redacción (UGR)')
-        SUB_SOC_COMM_AV        = 'SUB-SOC-COMM-AV',         _('Comunicación Audiovisual y Guion (UGR)')
-        SUB_SOC_GEOG_SIG       = 'SUB-SOC-GEOG-SIG',        _('Sistemas de Información Geográfica (UGR)')
-        SUB_SOC_GEOG_TER       = 'SUB-SOC-GEOG-TER',        _('Geografía Humana y Territorial (UGR)')
-        SUB_SOC_GEOG_FIS       = 'SUB-SOC-GEOG-FIS',        _('Geografía Física y Climatología (UGR)')
+        SUB_SOC_LAW_PROC_CIV  = 'SUB-SOC-LAW-PROC-CIV',  _('Derecho Procesal Civil (Acreditación Estándar)')
+        SUB_SOC_LAW_PROC_PEN  = 'SUB-SOC-LAW-PROC-PEN',  _('Derecho Procesal Penal (Acreditación Estándar)')
+        SUB_SOC_LAW_DICT_CIV  = 'SUB-SOC-LAW-DICT-CIV',  _('Derecho Civil I-IV — Dictamen (Acreditación Estándar)')
+        SUB_SOC_LAW_DICT_PEN  = 'SUB-SOC-LAW-DICT-PEN',  _('Derecho Penal I-II — Dictamen (Acreditación Estándar)')
+        SUB_SOC_ECON_QUAN_STAT = 'SUB-SOC-ECON-QUAN-STAT', _('Estadística y Técnicas Cuantitativas (Acreditación Estándar)')
+        SUB_SOC_ECON_QUAN_ECON = 'SUB-SOC-ECON-QUAN-ECON', _('Econometría I-III (Economía — Acreditación Estándar)')
+        SUB_SOC_ECON_MGMT_ACC  = 'SUB-SOC-ECON-MGMT-ACC',  _('Contabilidad Financiera y de Gestión (Acreditación Estándar)')
+        SUB_SOC_ECON_MGMT_STR  = 'SUB-SOC-ECON-MGMT-STR',  _('Dirección Estratégica I-II (ADE — Acreditación Estándar)')
+        SUB_SOC_ECON_MGMT_ECO  = 'SUB-SOC-ECON-MGMT-ECO',  _('Microeconomía y Macroeconomía (Acreditación Estándar)')
+        SUB_SOC_EDU_KIDS       = 'SUB-SOC-EDU-KIDS',        _('Magisterio Infantil/Primaria DUA (Acreditación Estándar)')
+        SUB_SOC_EDU_SEC        = 'SUB-SOC-EDU-SEC',         _('Máster Profesorado Secundaria MAES (Acreditación Estándar)')
+        SUB_SOC_COMM_JOUR      = 'SUB-SOC-COMM-JOUR',       _('Periodismo y Redacción (Acreditación Estándar)')
+        SUB_SOC_COMM_AV        = 'SUB-SOC-COMM-AV',         _('Comunicación Audiovisual y Guion (Acreditación Estándar)')
+        SUB_SOC_GEOG_SIG       = 'SUB-SOC-GEOG-SIG',        _('Sistemas de Información Geográfica (Acreditación Estándar)')
+        SUB_SOC_GEOG_TER       = 'SUB-SOC-GEOG-TER',        _('Geografía Humana y Territorial (Acreditación Estándar)')
+        SUB_SOC_GEOG_FIS       = 'SUB-SOC-GEOG-FIS',        _('Geografía Física y Climatología (Acreditación Estándar)')
         SUB_SOC_WORK_INT       = 'SUB-SOC-WORK-INT',        _('Trabajo Social: Intervención Individual/Familiar')
         SUB_SOC_WORK_POL       = 'SUB-SOC-WORK-POL',        _('Trabajo Social: Política Social y Bienestar')
         SUB_SOC_WORK_MED       = 'SUB-SOC-WORK-MED',        _('Trabajo Social: Mediación y Ámbitos Especializados')
 
         # --- RAMA INGENIERÍA Y ARQUITECTURA (17) ---
-        SUB_TEC_SOFT_ALG   = 'SUB-TEC-SOFT-ALG',   _('Algoritmia y Estructuras de Datos (ETSIIT-UGR)')
-        SUB_TEC_SOFT_DS    = 'SUB-TEC-SOFT-DS',    _('Diseño de Software e Ingeniería (ETSIIT-UGR)')
-        SUB_TEC_SOFT_SE    = 'SUB-TEC-SOFT-SE',    _('Ingeniería del Software (ETSIIT-UGR)')
-        SUB_TEC_CIVIL_STRUCT = 'SUB-TEC-CIVIL-STRUCT', _('Estructuras de Edificación (ETSICCP-UGR)')
-        SUB_TEC_CIVIL_CONC   = 'SUB-TEC-CIVIL-CONC',   _('Hormigón Armado y Pretensado (ETSICCP-UGR)')
-        SUB_TEC_CIVIL_STEEL  = 'SUB-TEC-CIVIL-STEEL',  _('Estructuras Metálicas (ETSICCP-UGR)')
-        SUB_TEC_INDUS_THERMO = 'SUB-TEC-INDUS-THERMO', _('Termodinámica y Motores (EPSC-UCO)')
-        SUB_TEC_INDUS_TMM    = 'SUB-TEC-INDUS-TMM',    _('Teoría de Máquinas y Mecanismos (EPSC-UCO)')
-        SUB_TEC_INDUS_DEM    = 'SUB-TEC-INDUS-DEM',    _('Diseño y Fabricación — Ingeniería Industrial (UCO)')
-        SUB_TEC_CHEM_BAL     = 'SUB-TEC-CHEM-BAL',     _('Balances de Materia y Energía (IQ-UGR)')
-        SUB_TEC_CHEM_REACT   = 'SUB-TEC-CHEM-REACT',   _('Ingeniería de Reactores Químicos (IQ-UGR)')
-        SUB_TEC_PROJ_ARCH    = 'SUB-TEC-PROJ-ARCH',    _('Proyectos de Arquitectura (ETSAG-UGR)')
-        SUB_TEC_PROJ_URB     = 'SUB-TEC-PROJ-URB',     _('Urbanismo y Ordenación del Territorio (ETSAG-UGR)')
-        SUB_TEC_CONS_TECH    = 'SUB-TEC-CONS-TECH',    _('Tecnología de la Construcción (ETSIE-UGR)')
-        SUB_TEC_CONS_MAN     = 'SUB-TEC-CONS-MAN',     _('Gestión y Economía de la Construcción (ETSIE-UGR)')
-        SUB_TEC_PURE_ANAL    = 'SUB-TEC-PURE-ANAL',    _('Análisis Matemático (Grado Matemáticas UGR)')
-        SUB_TEC_PURE_ALGSTR  = 'SUB-TEC-PURE-ALGSTR',  _('Álgebra Estructural y Topología (Matemáticas UGR)')
+        SUB_TEC_SOFT_ALG   = 'SUB-TEC-SOFT-ALG',   _('Algoritmia y Estructuras de Datos (ETSIIT — Acreditación Estándar)')
+        SUB_TEC_SOFT_DS    = 'SUB-TEC-SOFT-DS',    _('Diseño de Software e Ingeniería (ETSIIT — Acreditación Estándar)')
+        SUB_TEC_SOFT_SE    = 'SUB-TEC-SOFT-SE',    _('Ingeniería del Software (ETSIIT — Acreditación Estándar)')
+        SUB_TEC_CIVIL_STRUCT = 'SUB-TEC-CIVIL-STRUCT', _('Estructuras de Edificación (ETSICCP — Acreditación Estándar)')
+        SUB_TEC_CIVIL_CONC   = 'SUB-TEC-CIVIL-CONC',   _('Hormigón Armado y Pretensado (ETSICCP — Acreditación Estándar)')
+        SUB_TEC_CIVIL_STEEL  = 'SUB-TEC-CIVIL-STEEL',  _('Estructuras Metálicas (ETSICCP — Acreditación Estándar)')
+        SUB_TEC_INDUS_THERMO = 'SUB-TEC-INDUS-THERMO', _('Termodinámica y Motores (EPSC)')
+        SUB_TEC_INDUS_TMM    = 'SUB-TEC-INDUS-TMM',    _('Teoría de Máquinas y Mecanismos (EPSC)')
+        SUB_TEC_INDUS_DEM    = 'SUB-TEC-INDUS-DEM',    _('Diseño y Fabricación — Ingeniería Industrial')
+        SUB_TEC_CHEM_BAL     = 'SUB-TEC-CHEM-BAL',     _('Balances de Materia y Energía (IQ — Acreditación Estándar)')
+        SUB_TEC_CHEM_REACT   = 'SUB-TEC-CHEM-REACT',   _('Ingeniería de Reactores Químicos (IQ — Acreditación Estándar)')
+        SUB_TEC_PROJ_ARCH    = 'SUB-TEC-PROJ-ARCH',    _('Proyectos de Arquitectura (ETSAG — Acreditación Estándar)')
+        SUB_TEC_PROJ_URB     = 'SUB-TEC-PROJ-URB',     _('Urbanismo y Ordenación del Territorio (ETSAG — Acreditación Estándar)')
+        SUB_TEC_CONS_TECH    = 'SUB-TEC-CONS-TECH',    _('Tecnología de la Construcción (ETSIE — Acreditación Estándar)')
+        SUB_TEC_CONS_MAN     = 'SUB-TEC-CONS-MAN',     _('Gestión y Economía de la Construcción (ETSIE — Acreditación Estándar)')
+        SUB_TEC_PURE_ANAL    = 'SUB-TEC-PURE-ANAL',    _('Análisis Matemático (Grado Matemáticas — Acreditación Estándar)')
+        SUB_TEC_PURE_ALGSTR  = 'SUB-TEC-PURE-ALGSTR',  _('Álgebra Estructural y Topología (Matemáticas — Acreditación Estándar)')
 
         # --- RAMA CIENCIAS (14) ---
-        SUB_SCI_BIO_GEN   = 'SUB-SCI-BIO-GEN',   _('Biología Molecular y Genética (UGR)')
-        SUB_SCI_BIO_ZOO   = 'SUB-SCI-BIO-ZOO',   _('Zoología y Botánica (UGR)')
-        SUB_SCI_BIO_ECO   = 'SUB-SCI-BIO-ECO',   _('Ecología (UGR)')
-        SUB_SCI_CHEM_ORG  = 'SUB-SCI-CHEM-ORG',  _('Química Orgánica Pura (UGR)')
-        SUB_SCI_CHEM_INORG = 'SUB-SCI-CHEM-INORG', _('Química Inorgánica Pura (UGR)')
-        SUB_SCI_PHYS_EM   = 'SUB-SCI-PHYS-EM',   _('Electromagnetismo (Física UGR)')
-        SUB_SCI_PHYS_QM   = 'SUB-SCI-PHYS-QM',   _('Mecánica Cuántica (Física UGR)')
-        SUB_SCI_GEOL_MIN  = 'SUB-SCI-GEOL-MIN',  _('Mineralogía y Petrología (UGR)')
-        SUB_SCI_GEOL_STRAT = 'SUB-SCI-GEOL-STRAT', _('Estratigrafía (UGR)')
-        SUB_SCI_GEOL_MAP  = 'SUB-SCI-GEOL-MAP',  _('Cartografía Geológica (UGR)')
-        SUB_SCI_ENV_RES   = 'SUB-SCI-ENV-RES',   _('Gestión de Residuos y Recursos (UGR)')
-        SUB_SCI_ENV_CONT  = 'SUB-SCI-ENV-CONT',  _('Contaminación Ambiental (UGR)')
-        SUB_SCI_DATA_STAT = 'SUB-SCI-DATA-STAT', _('Estadística Computacional e Inferencia (UCM GIDIA)')
-        SUB_SCI_DATA_ML   = 'SUB-SCI-DATA-ML',   _('Aprendizaje Automático e IA (UCM GIDIA)')
-        SUB_SCI_DATA_BIG  = 'SUB-SCI-DATA-BIG',  _('Ingeniería de Datos y Big Data (UCM GIDIA)')
+        SUB_SCI_BIO_GEN   = 'SUB-SCI-BIO-GEN',   _('Biología Molecular y Genética (Acreditación Estándar)')
+        SUB_SCI_BIO_ZOO   = 'SUB-SCI-BIO-ZOO',   _('Zoología y Botánica (Acreditación Estándar)')
+        SUB_SCI_BIO_ECO   = 'SUB-SCI-BIO-ECO',   _('Ecología (Acreditación Estándar)')
+        SUB_SCI_CHEM_ORG  = 'SUB-SCI-CHEM-ORG',  _('Química Orgánica Pura (Acreditación Estándar)')
+        SUB_SCI_CHEM_INORG = 'SUB-SCI-CHEM-INORG', _('Química Inorgánica Pura (Acreditación Estándar)')
+        SUB_SCI_PHYS_EM   = 'SUB-SCI-PHYS-EM',   _('Electromagnetismo (Física — Acreditación Estándar)')
+        SUB_SCI_PHYS_QM   = 'SUB-SCI-PHYS-QM',   _('Mecánica Cuántica (Física — Acreditación Estándar)')
+        SUB_SCI_GEOL_MIN  = 'SUB-SCI-GEOL-MIN',  _('Mineralogía y Petrología (Acreditación Estándar)')
+        SUB_SCI_GEOL_STRAT = 'SUB-SCI-GEOL-STRAT', _('Estratigrafía (Acreditación Estándar)')
+        SUB_SCI_GEOL_MAP  = 'SUB-SCI-GEOL-MAP',  _('Cartografía Geológica (Acreditación Estándar)')
+        SUB_SCI_ENV_RES   = 'SUB-SCI-ENV-RES',   _('Gestión de Residuos y Recursos (Acreditación Estándar)')
+        SUB_SCI_ENV_CONT  = 'SUB-SCI-ENV-CONT',  _('Contaminación Ambiental (Acreditación Estándar)')
+        SUB_SCI_DATA_STAT = 'SUB-SCI-DATA-STAT', _('Estadística Computacional e Inferencia (GIDIA)')
+        SUB_SCI_DATA_ML   = 'SUB-SCI-DATA-ML',   _('Aprendizaje Automático e IA (GIDIA)')
+        SUB_SCI_DATA_BIG  = 'SUB-SCI-DATA-BIG',  _('Ingeniería de Datos y Big Data (GIDIA)')
 
     # -------------------------------------------------------------------------
     # Itinerary taxonomy / Taxonomía de itinerarios
@@ -186,9 +186,10 @@ class Exam(models.Model):
     # -------------------------------------------------------------------------
     # Difficulty mode taxonomy / Taxonomía de modo de dificultad
     # Ref: HOJA DE RUTA H06 — PASO 6 (decisión de Miguel Ángel, S025).
-    # Criterio: manda lo que dicte la UGR como comportamiento por defecto (UGR);
-    # el modo ENDURECIDO añade exclusivamente lo que endurezca por encima de la
-    # normativa, nunca lo que la incumpla por debajo.
+    # Criterio: manda lo que dicte la normativa académica de referencia como
+    # comportamiento por defecto; el modo ENDURECIDO añade exclusivamente lo
+    # que endurezca por encima de la normativa, nunca lo que la incumpla por
+    # debajo.
     # -------------------------------------------------------------------------
     class DifficultyMode(models.TextChoices):
         UGR        = 'UGR',        _('Acreditación Estándar (por defecto)')
@@ -249,7 +250,8 @@ class Exam(models.Model):
     # nunca deducido por la IA. Gobierna, en modo ENDURECIDO: penalización de
     # CLO-OPEN/CLO-MULTI (no_negative_marking=False) y distractores extra en
     # W-MIX-MATCH. El modo UGR (por defecto) es siempre el comportamiento
-    # certificado contra la normativa UGR, sin ninguna variación.
+    # certificado contra la normativa académica de referencia, sin ninguna
+    # variación.
     difficulty_mode = models.CharField(
         _('Modo de Dificultad'), max_length=20, choices=DifficultyMode.choices,
         default=DifficultyMode.UGR
@@ -330,10 +332,10 @@ class ExamSection(models.Model):
     # -------------------------------------------------------------------------
     class Subdivision(models.TextChoices):
         # --- BLOQUE COMUNICATIVO: ARCH_LANG (SUB-LIN-INSTR) ---
-        SD_READ  = 'SD_READ',  _('Comprensión Lectora (Reading — CLM-UGR)')
-        SD_LIST  = 'SD_LIST',  _('Comprensión Auditiva (Listening — CLM-UGR)')
-        SD_WRIT  = 'SD_WRIT',  _('Expresión e Interacción Escritas (Writing — CLM-UGR)')
-        SD_SPEAK = 'SD_SPEAK', _('Expresión e Interacción Orales (Speaking — CLM-UGR)')
+        SD_READ  = 'SD_READ',  _('Comprensión Lectora (Reading — CLM)')
+        SD_LIST  = 'SD_LIST',  _('Comprensión Auditiva (Listening — CLM)')
+        SD_WRIT  = 'SD_WRIT',  _('Expresión e Interacción Escritas (Writing — CLM)')
+        SD_SPEAK = 'SD_SPEAK', _('Expresión e Interacción Orales (Speaking — CLM)')
 
         # --- BLOQUE LENGUAS MINOR (SUB-LIN-MINOR) ---
         SD_PHON_GRAPH    = 'SD_PHON_GRAPH',    _('Grafía y Fonética (Minor/Lenguas No Latinas)')
@@ -343,18 +345,18 @@ class ExamSection(models.Model):
         SD_CULT_INTEGRITY = 'SD_CULT_INTEGRITY', _('Competencia Intercultural y Contexto (Minor)')
 
         # --- BLOQUE FILOLÓGICO (SUB-LIN-PHILO) ---
-        SD_PHONO      = 'SD_PHONO',      _('Fonética y Fonología Histórica (Philo UGR)')
-        SD_MORPH_DIAC = 'SD_MORPH_DIAC', _('Morfología Diacrónica (Philo UGR)')
-        SD_LEX_SEM    = 'SD_LEX_SEM',    _('Lexicología y Semántica Histórica (Philo UGR)')
+        SD_PHONO      = 'SD_PHONO',      _('Fonética y Fonología Histórica (Philo)')
+        SD_MORPH_DIAC = 'SD_MORPH_DIAC', _('Morfología Diacrónica (Philo)')
+        SD_LEX_SEM    = 'SD_LEX_SEM',    _('Lexicología y Semántica Histórica (Philo)')
 
         # --- BLOQUE ECDÓTICO (SUB-LIN-ECDO) ---
-        SD_ORTOTYPO = 'SD_ORTOTYPO', _('Corrección Ortotipográfica (Ecdo UGR)')
-        SD_STYLE    = 'SD_STYLE',    _('Corrección de Estilo Editorial (Ecdo UGR)')
-        SD_ANNOT    = 'SD_ANNOT',    _('Anotación Crítica y Edición Científica (Ecdo UGR)')
-        SD_EVAL     = 'SD_EVAL',     _('Evaluación Editorial e Informe de Lector (Ecdo UGR)')
+        SD_ORTOTYPO = 'SD_ORTOTYPO', _('Corrección Ortotipográfica (Ecdo)')
+        SD_STYLE    = 'SD_STYLE',    _('Corrección de Estilo Editorial (Ecdo)')
+        SD_ANNOT    = 'SD_ANNOT',    _('Anotación Crítica y Edición Científica (Ecdo)')
+        SD_EVAL     = 'SD_EVAL',     _('Evaluación Editorial e Informe de Lector (Ecdo)')
 
         # --- BLOQUE NORMATIVO (SUB-LIN-NORM) ---
-        SD_CORPUS_ANALYSIS  = 'SD_CORPUS_ANALYSIS',  _('Investigación y Validación Empírica (Norm UGR)')
+        SD_CORPUS_ANALYSIS  = 'SD_CORPUS_ANALYSIS',  _('Investigación y Validación Empírica (Norm)')
         SD_MORPH_ANTINORM   = 'SD_MORPH_ANTINORM',   _('Diagnóstico de Desviaciones Morfosintácticas')
         SD_ORTHO_PRESCRIPTIVE = 'SD_ORTHO_PRESCRIPTIVE', _('Ortografía y Ortotipografía Académica')
         SD_CRITICAL_NORM    = 'SD_CRITICAL_NORM',    _('Comentario Crítico y Justificación Bibliográfica')
@@ -374,10 +376,10 @@ class ExamSection(models.Model):
         SD_HIST_PRAC = 'SD_HIST_PRAC', _('Análisis de Fuentes y Comentario Documental')
 
         # --- BLOQUE HUMANIDADES FILOSOFÍA (SUB-HUM-PHIL) ---
-        SD_PHIL_TEST  = 'SD_PHIL_TEST',  _('Test de Precisión Conceptual (Filosofía UGR)')
-        SD_PHIL_DEV   = 'SD_PHIL_DEV',   _('Preguntas de Desarrollo (Filosofía UGR)')
-        SD_PHIL_TEXT  = 'SD_PHIL_TEXT',  _('Comentario de Texto Filosófico (UGR)')
-        SD_PHIL_ESSAY = 'SD_PHIL_ESSAY', _('Ensayo Filosófico Argumentado (UGR)')
+        SD_PHIL_TEST  = 'SD_PHIL_TEST',  _('Test de Precisión Conceptual (Filosofía)')
+        SD_PHIL_DEV   = 'SD_PHIL_DEV',   _('Preguntas de Desarrollo (Filosofía)')
+        SD_PHIL_TEXT  = 'SD_PHIL_TEXT',  _('Comentario de Texto Filosófico (Acreditación Estándar)')
+        SD_PHIL_ESSAY = 'SD_PHIL_ESSAY', _('Ensayo Filosófico Argumentado (Acreditación Estándar)')
 
         # --- BLOQUE HUMANIDADES ARTE (SUB-HUM-ART-HIST / ART-CREA) ---
         SD_ART_IDENT = 'SD_ART_IDENT', _('Reconocimiento Iconográfico de Imágenes')
@@ -404,7 +406,7 @@ class ExamSection(models.Model):
         SD_HISTO_MICRO     = 'SD_HISTO_MICRO',     _('Histología Microscópica — Identificación Tisular')
         SD_HISTO_FORMULA   = 'SD_HISTO_FORMULA',   _('Fórmula Leucocitaria — Identificación Morfológica')
         SD_FISIO_HOMEO     = 'SD_FISIO_HOMEO',     _('Homeostasis y SNA — Fisiología General')
-        SD_FISIO_CARDIO    = 'SD_FISIO_CARDIO',    _('Fisiología Cardiovascular (UGR)')
+        SD_FISIO_CARDIO    = 'SD_FISIO_CARDIO',    _('Fisiología Cardiovascular (Acreditación Estándar)')
         SD_FISIO_ECG       = 'SD_FISIO_ECG',       _('Electrocardiografía — Trazado Normal')
         SD_FISIO_RESP      = 'SD_FISIO_RESP',      _('Fisiología Respiratoria y Espirometría')
         SD_FISIO_RENAL     = 'SD_FISIO_RENAL',     _('Fisiología Renal y Equilibrio Ácido-Base')
@@ -424,10 +426,10 @@ class ExamSection(models.Model):
         SD_PSY_EVAL_TECH     = 'SD_PSY_EVAL_TECH',     _('Evaluación Psicológica: Técnicas y Aplicaciones')
         SD_PSY_MET_DESIGN    = 'SD_PSY_MET_DESIGN',    _('Métodos y Diseños de Investigación (Psicología)')
         SD_PSY_STAT_DATA     = 'SD_PSY_STAT_DATA',     _('Descripción y Exploración de Datos Psicológicos')
-        SD_VET_CLIN          = 'SD_VET_CLIN',          _('Clínica Animal — Diagnóstico Veterinario (UCO)')
-        SD_VET_CIR           = 'SD_VET_CIR',           _('Cirugía Veterinaria — Procedimientos (UCO)')
-        SD_NUT_DISENO        = 'SD_NUT_DISENO',        _('Diseño y Evaluación de Dietas — Dietética UGR')
-        SD_NUT_VALORACION    = 'SD_NUT_VALORACION',    _('Valoración del Estado Nutricional (UGR)')
+        SD_VET_CLIN          = 'SD_VET_CLIN',          _('Clínica Animal — Diagnóstico Veterinario')
+        SD_VET_CIR           = 'SD_VET_CIR',           _('Cirugía Veterinaria — Procedimientos')
+        SD_NUT_DISENO        = 'SD_NUT_DISENO',        _('Diseño y Evaluación de Dietas — Dietética')
+        SD_NUT_VALORACION    = 'SD_NUT_VALORACION',    _('Valoración del Estado Nutricional (Acreditación Estándar)')
         SD_BROM_COMPOSICION  = 'SD_BROM_COMPOSICION',  _('Composición y Valor Nutricional de Alimentos')
         SD_BROM_ALTERACIONES = 'SD_BROM_ALTERACIONES', _('Alteraciones, Adulteraciones y Calidad Alimentaria')
         SD_SPUB_EPIDEMIOLOGIA = 'SD_SPUB_EPIDEMIOLOGIA', _('Epidemiología Nutricional y Vigilancia Alimentaria')
@@ -467,8 +469,8 @@ class ExamSection(models.Model):
         # --- BLOQUE CSJ EDUCACIÓN (SUB-SOC-EDU-*) ---
         SD_EDU_DUA       = 'SD_EDU_DUA',       _('Diseño Universal para el Aprendizaje (DUA/LOMLOE)')
         SD_EDU_SITUACION = 'SD_EDU_SITUACION', _('Situación de Aprendizaje y Programación Didáctica')
-        SD_EDU_MAES_PROC = 'SD_EDU_MAES_PROC', _('Procesos y Contextos Educativos — MAES UGR')
-        SD_EDU_MAES_DID  = 'SD_EDU_MAES_DID',  _('Didáctica Específica — MAES UGR')
+        SD_EDU_MAES_PROC = 'SD_EDU_MAES_PROC', _('Procesos y Contextos Educativos — MAES')
+        SD_EDU_MAES_DID  = 'SD_EDU_MAES_DID',  _('Didáctica Específica — MAES')
 
         # --- BLOQUE CSJ COMUNICACIÓN (SUB-SOC-COMM-*) ---
         SD_JOUR_REDACCION = 'SD_JOUR_REDACCION', _('Redacción Periodística y Géneros Informativos')
@@ -518,7 +520,7 @@ class ExamSection(models.Model):
         SD_GEOL_CARTOG  = 'SD_GEOL_CARTOG', _('Cartografía Geológica e Interpretación de Cortes')
         SD_ENV_GESTIÓN  = 'SD_ENV_GESTION', _('Gestión de Residuos y Evaluación de Impacto')
         SD_ENV_CONTAM   = 'SD_ENV_CONTAM',  _('Contaminación — Fuentes, Dispersión y Control')
-        SD_DATA_PROB    = 'SD_DATA_PROB',   _('Probabilidad y Modelos Estadísticos (UCM GIDIA)')
+        SD_DATA_PROB    = 'SD_DATA_PROB',   _('Probabilidad y Modelos Estadísticos (GIDIA)')
         SD_DATA_INF     = 'SD_DATA_INF',    _('Inferencia Estadística y Contrastes de Hipótesis')
         SD_DATA_REG     = 'SD_DATA_REG',    _('Regresión y Análisis Multivariante')
         SD_ML_SUPER     = 'SD_ML_SUPER',    _('Aprendizaje Supervisado — Clasificación y Regresión')
@@ -632,11 +634,11 @@ class ExamItem(models.Model):
         W_AUDIO_INSTR = 'W-AUDIO-INSTR', _('Reproductor de Audio — Contador de Reproducciones Hermético')
 
         # Specialized language widgets (V06DOC_WIDGETS Sec 5/7)
-        W_PHILO_IPA       = 'W-PHILO-IPA',       _('Pad de Transcripción Fonética y Diacrónica (Philo UGR)')
-        W_PHILO_ECDO      = 'W-PHILO-ECDO',      _('Editor de Crítica Textual y Colación (Ecdótica UGR)')
+        W_PHILO_IPA       = 'W-PHILO-IPA',       _('Pad de Transcripción Fonética y Diacrónica (Philo)')
+        W_PHILO_ECDO      = 'W-PHILO-ECDO',      _('Editor de Crítica Textual y Colación (Ecdótica)')
         W_PHILO_OCR_PALE  = 'W-PHILO-OCR-PALE',  _('Visor Paleográfico HD con Capa de Transcripción')
         W_CALLI_PAD       = 'W-CALLI-PAD',       _('Pad Caligráfico — Lenguas No Latinas (Ductus/OCR)')
-        W_DOC_RESOURCES   = 'W-DOC-RESOURCES',   _('Panel de Recursos Documentales UGR (TRA-TECH)')
+        W_DOC_RESOURCES   = 'W-DOC-RESOURCES',   _('Panel de Recursos Documentales (TRA-TECH)')
 
         # Multimedia & analysis widgets (V06DOC_WIDGETS Sec 8)
         W_MUS_SCORE   = 'W-MUS-SCORE',   _('Visor de Partitura + Análisis Armónico Anotable (HUM-MUS)')
@@ -653,24 +655,24 @@ class ExamItem(models.Model):
     # -------------------------------------------------------------------------
     class BlockType(models.TextChoices):
         # Objective & technical motors (V06DOC_BLOCKS Sec 1)
-        PRM_STRIKE  = 'PRM-STRIKE',  _('Respuesta Múltiple con Penalización — Fórmula UGR [A-E/(N-1)]')
+        PRM_STRIKE  = 'PRM-STRIKE',  _('Respuesta Múltiple con Penalización — Fórmula Estándar [A-E/(N-1)]')
         RBT_CANON   = 'RBT-CANON',   _('Respuesta Breve de Precisión Terminológica — Sin Paráfrasis')
-        RBT_SHORT_LANG = 'RBT-SHORT-LANG', _('Respuesta Breve Lingüística ≤4 palabras (CertAcles/CLM-UGR)')
+        RBT_SHORT_LANG = 'RBT-SHORT-LANG', _('Respuesta Breve Lingüística ≤4 palabras (CertAcles/CLM)')
         RPP_TRAZA   = 'RPP-TRAZA',   _('Resolución Procedimental con Arrastre de Error — Multietapa')
 
         # Security & critical analysis motors (V06DOC_BLOCKS Sec 2)
         CDS_KILL    = 'CDS-KILL',    _('Checklist Dicotómico de Seguridad Crítica — KILL_SWITCH')
-        DRA_HOLO    = 'DRA-HOLO',    _('Rúbrica Analítica Holística — 4 Ejes UGR/CertAcles')
-        DRA_HOLO_LIT = 'DRA-HOLO-LIT', _('Rúbrica Holística Literaria — 4 Ejes TRA-LIT FTI-UGR')
+        DRA_HOLO    = 'DRA-HOLO',    _('Rúbrica Analítica Holística — 4 Ejes CertAcles')
+        DRA_HOLO_LIT = 'DRA-HOLO-LIT', _('Rúbrica Holística Literaria — 4 Ejes TRA-LIT FTI')
         BMT_SHIFT   = 'BMT-SHIFT',   _('Mediación y Transferencia de Registro — Fidelidad + Adecuación')
         ILC_CONTEXT = 'ILC-CONTEXT', _('Interpretación de Contexto y Datos Brutos (IA-Evaluado)')
         EV_PALE     = 'EV-PALE',     _('Transcripción y Exégesis de Fuentes Primarias (Paleografía)')
 
         # Specialized evaluation motors (V06DOC_BLOCKS Sec 4/6)
-        EV_DIAC_VAL      = 'EV-DIAC-VAL',      _('Motor Diacrónico — Evolución Fonética (Philo UGR)')
-        EV_NORM_ANALYSIS = 'EV-NORM-ANALYSIS',  _('Motor Panhispánico — Desviaciones Norma (Norm UGR)')
+        EV_DIAC_VAL      = 'EV-DIAC-VAL',      _('Motor Diacrónico — Evolución Fonética (Philo)')
+        EV_NORM_ANALYSIS = 'EV-NORM-ANALYSIS',  _('Motor Panhispánico — Desviaciones Norma (Norm)')
         EV_TRA_PRECISION = 'EV-TRA-PRECISION',  _('Motor Precisión Terminológica Traductológica')
-        EV_TRA_PRECISION_TECH = 'EV-TRA-PRECISION-TECH', _('Motor Precisión FTI-UGR — Jerarquía Errores A/B/C')
+        EV_TRA_PRECISION_TECH = 'EV-TRA-PRECISION-TECH', _('Motor Precisión FTI — Jerarquía Errores A/B/C')
         EV_ICON_ART      = 'EV-ICON-ART',      _('Motor Iconológico — Identificación + Panofsky (ART-HIST)')
         EV_MUS_ANAL      = 'EV-MUS-ANAL',      _('Motor de Análisis Musical Armónico-Formal (HUM-MUS)')
 
@@ -853,7 +855,7 @@ class Submission(models.Model):
 
     final_score = models.DecimalField(
         _('Nota Final'), max_digits=5, decimal_places=4, null=True,
-        help_text=_('Valor en rango 0.0000 – 1.0000. Multiplicar por 10 para escala UGR.')
+        help_text=_('Valor en rango 0.0000 – 1.0000. Multiplicar por 10 para escala estándar.')
     )
     passed = models.BooleanField(_('Superado'), default=False)
 
