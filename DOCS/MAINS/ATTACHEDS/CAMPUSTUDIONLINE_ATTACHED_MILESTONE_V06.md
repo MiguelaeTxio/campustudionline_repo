@@ -23,8 +23,12 @@ en S030 verificado por segunda vez contra un examen 100% de produccion
 (ver PASO 4); vive como hito propio (H39, PAUSADO). PASO 6 (selector de
 dificultad UGR/Endurecido): CERRADO EN S031, verificado en produccion real
 con motor sintetico y examen real con distractores generados por Gemini
-(ver "RESULTADO DE S031").
-**FECHA DE ULTIMA ACTUALIZACION:** 2026-08-06 (S031)
+(ver "RESULTADO DE S031"). PASO 7 (densidad de items): CERRADO EN S032 por
+estimacion via tope de tiempo del Art. 12.2 UGR (4h), verificado con datos
+reales de los 82 sub-arquetipos, ante la perdida de la fuente real (seccion
+de evaluacion de las guias docentes, descartada por diseno del scraper --
+ver "RESULTADO DE S032").
+**FECHA DE ULTIMA ACTUALIZACION:** 2026-08-06 (S032)
 **NOTA:** el estado de seguimiento del hito (EN PROGRESO / PAUSADO) vive
 exclusivamente en `CAMPUSTUDIONLINE_ANNEX_ROUTER.md`. Este anexo no lo declara,
 conforme a la regla de oro 1 del PCH. La linea que antes decia
@@ -732,29 +736,34 @@ correctos en ambos casos antes de pedir la recarga manual):
 
 ### HOJA DE RUTA AL REANUDAR H06 -- EN ESTE ORDEN
 
-Reescrita por completo en S031 (cierre de sesion), sustituyendo integramente
-la version anterior ("HOJA DE RUTA AL REANUDAR H06" de S030, ver mas arriba
-en este mismo anexo para el historial completo del PASO 4 y anteriores, no
+Reescrita por completo en S032 (cierre de sesion), sustituyendo integramente
+la version anterior ("HOJA DE RUTA AL REANUDAR H06" de S031, ver mas arriba
+en este mismo anexo para el historial completo del PASO 6 y anteriores, no
 se pierde nada, solo se deja de repetir aqui). **No queda ningun paso
-pendiente anterior al PASO 7. La sesion siguiente arranca directamente en
-el PASO 7.**
+pendiente anterior al PASO 8. La sesion siguiente arranca directamente en
+el PASO 8.**
 
 PASO 6 -- Selector de dificultad UG/Endurecido -- CERRADO DEL TODO EN S031,
 CON VERIFICACION REAL COMPLETA (motor sintetico + examen real con Gemini
 generando distractores reales). Ver "RESULTADO DE S031" mas arriba para el
 detalle completo.
 
-PASO 7 -- **PUNTO DE ENTRADA REAL DE LA PROXIMA SESION.** Densidad de items
-(verificar normativa ANTES de tocar skeletons)
-Sin cambios en S031.
+PASO 7 -- Densidad de items -- CERRADO EN S032 por estimacion via tope de
+tiempo del Art. 12.2 UGR (4h/14.400s), ante la perdida de la fuente real
+(seccion de evaluacion de las guias docentes, descartada por diseno del
+scraper -- ver "RESULTADO DE S032" mas arriba para el detalle completo).
+Verificado con datos reales de los 82 sub-arquetipos: ninguno excede el
+tope, margen minimo real de 40 min en el caso mas ajustado
+(`SUB-HUM-ANTH`). Criterio fijado para futuras ampliaciones de items:
+volver a verificar contra este mismo calculo antes de aplicarlas.
 
-PASO 8 -- Decidir apertura a usuarios reales
-Sin cambios en S031. Nota nueva de S031: la plataforma ya tiene usuarios
+PASO 8 -- **PUNTO DE ENTRADA REAL DE LA PROXIMA SESION.** Decidir apertura
+a usuarios reales
+Sin cambios en S032. Nota heredada de S031: la plataforma ya tiene usuarios
 reales generando copias de estudio por su cuenta (confirmado visualmente
-por Miguel Angel durante esta sesion, capturas del panel de admin con
-usuarias reales como `miriam_` creando contenido) -- relevante para este
-paso cuando se retome, aunque la decision formal de apertura sigue sin
-tomarse.
+por Miguel Angel, capturas del panel de admin con usuarias reales como
+`miriam_` creando contenido) -- relevante para este paso cuando se retome,
+aunque la decision formal de apertura sigue sin tomarse.
 
 **Fuera de esta hoja de ruta, deuda tecnica que no bloquea nada de lo
 anterior pero sigue abierta (ver seccion "DEUDA TECNICA ABIERTA" mas abajo
@@ -770,6 +779,68 @@ resuelto ambas veces con recarga manual desde el panel; si se repite con
 frecuencia en sesiones futuras, podria valer la pena subir el `--max-time`
 del curl de ese paso o anadir un reintento automatico, pero no se toca
 ahora sin mas datos de frecuencia real.
+
+---
+---
+
+### RESULTADO DE S032 -- PASO 7 CERRADO: DENSIDAD DE ITEMS ESTIMADA POR TOPE DE TIEMPO, ANTE LA IMPOSIBILIDAD DE USAR LA SECCION DE EVALUACION DE LAS GUIAS DOCENTES REALES
+
+**Hallazgo 1 -- normativa general UGR consultada en la fuente oficial
+(`https://www.ugr.es/sites/default/files/2017-09/examenes.pdf`, texto
+consolidado BOUGR nº112, Normativa de evaluacion y de calificacion de los
+estudiantes de la UGR).** No existe ninguna norma UGR de caracter general
+que fije un numero minimo/maximo de preguntas por examen, por credito ECTS
+ni por bloque -- eso es competencia de la Guia Docente de cada asignatura
+(Art. 4.2), no de esta normativa central. Lo unico cuantitativo y
+transversal que si fija esta normativa es el **Art. 12.2: ninguna prueba de
+evaluacion puede durar mas de 4 horas (14.400 s)**, salvo excepcion
+justificada por el Departamento. El Art. 12.1 exige ademas claridad sobre
+que partes son obligatorias/optativas y la puntuacion maxima de cada una --
+ya cubierto estructuralmente por `weight` y `level_requisite` en
+`ExamItem`.
+
+**Hallazgo 2 -- la fuente real que si contendria densidad por asignatura
+esta descartada por diseno del scraper.** Miguel Angel confirmo en sesion
+que en su dia se descargaron todas las guias docentes reales y que los
+`learning_objectives` de `Subject` (`academic_structure/models.py`) vienen
+de ahi. Verificado contra el codigo real de los harvesters
+(`web_scrapping/PHASE_1_EAST/*.py`, patron identico en
+`uma_final_harvester.py` y el resto de variantes UMA): el diccionario
+`patterns` de `process_raw_content()` solo extrae `objectives`, `content` y
+`bibliography` -- la clave `evaluation` (`r'(?:evaluación|sistema de
+evaluación)'`) existe unicamente como **stop word** para saber donde
+termina la bibliografia, nunca se vuelca a `extracted_data`. El modelo
+`Subject` lo confirma: solo persiste `learning_objectives`,
+`course_content_outline` y `bibliography`, sin ningun campo de sistema de
+evaluacion. Es decir, la seccion de evaluacion de la guia docente real (que
+el propio Art. 4.2 UGR obliga a que exista, con "ponderaciones de cada una
+de las actividades") se descargo pero se descarto en el procesamiento, en
+todas las fases de scraping revisadas hasta ahora. No se ha confirmado si
+los ficheros crudos (PDF/HTML pre-recorte) siguen existiendo en algun sitio
+fuera de este repositorio -- pendiente si se retoma en el futuro.
+
+**Decision de Miguel Angel ante la perdida de esa fuente:** estimar la
+densidad por el tope de tiempo del Art. 12.2, en vez de por dato real de
+guia docente.
+
+**Verificacion real contra el codigo, no estimada:** sumado el `time_limit`
+de todas las secciones de `get_exam_skeleton()` para los 82 sub-arquetipos
+completos (18 SALUD + 6 HUM + 7 LIN + 15 SCI + 19 SOC + 17 TEC = 82,
+cuadra exacto con el numero declarado en la Seccion 1 de este anexo).
+**Ningun sub-arquetipo excede las 4h.** El mas largo es `SUB-HUM-ANTH` con
+12.000 s (3,33 h), seguido de `SUB-LIN-TRA-LIT` (11.400 s / 3,17 h) y
+`SUB-HUM-PHIL` (9.600 s / 2,67 h) -- margen minimo real de 2.400 s (40 min)
+bajo el tope, en el caso mas ajustado. El resto de los 82 esta claramente
+por debajo.
+
+**PASO 7 cerrado con este criterio, sin tocar ningun skeleton:** la
+densidad actual queda validada por estar dentro del tope de la normativa
+general, con margen de seguridad en todos los casos. **Criterio fijado
+para el futuro:** cualquier ampliacion de items en un sub-arquetipo debe
+verificarse contra este mismo calculo antes de aplicarse, para que la suma
+de `time_limit` de ese sub-arquetipo no supere 14.400 s -- especial
+atencion a `SUB-HUM-ANTH`, `SUB-LIN-TRA-LIT` y `SUB-HUM-PHIL` por ser los
+que menos margen tienen.
 
 ---
 
