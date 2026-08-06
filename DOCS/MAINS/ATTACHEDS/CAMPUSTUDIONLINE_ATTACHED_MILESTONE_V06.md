@@ -447,10 +447,10 @@ datos en estado ERROR y son la evidencia que permitio el diagnostico.
 
 ### HOJA DE RUTA AL REANUDAR H06 -- EN ESTE ORDEN
 
-Reescrita por completo en S029 (cierre de sesion), sustituyendo integramente
+Reescrita por completo en S030 (cierre de sesion), sustituyendo integramente
 la version anterior -- ver mas arriba en este mismo anexo (secciones
-"RESULTADO DE S028" y anteriores) para el historial completo, no se pierde
-nada, solo se deja de repetir aqui.
+"RESULTADO DE S029", "RESULTADO DE S030" y la correccion posterior) para el
+historial completo, no se pierde nada, solo se deja de repetir aqui.
 
 **RESUMEN DE S029 (sesion muy larga, 27 commits):** PASO 1, 2 y 3 cerrados
 del todo con verificacion real. El motor `PENDING_AI_ANALYSIS` (antiguo
@@ -458,23 +458,29 @@ PASO 5) se construyo, se verifico end-to-end y se formalizo como hito propio
 (H39, PAUSADO) via PCH. H38 (imagenes) recibio cuatro correcciones reales en
 cadena (exclusion de PDF, consulta en dos niveles, traduccion IA,
 verificacion semantica), todas verificadas en produccion. PASO 4 avanzo
-mucho pero **NO quedo cerrado**: ver estado exacto abajo, incluida una
-incidencia sin resolver al cierre.
+mucho pero no quedo cerrado al final de esa sesion.
+
+**RESUMEN DE S030:** PASO 4 retomado y cerrado del todo con verificacion
+real completa (ver "RESULTADO DE S030" y su correccion posterior, mas abajo
+en este mismo anexo, para el detalle completo -- incluye el fix de HTML
+crudo en `media_attribution.text`, commit `c56cd40`, desplegado y verificado
+paso a paso). **No queda ningun paso pendiente de la hoja de ruta anterior
+a este punto.** La sesion siguiente arranca directamente en el PASO 6.
 
 PASO 1 -- CLO-OPEN -- CERRADO DEL TODO (ver detalle completo mas arriba,
-sin cambios en S029 respecto a como quedo documentado).
+sin cambios en S029/S030 respecto a como quedo documentado).
 
 PASO 2 -- Japones / wanakana -- CERRADO DEL TODO (ver detalle completo mas
-arriba, sin cambios en S029 respecto a como quedo documentado).
+arriba, sin cambios en S029/S030 respecto a como quedo documentado).
 
 PASO 3 -- ITIN_DOC en Magisterio -- CERRADO DEL TODO (ver detalle completo
-mas arriba, sin cambios en S029 respecto a como quedo documentado).
+mas arriba, sin cambios en S029/S030 respecto a como quedo documentado).
 
 PASO 4 -- Cerrar del todo el punto e-f de ARCH_HEALTH y ARCH_HUM --
-DESBLOQUEADO, EN CURSO, NO CERRADO AL FIN DE S029 (CERRADO EN S030 POR
-DECISION DE MIGUEL ANGEL -- ver "RESULTADO DE S030" mas abajo, antes del
-PASO 5, para el estado final real, incluida la parte que quedo sin
-verificar)
+CERRADO DEL TODO EN S030, CON VERIFICACION REAL COMPLETA (ver "RESULTADO DE
+S030" y su correccion posterior, mas abajo, para el detalle final real,
+incluido el motor `ILC-CONTEXT` ya ejercitado en produccion con contenido
+real, no solo con el kill-switch de campo vacio).
 El bloqueo original (motor `PENDING_AI_ANALYSIS` inexistente) ya no existe
 -- el motor esta construido y verificado (ver H39). En S029 se retomo con
 el examen real `8dd7b72d-8085-46e5-a759-6eb44e791213` (SUB-SAN-MED-BASIC,
@@ -517,18 +523,10 @@ ITIN_ROT, LVL_A), generado sobre la copia de estudio real de Anatomia:
   del examen `8dd7b72d` -- la respuesta con contenido real que cierra el
   PASO 4 sigue pendiente.
 
-**Siguiente sesion, en este orden:**
-1. Verificar el estado real del item 249 (ver arriba) antes de nada.
-2. Si hace falta, repoblar el item 249 correctamente, confirmando con
-   `_verificar_relevancia_semantica` que la imagen es la correcta (torax,
-   no otra estructura).
-3. Corregir el renderizado de `media_attribution.text` si se confirma que
-   muestra HTML crudo en la interfaz.
-4. Miguel Angel responde el examen `8dd7b72d` con contenido real (items 248,
-   249, 250).
-5. Verificar clasificacion, calificacion inicial y que
-   `refine_pending_ai_items_task` se encola sola y produce una nota final
-   coherente -- solo entonces el PASO 4 queda cerrado del todo.
+**Los 5 puntos que aqui figuraban ("Siguiente sesion, en este orden") se
+ejecutaron y verificaron todos en S030 -- ver "RESULTADO DE S030" y su
+correccion posterior para el detalle real de cada uno. No hay nada
+pendiente de este bloque.**
 
 ---
 
@@ -663,16 +661,30 @@ hoja de ruta (verificacion de `ILC-CONTEXT`/`DIA-INTERACT` con datos reales,
 decision sobre el widget de audio no conectado, `send_unified_notification`
 roto).
 
-PASO 6 -- Selector de dificultad UG / Endurecido (decision de Miguel Angel, S025)
-Sin cambios en S029. Criterio fijado por Miguel Angel: manda lo que haga la
+PASO 6 -- **PUNTO DE ENTRADA REAL DE LA PROXIMA SESION.** Selector de
+dificultad UG / Endurecido (decision de Miguel Angel, S025)
+Sin cambios en S030. Criterio fijado por Miguel Angel: manda lo que haga la
 UGR. Candidatos ampliados en S029: penalizacion de `CLO-MULTI` Y `CLO-OPEN`
-(ver PASO 1 mas arriba para el detalle del hallazgo de `CLO-OPEN`).
+(ver PASO 1 mas arriba para el detalle del hallazgo de `CLO-OPEN`), mas
+distractores extra en `W-MIX-MATCH`.
 
 PASO 7 -- Densidad de items (verificar normativa ANTES de tocar skeletons)
-Sin cambios en S029.
+Sin cambios en S030.
 
 PASO 8 -- Decidir apertura a usuarios reales
-Sin cambios en S029.
+Sin cambios en S030.
+
+**Fuera de esta hoja de ruta, deuda tecnica que no bloquea nada de lo
+anterior pero sigue abierta (ver seccion "DEUDA TECNICA ABIERTA" mas abajo
+para el detalle completo):** `send_unified_notification` roto en
+`_send_exam_failure_notification`; dos fallos preexistentes de push (VAPID
+UserSub 23, WNS UserSub 14); aviso de limite de 6 copias de estudio
+pendiente de reproducir en caliente; y, nuevo en S030, el nombre de archivo
+sin extension real que genera `verify_and_store()` en
+`media_library/services.py` cuando la URL de origen de Wikimedia trae query
+string pegada al nombre (`nombre_archivo = url.rsplit("/", 1)[-1]` no la
+separa) -- cosmetico, sin incidencia conocida en produccion hasta ahora, no
+se ha tocado.
 
 ---
 ---
