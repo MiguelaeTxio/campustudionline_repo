@@ -1,4 +1,5 @@
 # /home/MiguelAeTxio/PROJECTS/CampuStudiOnline/assessment_v2/models/tracking.py
+from decimal import Decimal
 from django.db import models
 from django.conf import settings
 from django.utils.translation import gettext_lazy as _
@@ -8,7 +9,15 @@ class TokenUsage(models.Model):
     date = models.DateField(_('Fecha'), auto_now_add=True)
     input_tokens_total = models.PositiveIntegerField(_('Tokens de Entrada'), default=0)
     output_tokens_total = models.PositiveIntegerField(_('Tokens de Salida'), default=0)
-    estimated_cost_usd = models.DecimalField(_('Coste Estimado (USD)'), max_digits=10, decimal_places=6, default=0.0)
+    # [FIX S031] default=0.0 (float nativo de Python) rompía TrackingService.record_usage
+    # en el primer registro diario de cada usuario: get_or_create() deja el objeto NUEVO
+    # con el default asignado tal cual en memoria (float), sin pasar por el backend de BD
+    # que lo habria convertido a Decimal -- el fetch de una fila YA EXISTENTE si lo hace
+    # bien, por eso el fallo solo aparecia la primera vez del dia. La suma posterior
+    # 'usage.estimated_cost_usd += cost_usd' (Decimal) fallaba con TypeError, capturado en
+    # silencio por el except generico de record_usage. Detectado ejecutando la generacion
+    # real de verificacion del PASO 6 de H06 (examen 135ed7de), no por lectura de codigo.
+    estimated_cost_usd = models.DecimalField(_('Coste Estimado (USD)'), max_digits=10, decimal_places=6, default=Decimal('0.0'))
 
     class Meta:
         verbose_name = _('Uso Diario de Tokens')
