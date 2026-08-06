@@ -5,6 +5,7 @@ from lxml import etree
 from copy import deepcopy
 import json
 from django.db import transaction
+from django.db.utils import IntegrityError
 from django.db.models import Exists, Q, Subquery, OuterRef, Case, When, Value, IntegerField, CharField
 from django.middleware.csrf import get_token
 from django.shortcuts import render, redirect, get_object_or_404
@@ -407,7 +408,30 @@ def delete_annotation(request, pk):
 @require_POST
 def delete_copy(request, pk):
     content_copy = get_object_or_404(ContentCopy, pk=pk, user=request.user)
-    content_copy.delete()
+    # [FIX S031] IntegrityError capturado en vez de dejarlo propagar como 500
+    # en crudo. Causa real encontrada esta sesion: una fila huerfana en la
+    # tabla legacy assessment_assessment (app 'assessment', eliminada del
+    # codigo, ya no forma parte de INSTALLED_APPS) mantenia una FK real en
+    # MySQL hacia esta ContentCopy que Django ya no conocia -- el collector
+    # de Django no cascadeaba esa tabla porque no tiene modelo asociado, y
+    # MySQL rechazaba el DELETE en crudo. Esa deuda concreta se limpio en
+    # esta misma sesion (las 4 tablas legacy assessment_* ya no existen),
+    # pero cualquier otro resto huerfano futuro de cualquier FK que Django
+    # no conozca debe dar un mensaje claro al usuario, nunca un 500.
+    try:
+        content_copy.delete()
+    except IntegrityError:
+        logger.error(
+            f"IntegrityError borrando ContentCopy {pk} (user {request.user.id}): "
+            f"referencia huerfana en una tabla que Django no conoce.",
+            exc_info=True
+        )
+        messages.error(
+            request,
+            'No se ha podido eliminar la copia porque tiene datos vinculados que '
+            'impiden el borrado. Contacta con soporte si el problema persiste.'
+        )
+        return redirect("study_room:copy_directory_root")
     messages.success(request, 'La copia ha sido eliminada.')
     return redirect("study_room:copy_directory_root")
 
