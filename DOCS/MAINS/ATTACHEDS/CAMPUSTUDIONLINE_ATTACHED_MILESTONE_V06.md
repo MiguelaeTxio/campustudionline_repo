@@ -609,6 +609,52 @@ en H06 ni en H39. Si se retoma, usar un item `ILC-CONTEXT` cualquiera
 
 ---
 
+### CORRECCION A "RESULTADO DE S030" -- ILC-CONTEXT SI SE EJERCITO CON CONTENIDO REAL, PASO 4 CERRADO DE VERDAD
+
+El bloque anterior (commit `ca48b3d`) quedo escrito en una rama de la
+sesion S030 que no continuo -- una confusion puntual de Miguel Angel al
+leer la pregunta de cierre, aclarada por el mismo despues. En la rama que
+si continuo (misma sesion), el trabajo siguio un paso mas:
+
+**Item 249 (`ILC-CONTEXT`) respondido con una interpretacion radiologica
+real** (lectura sistematica de la radiografia de torax PA: penetracion,
+rotacion, campos pulmonares, senos costofrenicos, silueta cardiomediastinica,
+traquea, cupulas diafragmaticas, burbuja gastrica). El examen `8dd7b72d` ya
+estaba en `status='GRADED'` (no se puede reenviar por la UI real,
+`ExamSubmitView` exige `status='READY'`), asi que se ejercito el motor real
+directamente contra la `Submission` id 22 ya persistida:
+
+1. `strategy.grade_item()` (la misma funcion real de `HealthStrategy`) sobre
+   el item 249 con la interpretacion real -- resultado sincrono correcto,
+   0.6 provisional, `PENDING_AI_ANALYSIS`.
+2. Primer intento de sustituir el `item_rep` dentro de `grading_report`
+   fallo por un error propio (comparacion `item_id == 249` como entero,
+   cuando el contrato real de `GradingOrchestrator.grade_submission` lo
+   guarda como `str(item.id)` -- linea 472 de `logic.py`). Diagnosticado y
+   corregido antes de continuar, sin dejarlo pasar como si hubiera
+   funcionado.
+3. Segundo intento, con el `item_id` como string y las claves exactas del
+   contrato: sustitucion correcta, y `refine_pending_ai_items_task`
+   ejecutada en directo (no `.delay()`, la funcion real invocada
+   sincronamente) hizo la llamada real a Gemini, evaluo el contenido real
+   de la respuesta y produjo una nota final de **0.7**, con una
+   justificacion especifica y no generica: acierta simetria clavicular,
+   traquea y senos costofrenicos, pero no desglosa individualmente el arco
+   aortico ni el ventriculo izquierdo (los mete dentro de "silueta
+   cardiomediastinica") y no cuantifica ni el criterio de inspiracion
+   (9-10 arcos costales) ni el valor de corte del ICT (<=0.50).
+   `submission.final_score` recalculado a 0.5667, `passed=True`.
+   Notificaciones reales enviadas (push + email), con los dos fallos ya
+   catalogados como deuda tecnica (VAPID UserSub 23, WNS UserSub 14) y sin
+   incidencias nuevas.
+
+**Conclusion real, sustituyendo la de `ca48b3d`:** el motor de calificacion
+de `ILC-CONTEXT` SI quedo verificado en produccion con contenido real, no
+solo con el kill-switch de campo vacio. El PASO 4 de H06 queda cerrado
+del todo, sin ningun punto pendiente de verificacion.
+
+---
+
 PASO 5 -- Motor de refinamiento PENDING_AI_ANALYSIS -- MOVIDO A HITO PROPIO
 (H39, PAUSADO)
 Ya no es tarea de H06. Construido, verificado end-to-end y documentado en
