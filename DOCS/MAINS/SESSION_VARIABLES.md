@@ -40,3 +40,5 @@ volcado a SWAP y descarga desde SWAP — nunca `get` directo del log.
 - **LOG_WEB_SERVER**: /var/log/www.campustudionline.com.server.log
 - **LOG_ALWAYSON_PRIMARIO**: /var/log/alwayson-log-182748.log (Always-on Task Primario, cola `high_priority`, worker `hp_worker`)
 - **LOG_ALWAYSON_PESADO**: /var/log/alwayson-log-209547.log (Always-on Task Pesado, cola `default`, worker `heavy_worker`)
+- **LOG_DJANGO_ERROR**: {SERVER_ROOT}logs/error.log (añadida S031 — logging interno de Django, `django.request`/nivel ERROR vía `RotatingFileHandler`, confirmado contra `BASE_DIR` de `core/settings.py`. DISTINTO de `LOG_WEB_ERROR`: este es el que recibe los tracebacks reales de excepciones no controladas — 500 — el log WSGI solo recibe ruido de proceso, nunca tracebacks de Django en este proyecto)
+- **LOG_DJANGO_APP**: {SERVER_ROOT}logs/django.log (añadida S031 — logger raíz + `django`, nivel DEBUG/INFO, mismo `RotatingFileHandler`, `core/settings.py`)
