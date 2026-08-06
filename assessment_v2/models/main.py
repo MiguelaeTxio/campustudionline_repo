@@ -184,6 +184,17 @@ class Exam(models.Model):
         TOTAL     = 'TOTAL',     _('Inmersión Total (Idioma Objetivo Dinámico)')
 
     # -------------------------------------------------------------------------
+    # Difficulty mode taxonomy / Taxonomía de modo de dificultad
+    # Ref: HOJA DE RUTA H06 — PASO 6 (decisión de Miguel Ángel, S025).
+    # Criterio: manda lo que dicte la UGR como comportamiento por defecto (UGR);
+    # el modo ENDURECIDO añade exclusivamente lo que endurezca por encima de la
+    # normativa, nunca lo que la incumpla por debajo.
+    # -------------------------------------------------------------------------
+    class DifficultyMode(models.TextChoices):
+        UGR        = 'UGR',        _('Estándar UGR (por defecto)')
+        ENDURECIDO = 'ENDURECIDO', _('Endurecido (penalización + distractores extra)')
+
+    # -------------------------------------------------------------------------
     # Fields / Campos
     # -------------------------------------------------------------------------
     uuid = models.UUIDField(
@@ -231,6 +242,17 @@ class Exam(models.Model):
     localized_sections = models.JSONField(
         _('Secciones Localizadas'), default=dict, blank=True,
         help_text=_('Títulos e instrucciones traducidos al idioma objetivo (solo ARCH_LANG).')
+    )
+
+    # Difficulty selector / Selector de dificultad
+    # Ref: HOJA DE RUTA H06 — PASO 6. Elegido por el alumno en ExamCreateView,
+    # nunca deducido por la IA. Gobierna, en modo ENDURECIDO: penalización de
+    # CLO-OPEN/CLO-MULTI (no_negative_marking=False) y distractores extra en
+    # W-MIX-MATCH. El modo UGR (por defecto) es siempre el comportamiento
+    # certificado contra la normativa UGR, sin ninguna variación.
+    difficulty_mode = models.CharField(
+        _('Modo de Dificultad'), max_length=20, choices=DifficultyMode.choices,
+        default=DifficultyMode.UGR
     )
 
     # Rigor configuration / Configuración de rigor

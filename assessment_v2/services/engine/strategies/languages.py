@@ -85,8 +85,10 @@ class LanguagesStrategy(BaseExamStrategy):
             return self._grade_clo_open(item, student_input)
 
         elif block_type == 'CLO-MULTI':
-            # CLO-MULTI is always no-negative by design (base motor)
-            # CLO-MULTI siempre es sin penalización por diseño (motor base)
+            # [PASO 6 H06 - S031] Ya no es siempre sin penalización: el motor
+            # base (_grade_clo_multi) decide según el selector de dificultad
+            # del examen (UGR = sin penalización, ENDURECIDO = penalización
+            # estándar), salvo override explícito en grading_logic.
             return self._grade_clo_multi(item, student_input)
 
         elif block_type == 'MAT-LINK':

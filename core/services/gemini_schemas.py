@@ -193,6 +193,7 @@ class GradingLogicSchema(BaseModel):
     correct_answer: Optional[str] = Field(default=None, description="Solución correcta genérica (texto).")
     gap_solutions: Optional[List[GapSolutionSchema]] = Field(default=None, description="Soluciones para los huecos de W-TXT-CLOZE, una entrada por hueco. Acepta variantes separadas por '|' en accepted_answer. Ref: V06DOC_BLOCKS Sección 3.1 (CLO-OPEN).")
     pairs: Optional[List[PairSchema]] = Field(default=None, description="Pares de vinculación para W-MIX-MATCH.")
+    distractors: Optional[List[str]] = Field(default=None, description="Elementos 'derecho' señuelo adicionales para W-MIX-MATCH, sin ningún 'izquierdo' que los empareje correctamente. Se rellena EXCLUSIVAMENTE cuando la instrucción del ítem lo pida explícitamente (modo de dificultad ENDURECIDO); se omite en el resto de casos.")
     step_matrix: Optional[List[str]] = Field(default=None, description="Etapas de resolución para RPP-TRAZA (motor multietapa con arrastre de error). Cada elemento es una etapa evaluable de forma independiente.")
 
 class MetadataSchema(BaseModel):

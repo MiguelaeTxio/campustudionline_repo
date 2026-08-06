@@ -65,6 +65,14 @@ class ExamCreateView(LoginRequiredMixin, View):
         end_idx = request.POST.get('end_index')
         context_text = extract_content_range(content.markdown_content, start_idx, end_idx)
 
+        # [PASO 6 H06 - S031] Selector de dificultad UGR/ENDURECIDO, elegido
+        # por el alumno en el formulario. Nunca deducido por la IA. Valor no
+        # reconocido (manipulación de POST) cae de forma segura al default
+        # certificado (UGR), nunca a ENDURECIDO.
+        difficulty_mode = request.POST.get('difficulty_mode', Exam.DifficultyMode.UGR)
+        if difficulty_mode not in Exam.DifficultyMode.values:
+            difficulty_mode = Exam.DifficultyMode.UGR
+
         # Relational header creation — minimal, no AI classification here.
         # Classification is delegated exclusively to generate_exam_task (single responsibility).
         # Creación de la cabecera relacional — mínima, sin clasificación IA aquí.
@@ -73,7 +81,8 @@ class ExamCreateView(LoginRequiredMixin, View):
         exam = Exam.objects.create(
             user=request.user,
             content_copy=content_copy,
-            status='PENDING'
+            status='PENDING',
+            difficulty_mode=difficulty_mode
         )
         
         # Launch asynchronous generation task with scoped context
@@ -178,6 +187,16 @@ class ExamTakeView(LoginRequiredMixin, DetailView):
                             item.content = {}
                         item.content['options'] = [{'text': izq} for izq, _ in parejas]
                         destinos = [der for _, der in parejas]
+                        # [PASO 6 H06 - S031] Modo ENDURECIDO: candidato de
+                        # S029 ("distractores extra en W-MIX-MATCH"). Los
+                        # señuelos viven en grading_logic.distractors (nunca
+                        # se persisten en content), no corresponden a ningún
+                        # 'izquierdo' real y por tanto nunca pueden puntuar
+                        # como par correcto en _grade_mat_link -- solo amplían
+                        # la columna de destino que ve el alumno.
+                        raw_distractors = item.grading_logic.get('distractors') if isinstance(item.grading_logic, dict) else None
+                        if isinstance(raw_distractors, list):
+                            destinos += [str(d) for d in raw_distractors if d]
                         random.Random(str(item.uuid)).shuffle(destinos)
                         item.content['targets'] = destinos
 
@@ -243,7 +262,10 @@ class ExamSubmitView(LoginRequiredMixin, View):
                 sub_archetype_id=exam.sub_archetype_id,
                 pedagogical_level=exam.pedagogical_level, 
                 itinerary_id=exam.itinerary_id,
-                target_language_code=exam.target_language_code
+                target_language_code=exam.target_language_code,
+                # [PASO 6 H06 - S031] Gobierna BaseExamStrategy._is_hardened()
+                # -- penalización de CLO-OPEN/CLO-MULTI en tiempo de calificación.
+                difficulty_mode=exam.difficulty_mode
             )
             
             with transaction.atomic():

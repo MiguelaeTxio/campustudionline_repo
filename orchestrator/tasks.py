@@ -1516,7 +1516,14 @@ def generate_exam_task(self, exam_uuid, context_text=None, topic=None):
             pedagogical_level=exam.pedagogical_level,
             itinerary_id=exam.itinerary_id,
             target_language_code=exam.target_language_code,
-            localized_sections=exam.localized_sections
+            localized_sections=exam.localized_sections,
+            # [PASO 6 H06 - S031] Selector de dificultad, elegido por el
+            # alumno en ExamCreateView y persistido en Exam.difficulty_mode.
+            # Gobierna, en modo ENDURECIDO: la instrucción de distractores
+            # extra para MAT-LINK/W-MIX-MATCH (ver widgets_info_list más
+            # abajo) y, en tiempo de calificación, la penalización de
+            # CLO-OPEN/CLO-MULTI (ver BaseExamStrategy._is_hardened()).
+            difficulty_mode=exam.difficulty_mode
         )
         exam.immersion_mode = strategy.get_immersion_mode()
         exam.grading_params = strategy._get_grading_params()
@@ -1621,6 +1628,21 @@ def generate_exam_task(self, exam_uuid, context_text=None, topic=None):
             widgets_info_list = []
             for i, item in enumerate(db_items):
                 instruction = item.metadata.get('task_instruction', 'Generar contenido académico estándar para este widget.')
+                # [PASO 6 H06 - S031] Modo ENDURECIDO: candidato de S029
+                # ("distractores extra en W-MIX-MATCH"). Se pide a la IA que
+                # rellene grading_logic.distractors (schema en
+                # gemini_schemas.py) con 2 elementos 'derecho' señuelo,
+                # plausibles pero incorrectos, sin ningún 'izquierdo' real que
+                # los empareje -- views.py los añade a la columna de destino
+                # en el momento de renderizar, sin afectar a la calificación
+                # (MAT-LINK solo puntúa contra los pares reales de 'pairs').
+                if item.block_type == 'MAT-LINK' and exam.difficulty_mode == 'ENDURECIDO':
+                    instruction += (
+                        ' [MODO ENDURECIDO] Añade además 2 distractores en '
+                        'grading_logic.distractors: elementos "derecho" señuelo, '
+                        'plausibles dentro de la misma materia pero que no son la '
+                        'pareja correcta de ningún "izquierdo" de esta lista.'
+                    )
                 widgets_info_list.append(f"Item {item.uuid} [{item.widget_id}]: {instruction}")
             
             widgets_info = "\n".join(widgets_info_list)

@@ -50,6 +50,22 @@ class BaseExamStrategy(ABC):
         # Ref: V06DOC_LEVELS (Matriz de Intersección LVL × ITIN)
         self.rigor_params = self._get_grading_params()
 
+    def _is_hardened(self) -> bool:
+        """
+        Returns True when the exam's difficulty selector is set to ENDURECIDO.
+        Read from self.config (kwargs propagated via ExamFactory.get_strategy),
+        never re-derived — the difficulty mode is a student choice persisted on
+        Exam.difficulty_mode, not something the strategy infers.
+        ---
+        Devuelve True cuando el selector de dificultad del examen está en
+        ENDURECIDO. Se lee de self.config (kwargs propagados vía
+        ExamFactory.get_strategy), nunca se re-deriva — el modo de dificultad
+        es una elección del alumno persistida en Exam.difficulty_mode, no algo
+        que la estrategia infiera.
+        Ref: HOJA DE RUTA H06 — PASO 6.
+        """
+        return self.config.get('difficulty_mode') == 'ENDURECIDO'
+
     # ==========================================================================
     # ABSTRACT METHODS — Must be implemented by each archetype strategy
     # MÉTODOS ABSTRACTOS — Deben ser implementados por cada estrategia de arquetipo
@@ -385,14 +401,20 @@ class BaseExamStrategy(ABC):
         # [FIX S029] Default corregido de False a True: CLO-OPEN se declara
         # dependiente de RBT-SHORT-LANG (V06DOC_BLOCKS Sec 3.1), que aplica
         # NO_NEGATIVE_MARKING siempre segun protocolo CLM-UGR (sin excepcion,
-        # sin opcion de override). El False por defecto anterior penalizaba
-        # respuestas abiertas sin ninguna cita UGR que lo respaldara -- mismo
-        # criterio ya aplicado a CLO-MULTI (ver PASO 6 de la hoja de ruta H06).
+        # sin opcion de override) EN MODO UGR. El False por defecto anterior
+        # penalizaba respuestas abiertas sin ninguna cita UGR que lo
+        # respaldara -- mismo criterio ya aplicado a CLO-MULTI.
         # Verificado con caso real: examen d7da300a, item 202, 2/6 huecos
         # correctos daba nota 0.0 en vez de ~0.33 por la penalizacion no
-        # certificada. Se conserva la rama penalizada por si un futuro modo
-        # endurecido la activa explicitamente via grading_logic.
-        no_negative   = bool(logic.get('no_negative_marking', True))
+        # certificada.
+        # [PASO 6 H06 - S031] El default ahora depende del selector de
+        # dificultad: True (sin penalizacion) en modo UGR, False (penalizacion
+        # estandar) en modo ENDURECIDO. Cualquier override explicito que la
+        # propia estrategia ya haya fijado en grading_logic (ej. SUB-LIN-INSTR
+        # SD_READ/SD_LIST, que fuerza True siempre) sigue teniendo prioridad
+        # sobre este default, porque logic.get() solo cae al default si la
+        # clave no esta presente.
+        no_negative   = bool(logic.get('no_negative_marking', not self._is_hardened()))
 
         if not gap_solutions:
             return Decimal('1.0'), {
@@ -453,18 +475,29 @@ class BaseExamStrategy(ABC):
     def _grade_clo_multi(self, item, student_input) -> tuple:
         """
         CLO-MULTI motor: Multiple-choice gap-filling. Each gap has predefined options.
-        No penalty by default (distractors penalize implicitly via wrong selection).
+        No penalty by default in UGR mode (distractors penalize implicitly via wrong
+        selection). In ENDURECIDO mode, standard penalty applies unless the strategy
+        already forced no_negative_marking=True explicitly in grading_logic.
         ---
         Motor CLO-MULTI: Rellenado de huecos con opciones predefinidas.
-        Sin penalización por defecto (los distractores penalizan implícitamente).
+        Sin penalización por defecto en modo UGR (los distractores penalizan
+        implícitamente). En modo ENDURECIDO se aplica penalización estándar, salvo
+        que la estrategia ya haya forzado no_negative_marking=True explícitamente
+        en grading_logic.
         Ref: V06DOC_BLOCKS Sección 3.2 (CLO-MULTI).
+        Ref: HOJA DE RUTA H06 — PASO 6 (candidato de S029: "extender la
+        penalización a CLO-MULTI").
         """
-        # CLO-MULTI shares the same gap-resolution logic as CLO-OPEN
-        # but always with no_negative_marking=True (options already constrain choices)
-        # CLO-MULTI comparte la lógica de resolución de CLO-OPEN
-        # pero siempre con no_negative_marking=True (las opciones ya restringen las elecciones)
+        # CLO-MULTI shares the same gap-resolution logic as CLO-OPEN.
+        # [PASO 6 H06 - S031] Antes de esta sesion, no_negative_marking era
+        # siempre True por diseño (las opciones ya restringen las elecciones),
+        # sin lectura de grading_logic ni del selector de dificultad. Ahora
+        # honra el mismo flag y el mismo default dependiente del modo que
+        # _grade_clo_open, para que el modo ENDURECIDO pueda penalizar.
+        # CLO-MULTI comparte la lógica de resolución de CLO-OPEN.
         logic = item.grading_logic
         gap_solutions = self._normalize_gap_solutions(logic.get('gap_solutions'))
+        no_negative   = bool(logic.get('no_negative_marking', not self._is_hardened()))
 
         if not gap_solutions:
             return Decimal('1.0'), {
@@ -497,7 +530,20 @@ class BaseExamStrategy(ABC):
                 'correct': is_correct
             }
 
-        raw_score = Decimal(str(correct_gaps)) / Decimal(str(total_gaps))
+        wrong_gaps = total_gaps - correct_gaps
+
+        if no_negative:
+            raw_score = Decimal(str(correct_gaps)) / Decimal(str(total_gaps))
+        else:
+            # Standard penalty: each wrong gap subtracts its share, mirroring
+            # the penalized branch of _grade_clo_open.
+            # Penalización estándar: cada hueco erróneo resta su fracción,
+            # replicando la rama penalizada de _grade_clo_open.
+            raw_score = max(
+                Decimal('0.0'),
+                (Decimal(str(correct_gaps)) - Decimal(str(wrong_gaps * 0.5))) / Decimal(str(total_gaps))
+            )
+
         return raw_score, {
             'status': 'GRADED',
             'feedback_category': 'FB_FORMAL' if correct_gaps < total_gaps else 'FB_CONCEPT',
