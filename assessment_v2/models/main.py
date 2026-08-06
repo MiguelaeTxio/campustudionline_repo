@@ -191,7 +191,7 @@ class Exam(models.Model):
     # normativa, nunca lo que la incumpla por debajo.
     # -------------------------------------------------------------------------
     class DifficultyMode(models.TextChoices):
-        UGR        = 'UGR',        _('Estándar UGR (por defecto)')
+        UGR        = 'UGR',        _('Acreditación Estándar (por defecto)')
         ENDURECIDO = 'ENDURECIDO', _('Endurecido (penalización + distractores extra)')
 
     # -------------------------------------------------------------------------
