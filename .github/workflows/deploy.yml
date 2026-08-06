@@ -189,7 +189,7 @@ jobs:
             echo "$CHANGED"
             echo ""
 
-            if echo "$CHANGED" | grep -qE '^(orchestrator/tasks\.py|orchestrator/models\.py|orchestrator/signals\.py|core/celery\.py|core/settings\.py|core/services/gemini_service\.py|core/services/gemini_schemas\.py|core/services/prompt_generators\.py|assessment_v2/|academic_structure/models\.py|users/models\.py|contents/models\.py|contents/services/navigation_builder\.py|messaging/push_utils\.py)'; then
+            if echo "$CHANGED" | grep -qE '^(orchestrator/tasks\.py|orchestrator/models\.py|orchestrator/signals\.py|core/celery\.py|core/settings\.py|core/services/gemini_service\.py|core/services/gemini_schemas\.py|core/services/prompt_generators\.py|assessment_v2/|academic_structure/models\.py|users/models\.py|contents/models\.py|contents/services/navigation_builder\.py|messaging/push_utils\.py|media_library/)'; then
               echo "--- Primario: cambios relevantes detectados, reiniciando (id 182748) ---"
               curl -sf --max-time 60 -X POST "https://www.pythonanywhere.com/api/v0/user/MiguelAeTxio/always_on/182748/restart/" \
                 -H "Authorization: Token ${{ secrets.PA_API_TOKEN }}"
